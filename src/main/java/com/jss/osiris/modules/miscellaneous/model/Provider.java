@@ -14,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
@@ -25,6 +26,7 @@ public class Provider implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false)
+	@IndexedField
 	private String label;
 
 	@ManyToOne

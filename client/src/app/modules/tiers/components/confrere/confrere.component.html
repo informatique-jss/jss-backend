@@ -74,6 +74,11 @@
                       </autocomplete-employee>
                     </td>
                     <td>
+                      <autocomplete-employee [(model)]="selectedConfrere.defaultCustomerOrderEmployee"
+                        [isDisabled]="!editMode" label="Assignation par défaut des commandes" [form]="entityForm2"
+                        propertyName="defaultCustomerOrderEmployee" [isMandatory]="false"></autocomplete-employee>
+                    </td>
+                    <td>
                       <autocomplete-employee [(model)]="selectedConfrere.formalisteEmployee" [isDisabled]="!editMode"
                         label="Formaliste" [isDisabled]="!editMode" [form]="entityForm2"
                         propertyName="formalisteEmployee">
@@ -191,7 +196,7 @@
                       <chips-special-offers [(model)]="selectedConfrere.specialOffers" [form]="entityForm2"
                         propertyName="specialOffers" [isDisabled]="!editMode"></chips-special-offers>
                     </td>
-                    <td>
+                    <td *ngIf="selectedConfrere.journalType && selectedConfrere.journalType.id == journalTypePaper.id">
                       <generic-input [(model)]="selectedConfrere.shippingCosts" label="Frais de port (€)"
                         [form]="entityForm2" propertyName="shippingCosts" [isMandatory]="false" [isDisabled]="!editMode"
                         type="number">
@@ -210,7 +215,8 @@
                     </td>
                   </tr>
                 </table>
-                <table class="full-width">
+                <table class="full-width"
+                  *ngIf="selectedConfrere.journalType && selectedConfrere.journalType.id == journalTypePaper.id">
                   <tr>
                     <td>
                       <generic-input [(model)]="selectedConfrere.numberOfPrint" label="Tirage" [form]="entityForm2"
@@ -296,7 +302,8 @@
         </ordering-list>
       </mat-tab>
       <mat-tab label="Prestations" *ngIf="selectedConfrere.id!=null && selectedConfrere.id!=undefined">
-        <provision-list class="integration-component" *ngIf="this.provisionSearch.customerOrders"
+        <provision-list class="integration-component"
+          *ngIf="this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0"
           [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
         </provision-list>
       </mat-tab>

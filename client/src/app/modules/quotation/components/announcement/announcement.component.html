@@ -94,14 +94,14 @@
           </table>
           <table class="full-width">
             <tr>
-              <td *ngIf="announcement.confrere && announcement.confrere.id !=confrereJssSpel.id ">
-                <single-attachment [entity]=" announcement!" [entityType]="ANNOUNCEMENT_ENTITY_TYPE.entityType"
+              <td *ngIf="announcement.confrere && announcement.confrere.id !=confrereJssSpel.id && provision ">
+                <single-attachment [entity]=" provision" [entityType]="PROVISION_ENTITY_TYPE.entityType"
                   [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypePublicationReceipt"
                   (onUploadedFile)="updateAttachments($event)">
                 </single-attachment>
               </td>
-              <td *ngIf="announcement.confrere && announcement.confrere.id !=confrereJssSpel.id">
-                <single-attachment [entity]=" announcement!" [entityType]="ANNOUNCEMENT_ENTITY_TYPE.entityType"
+              <td *ngIf="announcement.confrere && announcement.confrere.id !=confrereJssSpel.id && provision">
+                <single-attachment [entity]=" provision" [entityType]="PROVISION_ENTITY_TYPE.entityType"
                   [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypePublicationFlag"
                   (onUploadedFile)="updateAttachments($event)">
                 </single-attachment>
@@ -219,12 +219,12 @@
       <provision-options [editMode]="editMode" [provision]="provision" (provisionChange)="noticeChangeFunction()">
       </provision-options>
     </mat-tab>
-    <mat-tab label="Débours" *ngIf="instanceOfCustomerOrder && !isStatusOpen">
-      <add-debour [editMode]="editMode" [(provision)]="provision">
+    <mat-tab label="Débours/frais" *ngIf="instanceOfCustomerOrder && !isStatusOpen">
+      <add-debour [editMode]="editMode" [(provision)]="provision" [customerOrder]="quotation">
       </add-debour>
     </mat-tab>
-    <mat-tab label="Documents" *ngIf="announcement.id!=null && announcement.id!=undefined">
-      <attachments [entity]="announcement" [editMode]="editMode" [entityType]="ANNOUNCEMENT_ENTITY_TYPE.entityType">
+    <mat-tab label="Documents" *ngIf="announcement.id!=null && announcement.id!=undefined && provision">
+      <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="announcement && announcement.id">

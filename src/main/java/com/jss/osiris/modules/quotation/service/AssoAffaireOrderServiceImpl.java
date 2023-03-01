@@ -171,6 +171,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         // Complete domiciliation end date
         int nbrAssignation = 0;
         Employee currentEmployee = null;
+        Employee maxWeightEmployee = null;
+        Integer maxWeight = -1000000000;
 
         for (Provision provision : assoAffaireOrder.getProvisions()) {
             provision.setAssoAffaireOrder(assoAffaireOrder);
@@ -284,8 +286,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 boolean publicationProofFound = false;
                 if (announcement != null) {
-                    if (announcement.getAttachments() != null && announcement.getAttachments().size() > 0)
-                        for (Attachment attachment : announcement.getAttachments())
+                    if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+                        for (Attachment attachment : provision.getAttachments())
                             if (attachment.getAttachmentType().getId()
                                     .equals(constantService.getAttachmentTypePublicationProof().getId())) {
                                 publicationProofFound = true;
@@ -305,8 +307,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         }
                     } else {
                         // Else send publication receipt when it's available and if user accept
-                        if (announcement.getAttachments() != null && announcement.getAttachments().size() > 0)
-                            for (Attachment attachment : announcement.getAttachments())
+                        if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+                            for (Attachment attachment : provision.getAttachments())
                                 if (attachment.getAttachmentType().getId()
                                         .equals(constantService.getAttachmentTypePublicationReceipt().getId())) {
                                     announcementService.generateStoreAndSendPublicationReceipt(
@@ -386,10 +388,23 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     currentEmployee = employee;
                     nbrAssignation++;
                 }
+
+                // Handle weight
+                if (provision.getProvisionType().getAssignationWeight() != null
+                        && provision.getProvisionType().getAssignationWeight() > maxWeight) {
+                    maxWeight = provision.getProvisionType().getAssignationWeight();
+                    maxWeightEmployee = employee;
+                }
             }
         }
         if (nbrAssignation == 1)
             assoAffaireOrder.setAssignedTo(currentEmployee);
+
+        if (maxWeightEmployee != null) {
+            assoAffaireOrder.setAssignedTo(maxWeightEmployee);
+            for (Provision provision : assoAffaireOrder.getProvisions())
+                provision.setAssignedTo(maxWeightEmployee);
+        }
 
         return assoAffaireOrder;
     }
@@ -433,6 +448,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             customerOrderId.add(0);
         }
 
+        Integer waitedCompetentAuthorityId = 0;
+        if (affaireSearch.getWaitedCompetentAuthority() != null)
+            waitedCompetentAuthorityId = affaireSearch.getWaitedCompetentAuthority().getId();
+
         ArrayList<String> excludedCustomerOrderStatusCode = new ArrayList<String>();
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.OPEN);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.WAITING_DEPOSIT);
@@ -440,7 +459,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
         return assoAffaireOrderRepository.findAsso(responsibleId,
                 assignedId, affaireSearch.getLabel(),
-                statusId, excludedCustomerOrderStatusCode, customerOrderId);
+                statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId);
     }
 
 }

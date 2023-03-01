@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AFFAIRE_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
 import { Affaire } from '../../model/Affaire';
@@ -22,6 +23,8 @@ export class AffaireComponent implements OnInit {
   orderingSearch: OrderingSearch = {} as OrderingSearch;
   quotationSearch: QuotationSearch = {} as QuotationSearch;
 
+  saveObservableSubscription: Subscription = new Subscription;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private appService: AppService,
@@ -40,6 +43,18 @@ export class AffaireComponent implements OnInit {
           this.appService.changeHeaderTitle("Affaire - " + (this.affaire.denomination ? this.affaire.denomination : this.affaire.firstname + " " + this.affaire.lastname));
         }
       })
+
+    this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
+      if (response)
+        if (this.editMode)
+          this.saveAffaire()
+        else
+          this.editAffaire()
+    });
+  }
+
+  ngOnDestroy() {
+    this.saveObservableSubscription.unsubscribe();
   }
 
   editAffaire() {

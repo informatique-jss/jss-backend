@@ -266,7 +266,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
             this.onClose();
           })
         } else {
-          this.appService.displaySnackBar("Il n'est possible d'associer que des débours non associés.", true, 15);
+          this.appService.displaySnackBar("Il n'est possible d'associer que des débours/frais non associés.", true, 15);
         }
       });
     }

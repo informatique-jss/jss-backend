@@ -19,20 +19,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.invoicing.model.Invoice;
-import com.jss.osiris.modules.quotation.model.Announcement;
-import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
-import com.jss.osiris.modules.quotation.model.SimpleProvision;
-import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_tiers_attachment", columnList = "id_tiers"),
-		@Index(name = "idx_domiciliation_attachment", columnList = "id_domiciliation"),
 		@Index(name = "idx_customer_order_attachment", columnList = "id_customer_order"),
 		@Index(name = "idx_quotation_attachment", columnList = "id_quotation"),
 		@Index(name = "idx_responsable_attachment", columnList = "id_responsable") })
@@ -57,12 +51,6 @@ public class Attachment implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
-	@JoinColumn(name = "id_formalite")
-	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
-	private Formalite formalite;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonIgnore
 	@JoinColumn(name = "id_responsable")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Responsable responsable;
@@ -75,33 +63,9 @@ public class Attachment implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
-	@JoinColumn(name = "id_domiciliation")
-	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
-	private Domiciliation domiciliation;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonIgnore
-	@JoinColumn(name = "id_announcement")
-	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
-	private Announcement announcement;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonIgnore
-	@JoinColumn(name = "id_simple_provision")
-	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
-	private SimpleProvision simpleProvision;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonIgnore
 	@JoinColumn(name = "id_provision")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Provision provision;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonIgnore
-	@JoinColumn(name = "id_bodacc")
-	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
-	private Bodacc bodacc;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -139,14 +103,6 @@ public class Attachment implements Serializable, IId {
 		this.id = id;
 	}
 
-	public Bodacc getBodacc() {
-		return bodacc;
-	}
-
-	public void setBodacc(Bodacc bodacc) {
-		this.bodacc = bodacc;
-	}
-
 	public Tiers getTiers() {
 		return tiers;
 	}
@@ -161,14 +117,6 @@ public class Attachment implements Serializable, IId {
 
 	public void setResponsable(Responsable responsable) {
 		this.responsable = responsable;
-	}
-
-	public Announcement getAnnouncement() {
-		return announcement;
-	}
-
-	public void setAnnouncement(Announcement announcement) {
-		this.announcement = announcement;
 	}
 
 	public AttachmentType getAttachmentType() {
@@ -211,28 +159,12 @@ public class Attachment implements Serializable, IId {
 		this.customerOrder = customerOrder;
 	}
 
-	public Domiciliation getDomiciliation() {
-		return domiciliation;
-	}
-
-	public void setDomiciliation(Domiciliation domiciliation) {
-		this.domiciliation = domiciliation;
-	}
-
 	public Provision getProvision() {
 		return provision;
 	}
 
 	public void setProvision(Provision provision) {
 		this.provision = provision;
-	}
-
-	public Formalite getFormalite() {
-		return formalite;
-	}
-
-	public void setFormalite(Formalite formalite) {
-		this.formalite = formalite;
 	}
 
 	public CustomerMail getCustomerMail() {
@@ -257,14 +189,6 @@ public class Attachment implements Serializable, IId {
 
 	public void setCreatDateTime(LocalDateTime creatDateTime) {
 		this.creatDateTime = creatDateTime;
-	}
-
-	public SimpleProvision getSimpleProvision() {
-		return simpleProvision;
-	}
-
-	public void setSimpleProvision(SimpleProvision simpleProvision) {
-		this.simpleProvision = simpleProvision;
 	}
 
 	public Invoice getInvoice() {

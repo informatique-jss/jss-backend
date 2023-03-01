@@ -46,8 +46,8 @@
       <provision-options (provisionChange)="provisionChangeFunction()" [editMode]="editMode" [provision]="provision">
       </provision-options>
     </mat-tab>
-    <mat-tab label="Débours" *ngIf="instanceOfCustomerOrder && !isStatusOpen">
-      <add-debour [editMode]="editMode" [(provision)]="provision">
+    <mat-tab label="Débours/frais" *ngIf="instanceOfCustomerOrder && !isStatusOpen">
+      <add-debour [editMode]="editMode" [(provision)]="provision" [customerOrder]="quotation">
       </add-debour>
     </mat-tab>
     <mat-tab label="Imprimé"
@@ -66,8 +66,8 @@
         *ngIf="bodacc.bodaccPublicationType &&  bodacc.bodaccPublicationType.id==bodaccPublicationTypeSplit.id">
       </bodacc-split>
     </mat-tab>
-    <mat-tab label="Documents">
-      <attachments [entity]="bodacc" [editMode]="editMode" [entityType]="BODACC_ENTITY_TYPE.entityType">
+    <mat-tab label="Documents" *ngIf="bodacc.id && provision">
+      <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>
   </mat-tab-group>

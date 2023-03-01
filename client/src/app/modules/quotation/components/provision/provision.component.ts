@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
@@ -59,6 +60,8 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   journalTypeSpel = this.constantService.getJournalTypeSpel();
   getProvisionLabel = QuotationComponent.computeProvisionLabel;
 
+  saveObservableSubscription: Subscription = new Subscription;
+
   currentProvisionWorkflow: Provision | undefined;
 
   constructor(
@@ -96,6 +99,18 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.domiciliationStatusService.getDomiciliationStatus().subscribe(response => this.domiciliationStatus = response);
     this.announcementStatusService.getAnnouncementStatus().subscribe(response => this.announcementStatus = response);
     this.simpleProvisionStatusService.getSimpleProvisionStatus().subscribe(response => this.simpleProvisionStatus = response);
+
+    this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
+      if (response)
+        if (this.editMode)
+          this.saveAsso()
+        else if (this.asso)
+          this.editAsso()
+    });
+  }
+
+  ngOnDestroy() {
+    this.saveObservableSubscription.unsubscribe();
   }
 
   ngAfterContentChecked(): void {
@@ -136,7 +151,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     }
 
     if (provision.debours && provision.debours.length > 0) {
-      this.appService.displaySnackBar("Impossible de supprimer cette prestation : des débours ont déjà été saisis", true, 15);
+      this.appService.displaySnackBar("Impossible de supprimer cette prestation : des débours/frais ont déjà été saisis", true, 15);
       return;
     }
 
@@ -244,9 +259,9 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     return {} as IWorkflowElement;
   }
 
-  publicationReceiptFound(announcement: Announcement): boolean {
-    if (announcement && announcement.attachments && announcement.attachments.length > 0)
-      for (let attachement of announcement.attachments)
+  publicationReceiptFound(provision: Provision): boolean {
+    if (provision && provision.attachments && provision.attachments.length > 0)
+      for (let attachement of provision.attachments)
         if (attachement.attachmentType && attachement.attachmentType.id == this.constantService.getAttachmentTypePublicationReceipt().id)
           return true;
     return false;
@@ -262,7 +277,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     if (provision.announcement) {
       provision.announcement.announcementStatus = status;
       if (status.code == ANNOUNCEMENT_STATUS_IN_PROGRESS && !provision.announcement.isPublicationReciptAlreadySent && provision.announcement.confrere && provision.announcement.confrere.id == this.constantService.getConfrereJssSpel().id
-        || !provision.announcement.isPublicationReciptAlreadySent && provision.announcement.confrere && provision.announcement.confrere.id != this.constantService.getConfrereJssSpel().id && this.publicationReceiptFound(provision.announcement)) {
+        || !provision.announcement.isPublicationReciptAlreadySent && provision.announcement.confrere && provision.announcement.confrere.id != this.constantService.getConfrereJssSpel().id && this.publicationReceiptFound(provision)) {
         saveAsso = false;
         const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
           maxWidth: "400px",

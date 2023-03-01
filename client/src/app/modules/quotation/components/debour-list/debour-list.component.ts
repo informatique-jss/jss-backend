@@ -45,6 +45,7 @@ export class DebourListComponent implements OnInit {
     this.displayedColumns.push({ id: "billingType", fieldName: "billingTypeLabel", label: "Débour" } as SortTableColumn);
     this.displayedColumns.push({ id: "competentAuthority", fieldName: "competentAuthorityLabel", label: "Autorité compétente" } as SortTableColumn);
     this.displayedColumns.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "invoicedAmount", fieldName: "invoicedAmount", label: "Montant facturé", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "paymentType", fieldName: "paymentTypeLabel", label: "Type de paiement" } as SortTableColumn);
     this.displayedColumns.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "checkNumber", fieldName: "checkNumber", label: "N° de chèque" } as SortTableColumn);

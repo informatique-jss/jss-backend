@@ -5,6 +5,7 @@ import java.util.List;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationSearch;
@@ -37,6 +38,9 @@ public interface QuotationService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void sendRemindersForQuotation()
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
+        public void updateAssignedToForQuotation(Quotation quotation, Employee employee)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
 }

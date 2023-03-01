@@ -21,6 +21,7 @@ import { SpecialOffersDialogComponent } from 'src/app/modules/miscellaneous/comp
 import { AccountingModule } from '../../../accounting/components/accounting/accounting.module';
 import { InvoicingModule } from '../../../invoicing/components/invoicing/invoicing.module';
 import { QuotationModule } from '../../../quotation/components/quotation/quotation.module';
+import { ReportingModule } from '../../../reporting/components/reporting/reporting.module';
 import { ConfrereComponent } from '../confrere/confrere.component';
 import { ResponsableMainComponent } from '../responsable-main/responsable-main.component';
 import { SettlementBillingComponent } from '../settlement-billing/settlement-billing.component';
@@ -56,7 +57,8 @@ const routes: Routes = [
     MatTooltipModule,
     DragDropModule,
     QuotationModule,
-    InvoicingModule
+    InvoicingModule,
+    ReportingModule,
   ],
   declarations: [TiersComponent,
     PrincipalComponent,

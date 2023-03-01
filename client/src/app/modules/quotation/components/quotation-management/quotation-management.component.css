@@ -13,3 +13,7 @@
 td {
   padding-right: 8px;
 }
+
+.break-line {
+  white-space: pre-line;
+}

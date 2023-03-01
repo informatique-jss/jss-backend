@@ -27,14 +27,9 @@ import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
-import com.jss.osiris.modules.quotation.model.Announcement;
-import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
-import com.jss.osiris.modules.quotation.model.SimpleProvision;
-import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.BodaccService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
@@ -183,26 +178,6 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (quotation == null)
                 return new ArrayList<Attachment>();
             attachment.setQuotation(quotation);
-        } else if (entityType.equals(Domiciliation.class.getSimpleName())) {
-            Domiciliation domiciliation = domiciliationService.getDomiciliation(idEntity);
-            if (domiciliation == null)
-                return new ArrayList<Attachment>();
-            attachment.setDomiciliation(domiciliation);
-        } else if (entityType.equals(Announcement.class.getSimpleName())) {
-            Announcement announcement = announcementService.getAnnouncement(idEntity);
-            if (announcement == null)
-                return new ArrayList<Attachment>();
-            attachment.setAnnouncement(announcement);
-        } else if (entityType.equals(Formalite.class.getSimpleName())) {
-            Formalite formalite = formaliteService.getFormalite(idEntity);
-            if (formalite == null)
-                return new ArrayList<Attachment>();
-            attachment.setFormalite(formalite);
-        } else if (entityType.equals(Bodacc.class.getSimpleName())) {
-            Bodacc bodacc = bodaccService.getBodacc(idEntity);
-            if (bodacc == null)
-                return new ArrayList<Attachment>();
-            attachment.setBodacc(bodacc);
         } else if (entityType.equals(Provision.class.getSimpleName())) {
             Provision provision = provisionService.getProvision(idEntity);
             if (provision == null)
@@ -213,11 +188,6 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (customerOrder == null)
                 return new ArrayList<Attachment>();
             attachment.setCustomerOrder(customerOrder);
-        } else if (entityType.equals(SimpleProvision.class.getSimpleName())) {
-            SimpleProvision simpleProvision = simpleProvisionService.getSimpleProvision(idEntity);
-            if (simpleProvision == null)
-                return new ArrayList<Attachment>();
-            attachment.setSimpleProvision(simpleProvision);
         } else if (entityType.equals(Invoice.class.getSimpleName())) {
             Invoice invoice = invoiceService.getInvoice(idEntity);
             if (invoice == null)
@@ -261,18 +231,10 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByResponsableId(idEntity);
         } else if (entityType.equals(Quotation.class.getSimpleName())) {
             attachments = attachmentRepository.findByQuotationId(idEntity);
-        } else if (entityType.equals(Domiciliation.class.getSimpleName())) {
-            attachments = attachmentRepository.findByDomiciliationId(idEntity);
-        } else if (entityType.equals(Announcement.class.getSimpleName())) {
-            attachments = attachmentRepository.findByAnnouncementId(idEntity);
-        } else if (entityType.equals(Bodacc.class.getSimpleName())) {
-            attachments = attachmentRepository.findByBodaccId(idEntity);
         } else if (entityType.equals(Provision.class.getSimpleName())) {
             attachments = attachmentRepository.findByProvisionId(idEntity);
         } else if (entityType.equals(CustomerOrder.class.getSimpleName())) {
             attachments = attachmentRepository.findByCustomerOrderId(idEntity);
-        } else if (entityType.equals(SimpleProvision.class.getSimpleName())) {
-            attachments = attachmentRepository.findBySimpleProvisonId(idEntity);
         } else if (entityType.equals(Invoice.class.getSimpleName())) {
             attachments = attachmentRepository.findByInvoiceId(idEntity);
         } else if (entityType.equals(CustomerMail.class.getSimpleName())) {

@@ -4,6 +4,7 @@ import { formatDateForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
+import { formatEurosForSortTable } from '../../../../libs/FormatHelper';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Employee } from '../../../profile/model/Employee';
 import { EmployeeService } from '../../../profile/services/employee.service';
@@ -50,6 +51,7 @@ export class OrderingListComponent implements OnInit {
       if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
         this.orderingSearch = {} as OrderingSearch;
         this.orderingSearch.salesEmployee = this.bookmark.salesEmployee;
+        this.orderingSearch.assignedToEmployee = this.bookmark.assignedToEmployee;
         this.orderingSearch.customerOrderStatus = this.bookmark.customerOrderStatus;
       }
 
@@ -66,6 +68,7 @@ export class OrderingListComponent implements OnInit {
       this.availableColumns.push({ id: "customerOrderDescription", fieldName: "customerOrderDescription", label: "Description", isShrinkColumn: true } as SortTableColumn);
       this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
       this.availableColumns.push({ id: "customerOrderLabel", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
+      this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
       this.availableColumns.push({
         id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true, valueFonction: (element: any) => {
           if (element && this.allEmployees) {
@@ -76,6 +79,21 @@ export class OrderingListComponent implements OnInit {
           return undefined;
         }
       } as SortTableColumn);
+      this.availableColumns.push({
+        id: "assignedToEmployee", fieldName: "assignedToEmployeeId", label: "Assignée à", displayAsEmployee: true, valueFonction: (element: any) => {
+          if (element && this.allEmployees) {
+            for (let employee of this.allEmployees)
+              if (employee.id == element.assignedToEmployeeId)
+                return employee;
+          }
+          return undefined;
+        }
+      } as SortTableColumn);
+      this.availableColumns.push({ id: "announcementNbr", fieldName: "announcementNbr", label: "Nombre d'annonces légales" } as SortTableColumn);
+      this.availableColumns.push({ id: "formaliteNbr", fieldName: "formaliteNbr", label: "Nombre de formalités GU" } as SortTableColumn);
+      this.availableColumns.push({ id: "bodaccNbr", fieldName: "bodaccNbr", label: "Nombre de BODACC" } as SortTableColumn);
+      this.availableColumns.push({ id: "domiciliationNbr", fieldName: "domiciliationNbr", label: "Nombre de domiciliations" } as SortTableColumn);
+      this.availableColumns.push({ id: "simpleProvisionNbr", fieldName: "simpleProvisionNbr", label: "Nombre de formalités simples" } as SortTableColumn);
 
       this.setColumns();
 
@@ -113,15 +131,6 @@ export class OrderingListComponent implements OnInit {
 
   orderingSearchForm = this.formBuilder.group({
   });
-
-  getSalesEmployee(element: any): Employee | undefined {
-    if (element && this.allEmployees) {
-      for (let employee of this.allEmployees)
-        if (employee.id == element.salesEmployeeId)
-          return employee;
-    }
-    return undefined;
-  }
 
   getColumnLink(column: SortTableColumn, element: any) {
     if (element && column.id == "tiersLabel") {

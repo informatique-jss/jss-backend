@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
@@ -20,6 +21,7 @@ public class InvoiceStatus implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false)
+	@IndexedField
 	private String label;
 
 	private String code;

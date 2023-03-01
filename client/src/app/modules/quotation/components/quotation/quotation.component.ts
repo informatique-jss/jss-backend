@@ -3,8 +3,8 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
-import { Subject } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_TO_BILLED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
+import { Subject, Subscription } from 'rxjs';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { getRemainingToPay } from 'src/app/modules/invoicing/components/invoice-tools';
@@ -20,23 +20,27 @@ import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN } from '../
 import { replaceDocument } from '../../../../libs/DocumentHelper';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
 import { AssociateDepositDialogComponent } from '../../../invoicing/components/associate-deposit-dialog/associate-deposit-dialog.component';
+import { getCustomerOrderForIQuotation } from '../../../invoicing/components/invoice-tools';
 import { WorkflowDialogComponent } from '../../../miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { CustomerOrderStatus } from '../../model/CustomerOrderStatus';
+import { OrderingSearch } from '../../model/OrderingSearch';
 import { Provision } from '../../model/Provision';
 import { QuotationStatus } from '../../model/QuotationStatus';
 import { VatBase } from '../../model/VatBase';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
+import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
 import { ProvisionService } from '../../services/provision.service';
 import { QuotationStatusService } from '../../services/quotation-status.service';
 import { QuotationService } from '../../services/quotation.service';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
+import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { PrintLabelDialogComponent } from '../print-label-dialog/print-label-dialog.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
@@ -82,6 +86,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   idQuotation: number | undefined;
 
+  saveObservableSubscription: Subscription = new Subscription;
+
   constructor(private appService: AppService,
     private quotationService: QuotationService,
     private customerOrderService: CustomerOrderService,
@@ -92,6 +98,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     public mailLabelDialog: MatDialog,
     public addAffaireDialog: MatDialog,
     public quotationWorkflowDialog: MatDialog,
+    public orderSimilaritiesDialog: MatDialog,
     public customerOrderWorkflowDialog: MatDialog,
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
@@ -99,6 +106,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     protected searchService: SearchService,
     public associateDepositDialog: MatDialog,
     private provisionService: ProvisionService,
+    private orderingSearchResultService: OrderingSearchResultService,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   quotationForm = this.formBuilder.group({});
@@ -154,6 +162,18 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       // Blank page
       this.appService.changeHeaderTitle("Devis");
     }
+
+    this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
+      if (response)
+        if (this.editMode)
+          this.saveQuotation()
+        else if (this.quotation.id)
+          this.editQuotation()
+    });
+  }
+
+  ngOnDestroy() {
+    this.saveObservableSubscription.unsubscribe();
   }
 
   toggleTabs() {
@@ -238,14 +258,14 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     if (this.getFormsStatus()) {
       if (!this.instanceOfCustomerOrder) {
         this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
-          this.quotation = response;
           this.editMode = false;
+          this.quotation = response;
           this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
         })
       } else {
         this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
-          this.quotation = response;
           this.editMode = false;
+          this.quotation = response;
           this.appService.openRoute(null, '/order/' + this.quotation.id, null);
         })
       }
@@ -352,11 +372,39 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         asso.provisions.push({} as Provision);
         if (!this.quotation.assoAffaireOrders)
           this.quotation.assoAffaireOrders = [] as Array<AssoAffaireOrder>;
-        this.quotation.assoAffaireOrders.push(asso);
-        this.selectedTabIndex = 1;
+
+        // Check if another quotation / affaire already exists
+        let orderingSearch = {} as OrderingSearch;
+        orderingSearch.customerOrders = [getCustomerOrderForIQuotation(this.quotation)];
+        orderingSearch.affaires = [asso.affaire];
+        orderingSearch.customerOrderStatus = [];
+        if (this.customerOrderStatusList)
+          for (let status of this.customerOrderStatusList)
+            if ([CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED].indexOf(status.code) >= 0)
+              orderingSearch.customerOrderStatus.push(status);
+
+        this.orderingSearchResultService.getOrders(orderingSearch).subscribe(orders => {
+          if (orders && orders.length > 0) {
+            let dialogRef = this.orderSimilaritiesDialog.open(OrderSimilaritiesDialogComponent);
+            dialogRef.componentInstance.affaire = response;
+            dialogRef.componentInstance.orderingSearch = orderingSearch;
+
+            dialogRef.afterClosed().subscribe(accept => {
+              if (accept) {
+                this.quotation.assoAffaireOrders.push(asso);
+                this.selectedTabIndex = 1;
+              }
+            });
+          } else {
+            this.quotation.assoAffaireOrders.push(asso);
+            this.selectedTabIndex = 1;
+          }
+        });
       }
     })
   }
+
+
 
   displayQuotationWorkflowDialog() {
     let dialogRef = this.quotationWorkflowDialog.open(WorkflowDialogComponent, {
@@ -396,7 +444,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       return;
     }
     if (provision.debours && provision.debours.length > 0) {
-      this.appService.displaySnackBar("Impossible de supprimer cette prestation : des débours ont déjà été saisis", true, 15);
+      this.appService.displaySnackBar("Impossible de supprimer cette prestation : des débours/frais ont déjà été saisis", true, 15);
       return;
     }
     if (provision.announcement && provision.announcement.actuLegaleId)
@@ -574,7 +622,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
               for (let invoiceItem of provision.invoiceItems) {
                 if (invoiceItem.vat && invoiceItem.vatPrice && invoiceItem.vatPrice > 0) {
 
-                  if (!invoiceItem.billingItem.billingType.isDebour || !provision.debours || provision.debours.length == 0) {
+                  if (!invoiceItem.billingItem.billingType.isDebour && !invoiceItem.billingItem.billingType.isFee || !provision.debours || provision.debours.length == 0) {
                     let vatFound = false;
                     for (let vatBase of vatBases) {
                       if (vatBase.label == invoiceItem.vat.label) {
@@ -590,16 +638,17 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                     for (let debour of provision.debours) {
                       if (!debour.billingType.isNonTaxable) {
                         let vatFound = false;
+                        let debourAmount = debour.invoicedAmount ? debour.invoicedAmount : debour.debourAmount;
 
                         for (let vatBase of vatBases) {
                           if (vatBase.label == debourVat.label) {
                             vatFound = true;
-                            vatBase.base += debour.debourAmount / (1 + (debourVat.rate / 100));
-                            vatBase.total += (debour.debourAmount / (1 + (debourVat.rate / 100))) * debourVat.rate / 100;
+                            vatBase.base += debourAmount / (1 + (debourVat.rate / 100));
+                            vatBase.total += (debourAmount / (1 + (debourVat.rate / 100))) * debourVat.rate / 100;
                           }
                         }
                         if (!vatFound) {
-                          vatBases.push({ label: debourVat.label, base: debour.debourAmount / (1 + (debourVat.rate / 100)), total: (debour.debourAmount / (1 + (debourVat.rate / 100))) * debourVat.rate / 100 });
+                          vatBases.push({ label: debourVat.label, base: debourAmount / (1 + (debourVat.rate / 100)), total: (debourAmount / (1 + (debourVat.rate / 100))) * debourVat.rate / 100 });
                         }
                       }
                     }
@@ -627,7 +676,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           if (asso.provisions) {
             for (let provision of asso.provisions)
               if (provision.debours && provision.debours.length > 0)
-                this.appService.displaySnackBar("Impossible de supprimer cette affaire : des débours ont déjà été saisis sur une prestation", true, 15);
+                this.appService.displaySnackBar("Impossible de supprimer cette affaire : des débours/frais ont déjà été saisis sur une prestation", true, 15);
             return;
           }
         }
@@ -707,12 +756,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     });
 
     dialogRef.componentInstance.customerOrders.push(this.quotation.id + "");
-
-    dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult) {
-        this.customerOrderService.generateMailingLabel(dialogResult).subscribe(response => { });
-      }
-    });
   }
 
   displayAffaire(event: any, affaire: Affaire) {

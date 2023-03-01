@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { formatDateForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
+import { formatDateForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
@@ -46,6 +46,7 @@ export class QuotationListComponent implements OnInit {
       if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
         this.quotationSearch = {} as QuotationSearch;
         this.quotationSearch.salesEmployee = this.bookmark.salesEmployee;
+        this.quotationSearch.assignedToEmployee = this.bookmark.assignedToEmployee;
         this.quotationSearch.quotationStatus = this.bookmark.quotationStatus;
       }
 
@@ -62,6 +63,7 @@ export class QuotationListComponent implements OnInit {
       this.availableColumns.push({ id: "quotationDescription", fieldName: "quotationDescription", label: "Description", isShrinkColumn: true } as SortTableColumn);
       this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
       this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
+      this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
       this.availableColumns.push({
         id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true, valueFonction: (element: any) => {
           if (element && this.allEmployees) {
@@ -72,6 +74,21 @@ export class QuotationListComponent implements OnInit {
           return undefined;
         }
       } as SortTableColumn);
+      this.availableColumns.push({
+        id: "assignedToEmployee", fieldName: "assignedToEmployeeId", label: "Assigné à", displayAsEmployee: true, valueFonction: (element: any) => {
+          if (element && this.allEmployees) {
+            for (let employee of this.allEmployees)
+              if (employee.id == element.assignedToEmployeeId)
+                return employee;
+          }
+          return undefined;
+        }
+      } as SortTableColumn);
+      this.availableColumns.push({ id: "announcementNbr", fieldName: "announcementNbr", label: "Nombre d'annonces légales" } as SortTableColumn);
+      this.availableColumns.push({ id: "formaliteNbr", fieldName: "formaliteNbr", label: "Nombre de formalités GU" } as SortTableColumn);
+      this.availableColumns.push({ id: "bodaccNbr", fieldName: "bodaccNbr", label: "Nombre de BODACC" } as SortTableColumn);
+      this.availableColumns.push({ id: "domiciliationNbr", fieldName: "domiciliationNbr", label: "Nombre de domiciliations" } as SortTableColumn);
+      this.availableColumns.push({ id: "simpleProvisionNbr", fieldName: "simpleProvisionNbr", label: "Nombre de formalités simples" } as SortTableColumn);
 
       this.setColumns();
 
@@ -96,15 +113,6 @@ export class QuotationListComponent implements OnInit {
     }
     else
       this.displayedColumns.push(...this.availableColumns);
-  }
-
-  getSalesEmployee(element: any): Employee | undefined {
-    if (element && this.allEmployees) {
-      for (let employee of this.allEmployees)
-        if (employee.id == element.salesEmployeeId)
-          return employee;
-    }
-    return undefined;
   }
 
   getActionLink(action: SortTableAction, element: any) {

@@ -6,6 +6,7 @@ export interface InvoiceSearchResult {
   customerOrderId: number;
   customerOrderLabel: string;
   providerLabel: string;
+  tiersLabel: string;
   confrereId: number;
   responsableId: number;
   tiersId: number;

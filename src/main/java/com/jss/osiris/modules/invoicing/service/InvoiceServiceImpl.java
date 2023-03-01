@@ -141,7 +141,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             for (AccountingRecord accountingRecord : invoice.getAccountingRecords()) {
                 accountingRecordService.unassociateCustomerOrderPayementAndDeposit(accountingRecord);
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
-                    accountingRecordService.generateCounterPart(accountingRecord, null, operationIdCounterPart);
+                    accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart);
             }
 
         // Unlink invoice item from customer order
@@ -152,6 +152,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             }
         }
 
+        invoice = getInvoice(invoice.getId());
         // Create credit note
         Invoice creditNote = cloneInvoice(invoice);
         creditNote = addOrUpdateInvoice(creditNote);
@@ -277,11 +278,18 @@ public class InvoiceServiceImpl implements InvoiceService {
             customerOrderId.add(0);
         }
 
+        if (invoiceSearch.getCustomerOrderId() == null)
+            invoiceSearch.setCustomerOrderId(0);
+
+        if (invoiceSearch.getInvoiceId() == null)
+            invoiceSearch.setInvoiceId(0);
+
         return invoiceRepository.findInvoice(statusId,
                 invoiceSearch.getStartDate().withHour(0).withMinute(0),
                 invoiceSearch.getEndDate().withHour(23).withMinute(59), invoiceSearch.getMinAmount(),
                 invoiceSearch.getMaxAmount(), invoiceSearch.getShowToRecover(),
-                constantService.getInvoiceStatusPayed().getId(), customerOrderId);
+                constantService.getInvoiceStatusPayed().getId(), invoiceSearch.getInvoiceId(),
+                invoiceSearch.getCustomerOrderId(), customerOrderId);
     }
 
     @Override
@@ -527,7 +535,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 }
 
                 if (toSend) {
-                    mailHelper.sendCustomerOrderFinalisationToCustomer(invoice.getCustomerOrder(), false, true,
+                    mailHelper.sendCustomerOrderFinalisationToCustomer(
+                            customerOrderService.getCustomerOrder(invoice.getCustomerOrder().getId()), false, true,
                             invoice.getThirdReminderDateTime() != null);
                     addOrUpdateInvoice(invoice);
                 }
@@ -542,12 +551,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
                 for (Payment payment : invoice.getPayments())
-                    if (!payment.getIsCancelled())
+                    if (payment.getIsCancelled() == null || !payment.getIsCancelled())
                         total -= payment.getPaymentAmount();
 
             if (invoice.getDeposits() != null && invoice.getDeposits().size() > 0)
                 for (Deposit deposit : invoice.getDeposits())
-                    if (!deposit.getIsCancelled())
+                    if (deposit.getIsCancelled() == null || !deposit.getIsCancelled())
                         total -= deposit.getDepositAmount();
 
             return Math.round(total * 100f) / 100f;

@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>Commandes similaires</h1>
+<div mat-dialog-content>
+  <p>Des commandes similaires (même affaire, même donneur d'ordre) en cours ont été détectées :</p>
+  <table *ngIf="orderingSearch" class="margin-bottom ">
+    <tr>
+      <td>
+        <ordering-list class="" [orderingSearch]="orderingSearch" [isForDashboard]="true"></ordering-list>
+      </td>
+    </tr>
+  </table>
+  <p>Êtes-vous sûr de vouloir ajouter cette affaire ?</p>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="closeDialog()">Non</button>
+  <button mat-raised-button color="warn" (click)="accept()">Oui</button>
+</div>

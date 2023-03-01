@@ -13,6 +13,8 @@ public interface OrderingSearchResult {
 
     public Integer getSalesEmployeeId();
 
+    public Integer getAssignedToEmployeeId();
+
     public String getCustomerOrderDescription();
 
     public Integer getCustomerOrderId();
@@ -24,4 +26,22 @@ public interface OrderingSearchResult {
     public Integer getConfrereId();
 
     public String getAffaireLabel();
+
+    public Float getTotalPrice();
+
+    public Integer getQuotationId();
+
+    public String getAffaireSiren();
+
+    public String getAffaireAddress();
+
+    public Integer getAnnouncementNbr();
+
+    public Integer getFormaliteNbr();
+
+    public Integer getBodaccNbr();
+
+    public Integer getDomiciliationNbr();
+
+    public Integer getSimpleProvisionNbr();
 }

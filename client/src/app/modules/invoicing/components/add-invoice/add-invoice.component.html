@@ -154,7 +154,7 @@
       </div>
       <div class=" full-width padding-bottom" *ngIf="displayDeboursTable() && this.selectedDebours">
         <div>
-          <h3>Débours sélectionnés :</h3>
+          <h3>Débours/frais sélectionnés :</h3>
         </div>
         <sort-table class="margin-bottom" [columns]="displayedColumnsSelectedDebours"
           [refreshTable]="refreshTable.asObservable()" [actions]="tableActionSelectedDebours" [values]="selectedDebours"

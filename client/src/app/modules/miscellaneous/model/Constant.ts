@@ -22,6 +22,7 @@ import { SubscriptionPeriodType } from "../../tiers/model/SubscriptionPeriodType
 import { TiersType } from "../../tiers/model/TiersType";
 import { AttachmentType } from "./AttachmentType";
 import { BillingType } from "./BillingType";
+import { CompetentAuthority } from './CompetentAuthority';
 import { CompetentAuthorityType } from "./CompetentAuthorityType";
 import { Country } from "./Country";
 import { DeliveryService } from './DeliveryService';
@@ -90,10 +91,13 @@ export interface Constant {
   billingTypeDisbursement: BillingType;
   billingTypeFeasibilityStudy: BillingType;
   billingTypeChronopostFees: BillingType;
+  billingTypeConfrereFees: BillingType;
+  billingTypeShippingCosts: BillingType;
   billingTypeApplicationFees: BillingType;
   billingTypeBankCheque: BillingType;
   billingTypeComplexeFile: BillingType;
   billingTypeBilan: BillingType;
+  billingTypeInfogreffeDebour: BillingType;
   billingTypeDocumentScanning: BillingType;
   billingTypeEmergency: BillingType;
   billingTypeCentralPayFees: BillingType;
@@ -137,6 +141,7 @@ export interface Constant {
   transfertFundsTypePhysique: TransfertFundsType;
   transfertFundsTypeMoral: TransfertFundsType;
   transfertFundsTypeBail: TransfertFundsType;
+  competentAuthorityInfogreffe: CompetentAuthority;
   competentAuthorityTypeRcs: CompetentAuthorityType;
   competentAuthorityTypeCfp: CompetentAuthorityType;
   competentAuthorityTypeCci: CompetentAuthorityType;

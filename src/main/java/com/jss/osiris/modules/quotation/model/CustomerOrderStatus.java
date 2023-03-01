@@ -17,10 +17,9 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-public class CustomerOrderStatus implements Serializable, IId {
+public class CustomerOrderStatus extends IWorkflowElement implements Serializable {
 
 	/**
 	 * WARNINNG : add update in Service when adding a new status
@@ -140,16 +139,18 @@ public class CustomerOrderStatus implements Serializable, IId {
 		return successors;
 	}
 
-	public void setSuccessors(List<CustomerOrderStatus> successors) {
-		this.successors = successors;
+	@SuppressWarnings({ "unchecked" })
+	public void setSuccessors(List<? extends IWorkflowElement> successors) {
+		this.successors = (List<CustomerOrderStatus>) successors;
 	}
 
 	public List<CustomerOrderStatus> getPredecessors() {
 		return predecessors;
 	}
 
-	public void setPredecessors(List<CustomerOrderStatus> predecessors) {
-		this.predecessors = predecessors;
+	@SuppressWarnings({ "unchecked" })
+	public void setPredecessors(List<? extends IWorkflowElement> predecessors) {
+		this.predecessors = (List<CustomerOrderStatus>) predecessors;
 	}
 
 }

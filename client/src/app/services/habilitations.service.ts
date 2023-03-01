@@ -15,6 +15,10 @@ export class HabilitationsService {
     return true;
   }
 
+  canViewReportingModule() {
+    return true;
+  }
+
   canViewTiersModule() {
     return true;
   }
@@ -65,6 +69,10 @@ export class HabilitationsService {
 
   canAddNewAccountingRecord() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+  }
+
+  canAddNewCashPayment() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
 
   canDisplayBilan() {

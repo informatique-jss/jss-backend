@@ -39,7 +39,7 @@ public class QrCodeHelper {
 
         // write in a file
         ByteArrayOutputStream fileOutputStream = new ByteArrayOutputStream();
-        MatrixToImageConfig conf = new MatrixToImageConfig(0xff000000, 0xfffefef8);
+        MatrixToImageConfig conf = new MatrixToImageConfig(0xff000000, 0x00fefef8);
         try {
             MatrixToImageWriter.writeToStream(bitMatrix, imageFormat, fileOutputStream, conf);
             fileOutputStream.close();

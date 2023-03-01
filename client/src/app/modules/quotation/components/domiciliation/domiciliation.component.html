@@ -99,8 +99,8 @@
       <provision-options [editMode]="editMode" (provisionChange)="provisionChangeFunction()" [provision]="provision">
       </provision-options>
     </mat-tab>
-    <mat-tab label="Débours" *ngIf="instanceOfCustomerOrder && !isStatusOpen">
-      <add-debour [editMode]="editMode" [(provision)]="provision">
+    <mat-tab label="Débours/frais" *ngIf="instanceOfCustomerOrder && !isStatusOpen">
+      <add-debour [editMode]="editMode" [(provision)]="provision" [customerOrder]="quotation">
       </add-debour>
     </mat-tab>
     <mat-tab label="Activité">
@@ -214,8 +214,8 @@
         </table>
         <table class="full-width" *ngIf="domiciliation.isLegalPerson">
           <tr>
-            <td *ngIf="domiciliation && domiciliation.id">
-              <single-attachment [entity]="domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
+            <td *ngIf="domiciliation && domiciliation.id && provision">
+              <single-attachment [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE.entityType"
                 [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypeKbis">
               </single-attachment>
             </td>
@@ -329,13 +329,13 @@
         </table>
         <table class="full-width" *ngIf="!domiciliation.isLegalPerson">
           <tr>
-            <td *ngIf="domiciliation && domiciliation.id">
-              <single-attachment [entity]="domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
+            <td *ngIf="domiciliation && domiciliation.id && provision">
+              <single-attachment [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE.entityType"
                 [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypeCni">
               </single-attachment>
             </td>
-            <td *ngIf="domiciliation && domiciliation.id">
-              <single-attachment [entity]="domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
+            <td *ngIf="domiciliation && domiciliation.id &&provision">
+              <single-attachment [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE.entityType"
                 [editMode]="editMode" [attachmentTypeToDisplay]="attachmentProofOfAddress">
               </single-attachment>
             </td>
@@ -343,8 +343,8 @@
         </table>
       </div>
     </mat-tab>
-    <mat-tab label="Documents" *ngIf="domiciliation.id!=null && domiciliation.id!=undefined">
-      <attachments [entity]="domiciliation" [editMode]="editMode" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType">
+    <mat-tab label="Documents" *ngIf="domiciliation.id && provision">
+      <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="domiciliation && domiciliation.id">

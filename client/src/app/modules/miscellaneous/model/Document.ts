@@ -45,4 +45,5 @@ export interface Document {
   billingLabelCountry: Country;
   billingLabelIsIndividual: boolean;
   regie: Regie;
+  externalReference: string;
 }

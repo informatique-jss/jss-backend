@@ -94,6 +94,8 @@ public interface AccountingRecordService {
 
         public void generateBankAccountingRecordsForInboundPayment(Payment payment) throws OsirisException;
 
+        public void generateBankAccountingRecordsForInboundCashPayment(Payment payment) throws OsirisException;
+
         public void generateBankAccountingRecordsForOutboundPayment(Payment payment) throws OsirisException;
 
         public void generateBankAccountingRecordsForOutboundDebourPayment(Debour debour, CustomerOrder customerOrder)
@@ -116,9 +118,7 @@ public interface AccountingRecordService {
         public List<AccountingRecord> findByAccountingAccountAndInvoice(AccountingAccount accountingAccount,
                         Invoice invoice);
 
-        public AccountingRecord generateCounterPart(AccountingRecord originalAccountingRecord,
-                        AccountingJournal overrideJournal,
-                        Integer operationId);
+        public AccountingRecord generateCounterPart(AccountingRecord originalAccountingRecord, Integer operationId);
 
         public void deleteAccountingRecord(AccountingRecord accountingRecord);
 

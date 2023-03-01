@@ -65,7 +65,14 @@ export class AttachmentsComponent implements OnInit {
       }, display: true
     } as SortTableAction);
   }
+
   formatDateTimeForSortTable = formatDateTimeForSortTable;
+
+  downloadAllFiles() {
+    if (this.filteredAttachments)
+      for (let attachment of this.filteredAttachments)
+        this.uploadAttachmentService.downloadAttachment(attachment);
+  }
 
   setDataTable() {
     this.entity.attachments.sort(function (a: Attachment, b: Attachment) {

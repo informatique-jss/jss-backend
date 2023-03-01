@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
+import java.time.LocalDateTime;
+
 public interface AssoAffaireOrderSearchResult {
 
 	public String getAffaireLabel();
@@ -29,4 +31,8 @@ public interface AssoAffaireOrderSearchResult {
 	public Boolean getIsEmergency();
 
 	public String getWaitedCompetentAuthorityLabel();
+
+	public LocalDateTime getProvisionStatusDatetime();
+
+	public LocalDateTime getProvisionCreatedDatetime();
 }

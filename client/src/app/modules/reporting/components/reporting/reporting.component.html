@@ -1,0 +1,9 @@
+<div class="mat-elevation-z2 form-div mat-tab-group">
+  <div class=" full-width padding-top">
+    <div id="output"></div>
+  </div>
+  <div class="row-field-container" *ngIf="displayExportButton()">
+    <button mat-raised-button (click)="exportToExcel()" color="primary" class="mini-fab-add">Exporter
+    </button>
+  </div>
+</div>

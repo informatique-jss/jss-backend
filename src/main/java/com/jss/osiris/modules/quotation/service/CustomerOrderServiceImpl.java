@@ -3,16 +3,22 @@ package com.jss.osiris.modules.quotation.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -196,6 +202,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         if (customerOrder.getIsCreatedFromWebSite() == null)
             customerOrder.setIsCreatedFromWebSite(false);
+
+        // Set default customer order assignation to sales employee if not set
+        if (customerOrder.getAssignedTo() == null)
+            customerOrder.setAssignedTo(
+                    quotationService.getCustomerOrderOfQuotation(customerOrder).getDefaultCustomerOrderEmployee());
 
         customerOrder.setIsQuotation(false);
 
@@ -628,6 +639,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             salesEmployeeId.add(0);
         }
 
+        ArrayList<Integer> assignedToEmployeeId = new ArrayList<Integer>();
+        if (orderingSearch.getAssignedToEmployee() != null) {
+            for (Employee employee : employeeService.getMyHolidaymaker(orderingSearch.getAssignedToEmployee()))
+                assignedToEmployeeId.add(employee.getId());
+        } else {
+            assignedToEmployeeId.add(0);
+        }
+
         ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
         if (orderingSearch.getCustomerOrders() != null && orderingSearch.getCustomerOrders().size() > 0) {
             for (ITiers tiers : orderingSearch.getCustomerOrders())
@@ -651,7 +670,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             orderingSearch.setEndDate(LocalDateTime.now().plusYears(100));
 
         List<OrderingSearchResult> customerOrders = customerOrderRepository.findCustomerOrders(
-                salesEmployeeId,
+                salesEmployeeId, assignedToEmployeeId,
                 statusId,
                 orderingSearch.getStartDate().withHour(0).withMinute(0),
                 orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId);
@@ -723,26 +742,21 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         provision.setId(null);
                         if (provision.getAnnouncement() != null) {
                             provision.getAnnouncement().setId(null);
-                            provision.getAnnouncement().setAttachments(null);
                             if (provision.getAnnouncement().getDocuments() != null)
                                 for (Document document : provision.getAnnouncement().getDocuments())
                                     document.setId(null);
                         }
                         if (provision.getBodacc() != null) {
                             provision.getBodacc().setId(null);
-                            provision.getBodacc().setAttachments(null);
                         }
                         if (provision.getFormalite() != null) {
                             provision.getFormalite().setId(null);
-                            provision.getFormalite().setAttachments(null);
                         }
                         if (provision.getSimpleProvision() != null) {
                             provision.getSimpleProvision().setId(null);
-                            provision.getSimpleProvision().setAttachments(null);
                         }
                         if (provision.getDomiciliation() != null) {
                             provision.getDomiciliation().setId(null);
-                            provision.getDomiciliation().setAttachments(null);
                         }
                         if (provision.getInvoiceItems() != null)
                             for (InvoiceItem invoiceItem : provision.getInvoiceItems())
@@ -973,19 +987,66 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public void printMailingLabel(List<String> customerOrders)
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrdersIn, boolean printLabel,
+            boolean printLetters)
             throws OsirisException, OsirisClientMessageException {
-        if (customerOrders != null && customerOrders.size() > 0)
-            for (String id : customerOrders) {
+        ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
+        for (String id : customerOrdersIn) {
+            customerOrders.add(getCustomerOrder(Integer.parseInt(id)));
+        }
+
+        if (printLabel)
+            for (CustomerOrder customerOrder : customerOrders) {
                 try {
-                    CustomerOrder customerOrder = getCustomerOrder(Integer.parseInt(id));
-                    printDelegate.printMailingLabel(
-                            mailComputeHelper.computePaperLabelResult(customerOrder), customerOrder);
+                    printDelegate.printMailingLabel(mailComputeHelper.computePaperLabelResult(customerOrder),
+                            customerOrder);
                 } catch (NumberFormatException e) {
                 } catch (Exception e) {
                     throw new OsirisException(e, "Error when printing label");
                 }
             }
+        if (printLetters) {
+
+            byte[] data = null;
+            HttpHeaders headers = null;
+            File file = mailHelper.generateLetterPdf(customerOrders);
+
+            if (file != null) {
+                try {
+                    data = Files.readAllBytes(file.toPath());
+                } catch (IOException e) {
+                    throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+                }
+
+                headers = new HttpHeaders();
+                headers.setContentLength(data.length);
+                headers.add("filename", "Postal_letters_"
+                        + DateTimeFormatter.ofPattern("yyyyMMdd HHmm").format(LocalDateTime.now()) + ".pdf");
+                headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+
+                // Compute content type
+                String mimeType = null;
+                try {
+                    mimeType = Files.probeContentType(file.toPath());
+                } catch (IOException e) {
+                    throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+                }
+                if (mimeType == null)
+                    mimeType = "application/pdf";
+                headers.set("content-type", mimeType);
+                file.delete();
+            }
+            return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+        }
+        return new ResponseEntity<byte[]>(null, new HttpHeaders(), HttpStatus.OK);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateAssignedToForCustomerOrder(CustomerOrder customerOrder, Employee employee)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        customerOrder.setAssignedTo(employee);
+        addOrUpdateCustomerOrder(customerOrder, true, false);
+    }
 }

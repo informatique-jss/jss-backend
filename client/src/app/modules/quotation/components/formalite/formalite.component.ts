@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { FORMALITE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Content } from '../../model/guichet-unique/Content';
 import { Formalite } from '../../model/guichet-unique/Formalite';
 import { NatureCreation } from '../../model/guichet-unique/NatureCreation';
+import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { ContentComponent } from '../guichet-unique/content/content.component';
 import { NatureCreationComponent } from '../guichet-unique/nature-creation/nature-creation.component';
@@ -21,11 +22,13 @@ export class FormaliteComponent implements OnInit {
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
+  @Input() quotation: IQuotation | undefined;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
   @ViewChild(ContentComponent) contentComponent: ContentComponent | undefined;
   @ViewChild(NatureCreationComponent) natureCreationComponent: NatureCreationComponent | undefined;
 
   FORMALITE_ENTITY_TYPE = FORMALITE_ENTITY_TYPE;
+  PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
 
   typePersonnePersonnePhysique = this.constantService.getTypePersonnePersonnePhysique();
   typePersonnePersonneMorale = this.constantService.getTypePersonnePersonneMorale();

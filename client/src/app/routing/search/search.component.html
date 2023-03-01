@@ -112,6 +112,8 @@
                     <mat-card-title-group>
                       <mat-card-title>{{entity.text.id}}</mat-card-title>
                       <mat-card-subtitle>
+                        Commandé par {{getOrderingCustomerForInvoice(entity)}} - libellé au nom de
+                        {{entity.text.billingLabel}} - {{entity.text.invoiceStatus.label}}
                       </mat-card-subtitle>
                       <mat-icon class="mat-card-icon">point_of_sale</mat-icon>
                     </mat-card-title-group>

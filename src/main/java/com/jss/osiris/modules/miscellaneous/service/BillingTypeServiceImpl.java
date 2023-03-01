@@ -30,7 +30,7 @@ public class BillingTypeServiceImpl implements BillingTypeService {
 
     @Override
     public List<BillingType> getBillingTypesDebour() {
-        return billingTypeRepository.findByIsDebour(true);
+        return billingTypeRepository.findByIsDebourOrIsFee(true, true);
     }
 
     @Override

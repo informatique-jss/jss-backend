@@ -93,6 +93,7 @@ import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.FundType;
 import com.jss.osiris.modules.quotation.model.IQuotation;
+import com.jss.osiris.modules.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.NoticeType;
@@ -546,6 +547,40 @@ public class QuotationController {
       throw new OsirisValidationException("employee");
 
     assoAffaireOrderService.updateAssignedToForAsso(asso, employee);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/assign")
+  public ResponseEntity<Boolean> updateAssignedToForCustomerOrder(@RequestParam Integer customerOrderId,
+      @RequestParam Integer employeeId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    Employee employee = employeeService.getEmployee(employeeId);
+    if (employee == null)
+      throw new OsirisValidationException("employee");
+
+    customerOrderService.updateAssignedToForCustomerOrder(customerOrder, employee);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/quotation/assign")
+  public ResponseEntity<Boolean> updateAssignedToForQuotation(@RequestParam Integer quotationId,
+      @RequestParam Integer employeeId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+
+    Quotation quotation = quotationService.getQuotation(quotationId);
+    if (quotation == null)
+      throw new OsirisValidationException("quotationId");
+
+    Employee employee = employeeService.getEmployee(employeeId);
+    if (employee == null)
+      throw new OsirisValidationException("employee");
+
+    quotationService.updateAssignedToForQuotation(quotation, employee);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
@@ -1188,9 +1223,9 @@ public class QuotationController {
   public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrderStatus(@RequestBody CustomerOrder customerOrder,
       @RequestParam String targetStatusCode)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+    customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
     if (!targetStatusCode.equals(CustomerOrderStatus.ABANDONED))
       validateQuotationAndCustomerOrder(customerOrder, targetStatusCode);
-    customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
     boolean found = true;
     if (customerOrder.getCustomerOrderStatus() != null) {
       if (customerOrder.getCustomerOrderStatus().getSuccessors() != null)
@@ -1213,9 +1248,9 @@ public class QuotationController {
   public ResponseEntity<Quotation> addOrUpdateQuotationStatus(@RequestBody Quotation quotation,
       @RequestParam String targetStatusCode)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+    quotation = quotationService.getQuotation(quotation.getId());
     if (!targetStatusCode.equals(QuotationStatus.ABANDONED))
       validateQuotationAndCustomerOrder(quotation);
-    quotation = quotationService.getQuotation(quotation.getId());
     boolean found = true;
     if (quotation.getQuotationStatus() != null) {
       if (quotation.getQuotationStatus().getSuccessors() != null)
@@ -1259,6 +1294,31 @@ public class QuotationController {
       Quotation quotationQuotation = (Quotation) quotation;
       isOpen = quotationQuotation.getQuotationStatus() == null ||
           quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
+    }
+
+    validationHelper.validateReferential(quotation.getAssignedTo(), false, "AssignedTo");
+
+    if (targetStatusCode != null) {
+      IWorkflowElement status = null;
+      if (quotation instanceof CustomerOrder) {
+        status = ((CustomerOrder) quotation).getCustomerOrderStatus();
+      } else {
+        status = ((Quotation) quotation).getQuotationStatus();
+      }
+      boolean correctStatus = false;
+      if (status.getSuccessors() != null) {
+        for (IWorkflowElement successor : status.getSuccessors())
+          if (successor.getCode().equals(targetStatusCode))
+            correctStatus = true;
+      }
+      if (!correctStatus && status.getPredecessors() != null) {
+        for (IWorkflowElement predecessor : status.getPredecessors())
+          if (predecessor.getCode().equals(targetStatusCode))
+            correctStatus = true;
+      }
+
+      if (!correctStatus)
+        throw new OsirisValidationException("Wrong status : not set accordingly to workflow !");
     }
 
     boolean isCustomerOrder = quotation instanceof CustomerOrder;
@@ -1309,7 +1369,7 @@ public class QuotationController {
     IDocument tiersDocument = ObjectUtils.firstNonNull(quotation.getConfrere(), quotation.getResponsable(),
         quotation.getTiers());
     Document billingDocument = documentService.getBillingDocument(tiersDocument.getDocuments());
-    if (documentService.getBillingDocument(quotation.getDocuments()) == null) {
+    if (documentService.getBillingDocument(quotation.getDocuments()) == null && billingDocument != null) {
       billingDocument = documentService.cloneDocument(billingDocument);
       billingDocument.setTiers(null);
       billingDocument.setResponsable(null);
@@ -1326,7 +1386,7 @@ public class QuotationController {
     Document digitalDocument = documentService.getDocumentByDocumentType(tiersDocument.getDocuments(),
         constantService.getDocumentTypeDigital());
     if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
-        constantService.getDocumentTypeDigital()) == null) {
+        constantService.getDocumentTypeDigital()) == null && digitalDocument != null) {
       digitalDocument = documentService.cloneDocument(digitalDocument);
       digitalDocument.setTiers(null);
       digitalDocument.setResponsable(null);
@@ -1343,7 +1403,7 @@ public class QuotationController {
     Document paperDocument = documentService.getDocumentByDocumentType(tiersDocument.getDocuments(),
         constantService.getDocumentTypePaper());
     if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
-        constantService.getDocumentTypePaper()) == null) {
+        constantService.getDocumentTypePaper()) == null && paperDocument != null) {
       paperDocument = documentService.cloneDocument(paperDocument);
       paperDocument.setTiers(null);
       paperDocument.setResponsable(null);
@@ -1457,6 +1517,8 @@ public class QuotationController {
         validationHelper.validateReferential(debour.getPaymentType(), true, "paymentType");
         validationHelper.validateString(debour.getComments(), false, 250, "comments");
         validationHelper.validateFloat(debour.getDebourAmount(), true, "debourAmount");
+        validationHelper.validateFloat(debour.getInvoicedAmount(), debour.getBillingType().getIsFee(),
+            "invoicedAmount");
 
         if (debour.getPaymentDateTime() == null)
           debour.setPaymentDateTime(LocalDateTime.now());
@@ -1575,8 +1637,8 @@ public class QuotationController {
           && announcement.getConfrere() != null
           && !announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
         boolean publicationProofFound = false;
-        if (announcement.getAttachments() != null && announcement.getAttachments().size() > 0)
-          for (Attachment attachment : announcement.getAttachments())
+        if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+          for (Attachment attachment : provision.getAttachments())
             if (attachment.getAttachmentType().getId()
                 .equals(constantService.getAttachmentTypePublicationFlag().getId())
                 || attachment.getAttachmentType().getId()
@@ -2332,12 +2394,11 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/customer-order/print/label")
-  public ResponseEntity<Boolean> printMailingLabel(@RequestParam List<String> customerOrders)
+  public ResponseEntity<byte[]> printMailingLabel(@RequestParam List<String> customerOrders,
+      @RequestParam boolean printLabel, @RequestParam boolean printLetters)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
 
-    customerOrderService.printMailingLabel(customerOrders);
-
-    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    return customerOrderService.printMailingLabel(customerOrders, printLabel, printLetters);
   }
 
   @PostMapping(inputEntryPoint + "/dashboard/employee")
@@ -2368,7 +2429,7 @@ public class QuotationController {
       deboursOut.add(debour);
 
       if (debour.getPayment() != null)
-        throw new OsirisClientMessageException("Un des débours a déjà été rapproché d'un paiement");
+        throw new OsirisClientMessageException("Un des débours/frais a déjà été rapproché d'un paiement");
     }
 
     Payment payment = paymentService.getPayment(paymentId);

@@ -29,7 +29,7 @@ export class ChipsPhoneComponent extends GenericChipsComponent<Phone> implements
   }
 
   setValueToObject(value: string, object: Phone): Phone {
-    object.phoneNumber = value;
+    object.phoneNumber = value.replace(/ /g, '');
     return object;
   }
 

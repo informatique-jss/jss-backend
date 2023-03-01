@@ -2,9 +2,12 @@ package com.jss.osiris.modules.quotation.service;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.IQuotation;
@@ -70,7 +73,11 @@ public interface CustomerOrderService {
                         CentralPayPaymentRequest centralPayPaymentRequest)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public void printMailingLabel(List<String> customerOrders)
+        public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrders, boolean printLabel,
+                        boolean printLetters)
                         throws OsirisException, OsirisClientMessageException;
+
+        public void updateAssignedToForCustomerOrder(CustomerOrder customerOrder, Employee employee)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
 }

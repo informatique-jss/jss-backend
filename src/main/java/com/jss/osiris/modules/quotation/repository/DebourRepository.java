@@ -19,6 +19,7 @@ public interface DebourRepository extends CrudRepository<Debour, Integer> {
                         " b.label as billingTypeLabel, " +
                         " c.label as competentAuthorityLabel, " +
                         " d.debour_amount  as debourAmount, " +
+                        " d.invoiced_amount  as invoicedAmount, " +
                         " pt.label as paymentTypeLabel, " +
                         " d.payment_date_time as paymentDateTime, " +
                         " d.id_payment as paymentId, " +

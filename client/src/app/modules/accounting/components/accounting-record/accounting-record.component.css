@@ -39,3 +39,7 @@
   transform: scale(0.60);
   margin-left: -45px;
 }
+
+.toggle-td {
+  width: 160px;
+}

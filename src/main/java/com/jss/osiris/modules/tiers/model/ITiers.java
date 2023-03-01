@@ -16,6 +16,8 @@ public interface ITiers extends IId, IDocument {
 
 	public Employee getSalesEmployee();
 
+	public Employee getDefaultCustomerOrderEmployee();
+
 	public Employee getFormalisteEmployee();
 
 	public Employee getInsertionEmployee();

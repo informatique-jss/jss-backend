@@ -1,4 +1,5 @@
 import { AccountingRecord } from "../../accounting/model/AccountingRecord";
+import { PaymentType } from '../../miscellaneous/model/PaymentType';
 import { CustomerOrder } from "../../quotation/model/CustomerOrder";
 import { Invoice } from "../../quotation/model/Invoice";
 import { PaymentWay } from "./PaymentWay";
@@ -15,4 +16,5 @@ export interface Payment {
   customerOrder: CustomerOrder;
   isExternallyAssociated: boolean;
   isCancelled: boolean;
+  paymentType: PaymentType;
 }

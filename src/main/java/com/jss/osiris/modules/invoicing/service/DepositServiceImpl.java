@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.invoicing.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -82,8 +83,15 @@ public class DepositServiceImpl implements DepositService {
         deposit.setOriginPayment(payment);
         deposit = addOrUpdateDeposit(deposit);
         deposit.setInvoice(invoice);
+        deposit = addOrUpdateDeposit(deposit);
         accountingRecordService.generateAccountingRecordsForDepositOnInvoice(deposit, invoice,
                 overrideAccountingOperationId, isFromOriginPayment);
+
+        if (invoice.getDeposits() == null)
+            invoice.setDeposits(new ArrayList<Deposit>());
+        invoice.getDeposits().add(deposit);
+        invoiceService.addOrUpdateInvoice(invoice);
+
         return getDeposit(deposit.getId());
     }
 
@@ -102,6 +110,11 @@ public class DepositServiceImpl implements DepositService {
         deposit = addOrUpdateDeposit(deposit);
         accountingRecordService.generateAccountingRecordsForDepositAndCustomerOrder(deposit, customerOrder,
                 overrideAccountingOperationId, isFromOriginPayment);
+
+        if (customerOrder.getDeposits() == null)
+            customerOrder.setDeposits(new ArrayList<Deposit>());
+        customerOrder.getDeposits().add(deposit);
+
         return getDeposit(deposit.getId());
     }
 
@@ -130,8 +143,7 @@ public class DepositServiceImpl implements DepositService {
                 if ((accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                         && !accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
                                 .equals(constantService.getPrincipalAccountingAccountBank().getId()))
-                    accountingRecordService.generateCounterPart(accountingRecord,
-                            constantService.getAccountingJournalMiscellaneousOperations(), operationIdCounterPart);
+                    accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart);
             }
         deposit.setIsCancelled(true);
         deposit.setCustomerOrder(null);
@@ -189,14 +201,22 @@ public class DepositServiceImpl implements DepositService {
                 refundLabelSuffix = "commande n°" + customerOrder.getId();
             }
 
-        if (remainingMoney > 0) {
+        if (Math.abs(Math.round(remainingMoney * 100f) / 100f) > 0) {
             if (Math.abs(remainingMoney) <= Float.parseFloat(payementLimitRefundInEuros)) {
-                if (correspondingInvoices != null && correspondingInvoices.size() > 0)
+                boolean modifyDeposit = false;
+                if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
                     accountingRecordService.generateAppointForDeposit(deposit, remainingMoney,
                             invoiceHelper.getCustomerOrder(correspondingInvoices.get(0)));
-                else if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0)
+                    modifyDeposit = true;
+                } else if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0) {
                     accountingRecordService.generateAppointForDeposit(deposit, remainingMoney,
                             quotationService.getCustomerOrderOfQuotation(correspondingCustomerOrder.get(0)));
+                    modifyDeposit = true;
+                }
+                if (modifyDeposit) {
+                    deposit.setDepositAmount(deposit.getDepositAmount() - remainingMoney);
+                    addOrUpdateDeposit(deposit);
+                }
             } else {
                 refundService.generateRefund(tiersRefund, affaireRefund, null, deposit, remainingMoney,
                         refundLabelSuffix);

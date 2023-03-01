@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -10,20 +9,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
-import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 
 @Entity
-public class Bodacc implements IId, IAttachment {
+public class Bodacc implements IId {
 
 	@Id
 	@SequenceGenerator(name = "bodacc_sequence", sequenceName = "bodacc_sequence", allocationSize = 1)
@@ -55,10 +50,6 @@ public class Bodacc implements IId, IAttachment {
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private BodaccSplit bodaccSplit;
 
-	@OneToMany(mappedBy = "bodacc", cascade = CascadeType.REMOVE)
-	@JsonIgnoreProperties(value = { "bodacc" }, allowSetters = true)
-	private List<Attachment> attachments;
-
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate dateOfPublication;
 
@@ -88,14 +79,6 @@ public class Bodacc implements IId, IAttachment {
 
 	public void setBodaccFusion(BodaccFusion bodaccFusion) {
 		this.bodaccFusion = bodaccFusion;
-	}
-
-	public List<Attachment> getAttachments() {
-		return attachments;
-	}
-
-	public void setAttachments(List<Attachment> attachments) {
-		this.attachments = attachments;
 	}
 
 	public PaymentType getPaymentType() {

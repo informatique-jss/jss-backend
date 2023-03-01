@@ -7,8 +7,11 @@ import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { formatDateForSortTable, formatEurosForSortTable } from '../../../../libs/FormatHelper';
+import { AppService } from '../../../../services/app.service';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { CompetentAuthority } from '../../../miscellaneous/model/CompetentAuthority';
 import { Debour } from '../../model/Debour';
+import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 
 
@@ -22,6 +25,7 @@ export class AddDebourComponent implements OnInit {
   @Input() provision: Provision | undefined;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
   @Input() editMode: boolean = false;
+  @Input() customerOrder: IQuotation | undefined;
   newDebour: Debour | undefined;
   displayedColumns: SortTableColumn[] = [];
   paymentTypeVirement: PaymentType = this.constantService.getPaymentTypeVirement();
@@ -34,7 +38,10 @@ export class AddDebourComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
     public confirmationDialog: MatDialog,
     public selectDeboursDialog: MatDialog,
-    private constantService: ConstantService,) { }
+    private constantService: ConstantService,
+    private habilitationService: HabilitationsService,
+    private appService: AppService,
+  ) { }
 
   ngOnInit() {
     this.displayedColumns = [];
@@ -42,6 +49,7 @@ export class AddDebourComponent implements OnInit {
     this.displayedColumns.push({ id: "billingType", fieldName: "billingType.label", label: "Débour" } as SortTableColumn);
     this.displayedColumns.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
     this.displayedColumns.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "invoicedAmount", fieldName: "invoicedAmount", label: "Montant facturé", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "paymentType", fieldName: "paymentType.label", label: "Type de paiement" } as SortTableColumn);
     this.displayedColumns.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "checkNumber", fieldName: "checkNumber", label: "N° de chèque" } as SortTableColumn);
@@ -62,6 +70,20 @@ export class AddDebourComponent implements OnInit {
       this.newDebour = {} as Debour;
       this.refreshTable.next();
     }
+  }
+
+  fillInvoicedAmount() {
+    if (this.newDebour && this.newDebour.billingType && this.newDebour.billingType.isFee && this.newDebour.debourAmount)
+      this.newDebour.invoicedAmount = this.newDebour.debourAmount;
+  }
+
+  canAddNewInvoice() {
+    return this.habilitationService.canAddNewInvoice();
+  }
+
+  createInvoice(event: any, competentAuthority: CompetentAuthority) {
+    if (this.customerOrder)
+      this.appService.openRoute(event, "/invoicing/add/debour/" + competentAuthority.id + "/" + this.customerOrder.id, undefined);
   }
 
   addDebour() {
@@ -126,5 +148,16 @@ export class AddDebourComponent implements OnInit {
       }
 
     return Math.round(total * 100) / 100;
+  }
+
+  filledForInfogreffeKbis() {
+    if (this.newDebour) {
+      this.newDebour.billingType = this.constantService.getBillingTypeInfogreffeDebour();
+      this.newDebour.competentAuthority = this.constantService.getCompetentAuthorityInfogreffe();
+      this.newDebour.debourAmount = 3.37;
+      this.newDebour.invoicedAmount = 3.37;
+      this.newDebour.comments = 'Kbis';
+      this.newDebour.paymentType = this.constantService.getPaymentTypeAccount();
+    }
   }
 }

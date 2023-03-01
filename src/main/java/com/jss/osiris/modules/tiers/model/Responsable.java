@@ -90,6 +90,11 @@ public class Responsable implements ITiers, IAttachment {
 	private Employee salesEmployee;
 
 	@ManyToOne
+	@JoinColumn(name = "id_default_customer_order_employee")
+	@IndexedField
+	private Employee defaultCustomerOrderEmployee;
+
+	@ManyToOne
 	@JoinColumn(name = "id_formaliste")
 	private Employee formalisteEmployee;
 
@@ -504,6 +509,14 @@ public class Responsable implements ITiers, IAttachment {
 
 	public void setCanViewAllTiersInWeb(Boolean canViewAllTiersInWeb) {
 		this.canViewAllTiersInWeb = canViewAllTiersInWeb;
+	}
+
+	public Employee getDefaultCustomerOrderEmployee() {
+		return defaultCustomerOrderEmployee;
+	}
+
+	public void setDefaultCustomerOrderEmployee(Employee defaultCustomerOrderEmployee) {
+		this.defaultCustomerOrderEmployee = defaultCustomerOrderEmployee;
 	}
 
 }

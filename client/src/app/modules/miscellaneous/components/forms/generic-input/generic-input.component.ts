@@ -45,4 +45,18 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
   callOnNgInit(): void {
   }
 
+  parse(event: any) {
+    if (this.form && this.type == 'number') {
+      this.model = this.model.replace(',', '.');
+      if (isNaN(this.model)) {
+        this.model = undefined;
+      } else {
+        this.model = parseFloat(this.model);
+      }
+
+      this.modelChange.emit(this.model);
+      this.onFormChange.emit(this.model);
+      this.form.get(this.propertyName)?.setValue(this.model);
+    }
+  }
 }

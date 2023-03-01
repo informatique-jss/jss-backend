@@ -372,6 +372,8 @@ public class TiersController {
 
     validationHelper.validateReferential(tiers.getTiersCategory(), false, "TiersCategory");
     validationHelper.validateReferential(tiers.getSalesEmployee(), true, "SalesEmployee");
+    validationHelper.validateReferential(tiers.getDefaultCustomerOrderEmployee(), false,
+        "DefaultCustomerOrderEmployee");
     validationHelper.validateReferential(tiers.getFormalisteEmployee(), false, "FormalisteEmployee");
     validationHelper.validateReferential(tiers.getInsertionEmployee(), false, "InsertionEmployee");
     validationHelper.validateReferential(tiers.getLanguage(), true, "Language");
@@ -466,6 +468,8 @@ public class TiersController {
         validationHelper.validateReferential(responsable.getTiersType(), true, "TiersType");
         validationHelper.validateReferential(responsable.getTiersCategory(), false, "TiersCategory");
         validationHelper.validateReferential(responsable.getSalesEmployee(), true, "SalesEmployee");
+        validationHelper.validateReferential(responsable.getDefaultCustomerOrderEmployee(), false,
+            "DefaultCustomerOrderEmployee");
         validationHelper.validateReferential(responsable.getFormalisteEmployee(), false, "FormalisteEmployee");
         validationHelper.validateReferential(responsable.getInsertionEmployee(), false, "InsertionEmployee");
         validationHelper.validateReferential(responsable.getLanguage(), true, "Language");

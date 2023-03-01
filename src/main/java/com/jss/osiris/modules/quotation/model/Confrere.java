@@ -18,6 +18,7 @@ import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
@@ -48,6 +49,7 @@ public class Confrere implements ITiers {
 	private String code;
 
 	@Column(length = 100)
+	@IndexedField
 	private String label;
 
 	@ManyToMany
@@ -171,6 +173,11 @@ public class Confrere implements ITiers {
 	@ManyToOne
 	@JoinColumn(name = "id_commercial")
 	private Employee salesEmployee;
+
+	@ManyToOne
+	@JoinColumn(name = "id_default_customer_order_employee")
+	@IndexedField
+	private Employee defaultCustomerOrderEmployee;
 
 	@ManyToOne
 	@JoinColumn(name = "id_formaliste")
@@ -563,6 +570,14 @@ public class Confrere implements ITiers {
 
 	public void setSepaMandateSignatureDate(LocalDate sepaMandateSignatureDate) {
 		this.sepaMandateSignatureDate = sepaMandateSignatureDate;
+	}
+
+	public Employee getDefaultCustomerOrderEmployee() {
+		return defaultCustomerOrderEmployee;
+	}
+
+	public void setDefaultCustomerOrderEmployee(Employee defaultCustomerOrderEmployee) {
+		this.defaultCustomerOrderEmployee = defaultCustomerOrderEmployee;
 	}
 
 }

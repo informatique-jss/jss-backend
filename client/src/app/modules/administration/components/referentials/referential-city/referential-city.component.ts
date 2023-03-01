@@ -21,7 +21,21 @@ export class ReferentialCityComponent extends GenericReferentialComponent<City> 
   getAddOrUpdateObservable(): Observable<City> {
     return this.cityService.addOrUpdateCity(this.selectedEntity!);
   }
+
   getGetObservable(): Observable<City[]> {
-    return this.cityService.getCities();
+    return this.cityService.getCitiesFilteredByCountryAndNameAndPostalCode("dummy", undefined, undefined);
+  }
+
+  applyFilter(filterValue: any) {
+    let filterValueCast = (filterValue as HTMLInputElement);
+    filterValue = filterValueCast.value.trim();
+    this.searchText = filterValue.toLowerCase();
+
+    if (this.searchText && this.searchText.length > 2)
+      this.cityService.getCitiesFilteredByCountryAndNameAndPostalCode(this.searchText, undefined, undefined).subscribe(response => {
+        this.entities = response;
+        this.mapEntities();
+        this.definedMatTableColumn();
+      })
   }
 }

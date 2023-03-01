@@ -1,10 +1,15 @@
-<div class="mat-elevation-z2 form-div min-height">
+<div class="mat-elevation-z2 form-div " [ngClass]="{'min-height':!isForDashboard && !isForTiersIntegration}">
   <div class=" full-width">
     <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && !isForTiersIntegration && orderingSearch">
       <tr>
         <td>
           <autocomplete-employee [(model)]="orderingSearch.salesEmployee" label="Commercial" [form]="orderingSearchForm"
             propertyName="salesEmployee" [isMandatory]="false">
+          </autocomplete-employee>
+        </td>
+        <td>
+          <autocomplete-employee [(model)]="orderingSearch.assignedToEmployee" label="Assignée à"
+            [form]="orderingSearchForm" propertyName="assignedToEmployee" [isMandatory]="false">
           </autocomplete-employee>
         </td>
         <td>

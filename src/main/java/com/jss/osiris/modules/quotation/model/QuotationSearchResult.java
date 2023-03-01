@@ -13,6 +13,8 @@ public interface QuotationSearchResult {
 
     public Integer getSalesEmployeeId();
 
+    public Integer getAssignedToEmployeeId();
+
     public String getQuotationDescription();
 
     public Integer getQuotationId();
@@ -24,4 +26,16 @@ public interface QuotationSearchResult {
     public Integer getConfrereId();
 
     public String getAffaireLabel();
+
+    public Float getTotalPrice();
+
+    public Integer getAnnouncementNbr();
+
+    public Integer getFormaliteNbr();
+
+    public Integer getBodaccNbr();
+
+    public Integer getDomiciliationNbr();
+
+    public Integer getSimpleProvisionNbr();
 }

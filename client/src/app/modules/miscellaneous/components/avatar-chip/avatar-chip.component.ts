@@ -30,7 +30,6 @@ export class AvatarChipComponent implements OnInit {
         width: '50%'
       });
       changeEmployeeDialogRef.componentInstance.employee = this.employee;
-      changeEmployeeDialogRef.componentInstance.content = "Modifier l'affectation";
       changeEmployeeDialogRef.componentInstance.content = "Indiquez ici le nouveau collaborateur à affecter :";
       changeEmployeeDialogRef.componentInstance.closeActionText = "Annuler";
       changeEmployeeDialogRef.componentInstance.validationActionText = "Affecter";

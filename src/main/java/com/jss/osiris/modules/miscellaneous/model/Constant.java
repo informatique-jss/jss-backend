@@ -270,6 +270,14 @@ public class Constant implements Serializable, IId {
 	private BillingType billingTypeChronopostFees;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_shipping_costs")
+	private BillingType billingTypeShippingCosts;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_confrere_fees")
+	private BillingType billingTypeConfrereFees;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_application_fees")
 	private BillingType billingTypeApplicationFees;
 
@@ -284,6 +292,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_bilan")
 	private BillingType billingTypeBilan;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_infogreffe_debour")
+	private BillingType billingTypeInfogreffeDebour;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_document_scanning")
@@ -427,6 +439,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_transfert_funds_type_bail")
 	private TransfertFundsType transfertFundsTypeBail;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_competent_authority_infogreffe")
+	private CompetentAuthority competentAuthorityInfogreffe;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_competent_authority_type_rcs")
@@ -1846,6 +1862,38 @@ public class Constant implements Serializable, IId {
 	public void setPrincipalAccountingAccountDepositProvider(
 			PrincipalAccountingAccount principalAccountingAccountDepositProvider) {
 		this.principalAccountingAccountDepositProvider = principalAccountingAccountDepositProvider;
+	}
+
+	public BillingType getBillingTypeConfrereFees() {
+		return billingTypeConfrereFees;
+	}
+
+	public void setBillingTypeConfrereFees(BillingType billingTypeConfrereFees) {
+		this.billingTypeConfrereFees = billingTypeConfrereFees;
+	}
+
+	public BillingType getBillingTypeShippingCosts() {
+		return billingTypeShippingCosts;
+	}
+
+	public void setBillingTypeShippingCosts(BillingType billingTypeShippingCosts) {
+		this.billingTypeShippingCosts = billingTypeShippingCosts;
+	}
+
+	public BillingType getBillingTypeInfogreffeDebour() {
+		return billingTypeInfogreffeDebour;
+	}
+
+	public void setBillingTypeInfogreffeDebour(BillingType billingTypeInfogreffeDebour) {
+		this.billingTypeInfogreffeDebour = billingTypeInfogreffeDebour;
+	}
+
+	public CompetentAuthority getCompetentAuthorityInfogreffe() {
+		return competentAuthorityInfogreffe;
+	}
+
+	public void setCompetentAuthorityInfogreffe(CompetentAuthority competentAuthorityInfogreffe) {
+		this.competentAuthorityInfogreffe = competentAuthorityInfogreffe;
 	}
 
 }

@@ -1,0 +1,24 @@
+<div *ngIf="reporting">
+  <div class="mat-elevation-z2 form-div">
+    <div class=" full-width padding-top">
+      <form [formGroup]="userReportingForm">
+        <table class="full-width">
+          <tr>
+            <select-reporting-dataset [(model)]="reporting.dataset" label="Jeu de données" [form]="userReportingForm"
+              (selectionChange)="selectDataSet($event)" propertyName="dataset" [isMandatory]="true"
+              [isDisabled]="false"></select-reporting-dataset>
+          </tr>
+          <tr>
+            <generic-input [(model)]="reporting.name" label="Nom du rapport" [form]="userReportingForm"
+              propertyName="name" [isMandatory]="true" [isDisabled]="false" [maxLength]="250"></generic-input>
+          </tr>
+        </table>
+      </form>
+    </div>
+  </div>
+  <reporting [hidden]="!dataToDisplay" [dataToDisplay]="dataToDisplay" [settings]="reporting.settings"></reporting>
+  <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" (click)="saveReporting()"
+    *ngIf="reporting && reporting.dataset">
+    <mat-icon>save</mat-icon>
+  </button>
+</div>

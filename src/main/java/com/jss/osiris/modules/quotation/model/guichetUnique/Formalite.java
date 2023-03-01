@@ -1,7 +1,5 @@
 package com.jss.osiris.modules.quotation.model.guichetUnique;
 
-import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,11 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DiffusionINSEE;
@@ -25,15 +20,11 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePer
 
 @Entity
 @JsonIgnoreProperties
-public class Formalite implements IId, IAttachment {
+public class Formalite implements IId {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-
-    @OneToMany(mappedBy = "formalite", cascade = CascadeType.REMOVE)
-    @JsonIgnoreProperties(value = { "formalite" }, allowSetters = true)
-    private List<Attachment> attachments;
 
     private Integer formalityDraftId;
 
@@ -257,14 +248,6 @@ public class Formalite implements IId, IAttachment {
 
     public void setRegularisation(Boolean regularisation) {
         this.regularisation = regularisation;
-    }
-
-    public List<Attachment> getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(List<Attachment> attachments) {
-        this.attachments = attachments;
     }
 
     public FormaliteStatus getFormaliteStatus() {

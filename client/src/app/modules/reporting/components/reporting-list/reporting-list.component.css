@@ -1,0 +1,4 @@
+.table-container-scroll {
+  max-height: 215px;
+  overflow-y: auto;
+}

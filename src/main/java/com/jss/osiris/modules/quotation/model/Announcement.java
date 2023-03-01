@@ -20,15 +20,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.Document;
-import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-public class Announcement implements IId, IAttachment, IDocument {
+public class Announcement implements IId, IDocument {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -73,10 +71,6 @@ public class Announcement implements IId, IAttachment, IDocument {
 
 	@Column(nullable = false)
 	private Boolean isProofReadingDocument;
-
-	@OneToMany(mappedBy = "announcement", cascade = CascadeType.REMOVE)
-	@JsonIgnoreProperties(value = { "announcement" }, allowSetters = true)
-	private List<Attachment> attachments;
 
 	@OneToMany(targetEntity = Document.class, mappedBy = "announcement", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "announcement" }, allowSetters = true)
@@ -187,14 +181,6 @@ public class Announcement implements IId, IAttachment, IDocument {
 
 	public void setIsProofReadingDocument(Boolean isProofReadingDocument) {
 		this.isProofReadingDocument = isProofReadingDocument;
-	}
-
-	public List<Attachment> getAttachments() {
-		return attachments;
-	}
-
-	public void setAttachments(List<Attachment> attachments) {
-		this.attachments = attachments;
 	}
 
 	public List<Document> getDocuments() {

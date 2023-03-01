@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -6,10 +7,12 @@ import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableCo
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { AppService } from 'src/app/services/app.service';
+import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { Payment } from '../../model/Payment';
 import { PaymentSearchResult } from '../../model/PaymentSearchResult';
 import { PaymentService } from '../../services/payment.service';
 import { AssociatePaymentDialogComponent } from '../associate-payment-dialog/associate-payment-dialog.component';
+import { getRemainingToPay } from '../invoice-tools';
 
 @Component({
   selector: 'invoice-payment',
@@ -22,6 +25,8 @@ export class InvoicePaymentComponent implements OnInit {
   @Input() invoice: Invoice = {} as Invoice;
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
+  newPayment: Payment = {} as Payment;
+  displayAddCashPayment = this.habilitationsService.canAddNewCashPayment();
 
   @Output() stateChanged = new EventEmitter<void>();
 
@@ -31,7 +36,12 @@ export class InvoicePaymentComponent implements OnInit {
   constructor(private paymentService: PaymentService,
     private appService: AppService,
     private constantService: ConstantService,
-    public associatePaymentDialog: MatDialog) { }
+    public associatePaymentDialog: MatDialog,
+    private formBuilder: FormBuilder,
+    private habilitationsService: HabilitationsService
+  ) { }
+
+  invoicePaymentForm = this.formBuilder.group({});
 
   ngOnInit() {
     this.displayedColumns = [];
@@ -55,6 +65,8 @@ export class InvoicePaymentComponent implements OnInit {
         this.advisedPayment = response;
       })
     }
+
+    this.newPayment.paymentAmount = getRemainingToPay(this.invoice);
   }
 
   openAssociationDialog(elementIn: PaymentSearchResult) {
@@ -68,5 +80,17 @@ export class InvoicePaymentComponent implements OnInit {
         this.stateChanged.emit();
       });
     })
+  }
+
+  addCashPayment() {
+    if (this.newPayment && this.invoicePaymentForm.valid) {
+      this.newPayment.paymentWay = this.constantService.getPaymentWayInbound();
+      this.newPayment.paymentType = this.constantService.getPaymentTypeEspeces();
+      this.newPayment.isCancelled = false;
+      this.newPayment.isExternallyAssociated = false;
+      this.paymentService.addCashPaymentForInvoice(this.newPayment, this.invoice).subscribe(reposne => {
+        this.stateChanged.emit();
+      })
+    }
   }
 }

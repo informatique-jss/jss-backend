@@ -6,10 +6,11 @@ import { Civility } from 'src/app/modules/miscellaneous/model/Civility';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { CivilityService } from 'src/app/modules/miscellaneous/services/civility.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
-import { DOMICILIATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { DOMICILIATION_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { BuildingDomiciliation } from '../../model/BuildingDomiciliation';
 import { Domiciliation } from '../../model/Domiciliation';
 import { DomiciliationContractType } from '../../model/DomiciliationContractType';
+import { IQuotation } from '../../model/IQuotation';
 import { MailRedirectionType } from '../../model/MailRedirectionType';
 import { Provision } from '../../model/Provision';
 import { Siren } from '../../model/Siren';
@@ -31,10 +32,12 @@ export class DomiciliationComponent implements OnInit {
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
   @Input() editMode: boolean = false;
+  @Input() quotation: IQuotation | undefined;
 
   @ViewChild('tabs', { static: false }) tabs: any;
 
   DOMICILIATION_ENTITY_TYPE = DOMICILIATION_ENTITY_TYPE;
+  PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
   attachmentTypeKbis = this.constantService.getAttachmentTypeKbis();
   attachmentTypeCni = this.constantService.getAttachmentTypeCni();
   attachmentProofOfAddress = this.constantService.getAttachmentTypeProofOfAddress();
@@ -114,6 +117,10 @@ export class DomiciliationComponent implements OnInit {
 
   getFormStatus(): boolean {
     this.domiciliationForm.markAllAsTouched();
+    if (this.domiciliation.legalGardianBirthdate)
+      this.domiciliation.legalGardianBirthdate = new Date(this.domiciliation.legalGardianBirthdate.setHours(12));
+    if (this.domiciliation.startDate)
+      this.domiciliation.startDate = new Date(this.domiciliation.startDate.setHours(12));
     return this.domiciliationForm.valid;
   }
 

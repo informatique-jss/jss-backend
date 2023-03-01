@@ -1,7 +1,7 @@
 import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { PaymentSearch } from 'src/app/modules/invoicing/model/PaymentSearch';
 import { RefundSearch } from 'src/app/modules/invoicing/model/RefundSearch';
@@ -87,9 +87,11 @@ export class DashboardComponent implements OnInit {
   QUOTATION_OPEN = "Mes devis ouverts";
   QUOTATION_TO_VERIFY = "Mes devis à vérifier";
   QUOTATION_REFUSED = "Mes devis refusés";
+  QUOTATION_SENT = "Mes devis envoyés";
   quotationSearchOpen: QuotationSearch = {} as QuotationSearch;
   quotationSearchToVerify: QuotationSearch = {} as QuotationSearch;
   quotationSearchRefused: QuotationSearch = {} as QuotationSearch;
+  quotationSearchSent: QuotationSearch = {} as QuotationSearch;
 
   INVOICE_TO_ASSOCIATE = "Factures à associer";
   invoiceSearchToAssociate: InvoiceSearch = {} as InvoiceSearch;
@@ -107,7 +109,7 @@ export class DashboardComponent implements OnInit {
   allItems: Array<string> = [this.QUOTATION_REFUSED, this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY,
   this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDER_OPEN,
   this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY,
-  this.AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO,
+  this.AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO, this.QUOTATION_SENT,
   this.PROVISION_BOARD].sort((a, b) => a.localeCompare(b));
 
   BOX_SIZE_X_SMALL = "Zoom très petit";
@@ -180,22 +182,25 @@ export class DashboardComponent implements OnInit {
         this.affaireSearchWaitingAuthority.assignedTo = this.currentEmployee;
         this.affaireSearchWaitingAuthority.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY);
 
-        this.orderingSearchOpen.salesEmployee = this.currentEmployee!;
+        this.orderingSearchOpen.assignedToEmployee = this.currentEmployee!;
         this.orderingSearchOpen.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_OPEN)!];
 
-        this.orderingSearchBeingProcessed.salesEmployee = this.currentEmployee!;
+        this.orderingSearchBeingProcessed.assignedToEmployee = this.currentEmployee!;
         this.orderingSearchBeingProcessed.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_BEING_PROCESSED)!];
 
         this.orderingSearchToBilled.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_TO_BILLED)!];
 
-        this.quotationSearchOpen.salesEmployee = this.currentEmployee!;
+        this.quotationSearchOpen.assignedToEmployee = this.currentEmployee!;
         this.quotationSearchOpen.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_OPEN)!];
 
-        this.quotationSearchToVerify.salesEmployee = this.currentEmployee!;
+        this.quotationSearchToVerify.assignedToEmployee = this.currentEmployee!;
         this.quotationSearchToVerify.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_TO_VERIFY)!];
 
-        this.quotationSearchRefused.salesEmployee = this.currentEmployee!;
+        this.quotationSearchRefused.assignedToEmployee = this.currentEmployee!;
         this.quotationSearchRefused.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_REFUSED_BY_CUSTOMER)!];
+
+        this.quotationSearchSent.assignedToEmployee = this.currentEmployee!;
+        this.quotationSearchSent.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_SENT_TO_CUSTOMER)!];
 
         this.invoiceSearchToAssociate.invoiceStatus = [this.constantService.getInvoiceStatusSend()];
 

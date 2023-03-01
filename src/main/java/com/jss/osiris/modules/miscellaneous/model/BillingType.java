@@ -42,6 +42,8 @@ public class BillingType implements Serializable, IId {
 	@Column(nullable = false)
 	private Boolean isDebour;
 
+	private Boolean isFee;
+
 	@Column(nullable = false)
 	private Boolean isOptionnal;
 
@@ -173,6 +175,14 @@ public class BillingType implements Serializable, IId {
 
 	public void setIsDebour(Boolean isDebour) {
 		this.isDebour = isDebour;
+	}
+
+	public Boolean getIsFee() {
+		return isFee;
+	}
+
+	public void setIsFee(Boolean isFee) {
+		this.isFee = isFee;
 	}
 
 }

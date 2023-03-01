@@ -23,6 +23,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   @Input() invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   @Input() isForDashboard: boolean = false;
   @Input() isForTiersIntegration: boolean = false;
+  @Input() isForPaymentAssocationIntegration: boolean = false;
   invoices: InvoiceSearchResult[] | undefined;
   availableColumns: SortTableColumn[] = [];
   columnToDisplayOnDashboard: string[] = ["description", "affaires", "invoicePayer", "totalPrice"];
@@ -75,6 +76,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "status", fieldName: "invoiceStatus", label: "Status" } as SortTableColumn);
     this.availableColumns.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "N° de commande", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn);
     this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
+    this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
     this.availableColumns.push({ id: "responsable", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn);
     this.availableColumns.push({ id: "affaires", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn);
     this.availableColumns.push({ id: "providerLabel", fieldName: "providerLabel", label: "Fournisseur" } as SortTableColumn);

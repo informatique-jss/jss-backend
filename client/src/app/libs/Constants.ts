@@ -3,6 +3,7 @@ import { COMMA, ENTER } from "@angular/cdk/keycodes";
 export const SEPARATOR_KEY_CODES: number[] = [ENTER, COMMA];
 export const SEARCH_KEY_CODE: string = "F8";
 export const NOTIFICATION_KEY_CODE: string = "F9";
+export const SAVE_KEY_CODE: string = "F2";
 export const NOTIFICATION_REFRESH_INTERVAL: number = 30 * 1000;
 export const MAX_SIZE_UPLOAD_FILES = 5242880;
 export const INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = 2;
@@ -19,6 +20,7 @@ export const QUOTATION_STATUS_OPEN = "OPEN";
 export const QUOTATION_STATUS_ABANDONED = "ABANDONED";
 export const QUOTATION_STATUS_TO_VERIFY = "TO_VERIFY";
 export const QUOTATION_STATUS_REFUSED_BY_CUSTOMER = "REFUSED_BY_CUSTOMER";
+export const QUOTATION_STATUS_SENT_TO_CUSTOMER = "SENT_TO_CUSTOMER";
 export const VALIDATED_BY_CUSTOMER = "VALIDATED_BY_CUSTOMER";
 
 // Customer order status
@@ -60,3 +62,8 @@ export const CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN = "CUSTOMER_ORDER_ASSO_
 export const CUSTOMER_ORDER_TO_BE_BILLED = "CUSTOMER_ORDER_TO_BE_BILLED";
 
 export const INVOICE_REMINDER_PAYMENT = "INVOICE_REMINDER_PAYMENT";
+
+
+// Reporting datasets
+export const REPORTING_DATASET_QUOTATION = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante";
+export const REPORTING_DATASET_QUOTATION_FOR_TIERS = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante pour un tiers";

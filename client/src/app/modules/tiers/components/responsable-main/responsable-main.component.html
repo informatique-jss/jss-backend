@@ -80,6 +80,11 @@
                     </autocomplete-employee>
                   </td>
                   <td>
+                    <autocomplete-employee [(model)]="selectedResponsable.defaultCustomerOrderEmployee"
+                      [isDisabled]="!editMode" label="Assignation par défaut des commandes" [form]="principalForm"
+                      propertyName="defaultCustomerOrderEmployee" [isMandatory]="false"></autocomplete-employee>
+                  </td>
+                  <td>
                     <autocomplete-employee [(model)]="selectedResponsable.formalisteEmployee" label="Formaliste"
                       [isDisabled]="!editMode" [form]="principalForm" propertyName="formalisteEmployee"
                       [isDisabled]="!editMode">

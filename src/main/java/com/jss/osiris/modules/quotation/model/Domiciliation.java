@@ -3,7 +3,6 @@ package com.jss.osiris.modules.quotation.model;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,18 +12,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
-import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Civility;
 import com.jss.osiris.modules.miscellaneous.model.Country;
-import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
@@ -32,16 +27,12 @@ import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
 
 @Entity
-public class Domiciliation implements IId, IAttachment {
+public class Domiciliation implements IId {
 
 	@Id
 	@SequenceGenerator(name = "domiciliation_sequence", sequenceName = "domiciliation_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "domiciliation_sequence")
 	private Integer id;
-
-	@OneToMany(targetEntity = Attachment.class, mappedBy = "domiciliation", cascade = CascadeType.ALL)
-	@JsonIgnoreProperties(value = { "domiciliation" }, allowSetters = true)
-	private List<Attachment> attachments;
 
 	@ManyToOne
 	@JoinColumn(name = "id_domiciliation_contract_type")
@@ -198,14 +189,6 @@ public class Domiciliation implements IId, IAttachment {
 
 	public void setAccountingRecordDomiciliation(String accountingRecordDomiciliation) {
 		this.accountingRecordDomiciliation = accountingRecordDomiciliation;
-	}
-
-	public List<Attachment> getAttachments() {
-		return attachments;
-	}
-
-	public void setAttachments(List<Attachment> attachments) {
-		this.attachments = attachments;
 	}
 
 	public DomiciliationContractType getDomiciliationContractType() {

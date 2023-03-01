@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AccountingAccount } from 'src/app/modules/accounting/model/AccountingAccount';
@@ -13,6 +13,11 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 })
 export class AutocompleteAccountingAccountComponent extends GenericAutocompleteComponent<AccountingAccount, AccountingAccount> implements OnInit {
 
+  /**
+   * If defined, only account with specified subnumber are searchable
+   */
+  @Input() filteredAccountSubNumber: number | undefined;
+
   constructor(private formBuild: UntypedFormBuilder, private accountingAccountService: AccountingAccountService, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
   }
@@ -24,5 +29,24 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
 
   displayLabel(object: any): string {
     return object ? object.label + " - " + object.principalAccountingAccount.code + "-" + object.accountingAccountSubNumber : '';
+  }
+
+  mapResponse(response: AccountingAccount[]): AccountingAccount[] {
+    if (response && this.filteredAccountSubNumber) {
+      let outAccountingAccount = [];
+      for (let account of response)
+        if (account.accountingAccountSubNumber == this.filteredAccountSubNumber)
+          outAccountingAccount.push(account);
+      return outAccountingAccount;
+    } else
+      return response;
+  }
+
+  ngOnInit(): void {
+    super.ngOnInit();
+    if (this.filteredAccountSubNumber)
+      this.accountingAccountService.getAccountingAccountByLabel("-" + this.filteredAccountSubNumber).subscribe(response => {
+        this.filteredTypes = this.mapResponse(response);
+      })
   }
 }

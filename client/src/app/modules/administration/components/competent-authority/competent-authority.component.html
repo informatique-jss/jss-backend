@@ -61,18 +61,18 @@
             <tr>
               <td>
                 <select-regions [(model)]="selectedcompetentAuthority.regions" label="Régions" [form]="entityForm2"
-                  propertyName="regions" [isMandatory]="true" [isDisabled]="!editMode"
+                  propertyName="regions" [isMandatory]="false" [isDisabled]="!editMode"
                   [conditionnalRequired]="!selectedcompetentAuthority.departments && !selectedcompetentAuthority.cities"></select-regions>
               </td>
               <td>
                 <select-departments [(model)]="selectedcompetentAuthority.departments" label="Départements"
                   [form]="entityForm2"
                   [conditionnalRequired]="!selectedcompetentAuthority.regions && !selectedcompetentAuthority.cities"
-                  propertyName="departments" [isMandatory]="true" [isDisabled]="!editMode"></select-departments>
+                  propertyName="departments" [isMandatory]="false" [isDisabled]="!editMode"></select-departments>
               </td>
               <td>
                 <chips-city [(model)]="selectedcompetentAuthority.cities" [form]="entityForm2" propertyName="cities"
-                  [isMandatory]="true" [isDisabled]="!editMode" label="Villes"
+                  [isMandatory]="false" [isDisabled]="!editMode" label="Villes"
                   [conditionnalRequired]="!selectedcompetentAuthority.regions && !selectedcompetentAuthority.departments"></chips-city>
               </td>
             </tr>
@@ -98,7 +98,7 @@
             <tr>
               <td>
                 <chips-mail [(model)]="selectedcompetentAuthority.mails" label="Mails" [form]="entityForm2"
-                  propertyName="mails" [isMandatory]="true" [isDisabled]="!editMode"></chips-mail>
+                  propertyName="mails" [isMandatory]="false" [isDisabled]="!editMode"></chips-mail>
               </td>
               <td>
                 <chips-mail [(model)]="selectedcompetentAuthority.accountingMails" label="Mails (comptabilité)"
@@ -107,7 +107,7 @@
               </td>
               <td>
                 <chips-phone [(model)]="selectedcompetentAuthority.phones" label="Téléphones" [form]="entityForm2"
-                  propertyName="phones" [isMandatory]="true" [isDisabled]="!editMode"></chips-phone>
+                  propertyName="phones" [isMandatory]="false" [isDisabled]="!editMode"></chips-phone>
               </td>
               <td>
                 <generic-input [(model)]="selectedcompetentAuthority.contact" label="Contact" [form]="entityForm2"
@@ -184,6 +184,15 @@
                   propertyName="country" label="Pays" [isDisabled]="!editMode" [isMandatory]="false"
                   [isDisabled]="!editMode">
                 </autocomplete-country>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-textarea [(model)]="selectedcompetentAuthority.observations" label="Observations"
+                  [form]="entityForm2" propertyName="observations" [isMandatory]="false"
+                  [isDisabled]="!editMode"></generic-textarea>
               </td>
             </tr>
           </table>

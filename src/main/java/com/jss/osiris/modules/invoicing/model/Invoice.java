@@ -71,26 +71,32 @@ public class Invoice implements IId, IAttachment {
 
 	@ManyToOne
 	@JoinColumn(name = "id_responsable")
+	@IndexedField
 	private Responsable responsable;
 
 	@ManyToOne
 	@JoinColumn(name = "id_confrere")
+	@IndexedField
 	private Confrere confrere;
 
 	@ManyToOne
 	@JoinColumn(name = "id_tiers")
+	@IndexedField
 	private Tiers tiers;
 
 	@ManyToOne
-	@JoinColumn(name = "id_competent_authority")
+	@JoinColumn(name = "id_competent_authority") 
+	@IndexedField 
 	@JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
 	private CompetentAuthority competentAuthority;
 
 	@ManyToOne
 	@JoinColumn(name = "id_provider")
+	@IndexedField
 	private Provider provider;
 
-	@Column(length = 100, name = "billing_label")
+	@Column(length = 300, name = "billing_label")
+	@IndexedField
 	private String billingLabel;
 
 	@Column(name = "billing_label_address", length = 160)
@@ -135,6 +141,7 @@ public class Invoice implements IId, IAttachment {
 
 	@ManyToOne
 	@JoinColumn(name = "id_invoice_status")
+	@IndexedField
 	private InvoiceStatus invoiceStatus;
 
 	@OneToMany(mappedBy = "invoice")

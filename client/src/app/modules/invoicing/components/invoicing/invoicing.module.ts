@@ -20,6 +20,7 @@ import { AmountDialogComponent } from "../amount-dialog/amount-dialog.component"
 import { AssociateDepositDialogComponent } from '../associate-deposit-dialog/associate-deposit-dialog.component';
 import { AssociatePaymentDialogComponent } from "../associate-payment-dialog/associate-payment-dialog.component";
 import { BankTransfertListComponent } from '../bank-transfert-list/bank-transfert-list.component';
+import { DeboursAmountInvoicedDialogComponent } from '../debours-amount-invoiced-dialog/debours-amount-invoiced-dialog.component';
 import { DeboursAmountTaxableDialogComponent } from "../debours-amount-taxable-dialog/debours-amount-taxable-dialog.component";
 import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.component";
 import { InvoiceListComponent } from "../invoice-list/invoice-list.component";
@@ -32,6 +33,7 @@ const routes: Routes = [
   { path: 'invoicing', component: InvoiceComponent },
   { path: 'invoicing/view/:id', component: InvoiceDetailsComponent },
   { path: 'invoicing/add/:id', component: AddInvoiceComponent },
+  { path: 'invoicing/add/debour/:idCompetentAuhority/:idCustomerOrder', component: AddInvoiceComponent },
 ];
 
 @NgModule({
@@ -65,6 +67,7 @@ const routes: Routes = [
     AmountDialogComponent,
     BankTransfertListComponent,
     DeboursAmountTaxableDialogComponent,
+    DeboursAmountInvoicedDialogComponent,
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,

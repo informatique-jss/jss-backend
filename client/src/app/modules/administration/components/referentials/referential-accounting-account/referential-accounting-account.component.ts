@@ -34,10 +34,23 @@ export class ReferentialAccountingAccountComponent extends GenericReferentialCom
     return this.accountingAccountService.addOrUpdateAccountingAccount(this.selectedEntity!);
   }
   getGetObservable(): Observable<AccountingAccount[]> {
-    return this.accountingAccountService.getAccountingAccounts();
+    return this.accountingAccountService.getAccountingAccountByLabel("dummy");
   }
 
   getElementCode(element: AccountingAccount) {
     return element.label;
+  }
+
+  applyFilter(filterValue: any) {
+    let filterValueCast = (filterValue as HTMLInputElement);
+    filterValue = filterValueCast.value.trim();
+    this.searchText = filterValue.toLowerCase();
+
+    if (this.searchText && this.searchText.length > 2)
+      this.accountingAccountService.getAccountingAccountByLabel(this.searchText).subscribe(response => {
+        this.entities = response;
+        this.mapEntities();
+        this.definedMatTableColumn();
+      })
   }
 }

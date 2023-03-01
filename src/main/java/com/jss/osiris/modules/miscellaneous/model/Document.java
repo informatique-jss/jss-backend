@@ -156,6 +156,8 @@ public class Document implements Serializable, IId {
 	@Column(length = 20)
 	private String cedexComplement;
 
+	private String externalReference;
+
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_city")
 	private City billingLabelCity;
@@ -472,6 +474,14 @@ public class Document implements Serializable, IId {
 
 	public void setRefundBic(String refundBic) {
 		this.refundBic = refundBic;
+	}
+
+	public String getExternalReference() {
+		return externalReference;
+	}
+
+	public void setExternalReference(String externalReference) {
+		this.externalReference = externalReference;
 	}
 
 }

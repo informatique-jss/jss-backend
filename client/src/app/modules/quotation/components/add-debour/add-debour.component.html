@@ -4,8 +4,9 @@
       <table class="full-width">
         <tr>
           <td>
-            <select-billing-type-debour [(model)]="newDebour.billingType" label="Type de débours" [form]="debourForm"
-              propertyName="billingType" [isMandatory]="true" [isDisabled]="!editMode"></select-billing-type-debour>
+            <select-billing-type-debour [(model)]="newDebour.billingType" label="Type de débours/frais"
+              [form]="debourForm" propertyName="billingType" [isMandatory]="true"
+              [isDisabled]="!editMode"></select-billing-type-debour>
           </td>
           <td>
             <autocomplete-competent-authority [(model)]="newDebour.competentAuthority" [form]="debourForm"
@@ -14,16 +15,21 @@
           </td>
           <td>
             <generic-input [(model)]="newDebour.debourAmount" label="Montant" [form]="debourForm"
-              propertyName="debourAmount" [isMandatory]="true" [isDisabled]="!editMode" type="number"
+              propertyName="debourAmount" [isMandatory]="true" [isDisabled]="!editMode" type="number" step="0,01"
+              (onFormChange)="fillInvoicedAmount()"></generic-input>
+          </td>
+          <td *ngIf="newDebour.billingType && newDebour.billingType.isFee">
+            <generic-input [(model)]="newDebour.invoicedAmount" label="Montant facturé" [form]="debourForm"
+              propertyName="invoicedAmount" [isMandatory]="false" [isDisabled]="!editMode" type="number"
               step="0,01"></generic-input>
           </td>
-          <td>
+          <td *ngIf="newDebour.competentAuthority">
             <select-payment-types [(model)]="newDebour.paymentType" label="Mode de paiement" [form]="debourForm"
-              *ngIf="newDebour.competentAuthority && !newDebour.competentAuthority.competentAuthorityType.isDirectCharge"
+              *ngIf=" !newDebour.competentAuthority.competentAuthorityType.isDirectCharge"
               [filteredPaymentType]="[paymentTypeVirement,paymentTypeCb, paymentTypeCheques,paymentTypeEspeces,paymentTypeAccount]"
               propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"></select-payment-types>
             <select-payment-types [(model)]="newDebour.paymentType" label="Mode de paiement" [form]="debourForm"
-              *ngIf="newDebour.competentAuthority && newDebour.competentAuthority.competentAuthorityType.isDirectCharge"
+              *ngIf="  newDebour.competentAuthority.competentAuthorityType.isDirectCharge"
               [filteredPaymentType]="[paymentTypeVirement,paymentTypeCb, paymentTypeCheques,paymentTypeEspeces]"
               propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"></select-payment-types>
           </td>
@@ -53,7 +59,14 @@
   <div *ngIf="provision.debours && provision.debours.length>0" class="margin-top">
     <p>Total par authorité compétente</p>
     <ul *ngFor="let competentAuthority of getCompetentAuthorities()">
-      <li>{{competentAuthority.label}} : {{getTotalForCompetentAuthority(competentAuthority)}} €</li>
+      <li>{{competentAuthority.label}} : {{getTotalForCompetentAuthority(competentAuthority)}} € <span class="pointer"
+          *ngIf="canAddNewInvoice()" (click)="createInvoice($event, competentAuthority)"
+          (auxclick)="createInvoice($event, competentAuthority)">(créer une facture libre)</span></li>
     </ul>
+  </div>
+  <div class="row-field-container" *ngIf="editMode">
+    <button mat-raised-button (click)="filledForInfogreffeKbis()" color="primary" class="mini-fab-add">
+      Pré-remplir pour un KBis
+    </button>
   </div>
 </div>

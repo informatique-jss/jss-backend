@@ -8,6 +8,7 @@ export interface BillingType extends IReferential {
   isOverrideVat: boolean;
   isNonTaxable: boolean;
   isDebour: boolean;
+  isFee: boolean;
   vat: Vat;
   isOptionnal: boolean;
   accountingAccountProduct: AccountingAccount;

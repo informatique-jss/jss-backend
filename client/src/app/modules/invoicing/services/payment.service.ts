@@ -37,4 +37,12 @@ export class PaymentService extends AppRestService<Payment>{
   unsetExternallyAssociated(payment: Payment) {
     return this.postList(new HttpParams(), "payments/unassociate/externally", payment);
   }
+
+  addCashPaymentForInvoice(payment: Payment, invoice: Invoice) {
+    return this.postItem(new HttpParams().set("idInvoice", invoice.id), "payment/cash/add/invoice", payment);
+  }
+
+  addCashPaymentForCustomerOrder(payment: Payment, customerOrder: CustomerOrder) {
+    return this.postItem(new HttpParams().set("idCustomerOrder", customerOrder.id), "payment/cash/add/customer-order", payment);
+  }
 }

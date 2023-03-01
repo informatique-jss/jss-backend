@@ -11,4 +11,5 @@ export interface ProvisionType extends IReferential {
   provisionScreenType: ProvisionScreenType;
   assignationType: AssignationType;
   defaultEmployee: Employee;
+  assignationWeight: number;
 }

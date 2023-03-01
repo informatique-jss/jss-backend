@@ -56,6 +56,8 @@ public class ProvisionType implements Serializable, IId {
 	@JoinColumn(name = "id_default_assigned")
 	private Employee defaultEmployee;
 
+	private Integer assignationWeight;
+
 	public Integer getId() {
 		return id;
 	}
@@ -118,6 +120,14 @@ public class ProvisionType implements Serializable, IId {
 
 	public void setDefaultEmployee(Employee defaultEmployee) {
 		this.defaultEmployee = defaultEmployee;
+	}
+
+	public Integer getAssignationWeight() {
+		return assignationWeight;
+	}
+
+	public void setAssignationWeight(Integer assignationWeight) {
+		this.assignationWeight = assignationWeight;
 	}
 
 }

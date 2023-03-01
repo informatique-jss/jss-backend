@@ -449,6 +449,22 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeConfrereFees"
+                label="Type de poste de facturation - Frais administratif du confrère" [form]="constantForm"
+                propertyName="billingTypeConfrereFees" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeShippingCosts"
+                label="Type de poste de facturation - Frais de ports" [form]="constantForm"
+                propertyName="billingTypeShippingCosts" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeApplicationFees"
                 label="Type de poste de facturation - Frais de dossier" [form]="constantForm"
                 propertyName="billingTypeApplicationFees" [isMandatory]="true" [isDisabled]="!editMode">
@@ -476,6 +492,14 @@
               <autocomplete-billing-type [(model)]="constant.billingTypeBilan"
                 label="Type de poste de facturation - Bilan" [form]="constantForm" propertyName="billingTypeBilan"
                 [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeInfogreffeDebour"
+                label="Type de poste de facturation - Débours Infogreffe" [form]="constantForm"
+                propertyName="billingTypeInfogreffeDebour" [isMandatory]="true" [isDisabled]="!editMode">
               </autocomplete-billing-type>
             </td>
           </tr>
@@ -800,6 +824,13 @@
                 [isDisabled]="!editMode" propertyName="transfertFundsTypePhysique"
                 label="Type de transfert de fonds - personne physique">
               </radio-group-transfert-funds>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-competent-authority [(model)]="constant.competentAuthorityInfogreffe" [form]="constantForm"
+                propertyName="competentAuthorityInfogreffe" [isMandatory]="true"
+                label="Autorité compétante - Infogreffe"></autocomplete-competent-authority>
             </td>
           </tr>
           <tr>

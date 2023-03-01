@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -307,7 +308,8 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
             xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + xml;
             // Non supporting characters for bank ...
-            xml = xml.replaceAll("°", " ");
+            xml = StringUtils.stripAccents(xml).replaceAll("[^a-zA-Z0-9 /-?:().,'+<>\"]", " ");
+
         } catch (JsonProcessingException e2) {
             throw new OsirisException(null, "Impossible to generate XML file for refund export");
         }

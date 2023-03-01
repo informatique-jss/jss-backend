@@ -1,7 +1,6 @@
 import { City } from "../../miscellaneous/model/City";
 import { Civility } from "../../miscellaneous/model/Civility";
 import { Country } from "../../miscellaneous/model/Country";
-import { IAttachment } from "../../miscellaneous/model/IAttachment";
 import { Language } from "../../miscellaneous/model/Language";
 import { LegalForm } from "../../miscellaneous/model/LegalForm";
 import { Mail } from "../../miscellaneous/model/Mail";
@@ -11,7 +10,7 @@ import { DomiciliationContractType } from "./DomiciliationContractType";
 import { DomiciliationStatus } from './DomiciliationStatus';
 import { MailRedirectionType } from "./MailRedirectionType";
 
-export interface Domiciliation extends IAttachment {
+export interface Domiciliation {
   id: number;
   domiciliationContractType: DomiciliationContractType;
   language: Language;

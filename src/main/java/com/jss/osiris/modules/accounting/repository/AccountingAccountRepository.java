@@ -10,7 +10,7 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 
 public interface AccountingAccountRepository extends CrudRepository<AccountingAccount, Integer> {
-    @Query("select a from AccountingAccount a join a.principalAccountingAccount p where   upper(cast(a.label as string))  like '%' || cast(upper(:label) as string) || '%' or p.code||a.accountingAccountSubNumber like '%' || cast(upper(:label) as string) || '%' ")
+    @Query("select a from AccountingAccount a join a.principalAccountingAccount p where   upper(cast(a.label as string))  like '%' || cast(upper(:label) as string) || '%' or p.code||a.accountingAccountSubNumber like '%' || cast(upper(:label) as string) || '%' or p.code||'-' ||a.accountingAccountSubNumber like '%' || cast(upper(:label) as string) || '%' ")
     List<AccountingAccount> findByLabelOrCodeContainingIgnoreCase(@Param("label") String label);
 
     List<AccountingAccount> findByPrincipalAccountingAccount(PrincipalAccountingAccount principalAccountingAccount);

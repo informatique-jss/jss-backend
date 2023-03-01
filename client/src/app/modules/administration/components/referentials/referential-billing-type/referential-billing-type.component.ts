@@ -32,6 +32,8 @@ export class ReferentialBillingTypeComponent extends GenericReferentialComponent
         entity.isNonTaxable = false;
       if (!entity.isDebour)
         entity.isDebour = false;
+      if (!entity.isFee)
+        entity.isFee = false;
     }
   }
 
@@ -40,5 +42,15 @@ export class ReferentialBillingTypeComponent extends GenericReferentialComponent
   }
   getGetObservable(): Observable<BillingType[]> {
     return this.billingTypeService.getBillingTypes();
+  }
+
+  toggleFees() {
+    if (this.selectedEntity && this.selectedEntity.isFee)
+      this.selectedEntity.isDebour = false;
+  }
+
+  toggleDebour() {
+    if (this.selectedEntity && this.selectedEntity.isDebour)
+      this.selectedEntity.isFee = false;
   }
 }

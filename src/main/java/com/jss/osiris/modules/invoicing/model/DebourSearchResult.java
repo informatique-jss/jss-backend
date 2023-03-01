@@ -15,6 +15,8 @@ public interface DebourSearchResult {
 
     public Float getDebourAmount();
 
+    public Float getInvoicedAmount();
+
     public String getPaymentTypeLabel();
 
     public Date getPaymentDateTime();

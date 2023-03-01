@@ -17,11 +17,9 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-public class QuotationStatus implements Serializable, IId {
-
+public class QuotationStatus extends IWorkflowElement implements Serializable {
 	/**
 	 * WARNINNG : add update in QuotationStatutsService when adding a new status
 	 */
@@ -141,16 +139,18 @@ public class QuotationStatus implements Serializable, IId {
 		return successors;
 	}
 
-	public void setSuccessors(List<QuotationStatus> successors) {
-		this.successors = successors;
+	@SuppressWarnings({ "unchecked" })
+	public void setSuccessors(List<? extends IWorkflowElement> successors) {
+		this.successors = (List<QuotationStatus>) successors;
 	}
 
 	public List<QuotationStatus> getPredecessors() {
 		return predecessors;
 	}
 
-	public void setPredecessors(List<QuotationStatus> predecessors) {
-		this.predecessors = predecessors;
+	@SuppressWarnings({ "unchecked" })
+	public void setPredecessors(List<? extends IWorkflowElement> predecessors) {
+		this.predecessors = (List<QuotationStatus>) predecessors;
 	}
 
 }

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
-import { BODACC_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { BODACC_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ActType } from '../../model/ActType';
 import { Affaire } from '../../model/Affaire';
 import { Bodacc } from '../../model/Bodacc';
@@ -9,6 +9,7 @@ import { BodaccFusion } from '../../model/BodaccFusion';
 import { BodaccPublicationType } from '../../model/BodaccPublicationType';
 import { BodaccSale } from '../../model/BodaccSale';
 import { BodaccSplit } from '../../model/BodaccSplit';
+import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { ActTypeService } from '../../services/act-type.service';
 import { BodaccFusionComponent } from '../bodacc-fusion/bodacc-fusion.component';
@@ -28,6 +29,7 @@ export class BodaccMainComponent implements OnInit {
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
+  @Input() quotation: IQuotation | undefined;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
   @ViewChild(BodaccSaleComponent) bodaccSaleComponent: BodaccSaleComponent | undefined;
   @ViewChild(BodaccFusionComponent) bodaccFusionComponent: BodaccFusionComponent | undefined;
@@ -36,6 +38,7 @@ export class BodaccMainComponent implements OnInit {
   @ViewChild('tabs', { static: false }) tabs: any;
 
   BODACC_ENTITY_TYPE = BODACC_ENTITY_TYPE;
+  PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
 
   bodaccPublicationTypeMerging: BodaccPublicationType = this.constantService.getBodaccPublicationTypeMerging();
   bodaccPublicationTypeSplit: BodaccPublicationType = this.constantService.getBodaccPublicationTypeSplit();

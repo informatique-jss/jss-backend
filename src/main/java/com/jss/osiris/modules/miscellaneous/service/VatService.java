@@ -13,7 +13,7 @@ public interface VatService {
 
     public Vat getVat(Integer id);
 
-    public Vat getGeographicalApplicableVat(Country country, Department departement, boolean isIndividual)
+    public Vat getGeographicalApplicableVat(Country country, Department departement)
             throws OsirisException, OsirisClientMessageException;
 
     public Vat addOrUpdateVat(Vat vat);

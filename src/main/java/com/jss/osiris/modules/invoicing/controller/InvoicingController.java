@@ -495,6 +495,56 @@ public class InvoicingController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    @PostMapping(inputEntryPoint + "/payment/cash/add/invoice")
+    public ResponseEntity<Boolean> addCashPaymentForInvoice(@RequestBody Payment cashPayment,
+            @RequestParam Integer idInvoice)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        Invoice invoice = invoiceService.getInvoice(idInvoice);
+
+        if (invoice == null)
+            throw new OsirisValidationException("invoice");
+
+        if (cashPayment == null)
+            throw new OsirisValidationException("payment");
+
+        cashPayment.setPaymentType(constantService.getPaymentTypeEspeces());
+        cashPayment.setPaymentWay(constantService.getPaymentWayInbound());
+        validationHelper.validateString(cashPayment.getLabel(), true, 250, "paymentType");
+        validationHelper.validateDateTimeMax(cashPayment.getPaymentDate(), true, LocalDateTime.now(), "paymentType");
+
+        Float remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+        if (remainingToPay == null || remainingToPay < cashPayment.getPaymentAmount())
+            throw new OsirisValidationException("paymentAmount");
+
+        this.paymentService.addCashPaymentForInvoice(cashPayment, invoice);
+
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    @PostMapping(inputEntryPoint + "/payment/cash/add/customer-order")
+    public ResponseEntity<Boolean> addCashPaymentForCustomerOrder(@RequestBody Payment cashPayment,
+            @RequestParam Integer idCustomerOrder)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+
+        if (customerOrder == null)
+            throw new OsirisValidationException("customerOrder");
+
+        if (cashPayment == null)
+            throw new OsirisValidationException("payment");
+
+        cashPayment.setPaymentType(constantService.getPaymentTypeEspeces());
+        cashPayment.setPaymentWay(constantService.getPaymentWayInbound());
+        validationHelper.validateString(cashPayment.getLabel(), true, 250, "paymentLabel");
+        validationHelper.validateDateTimeMax(cashPayment.getPaymentDate(), true, LocalDateTime.now(), "paymentDate");
+
+        this.paymentService.addCashPaymentForCustomerOrder(cashPayment, customerOrder);
+
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
     @PostMapping(inputEntryPoint + "/deposits/associate")
     public ResponseEntity<Boolean> associateDepositsAndInvoiceAndCustomerOrder(
             @RequestBody PaymentAssociate paymentAssociate)

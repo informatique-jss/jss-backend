@@ -140,6 +140,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         + "        end) as debitAmount," + "	 "
                         + "		pa.code as principalAccountingAccountCode,"
                         + "		pa.label as principalAccountingAccountLabel,"
+                        + "		case when pa.code in ('401','411','4091','4191') then '' else accounting.accounting_account_sub_number ||'' end as accountingAccountSubNumber,"
                         + "		sum(case when substring(pa.code,1,1) in ('6','7') and i.due_date>now() and i.due_date<= (now() +INTERVAL '30 day') then i.total_price  end) as echoir30, "
                         + "		sum(case when substring(pa.code,1,1) in ('6','7') and i.due_date>now() and i.due_date<= (now() +INTERVAL '60 day') and i.due_date> (now() +INTERVAL '30 day')  then i.total_price  end) as echoir60, "
                         + "		sum(case when substring(pa.code,1,1) in ('6','7') and  i.due_date>now() and i.due_date> (now() +INTERVAL '60 day')  then i.total_price  end) as echoir90, "
@@ -158,7 +159,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false)  " +
-                        " group by pa.code,pa.label ")
+                        " group by pa.code,pa.label,case when pa.code in ('401','411','4091','4191') then '' else accounting.accounting_account_sub_number ||'' end  ")
         List<AccountingBalance> searchAccountingBalanceGenerale(
                         @Param("accountingClassId") Integer accountingClassId,
                         @Param("accountingAccountId") Integer accountingAccountId,

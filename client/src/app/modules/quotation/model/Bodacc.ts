@@ -1,4 +1,3 @@
-import { IAttachment } from "../../miscellaneous/model/IAttachment";
 import { PaymentType } from "../../miscellaneous/model/PaymentType";
 import { BodaccFusion } from "./BodaccFusion";
 import { BodaccPublicationType } from "./BodaccPublicationType";
@@ -7,7 +6,7 @@ import { BodaccSplit } from "./BodaccSplit";
 import { BodaccStatus } from './BodaccStatus';
 import { TransfertFundsType } from "./TransfertFundsType";
 
-export interface Bodacc extends IAttachment {
+export interface Bodacc {
   id: number;
   bodaccPublicationType: BodaccPublicationType;
   transfertFundsType: TransfertFundsType;

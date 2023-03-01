@@ -5,10 +5,22 @@ export interface OrderingSearchResult {
   customerOrderStatus: string;
   createdDate: Date;
   salesEmployeeId: number;
+  assignedEmployeeId: number;
   customerOrderDescription: string;
   customerOrderId: number;
   responsableId: number;
   tiersId: number;
   confrereId: number;
   affaireLabel: string;
+  totalPrice: number;
+  quotationId: number;
+  affaireSiren: string;
+  affaireAddress: string;
+  announcementNbr: number;
+  formaliteNbr: number;
+  bodaccNbr: number;
+  domiciliationNbr: number;
+  simpleProvisionNbr: number;
 }
+
+

@@ -9,4 +9,6 @@ export interface InvoiceSearch {
   invoiceStatus: InvoiceStatus[];
   showToRecover: boolean;
   customerOrders: ITiers[];
+  invoiceId: number;
+  customerOrderId: number;
 }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -19,13 +19,16 @@ import { InvoiceItem } from 'src/app/modules/quotation/model/InvoiceItem';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
+import { IndexEntityService } from '../../../../routing/search/index.entity.service';
 import { IndexEntity } from '../../../../routing/search/IndexEntity';
 import { BillingItem } from '../../../miscellaneous/model/BillingItem';
+import { CompetentAuthorityService } from '../../../miscellaneous/services/competent.authority.service';
 import { CustomerOrder } from '../../../quotation/model/CustomerOrder';
 import { Debour } from '../../../quotation/model/Debour';
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
 import { ResponsableService } from '../../../tiers/services/responsable.service';
 import { InvoiceService } from '../../services/invoice.service';
+import { DeboursAmountInvoicedDialogComponent } from '../debours-amount-invoiced-dialog/debours-amount-invoiced-dialog.component';
 import { DeboursAmountTaxableDialogComponent } from '../debours-amount-taxable-dialog/debours-amount-taxable-dialog.component';
 
 @Component({
@@ -44,6 +47,8 @@ export class AddInvoiceComponent implements OnInit {
   countryFrance: Country = this.contantService.getCountryFrance();
   billingLableTypeOther = this.contantService.getBillingLabelTypeOther();
 
+  saveObservableSubscription: Subscription = new Subscription;
+
   constructor(private formBuilder: FormBuilder,
     private appService: AppService,
     private invoiceService: InvoiceService,
@@ -54,6 +59,9 @@ export class AddInvoiceComponent implements OnInit {
     private customerOrderService: CustomerOrderService,
     private contantService: ConstantService,
     public deboursAmontTaxableDialog: MatDialog,
+    private competentAuthorityService: CompetentAuthorityService,
+    public deboursAmontInvoicedDialog: MatDialog,
+    private indexEntityService: IndexEntityService,
   ) {
   }
 
@@ -75,15 +83,29 @@ export class AddInvoiceComponent implements OnInit {
   ngOnInit() {
     let idInvoice = this.activatedRoute.snapshot.params.id;
 
-    if (idInvoice != null && idInvoice != "null")
+    let idCustomerOrder = this.activatedRoute.snapshot.params.idCustomerOrder;
+    let idCompetentAuhority = this.activatedRoute.snapshot.params.idCompetentAuhority;
+
+    if (idInvoice != null && idInvoice != "null") {
       this.invoiceService.getInvoiceById(idInvoice).subscribe(response => {
         this.invoice = response;
         this.invoiceItems = this.invoice.invoiceItems;
         this.appService.changeHeaderTitle("Facture n°" + this.invoice.id);
       });
-    else {
+    } else {
       this.addInvoiceItem();
       this.invoice.isInvoiceFromProvider = true;
+      if (idCompetentAuhority)
+        this.competentAuthorityService.getCompetentAuthorityById(idCompetentAuhority).subscribe(competentAuthority => this.invoice.competentAuthority = competentAuthority);
+
+      if (idCustomerOrder) {
+        this.indexEntityService.getCustomerOrdersByKeyword(idCustomerOrder).subscribe(indexEntity => {
+          if (indexEntity) {
+            this.indexedCustomerOrder = indexEntity[0];
+            this.fillCustomerOrder(indexEntity[0]);
+          }
+        });
+      }
     }
     this.invoice.invoiceItems = this.invoiceItems;
     this.appService.changeHeaderTitle("Nouvelle facture");
@@ -110,6 +132,7 @@ export class AddInvoiceComponent implements OnInit {
     this.displayedColumnsDebours.push({ id: "billingType", fieldName: "billingType.label", label: "Débour" } as SortTableColumn);
     this.displayedColumnsDebours.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
     this.displayedColumnsDebours.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumnsDebours.push({ id: "invoicedAmount", fieldName: "invoicedAmount", label: "Montant facuré TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumnsDebours.push({ id: "paymentType", fieldName: "paymentType.label", label: "Type de paiement" } as SortTableColumn);
     this.displayedColumnsDebours.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
     this.displayedColumnsDebours.push({ id: "comments", fieldName: "comments", label: "Commentaires", isShrinkColumn: true } as SortTableColumn);
@@ -119,6 +142,7 @@ export class AddInvoiceComponent implements OnInit {
     this.displayedColumnsSelectedDebours.push({ id: "billingType", fieldName: "billingType.label", label: "Débour" } as SortTableColumn);
     this.displayedColumnsSelectedDebours.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
     this.displayedColumnsSelectedDebours.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumnsSelectedDebours.push({ id: "invoicedAmount", fieldName: "invoicedAmount", label: "Montant facuré TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumnsSelectedDebours.push({ id: "nonTaxableAmount", fieldName: "nonTaxableAmount", label: "Dont montant non taxable", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumnsSelectedDebours.push({ id: "paymentType", fieldName: "paymentType.label", label: "Type de paiement" } as SortTableColumn);
     this.displayedColumnsSelectedDebours.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
@@ -131,6 +155,15 @@ export class AddInvoiceComponent implements OnInit {
         }
       }, display: true,
     } as SortTableAction);
+
+    this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
+      if (response)
+        this.saveInvoice()
+    });
+  }
+
+  ngOnDestroy() {
+    this.saveObservableSubscription.unsubscribe();
   }
 
   getVatPrice(element: any) {
@@ -268,16 +301,39 @@ export class AddInvoiceComponent implements OnInit {
 
   selectDebour(debour: Debour) {
     if (debour.invoiceItem) {
-      this.appService.displaySnackBar("Ce débours a déjà été attaché à la facture n°" + debour.invoiceItem.invoice.id, false, 10);
+      this.appService.displaySnackBar("Ce débours/frais a déjà été attaché à la facture n°" + debour.invoiceItem.invoice.id, false, 10);
       return;
     }
     if (!this.selectedDebours || this.getIndexOfDebours(debour, this.selectedDebours) < 0) {
-      if (debour && debour.billingType.isNonTaxable) {
+      if (debour && !debour.billingType.isFee && debour.billingType.isNonTaxable) {
         if (!this.selectedDebours)
           this.selectedDebours = [];
         debour.nonTaxableAmount = debour.debourAmount;
         this.selectedDebours.push(debour);
         this.refreshTable.next();
+        return;
+      }
+
+      if (debour && debour.billingType.isFee) {
+        if (!this.selectedDebours)
+          this.selectedDebours = [];
+        debour.nonTaxableAmount = 0;
+
+        const dialogRef = this.deboursAmontTaxableDialog.open(DeboursAmountInvoicedDialogComponent, {
+          maxWidth: "300px",
+        });
+
+        dialogRef.componentInstance.invoicedAmount = debour.invoicedAmount;
+
+        dialogRef.afterClosed().subscribe(dialogResult => {
+          if (dialogResult != null && this.debours) {
+            if (!this.selectedDebours)
+              this.selectedDebours = [];
+            debour.invoicedAmount = parseFloat(dialogResult);
+            this.selectedDebours.push(debour);
+            this.refreshTable.next();
+          }
+        });
         return;
       }
 
@@ -297,7 +353,7 @@ export class AddInvoiceComponent implements OnInit {
         }
       });
     } else {
-      this.appService.displaySnackBar("Ce débours a déjà été sélectionné", false, 10);
+      this.appService.displaySnackBar("Ce débours/frais a déjà été sélectionné", false, 10);
     }
   }
 
@@ -357,7 +413,7 @@ export class AddInvoiceComponent implements OnInit {
         invoiceItem.vat = billingItem.billingType.vat;
         return;
       }
-    if (billingItem.billingType && billingItem.billingType.isDebour)
+    if (billingItem.billingType && (billingItem.billingType.isDebour || billingItem.billingType.isFee))
       if (billingItem.billingType.isNonTaxable)
         invoiceItem.vat = this.contantService.getVatZero();
       else

@@ -262,6 +262,14 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.billingTypeChronopostFees;
   }
 
+  getBillingTypeConfrereFees() {
+    return this.constant.billingTypeConfrereFees;
+  }
+
+  getBillingTypeShippingCosts() {
+    return this.constant.billingTypeShippingCosts;
+  }
+
   getBillingTypeApplicationFees() {
     return this.constant.billingTypeApplicationFees;
   }
@@ -276,6 +284,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getBillingTypeBilan() {
     return this.constant.billingTypeBilan;
+  }
+
+  getBillingTypeInfogreffeDebour() {
+    return this.constant.billingTypeInfogreffeDebour;
   }
 
   getBillingTypeDocumentScanning() {
@@ -442,6 +454,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getTransfertFundsTypeBail() {
     return this.constant.transfertFundsTypeBail;
+  }
+
+  getCompetentAuthorityInfogreffe() {
+    return this.constant.competentAuthorityInfogreffe;
   }
 
   getCompetentAuthorityTypeRcs() {

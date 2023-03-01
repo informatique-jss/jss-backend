@@ -100,6 +100,8 @@ public class CustomerMail {
 
     private Boolean sendToMe;
 
+    private Boolean copyToMe;
+
     @Column(columnDefinition = "TEXT")
     private String customerMailCustomMessage;
 
@@ -462,6 +464,14 @@ public class CustomerMail {
 
     public void setCustomerMailCustomMessage(String customerMailCustomMessage) {
         this.customerMailCustomMessage = customerMailCustomMessage;
+    }
+
+    public Boolean getCopyToMe() {
+        return copyToMe;
+    }
+
+    public void setCopyToMe(Boolean copyToMe) {
+        this.copyToMe = copyToMe;
     }
 
 }

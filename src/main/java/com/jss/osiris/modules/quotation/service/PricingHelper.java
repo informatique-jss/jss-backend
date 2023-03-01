@@ -152,20 +152,6 @@ public class PricingHelper {
                         * characterPriceService.getCharacterNumber(provision);
                 invoiceItem.setPreTaxPrice(Math.round(price * 100f) / 100f);
 
-                // If it's an announcement published by a Confrere, apply additionnal fees and
-                // JSS markup
-                if (isNotJssConfrere(provision)) {
-                    Float additionnalFees = 0f;
-                    Confrere confrere = provision.getAnnouncement().getConfrere();
-                    if (confrere.getAdministrativeFees() != null)
-                        additionnalFees += confrere.getAdministrativeFees();
-
-                    invoiceItem.setPreTaxPrice(
-                            invoiceItem.getPreTaxPrice()
-                                    * (1 + (confrere.getReinvoicing() != null ? confrere.getReinvoicing() : 0f) / 100)
-                                    + additionnalFees);
-                }
-
                 // Add notice type indication for announcements
                 String noticeFamiliyType = (provision.getAnnouncement() != null
                         && provision.getAnnouncement().getNoticeTypeFamily() != null)
@@ -197,29 +183,61 @@ public class PricingHelper {
                 .equals(constantService.getBillingTypePublicationPaper().getId())) {
             Integer nbr = getPublicationPaperNbr(provision);
             if (nbr > 0) {
+                Confrere confrere = provision.getAnnouncement().getConfrere();
                 invoiceItem.setLabel(invoiceItem.getLabel() + " (quantité : " + nbr + ")");
 
-                Confrere confrere = provision.getAnnouncement().getConfrere();
-                if (isNotJssConfrere(provision) && confrere.getPaperPrice() != null) {
-                    invoiceItem
-                            .setPreTaxPrice(
-                                    Math.round((confrere.getPaperPrice() * nbr
-                                            + (confrere.getShippingCosts() != null ? confrere.getShippingCosts() : 0f))
-                                            * 100f)
-                                            / 100f);
-                } else
-                    invoiceItem.setPreTaxPrice(
-                            Math.round(billingItem.getPreTaxPrice() * nbr * 100f) / 100f);
+                invoiceItem.setPreTaxPrice(
+                        Math.round((confrere.getPaperPrice() != null ? confrere.getPaperPrice() : 0f) * nbr * 100f)
+                                / 100f);
             }
-        } else if (billingItem.getBillingType().getIsDebour()
+        } else if (billingItem.getBillingType().getId()
+                .equals(constantService.getBillingTypeConfrereFees().getId())) {
+            // If it's an announcement published by a Confrere, apply additionnal fees and
+            // JSS markup
+
+            // Check if we have a character based price announcement
+            boolean hasPriceBasedProvisionType = false;
+            for (BillingType otherBillingType : provision.getProvisionType().getBillingTypes())
+                if (otherBillingType.getIsPriceBasedOnCharacterNumber())
+                    hasPriceBasedProvisionType = true;
+
+            if (isNotJssConfrere(provision) && hasPriceBasedProvisionType) {
+                CharacterPrice characterPrice = characterPriceService.getCharacterPrice(provision);
+                Float price = 0f;
+                if (characterPrice != null) {
+                    price = characterPrice.getPrice()
+                            * characterPriceService.getCharacterNumber(provision);
+                }
+
+                Float additionnalFees = 0f;
+                Confrere confrere = provision.getAnnouncement().getConfrere();
+                if (confrere.getAdministrativeFees() != null)
+                    additionnalFees += confrere.getAdministrativeFees();
+
+                invoiceItem.setPreTaxPrice(
+                        (price != null ? price : 0f)
+                                * ((confrere.getReinvoicing() != null ? confrere.getReinvoicing() : 0f) / 100)
+                                + additionnalFees);
+            }
+        } else if (billingItem.getBillingType().getId()
+                .equals(constantService.getBillingTypeShippingCosts().getId())) {
+            Integer nbr = getPublicationPaperNbr(provision);
+            Confrere confrere = provision.getAnnouncement().getConfrere();
+            if (nbr > 0)
+                invoiceItem.setPreTaxPrice(Math
+                        .round(((confrere.getShippingCosts() != null ? confrere.getShippingCosts() : 0f)) * 100f)
+                        / 100f);
+        } else if ((billingItem.getBillingType().getIsDebour() || billingItem.getBillingType().getIsFee())
                 && provision.getDebours() != null && provision.getDebours().size() > 0) {
             // Compute debour prices
             Float total = 0f;
             for (Debour debour : provision.getDebours()) {
+                Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
+                        : debour.getDebourAmount();
                 if (debour.getBillingType().getIsNonTaxable())
-                    total += debour.getDebourAmount();
+                    total += debourAmount;
                 else
-                    total += debour.getDebourAmount() / ((100 + constantService.getVatDeductible().getRate()) / 100f);
+                    total += debourAmount / ((100 + constantService.getVatDeductible().getRate()) / 100f);
             }
             invoiceItem.setPreTaxPrice(Math.round(total * 100f) / 100f);
         } else {
@@ -304,7 +322,8 @@ public class PricingHelper {
                                     || invoiceItem.getPreTaxPrice() == null
                                     || invoiceItem.getPreTaxPrice() <= 0
                                     || invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()
-                                    || billingItem.getBillingType().getIsDebour()
+                                    || (billingItem.getBillingType().getIsDebour()
+                                            || billingItem.getBillingType().getIsFee())
                                             && provision.getDebours() != null && provision.getDebours().size() > 0)
                                 setInvoiceItemPreTaxPriceAndLabel(invoiceItem, billingItem, provision);
                             computeInvoiceItemsVatAndDiscount(invoiceItem, quotation, provision);
@@ -450,6 +469,12 @@ public class PricingHelper {
         if (billingType.getId().equals(constantService.getBillingTypePublicationPaper().getId())
                 && provision.getIsPublicationPaper() != null && provision.getIsPublicationPaper())
             return true;
+        if (billingType.getId().equals(constantService.getBillingTypeConfrereFees().getId())
+                && isNotJssConfrere(provision))
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeShippingCosts().getId())
+                && getPublicationPaperNbr(provision) > 0)
+            return true;
 
         return false;
     }
@@ -489,10 +514,16 @@ public class PricingHelper {
 
         // If document not found or document indicate to use it, take customer order as
         // default
-        if (invoiceItem.getBillingItem() != null && invoiceItem.getBillingItem().getBillingType() != null
+
+        // No VAT abroad (France and Monaco)
+        if (!customerOrder.getCountry().getId().equals(constantService.getCountryFrance().getId())
+                && !customerOrder.getCountry().getId().equals(constantService.getCountryMonaco().getId())) {
+            vat = null;
+        } else if (invoiceItem.getBillingItem() != null && invoiceItem.getBillingItem().getBillingType() != null
                 && invoiceItem.getBillingItem().getBillingType().getIsOverrideVat()) {
             vat = invoiceItem.getBillingItem().getBillingType().getVat();
-        } else if (invoiceItem.getBillingItem().getBillingType().getIsDebour()) {
+        } else if (invoiceItem.getBillingItem().getBillingType().getIsDebour()
+                || invoiceItem.getBillingItem().getBillingType().getIsFee()) {
             vat = constantService.getVatDeductible();
         } else {
             if (billingDocument == null || billingDocument.getBillingLabelType() == null
@@ -500,13 +531,11 @@ public class PricingHelper {
                             .equals(constantService.getBillingLabelTypeCustomer().getId())) {
                 City city = cityService.getCity(customerOrder.getCity().getId());
                 vat = vatService.getGeographicalApplicableVat(customerOrder.getCountry(),
-                        city.getDepartment(),
-                        customerOrder.getIsIndividual());
+                        city.getDepartment());
             } else if (billingDocument.getBillingLabelType().getId()
                     .equals(constantService.getBillingLabelTypeCodeAffaire().getId())) {
                 Affaire affaire = invoiceItem.getProvision().getAssoAffaireOrder().getAffaire();
-                vat = vatService.getGeographicalApplicableVat(affaire.getCountry(), affaire.getCity().getDepartment(),
-                        affaire.getIsIndividual());
+                vat = vatService.getGeographicalApplicableVat(affaire.getCountry(), affaire.getCity().getDepartment());
             } else {
                 if (billingDocument.getBillingLabelCity() == null)
                     throw new OsirisClientMessageException(
@@ -515,20 +544,23 @@ public class PricingHelper {
                     throw new OsirisClientMessageException(
                             "Pays non trouvé dans l'adresse indiquée dans la configuration de facturation de la commande");
                 vat = vatService.getGeographicalApplicableVat(billingDocument.getBillingLabelCountry(),
-                        billingDocument.getBillingLabelCity().getDepartment(),
-                        billingDocument.getBillingLabelIsIndividual());
+                        billingDocument.getBillingLabelCity().getDepartment());
             }
         }
 
         if (vat != null && (invoiceItem.getIsGifted() == null || !invoiceItem.getIsGifted())) {
             Float vatPrice = 0f;
             if (provision.getDebours() != null && provision.getDebours().size() > 0
-                    && invoiceItem.getBillingItem().getBillingType().getIsDebour()) {
+                    && (invoiceItem.getBillingItem().getBillingType().getIsDebour()
+                            || invoiceItem.getBillingItem().getBillingType().getIsFee())) {
                 vatPrice = 0f;
                 for (Debour debour : provision.getDebours())
-                    if (!debour.getBillingType().getIsNonTaxable())
-                        vatPrice += (constantService.getVatDeductible().getRate() / 100f) * debour.getDebourAmount()
+                    if (!debour.getBillingType().getIsNonTaxable()) {
+                        Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
+                                : debour.getDebourAmount();
+                        vatPrice += (constantService.getVatDeductible().getRate() / 100f) * debourAmount
                                 / ((100 + constantService.getVatDeductible().getRate()) / 100f);
+                    }
             } else {
                 vatPrice = vat.getRate() / 100
                         * ((invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0)

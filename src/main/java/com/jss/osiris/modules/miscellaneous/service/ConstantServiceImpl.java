@@ -27,6 +27,7 @@ import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.miscellaneous.model.Constant;
 import com.jss.osiris.modules.miscellaneous.model.Country;
@@ -395,6 +396,16 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public BillingType getBillingTypeConfrereFees() throws OsirisException {
+        return getConstants().getBillingTypeConfrereFees();
+    }
+
+    @Override
+    public BillingType getBillingTypeShippingCosts() throws OsirisException {
+        return getConstants().getBillingTypeShippingCosts();
+    }
+
+    @Override
     public BillingType getBillingTypeApplicationFees() throws OsirisException {
         return getConstants().getBillingTypeApplicationFees();
     }
@@ -412,6 +423,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public BillingType getBillingTypeBilan() throws OsirisException {
         return getConstants().getBillingTypeBilan();
+    }
+
+    @Override
+    public BillingType getBillingTypeInfogreffeDebour() throws OsirisException {
+        return getConstants().getBillingTypeInfogreffeDebour();
     }
 
     @Override
@@ -622,6 +638,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public TransfertFundsType getTransfertFundsTypeBail() throws OsirisException {
         return getConstants().getTransfertFundsTypeBail();
+    }
+
+    @Override
+    public CompetentAuthority getCompetentAuthorityInfogreffe() throws OsirisException {
+        return getConstants().getCompetentAuthorityInfogreffe();
     }
 
     @Override

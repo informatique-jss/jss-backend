@@ -1,24 +1,59 @@
-<h3 *ngIf="customerOrder.deposits && customerOrder.deposits.length>0">Acomptes associés :</h3>
-<table class="total-table mat-table full-width">
-  <tr class="mat-row" *ngFor="let deposit of customerOrder.deposits">
-    <td class="mat-cell">
-      Acompte n°{{deposit.id}}
-    </td>
-    <td class="td-price mat-cell">
-      {{deposit.depositAmount|number}} €
-    </td>
-  </tr>
-</table>
-<div *ngIf="customerOrder.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_BILLED">
-  <div class="advise" *ngIf="advisedPayment && advisedPayment.length>0">
-    <h3>Paiements conseillés par Osiris :</h3>
-    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="advisedPayment"
-      tableName="Paiements conseillés">
-    </sort-table>
-  </div>
-  <div class=" advise">
-    <h3>Autres paiements :</h3>
-    <payment-list [overrideIconAction]="'merge_type'" [overrideTooltipAction]="'Associer le paiement'"
-      (actionBypass)="openAssociationDialog($event)"></payment-list>
+<div class="mat-elevation-z2 form-div">
+  <h3 *ngIf="customerOrder.deposits && customerOrder.deposits.length>0">Acomptes associés :</h3>
+  <table class="total-table mat-table full-width">
+    <tr class="mat-row" *ngFor="let deposit of customerOrder.deposits">
+      <td class="mat-cell">
+        Acompte n°{{deposit.id}}
+      </td>
+      <td class="td-price mat-cell">
+        {{deposit.depositAmount|number}} €
+      </td>
+    </tr>
+  </table>
+  <div *ngIf="customerOrder.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_BILLED">
+    <div class="advise" *ngIf="advisedPayment && advisedPayment.length>0">
+      <h3>Paiements conseillés par Osiris :</h3>
+      <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="advisedPayment"
+        tableName="Paiements conseillés">
+      </sort-table>
+    </div>
+    <div class=" advise">
+      <h3>Autres paiements :</h3>
+      <payment-list [overrideIconAction]="'merge_type'" [overrideTooltipAction]="'Associer le paiement'"
+        (actionBypass)="openAssociationDialog($event)"></payment-list>
+    </div>
+    <div class=" advise" *ngIf="displayAddCashPayment">
+      <h3>Déclarer un paiement en espèces</h3>
+      <div>
+        <form [formGroup]="customerOrderPaymentForm">
+          <div class="full-width">
+            <table>
+              <tr>
+                <td>
+                  <generic-input [(model)]="newPayment.paymentAmount" label="Montant" [form]="customerOrderPaymentForm"
+                    propertyName="paymentAmount" [isMandatory]="true" [isDisabled]="false"
+                    type="number"></generic-input>
+                </td>
+                <td>
+                  <generic-datetime-picker [(model)]="newPayment.paymentDate" label="Date de paiement"
+                    [form]="customerOrderPaymentForm" propertyName="paymentDate" [isMandatory]="true"
+                    [isDisabled]="false"></generic-datetime-picker>
+                </td>
+                <td>
+                  <generic-input [(model)]="newPayment.label" label="Libellé du paiement"
+                    [form]="customerOrderPaymentForm" propertyName="label" [isMandatory]="true" [isDisabled]="false"
+                    [maxLength]="250"></generic-input>
+                </td>
+                <td class="button-td">
+                  <button (click)="addCashPayment()" mat-mini-fab color="warn" class="mini-fab-add add-button">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>

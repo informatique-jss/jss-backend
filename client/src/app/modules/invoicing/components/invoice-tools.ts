@@ -19,10 +19,14 @@ export function getColumnLink(column: SortTableColumn, element: any) {
     if (element.tiersId)
       return ['/tiers', element.tiersId];
   }
-  if (element && column.id == "customerOrderId" && element.customerOrder) {
+  if (element && column.id == "tiers") {
+    if (element.tiersId)
+      return ['/tiers', element.tiersId];
+  }
+  if (element && column.id == "customerOrderId" && element.customerOrderId) {
     if (element.isQuotation)
-      return ['/quotation/', element.customerOrder.id];
-    return ['/order/', element.customerOrder.id];
+      return ['/quotation/', element.customerOrderId];
+    return ['/order/', element.customerOrderId];
   }
   if (element.customerOrder && element.customerOrder.tiers)
     return ['/tiers', element.customerOrder.tiers.id];
