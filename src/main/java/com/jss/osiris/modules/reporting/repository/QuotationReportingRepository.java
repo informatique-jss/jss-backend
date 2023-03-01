@@ -34,6 +34,8 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " e2.firstname || ' ' || e2.lastname as salesEmployeeLabel, " +
                         " max((substring(invoice_item.label,'(\\d+)(?=\\s*caract)'))) as characterNumber, " +
                         " sum(coalesce(invoice_item.pre_tax_price,0)) as preTaxPrice, " +
+                        " sum(coalesce(case when billing_type.is_fee=false and billing_type.is_debour = false then invoice_item.pre_tax_price end,0)) as preTaxPriceWithoutDebour, "
+                        +
                         " sum(coalesce(invoice_item.pre_tax_price,0)+coalesce(invoice_item.vat_price,0)-coalesce(invoice_item.discount_amount,0)) as taxedPrice "
                         +
                         " from asso_affaire_order asso " +
@@ -51,6 +53,8 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " left join provision_family_type provision_ft on provision_ft.id = provision.id_provision_family_type "
                         +
                         " left join invoice_item on invoice_item.id_provision = provision.id " +
+                        " left join billing_item on billing_item.id = invoice_item.id_billing_item " +
+                        " left join billing_type on billing_item.id_billing_type = billing_type.id " +
                         " left join announcement a on a.id = provision.id_announcement  " +
                         " left join announcement_status ast on ast.id = a.id_announcement_status " +
                         " left join simple_provision sp on sp.id = provision.id_simple_provision " +

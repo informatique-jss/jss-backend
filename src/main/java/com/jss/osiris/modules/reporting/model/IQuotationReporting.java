@@ -19,6 +19,8 @@ public interface IQuotationReporting {
 
     public Float getPreTaxPrice();
 
+    public Float getPreTaxPriceWithoutDebour();
+
     public Float getTaxedPrice();
 
     public String getProvisionStatus();

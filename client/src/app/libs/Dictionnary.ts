@@ -6,6 +6,7 @@ export const Dictionnary = {
   "customerOrderId": "N° de la commande",
   "customerOrderLabel": "Donneur d'ordre",
   "preTaxPrice": "Prix HT",
+  "preTaxPriceWithoutDebour": "Prix HT (hors débours)",
   "provisionFamilyTypeLabel": "Famille de prestations",
   "provisionId": "N° prestation",
   "provisionTypeLabel": "Prestation",

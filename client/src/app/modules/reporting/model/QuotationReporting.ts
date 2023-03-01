@@ -8,6 +8,7 @@ export interface QuotationReporting {
   customerOrderLabel: string;
   tiersLabel: string;
   preTaxPrice: number;
+  preTaxPriceWithoutDebour: number;
   taxedPrice: number;
   provisionStatus: string;
   provisionAssignedToLabel: string;
