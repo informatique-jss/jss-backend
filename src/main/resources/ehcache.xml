@@ -550,4 +550,8 @@
         <key-type>java.lang.Integer</key-type>
         <value-type>com.jss.osiris.modules.reporting.model.UserReporting</value-type>
     </cache>
+    <cache alias="quotationReportingList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
 </config>
