@@ -21,7 +21,6 @@ export class OrderSimilaritiesDialogComponent implements OnInit {
   affaire: Affaire | undefined;
   customerOrderStatusList: CustomerOrderStatus[] = [] as Array<CustomerOrderStatus>;
   orderingSearch: OrderingSearch | undefined;
-  loaded: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<AddAffaireDialogComponent>,

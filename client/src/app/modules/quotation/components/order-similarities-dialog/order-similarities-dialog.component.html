@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Commandes similaires</h1>
 <div mat-dialog-content>
   <p>Des commandes similaires (même affaire, même donneur d'ordre) en cours ont été détectées :</p>
-  <table *ngIf="loaded && orderingSearch" class="margin-bottom ">
+  <table *ngIf="orderingSearch" class="margin-bottom ">
     <tr>
       <td>
         <ordering-list class="" [orderingSearch]="orderingSearch" [isForDashboard]="true"></ordering-list>
