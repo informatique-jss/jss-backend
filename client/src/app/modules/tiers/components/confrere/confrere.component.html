@@ -196,7 +196,7 @@
                       <chips-special-offers [(model)]="selectedConfrere.specialOffers" [form]="entityForm2"
                         propertyName="specialOffers" [isDisabled]="!editMode"></chips-special-offers>
                     </td>
-                    <td>
+                    <td *ngIf="selectedConfrere.journalType && selectedConfrere.journalType.id == journalTypePaper.id">
                       <generic-input [(model)]="selectedConfrere.shippingCosts" label="Frais de port (€)"
                         [form]="entityForm2" propertyName="shippingCosts" [isMandatory]="false" [isDisabled]="!editMode"
                         type="number">
@@ -215,7 +215,8 @@
                     </td>
                   </tr>
                 </table>
-                <table class="full-width">
+                <table class="full-width"
+                  *ngIf="selectedConfrere.journalType && selectedConfrere.journalType.id == journalTypePaper.id">
                   <tr>
                     <td>
                       <generic-input [(model)]="selectedConfrere.numberOfPrint" label="Tirage" [form]="entityForm2"

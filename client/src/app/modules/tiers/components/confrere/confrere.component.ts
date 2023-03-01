@@ -50,6 +50,8 @@ export class ConfrereComponent implements OnInit {
 
   saveObservableSubscription: Subscription = new Subscription;
 
+  journalTypePaper = this.constantService.getJournalTypePaper();
+
   ngOnInit(): void {
     this.appService.changeHeaderTitle("Confrères");
     let idConfrere = this.activatedRoute.snapshot.params.id;
