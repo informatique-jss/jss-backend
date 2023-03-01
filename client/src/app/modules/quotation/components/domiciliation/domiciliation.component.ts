@@ -10,6 +10,7 @@ import { DOMICILIATION_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routin
 import { BuildingDomiciliation } from '../../model/BuildingDomiciliation';
 import { Domiciliation } from '../../model/Domiciliation';
 import { DomiciliationContractType } from '../../model/DomiciliationContractType';
+import { IQuotation } from '../../model/IQuotation';
 import { MailRedirectionType } from '../../model/MailRedirectionType';
 import { Provision } from '../../model/Provision';
 import { Siren } from '../../model/Siren';
@@ -31,6 +32,7 @@ export class DomiciliationComponent implements OnInit {
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
   @Input() editMode: boolean = false;
+  @Input() quotation: IQuotation | undefined;
 
   @ViewChild('tabs', { static: false }) tabs: any;
 

@@ -818,6 +818,12 @@ public class MiscellaneousController {
                 HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/competent-authority")
+    public ResponseEntity<CompetentAuthority> getCompetentAuthority(@RequestParam Integer id) {
+        return new ResponseEntity<CompetentAuthority>(competentAuthorityService.getCompetentAuthority(id),
+                HttpStatus.OK);
+    }
+
     @PostMapping(inputEntryPoint + "/competent-authority")
     public ResponseEntity<CompetentAuthority> addOrUpdateCompetentAuthority(
             @RequestBody CompetentAuthority competentAuthorities) throws OsirisValidationException, OsirisException {

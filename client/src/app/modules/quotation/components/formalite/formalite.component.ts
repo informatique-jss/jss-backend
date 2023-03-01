@@ -5,6 +5,7 @@ import { ConstantService } from '../../../miscellaneous/services/constant.servic
 import { Content } from '../../model/guichet-unique/Content';
 import { Formalite } from '../../model/guichet-unique/Formalite';
 import { NatureCreation } from '../../model/guichet-unique/NatureCreation';
+import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { ContentComponent } from '../guichet-unique/content/content.component';
 import { NatureCreationComponent } from '../guichet-unique/nature-creation/nature-creation.component';
@@ -21,6 +22,7 @@ export class FormaliteComponent implements OnInit {
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
+  @Input() quotation: IQuotation | undefined;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
   @ViewChild(ContentComponent) contentComponent: ContentComponent | undefined;
   @ViewChild(NatureCreationComponent) natureCreationComponent: NatureCreationComponent | undefined;

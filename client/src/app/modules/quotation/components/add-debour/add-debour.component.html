@@ -59,7 +59,9 @@
   <div *ngIf="provision.debours && provision.debours.length>0" class="margin-top">
     <p>Total par authorité compétente</p>
     <ul *ngFor="let competentAuthority of getCompetentAuthorities()">
-      <li>{{competentAuthority.label}} : {{getTotalForCompetentAuthority(competentAuthority)}} €</li>
+      <li>{{competentAuthority.label}} : {{getTotalForCompetentAuthority(competentAuthority)}} € <span class="pointer"
+          *ngIf="canAddNewInvoice()" (click)="createInvoice($event, competentAuthority)"
+          (auxclick)="createInvoice($event, competentAuthority)">(créer une facture libre)</span></li>
     </ul>
   </div>
   <div class="row-field-container" *ngIf="editMode">

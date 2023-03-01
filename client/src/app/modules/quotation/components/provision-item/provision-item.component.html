@@ -22,23 +22,27 @@
   </tr>
 </table>
 <domiciliation [domiciliation]="provision.domiciliation" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
-  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [(provision)]="provision" (provisionChange)="noticeChange()"
+  [quotation]="quotation" [instanceOfCustomerOrder]="instanceOfCustomerOrder" [(provision)]="provision"
+  (provisionChange)="noticeChange()"
   *ngIf="provision && provision.domiciliation && provision.provisionType &&  provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_DOMICILIATION">
 </domiciliation>
 <announcement [announcement]="provision.announcement" [editMode]="editMode" [(provision)]="provision"
-  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen" (provisionChange)="noticeChange()"
+  [quotation]="quotation" [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen"
+  (provisionChange)="noticeChange()"
   *ngIf="provision && provision.announcement && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_ANNOUNCEMENT">
   [affaire]="affaire">
 </announcement>
 <bodacc-main [bodacc]="provision.bodacc" [affaire]="affaire" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
-  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [(provision)]="provision" (provisionChange)="noticeChange()"
+  [quotation]="quotation" [instanceOfCustomerOrder]="instanceOfCustomerOrder" [(provision)]="provision"
+  (provisionChange)="noticeChange()"
   *ngIf="provision && provision.bodacc && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_BODACC">
 </bodacc-main>
-<formalite [formalite]="provision.formalite" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
+<formalite [formalite]="provision.formalite" [editMode]="editMode" [isStatusOpen]="isStatusOpen" [quotation]="quotation"
   [instanceOfCustomerOrder]="instanceOfCustomerOrder" [(provision)]="provision" (provisionChange)="noticeChange()"
   *ngIf="provision && provision.formalite && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE && false">
 </formalite>
 <simple-provision [simpleProvision]="provision.simpleProvision" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
-  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [(provision)]="provision" (provisionChange)="noticeChange()"
+  [quotation]="quotation" [instanceOfCustomerOrder]="instanceOfCustomerOrder" [(provision)]="provision"
+  (provisionChange)="noticeChange()"
   *ngIf="provision && provision.simpleProvision && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_STANDARD">
 </simple-provision>

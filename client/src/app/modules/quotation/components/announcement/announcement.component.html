@@ -220,7 +220,7 @@
       </provision-options>
     </mat-tab>
     <mat-tab label="Débours/frais" *ngIf="instanceOfCustomerOrder && !isStatusOpen">
-      <add-debour [editMode]="editMode" [(provision)]="provision">
+      <add-debour [editMode]="editMode" [(provision)]="provision" [customerOrder]="quotation">
       </add-debour>
     </mat-tab>
     <mat-tab label="Documents" *ngIf="announcement.id!=null && announcement.id!=undefined && provision">

@@ -19,6 +19,10 @@ export class CompetentAuthorityService extends AppRestService<CompetentAuthority
     return this.getListCached(new HttpParams(), "competent-authorities");
   }
 
+  getCompetentAuthorityById(id: number) {
+    return this.getById("competent-authority", id);
+  }
+
   addOrUpdateCompetentAuthority(competentAuthority: CompetentAuthority) {
     this.clearListCache(new HttpParams(), "competent-authorities");
     return this.addOrUpdate(new HttpParams(), "competent-authority", competentAuthority, "Enregistré", "Erreur lors de l'enregistrement");

@@ -20,6 +20,7 @@ import { Announcement } from '../../model/Announcement';
 import { AnnouncementNoticeTemplate } from '../../model/AnnouncementNoticeTemplate';
 import { CharacterPrice } from '../../model/CharacterPrice';
 import { Confrere } from '../../model/Confrere';
+import { IQuotation } from '../../model/IQuotation';
 import { JournalType } from '../../model/JournalType';
 import { NoticeType } from '../../model/NoticeType';
 import { Provision } from '../../model/Provision';
@@ -42,6 +43,7 @@ export class AnnouncementComponent implements OnInit {
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
+  @Input() quotation: IQuotation | undefined;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
 
   @ViewChild('tabs', { static: false }) tabs: any;

@@ -19,8 +19,10 @@ import { InvoiceItem } from 'src/app/modules/quotation/model/InvoiceItem';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
+import { IndexEntityService } from '../../../../routing/search/index.entity.service';
 import { IndexEntity } from '../../../../routing/search/IndexEntity';
 import { BillingItem } from '../../../miscellaneous/model/BillingItem';
+import { CompetentAuthorityService } from '../../../miscellaneous/services/competent.authority.service';
 import { CustomerOrder } from '../../../quotation/model/CustomerOrder';
 import { Debour } from '../../../quotation/model/Debour';
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
@@ -57,7 +59,9 @@ export class AddInvoiceComponent implements OnInit {
     private customerOrderService: CustomerOrderService,
     private contantService: ConstantService,
     public deboursAmontTaxableDialog: MatDialog,
+    private competentAuthorityService: CompetentAuthorityService,
     public deboursAmontInvoicedDialog: MatDialog,
+    private indexEntityService: IndexEntityService,
   ) {
   }
 
@@ -79,15 +83,29 @@ export class AddInvoiceComponent implements OnInit {
   ngOnInit() {
     let idInvoice = this.activatedRoute.snapshot.params.id;
 
-    if (idInvoice != null && idInvoice != "null")
+    let idCustomerOrder = this.activatedRoute.snapshot.params.idCustomerOrder;
+    let idCompetentAuhority = this.activatedRoute.snapshot.params.idCompetentAuhority;
+
+    if (idInvoice != null && idInvoice != "null") {
       this.invoiceService.getInvoiceById(idInvoice).subscribe(response => {
         this.invoice = response;
         this.invoiceItems = this.invoice.invoiceItems;
         this.appService.changeHeaderTitle("Facture n°" + this.invoice.id);
       });
-    else {
+    } else {
       this.addInvoiceItem();
       this.invoice.isInvoiceFromProvider = true;
+      if (idCompetentAuhority)
+        this.competentAuthorityService.getCompetentAuthorityById(idCompetentAuhority).subscribe(competentAuthority => this.invoice.competentAuthority = competentAuthority);
+
+      if (idCustomerOrder) {
+        this.indexEntityService.getCustomerOrdersByKeyword(idCustomerOrder).subscribe(indexEntity => {
+          if (indexEntity) {
+            this.indexedCustomerOrder = indexEntity[0];
+            this.fillCustomerOrder(indexEntity[0]);
+          }
+        });
+      }
     }
     this.invoice.invoiceItems = this.invoiceItems;
     this.appService.changeHeaderTitle("Nouvelle facture");

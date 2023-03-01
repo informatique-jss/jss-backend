@@ -7,8 +7,11 @@ import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { formatDateForSortTable, formatEurosForSortTable } from '../../../../libs/FormatHelper';
+import { AppService } from '../../../../services/app.service';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { CompetentAuthority } from '../../../miscellaneous/model/CompetentAuthority';
 import { Debour } from '../../model/Debour';
+import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 
 
@@ -22,6 +25,7 @@ export class AddDebourComponent implements OnInit {
   @Input() provision: Provision | undefined;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
   @Input() editMode: boolean = false;
+  @Input() customerOrder: IQuotation | undefined;
   newDebour: Debour | undefined;
   displayedColumns: SortTableColumn[] = [];
   paymentTypeVirement: PaymentType = this.constantService.getPaymentTypeVirement();
@@ -34,7 +38,10 @@ export class AddDebourComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
     public confirmationDialog: MatDialog,
     public selectDeboursDialog: MatDialog,
-    private constantService: ConstantService,) { }
+    private constantService: ConstantService,
+    private habilitationService: HabilitationsService,
+    private appService: AppService,
+  ) { }
 
   ngOnInit() {
     this.displayedColumns = [];
@@ -68,6 +75,15 @@ export class AddDebourComponent implements OnInit {
   fillInvoicedAmount() {
     if (this.newDebour && this.newDebour.billingType && this.newDebour.billingType.isFee && this.newDebour.debourAmount)
       this.newDebour.invoicedAmount = this.newDebour.debourAmount;
+  }
+
+  canAddNewInvoice() {
+    return this.habilitationService.canAddNewInvoice();
+  }
+
+  createInvoice(event: any, competentAuthority: CompetentAuthority) {
+    if (this.customerOrder)
+      this.appService.openRoute(event, "/invoicing/add/debour/" + competentAuthority.id + "/" + this.customerOrder.id, undefined);
   }
 
   addDebour() {

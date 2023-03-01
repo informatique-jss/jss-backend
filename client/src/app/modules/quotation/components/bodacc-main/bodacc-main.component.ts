@@ -9,6 +9,7 @@ import { BodaccFusion } from '../../model/BodaccFusion';
 import { BodaccPublicationType } from '../../model/BodaccPublicationType';
 import { BodaccSale } from '../../model/BodaccSale';
 import { BodaccSplit } from '../../model/BodaccSplit';
+import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { ActTypeService } from '../../services/act-type.service';
 import { BodaccFusionComponent } from '../bodacc-fusion/bodacc-fusion.component';
@@ -28,6 +29,7 @@ export class BodaccMainComponent implements OnInit {
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
+  @Input() quotation: IQuotation | undefined;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
   @ViewChild(BodaccSaleComponent) bodaccSaleComponent: BodaccSaleComponent | undefined;
   @ViewChild(BodaccFusionComponent) bodaccFusionComponent: BodaccFusionComponent | undefined;
