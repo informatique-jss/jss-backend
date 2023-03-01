@@ -497,6 +497,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeInfogreffeDebour"
+                label="Type de poste de facturation - Débours Infogreffe" [form]="constantForm"
+                propertyName="billingTypeInfogreffeDebour" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeDocumentScanning"
                 label="Type de poste de facturation - Numérisation de document" [form]="constantForm"
                 propertyName="billingTypeDocumentScanning" [isMandatory]="true" [isDisabled]="!editMode">
@@ -816,6 +824,13 @@
                 [isDisabled]="!editMode" propertyName="transfertFundsTypePhysique"
                 label="Type de transfert de fonds - personne physique">
               </radio-group-transfert-funds>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-competent-authority [(model)]="constant.competentAuthorityInfogreffe" [form]="constantForm"
+                propertyName="competentAuthorityInfogreffe" [isMandatory]="true"
+                label="Autorité compétante - Infogreffe"></autocomplete-competent-authority>
             </td>
           </tr>
           <tr>

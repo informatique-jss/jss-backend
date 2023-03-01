@@ -133,4 +133,15 @@ export class AddDebourComponent implements OnInit {
 
     return Math.round(total * 100) / 100;
   }
+
+  filledForInfogreffeKbis() {
+    if (this.newDebour) {
+      this.newDebour.billingType = this.constantService.getBillingTypeInfogreffeDebour();
+      this.newDebour.competentAuthority = this.constantService.getCompetentAuthorityInfogreffe();
+      this.newDebour.debourAmount = 3.37;
+      this.newDebour.invoicedAmount = 3.37;
+      this.newDebour.comments = 'Kbis';
+      this.newDebour.paymentType = this.constantService.getPaymentTypeAccount();
+    }
+  }
 }

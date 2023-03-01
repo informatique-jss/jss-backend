@@ -294,6 +294,10 @@ public class Constant implements Serializable, IId {
 	private BillingType billingTypeBilan;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_infogreffe_debour")
+	private BillingType billingTypeInfogreffeDebour;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_document_scanning")
 	private BillingType billingTypeDocumentScanning;
 
@@ -435,6 +439,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_transfert_funds_type_bail")
 	private TransfertFundsType transfertFundsTypeBail;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_competent_authority_infogreffe")
+	private CompetentAuthority competentAuthorityInfogreffe;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_competent_authority_type_rcs")
@@ -1870,6 +1878,22 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeShippingCosts(BillingType billingTypeShippingCosts) {
 		this.billingTypeShippingCosts = billingTypeShippingCosts;
+	}
+
+	public BillingType getBillingTypeInfogreffeDebour() {
+		return billingTypeInfogreffeDebour;
+	}
+
+	public void setBillingTypeInfogreffeDebour(BillingType billingTypeInfogreffeDebour) {
+		this.billingTypeInfogreffeDebour = billingTypeInfogreffeDebour;
+	}
+
+	public CompetentAuthority getCompetentAuthorityInfogreffe() {
+		return competentAuthorityInfogreffe;
+	}
+
+	public void setCompetentAuthorityInfogreffe(CompetentAuthority competentAuthorityInfogreffe) {
+		this.competentAuthorityInfogreffe = competentAuthorityInfogreffe;
 	}
 
 }

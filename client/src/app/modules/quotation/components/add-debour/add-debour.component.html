@@ -62,4 +62,9 @@
       <li>{{competentAuthority.label}} : {{getTotalForCompetentAuthority(competentAuthority)}} €</li>
     </ul>
   </div>
+  <div class="row-field-container" *ngIf="editMode">
+    <button mat-raised-button (click)="filledForInfogreffeKbis()" color="primary" class="mini-fab-add">
+      Pré-remplir pour un KBis
+    </button>
+  </div>
 </div>

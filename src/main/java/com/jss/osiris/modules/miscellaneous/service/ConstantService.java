@@ -8,6 +8,7 @@ import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.miscellaneous.model.Constant;
 import com.jss.osiris.modules.miscellaneous.model.Country;
@@ -169,6 +170,8 @@ public interface ConstantService {
 
     public BillingType getBillingTypeBilan() throws OsirisException;
 
+    public BillingType getBillingTypeInfogreffeDebour() throws OsirisException;
+
     public BillingType getBillingTypeDocumentScanning() throws OsirisException;
 
     public BillingType getBillingTypeEmergency() throws OsirisException;
@@ -252,6 +255,8 @@ public interface ConstantService {
     public TransfertFundsType getTransfertFundsTypeMoral() throws OsirisException;
 
     public TransfertFundsType getTransfertFundsTypeBail() throws OsirisException;
+
+    public CompetentAuthority getCompetentAuthorityInfogreffe() throws OsirisException;
 
     public CompetentAuthorityType getCompetentAuthorityTypeRcs() throws OsirisException;
 
