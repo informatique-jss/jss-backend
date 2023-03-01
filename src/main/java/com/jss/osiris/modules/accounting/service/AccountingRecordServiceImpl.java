@@ -304,7 +304,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (payment == null)
       throw new OsirisException(null, "No payments nor deposits provided with invoice " + invoice.getId());
 
-    AccountingJournal journal = constantService.getAccountingJournalBank();
+    AccountingJournal journal = payment.getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId())
+        ? constantService.getAccountingJournalCash()
+        : constantService.getAccountingJournalBank();
     if (payment.getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId()))
       journal = constantService.getAccountingJournalCash();
 
@@ -336,13 +338,17 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public void generateAccountingRecordsForPurshaseOnInvoicePayment(Invoice invoice, List<Payment> payments,
       Float amountToUse) throws OsirisException {
-    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
 
     if (invoice == null)
       throw new OsirisException(null, "No invoice provided");
 
     if ((payments == null || payments.size() == 0))
       throw new OsirisException(null, "No payments provided with invoice " + invoice.getId());
+
+    AccountingJournal bankJournal = payments.get(0).getPaymentType().getId()
+        .equals(constantService.getPaymentTypeEspeces().getId())
+            ? constantService.getAccountingJournalCash()
+            : constantService.getAccountingJournalBank();
 
     AccountingAccount waitingAccountingAccount = accountingAccountService.getWaitingAccountingAccount();
 
@@ -374,8 +380,13 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   public void generateAccountingRecordsForDepositOnInvoice(Deposit deposit, Invoice invoice,
       Integer overrideAccountingOperationId, boolean isFromOriginPayment) throws OsirisException {
     AccountingAccount customerAccountingAccount = getCustomerAccountingAccountForInvoice(invoice);
-    AccountingJournal journal = isFromOriginPayment ? constantService.getAccountingJournalBank()
-        : constantService.getAccountingJournalMiscellaneousOperations();
+    AccountingJournal journal = deposit.getOriginPayment() != null
+        && deposit.getOriginPayment().getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId())
+            ? constantService.getAccountingJournalCash()
+            : constantService.getAccountingJournalBank();
+
+    if (!isFromOriginPayment)
+      journal = constantService.getAccountingJournalMiscellaneousOperations();
 
     Integer operationId = deposit.getId();
     if (overrideAccountingOperationId != null)
@@ -392,8 +403,13 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     AccountingAccount depositAccountingAccount = getDepositAccountingAccountForCustomerOrder(
         quotationService.getCustomerOrderOfQuotation(customerOrder));
-    AccountingJournal journal = isFromOriginPayment ? constantService.getAccountingJournalBank()
-        : constantService.getAccountingJournalMiscellaneousOperations();
+    AccountingJournal journal = deposit.getOriginPayment() != null
+        && deposit.getOriginPayment().getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId())
+            ? constantService.getAccountingJournalCash()
+            : constantService.getAccountingJournalBank();
+
+    if (!isFromOriginPayment)
+      journal = constantService.getAccountingJournalMiscellaneousOperations();
 
     // If deposit is created from a payment, use the payment ID as operation ID to
     // keep the balance to 0 for a same operationID
@@ -499,7 +515,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     CentralPayTransaction transaction = centralPayDelegateService.getTransaction(centralPayPaymentRequest);
 
-    Float commission = transaction.getCommission() / 100f;
+    Float commission = (transaction.getCommission() != null ? transaction.getCommission() : 0f) / 100f;
     Float preTaxPrice = commission / ((100 + billingTypeCentralPayCommission.getVat().getRate()) / 100f);
     Float taxPrice = commission - preTaxPrice;
 
@@ -571,7 +587,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public void generateBankAccountingRecordsForInboundPayment(Payment payment) throws OsirisException {
-    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
+    AccountingJournal bankJournal = payment.getPaymentType().getId()
+        .equals(constantService.getPaymentTypeEspeces().getId())
+            ? constantService.getAccountingJournalCash()
+            : constantService.getAccountingJournalBank();
 
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
         "Paiement n°" + payment.getId(), null, payment.getPaymentAmount(),
@@ -582,7 +601,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public void generateBankAccountingRecordsForOutboundPayment(Payment payment) throws OsirisException {
-    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
+    AccountingJournal bankJournal = payment.getPaymentType().getId()
+        .equals(constantService.getPaymentTypeEspeces().getId())
+            ? constantService.getAccountingJournalCash()
+            : constantService.getAccountingJournalBank();
 
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
         "Paiement n°" + payment.getId(), payment.getPaymentAmount(), null,

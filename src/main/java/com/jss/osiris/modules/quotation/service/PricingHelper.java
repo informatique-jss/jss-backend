@@ -193,7 +193,14 @@ public class PricingHelper {
                 .equals(constantService.getBillingTypeConfrereFees().getId())) {
             // If it's an announcement published by a Confrere, apply additionnal fees and
             // JSS markup
-            if (isNotJssConfrere(provision)) {
+
+            // Check if we have a character based price announcement
+            boolean hasPriceBasedProvisionType = false;
+            for (BillingType otherBillingType : provision.getProvisionType().getBillingTypes())
+                if (otherBillingType.getIsPriceBasedOnCharacterNumber())
+                    hasPriceBasedProvisionType = true;
+
+            if (isNotJssConfrere(provision) && hasPriceBasedProvisionType) {
                 CharacterPrice characterPrice = characterPriceService.getCharacterPrice(provision);
                 Float price = 0f;
                 if (characterPrice != null) {
@@ -506,7 +513,12 @@ public class PricingHelper {
 
         // If document not found or document indicate to use it, take customer order as
         // default
-        if (invoiceItem.getBillingItem() != null && invoiceItem.getBillingItem().getBillingType() != null
+
+        // No VAT abroad (France and Monaco)
+        if (!customerOrder.getCountry().getId().equals(constantService.getCountryFrance().getId())
+                && !customerOrder.getCountry().getId().equals(constantService.getCountryMonaco().getId())) {
+            vat = null;
+        } else if (invoiceItem.getBillingItem() != null && invoiceItem.getBillingItem().getBillingType() != null
                 && invoiceItem.getBillingItem().getBillingType().getIsOverrideVat()) {
             vat = invoiceItem.getBillingItem().getBillingType().getVat();
         } else if (invoiceItem.getBillingItem().getBillingType().getIsDebour()
@@ -518,13 +530,11 @@ public class PricingHelper {
                             .equals(constantService.getBillingLabelTypeCustomer().getId())) {
                 City city = cityService.getCity(customerOrder.getCity().getId());
                 vat = vatService.getGeographicalApplicableVat(customerOrder.getCountry(),
-                        city.getDepartment(),
-                        customerOrder.getIsIndividual());
+                        city.getDepartment());
             } else if (billingDocument.getBillingLabelType().getId()
                     .equals(constantService.getBillingLabelTypeCodeAffaire().getId())) {
                 Affaire affaire = invoiceItem.getProvision().getAssoAffaireOrder().getAffaire();
-                vat = vatService.getGeographicalApplicableVat(affaire.getCountry(), affaire.getCity().getDepartment(),
-                        affaire.getIsIndividual());
+                vat = vatService.getGeographicalApplicableVat(affaire.getCountry(), affaire.getCity().getDepartment());
             } else {
                 if (billingDocument.getBillingLabelCity() == null)
                     throw new OsirisClientMessageException(
@@ -533,8 +543,7 @@ public class PricingHelper {
                     throw new OsirisClientMessageException(
                             "Pays non trouvé dans l'adresse indiquée dans la configuration de facturation de la commande");
                 vat = vatService.getGeographicalApplicableVat(billingDocument.getBillingLabelCountry(),
-                        billingDocument.getBillingLabelCity().getDepartment(),
-                        billingDocument.getBillingLabelIsIndividual());
+                        billingDocument.getBillingLabelCity().getDepartment());
             }
         }
 

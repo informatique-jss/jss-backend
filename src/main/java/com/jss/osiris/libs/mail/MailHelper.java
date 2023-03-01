@@ -898,6 +898,7 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void sendCustomerOrderAttachmentTypeQueryToCustomer(CustomerOrder customerOrder, Provision provision,
             AttachmentTypeMailQuery query)
             throws OsirisException, OsirisClientMessageException {

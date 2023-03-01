@@ -95,7 +95,7 @@ public class Invoice implements IId, IAttachment {
 	@IndexedField
 	private Provider provider;
 
-	@Column(length = 100, name = "billing_label")
+	@Column(length = 300, name = "billing_label")
 	@IndexedField
 	private String billingLabel;
 

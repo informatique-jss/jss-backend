@@ -60,16 +60,11 @@ public class VatServiceImpl implements VatService {
      * @throws OsirisClientMessageException
      */
     @Override
-    public Vat getGeographicalApplicableVat(Country country, Department departement, boolean isIndividual)
+    public Vat getGeographicalApplicableVat(Country country, Department departement)
             throws OsirisException, OsirisClientMessageException {
         if (country == null)
             throw new OsirisClientMessageException(
                     "Pays non trouvé sur le donneur d'ordre, l'affaire ou le libellé de facturation");
-
-        // No VAT abroad (France and Monaco)
-        if (!country.getId().equals(constantService.getCountryFrance().getId())
-                && !country.getId().equals(constantService.getCountryMonaco().getId()))
-            return null;
 
         Vat vatTwenty = constantService.getVatTwenty();
         if (vatTwenty == null) {
@@ -93,9 +88,7 @@ public class VatServiceImpl implements VatService {
         if (departement.getId().equals(constantService.getDepartmentMartinique().getId())
                 || departement.getId().equals(constantService.getDepartmentGuadeloupe().getId())
                 || departement.getId().equals(constantService.getDepartmentReunion().getId())) {
-            if (isIndividual)
-                return vatEight;
-            return vatTwenty;
+            return vatEight;
         }
 
         // No VAT for TOM and other DOM

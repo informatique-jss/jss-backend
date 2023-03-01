@@ -387,6 +387,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           if (orders && orders.length > 0) {
             let dialogRef = this.orderSimilaritiesDialog.open(OrderSimilaritiesDialogComponent);
             dialogRef.componentInstance.affaire = response;
+            dialogRef.componentInstance.orderingSearch = orderingSearch;
+
             dialogRef.afterClosed().subscribe(accept => {
               if (accept) {
                 this.quotation.assoAffaireOrders.push(asso);

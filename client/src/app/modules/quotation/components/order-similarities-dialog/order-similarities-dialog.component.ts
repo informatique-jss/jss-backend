@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
 import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { Affaire } from '../../model/Affaire';
@@ -39,19 +38,6 @@ export class OrderSimilaritiesDialogComponent implements OnInit {
     this.displayedColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
     this.displayedColumns.push({ id: "customerOrderLabel", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
     this.displayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
-
-    this.customerOrderStatusService.getCustomerOrderStatus().subscribe(response => {
-      this.customerOrderStatusList = response;
-      this.orderingSearch = {} as OrderingSearch;
-      if (this.affaire)
-        this.orderingSearch.affaires = [this.affaire];
-      this.orderingSearch.customerOrderStatus = [];
-      if (this.customerOrderStatusList)
-        for (let status of this.customerOrderStatusList)
-          if ([CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED].indexOf(status.code) >= 0)
-            this.orderingSearch.customerOrderStatus.push(status);
-      this.loaded = true;
-    })
   }
 
   getColumnLink(column: SortTableColumn, element: any) {

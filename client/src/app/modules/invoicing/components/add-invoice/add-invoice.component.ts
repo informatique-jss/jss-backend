@@ -26,6 +26,7 @@ import { Debour } from '../../../quotation/model/Debour';
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
 import { ResponsableService } from '../../../tiers/services/responsable.service';
 import { InvoiceService } from '../../services/invoice.service';
+import { DeboursAmountInvoicedDialogComponent } from '../debours-amount-invoiced-dialog/debours-amount-invoiced-dialog.component';
 import { DeboursAmountTaxableDialogComponent } from '../debours-amount-taxable-dialog/debours-amount-taxable-dialog.component';
 
 @Component({
@@ -56,6 +57,7 @@ export class AddInvoiceComponent implements OnInit {
     private customerOrderService: CustomerOrderService,
     private contantService: ConstantService,
     public deboursAmontTaxableDialog: MatDialog,
+    public deboursAmontInvoicedDialog: MatDialog,
   ) {
   }
 
@@ -298,8 +300,22 @@ export class AddInvoiceComponent implements OnInit {
         if (!this.selectedDebours)
           this.selectedDebours = [];
         debour.nonTaxableAmount = 0;
-        this.selectedDebours.push(debour);
-        this.refreshTable.next();
+
+        const dialogRef = this.deboursAmontTaxableDialog.open(DeboursAmountInvoicedDialogComponent, {
+          maxWidth: "300px",
+        });
+
+        dialogRef.componentInstance.invoicedAmount = debour.invoicedAmount;
+
+        dialogRef.afterClosed().subscribe(dialogResult => {
+          if (dialogResult != null && this.debours) {
+            if (!this.selectedDebours)
+              this.selectedDebours = [];
+            debour.invoicedAmount = parseFloat(dialogResult);
+            this.selectedDebours.push(debour);
+            this.refreshTable.next();
+          }
+        });
         return;
       }
 
