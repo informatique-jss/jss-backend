@@ -174,7 +174,7 @@ public class Provision implements IId, IAttachment {
 	@Column(nullable = false)
 	private Boolean isCorrespondenceFees;
 
-	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.ALL)
 	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
 	private List<Attachment> attachments;
 

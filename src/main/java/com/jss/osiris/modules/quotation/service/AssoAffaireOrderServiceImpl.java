@@ -177,6 +177,12 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         for (Provision provision : assoAffaireOrder.getProvisions()) {
             provision.setAssoAffaireOrder(assoAffaireOrder);
 
+            if (provision.getAttachments() != null)
+                for (Attachment attachment : provision.getAttachments()) {
+                    attachment.setProvision(provision);
+                    attachmentService.addOrUpdateAttachment(attachment);
+                }
+
             if (provision.getId() != null && provision.getInvoiceItems() != null)
                 for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
                     invoiceItem.setProvision(provision);
