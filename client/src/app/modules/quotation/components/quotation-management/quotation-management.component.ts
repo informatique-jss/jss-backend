@@ -179,7 +179,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
     this.updateInvoiceLabelResult();
     this.updatePaperLabelResult();
     if (!this.isStatusOpen && instanceOfCustomerOrder(this.quotation) && (!this.invoiceLabelResult?.billingLabel || !this.invoiceLabelResult.billingLabelAddress || !this.invoiceLabelResult.billingLabelCity
-      || !this.invoiceLabelResult.billingLabelCountry || !this.invoiceLabelResult.billingLabelPostalCode))
+      || !this.invoiceLabelResult.billingLabelCountry))
       return false;
     if (!this.isStatusOpen && instanceOfCustomerOrder(this.quotation) && (!this.billingMailComputeResult || !this.billingMailComputeResult.recipientsMailTo || this.billingMailComputeResult.recipientsMailTo.length == 0
       || !this.digitalMailComputeResult || !this.digitalMailComputeResult.recipientsMailTo || this.digitalMailComputeResult.recipientsMailTo.length == 0))
