@@ -157,7 +157,7 @@ export class AddDebourComponent implements OnInit {
       this.newDebour.debourAmount = 3.37;
       this.newDebour.invoicedAmount = 3.37;
       this.newDebour.comments = 'Kbis';
-      this.newDebour.paymentType = this.constantService.getPaymentTypeAccount();
+      this.newDebour.paymentType = this.constantService.getPaymentTypeVirement();
     }
   }
 }
