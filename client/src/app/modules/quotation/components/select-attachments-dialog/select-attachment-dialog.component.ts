@@ -64,7 +64,7 @@ export class SelectAttachmentsDialogComponent implements OnInit {
 
   getAttachments() {
     if (this.provision) {
-      this.provision.attachments
+      return this.provision.attachments
     }
     return [];
   }
