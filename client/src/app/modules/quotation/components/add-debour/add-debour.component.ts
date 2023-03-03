@@ -29,6 +29,7 @@ export class AddDebourComponent implements OnInit {
   newDebour: Debour | undefined;
   displayedColumns: SortTableColumn[] = [];
   paymentTypeVirement: PaymentType = this.constantService.getPaymentTypeVirement();
+  paymentTypePrelevement: PaymentType = this.constantService.getPaymentTypePrelevement();
   paymentTypeCb: PaymentType = this.constantService.getPaymentTypeCB();
   paymentTypeEspeces: PaymentType = this.constantService.getPaymentTypeEspeces();
   paymentTypeCheques: PaymentType = this.constantService.getPaymentTypeCheques();

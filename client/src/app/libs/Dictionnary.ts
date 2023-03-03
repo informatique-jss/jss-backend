@@ -2,6 +2,9 @@
 export const Dictionnary = {
   "notice": "Texte de l'annonce",
   "affaireId": "N° de l'affaire",
+  "affaireSiren": "SIREN de l'affaire",
+  "affaireSiret": "SIRET de l'affaire",
+  "waitedCompetentAuthorityLabel": "Autorité compétente en attente",
   "affaireLabel": "Affaire",
   "customerOrderId": "N° de la commande",
   "customerOrderLabel": "Donneur d'ordre",

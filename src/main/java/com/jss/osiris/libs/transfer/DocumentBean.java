@@ -2,8 +2,10 @@ package com.jss.osiris.libs.transfer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JacksonXmlRootElement(localName = "Document")
 public class DocumentBean {
 
 	@JacksonXmlProperty(isAttribute = true)

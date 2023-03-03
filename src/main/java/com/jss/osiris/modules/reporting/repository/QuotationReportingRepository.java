@@ -15,11 +15,14 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
         @Query(nativeQuery = true, value = "" +
                         " select  " +
                         " affaire.id as affaireId, " +
+                        " affaire.siren as affaireSiren, " +
+                        " affaire.siret as affaireSiret, " +
                         " coalesce(affaire.denomination, affaire.firstname || ' '||affaire.lastname) as affaireLabel, "
                         +
                         " customer_order.id as customerOrderId, " +
                         " provision.id as provisionId, " +
                         " provision_t.label as provisionTypeLabel, " +
+                        " ca.label as waitedCompetentAuthorityLabel, " +
                         " customer_order_status.label as customerOrderStatusLabel, " +
                         " provision_ft.label as provisionFamilyTypeLabel, " +
                         " coalesce(initcap(to_char(a.publication_date,'tmmonth')),'N/A') as publicationDateMonth, " +
@@ -59,6 +62,7 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " left join announcement_status ast on ast.id = a.id_announcement_status " +
                         " left join simple_provision sp on sp.id = provision.id_simple_provision " +
                         " left join simple_provision_status sps on sps.id = sp.id_simple_provision_status " +
+                        " left join competent_authority ca on ca.id = sp.id_waited_competent_authority " +
                         " left join domiciliation d on d.id = provision.id_domiciliation " +
                         " left join domiciliation_status ds on ds.id = d.id_domicilisation_status  " +
                         " left join bodacc b on b.id = provision.id_bodacc " +
@@ -72,6 +76,9 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " and (:tiersId=0 or tiers.id = :tiersId) " +
                         " group by " +
                         " affaire.id , " +
+                        " affaire.siren , " +
+                        " affaire.siret , " +
+                        " ca.label , " +
                         " customer_order.created_date , " +
                         " a.publication_date , " +
                         " customer_order_status.label , " +

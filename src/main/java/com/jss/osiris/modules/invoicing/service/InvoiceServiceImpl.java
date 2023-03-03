@@ -432,7 +432,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.getIsInvoiceFromProvider()
                 && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())
                 && invoice.getCompetentAuthority() == null)
-            bankTransfertService.generateBankTransfertForManualInvoice(invoice);
+            invoice.setBankTransfert(bankTransfertService.generateBankTransfertForManualInvoice(invoice));
 
         addOrUpdateInvoice(invoice);
 
@@ -463,13 +463,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceItem.setLabel(debour.getBillingType().getLabel());
         if (isNonTaxable) {
             invoiceItem.setPreTaxPrice(debour.getDebourAmount());
-            invoiceItem.setVat(constantService.getVatZero());
-            invoiceItem.setVatPrice(0f);
         } else {
             invoiceItem.setPreTaxPrice(
                     debour.getDebourAmount() / ((100 + constantService.getVatDeductible().getRate()) / 100f));
-            invoiceItem.setVat(constantService.getVatDeductible());
-            invoiceItem.setVatPrice(debour.getDebourAmount() - invoiceItem.getPreTaxPrice());
         }
         return invoiceItem;
     }

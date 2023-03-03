@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
@@ -43,6 +44,12 @@ public class BankTransfert implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "bankTransfert", "payment", "accountingRecords", "provision",
 			"invoiceItem" }, allowSetters = true)
 	List<Debour> debours;
+
+	@OneToMany(mappedBy = "bankTransfert")
+	@JsonIgnoreProperties(value = { "bankTransfert", "invoiceItems", "customerOrder", "payments",
+			"deposits", "accountingRecords", "customerOrderForInboundInvoice", "creditNote",
+			"reverseCreditNote" }, allowSetters = true)
+	List<Invoice> invoices;
 
 	public Integer getId() {
 		return id;
@@ -106,6 +113,14 @@ public class BankTransfert implements Serializable, IId {
 
 	public void setDebours(List<Debour> debours) {
 		this.debours = debours;
+	}
+
+	public List<Invoice> getInvoices() {
+		return invoices;
+	}
+
+	public void setInvoices(List<Invoice> invoices) {
+		this.invoices = invoices;
 	}
 
 }

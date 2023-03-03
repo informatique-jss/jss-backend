@@ -26,7 +26,7 @@
           <td *ngIf="newDebour.competentAuthority">
             <select-payment-types [(model)]="newDebour.paymentType" label="Mode de paiement" [form]="debourForm"
               *ngIf=" !newDebour.competentAuthority.competentAuthorityType.isDirectCharge"
-              [filteredPaymentType]="[paymentTypeVirement,paymentTypeCb, paymentTypeCheques,paymentTypeEspeces,paymentTypeAccount]"
+              [filteredPaymentType]="[paymentTypeVirement,paymentTypeCb, paymentTypeCheques,paymentTypeEspeces,paymentTypeAccount,paymentTypePrelevement]"
               propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"></select-payment-types>
             <select-payment-types [(model)]="newDebour.paymentType" label="Mode de paiement" [form]="debourForm"
               *ngIf="  newDebour.competentAuthority.competentAuthorityType.isDirectCharge"

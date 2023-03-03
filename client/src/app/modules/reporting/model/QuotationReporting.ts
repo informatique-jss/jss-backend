@@ -1,5 +1,8 @@
 export interface QuotationReporting {
   affaireId: number;
+  affaireSiren: string;
+  affaireSiret: number;
+  waitedCompetentAuthorityLabel: string;
   affaireLabel: string;
   customerOrderId: number;
   provisionId: number;

@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -185,6 +186,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
             totalAmount += bankTransfert.getTransfertAmount();
 
         XmlMapper xmlMapper = new XmlMapper();
+        xmlMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         DateTimeFormatter formatterDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
@@ -194,7 +196,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
             GrpHdrBean header = new GrpHdrBean();
             document.getCstmrCdtTrfInitnBean().setGrpHdrBean(header);
 
-            header.setMsgId("Prélèvements JSS du " + LocalDateTime.now().format(formatterDateTime));
+            header.setMsgId("Prélèvements JSS du " + LocalDateTime.now().format(formatterDate));
             header.setCreDtTm(LocalDateTime.now().format(formatterDateTime));
             header.setNbOfTxs(bankTransferts.size());
             header.setCtrlSum(totalAmount);
@@ -269,8 +271,8 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                 DrctDbtTxInfBean prelevement = new DrctDbtTxInfBean();
                 PmtIdBean virementId = new PmtIdBean();
                 prelevement.setPmtIdBean(virementId);
-                virementId.setEndToEndId("2-Prélèvement JSS du " + LocalDateTime.now().format(formatterDateTime));
-                virementId.setInstrId("2-Prélèvement JSS du " + LocalDateTime.now().format(formatterDateTime));
+                virementId.setEndToEndId("2-Prélèvement JSS du " + LocalDateTime.now().format(formatterDate));
+                virementId.setInstrId("2-Prélèvement JSS du " + LocalDateTime.now().format(formatterDate));
 
                 InstdAmtBean currencyDetails = new InstdAmtBean();
                 currencyDetails.setCcy("EUR");
@@ -300,7 +302,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                 prelevement.setDbtrAcctBean(customerAccount);
                 IdBean customerAccountId = new IdBean();
                 customerAccount.setIdBean(customerAccountId);
-                customerAccountId.setIban(completeTransfert.getTransfertIban());
+                customerAccountId.setIban(completeTransfert.getTransfertIban().replaceAll(" ", ""));
 
                 RmtInfBean virementLabel = new RmtInfBean();
                 prelevement.setRmtInfBean(virementLabel);
@@ -314,8 +316,8 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
             xml = xmlMapper.writeValueAsString(document);
 
+            xml = StringUtils.stripAccents(xml).replaceAll("[^a-zA-Z0-9 /?:().,'+<>=\"-]", " ");
             xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + xml;
-            xml = StringUtils.stripAccents(xml).replaceAll("[^a-zA-Z0-9 /-?:().,'+<>\"]", " ");
         } catch (JsonProcessingException e2) {
             throw new OsirisException(null, "Impossible to generate XML file for refund export");
         }

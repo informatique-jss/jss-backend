@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -27,7 +28,6 @@ import com.jss.osiris.libs.transfer.AmtBean;
 import com.jss.osiris.libs.transfer.CdtTrfTxInfBean;
 import com.jss.osiris.libs.transfer.CdtrAcctBean;
 import com.jss.osiris.libs.transfer.CdtrAgtBean;
-import com.jss.osiris.libs.transfer.CdtrBean;
 import com.jss.osiris.libs.transfer.CstmrCdtTrfInitnBean;
 import com.jss.osiris.libs.transfer.CtgyPurpBean;
 import com.jss.osiris.libs.transfer.DbtrAcctBean;
@@ -55,6 +55,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.repository.BankTransfertRepository;
@@ -127,7 +128,8 @@ public class BankTransfertServiceImpl implements BankTransfertService {
     }
 
     @Override
-    public BankTransfert generateBankTransfertForDebour(Debour debour, AssoAffaireOrder asso)
+    public BankTransfert generateBankTransfertForDebour(Debour debour, AssoAffaireOrder asso,
+            CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException {
 
         if (debour.getCompetentAuthority().getIban() == null || debour.getCompetentAuthority().getIban().equals(""))
@@ -139,11 +141,10 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                     "BIC non renseigné pour l'autorité compétente " + debour.getCompetentAuthority().getLabel());
 
         BankTransfert bankTransfert = new BankTransfert();
-        bankTransfert.setLabel("Débours " + debour.getId() + " / Journal Spécial des Sociétés / "
+        bankTransfert.setLabel("Débours " + debour.getId() + " / JSS / " + customerOrder.getId() + " / "
                 + (asso.getAffaire().getDenomination() == null
                         ? asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()
-                        : asso.getAffaire().getDenomination())
-                + " / " + debour.getCompetentAuthority().getLabel());
+                        : asso.getAffaire().getDenomination()));
 
         bankTransfert.setIsAlreadyExported(false);
         bankTransfert.setTransfertAmount(debour.getDebourAmount());
@@ -157,7 +158,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
     public BankTransfert generateBankTransfertForManualInvoice(Invoice invoice)
             throws OsirisException, OsirisClientMessageException {
         BankTransfert bankTransfert = new BankTransfert();
-        bankTransfert.setLabel("Facture " + invoice.getId() + " / Journal Spécial des Sociétés / "
+        bankTransfert.setLabel("Facture " + invoice.getId() + " / JSS / "
                 + invoice.getCommandNumber() + " / " + invoice.getManualAccountingDocumentNumber());
         bankTransfert.setIsAlreadyExported(false);
         bankTransfert.setTransfertAmount(invoice.getTotalPrice());
@@ -179,9 +180,10 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
         Float totalAmount = 0f;
         for (BankTransfertSearchResult bankTransfert : bankTransferts)
-            totalAmount += bankTransfert.getTransfertAmount();
+            totalAmount += Math.round(bankTransfert.getTransfertAmount() * 100f) / 100f;
 
         XmlMapper xmlMapper = new XmlMapper();
+        xmlMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         DateTimeFormatter formatterDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
@@ -259,14 +261,14 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                 CdtTrfTxInfBean virement = new CdtTrfTxInfBean();
                 PmtIdBean virementId = new PmtIdBean();
                 virement.setPmtIdBean(virementId);
-                virementId.setEndToEndId("2-Virement JSS du " + LocalDateTime.now().format(formatterDateTime));
-                virementId.setInstrId("2-Virement JSS du " + LocalDateTime.now().format(formatterDateTime));
+                virementId.setEndToEndId("2-Virement JSS du " + LocalDateTime.now().format(formatterDate));
+                virementId.setInstrId("2-Virement JSS du " + LocalDateTime.now().format(formatterDate));
 
                 AmtBean currency = new AmtBean();
                 virement.setAmtBean(currency);
                 InstdAmtBean currencyDetails = new InstdAmtBean();
                 currencyDetails.setCcy("EUR");
-                currencyDetails.setValue(bankTransfert.getTransfertAmount() + "");
+                currencyDetails.setValue(Math.round(bankTransfert.getTransfertAmount() * 100f) / 100f + "");
                 currency.setInstdAmtBean(currencyDetails);
 
                 CdtrAgtBean bicVirement = new CdtrAgtBean();
@@ -275,15 +277,11 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                 bicVirement.setFinInstnIdBean(financialInstitution);
                 bicVirementId.setBic(bicJss);
 
-                CdtrBean customerOrder = new CdtrBean();
-                virement.setCdtrBeanList(Arrays.asList(customerOrder));
-                customerOrder.setNm("");
-
                 CdtrAcctBean customerAccount = new CdtrAcctBean();
                 virement.setCdtrAcctBean(customerAccount);
                 IdBean customerAccountId = new IdBean();
                 customerAccount.setIdBean(customerAccountId);
-                customerAccountId.setIban(completeTransfert.getTransfertIban());
+                customerAccountId.setIban(completeTransfert.getTransfertIban().replaceAll(" ", ""));
 
                 RmtInfBean virementLabel = new RmtInfBean();
                 virement.setRmtInfBean(virementLabel);
@@ -306,9 +304,9 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
             xml = xmlMapper.writeValueAsString(document);
 
-            xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + xml;
             // Non supporting characters for bank ...
-            xml = StringUtils.stripAccents(xml).replaceAll("[^a-zA-Z0-9 /-?:().,'+<>\"]", " ");
+            xml = StringUtils.stripAccents(xml).replaceAll("[^a-zA-Z0-9 /?:().,'+<>=\"-]", " ");
+            xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + xml;
 
         } catch (JsonProcessingException e2) {
             throw new OsirisException(null, "Impossible to generate XML file for refund export");

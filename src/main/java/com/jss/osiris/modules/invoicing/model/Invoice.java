@@ -32,6 +32,7 @@ import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Provider;
+import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
@@ -183,6 +184,10 @@ public class Invoice implements IId, IAttachment {
 	@OneToOne(mappedBy = "creditNote")
 	@JsonIgnoreProperties(value = { "creditNote", "customerOrder" }, allowSetters = true)
 	private Invoice reverseCreditNote;
+
+	@ManyToOne
+	@JoinColumn(name = "id_bank_transfert")
+	private BankTransfert bankTransfert;
 
 	public Integer getId() {
 		return id;
@@ -494,6 +499,14 @@ public class Invoice implements IId, IAttachment {
 
 	public void setReverseCreditNote(Invoice reverseCreditNote) {
 		this.reverseCreditNote = reverseCreditNote;
+	}
+
+	public BankTransfert getBankTransfert() {
+		return bankTransfert;
+	}
+
+	public void setBankTransfert(BankTransfert bankTransfert) {
+		this.bankTransfert = bankTransfert;
 	}
 
 }
