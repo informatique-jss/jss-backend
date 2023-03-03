@@ -15,4 +15,8 @@ public interface BankTransfertSearchResult {
     public String getTransfertIban();
 
     public Boolean getIsAlreadyExported();
+
+    public String getInvoiceBillingLabel();
+
+    public String getCompetentAuthorityLabel();
 }

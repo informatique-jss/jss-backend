@@ -234,13 +234,12 @@ public class MailHelper {
             if (mail.getReplyToMail() != null)
                 message.setReplyTo(mail.getReplyToMail());
 
-            if (mail.getSendToMe() != null && mail.getSendToMe())
-                message.addTo(mail.getSendToMeEmployee().getMail());
-
             if (mail.getCopyToMe() != null && mail.getCopyToMe())
                 message.addCc(mail.getSendToMeEmployee().getMail());
 
-            else {
+            if (mail.getSendToMe() != null && mail.getSendToMe()) {
+                message.addTo(mail.getSendToMeEmployee().getMail());
+            } else {
                 if (mail.getMailComputeResult().getRecipientsMailTo() == null
                         || mail.getMailComputeResult().getRecipientsMailTo().size() == 0)
                     throw new OsirisException(null, "No recipient found for mail n°" + mail.getId());

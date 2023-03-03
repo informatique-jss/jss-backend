@@ -15,4 +15,8 @@ public interface DirectDebitTransfertSearchResult {
     public String getTransfertIban();
 
     public Boolean getIsAlreadyExported();
+
+    public String getInvoiceBillingLabel();
+
+    public String getCompetentAuthorityLabel();
 }

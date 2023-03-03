@@ -3,6 +3,12 @@ package com.jss.osiris.modules.reporting.model;
 public interface IQuotationReporting {
     public Integer getAffaireId();
 
+    public String getAffaireSiren();
+
+    public String getAffaireSiret();
+
+    public String getWaitedCompetentAuthorityLabel();
+
     public String getAffaireLabel();
 
     public Integer getCustomerOrderId();
