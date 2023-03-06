@@ -47,7 +47,7 @@ public interface QuotationRepository extends CrudRepository<Quotation, Integer> 
                         + " left join tiers t2 on t2.id = r.id_tiers"
                         + " where ( COALESCE(:customerOrderStatus) =0 or co.id_quotation_status in (:customerOrderStatus)) "
                         + " and co.created_date>=:startDate and co.created_date<=:endDate "
-                        + " and ( COALESCE(:assignedToEmployee) =0 or co.id_assigned_to=:assignedToEmployee)"
+                        + " and ( COALESCE(:assignedToEmployee) =0 or co.id_assigned_to in (:assignedToEmployee))"
                         + " and ( COALESCE(:salesEmployee) =0 or cf.id_commercial in (:salesEmployee) or r.id_commercial in (:salesEmployee) or t.id_commercial in (:salesEmployee) or t.id_commercial is null and t2.id_commercial in (:salesEmployee))"
                         + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder))"
                         + " and ( COALESCE(:affaire)=0 or af.id in (:affaire) )"

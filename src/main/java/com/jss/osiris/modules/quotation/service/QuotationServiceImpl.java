@@ -369,7 +369,7 @@ public class QuotationServiceImpl implements QuotationService {
         for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
             for (Provision provision : asso.getProvisions()) {
                 for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                    preTaxPriceTotal += invoiceItem.getPreTaxPrice();
+                    preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f;
                     if (invoiceItem.getDiscountAmount() != null && invoiceItem.getDiscountAmount() > 0) {
                         if (discountTotal == null)
                             discountTotal = invoiceItem.getDiscountAmount();
