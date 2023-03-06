@@ -159,7 +159,8 @@ public class BankTransfertServiceImpl implements BankTransfertService {
             throws OsirisException, OsirisClientMessageException {
         BankTransfert bankTransfert = new BankTransfert();
         bankTransfert.setLabel("Facture " + invoice.getId() + " / JSS / "
-                + invoice.getCommandNumber() + " / " + invoice.getManualAccountingDocumentNumber());
+                + (invoice.getCommandNumber() != null ? invoice.getCommandNumber() : "") + " / "
+                + invoice.getManualAccountingDocumentNumber());
         bankTransfert.setIsAlreadyExported(false);
         bankTransfert.setTransfertAmount(invoice.getTotalPrice());
         bankTransfert.setTransfertDateTime(LocalDateTime.now());
