@@ -62,7 +62,7 @@ public class InvoiceHelper {
         Float preTaxTotal = 0f;
         if (invoice != null && invoice.getInvoiceItems() != null && invoice.getInvoiceItems().size() > 0) {
             for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-                preTaxTotal += invoiceItem.getPreTaxPrice();
+                preTaxTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f;
             }
         }
         return preTaxTotal;

@@ -17,6 +17,7 @@ import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.City;
+import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
@@ -516,8 +517,23 @@ public class PricingHelper {
         // default
 
         // No VAT abroad (France and Monaco)
-        if (!customerOrder.getCountry().getId().equals(constantService.getCountryFrance().getId())
-                && !customerOrder.getCountry().getId().equals(constantService.getCountryMonaco().getId())) {
+        Country country = null;
+        if (billingDocument == null || billingDocument.getBillingLabelType() == null
+                || billingDocument.getBillingLabelType().getId()
+                        .equals(constantService.getBillingLabelTypeCustomer().getId())) {
+            country = customerOrder.getCountry();
+        } else if (billingDocument.getBillingLabelType().getId()
+                .equals(constantService.getBillingLabelTypeCodeAffaire().getId())) {
+            country = invoiceItem.getProvision().getAssoAffaireOrder().getAffaire().getCountry();
+        } else {
+            if (billingDocument.getBillingLabelCountry() == null)
+                throw new OsirisClientMessageException(
+                        "Pays non trouvé dans l'adresse indiquée dans la configuration de facturation de la commande");
+            country = billingDocument.getBillingLabelCountry();
+        }
+
+        if (country != null && country.getId().equals(constantService.getCountryFrance().getId())
+                && !country.getId().equals(constantService.getCountryMonaco().getId())) {
             vat = null;
         } else if (invoiceItem.getBillingItem() != null && invoiceItem.getBillingItem().getBillingType() != null
                 && invoiceItem.getBillingItem().getBillingType().getIsOverrideVat()) {
