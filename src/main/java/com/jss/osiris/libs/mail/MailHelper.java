@@ -1119,9 +1119,13 @@ public class MailHelper {
 
         ctx.setVariable("noticeHeader",
                 (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
-                        ? announcement.getNoticeHeader().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
+                        ? announcement.getNoticeHeader()
+                                .replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
+                                .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
                         : null);
-        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " "));
+        ctx.setVariable("notice",
+                announcement.getNotice().replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
+                        .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " "));
         LocalDate localDate = announcement.getPublicationDate();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         ctx.setVariable("date", localDate.format(formatter));
@@ -1162,9 +1166,13 @@ public class MailHelper {
 
         ctx.setVariable("noticeHeader",
                 (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
-                        ? announcement.getNoticeHeader().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
+                        ? announcement.getNoticeHeader()
+                                .replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
+                                .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
                         : null);
-        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " "));
+        ctx.setVariable("notice",
+                announcement.getNotice().replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
+                        .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " "));
         if (announcement.getDepartment() != null)
             ctx.setVariable("department",
                     announcement.getDepartment().getCode() + " - " + announcement.getDepartment().getLabel());
