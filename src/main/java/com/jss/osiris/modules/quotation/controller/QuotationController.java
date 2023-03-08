@@ -2440,4 +2440,14 @@ public class QuotationController {
     paymentService.associateOutboundPaymentAndDebourFromUser(payment, deboursOut);
     return new ResponseEntity<List<Debour>>(deboursOut, HttpStatus.OK);
   }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @GetMapping(inputEntryPoint + "/announcement/actulegale")
+  public ResponseEntity<Boolean> publishAnnouncementsToActuLegale()
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+
+    announcementService.publishAnnouncementsToActuLegale();
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
 }

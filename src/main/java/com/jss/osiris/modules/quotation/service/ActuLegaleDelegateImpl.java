@@ -7,7 +7,6 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -131,8 +130,8 @@ public class ActuLegaleDelegateImpl implements ActuLegaleDelegate {
         } catch (Exception e) {
         } // Completely a foul to expect an Integer here ...
         actuLegaleAnnouncement.setTest(actuLegaleIsTest);
-        actuLegaleAnnouncement.setText(announcement.getNotice().replaceAll("(\r?\n){2,}", " ")
-                .replaceAll("\\<.*?>", "").replaceAll("&nbsp;", " "));
+        actuLegaleAnnouncement.setText(announcement.getNotice().replaceAll("\r?\n", " ")
+                .replaceAll("\\<.*?>", "").replaceAll("&nbsp;", " ").replaceAll("\\\\", " "));
 
         HttpEntity<ActuLegaleAnnouncement> request = new HttpEntity<ActuLegaleAnnouncement>(actuLegaleAnnouncement,
                 headers);
@@ -143,13 +142,8 @@ public class ActuLegaleDelegateImpl implements ActuLegaleDelegate {
             response = new RestTemplate().postForEntity(
                     actuLegalePublishEntryPoint + publishUrl, request, ActuLegaleAnnouncement.class);
         } catch (HttpClientErrorException e) {
-            if (e.getStatusCode().equals(HttpStatus.UNPROCESSABLE_ENTITY)) {
-                ActuLegaleAnnouncement actu = new ActuLegaleAnnouncement();
-                actu.setId(1);
-                return actu;
-            } else
-                throw new OsirisException(e,
-                        "Impossible to publish announcement to actu legale n°" + announcement.getId());
+            throw new OsirisException(e,
+                    "Impossible to publish announcement to actu legale n°" + announcement.getId());
         }
 
         if (response != null && response.getBody() != null) {
