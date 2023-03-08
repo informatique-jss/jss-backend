@@ -148,7 +148,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void publishAnnouncementsToActuLegale() throws OsirisException {
         List<Announcement> announcements = announcementRepository.getAnnouncementByStatusAndPublicationDateMin(
                 announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE),
