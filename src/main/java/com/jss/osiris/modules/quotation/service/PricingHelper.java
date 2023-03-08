@@ -195,6 +195,7 @@ public class PricingHelper {
                 .equals(constantService.getBillingTypeConfrereFees().getId())) {
             // If it's an announcement published by a Confrere, apply additionnal fees and
             // JSS markup
+            invoiceItem.setPreTaxPrice(0f);
 
             // Check if we have a character based price announcement
             boolean hasPriceBasedProvisionType = false;
@@ -532,7 +533,7 @@ public class PricingHelper {
             country = billingDocument.getBillingLabelCountry();
         }
 
-        if (country != null && country.getId().equals(constantService.getCountryFrance().getId())
+        if (country != null && !country.getId().equals(constantService.getCountryFrance().getId())
                 && !country.getId().equals(constantService.getCountryMonaco().getId())) {
             vat = null;
         } else if (invoiceItem.getBillingItem() != null && invoiceItem.getBillingItem().getBillingType() != null

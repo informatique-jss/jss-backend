@@ -46,6 +46,7 @@ public class OFXParser {
                     .collect(Collectors.joining("\n"));
 
             // Apply magic to add missing end-tags
+            xml = xml.replaceAll("&", " ");
             xml = xml.replaceAll("<MEMO>\n", "<MEMO>vide\n");
             xml = xml.replaceAll("(?m)^(\\s*)<(\\w+)>([^<]+)$", "$1<$2>$3</$2>");
             xml = xml.substring(xml.indexOf("<"));

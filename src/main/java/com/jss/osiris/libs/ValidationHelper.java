@@ -259,7 +259,7 @@ public class ValidationHelper {
             throws OsirisValidationException {
         if ((value == null) && isMandatory)
             throw new OsirisValidationException(fieldName);
-        if (value != null) {
+        if (value != null && maxDate != null) {
             if (maxDate != null && value.isAfter(maxDate))
                 throw new OsirisValidationException(fieldName);
         }
@@ -269,7 +269,7 @@ public class ValidationHelper {
             throws OsirisValidationException {
         if ((value == null) && isMandatory)
             throw new OsirisValidationException(fieldName);
-        if (value != null) {
+        if (value != null && minDate != null) {
             if (minDate != null && value.isBefore(minDate))
                 throw new OsirisValidationException(fieldName);
         }

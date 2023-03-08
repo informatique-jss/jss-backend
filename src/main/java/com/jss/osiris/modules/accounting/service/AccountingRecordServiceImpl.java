@@ -184,6 +184,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         throw new OsirisException(null,
             "No billing type defined in billing item n°" + invoiceItem.getBillingItem().getId());
 
+      if (invoiceItem.getPreTaxPrice() == null)
+        invoiceItem.setPreTaxPrice(0f);
+
       AccountingAccount producAccountingAccount = invoiceItem.getBillingItem().getBillingType()
           .getAccountingAccountProduct();
 
