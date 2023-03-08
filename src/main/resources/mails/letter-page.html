@@ -68,6 +68,7 @@
                                 <span th:text="${letter.invoiceLabelResult.billingLabel}"></span><br />
                                 <span th:text="${letter.invoiceLabelResult.billingLabelAddress}"></span><br />
                                 <span><span th:text="${letter.invoiceLabelResult.billingLabelPostalCode}"></span> <span
+                                        th:if="${letter.invoiceLabelResult.billingLabelCity!=null}"
                                         th:text="${letter.invoiceLabelResult.billingLabelCity.label}"></span></span>
                             </td>
                         </tr>
