@@ -2,6 +2,7 @@ package com.jss.osiris.modules.miscellaneous.model;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -60,9 +61,6 @@ public class CompetentAuthority implements IId, IAttachment {
 	@Column(length = 40)
 	private String bic;
 
-	@Column(length = 40)
-	private String jssAccount;
-
 	@Column(length = 60)
 	private String contact;
 
@@ -116,6 +114,10 @@ public class CompetentAuthority implements IId, IAttachment {
 
 	@OneToMany(mappedBy = "competentAuthority")
 	private List<Attachment> attachments;
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_competent_authority_payment_type", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_payment_type"))
+	private List<PaymentType> paymentTypes;
 
 	public Integer getId() {
 		return id;
@@ -203,14 +205,6 @@ public class CompetentAuthority implements IId, IAttachment {
 
 	public void setCities(List<City> cities) {
 		this.cities = cities;
-	}
-
-	public String getJssAccount() {
-		return jssAccount;
-	}
-
-	public void setJssAccount(String jssAccount) {
-		this.jssAccount = jssAccount;
 	}
 
 	public List<Region> getRegions() {
@@ -339,6 +333,14 @@ public class CompetentAuthority implements IId, IAttachment {
 
 	public void setAttachments(List<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+
+	public List<PaymentType> getPaymentTypes() {
+		return paymentTypes;
+	}
+
+	public void setPaymentTypes(List<PaymentType> paymentTypes) {
+		this.paymentTypes = paymentTypes;
 	}
 
 }

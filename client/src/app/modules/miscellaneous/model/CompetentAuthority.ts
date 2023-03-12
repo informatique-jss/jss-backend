@@ -6,6 +6,7 @@ import { Country } from "./Country";
 import { Department } from "./Department";
 import { IAttachment } from './IAttachment';
 import { Mail } from "./Mail";
+import { PaymentType } from './PaymentType';
 import { Phone } from "./Phone";
 import { Region } from "./Region";
 
@@ -17,7 +18,6 @@ export interface CompetentAuthority extends IReferential, IAttachment {
   accountingMails: Mail[];
   iban: string;
   bic: string;
-  jssAccount: string;
   cities: City[];
   regions: Region[];
   contact: string;
@@ -33,4 +33,5 @@ export interface CompetentAuthority extends IReferential, IAttachment {
   reinvoicing: number;
   schedulle: string;
   observations: string;
+  paymentTypes: PaymentType[];
 }

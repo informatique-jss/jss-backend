@@ -1,0 +1,20 @@
+<mat-form-field class="full-width" [formGroup]="form!">
+  <mat-label>{{label}}</mat-label>
+  <mat-chip-list #chipListPaymentType>
+    <mat-chip *ngFor="let paymentType of model" (removed)="removeElement(paymentType)">
+      {{paymentType.label}}
+      <button matChipRemove *ngIf="!isDisabled">
+        <mat-icon>cancel</mat-icon>
+      </button>
+    </mat-chip>
+    <input matInput placeholder="Choisir un type de paiement" [formControlName]="propertyName" #paymentTypeInput
+      [matChipInputFor]="chipListPaymentType" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+      [disabled]="isDisabled" [matAutocomplete]="autoComplete">
+  </mat-chip-list>
+  <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
+    (optionSelected)="addPaymentType($event)">
+    <mat-option *ngFor="let paymentType of filteredPaymentTypes | async" [value]="paymentType">
+      {{paymentType.label}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

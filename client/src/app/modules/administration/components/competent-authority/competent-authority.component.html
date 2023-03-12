@@ -92,9 +92,9 @@
                       [maxLength]="40"></generic-input>
                   </td>
                   <td>
-                    <generic-input [(model)]="selectedcompetentAuthority.jssAccount" label="Compte du JSS chez AC"
-                      [form]="entityForm2" propertyName="jssAccount" [isMandatory]="false" [isDisabled]="!editMode"
-                      [maxLength]="40"></generic-input>
+                    <chips-payment-type [(model)]="selectedcompetentAuthority.paymentTypes"
+                      label="Type de paiements autorisés" [form]="entityForm2" propertyName="paymentTypes"
+                      [isMandatory]="false" [isDisabled]="!editMode"></chips-payment-type>
                   </td>
                 </tr>
               </table>
