@@ -147,6 +147,7 @@ export interface Constant {
   competentAuthorityTypeCci: CompetentAuthorityType;
   competentAuthorityTypeChambreMetier: CompetentAuthorityType;
   competentAuthorityTypeDireccte: CompetentAuthorityType;
+  competentAuthorityTypePrefecture: CompetentAuthorityType;
   invoiceStatusSend: InvoiceStatus;
   invoiceStatusReceived: InvoiceStatus;
   invoiceStatusPayed: InvoiceStatus;
