@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.quotation.service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -167,7 +168,13 @@ public class PricingHelper {
                 if (noticeFamiliyType != null && noticeTypes.size() > 0)
                     invoiceItem.setLabel(invoiceItem.getLabel() + " ("
                             + characterPriceService.getCharacterNumber(provision)
-                            + " caractères, rubrique " + noticeFamiliyType + ", "
+                            + " caractères"
+                            + (provision.getAnnouncement() != null
+                                    && provision.getAnnouncement().getPublicationDate() != null
+                                            ? ", publiée le " + provision.getAnnouncement().getPublicationDate()
+                                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                            : "")
+                            + ", rubrique " + noticeFamiliyType + ", "
                             + String.join(" / ", noticeTypes) + ")");
                 else
                     invoiceItem.setLabel(invoiceItem.getLabel() + " ("
