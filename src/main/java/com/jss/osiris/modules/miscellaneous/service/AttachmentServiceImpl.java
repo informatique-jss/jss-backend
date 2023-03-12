@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
@@ -104,6 +106,12 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     ProviderService providerService;
+
+    @Autowired
+    ConstantService constantService;
+
+    @Autowired
+    MailHelper mailHelper;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -201,6 +209,13 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (provision == null)
                 return new ArrayList<Attachment>();
             attachment.setProvision(provision);
+
+            // Send Kbis immediatly to customer order
+            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeKbisUpdated().getId())) {
+                addOrUpdateAttachment(attachment);
+                mailHelper.sendCustomerOrderAttachmentsToCustomer(provision.getAssoAffaireOrder().getCustomerOrder(),
+                        provision.getAssoAffaireOrder(), false, Arrays.asList(attachment));
+            }
         } else if (entityType.equals(CustomerOrder.class.getSimpleName())) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idEntity);
             if (customerOrder == null)
