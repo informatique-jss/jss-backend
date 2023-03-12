@@ -105,16 +105,8 @@ public class Document implements Serializable, IId {
 	private List<Mail> mailsClient;
 
 	@ManyToMany
-	@JoinTable(name = "asso_document_mail_cc_responsable_client", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
-	private List<Responsable> mailsCCResponsableClient;
-
-	@ManyToMany
 	@JoinTable(name = "asso_document_mail_affaire", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mailsAffaire;
-
-	@ManyToMany
-	@JoinTable(name = "asso_document_mail_cc_responsable_affaire", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
-	private List<Responsable> mailsCCResponsableAffaire;
 
 	private Boolean isResponsableOnBilling;
 	private Boolean isCommandNumberMandatory;
@@ -167,6 +159,9 @@ public class Document implements Serializable, IId {
 	private Country billingLabelCountry;
 
 	private Boolean billingLabelIsIndividual;
+
+	private Boolean addToClientMailList;
+	private Boolean addToAffaireMailList;
 
 	@ManyToOne
 	@JoinColumn(name = "id_regie")
@@ -308,28 +303,12 @@ public class Document implements Serializable, IId {
 		this.mailsClient = mailsClient;
 	}
 
-	public List<Responsable> getMailsCCResponsableClient() {
-		return mailsCCResponsableClient;
-	}
-
-	public void setMailsCCResponsableClient(List<Responsable> mailsCCResponsableClient) {
-		this.mailsCCResponsableClient = mailsCCResponsableClient;
-	}
-
 	public List<Mail> getMailsAffaire() {
 		return mailsAffaire;
 	}
 
 	public void setMailsAffaire(List<Mail> mailsAffaire) {
 		this.mailsAffaire = mailsAffaire;
-	}
-
-	public List<Responsable> getMailsCCResponsableAffaire() {
-		return mailsCCResponsableAffaire;
-	}
-
-	public void setMailsCCResponsableAffaire(List<Responsable> mailsCCResponsableAffaire) {
-		this.mailsCCResponsableAffaire = mailsCCResponsableAffaire;
 	}
 
 	public Boolean getIsResponsableOnBilling() {
@@ -482,6 +461,22 @@ public class Document implements Serializable, IId {
 
 	public void setExternalReference(String externalReference) {
 		this.externalReference = externalReference;
+	}
+
+	public Boolean getAddToClientMailList() {
+		return addToClientMailList;
+	}
+
+	public void setAddToClientMailList(Boolean addToClientMailList) {
+		this.addToClientMailList = addToClientMailList;
+	}
+
+	public Boolean getAddToAffaireMailList() {
+		return addToAffaireMailList;
+	}
+
+	public void setAddToAffaireMailList(Boolean addToAffaireMailList) {
+		this.addToAffaireMailList = addToAffaireMailList;
 	}
 
 }

@@ -54,26 +54,18 @@
       </td>
     </tr>
     <tr *ngIf="document.isRecipientAffaire && overrideAffaireMail">
-      <td colspan="3">
+      <td colspan="2" class="full-width">
         <chips-mail [(model)]="document.mailsAffaire" [form]="adressingForm" propertyName="mailsAffaire"
           (onFormChange)="changeDocument()" label="Autres adresses mail pour l'affaire"
           [isDisabled]="!editMode"></chips-mail>
       </td>
-      <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
+      <td>
+        <generic-toggle [(model)]="document.addToAffaireMailList" label="Ajouter à la liste courante de mails ?"
+          [form]="adressingForm" propertyName="addToAffaireMailList" (onFormChange)="changeDocument()"></generic-toggle>
+      </td>
+      <td [hidden]="!editMode" align="end">
+        <button mat-icon-button color="accent"
           (click)="overrideAffaireMail=false ; removeAllMailAffaire(document);changeDocument()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </td>
-    </tr>
-    <tr *ngIf="document.isRecipientAffaire && overrideAffaireMail && displayMailCC">
-      <td colspan=" 3">
-        <select-responsable [(model)]="document.mailsCCResponsableAffaire"
-          label="Autres destinataires mail (CC) pour l'affaire" [form]="adressingForm" (onFormChange)="changeDocument()"
-          propertyName="mailsCCResponsableAffaire" [isDisabled]="!editMode" [responsableList]="getResponsables()">
-        </select-responsable>
-      </td>
-      <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
-          (click)="overrideAffaireMailCC=false ; document.mailsCCResponsableAffaire=[];changeDocument()">
           <mat-icon>close</mat-icon>
         </button>
       </td>
@@ -97,26 +89,18 @@
       </td>
     </tr>
     <tr *ngIf="document.isRecipientClient && overrideClientMail">
-      <td [hidden]="!overrideClientMail " colspan="3">
+      <td [hidden]="!overrideClientMail " colspan="2" class="full-width">
         <chips-mail [(model)]="document.mailsClient" [form]="adressingForm" propertyName="mailsClient"
           (onFormChange)="changeDocument()" label="Autres adresses mail pour le client"
           [isDisabled]="!editMode"></chips-mail>
       </td>
-      <td [hidden]="!editMode" align="end"><button mat-icon-button color="accent"
+      <td>
+        <generic-toggle [(model)]="document.addToClientMailList" label="Ajouter à la liste courante de mails ?"
+          (onFormChange)="changeDocument()" [form]="adressingForm" propertyName="addToClientMailList"></generic-toggle>
+      </td>
+      <td [hidden]="!editMode" align="end">
+        <button mat-icon-button color="accent"
           (click)="overrideClientMail=false ;removeAllMailClient(document);changeDocument()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </td>
-    </tr>
-    <tr *ngIf="document.isRecipientClient && overrideClientMail && displayMailCC">
-      <td colspan=" 3">
-        <select-responsable [(model)]="document.mailsCCResponsableClient"
-          label="Autres destinataires mail (CC) pour le client" [form]="adressingForm" (onFormChange)="changeDocument()"
-          propertyName="mailsCCResponsableClient" [isDisabled]="!editMode" [responsableList]="getResponsables()">
-        </select-responsable>
-      </td>
-      <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
-          (click)="overrideAffaireMailCC=false ; document.mailsCCResponsableAffaire=[];changeDocument()">
           <mat-icon>close</mat-icon>
         </button>
       </td>

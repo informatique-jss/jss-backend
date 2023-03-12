@@ -13,7 +13,6 @@ import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.repository.DocumentRepository;
-import com.jss.osiris.modules.tiers.model.Responsable;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
@@ -104,20 +103,10 @@ public class DocumentServiceImpl implements DocumentService {
             for (Mail mail : document.getMailsClient())
                 newDocument.getMailsClient().add(mail);
 
-        newDocument.setMailsCCResponsableClient(new ArrayList<Responsable>());
-        if (document.getMailsCCResponsableClient() != null && document.getMailsCCResponsableClient().size() > 0)
-            for (Responsable responsable : document.getMailsCCResponsableClient())
-                newDocument.getMailsCCResponsableClient().add(responsable);
-
         newDocument.setMailsAffaire(new ArrayList<Mail>());
         if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
             for (Mail mail : document.getMailsAffaire())
                 newDocument.getMailsAffaire().add(mail);
-
-        newDocument.setMailsCCResponsableAffaire(new ArrayList<Responsable>());
-        if (document.getMailsCCResponsableAffaire() != null && document.getMailsCCResponsableAffaire().size() > 0)
-            for (Responsable responsable : document.getMailsCCResponsableAffaire())
-                newDocument.getMailsCCResponsableAffaire().add(responsable);
 
         newDocument.setIsResponsableOnBilling(document.getIsResponsableOnBilling());
         newDocument.setIsCommandNumberMandatory(document.getIsCommandNumberMandatory());
@@ -135,6 +124,8 @@ public class DocumentServiceImpl implements DocumentService {
         newDocument.setBillingLabelCountry(document.getBillingLabelCountry());
         newDocument.setBillingLabelIsIndividual(document.getBillingLabelIsIndividual());
         newDocument.setRegie(document.getRegie());
+        newDocument.setAddToAffaireMailList(document.getAddToAffaireMailList());
+        newDocument.setAddToClientMailList(document.getAddToClientMailList());
         return newDocument;
     }
 }

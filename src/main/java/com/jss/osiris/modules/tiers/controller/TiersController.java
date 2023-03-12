@@ -493,19 +493,6 @@ public class TiersController {
                 && document.getMailsClient().size() > 0)
               if (!validationHelper.validateMailList(document.getMailsClient()))
                 throw new OsirisValidationException("MailsClient");
-            if (document.getMailsCCResponsableAffaire() != null
-                && document.getMailsCCResponsableAffaire().size() > 0) {
-              for (Responsable res : document.getMailsCCResponsableAffaire()) {
-                if (res.getId() == null || responsableService.getResponsable(res.getId()) == null)
-                  throw new OsirisValidationException("Responsable");
-              }
-            }
-            if (document.getMailsCCResponsableClient() != null && document.getMailsCCResponsableClient().size() > 0) {
-              for (Responsable res : document.getMailsCCResponsableClient()) {
-                if (res.getId() == null || responsableService.getResponsable(res.getId()) == null)
-                  throw new OsirisValidationException("Responsable");
-              }
-            }
 
             validationHelper.validateString(document.getAffaireAddress(), false, 200, "AffaireAddress");
             validationHelper.validateString(document.getClientAddress(), false, 100, "ClientAddress");

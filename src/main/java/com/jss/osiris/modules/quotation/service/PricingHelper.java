@@ -529,17 +529,25 @@ public class PricingHelper {
 
         // No VAT abroad (France and Monaco)
         Country country = null;
+        City city = null;
         if (billingDocument == null || billingDocument.getBillingLabelType() == null
                 || billingDocument.getBillingLabelType().getId()
                         .equals(constantService.getBillingLabelTypeCustomer().getId())) {
             country = customerOrder.getCountry();
+            city = cityService.getCity(customerOrder.getCity().getId());
         } else if (billingDocument.getBillingLabelType().getId()
                 .equals(constantService.getBillingLabelTypeCodeAffaire().getId())) {
-            country = invoiceItem.getProvision().getAssoAffaireOrder().getAffaire().getCountry();
+            Affaire affaire = invoiceItem.getProvision().getAssoAffaireOrder().getAffaire();
+            city = affaire.getCity();
+            country = affaire.getCountry();
         } else {
             if (billingDocument.getBillingLabelCountry() == null)
                 throw new OsirisClientMessageException(
                         "Pays non trouvé dans l'adresse indiquée dans la configuration de facturation de la commande");
+            if (billingDocument.getBillingLabelCountry() == null)
+                throw new OsirisClientMessageException(
+                        "Pays non trouvé dans l'adresse indiquée dans la configuration de facturation de la commande");
+            city = billingDocument.getBillingLabelCity();
             country = billingDocument.getBillingLabelCountry();
         }
 
@@ -553,26 +561,7 @@ public class PricingHelper {
                 || invoiceItem.getBillingItem().getBillingType().getIsFee()) {
             vat = constantService.getVatDeductible();
         } else {
-            if (billingDocument == null || billingDocument.getBillingLabelType() == null
-                    || billingDocument.getBillingLabelType().getId()
-                            .equals(constantService.getBillingLabelTypeCustomer().getId())) {
-                City city = cityService.getCity(customerOrder.getCity().getId());
-                vat = vatService.getGeographicalApplicableVat(customerOrder.getCountry(),
-                        city.getDepartment());
-            } else if (billingDocument.getBillingLabelType().getId()
-                    .equals(constantService.getBillingLabelTypeCodeAffaire().getId())) {
-                Affaire affaire = invoiceItem.getProvision().getAssoAffaireOrder().getAffaire();
-                vat = vatService.getGeographicalApplicableVat(affaire.getCountry(), affaire.getCity().getDepartment());
-            } else {
-                if (billingDocument.getBillingLabelCity() == null)
-                    throw new OsirisClientMessageException(
-                            "Ville non trouvée dans l'adresse indiquée dans la configuration de facturation de la commande");
-                if (billingDocument.getBillingLabelCountry() == null)
-                    throw new OsirisClientMessageException(
-                            "Pays non trouvé dans l'adresse indiquée dans la configuration de facturation de la commande");
-                vat = vatService.getGeographicalApplicableVat(billingDocument.getBillingLabelCountry(),
-                        billingDocument.getBillingLabelCity().getDepartment());
-            }
+            vat = vatService.getGeographicalApplicableVat(country, city.getDepartment());
         }
 
         if (vat != null && (invoiceItem.getIsGifted() == null || !invoiceItem.getIsGifted())) {
