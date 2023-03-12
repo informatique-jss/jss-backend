@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -112,6 +113,8 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
 
         competentAuthority.setCountry(constantService.getCountryFrance());
         competentAuthority.setLabel(organisme.getProperties().getNom());
+        if (competentAuthority.getLabel() != null)
+            competentAuthority.setLabel(StringUtils.stripAccents(competentAuthority.getLabel()).toUpperCase());
 
         if (organisme.getProperties().getEmail() != null
                 && !isMailInList(organisme.getProperties().getEmail(), competentAuthority.getMails())) {
