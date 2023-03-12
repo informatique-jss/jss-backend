@@ -42,23 +42,25 @@ export function formatPercentForSortTable(element: any, elements: any[], column:
 export function formatDateForSortTable(element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string {
   if (element && column && column.fieldName && getObjectPropertybyString(element, column.fieldName)) {
     let date = new Date(getObjectPropertybyString(element, column.fieldName));
-    return [
-      padTo2Digits(date.getDate()),
-      padTo2Digits(date.getMonth() + 1),
-      date.getFullYear(),
-    ].join('/');
+    return formatDateFrance(date);
   }
   return "";
+}
+
+export function formatDateFrance(date: Date) {
+  if (!(date instanceof Date))
+    date = new Date(date);
+  return [
+    padTo2Digits(date.getDate()),
+    padTo2Digits(date.getMonth() + 1),
+    date.getFullYear(),
+  ].join('/');
 }
 
 export function formatDateTimeForSortTable(element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string {
   if (element && column && column.fieldName && getObjectPropertybyString(element, column.fieldName)) {
     let date = new Date(getObjectPropertybyString(element, column.fieldName));
-    return [
-      padTo2Digits(date.getDate()),
-      padTo2Digits(date.getMonth() + 1),
-      date.getFullYear(),
-    ].join('/') + " " + [
+    return formatDateFrance(date) + " " + [
       padTo2Digits(date.getHours()),
       padTo2Digits(date.getMinutes()),
       padTo2Digits(date.getSeconds()),

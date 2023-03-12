@@ -9,7 +9,8 @@
   <mat-accordion multi>
     <mat-expansion-panel expanded="false">
       <mat-expansion-panel-header>
-        <mat-panel-title>Détails de la commande n°{{asso.customerOrder.id}}
+        <mat-panel-title>Détails de la commande n°{{asso.customerOrder.id}} du {{asso.customerOrder.createdDate |
+          date:'dd/MM/yyyy'}}
         </mat-panel-title>
         <mat-panel-description>
           <span class="status-text">{{asso.customerOrder.customerOrderStatus.label}}</span>

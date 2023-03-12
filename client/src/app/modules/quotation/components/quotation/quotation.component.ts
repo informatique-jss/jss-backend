@@ -18,6 +18,7 @@ import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN } from '../../../../libs/Constants';
 import { replaceDocument } from '../../../../libs/DocumentHelper';
+import { formatDateFrance } from '../../../../libs/FormatHelper';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
 import { AssociateDepositDialogComponent } from '../../../invoicing/components/associate-deposit-dialog/associate-deposit-dialog.component';
 import { getCustomerOrderForIQuotation } from '../../../invoicing/components/invoice-tools';
@@ -136,7 +137,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         this.customerOrderService.getCustomerOrder(this.idQuotation).subscribe(response => {
           this.quotation = response;
           if (instanceOfCustomerOrder(this.quotation))
-            this.appService.changeHeaderTitle("Commande " + this.quotation.id + " - " +
+            this.appService.changeHeaderTitle("Commande " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
               (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : ""));
           this.toggleTabs();
           this.setOpenStatus();
@@ -151,7 +152,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       this.quotationService.getQuotation(this.idQuotation).subscribe(response => {
         this.quotation = response;
         if (instanceOfQuotation(this.quotation))
-          this.appService.changeHeaderTitle("Devis " + this.quotation.id + " - " +
+          this.appService.changeHeaderTitle("Devis " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
             (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
         this.toggleTabs();
         this.setOpenStatus();
