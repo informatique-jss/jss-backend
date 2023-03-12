@@ -330,6 +330,16 @@ public class InvoiceServiceImpl implements InvoiceService {
                             for (Provision provision : asso.getProvisions())
                                 if (provision.getDebours() != null)
                                     for (Debour debour : provision.getDebours()) {
+                                        if (debour.getBankTransfert() == null && debour.getPaymentType().getId()
+                                                .equals(constantService.getPaymentTypeVirement().getId())) {
+                                            debour = debourService.getDebour(debour.getId());
+                                            debour.setBankTransfert(
+                                                    bankTransfertService.generateBankTransfertForDebour(debour,
+                                                            debour.getProvision().getAssoAffaireOrder(),
+                                                            invoice.getCustomerOrderForInboundInvoice()));
+                                            debour = debourService.addOrUpdateDebour(debour);
+                                        }
+
                                         if (debour.getNonTaxableAmount() != null && debour.getInvoiceItem() == null) {
 
                                             if (debour.getPaymentType().getId()

@@ -198,15 +198,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     if (isNewDebour)
                         debourService.addOrUpdateDebour(debour);
 
-                    if (debour.getBankTransfert() == null && debour.getPaymentType().getId()
-                            .equals(constantService.getPaymentTypeVirement().getId())) {
-
-                        debourService.addOrUpdateDebour(debour);
-                        debour.setBankTransfert(
-                                bankTransfertService.generateBankTransfertForDebour(debour, assoAffaireOrder,
-                                        (CustomerOrder) customerOrder));
-                        debour = debourService.addOrUpdateDebour(debour);
-                    } else if (isNewDebour && debour.getPaymentType().getId()
+                    if (isNewDebour && debour.getPaymentType().getId()
                             .equals(constantService.getPaymentTypeCheques().getId())) {
                         debourService.addOrUpdateDebour(debour);
                         accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
