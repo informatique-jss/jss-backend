@@ -151,6 +151,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                     accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart);
             }
 
+        // Refresh invoice
+        invoice = getInvoice(invoice.getId());
+
         // Unlink invoice item from customer order
         if (invoice.getInvoiceItems() != null) {
             for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
