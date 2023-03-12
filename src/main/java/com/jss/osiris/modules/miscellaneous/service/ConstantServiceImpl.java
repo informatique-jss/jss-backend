@@ -311,6 +311,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public BillingType getBillingTypeBaloPublicationFlag() throws OsirisException {
+        return getConstants().getBillingTypeBaloPublicationFlag();
+    }
+
+    @Override
     public BillingType getBillingTypePublicationPaper() throws OsirisException {
         return getConstants().getBillingTypePublicationPaper();
     }

@@ -30,6 +30,13 @@
               (onToggleChange)="provisionChangeFunction()" propertyName="isBaloPackage"></generic-toggle>
           </td>
         </tr>
+        <tr *ngIf="displayOption(billingTypePublicationFlag)">
+          <td>
+            <generic-toggle [(model)]="provision.isBaloPackage" label="Justificatif numérique BALO ?"
+              [form]="optionForm" (onToggleChange)="provisionChangeFunction()"
+              propertyName="isBaloPublicationFlag"></generic-toggle>
+          </td>
+        </tr>
         <tr *ngIf="displayOption(billingTypePublicationReceipt) && provision.announcement && provision.announcement.confrere
          && provision.announcement.confrere.journalType.id==journalTypePaper.id">
           <td>

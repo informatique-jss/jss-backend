@@ -90,6 +90,8 @@ public class Provision implements IId, IAttachment {
 	@Column(nullable = false)
 	private Boolean isBaloPackage;
 
+	private Boolean isBaloPublicationFlag;
+
 	@Column(nullable = false)
 	private Boolean isPublicationPaper;
 
@@ -536,6 +538,14 @@ public class Provision implements IId, IAttachment {
 
 	public void setDebours(List<Debour> debours) {
 		this.debours = debours;
+	}
+
+	public Boolean getIsBaloPublicationFlag() {
+		return isBaloPublicationFlag;
+	}
+
+	public void setIsBaloPublicationFlag(Boolean isBaloPublicationFlag) {
+		this.isBaloPublicationFlag = isBaloPublicationFlag;
 	}
 
 }
