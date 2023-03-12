@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
+import { CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
 import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -319,21 +320,28 @@ export class AddInvoiceComponent implements OnInit {
           this.selectedDebours = [];
         debour.nonTaxableAmount = 0;
 
-        const dialogRef = this.deboursAmontTaxableDialog.open(DeboursAmountInvoicedDialogComponent, {
-          maxWidth: "300px",
-        });
+        if (this.invoice.customerOrderForInboundInvoice.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_BILLED) {
+          const dialogRef = this.deboursAmontTaxableDialog.open(DeboursAmountInvoicedDialogComponent, {
+            maxWidth: "300px",
+          });
 
-        dialogRef.componentInstance.invoicedAmount = debour.invoicedAmount;
+          dialogRef.componentInstance.invoicedAmount = debour.invoicedAmount;
 
-        dialogRef.afterClosed().subscribe(dialogResult => {
-          if (dialogResult != null && this.debours) {
-            if (!this.selectedDebours)
-              this.selectedDebours = [];
-            debour.invoicedAmount = parseFloat(dialogResult);
-            this.selectedDebours.push(debour);
-            this.refreshTable.next();
-          }
-        });
+          dialogRef.afterClosed().subscribe(dialogResult => {
+            if (dialogResult != null && this.debours) {
+              if (!this.selectedDebours)
+                this.selectedDebours = [];
+              debour.invoicedAmount = parseFloat(dialogResult);
+              this.selectedDebours.push(debour);
+              this.refreshTable.next();
+            }
+          });
+        } else {
+          if (!this.selectedDebours)
+            this.selectedDebours = [];
+          this.selectedDebours.push(debour);
+          this.refreshTable.next();
+        }
         return;
       }
 

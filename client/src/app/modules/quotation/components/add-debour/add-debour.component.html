@@ -55,7 +55,7 @@
     </div>
   </form>
   <sort-table [refreshTable]="refreshTable" [columns]="displayedColumns" [values]="provision.debours"
-    tableName="Débours"></sort-table>
+    tableName="Débours" [actions]="tableAction"></sort-table>
   <div *ngIf="provision.debours && provision.debours.length>0" class="margin-top">
     <p>Total par authorité compétente</p>
     <ul *ngFor="let competentAuthority of getCompetentAuthorities()">
