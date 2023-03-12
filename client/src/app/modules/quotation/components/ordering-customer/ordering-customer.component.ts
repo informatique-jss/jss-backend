@@ -99,7 +99,7 @@ export class OrderingCustomerComponent implements OnInit {
     this.customerOrderTableActions.push({
       actionIcon: "visibility", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction, element: any) => {
         if (element)
-          return ['/order', element.id];
+          return ['/order', element.customerOrderId];
         return undefined;
       }, display: true,
     } as SortTableAction);
@@ -113,7 +113,7 @@ export class OrderingCustomerComponent implements OnInit {
     this.quotationTableActions.push({
       actionIcon: "visibility", actionName: "Voir le devis", actionLinkFunction: (action: SortTableAction, element: any) => {
         if (element)
-          return ['/quotation', element.id];
+          return ['/quotation', element.quotationId];
         return undefined;
       }, display: true,
     } as SortTableAction);
