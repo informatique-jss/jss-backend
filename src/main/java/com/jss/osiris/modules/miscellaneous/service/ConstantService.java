@@ -40,8 +40,6 @@ import com.jss.osiris.modules.tiers.model.TiersType;
 public interface ConstantService {
     public Constant getConstants() throws OsirisException;
 
-    public Constant getConstant(Integer id) throws OsirisException;
-
     public Constant addOrUpdateConstant(Constant constant) throws OsirisException;
 
     public BillingLabelType getBillingLabelTypeCodeAffaire() throws OsirisException;

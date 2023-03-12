@@ -38,6 +38,7 @@ import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.invoicing.model.Payment;
+import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
@@ -326,6 +327,9 @@ public class QuotationController {
   @Autowired
   PaymentService paymentService;
 
+  @Autowired
+  InvoiceService invoiceService;
+
   @GetMapping(inputEntryPoint + "/bank-transferts")
   public ResponseEntity<List<BankTransfert>> getBankTransfers() {
     return new ResponseEntity<List<BankTransfert>>(bankTransfertService.getBankTransfers(), HttpStatus.OK);
@@ -357,6 +361,31 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/announcement")
   public ResponseEntity<Announcement> getAnnouncementById(@RequestParam Integer id) {
     return new ResponseEntity<Announcement>(announcementService.getAnnouncement(id),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/quotation/customer-order")
+  public ResponseEntity<List<QuotationSearchResult>> getQuotationByCustomerOrderId(
+      @RequestParam Integer idCustomerOrder) {
+    return new ResponseEntity<List<QuotationSearchResult>>(quotationService.searchByCustomerOrderId(idCustomerOrder),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/quotation")
+  public ResponseEntity<List<OrderingSearchResult>> getCustomerOrderByQuotationId(@RequestParam Integer idQuotation) {
+    return new ResponseEntity<List<OrderingSearchResult>>(customerOrderService.searchByQuotationId(idQuotation),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/announcement/confrere")
+  public ResponseEntity<Confrere> getConfrereForAnnouncement(@RequestParam Integer idAnnouncement) {
+    return new ResponseEntity<Confrere>(announcementService.getConfrereForAnnouncement(idAnnouncement),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/invoice/customer-order")
+  public ResponseEntity<CustomerOrder> getCustomerOrderForInvoice(@RequestParam Integer idInvoice) {
+    return new ResponseEntity<CustomerOrder>(invoiceService.getCustomerOrderByIdInvoice(idInvoice),
         HttpStatus.OK);
   }
 

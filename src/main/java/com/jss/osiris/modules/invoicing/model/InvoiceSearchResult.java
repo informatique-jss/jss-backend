@@ -11,6 +11,8 @@ public interface InvoiceSearchResult {
 
     public String getInvoiceStatus();
 
+    public String getInvoiceStatusCode();
+
     public Integer getCustomerOrderId();
 
     public String getCustomerOrderLabel();
@@ -48,4 +50,6 @@ public interface InvoiceSearchResult {
     public LocalDate getLastFollowupDate();
 
     public String getPaymentId();
+
+    public Float getRemainingToPay();
 }

@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -261,7 +262,7 @@ public class QuotationServiceImpl implements QuotationService {
                 salesEmployeeId, assignedToEmployeeId,
                 statusId,
                 quotationSearch.getStartDate().withHour(0).withMinute(0),
-                quotationSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId);
+                quotationSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId, 0);
     }
 
     @Override
@@ -448,6 +449,13 @@ public class QuotationServiceImpl implements QuotationService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         quotation.setAssignedTo(employee);
         addOrUpdateQuotation(quotation);
+    }
+
+    @Override
+    public List<QuotationSearchResult> searchByCustomerOrderId(Integer idCustomerOrder) {
+        return quotationRepository.findQuotations(
+                Arrays.asList(0), Arrays.asList(0), Arrays.asList(0), LocalDateTime.now().minusYears(100),
+                LocalDateTime.now().plusYears(100), Arrays.asList(0), Arrays.asList(0), idCustomerOrder);
     }
 
 }

@@ -673,7 +673,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 salesEmployeeId, assignedToEmployeeId,
                 statusId,
                 orderingSearch.getStartDate().withHour(0).withMinute(0),
-                orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId);
+                orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId, 0);
         return customerOrders;
     }
 
@@ -1048,5 +1048,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         customerOrder.setAssignedTo(employee);
         addOrUpdateCustomerOrder(customerOrder, true, false);
+    }
+
+    @Override
+    public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation) {
+        return customerOrderRepository.findCustomerOrders(
+                Arrays.asList(0), Arrays.asList(0), Arrays.asList(0), LocalDateTime.now().minusYears(100),
+                LocalDateTime.now().plusYears(100), Arrays.asList(0), Arrays.asList(0), idQuotation);
     }
 }

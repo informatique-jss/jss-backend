@@ -152,7 +152,7 @@ public class PricingHelper {
             if (characterPrice != null) {
                 Float price = characterPrice.getPrice()
                         * characterPriceService.getCharacterNumber(provision);
-                invoiceItem.setPreTaxPrice(Math.round(price * 100f) / 100f);
+                invoiceItem.setPreTaxPrice(price);
 
                 // Add notice type indication for announcements
                 String noticeFamiliyType = (provision.getAnnouncement() != null
@@ -194,9 +194,7 @@ public class PricingHelper {
                 Confrere confrere = provision.getAnnouncement().getConfrere();
                 invoiceItem.setLabel(invoiceItem.getLabel() + " (quantité : " + nbr + ")");
 
-                invoiceItem.setPreTaxPrice(
-                        Math.round((confrere.getPaperPrice() != null ? confrere.getPaperPrice() : 0f) * nbr * 100f)
-                                / 100f);
+                invoiceItem.setPreTaxPrice((confrere.getPaperPrice() != null ? confrere.getPaperPrice() : 0f) * nbr);
             }
         } else if (billingItem.getBillingType().getId()
                 .equals(constantService.getBillingTypeConfrereFees().getId())) {
@@ -248,10 +246,13 @@ public class PricingHelper {
                 else
                     total += debourAmount / ((100 + constantService.getVatDeductible().getRate()) / 100f);
             }
-            invoiceItem.setPreTaxPrice(Math.round(total * 100f) / 100f);
+            invoiceItem.setPreTaxPrice(total);
         } else {
-            invoiceItem.setPreTaxPrice(Math.round(billingItem.getPreTaxPrice() * 100f) / 100f);
+            invoiceItem.setPreTaxPrice(billingItem.getPreTaxPrice());
         }
+
+        if (invoiceItem.getPreTaxPrice() != null)
+            invoiceItem.setPreTaxPrice(Math.round(invoiceItem.getPreTaxPrice() * 100f) / 100f);
 
         if (invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()) {
             invoiceItem.setPreTaxPrice(0f);

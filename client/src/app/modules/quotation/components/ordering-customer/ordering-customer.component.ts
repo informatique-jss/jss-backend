@@ -9,6 +9,7 @@ import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
+import { formatEurosForSortTable } from '../../../../libs/FormatHelper';
 import { IndexEntity } from '../../../../routing/search/IndexEntity';
 import { AppService } from '../../../../services/app.service';
 import { Document } from '../../../miscellaneous/model/Document';
@@ -17,8 +18,12 @@ import { SortTableAction } from '../../../miscellaneous/model/SortTableAction';
 import { ResponsableService } from '../../../tiers/services/responsable.service';
 import { Confrere } from '../../model/Confrere';
 import { IQuotation } from '../../model/IQuotation';
+import { OrderingSearchResult } from '../../model/OrderingSearchResult';
+import { QuotationSearchResult } from '../../model/QuotationSearchResult';
 import { CustomerOrderService } from '../../services/customer.order.service';
-import { QuotationComponent } from '../quotation/quotation.component';
+import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
+import { QuotationSearchResultService } from '../../services/quotation.search.result.service';
+import { QuotationService } from '../../services/quotation.service';
 
 @Component({
   selector: 'ordering-customer',
@@ -43,6 +48,9 @@ export class OrderingCustomerComponent implements OnInit {
   quotationTableActions: SortTableAction[] = [] as Array<SortTableAction>;
   quotationDisplayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
 
+  customerOrderQuotations: QuotationSearchResult[] | undefined;
+  quotationCustomerOrders: OrderingSearchResult[] | undefined;
+
   constructor(private formBuilder: UntypedFormBuilder,
     private tiersService: TiersService,
     private appService: AppService,
@@ -51,6 +59,9 @@ export class OrderingCustomerComponent implements OnInit {
     private indexEntityService: IndexEntityService,
     protected documentTypeService: DocumentTypeService,
     private customerOrderService: CustomerOrderService,
+    private orderingSearchResultService: OrderingSearchResultService,
+    private quotationSearchResultService: QuotationSearchResultService,
+    private quotationService: QuotationService,
     public specialOfferDialog: MatDialog) { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -67,6 +78,12 @@ export class OrderingCustomerComponent implements OnInit {
         this.indexEntityService.getIndividualTiersByKeyword(this.quotation.tiers.id + "").subscribe(response => this.searchedTiers = response[0]);
       }
       this.orderingCustomerForm.markAllAsTouched();
+
+      if (changes.quotation && this.quotation.id && instanceOfCustomerOrder(this.quotation))
+        this.quotationSearchResultService.getQuotationsForCustomerOrder(this.quotation).subscribe(quotations => this.customerOrderQuotations = quotations);
+
+      if (changes.quotation && this.quotation.id && instanceOfQuotation(this.quotation))
+        this.orderingSearchResultService.getCustomerOrderForQuotation(this.quotation).subscribe(quotations => this.quotationCustomerOrders = quotations);
     }
   }
 
@@ -74,10 +91,10 @@ export class OrderingCustomerComponent implements OnInit {
     this.orderingCustomerForm.markAllAsTouched();
 
     this.customerOrderDisplayedColumns = [];
-    this.customerOrderDisplayedColumns.push({ id: "id", fieldName: "id", label: "N° de la commande" } as SortTableColumn);
-    this.customerOrderDisplayedColumns.push({ id: "quotationStatus", fieldName: "customerOrderStatus.label", label: "Statut" } as SortTableColumn);
+    this.customerOrderDisplayedColumns.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "N° de la commande" } as SortTableColumn);
+    this.customerOrderDisplayedColumns.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut" } as SortTableColumn);
     this.customerOrderDisplayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.customerOrderDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return QuotationComponent.computePriceTotal(element) + " €"; } } as SortTableColumn);
+    this.customerOrderDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: formatEurosForSortTable } as SortTableColumn);
 
     this.customerOrderTableActions.push({
       actionIcon: "visibility", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction, element: any) => {
@@ -88,10 +105,10 @@ export class OrderingCustomerComponent implements OnInit {
     } as SortTableAction);
 
     this.quotationDisplayedColumns = [];
-    this.quotationDisplayedColumns.push({ id: "id", fieldName: "id", label: "N° du devis" } as SortTableColumn);
-    this.quotationDisplayedColumns.push({ id: "quotationStatus", fieldName: "quotationStatus.label", label: "Statut" } as SortTableColumn);
+    this.quotationDisplayedColumns.push({ id: "quotationId", fieldName: "quotationId", label: "N° du devis" } as SortTableColumn);
+    this.quotationDisplayedColumns.push({ id: "quotationStatus", fieldName: "quotationStatus", label: "Statut" } as SortTableColumn);
     this.quotationDisplayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.quotationDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return QuotationComponent.computePriceTotal(element) + " €"; } } as SortTableColumn);
+    this.quotationDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: formatEurosForSortTable } as SortTableColumn);
 
     this.quotationTableActions.push({
       actionIcon: "visibility", actionName: "Voir le devis", actionLinkFunction: (action: SortTableAction, element: any) => {

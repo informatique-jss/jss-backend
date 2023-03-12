@@ -35,7 +35,7 @@ public interface InvoiceService {
          */
         public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer) throws OsirisException;
 
-        public List<Invoice> getInvoiceForCustomerOrder(Integer customerOrderId);
+        public List<InvoiceSearchResult> getInvoiceForCustomerOrder(Integer customerOrderId) throws OsirisException;
 
         public LocalDate getFirstBillingDateForTiers(Tiers tiers);
 
@@ -59,5 +59,10 @@ public interface InvoiceService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException;
+
+        public List<InvoiceSearchResult> getProviderInvoiceForCustomerOrder(Integer customerOrderId)
+                        throws OsirisException;
+
+        public CustomerOrder getCustomerOrderByIdInvoice(Integer idInvoice);
 
 }

@@ -9,6 +9,7 @@ import { ConstantService } from '../../../miscellaneous/services/constant.servic
 import { Affaire } from '../../model/Affaire';
 import { Announcement } from '../../model/Announcement';
 import { Bodacc } from '../../model/Bodacc';
+import { Confrere } from '../../model/Confrere';
 import { Domiciliation } from '../../model/Domiciliation';
 import { Formalite } from '../../model/guichet-unique/Formalite';
 import { IQuotation } from '../../model/IQuotation';
@@ -51,6 +52,8 @@ export class ProvisionItemComponent implements OnInit {
 
   provisionFamilyTypes: ProvisionFamilyType[] = [] as Array<ProvisionFamilyType>;
   provisionTypes: ProvisionType[] = [] as Array<ProvisionType>;
+
+  announcementConfrere: Confrere | undefined;
 
   PROVISION_SCREEN_TYPE_BODACC = PROVISION_SCREEN_TYPE_BODACC;
   PROVISION_SCREEN_TYPE_DOMICILIATION = PROVISION_SCREEN_TYPE_DOMICILIATION;

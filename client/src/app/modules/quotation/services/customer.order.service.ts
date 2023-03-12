@@ -4,6 +4,7 @@ import { AppRestService } from 'src/app/services/appRest.service';
 import { Employee } from '../../profile/model/Employee';
 import { Announcement } from '../model/Announcement';
 import { CustomerOrder } from '../model/CustomerOrder';
+import { Invoice } from '../model/Invoice';
 import { IQuotation } from '../model/IQuotation';
 import { Quotation } from '../model/Quotation';
 
@@ -22,6 +23,10 @@ export class CustomerOrderService extends AppRestService<IQuotation>{
 
   getCustomerOrder(idCustomerOrder: number) {
     return this.getById("customer-order", idCustomerOrder);
+  }
+
+  getCustomerOrderForInvoice(invoice: Invoice) {
+    return this.get(new HttpParams().set("idInvoice", invoice.id), "invoice/customer-order");
   }
 
   addOrUpdateCustomerOrder(customerOrder: IQuotation) {

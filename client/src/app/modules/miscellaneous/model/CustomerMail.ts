@@ -1,6 +1,5 @@
 import { Employee } from '../../profile/model/Employee';
 import { Confrere } from '../../quotation/model/Confrere';
-import { CustomerOrder } from '../../quotation/model/CustomerOrder';
 import { MailComputeResult } from '../../quotation/model/MailComputeResult';
 import { Quotation } from '../../quotation/model/Quotation';
 import { Responsable } from '../../tiers/model/Responsable';
@@ -35,7 +34,6 @@ export interface CustomerMail {
   sendToMeEmployee: Employee;
   subject: string;
   createdDateTime: Date;
-  customerOrder: CustomerOrder;
   quotation: Quotation;
   tiers: Tiers;
   responsable: Responsable;

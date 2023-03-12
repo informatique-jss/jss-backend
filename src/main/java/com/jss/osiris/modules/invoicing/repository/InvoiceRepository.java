@@ -27,6 +27,7 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
         @Query(nativeQuery = true, value = "select "
                         + " i.id as invoiceId,"
                         + " ist.label as invoiceStatus,"
+                        + " ist.code as invoiceStatusCode,"
                         + " ist.id as invoiceStatusId,"
                         + " c.id as customerOrderId,"
                         + " case when co.id is not null then co.label"
@@ -48,6 +49,7 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
                         + "  i.third_reminder_date_time as thirdReminderDateTime,"
                         + "  i.due_date as dueDate,"
                         + "  max(follow.followup_date) as lastFollowupDate,"
+                        + "  COALESCE(i.total_price,0)-sum(COALESCE(deposit.deposit_amount,0)) - sum(COALESCE(p.payment_amount,0)) as remainingToPay,"
                         + "  STRING_AGG( cast(p.id as text),', ' order by 1) as paymentId"
                         + " from invoice i"
                         + " join invoice_status ist on ist.id = i.id_invoice_status "
@@ -59,17 +61,19 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
                         + " left join tiers t on t.id = c.id_tiers or r1.id_tiers =t.id "
                         + " left join confrere co on co.id = c.id_confrere"
                         + " left join provider pro on pro.id = i.id_provider"
-                        + " left join payment p on p.id_invoice = i.id"
+                        + " left join payment p on p.id_invoice = i.id and p.is_cancelled = false"
+                        + " left join deposit on deposit.id_invoice = i.id and deposit.is_cancelled = false"
                         + " left join tiers_followup follow on follow.id_invoice = i.id"
                         + " where i.created_date>=:startDate and i.created_date<=:endDate "
                         + " and  ( COALESCE(:invoiceStatus)=0 or ist.id in (:invoiceStatus)) "
                         + " and  ( COALESCE(:customerOrderId)=0 or c.id in (:customerOrderId)) "
+                        + " and  ( COALESCE(:customerOrderForInboundInvoiceId)=0 or i.id_customer_order_for_inbound_invoice in (:customerOrderForInboundInvoiceId)) "
                         + " and  ( COALESCE(:invoiceId)=0 or i.id in (:invoiceId)) "
                         + " and  ( COALESCE(:customerOrderIds) =0 or t.id in (:customerOrderIds) or r1.id in (:customerOrderIds) or co.id in (:customerOrderIds) ) "
                         + " and (:minAmount is null or total_price>=CAST(CAST(:minAmount as text) as real) ) "
                         + " and (:maxAmount is null or total_price<=CAST(CAST(:maxAmount as text) as real) )"
                         + " and (:showToRecover is false or (  i.first_reminder_date_time is not null and  i.second_reminder_date_time  is not null and  i.third_reminder_date_time  is not null and i.id_invoice_status<>:invoicePayedStatusId ) )"
-                        + " group by i.id, ist.label,ist.id, pro.label,c.id, co.id, co.label, r1.id, r1.firstname,t.id, r1.lastname,"
+                        + " group by i.id, ist.label,ist.code,ist.id, pro.label,c.id, co.id, co.label, r1.id, r1.firstname,t.id, r1.lastname,"
                         + " t.denomination, t.firstname, t.lastname, r1.firstname, r1.lastname, i.billing_label, i.created_date, i.total_price,"
                         + " i.first_reminder_date_time , i.second_reminder_date_time,i.third_reminder_date_time, i.due_date ,c.description")
         List<InvoiceSearchResult> findInvoice(@Param("invoiceStatus") List<Integer> invoiceStatus,
@@ -79,9 +83,12 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
                         @Param("invoicePayedStatusId") Integer invoicePayedStatusId,
                         @Param("invoiceId") Integer invoiceId,
                         @Param("customerOrderId") Integer customerOrderId,
-                        @Param("customerOrderIds") List<Integer> customerOrderIds);
+                        @Param("customerOrderIds") List<Integer> customerOrderIds,
+                        @Param("customerOrderForInboundInvoiceId") Integer customerOrderForInboundInvoiceId);
 
         @Query(value = "select n from Invoice n where invoiceStatus=:invoiceStatus and thirdReminderDateTime is null ")
         List<Invoice> findInvoiceForReminder(@Param("invoiceStatus") InvoiceStatus invoiceStatus);
+
+        List<Invoice> findByCustomerOrderForInboundInvoiceId(Integer customerOrderId);
 
 }

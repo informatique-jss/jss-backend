@@ -7,7 +7,6 @@ import { Subject, Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
-import { getRemainingToPay } from 'src/app/modules/invoicing/components/invoice-tools';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
@@ -22,6 +21,8 @@ import { formatDateFrance } from '../../../../libs/FormatHelper';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
 import { AssociateDepositDialogComponent } from '../../../invoicing/components/associate-deposit-dialog/associate-deposit-dialog.component';
 import { getCustomerOrderForIQuotation } from '../../../invoicing/components/invoice-tools';
+import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
+import { InvoiceSearchResultService } from '../../../invoicing/services/invoice.search.result.service';
 import { WorkflowDialogComponent } from '../../../miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { Affaire } from '../../model/Affaire';
@@ -88,6 +89,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   idQuotation: number | undefined;
 
   saveObservableSubscription: Subscription = new Subscription;
+  customerOrderInvoices: InvoiceSearchResult[] | undefined;
 
   constructor(private appService: AppService,
     private quotationService: QuotationService,
@@ -108,6 +110,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     public associateDepositDialog: MatDialog,
     private provisionService: ProvisionService,
     private orderingSearchResultService: OrderingSearchResultService,
+    private invoiceSearchResultService: InvoiceSearchResultService,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   quotationForm = this.formBuilder.group({});
@@ -144,6 +147,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           this.checkAffaireAssignation();
           this.updateDocumentsEvent.next(this.quotation);
         })
+        this.getInvoices();
       }
       // Load by quotation
     } else if (this.idQuotation != null && this.idQuotation != undefined) {
@@ -194,6 +198,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   updateDocuments() {
     this.updateDocumentsEvent.next(this.quotation);
+  }
+
+  getInvoices() {
+    this.invoiceSearchResultService.getInvoiceForCustomerOrder({ id: this.idQuotation } as CustomerOrder).subscribe(response => this.customerOrderInvoices = response);
   }
 
   updateAssignedToForAffaire(employee: Employee, asso: AssoAffaireOrder) {
@@ -712,10 +720,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus)
       if (this.quotation.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_BILLED)
         return Math.round((QuotationComponent.computePriceTotal(this.quotation) - QuotationComponent.computePayed(this.quotation)) * 100) / 100;
-      else {
-        for (let invoice of this.quotation.invoices)
-          if (invoice.invoiceStatus.code != this.constantService.getInvoiceStatusCancelled().code)
-            return getRemainingToPay(invoice);
+      else if (this.customerOrderInvoices) {
+        for (let invoice of this.customerOrderInvoices)
+          if (invoice.invoiceStatusCode != this.constantService.getInvoiceStatusCancelled().code)
+            return invoice.remainingToPay;
       }
     return this.getPriceTotal();
   }

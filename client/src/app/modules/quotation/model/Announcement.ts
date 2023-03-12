@@ -8,7 +8,6 @@ import { NoticeTypeFamily } from "./NoticeTypeFamily";
 export interface Announcement extends IDocument {
   id: number;
   department: Department;
-  confrere: Confrere | undefined;
   publicationDate: Date;
   notice: string;
   noticeHeader: string;
@@ -22,4 +21,10 @@ export interface Announcement extends IDocument {
   isAnnouncementAlreadySentToConfrere: boolean;
   announcementStatus: AnnouncementStatus;
   actuLegaleId: number;
+
+  /**
+   * WARNING : property not directly fethed from server
+   * User ConfrereService.getConfrereForAnnouncement to fetch it !
+   */
+  confrere: Confrere;
 }

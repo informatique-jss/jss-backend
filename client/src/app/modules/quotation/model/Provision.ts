@@ -57,5 +57,4 @@ export interface Provision extends IAttachment {
   isVacationUpdateBeneficialOwners: boolean;
   isFormalityAdditionalDeclaration: boolean;
   isCorrespondenceFees: boolean;
-
 }

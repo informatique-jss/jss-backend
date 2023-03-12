@@ -28,6 +28,7 @@ import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
@@ -789,23 +790,29 @@ public class PaymentServiceImpl implements PaymentService {
                     return invoice;
             }
             if (foundEntity.getEntityType().equals(CustomerOrder.class.getSimpleName())) {
-                List<Invoice> invoices = invoiceService.getInvoiceForCustomerOrder(foundEntity.getEntityId());
+                List<InvoiceSearchResult> invoices = invoiceService
+                        .getInvoiceForCustomerOrder(foundEntity.getEntityId());
                 if (invoices != null && invoices.size() > 0)
-                    for (Invoice invoice : invoices)
-                        if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId()))
-                            return invoice;
+                    for (InvoiceSearchResult invoice : invoices){
+                        Invoice completeInvoice = invoiceService.getInvoice(invoice.getInvoiceId());
+                        if (completeInvoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId()))
+                            return completeInvoice;
+                    }
             }
             if (foundEntity.getEntityType().equals(Quotation.class.getSimpleName())) {
                 Quotation quotation = quotationService.getQuotation(foundEntity.getEntityId());
                 if (quotation != null && quotation.getCustomerOrders() != null
                         && quotation.getCustomerOrders().size() > 0) {
                     for (CustomerOrder customerOrder : quotation.getCustomerOrders()) {
-                        List<Invoice> invoices = invoiceService.getInvoiceForCustomerOrder(customerOrder.getId());
+                        List<InvoiceSearchResult> invoices = invoiceService
+                                .getInvoiceForCustomerOrder(customerOrder.getId());
                         if (invoices != null && invoices.size() > 0)
-                            for (Invoice invoice : invoices)
-                                if (invoice.getInvoiceStatus().getId()
+                            for (InvoiceSearchResult invoice : invoices){
+                                Invoice completeInvoice = invoiceService.getInvoice(invoice.getInvoiceId());
+                                if (completeInvoice.getInvoiceStatus().getId()
                                         .equals(constantService.getInvoiceStatusSend().getId()))
-                                    return invoice;
+                                    return completeInvoice;
+                            }
                     }
                 }
             }

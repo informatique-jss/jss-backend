@@ -3,12 +3,12 @@ import { FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
-import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate, getRemainingToPay } from 'src/app/modules/invoicing/components/invoice-tools';
-import { InvoiceService } from 'src/app/modules/invoicing/services/invoice.service';
+import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
+import { InvoiceSearchResultService } from 'src/app/modules/invoicing/services/invoice.search.result.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from '../../../../services/app.service';
+import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
 import { CustomerOrder } from '../../model/CustomerOrder';
-import { Invoice } from '../../model/Invoice';
 import { InvoiceItem } from '../../model/InvoiceItem';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { IQuotation } from '../../model/IQuotation';
@@ -25,6 +25,8 @@ export class InvoiceManagementComponent implements OnInit {
 
   @Input() quotation: IQuotation = {} as IQuotation;
   customerOrder: CustomerOrder | undefined;
+  @Input() customerOrderInvoices: InvoiceSearchResult[] | undefined;
+  customerOrderProviderInvoices: InvoiceSearchResult[] | undefined;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Output() invoiceItemChange: EventEmitter<void> = new EventEmitter<void>();
@@ -46,11 +48,14 @@ export class InvoiceManagementComponent implements OnInit {
     private constantService: ConstantService,
     private appService: AppService,
     private invoiceLabelResultService: InvoiceLabelResultService,
-    protected invoiceService: InvoiceService,) { }
+    protected invoiceSearchResultService: InvoiceSearchResultService,) { }
 
   ngOnInit() {
     this.updateInvoiceLabelResult();
     this.invoiceManagementForm.markAllAsTouched();
+
+    if (instanceOfCustomerOrder(this.quotation))
+      this.invoiceSearchResultService.getProviderInvoiceForCustomerOrder(this.quotation).subscribe(invoices => this.customerOrderProviderInvoices = invoices);
   }
 
   ngOnDestroy() {
@@ -110,7 +115,7 @@ export class InvoiceManagementComponent implements OnInit {
       if (this.quotation.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_BILLED)
         return Math.round((QuotationComponent.computePriceTotal(this.quotation) - QuotationComponent.computePayed(this.quotation)) * 100) / 100;
       else if (this.getCurrentInvoiceForCustomerOrder() != undefined) {
-        return getRemainingToPay(this.getCurrentInvoiceForCustomerOrder()!);
+        return this.getCurrentInvoiceForCustomerOrder()!.remainingToPay;
       }
     return this.getPriceTotal();
   }
@@ -128,10 +133,10 @@ export class InvoiceManagementComponent implements OnInit {
     }
   }
 
-  getCurrentInvoiceForCustomerOrder(): Invoice | undefined {
-    if (instanceOfCustomerOrder(this.quotation) && this.quotation.invoices)
-      for (let invoice of this.quotation.invoices)
-        if (invoice.invoiceStatus && (invoice.invoiceStatus.id == this.constantService.getInvoiceStatusSend().id || invoice.invoiceStatus.id == this.constantService.getInvoiceStatusPayed().id))
+  getCurrentInvoiceForCustomerOrder(): InvoiceSearchResult | undefined {
+    if (instanceOfCustomerOrder(this.quotation) && this.customerOrderInvoices)
+      for (let invoice of this.customerOrderInvoices)
+        if (invoice.invoiceStatus && (invoice.invoiceStatusId == this.constantService.getInvoiceStatusSend().id || invoice.invoiceStatusId == this.constantService.getInvoiceStatusPayed().id))
           return invoice;
     return undefined;
   }

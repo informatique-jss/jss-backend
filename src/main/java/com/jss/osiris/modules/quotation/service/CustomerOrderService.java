@@ -80,4 +80,6 @@ public interface CustomerOrderService {
         public void updateAssignedToForCustomerOrder(CustomerOrder customerOrder, Employee employee)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
+        public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation);
+
 }

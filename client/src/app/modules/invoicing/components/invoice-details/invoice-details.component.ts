@@ -10,6 +10,7 @@ import { VatBase } from 'src/app/modules/quotation/model/VatBase';
 import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { instanceOfConfrere, instanceOfResponsable, instanceOfTiers } from '../../../../libs/TypeHelper';
+import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { InvoiceService } from '../../services/invoice.service';
 import { getAffaireList, getAffaireListArray, getCustomerOrderForInvoice, getCustomerOrderNameForInvoice, getLetteringDate, getRemainingToPay, getResponsableName } from '../invoice-tools';
@@ -32,6 +33,7 @@ export class InvoiceDetailsComponent implements OnInit {
     private appService: AppService,
     private activatedRoute: ActivatedRoute,
     private constantService: ConstantService,
+    private customerOrderService: CustomerOrderService,
   ) { }
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();

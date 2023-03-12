@@ -17,6 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -39,6 +41,7 @@ public class Announcement implements IId, IDocument {
 
 	@ManyToOne
 	@JoinColumn(name = "id_confrere")
+	@JsonProperty(access = Access.WRITE_ONLY) // For client-side performance purpose
 	private Confrere confrere;
 
 	@ManyToOne

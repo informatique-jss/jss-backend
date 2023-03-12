@@ -1,38 +1,26 @@
 <div *ngIf="quotation && quotation.id" class=" form-div min-height ">
-  <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) &&  quotation.invoices">
-    <h3 *ngFor="let invoice of quotation.invoices">
-      <div class="invoice-title">Facture n°{{invoice.id}} émise à Paris, le
-        {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}<span *ngIf="getLetteringDate(invoice)">,
-          lettrée le {{getLetteringDate(invoice)|date:'dd/MM/yyyy à HH:mm'}}</span>
-        <chips-status class="invoice-chip" [status]="invoice.invoiceStatus.code" [value]="invoice.invoiceStatus.label">
+  <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) &&  customerOrderInvoices">
+    <h3 *ngFor="let invoice of customerOrderInvoices">
+      <div class="invoice-title">Facture n°{{invoice.invoiceId}} émise à Paris, le
+        {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}<chips-status class="invoice-chip"
+          [status]="invoice.invoiceStatusCode" [value]="invoice.invoiceStatus">
         </chips-status>
-        <mat-icon (click)="openRoute($event,'/invoicing/view/'+invoice.id)"
-          (auxclick)="openRoute($event,'/invoicing/view/'+invoice.id)" matTooltip="Voir la facture" color="accent"
-          class="pointer invoice-chip">visibility
-        </mat-icon>
-      </div>
-      <div class="invoice-title" *ngIf="invoice.creditNote">
-        <span>Avoir n°{{invoice.creditNote.id}} émis à Paris, le
-          {{invoice.creditNote.createdDate|date:'dd/MM/yyyy à HH:mm'}}</span>
-        <chips-status class="invoice-chip" [status]="invoice.creditNote.invoiceStatus.code"
-          [value]="invoice.creditNote.invoiceStatus.label">
-        </chips-status>
-        <mat-icon (click)="openRoute($event,'/invoicing/view/'+invoice.creditNote.id)"
-          (auxclick)="openRoute($event,'/invoicing/view/'+invoice.creditNote.id)" matTooltip="Voir l'avoir"
+        <mat-icon (click)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)"
+          (auxclick)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)" matTooltip="Voir la facture"
           color="accent" class="pointer invoice-chip">visibility
         </mat-icon>
       </div>
     </h3>
   </ng-container>
-  <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) &&  quotation.providerInvoices">
-    <h3 class="invoice-title" *ngFor="let invoice of quotation.providerInvoices">
-      Facture fournisseur n°{{invoice.id}}, saisie le {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}, pour un total
-      de {{invoice.totalPrice}} €<span *ngIf="getLetteringDate(invoice)">, lettrée le
-        {{getLetteringDate(invoice)|date:'dd/MM/yyyy à HH:mm'}}</span>
-      <chips-status class="invoice-chip" [status]="invoice.invoiceStatus.code" [value]="invoice.invoiceStatus.label">
+  <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) &&  customerOrderProviderInvoices">
+    <h3 class="invoice-title" *ngFor="let invoice of customerOrderProviderInvoices">
+      Facture fournisseur n°{{invoice.invoiceId}}, saisie le {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}, pour un
+      total
+      de {{invoice.totalPrice}} €
+      <chips-status class="invoice-chip" [status]="invoice.invoiceStatusCode" [value]="invoice.invoiceStatus">
       </chips-status>
-      <mat-icon (click)="openRoute($event,'/invoicing/view/'+invoice.id)"
-        (auxclick)="openRoute($event,'/invoicing/view/'+invoice.id)" matTooltip="Voir la facture" color="accent"
+      <mat-icon (click)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)"
+        (auxclick)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)" matTooltip="Voir la facture" color="accent"
         class="pointer invoice-chip">visibility
       </mat-icon>
     </h3>
@@ -183,26 +171,6 @@
           </td>
           <td class="td-price mat-cell">
             - {{deposit.depositAmount|number}} €
-          </td>
-        </tr>
-      </ng-container>
-      <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()!=undefined">
-        <tr class="mat-row" *ngFor="let deposit of getCurrentInvoiceForCustomerOrder()!.deposits">
-          <td class="mat-cell">
-            Acompte n°{{deposit.id}} - {{deposit.label}}
-          </td>
-          <td class="td-price mat-cell">
-            - {{deposit.depositAmount|number}} €
-          </td>
-        </tr>
-      </ng-container>
-      <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()!=undefined">
-        <tr class="mat-row" *ngFor="let payment of getCurrentInvoiceForCustomerOrder()!.payments">
-          <td class="mat-cell">
-            Paiement n°{{payment.id}} - {{payment.label}}
-          </td>
-          <td class="td-price mat-cell">
-            - {{payment.paymentAmount|number}} €
           </td>
         </tr>
       </ng-container>

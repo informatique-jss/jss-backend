@@ -1,24 +1,9 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
-import com.jss.osiris.libs.JacksonLocalDateDeserializer;
-import com.jss.osiris.libs.JacksonLocalDateSerializer;
-import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
-import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
@@ -38,7 +23,6 @@ import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
-import com.jss.osiris.modules.miscellaneous.repository.ConstantRepository;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.AssignationType;
@@ -61,53 +45,18 @@ import com.jss.osiris.modules.tiers.model.TiersType;
 public class ConstantServiceImpl implements ConstantService {
 
     @Autowired
-    ConstantRepository constantRepository;
-
-    Constant constantsSingleton = null;
+    ConstantServiceProxyImpl constantServiceProxyImpl;
 
     @Override
     public Constant getConstants() throws OsirisException {
-        if (constantsSingleton != null)
-            return constantsSingleton;
-        List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
-        if (constants == null || constants.size() != 1)
-            throw new OsirisException(null, "Constants not defined or multiple");
-        fecthAllProperty(constants.get(0));
-        constantsSingleton = constants.get(0);
-        return constantsSingleton;
-    }
-
-    private void fecthAllProperty(Constant contants) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        SimpleModule simpleModule = new SimpleModule("SimpleModule");
-        simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
-        simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
-        simpleModule.addDeserializer(LocalDateTime.class, new JacksonLocalDateTimeDeserializer());
-        simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
-        objectMapper.registerModule(simpleModule);
-        Hibernate5Module module = new Hibernate5Module();
-        module.enable(Feature.FORCE_LAZY_LOADING);
-        objectMapper.registerModule(module);
-        try {
-            objectMapper.writeValueAsString(contants);
-        } catch (JsonProcessingException e) {
-        }
-    }
-
-    @Override
-    public Constant getConstant(Integer id) {
-        Optional<Constant> constant = constantRepository.findById(id);
-        if (constant.isPresent())
-            return constant.get();
-        return null;
+        return constantServiceProxyImpl.getConstants();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Constant addOrUpdateConstant(
-            Constant constant) {
-        constantsSingleton = constantRepository.save(constant);
-        return constantsSingleton;
+            Constant constant) throws OsirisException {
+        return constantServiceProxyImpl.addOrUpdateConstant(constant);
     }
 
     @Override

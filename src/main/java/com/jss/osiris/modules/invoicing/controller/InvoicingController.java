@@ -839,8 +839,17 @@ public class InvoicingController {
     }
 
     @GetMapping(inputEntryPoint + "/invoice/customer-order")
-    public ResponseEntity<List<Invoice>> getInvoiceForCustomerOrder(@RequestParam Integer customerOrderId) {
-        return new ResponseEntity<List<Invoice>>(invoiceService.getInvoiceForCustomerOrder(customerOrderId),
+    public ResponseEntity<List<InvoiceSearchResult>> getInvoiceForCustomerOrder(@RequestParam Integer customerOrderId)
+            throws OsirisException {
+        return new ResponseEntity<List<InvoiceSearchResult>>(invoiceService.getInvoiceForCustomerOrder(customerOrderId),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/invoice/customer-order/provider")
+    public ResponseEntity<List<InvoiceSearchResult>> getProviderInvoiceForCustomerOrder(
+            @RequestParam Integer customerOrderId) throws OsirisException {
+        return new ResponseEntity<List<InvoiceSearchResult>>(
+                invoiceService.getProviderInvoiceForCustomerOrder(customerOrderId),
                 HttpStatus.OK);
     }
 

@@ -192,6 +192,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
       let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
         width: '100%'
       });
+
       let asso = { payment: this.payment, invoice: invoice } as AssociationSummaryTable;
       let maxAmount = Math.round((Math.min(this.getLeftMaxAmountPayed(asso), this.getInitialAmount(asso) - this.getInitialPayedAmount(asso))) * 100) / 100;
       amountDialogRef.componentInstance.label = "Indiquer le montant à utiliser (max : " + maxAmount + " €) :";

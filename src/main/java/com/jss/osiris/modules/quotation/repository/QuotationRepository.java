@@ -45,8 +45,10 @@ public interface QuotationRepository extends CrudRepository<Quotation, Integer> 
                         + " left join responsable r on r.id = co.id_responsable"
                         + " left join tiers t on t.id = co.id_tiers"
                         + " left join tiers t2 on t2.id = r.id_tiers"
+                        + " left join asso_quotation_customer_order asso_co on asso_co.id_quotation = co.id "
                         + " where ( COALESCE(:customerOrderStatus) =0 or co.id_quotation_status in (:customerOrderStatus)) "
                         + " and co.created_date>=:startDate and co.created_date<=:endDate "
+                        + " and ( :idCustomerOrder =0 or asso_co.id_customer_order = :idCustomerOrder)"
                         + " and ( COALESCE(:assignedToEmployee) =0 or co.id_assigned_to in (:assignedToEmployee))"
                         + " and ( COALESCE(:salesEmployee) =0 or cf.id_commercial in (:salesEmployee) or r.id_commercial in (:salesEmployee) or t.id_commercial in (:salesEmployee) or t.id_commercial is null and t2.id_commercial in (:salesEmployee))"
                         + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder))"
@@ -57,8 +59,11 @@ public interface QuotationRepository extends CrudRepository<Quotation, Integer> 
                         @Param("assignedToEmployee") List<Integer> assignedToEmployee,
                         @Param("customerOrderStatus") List<Integer> customerOrderStatus,
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                        @Param("customerOrder") List<Integer> customerOrder, @Param("affaire") List<Integer> affaire);
+                        @Param("customerOrder") List<Integer> customerOrder, @Param("affaire") List<Integer> affaire,
+                        @Param("idCustomerOrder") Integer idCustomerOrder);
 
         @Query(value = "select n from Quotation n where quotationStatus=:quotationStatus and thirdReminderDateTime is null ")
         List<Quotation> findQuotationForReminder(@Param("quotationStatus") QuotationStatus quotationStatus);
+
+        List<Quotation> findByCustomerOrders_Id(Integer idCustomerOrder);
 }

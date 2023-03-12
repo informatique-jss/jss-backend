@@ -2,6 +2,7 @@
 export interface InvoiceSearchResult {
   invoiceId: number;
   invoiceStatus: string;
+  invoiceStatusCode: string;
   invoiceStatusId: number;
   customerOrderId: number;
   customerOrderLabel: string;
@@ -22,6 +23,7 @@ export interface InvoiceSearchResult {
   totalPrice: number;
   customerOrderDescription: string;
   paymentId: string;
+  remainingToPay: number;
 }
 
 

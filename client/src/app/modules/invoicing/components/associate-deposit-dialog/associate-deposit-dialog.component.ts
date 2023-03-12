@@ -23,6 +23,7 @@ import { Deposit } from '../../model/Deposit';
 import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
 import { PaymentAssociate } from '../../model/PaymentAssociate';
 import { DepositService } from '../../services/deposit.service';
+import { InvoiceSearchResultService } from '../../services/invoice.search.result.service';
 import { InvoiceService } from '../../services/invoice.service';
 import { AmountDialogComponent } from '../amount-dialog/amount-dialog.component';
 import { getAmountPayed, getCustomerOrderForInvoice, getCustomerOrderForIQuotation, getCustomerOrderNameForITiers, getRemainingToPay } from '../invoice-tools';
@@ -57,8 +58,8 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
     public amountDialog: MatDialog,
     private depositService: DepositService,
     private customerOrderService: CustomerOrderService,
+    private invoiceSearchResultService: InvoiceSearchResultService,
     private invoiceService: InvoiceService,
-    private InvoiceService: InvoiceService,
     private changeDetectorRef: ChangeDetectorRef,
     private constantService: ConstantService,
     private formBuilder: FormBuilder,
@@ -238,10 +239,15 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
 
       let asso = {} as AssociationSummaryTable;
       // If invoice found on CustomerOrder, associate invoice, not customer order
-      if (orderAs && orderAs.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED && orderAs.invoices) {
-        for (let invoice of orderAs.invoices)
-          if (invoice.invoiceStatus && invoice.invoiceStatus.id == this.constantService.getInvoiceStatusSend().id)
-            asso = { deposit: this.deposit, invoice: invoice, } as AssociationSummaryTable;
+      if (orderAs && orderAs.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED) {
+        this.invoiceSearchResultService.getInvoiceForCustomerOrder(orderAs).subscribe(invoices => {
+          for (let invoice of invoices)
+            if (invoice.invoiceStatus && invoice.invoiceStatusId == this.constantService.getInvoiceStatusSend().id) {
+              this.invoiceService.getInvoiceById(invoice.invoiceId).subscribe(invoice => {
+                asso = { deposit: this.deposit, invoice: invoice, } as AssociationSummaryTable;
+              })
+            }
+        })
       } else
         asso = { deposit: this.deposit, customerOrder: order, } as AssociationSummaryTable;
       let maxAmount = Math.round((this.amountRemaining()) * 100) / 100;

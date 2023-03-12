@@ -83,17 +83,17 @@
             </tr>
           </table>
           <div class="div-customer-order"
-            *ngIf="quotation && instanceOfQuotation(quotation) && quotation.customerOrders && quotation.customerOrders.length>0">
+            *ngIf="quotation && instanceOfQuotation(quotation) && quotationCustomerOrders && quotationCustomerOrders.length>0">
             <p>Commandes issues de ce devis</p>
             <sort-table [actions]="customerOrderTableActions" [columns]="customerOrderDisplayedColumns"
-              [values]="quotation.customerOrders" tableName="Liste commandes">
+              [values]="quotationCustomerOrders" tableName="Liste commandes">
             </sort-table>
           </div>
           <div class="div-customer-order"
-            *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.quotations && quotation.quotations.length>0">
+            *ngIf="quotation && instanceOfCustomerOrder(quotation) && customerOrderQuotations && customerOrderQuotations.length>0">
             <p>Devis issus de cette commande</p>
             <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
-              [values]="quotation.quotations" tableName="Liste devis">
+              [values]="customerOrderQuotations" tableName="Liste devis">
             </sort-table>
           </div>
           <table class="full-width">
@@ -163,17 +163,17 @@
             </tr>
           </table>
           <div class="div-customer-order"
-            *ngIf="quotation && instanceOfQuotation(quotation) && quotation.customerOrders && quotation.customerOrders.length>0">
+            *ngIf="quotation && instanceOfQuotation(quotation) && quotationCustomerOrders && quotationCustomerOrders.length>0">
             <p>Commandes issues de ce devis</p>
             <sort-table [actions]="customerOrderTableActions" [columns]="customerOrderDisplayedColumns"
-              [values]="quotation.customerOrders" tableName="Liste commandes">
+              [values]="quotationCustomerOrders" tableName="Liste commandes">
             </sort-table>
           </div>
           <div class="div-customer-order"
-            *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.quotations && quotation.quotations.length>0">
+            *ngIf="quotation && instanceOfCustomerOrder(quotation) && customerOrderQuotations && customerOrderQuotations.length>0">
             <p>Devis issus de cette commande</p>
             <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
-              [values]="quotation.quotations" tableName="Liste devis">
+              [values]="customerOrderQuotations" tableName="Liste devis">
             </sort-table>
           </div>
           <table class="full-width">

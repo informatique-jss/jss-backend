@@ -9,6 +9,7 @@ import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/
 import { PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { Provision } from '../../model/Provision';
+import { ConfrereService } from '../../services/confrere.service';
 
 @Component({
   selector: 'provision-options',
@@ -68,11 +69,14 @@ export class ProvisionOptionsComponent implements OnInit {
     private uploadAttachmentService: UploadAttachmentService,
     private constantService: ConstantService,
     private sanitizer: DomSanitizer,
+    private confrereService: ConfrereService,
   ) { }
 
   optionForm = this.formBuilder.group({});
 
   ngOnInit() {
+    if (this.provision && this.provision.announcement && !this.provision.announcement.confrere)
+      this.confrereService.getConfrereForAnnouncement(this.provision.announcement).subscribe(confrere => this.provision!.announcement!.confrere = confrere);
   }
 
   ngOnChanges(changes: SimpleChanges) {

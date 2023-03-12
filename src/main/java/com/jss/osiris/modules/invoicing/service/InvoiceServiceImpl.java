@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -251,8 +252,18 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public List<Invoice> getInvoiceForCustomerOrder(Integer customerOrderId) {
-        return invoiceRepository.findByCustomerOrderId(customerOrderId);
+    public List<InvoiceSearchResult> getInvoiceForCustomerOrder(Integer customerOrderId) throws OsirisException {
+        return invoiceRepository.findInvoice(Arrays.asList(0), LocalDateTime.now().minusYears(100),
+                LocalDateTime.now().plusYears(100), null, null, false, constantService.getInvoiceStatusPayed().getId(),
+                0, customerOrderId, Arrays.asList(0), 0);
+    }
+
+    @Override
+    public List<InvoiceSearchResult> getProviderInvoiceForCustomerOrder(Integer customerOrderId)
+            throws OsirisException {
+        return invoiceRepository.findInvoice(Arrays.asList(0), LocalDateTime.now().minusYears(100),
+                LocalDateTime.now().plusYears(100), null, null, false, constantService.getInvoiceStatusPayed().getId(),
+                0, 0, Arrays.asList(0), customerOrderId);
     }
 
     @Override
@@ -303,7 +314,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 invoiceSearch.getEndDate().withHour(23).withMinute(59), invoiceSearch.getMinAmount(),
                 invoiceSearch.getMaxAmount(), invoiceSearch.getShowToRecover(),
                 constantService.getInvoiceStatusPayed().getId(), invoiceSearch.getInvoiceId(),
-                invoiceSearch.getCustomerOrderId(), customerOrderId);
+                invoiceSearch.getCustomerOrderId(), customerOrderId, 0);
     }
 
     @Override
@@ -609,6 +620,14 @@ public class InvoiceServiceImpl implements InvoiceService {
         newInvoice.setTiers(invoice.getTiers());
         newInvoice.setTotalPrice(invoice.getTotalPrice());
         return newInvoice;
+    }
+
+    @Override
+    public CustomerOrder getCustomerOrderByIdInvoice(Integer idInvoice) {
+        Invoice invoice = getInvoice(idInvoice);
+        if (invoice != null)
+            return invoice.getCustomerOrder();
+        return null;
     }
 
 }
