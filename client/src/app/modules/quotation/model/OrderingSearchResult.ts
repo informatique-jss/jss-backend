@@ -13,6 +13,7 @@ export interface OrderingSearchResult {
   confrereId: number;
   affaireLabel: string;
   totalPrice: number;
+  depositTotalAmount: number;
   quotationId: number;
   affaireSiren: string;
   affaireAddress: string;

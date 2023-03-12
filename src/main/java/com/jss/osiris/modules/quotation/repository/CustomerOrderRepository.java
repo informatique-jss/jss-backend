@@ -29,6 +29,7 @@ public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, I
                         + " coalesce(t2.id,t.id) as tiersId,"
                         + " cf.id as confrereId,"
                         + " sum(COALESCE(i.pre_tax_price,0)+COALESCE(i.vat_price,0)-COALESCE(i.discount_amount,0)) as totalPrice ,"
+                        + " (select sum(COALESCE(deposit.deposit_amount,0)) from deposit where deposit.id_customer_order = co.id and deposit.is_cancelled=false ) as depositTotalAmount ,"
                         + " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')' ,', ' ) as affaireLabel,"
                         + " STRING_AGG(DISTINCT af.siren ,', '  ) as affaireSiren,"
                         + " STRING_AGG(DISTINCT af.address ||' '||af.postal_code||' '||city.label ||' '||country.label ,', '  ) as affaireAddress,"

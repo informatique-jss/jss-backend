@@ -29,6 +29,8 @@ public interface OrderingSearchResult {
 
     public Float getTotalPrice();
 
+    public Float getDepositTotalAmount();
+
     public Integer getQuotationId();
 
     public String getAffaireSiren();
