@@ -35,6 +35,7 @@ export class InvoiceDetailsComponent implements OnInit {
   ) { }
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
+  invoiceStatusPayed = this.constantService.getInvoiceStatusPayed();
   invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
   attachmentTypeInvoice = this.constantService.getAttachmentTypeInvoice();
 
@@ -170,6 +171,19 @@ export class InvoiceDetailsComponent implements OnInit {
 
   openRoute(event: any, link: string) {
     this.appService.openRoute(event, link, null);
+  }
+
+  editInvoice(event: any) {
+    if (this.invoice)
+      this.appService.openRoute(event, "/invoicing/add/" + this.invoice.id, undefined);
+  }
+
+  cancelInvoice(event: any) {
+    if (this.invoice)
+      this.invoiceService.cancelInvoice(this.invoice).subscribe(response => {
+        if (response && response.creditNote)
+          this.appService.openRoute(null, 'invoicing/view/' + response.creditNote.id, undefined);
+      })
   }
 
 }

@@ -52,6 +52,9 @@ public interface InvoiceService {
         public Invoice cancelInvoice(Invoice invoice, CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
+        public Invoice cancelInvoiceFromUser(Invoice invoice)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
         public void sendRemindersForInvoices()
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 

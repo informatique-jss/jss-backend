@@ -25,4 +25,8 @@ export class InvoiceService extends AppRestService<Invoice>{
     return this.getById("invoice", invoiceId);
   }
 
+  cancelInvoice(invoice: Invoice) {
+    return this.postItem(new HttpParams(), "invoice/cancel", invoice);
+  }
+
 }

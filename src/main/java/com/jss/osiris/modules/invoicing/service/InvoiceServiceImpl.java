@@ -130,6 +130,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Invoice cancelInvoiceFromUser(Invoice invoice)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        return cancelInvoice(invoice, null);
+    }
+
+    @Override
     public Invoice cancelInvoice(Invoice invoice, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Unletter
@@ -173,26 +180,30 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice = addOrUpdateInvoice(invoice);
         creditNote = addOrUpdateInvoice(creditNote);
 
-        // Generate PDF and attached it to customer order
-        File creditNotePdf = mailHelper.generateInvoicePdf(customerOrder, creditNote, invoice);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
-        try {
-            attachmentService.addAttachment(new FileInputStream(creditNotePdf), customerOrder.getId(),
-                    CustomerOrder.class.getSimpleName(),
-                    constantService.getAttachmentTypeCreditNote(),
-                    "Credit_note_" + creditNote.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                    false, "Avoir n°" + creditNote.getId());
-        } catch (FileNotFoundException e) {
-            throw new OsirisException(e, "Impossible to read invoice PDF temp file");
-        } finally {
-            creditNotePdf.delete();
+        if (customerOrder != null) {
+            // Generate PDF and attached it to customer order
+            File creditNotePdf = mailHelper.generateInvoicePdf(customerOrder, creditNote, invoice);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+            try {
+                attachmentService.addAttachment(new FileInputStream(creditNotePdf), customerOrder.getId(),
+                        CustomerOrder.class.getSimpleName(),
+                        constantService.getAttachmentTypeCreditNote(),
+                        "Credit_note_" + creditNote.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                        false, "Avoir n°" + creditNote.getId());
+            } catch (FileNotFoundException e) {
+                throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+            } finally {
+                creditNotePdf.delete();
+            }
         }
 
         // Cancel invoice
         invoice.setInvoiceStatus(constantService.getInvoiceStatusCancelled());
         addOrUpdateInvoice(invoice);
 
-        mailHelper.sendCreditNoteToCustomer(customerOrder, false, creditNote, invoice);
+        if (customerOrder != null) {
+            mailHelper.sendCreditNoteToCustomer(customerOrder, false, creditNote, invoice);
+        }
 
         return invoice;
     }

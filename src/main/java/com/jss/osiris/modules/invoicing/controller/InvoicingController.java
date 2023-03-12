@@ -807,6 +807,19 @@ public class InvoicingController {
         return new ResponseEntity<Invoice>(invoiceService.addOrUpdateInvoiceFromUser(invoice), HttpStatus.OK);
     }
 
+    @PostMapping(inputEntryPoint + "/invoice/cancel")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<Invoice> cancelInvoice(@RequestBody Invoice invoice)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        validationHelper.validateReferential(invoice, true, "Invoice");
+
+        if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
+                && !invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusPayed().getId()))
+            throw new OsirisValidationException("Invoice must be at sent or payed status to be cancelled");
+
+        return new ResponseEntity<Invoice>(invoiceService.cancelInvoice(invoice, null), HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/invoice-status-list")
     public ResponseEntity<List<InvoiceStatus>> getInvoiceStatus() {
         return new ResponseEntity<List<InvoiceStatus>>(invoiceStatusService.getInvoiceStatus(), HttpStatus.OK);
