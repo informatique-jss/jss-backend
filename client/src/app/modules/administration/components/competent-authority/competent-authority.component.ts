@@ -6,6 +6,7 @@ import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableCo
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
+import { COMPETENT_AUTHORITY_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
 import { CompetentAuthority } from '../../../miscellaneous/model/CompetentAuthority';
 import { CompetentAuthorityType } from '../../../miscellaneous/model/CompetentAuthorityType';
@@ -36,6 +37,7 @@ export class CompetentAuthorityComponent implements OnInit {
   editMode: boolean = false;
 
   saveObservableSubscription: Subscription = new Subscription;
+  COMPETENT_AUTHORITY_ENTITY_TYPE = COMPETENT_AUTHORITY_ENTITY_TYPE;
 
 
   ngOnInit(): void {

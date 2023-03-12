@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Provider } from 'src/app/modules/miscellaneous/model/Provider';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { ProviderService } from 'src/app/modules/miscellaneous/services/provider.service';
+import { PROVIDER_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
@@ -23,6 +24,7 @@ export class ReferentialProviderComponent extends GenericReferentialComponent<Pr
   }
 
   selectedProviderId: number | undefined;
+  PROVIDER_ENTITY_TYPE = PROVIDER_ENTITY_TYPE;
 
   ngOnInit(): void {
     super.ngOnInit();

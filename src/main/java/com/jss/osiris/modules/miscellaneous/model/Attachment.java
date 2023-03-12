@@ -57,6 +57,18 @@ public class Attachment implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
+	@JoinColumn(name = "id_provider")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	private Provider provider;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "id_competent_authority")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	private CompetentAuthority competentAuthority;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	@JoinColumn(name = "id_quotation")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Quotation quotation;
@@ -197,6 +209,22 @@ public class Attachment implements Serializable, IId {
 
 	public void setInvoice(Invoice invoice) {
 		this.invoice = invoice;
+	}
+
+	public Provider getProvider() {
+		return provider;
+	}
+
+	public void setProvider(Provider provider) {
+		this.provider = provider;
+	}
+
+	public CompetentAuthority getCompetentAuthority() {
+		return competentAuthority;
+	}
+
+	public void setCompetentAuthority(CompetentAuthority competentAuthority) {
+		this.competentAuthority = competentAuthority;
 	}
 
 }

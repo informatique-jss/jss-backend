@@ -26,6 +26,8 @@ import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -96,6 +98,12 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     CustomerMailService customerMailService;
+
+    @Autowired
+    CompetentAuthorityService competentAuthorityService;
+
+    @Autowired
+    ProviderService providerService;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -173,6 +181,16 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (responsable == null)
                 return new ArrayList<Attachment>();
             attachment.setResponsable(responsable);
+        } else if (entityType.equals(Provider.class.getSimpleName())) {
+            Provider provider = providerService.getProvider(idEntity);
+            if (provider == null)
+                return new ArrayList<Attachment>();
+            attachment.setProvider(provider);
+        } else if (entityType.equals(CompetentAuthority.class.getSimpleName())) {
+            CompetentAuthority competentAuthority = competentAuthorityService.getCompetentAuthority(idEntity);
+            if (competentAuthority == null)
+                return new ArrayList<Attachment>();
+            attachment.setCompetentAuthority(competentAuthority);
         } else if (entityType.equals(Quotation.class.getSimpleName())) {
             Quotation quotation = quotationService.getQuotation(idEntity);
             if (quotation == null)
@@ -239,6 +257,10 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByInvoiceId(idEntity);
         } else if (entityType.equals(CustomerMail.class.getSimpleName())) {
             attachments = attachmentRepository.findByCustomerMailId(idEntity);
+        } else if (entityType.equals(Provider.class.getSimpleName())) {
+            attachments = attachmentRepository.findByProviderId(idEntity);
+        } else if (entityType.equals(CompetentAuthority.class.getSimpleName())) {
+            attachments = attachmentRepository.findByCompetentAuthorityId(idEntity);
         }
         return attachments;
     }

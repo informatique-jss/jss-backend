@@ -4,11 +4,12 @@ import { City } from "./City";
 import { CompetentAuthorityType } from "./CompetentAuthorityType";
 import { Country } from "./Country";
 import { Department } from "./Department";
+import { IAttachment } from './IAttachment';
 import { Mail } from "./Mail";
 import { Phone } from "./Phone";
 import { Region } from "./Region";
 
-export interface CompetentAuthority extends IReferential {
+export interface CompetentAuthority extends IReferential, IAttachment {
   competentAuthorityType: CompetentAuthorityType;
   departments: Department[];
   phones: Phone[];

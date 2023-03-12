@@ -981,6 +981,8 @@ public class MiscellaneousController {
                 && !entityType.equals(Responsable.class.getSimpleName())
                 && !entityType.equals(Quotation.class.getSimpleName())
                 && !entityType.equals(CustomerOrder.class.getSimpleName())
+                && !entityType.equals(Provider.class.getSimpleName())
+                && !entityType.equals(CompetentAuthority.class.getSimpleName())
                 && !entityType.equals(Provision.class.getSimpleName())
                 && !entityType.equals(Invoice.class.getSimpleName()))
             throw new OsirisValidationException("entityType");

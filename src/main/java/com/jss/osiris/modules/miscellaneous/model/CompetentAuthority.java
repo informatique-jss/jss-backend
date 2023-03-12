@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.miscellaneous.model;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -12,13 +11,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
-public class CompetentAuthority implements Serializable, IId {
+public class CompetentAuthority implements IId, IAttachment {
 
 	@Id
 	@SequenceGenerator(name = "competent_authority_sequence", sequenceName = "competent_authority_sequence", allocationSize = 1)
@@ -113,6 +113,9 @@ public class CompetentAuthority implements Serializable, IId {
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
+
+	@OneToMany(mappedBy = "competentAuthority")
+	private List<Attachment> attachments;
 
 	public Integer getId() {
 		return id;
@@ -328,6 +331,14 @@ public class CompetentAuthority implements Serializable, IId {
 
 	public void setObservations(String observations) {
 		this.observations = observations;
+	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
 	}
 
 }
