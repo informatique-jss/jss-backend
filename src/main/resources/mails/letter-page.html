@@ -69,7 +69,9 @@
                                 <span th:text="${letter.invoiceLabelResult.billingLabelAddress}"></span><br />
                                 <span><span th:text="${letter.invoiceLabelResult.billingLabelPostalCode}"></span> <span
                                         th:if="${letter.invoiceLabelResult.billingLabelCity!=null}"
-                                        th:text="${letter.invoiceLabelResult.billingLabelCity.label}"></span></span>
+                                        th:text="${letter.invoiceLabelResult.billingLabelCity.label}"></span><span
+                                        th:if="${letter.invoiceLabelResult.billingLabelComplementCedex!=null}"
+                                        th:text="${letter.invoiceLabelResult.billingLabelComplementCedex.label}"></span></span>
                             </td>
                         </tr>
                     </table>

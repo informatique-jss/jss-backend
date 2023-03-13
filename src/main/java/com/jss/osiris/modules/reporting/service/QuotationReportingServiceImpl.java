@@ -27,7 +27,7 @@ public class QuotationReportingServiceImpl implements QuotationReportingService 
     ConstantService constantService;
 
     @Override
-    @Cacheable(value = "quotationReportingList", key = "#root.methodName")
+    @Cacheable(value = "quotationReportingList", key = "#tiersId")
     public List<IQuotationReporting> getQuotationReporting(Integer tiersId) throws OsirisException {
         if (tiersId == null)
             tiersId = 0;
