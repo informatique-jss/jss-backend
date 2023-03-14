@@ -784,6 +784,11 @@ public class PaymentServiceImpl implements PaymentService {
         if (foundEntity != null && foundEntity.getEntityType() != null) {
             if (foundEntity.getEntityType().equals(Invoice.class.getSimpleName())) {
                 Invoice invoice = invoiceService.getInvoice(foundEntity.getEntityId());
+
+                if (invoice.getInvoiceStatus() == null)
+                    throw new OsirisException(null,
+                            "No invoice status found for entity n°" + foundEntity.getEntityId());
+
                 if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId()) || invoice
                         .getInvoiceStatus().getId().equals(constantService.getInvoiceStatusReceived().getId()))
                     return invoice;
