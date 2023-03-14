@@ -53,7 +53,7 @@ public class BillingTypeServiceImpl implements BillingTypeService {
     @Caching(evict = {
             @CacheEvict(value = "billingTypeList", allEntries = true),
             @CacheEvict(value = "billingTypeDebourList", allEntries = true),
-            @CacheEvict(value = "billingType", key = "#vat.id")
+            @CacheEvict(value = "billingType", key = "#billingType.id")
     })
     public BillingType addOrUpdateBillingType(BillingType billingType) throws OsirisException {
         if (billingType.getId() == null

@@ -1,7 +1,9 @@
 package com.jss.osiris.libs.transfer;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+@JsonPropertyOrder({ "msgId", "creDtTm", "nbOfTxs", "ctrlSum" })
 public class GrpHdrBean {
 	@JacksonXmlProperty(localName = "CreDtTm")
 	String creDtTm = "";
