@@ -218,6 +218,9 @@ public class DepositServiceImpl implements DepositService {
                     addOrUpdateDeposit(deposit);
                 }
             } else {
+                if (tiersRefund == null)
+                    throw new OsirisValidationException("TiersRefund or ConfrereRefund");
+
                 refundService.generateRefund(tiersRefund, affaireRefund, null, deposit, remainingMoney,
                         refundLabelSuffix);
             }

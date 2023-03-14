@@ -600,9 +600,6 @@ public class InvoicingController {
         }
         totalAmount = Math.round(totalAmount * 100f) / 100f;
 
-        // Mandatory because we need customer order to get customer accounting account
-        if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null)
-            throw new OsirisValidationException("TiersRefund or ConfrereRefund");
         validationHelper.validateReferential(paymentAssociate.getTiersRefund(), false, "TiersRefund");
         validationHelper.validateReferential(paymentAssociate.getConfrereRefund(), false, "ConfrereRefund");
 
