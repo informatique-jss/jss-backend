@@ -90,6 +90,8 @@ public class Provision implements IId, IAttachment {
 	@Column(nullable = false)
 	private Boolean isBaloPackage;
 
+	private Boolean isBaloNormalization;
+
 	@Column(nullable = false)
 	private Boolean isPublicationPaper;
 
@@ -174,7 +176,7 @@ public class Provision implements IId, IAttachment {
 	@Column(nullable = false)
 	private Boolean isCorrespondenceFees;
 
-	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
 	private List<Attachment> attachments;
 
@@ -536,6 +538,14 @@ public class Provision implements IId, IAttachment {
 
 	public void setDebours(List<Debour> debours) {
 		this.debours = debours;
+	}
+
+	public Boolean getIsBaloNormalization() {
+		return isBaloNormalization;
+	}
+
+	public void setIsBaloNormalization(Boolean isBaloNormalization) {
+		this.isBaloNormalization = isBaloNormalization;
 	}
 
 }

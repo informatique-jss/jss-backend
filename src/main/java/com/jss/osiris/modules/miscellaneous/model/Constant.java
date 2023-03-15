@@ -202,6 +202,10 @@ public class Constant implements Serializable, IId {
 	private BillingType billingTypeBaloPackage;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_balo_normalization")
+	private BillingType billingTypeBaloNormalization;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_publication_paper")
 	private BillingType billingTypePublicationPaper;
 
@@ -1896,4 +1900,11 @@ public class Constant implements Serializable, IId {
 		this.competentAuthorityInfogreffe = competentAuthorityInfogreffe;
 	}
 
+	public BillingType getBillingTypeBaloNormalization() {
+		return billingTypeBaloNormalization;
+	}
+
+	public void setBillingTypeBaloNormalization(BillingType billingTypeBaloNormalization) {
+		this.billingTypeBaloNormalization = billingTypeBaloNormalization;
+	}
 }

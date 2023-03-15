@@ -74,6 +74,7 @@ export interface Constant {
   billingTypeLogo: BillingType;
   billingTypeRedactedByJss: BillingType;
   billingTypeBaloPackage: BillingType;
+  billingTypeBaloNormalization: BillingType;
   billingTypePublicationPaper: BillingType;
   billingTypePublicationReceipt: BillingType;
   billingTypePublicationFlag: BillingType;
