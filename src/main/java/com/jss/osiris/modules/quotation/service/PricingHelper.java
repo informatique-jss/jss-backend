@@ -385,6 +385,9 @@ public class PricingHelper {
         if (billingType.getId().equals(constantService.getBillingTypeBaloPackage().getId())
                 && provision.getIsBaloPackage() != null && provision.getIsBaloPackage())
             return true;
+        if (billingType.getId().equals(constantService.getBillingTypeBaloNormalization().getId())
+                && provision.getIsBaloNormalization() != null && provision.getIsBaloNormalization())
+            return true;
         if (billingType.getId().equals(constantService.getBillingTypeBaloPublicationFlag().getId())
                 && provision.getIsBaloPublicationFlag() != null && provision.getIsBaloPublicationFlag())
             return true;

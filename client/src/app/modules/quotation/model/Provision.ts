@@ -28,6 +28,7 @@ export interface Provision extends IAttachment {
   isRedactedByJss: boolean;
   isBaloPackage: boolean;
   isBaloPublicationFlag: boolean;
+  isBaloNormalization: boolean;
   isPublicationReceipt: boolean;
   isPublicationPaper: boolean;
   publicationPaperAffaireNumber: number;

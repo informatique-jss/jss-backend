@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
+import com.jss.osiris.modules.miscellaneous.repository.ConstantRepository;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.AssignationType;
@@ -47,9 +50,20 @@ public class ConstantServiceImpl implements ConstantService {
     @Autowired
     ConstantServiceProxyImpl constantServiceProxyImpl;
 
+    @Autowired
+    ConstantRepository constantRepository;
+
     @Override
     public Constant getConstants() throws OsirisException {
         return constantServiceProxyImpl.getConstants();
+    }
+
+    @Override
+    public Constant getConstant(Integer id) {
+        Optional<Constant> constant = constantRepository.findById(id);
+        if (constant.isPresent())
+            return constant.get();
+        return null;
     }
 
     @Override
@@ -257,6 +271,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public BillingType getBillingTypeBaloPackage() throws OsirisException {
         return getConstants().getBillingTypeBaloPackage();
+    }
+
+    @Override
+    public BillingType getBillingTypeBaloNormalization() throws OsirisException {
+        return getConstants().getBillingTypeBaloNormalization();
     }
 
     @Override
