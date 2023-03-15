@@ -30,7 +30,7 @@
               (onToggleChange)="provisionChangeFunction()" propertyName="isBaloPackage"></generic-toggle>
           </td>
         </tr>
-        <tr>
+        <tr *ngIf="displayOption(billingTypeBaloPublicationFlag)">
           <td>
             <generic-toggle [(model)]="provision.isBaloPackage" label="Justificatif numérique BALO ?"
               [form]="optionForm" (onToggleChange)="provisionChangeFunction()"
