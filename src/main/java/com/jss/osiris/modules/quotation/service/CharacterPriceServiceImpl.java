@@ -70,20 +70,9 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
             int noticeNumber = 0;
             int headerNumber = 0;
             if (provision.getAnnouncement().getNotice() != null)
-                noticeNumber = StringUtils
-                        .normalizeSpace(StringUtils
-                                .normalizeSpace(StringEscapeUtils.unescapeXml(provision.getAnnouncement().getNotice()
-                                        .replaceAll("(\r?\n){2,}", "$1").replaceAll("\\<.*?>", "")
-                                        .replaceAll("&nbsp;", " "))))
-                        .length();
+                noticeNumber = cleanString(provision.getAnnouncement().getNotice()).length();
             if (provision.getAnnouncement().getNoticeHeader() != null)
-                headerNumber = StringUtils
-                        .normalizeSpace(StringUtils
-                                .normalizeSpace(
-                                        StringEscapeUtils.unescapeXml(provision.getAnnouncement().getNoticeHeader()
-                                                .replaceAll("(\r?\n){2,}", "$1").replaceAll("\\<.*?>", "")
-                                                .replaceAll("&nbsp;", " "))))
-                        .length();
+                headerNumber = cleanString(provision.getAnnouncement().getNoticeHeader()).length();
 
             return noticeNumber
                     + ((provision.getAnnouncement().getIsHeaderFree() == null
@@ -91,6 +80,28 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
                                     : headerNumber);
         }
         return 0;
+    }
+
+    private String cleanString(String string) {
+        if (string != null) {
+            // Remove w:data office string
+            string = string.replaceAll("<w:data>(.*?)</w:data>", " ");
+            string = string.replaceAll("FORMTEXT", " ");
+            // Remove HTML tags
+            string = string.replaceAll("<[^>]*>", " ");
+            // Remove multi lines
+            string = string.replaceAll("(\r?\n){2,}", "$1");
+            // Remove nbsp
+            string = string.replaceAll("&nbsp;", " ");
+            // Escape XML
+            string = StringEscapeUtils.unescapeXml(string);
+            // Normalize spaces
+            string = StringUtils.normalizeSpace(StringUtils.normalizeSpace(string));
+            // Remove space before comma and dot
+            string = string.replaceAll(" ,", ",");
+            string = string.replaceAll(" .", ".");
+        }
+        return string;
     }
 
     @Override
