@@ -171,8 +171,12 @@ public class PricingHelper {
                             + " caractères"
                             + (provision.getAnnouncement() != null
                                     && provision.getAnnouncement().getPublicationDate() != null
-                                            ? ", publiée le " + provision.getAnnouncement().getPublicationDate()
-                                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                            ? ", " + (provision.getAnnouncement().getPublicationDate()
+                                                    .isAfter(LocalDate.now())
+                                                            ? "sera publiée le "
+                                                            : "publiée le ")
+                                                    + provision.getAnnouncement().getPublicationDate()
+                                                            .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                                             : "")
                             + ", rubrique " + noticeFamiliyType + ", "
                             + String.join(" / ", noticeTypes) + ")");
