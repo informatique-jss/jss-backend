@@ -114,9 +114,10 @@ export class CompetentAuthorityComponent implements OnInit {
     this.searchText = filterValue ? filterValue.trim().toLowerCase() : "";
     this.filteredCompetentAuthorities = [];
     this.selectedcompetentAuthority = undefined;
+
     if (this.competentAuthorities)
       for (let competentAuthority of this.competentAuthorities)
-        if (competentAuthority.label.toLocaleLowerCase().indexOf(this.searchText) >= 0)
+        if (competentAuthority.label.toLocaleLowerCase().indexOf(this.searchText.normalize("NFD").replace(/[\u0300-\u036f]/g, "")) >= 0)
           this.filteredCompetentAuthorities.push(competentAuthority);
   }
 
