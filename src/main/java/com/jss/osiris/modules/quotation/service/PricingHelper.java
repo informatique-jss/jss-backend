@@ -178,7 +178,7 @@ public class PricingHelper {
                                                     + provision.getAnnouncement().getPublicationDate()
                                                             .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                                             : "")
-                            + ", rubrique " + noticeFamiliyType + ","
+                            + ", rubrique " + noticeFamiliyType + ", "
                             + String.join(" / ", noticeTypes) + ")");
                 else
                     invoiceItem.setLabel(invoiceItem.getLabel() + " ("
