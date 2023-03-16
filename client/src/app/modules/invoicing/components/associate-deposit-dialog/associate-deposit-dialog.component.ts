@@ -18,6 +18,7 @@ import { AppService } from 'src/app/services/app.service';
 import { CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
 import { OrderingSearchResult } from '../../../quotation/model/OrderingSearchResult';
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
+import { Responsable } from '../../../tiers/model/Responsable';
 import { AssociationSummaryTable } from '../../model/AssociationSummaryTable';
 import { Deposit } from '../../model/Deposit';
 import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
@@ -178,7 +179,7 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
       if (invoice.confrere)
         customerOrderId = invoice.confrere.id
       if (invoice.responsable)
-        customerOrderId = invoice.responsable.id
+        customerOrderId = invoice.responsable.tiers.id
       if (invoice.tiers)
         customerOrderId = invoice.tiers.id
 
@@ -217,7 +218,7 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
       if (order.confrere)
         customerOrderId = order.confrere.id
       if (order.responsable)
-        customerOrderId = order.responsable.id
+        customerOrderId = order.responsable.tiers.id
       if (order.tiers)
         customerOrderId = order.tiers.id
 
@@ -275,7 +276,12 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
           customerOrder = getCustomerOrderForIQuotation(asso.customerOrder);
         if (currentCustomerOrder == undefined)
           currentCustomerOrder = customerOrder;
-        if (currentCustomerOrder != undefined && newCustomerOrder != undefined && currentCustomerOrder?.id != newCustomerOrder)
+
+        // If responsable, consider associated Tiers
+        if ((customerOrder as Responsable).tiers)
+          currentCustomerOrder = (customerOrder as Responsable).tiers;
+
+        if (currentCustomerOrder && newCustomerOrder && currentCustomerOrder.id != newCustomerOrder)
           return false;
       }
     return true;

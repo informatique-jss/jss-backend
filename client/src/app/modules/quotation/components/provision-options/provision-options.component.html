@@ -30,7 +30,14 @@
               (onToggleChange)="provisionChangeFunction()" propertyName="isBaloPackage"></generic-toggle>
           </td>
         </tr>
-        <tr *ngIf="displayOption(billingTypePublicationFlag)">
+        <tr *ngIf="displayOption(billingTypeBaloNormalization)">
+          <td>
+            <generic-toggle [(model)]="provision.isBaloNormalization" label="Frais de normalisation BALO ?"
+              [form]="optionForm" (onToggleChange)="provisionChangeFunction()"
+              propertyName="isBaloNormalization"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeBaloPublicationFlag)">
           <td>
             <generic-toggle [(model)]="provision.isBaloPackage" label="Justificatif numérique BALO ?"
               [form]="optionForm" (onToggleChange)="provisionChangeFunction()"

@@ -23,6 +23,7 @@ import { DebourSearchResult } from '../../../quotation/model/DebourSearchResult'
 import { OrderingSearchResult } from '../../../quotation/model/OrderingSearchResult';
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
 import { DebourService } from '../../../quotation/services/debour.service';
+import { Responsable } from '../../../tiers/model/Responsable';
 import { AssociationSummaryTable } from '../../model/AssociationSummaryTable';
 import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
 import { Payment } from '../../model/Payment';
@@ -286,6 +287,13 @@ export class AssociatePaymentDialogComponent implements OnInit {
           customerOrder = getCustomerOrderForIQuotation(asso.customerOrder);
         if (currentCustomerOrder == undefined)
           currentCustomerOrder = customerOrder;
+
+        // If responsable, consider tiers
+        if ((newCustomerOrder as Responsable).tiers)
+          newCustomerOrder = (newCustomerOrder as Responsable).tiers;
+        if ((customerOrder as Responsable).tiers)
+          customerOrder = (customerOrder as Responsable).tiers;
+
         if (currentCustomerOrder != undefined && newCustomerOrder != undefined && currentCustomerOrder?.id != newCustomerOrder.id)
           return false;
       }

@@ -310,6 +310,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeBaloNormalization"
+                label="Type de poste de facturation - Frais de normalisation BALO" [form]="constantForm"
+                propertyName="billingTypeBaloNormalization" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeBaloPublicationFlag"
                 label="Type de poste de facturation - Justificatif numérique BALO" [form]="constantForm"
                 propertyName="billingTypeBaloPublicationFlag" [isMandatory]="true" [isDisabled]="!editMode">
