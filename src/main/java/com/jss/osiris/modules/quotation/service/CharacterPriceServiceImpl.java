@@ -99,7 +99,7 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
             string = StringUtils.normalizeSpace(StringUtils.normalizeSpace(string));
             // Remove space before comma and dot
             string = string.replaceAll(" ,", ",");
-            string = string.replaceAll(" .", ".");
+            string = string.replaceAll(" \\.", ".");
         }
         return string;
     }
