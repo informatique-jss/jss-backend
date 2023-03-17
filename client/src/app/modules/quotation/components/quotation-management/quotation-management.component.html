@@ -252,6 +252,9 @@
                       {{paperLabelResult.billingLabel?paperLabelResult.billingLabel:"Libellé inconnu"}}</p>
                     <p [ngClass]="{'color-warn':!paperLabelResult.billingLabelAddress}">
                       {{paperLabelResult.billingLabelAddress?paperLabelResult.billingLabelAddress:"Adresse"}}</p>
+                    <p>
+                      {{paperLabelResult.billingLabelPostalCode}}
+                      {{paperLabelResult.billingLabelCity?paperLabelResult.billingLabelCity.label:""}}</p>
                   </td>
                 </tr>
               </table>
