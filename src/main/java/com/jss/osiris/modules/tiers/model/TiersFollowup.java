@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
@@ -33,24 +35,28 @@ public class TiersFollowup implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tiers_followup_sequence")
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
 	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
+	@JsonIgnore
 	private Tiers tiers;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
+	@JsonIgnore
 	private Responsable responsable;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
 	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
+	@JsonIgnore
 	private Confrere confrere;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice")
 	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
+	@JsonIgnore
 	private Invoice invoice;
 
 	@ManyToOne
