@@ -109,28 +109,31 @@ export class TiersFollowupComponent implements OnInit {
     if (this.tiers) {
       if (this.tiers.tiersFollowups == null || this.tiers.tiersFollowups == undefined)
         this.tiers.tiersFollowups = [] as Array<TiersFollowup>;
-
-      if (instanceOfConfrere(this.tiers))
-        this.newFollowup.confrere = this.tiers;
-      else if (instanceOfTiers(this.tiers))
-        this.newFollowup.tiers = this.tiers;
-      else if (instanceOfResponsable(this.tiers))
-        this.newFollowup.responsable = this.tiers;
     } else if (this.invoice) {
       if (this.invoice.tiersFollowups == null || this.invoice.tiersFollowups == undefined)
         this.invoice.tiersFollowups = [] as Array<TiersFollowup>;
-      this.newFollowup.invoice = this.invoice;
     }
     // Remove UTC delay
     this.newFollowup.followupDate = new Date(this.newFollowup.followupDate.setHours(12));
 
-    this.tiersFollowupService.addFollowup(this.newFollowup).subscribe(response => {
-      if (this.tiers)
-        this.tiers.tiersFollowups = response;
-      else if (this.invoice)
-        this.invoice.tiersFollowups = response;
-      this.setData();
-    });
+    let promise;
+    if (instanceOfConfrere(this.tiers))
+      promise = this.tiersFollowupService.addFollowupForConfrere(this.newFollowup, this.tiers);
+    else if (instanceOfTiers(this.tiers))
+      promise = this.tiersFollowupService.addFollowupForTiers(this.newFollowup, this.tiers);
+    else if (instanceOfResponsable(this.tiers))
+      promise = this.tiersFollowupService.addFollowupForResponsable(this.newFollowup, this.tiers);
+    else if (this.invoice)
+      promise = this.tiersFollowupService.addFollowupForInvoice(this.newFollowup, this.invoice);
+
+    if (promise)
+      promise.subscribe(response => {
+        if (this.tiers)
+          this.tiers.tiersFollowups = response;
+        else if (this.invoice)
+          this.invoice.tiersFollowups = response;
+        this.setData();
+      });
     this.newFollowup = {} as TiersFollowup;
     this.newFollowup.tiersFollowupType = this.followUpTypes[0];
     this.setData();
