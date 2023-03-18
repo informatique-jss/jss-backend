@@ -357,6 +357,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                                     for (Debour debour : provision.getDebours()) {
                                         if (debour.getNonTaxableAmount() != null && debour.getInvoiceItem() == null) {
 
+                                            Float nonTaxableAmount = debour.getNonTaxableAmount();
+
                                             if (debour.getBankTransfert() == null && debour.getPaymentType().getId()
                                                     .equals(constantService.getPaymentTypeVirement().getId())) {
                                                 debour = debourService.getDebour(debour.getId());
@@ -377,8 +379,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                                             if (debour.getPayment() != null)
                                                 debourPayments.put(debour.getPayment().getId(), debour);
 
-                                            if (debour.getNonTaxableAmount() > 0
-                                                    && debour.getNonTaxableAmount() < debour.getDebourAmount()) {
+                                            if (nonTaxableAmount > 0
+                                                    && nonTaxableAmount < debour.getDebourAmount()) {
                                                 nonTaxableDebour = new Debour();
                                                 nonTaxableDebour
                                                         .setBillingType(

@@ -152,14 +152,13 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                 + (asso.getAffaire().getDenomination() == null
                         ? asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()
                         : asso.getAffaire().getDenomination()));
-
-        bankTransfert.setTransfertIban(bankTransfert.getTransfertIban().replaceAll(" ", ""));
-        bankTransfert.setTransfertBic(bankTransfert.getTransfertBic().replaceAll(" ", ""));
         bankTransfert.setIsAlreadyExported(false);
         bankTransfert.setTransfertAmount(debour.getDebourAmount());
         bankTransfert.setTransfertDateTime(LocalDateTime.now());
         bankTransfert.setTransfertIban(debour.getCompetentAuthority().getIban());
         bankTransfert.setTransfertBic(debour.getCompetentAuthority().getBic());
+        bankTransfert.setTransfertIban(bankTransfert.getTransfertIban().replaceAll(" ", ""));
+        bankTransfert.setTransfertBic(bankTransfert.getTransfertBic().replaceAll(" ", ""));
         bankTransfert.setIsCancelled(false);
         return this.addOrUpdateBankTransfert(bankTransfert);
     }
