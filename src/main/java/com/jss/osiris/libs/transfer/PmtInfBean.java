@@ -3,9 +3,12 @@ package com.jss.osiris.libs.transfer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+@JsonPropertyOrder({ "PmtInfId", "PmtMtd", "BtchBookg", "NbOfTxs", "CtrlSum", "PmtTpInf", "InstrPrty", "SvcLvl", "Cd",
+		"CtgyPurp", "ReqdExctnDt" })
 public class PmtInfBean {
 	@JacksonXmlProperty(localName = "BtchBookg")
 	Boolean btchBookg = true;

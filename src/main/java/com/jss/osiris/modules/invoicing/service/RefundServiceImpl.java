@@ -153,9 +153,12 @@ public class RefundServiceImpl implements RefundService {
             }
         }
 
-        if (refund.getRefundIBAN() == null || refund.getRefundType() == null)
+        if (refund.getRefundIBAN() == null || refund.getRefundBic() == null || refund.getRefundType() == null)
             throw new OsirisClientMessageException(
                     "IBAN non trouvé pour effectuer le remboursement. Merci de renseigner le tiers ou l'affaire. L'opération est annulée.");
+
+        refund.setRefundIBAN(refund.getRefundIBAN().replaceAll(" ", ""));
+        refund.setRefundBic(refund.getRefundBic().replaceAll(" ", ""));
 
         if (payment != null) {
             refund.setLabel("Remboursement du paiement N " + payment.getId());
@@ -199,7 +202,7 @@ public class RefundServiceImpl implements RefundService {
             GrpHdrBean header = new GrpHdrBean();
             document.getCstmrCdtTrfInitnBean().setGrpHdrBean(header);
 
-            header.setMsgId("Virement JSS du " + LocalDateTime.now().format(formatterDateTime));
+            header.setMsgId("Virement JSS du " + LocalDateTime.now().format(formatterDate));
             header.setCreDtTm(LocalDateTime.now().format(formatterDateTime));
             header.setNbOfTxs(refunds.size());
             header.setCtrlSum(totalAmount);
@@ -221,47 +224,49 @@ public class RefundServiceImpl implements RefundService {
             orgId.setOthrBean(othrBean);
             othrBean.setId("55207462700035");
 
-            PmtInfBean body = new PmtInfBean();
-            document.getCstmrCdtTrfInitnBean().setPmtInfBean(body);
-            body.setPmtInfId(header.getMsgId());
-            body.setPmtMtd("TRF");
-            body.setBtchBookg(true);
-            body.setNbOfTxs(refunds.size());
-            body.setCtrlSum(totalAmount);
-
-            PmtTpInfBean bodyTransfertType = new PmtTpInfBean();
-            body.setPmtTpInfBean(bodyTransfertType);
-            bodyTransfertType.setInstrPrty("NORM");
-
-            SvcLvlBean transfertNorm = new SvcLvlBean();
-            bodyTransfertType.setSvcLvlBean(transfertNorm);
-            transfertNorm.setCd("SEPA");
-
-            CtgyPurpBean transfertPurpose = new CtgyPurpBean();
-            bodyTransfertType.setCtgyPurpBean(transfertPurpose);
-            transfertPurpose.setCd("FOUR");
-
-            body.setReqdExctnDt(LocalDateTime.now().plusDays(1).format(formatterDate));
-
-            DbtrBean debiteur = new DbtrBean();
-            body.setDbtrBean(debiteur);
-            debiteur.setNm("SPPS - JSS REMBOURSEMENT");
-
-            DbtrAcctBean account = new DbtrAcctBean();
-            body.setDbtrAcctBean(account);
-            IdBean accountId = new IdBean();
-            accountId.setIban(ibanJss.replaceAll(" ", ""));
-            account.setIdBean(accountId);
-
-            DbtrAgtBean bic = new DbtrAgtBean();
-            body.setDbtrAgtBean(bic);
-            FinInstnIdBean financialInstitution = new FinInstnIdBean();
-            financialInstitution.setBic(bicJss);
-            bic.setFinInstnIdBean(financialInstitution);
-
-            body.setCdtTrfTxInfBeanList(new ArrayList<CdtTrfTxInfBean>());
+            document.getCstmrCdtTrfInitnBean().setPmtInfBean(new ArrayList<PmtInfBean>());
 
             for (RefundSearchResult refund : refunds) {
+                PmtInfBean body = new PmtInfBean();
+                document.getCstmrCdtTrfInitnBean().getPmtInfBean().add(body);
+                body.setPmtInfId(header.getMsgId());
+                body.setPmtMtd("TRF");
+                body.setBtchBookg(false);
+                body.setNbOfTxs(refunds.size());
+                body.setCtrlSum(totalAmount);
+
+                PmtTpInfBean bodyTransfertType = new PmtTpInfBean();
+                body.setPmtTpInfBean(bodyTransfertType);
+                bodyTransfertType.setInstrPrty("NORM");
+
+                SvcLvlBean transfertNorm = new SvcLvlBean();
+                bodyTransfertType.setSvcLvlBean(transfertNorm);
+                transfertNorm.setCd("SEPA");
+
+                CtgyPurpBean transfertPurpose = new CtgyPurpBean();
+                bodyTransfertType.setCtgyPurpBean(transfertPurpose);
+                transfertPurpose.setCd("FOUR");
+
+                body.setReqdExctnDt(refund.getRefundDate().format(formatterDate));
+
+                DbtrBean debiteur = new DbtrBean();
+                body.setDbtrBean(debiteur);
+                debiteur.setNm("SPPS - JSS REMBOURSEMENT");
+
+                DbtrAcctBean account = new DbtrAcctBean();
+                body.setDbtrAcctBean(account);
+                IdBean accountId = new IdBean();
+                accountId.setIban(ibanJss.replaceAll(" ", ""));
+                account.setIdBean(accountId);
+
+                DbtrAgtBean bic = new DbtrAgtBean();
+                body.setDbtrAgtBean(bic);
+                FinInstnIdBean financialInstitution = new FinInstnIdBean();
+                financialInstitution.setBic(bicJss);
+                bic.setFinInstnIdBean(financialInstitution);
+
+                body.setCdtTrfTxInfBeanList(new ArrayList<CdtTrfTxInfBean>());
+
                 Refund completeRefund = getRefund(refund.getId());
 
                 CdtTrfTxInfBean virement = new CdtTrfTxInfBean();
@@ -298,8 +303,8 @@ public class RefundServiceImpl implements RefundService {
                                     + completeRefund.getTiers().getLastname());
 
                 CdtrBean customerOrder = new CdtrBean();
-                virement.setCdtrBeanList(Arrays.asList(customerOrder));
-                customerOrder.setNm(customerLabel);
+                virement.setCdtrBean(customerOrder);
+                customerOrder.setNm(customerLabel.substring(0, 139));
 
                 CdtrAcctBean customerAccount = new CdtrAcctBean();
                 virement.setCdtrAcctBean(customerAccount);
@@ -309,7 +314,7 @@ public class RefundServiceImpl implements RefundService {
 
                 RmtInfBean virementLabel = new RmtInfBean();
                 virement.setRmtInfBean(virementLabel);
-                virementLabel.setUstrd("JSS - " + refund.getRefundLabel());
+                virementLabel.setUstrd(("JSS - " + refund.getRefundLabel()).substring(0, 139));
 
                 body.getCdtTrfTxInfBeanList().add(virement);
 

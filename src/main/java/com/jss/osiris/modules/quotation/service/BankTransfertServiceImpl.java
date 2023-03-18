@@ -28,6 +28,7 @@ import com.jss.osiris.libs.transfer.AmtBean;
 import com.jss.osiris.libs.transfer.CdtTrfTxInfBean;
 import com.jss.osiris.libs.transfer.CdtrAcctBean;
 import com.jss.osiris.libs.transfer.CdtrAgtBean;
+import com.jss.osiris.libs.transfer.CdtrBean;
 import com.jss.osiris.libs.transfer.CstmrCdtTrfInitnBean;
 import com.jss.osiris.libs.transfer.CtgyPurpBean;
 import com.jss.osiris.libs.transfer.DbtrAcctBean;
@@ -146,6 +147,8 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                         ? asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()
                         : asso.getAffaire().getDenomination()));
 
+        bankTransfert.setTransfertIban(bankTransfert.getTransfertIban().replaceAll(" ", ""));
+        bankTransfert.setTransfertBic(bankTransfert.getTransfertBic().replaceAll(" ", ""));
         bankTransfert.setIsAlreadyExported(false);
         bankTransfert.setTransfertAmount(debour.getDebourAmount());
         bankTransfert.setTransfertDateTime(LocalDateTime.now());
@@ -163,9 +166,16 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                 + invoice.getManualAccountingDocumentNumber());
         bankTransfert.setIsAlreadyExported(false);
         bankTransfert.setTransfertAmount(invoice.getTotalPrice());
-        bankTransfert.setTransfertDateTime(LocalDateTime.now());
+        bankTransfert.setTransfertDateTime(invoice.getDueDate().atTime(12, 0));
         bankTransfert.setTransfertIban(invoiceHelper.getIbanOfOrderingCustomer(invoice));
         bankTransfert.setTransfertBic(invoiceHelper.getBicOfOrderingCustomer(invoice));
+
+        if (bankTransfert.getTransfertIban() == null || bankTransfert.getTransfertBic() == null)
+            throw new OsirisException(null, "IBAN or BIC not found for bank transfert");
+
+        bankTransfert.setTransfertIban(bankTransfert.getTransfertIban().replaceAll(" ", ""));
+        bankTransfert.setTransfertBic(bankTransfert.getTransfertBic().replaceAll(" ", ""));
+
         return this.addOrUpdateBankTransfert(bankTransfert);
     }
 
@@ -194,7 +204,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
             GrpHdrBean header = new GrpHdrBean();
             document.getCstmrCdtTrfInitnBean().setGrpHdrBean(header);
 
-            header.setMsgId("Virement JSS du " + LocalDateTime.now().format(formatterDateTime));
+            header.setMsgId(("Virement JSS du " + LocalDateTime.now().format(formatterDate)).substring(0, 34));
             header.setCreDtTm(LocalDateTime.now().format(formatterDateTime));
             header.setNbOfTxs(bankTransferts.size());
             header.setCtrlSum(totalAmount);
@@ -216,48 +226,50 @@ public class BankTransfertServiceImpl implements BankTransfertService {
             orgId.setOthrBean(othrBean);
             othrBean.setId("55207462700035");
 
-            PmtInfBean body = new PmtInfBean();
-            document.getCstmrCdtTrfInitnBean().setPmtInfBean(body);
-            body.setPmtInfId(header.getMsgId());
-            body.setPmtMtd("TRF");
-            body.setBtchBookg(true);
-            body.setNbOfTxs(bankTransferts.size());
-            body.setCtrlSum(totalAmount);
-
-            PmtTpInfBean bodyTransfertType = new PmtTpInfBean();
-            body.setPmtTpInfBean(bodyTransfertType);
-            bodyTransfertType.setInstrPrty("NORM");
-
-            SvcLvlBean transfertNorm = new SvcLvlBean();
-            bodyTransfertType.setSvcLvlBean(transfertNorm);
-            transfertNorm.setCd("SEPA");
-
-            CtgyPurpBean transfertPurpose = new CtgyPurpBean();
-            bodyTransfertType.setCtgyPurpBean(transfertPurpose);
-            transfertPurpose.setCd("FOUR");
-
-            body.setReqdExctnDt(LocalDateTime.now().plusDays(1).format(formatterDate));
-
-            DbtrBean debiteur = new DbtrBean();
-            body.setDbtrBean(debiteur);
-            debiteur.setNm("SPPS - JSS COMPTE 00011");
-
-            DbtrAcctBean account = new DbtrAcctBean();
-            body.setDbtrAcctBean(account);
-            IdBean accountId = new IdBean();
-            accountId.setIban(ibanJss.replaceAll(" ", ""));
-            account.setIdBean(accountId);
-
-            DbtrAgtBean bic = new DbtrAgtBean();
-            body.setDbtrAgtBean(bic);
-            FinInstnIdBean financialInstitution = new FinInstnIdBean();
-            financialInstitution.setBic(bicJss);
-            bic.setFinInstnIdBean(financialInstitution);
-
-            body.setCdtTrfTxInfBeanList(new ArrayList<CdtTrfTxInfBean>());
+            document.getCstmrCdtTrfInitnBean().setPmtInfBean(new ArrayList<PmtInfBean>());
 
             for (BankTransfertSearchResult bankTransfert : bankTransferts) {
                 BankTransfert completeTransfert = getBankTransfert(bankTransfert.getId());
+
+                PmtInfBean body = new PmtInfBean();
+                document.getCstmrCdtTrfInitnBean().getPmtInfBean().add(body);
+                body.setPmtInfId(header.getMsgId());
+                body.setPmtMtd("TRF");
+                body.setBtchBookg(false);
+                body.setNbOfTxs(1);
+                body.setCtrlSum(completeTransfert.getTransfertAmount());
+
+                PmtTpInfBean bodyTransfertType = new PmtTpInfBean();
+                body.setPmtTpInfBean(bodyTransfertType);
+                bodyTransfertType.setInstrPrty("NORM");
+
+                SvcLvlBean transfertNorm = new SvcLvlBean();
+                bodyTransfertType.setSvcLvlBean(transfertNorm);
+                transfertNorm.setCd("SEPA");
+
+                CtgyPurpBean transfertPurpose = new CtgyPurpBean();
+                bodyTransfertType.setCtgyPurpBean(transfertPurpose);
+                transfertPurpose.setCd("FOUR");
+
+                body.setReqdExctnDt(bankTransfert.getTransfertDate().format(formatterDate));
+
+                DbtrBean debiteur = new DbtrBean();
+                body.setDbtrBean(debiteur);
+                debiteur.setNm("SPPS - JSS COMPTE 00011");
+
+                DbtrAcctBean account = new DbtrAcctBean();
+                body.setDbtrAcctBean(account);
+                IdBean accountId = new IdBean();
+                accountId.setIban(ibanJss.replaceAll(" ", ""));
+                account.setIdBean(accountId);
+
+                DbtrAgtBean bic = new DbtrAgtBean();
+                body.setDbtrAgtBean(bic);
+                FinInstnIdBean financialInstitution = new FinInstnIdBean();
+                financialInstitution.setBic(bicJss);
+                bic.setFinInstnIdBean(financialInstitution);
+
+                body.setCdtTrfTxInfBeanList(new ArrayList<CdtTrfTxInfBean>());
 
                 CdtTrfTxInfBean virement = new CdtTrfTxInfBean();
                 PmtIdBean virementId = new PmtIdBean();
@@ -278,6 +290,12 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                 bicVirement.setFinInstnIdBean(financialInstitution);
                 bicVirementId.setBic(bicJss);
 
+                CdtrBean customerOrder = new CdtrBean();
+                virement.setCdtrBean(customerOrder);
+                customerOrder.setNm(
+                        (bankTransfert.getCompetentAuthorityLabel() != null ? bankTransfert.getCompetentAuthorityLabel()
+                                : bankTransfert.getInvoiceBillingLabel()).substring(0, 139));
+
                 CdtrAcctBean customerAccount = new CdtrAcctBean();
                 virement.setCdtrAcctBean(customerAccount);
                 IdBean customerAccountId = new IdBean();
@@ -286,7 +304,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
                 RmtInfBean virementLabel = new RmtInfBean();
                 virement.setRmtInfBean(virementLabel);
-                virementLabel.setUstrd(completeTransfert.getLabel());
+                virementLabel.setUstrd(completeTransfert.getLabel().substring(0, 139));
 
                 body.getCdtTrfTxInfBeanList().add(virement);
 
