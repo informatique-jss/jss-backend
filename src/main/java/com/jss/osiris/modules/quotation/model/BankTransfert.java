@@ -51,6 +51,8 @@ public class BankTransfert implements Serializable, IId {
 			"reverseCreditNote" }, allowSetters = true)
 	List<Invoice> invoices;
 
+	private Boolean isCancelled;
+
 	public Integer getId() {
 		return id;
 	}
@@ -121,6 +123,14 @@ public class BankTransfert implements Serializable, IId {
 
 	public void setInvoices(List<Invoice> invoices) {
 		this.invoices = invoices;
+	}
+
+	public Boolean getIsCancelled() {
+		return isCancelled;
+	}
+
+	public void setIsCancelled(Boolean isCancelled) {
+		this.isCancelled = isCancelled;
 	}
 
 }

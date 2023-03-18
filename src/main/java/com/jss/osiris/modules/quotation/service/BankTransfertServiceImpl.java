@@ -108,6 +108,12 @@ public class BankTransfertServiceImpl implements BankTransfertService {
     }
 
     @Override
+    public BankTransfert cancelBankTransfert(BankTransfert bankTransfert) {
+        bankTransfert.setIsCancelled(true);
+        return addOrUpdateBankTransfert(bankTransfert);
+    }
+
+    @Override
     public void reindexBankTransfert() {
         List<BankTransfert> bankTransferts = getBankTransfers();
         if (bankTransferts != null)
@@ -154,6 +160,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
         bankTransfert.setTransfertDateTime(LocalDateTime.now());
         bankTransfert.setTransfertIban(debour.getCompetentAuthority().getIban());
         bankTransfert.setTransfertBic(debour.getCompetentAuthority().getBic());
+        bankTransfert.setIsCancelled(false);
         return this.addOrUpdateBankTransfert(bankTransfert);
     }
 
@@ -175,6 +182,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
         bankTransfert.setTransfertIban(bankTransfert.getTransfertIban().replaceAll(" ", ""));
         bankTransfert.setTransfertBic(bankTransfert.getTransfertBic().replaceAll(" ", ""));
+        bankTransfert.setIsCancelled(false);
 
         return this.addOrUpdateBankTransfert(bankTransfert);
     }

@@ -27,7 +27,7 @@ public interface BankTransfertRepository extends CrudRepository<BankTransfert, I
                         + " left join provider on provider.id = invoice.id_provider "
                         + " left join competent_authority on competent_authority.id = invoice.id_competent_authority "
                         + " left join confrere on confrere.id = invoice.id_confrere "
-                        + " where (:isHideExportedRefunds=false OR r.is_already_exported=false) "
+                        + " where is_cancelled=false and (:isHideExportedRefunds=false OR r.is_already_exported=false) "
                         + " and r.transfert_date_time>=:startDate and r.transfert_date_time<=:endDate "
                         + "  and (:minAmount is null or r.transfert_amount>=CAST(CAST(:minAmount as text) as real) ) "
                         + "  and (:maxAmount is null or r.transfert_amount<=CAST(CAST(:maxAmount as text) as real) )"

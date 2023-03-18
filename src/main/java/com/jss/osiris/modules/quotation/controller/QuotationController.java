@@ -335,6 +335,17 @@ public class QuotationController {
     return new ResponseEntity<List<BankTransfert>>(bankTransfertService.getBankTransfers(), HttpStatus.OK);
   }
 
+  @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+  @GetMapping(inputEntryPoint + "/bank-transfert/cancel")
+  public ResponseEntity<BankTransfert> cancelBankTransfer(@RequestParam Integer idBankTranfert)
+      throws OsirisValidationException {
+    BankTransfert bankTransfert = bankTransfertService.getBankTransfert(idBankTranfert);
+    if (bankTransfert == null)
+      throw new OsirisValidationException("bankTransfert");
+    return new ResponseEntity<BankTransfert>(bankTransfertService.cancelBankTransfert(bankTransfert),
+        HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/simple-provision-status")
   public ResponseEntity<List<SimpleProvisionStatus>> getSimpleProvisionStatus() {
     return new ResponseEntity<List<SimpleProvisionStatus>>(simpleProvisonStatusService.getSimpleProvisionStatus(),

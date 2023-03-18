@@ -3,6 +3,8 @@ import { FormBuilder } from '@angular/forms';
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { HabilitationsService } from '../../../../services/habilitations.service';
+import { BankTransfertService } from '../../../quotation/services/bank.transfert.service';
 import { BankTransfertSearch } from '../../model/BankTransfertSearch';
 import { BankTransfertSearchResult } from '../../model/BankTransfertSearchResult';
 import { BankTransfertSearchResultService } from '../../services/bank.transfert.search.result.service';
@@ -24,6 +26,8 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
     private bankTransfertSearchResultService: BankTransfertSearchResultService,
     private changeDetectorRef: ChangeDetectorRef,
     private formBuilder: FormBuilder,
+    private bankTransfertService: BankTransfertService,
+    private habilitationService: HabilitationsService,
   ) { }
 
   ngAfterContentChecked(): void {
@@ -43,6 +47,13 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
     this.setColumns();
 
     this.transfertSearch.isHideExportedBankTransfert = true;
+
+    if (this.habilitationService.canCancelBankTransfert())
+      this.tableAction.push({
+        actionIcon: 'delete', actionName: 'Supprimer ce virement', actionClick: (action: SortTableAction, element: any) => {
+          this.bankTransfertService.cancelBankTransfert(element).subscribe(response => this.searchTransferts());
+        }, display: true,
+      } as SortTableAction);
   }
 
   transfertForm = this.formBuilder.group({

@@ -32,4 +32,6 @@ public interface BankTransfertService {
                         throws OsirisException, OsirisClientMessageException;
 
         public File getBankTransfertExport(BankTransfertSearch transfertSearch) throws OsirisException;
+
+        public BankTransfert cancelBankTransfert(BankTransfert bankTransfert);
 }
