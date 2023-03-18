@@ -119,7 +119,7 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
         this.appService.displaySnackBar("Veuillez choisir un tiers à rembourser", true, 30);
         return;
       }
-      paymentAssociate.affaireRefund = (this.selectedRefundTiers && this.selectedRefundTiers.rna != undefined) ? this.selectedRefundTiers : null;
+      paymentAssociate.affaire = (this.selectedRefundTiers && 'rna' in this.selectedRefundTiers) ? this.selectedRefundTiers : null;
       paymentAssociate.tiersRefund = (!this.getRefundCustomerOrder() || (this.getRefundCustomerOrder() as any).label) ? null : this.getRefundCustomerOrder() as Tiers;
       paymentAssociate.confrereRefund = ((!this.getRefundCustomerOrder() || this.getRefundCustomerOrder() as any).label) ? this.getRefundCustomerOrder() as Confrere : null;
       paymentAssociate.deposit = this.deposit;

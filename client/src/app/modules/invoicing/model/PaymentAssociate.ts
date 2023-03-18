@@ -11,7 +11,7 @@ export interface PaymentAssociate {
   deposit: Deposit;
   invoices: Invoice[];
   customerOrders: CustomerOrder[];
-  affaireRefund: Affaire;
+  affaire: Affaire;
   tiersRefund: Tiers | null;
   confrereRefund: Confrere | null;
   byPassAmount: number[];
