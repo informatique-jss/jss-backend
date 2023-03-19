@@ -878,13 +878,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             CentralPayPaymentRequest centralPayPaymentRequest)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Generate payment to materialize CB payment
-        Payment payment = getCentralPayPayment(centralPayPaymentRequest, true);
+        Payment payment = getCentralPayPayment(centralPayPaymentRequest, true, null);
 
         Deposit deposit = depositService.getNewDepositForCustomerOrder(payment.getPaymentAmount(), LocalDateTime.now(),
                 customerOrder, null, payment, true);
 
         deposit.setCustomerOrder(customerOrder);
         depositService.addOrUpdateDeposit(deposit);
+
+        paymentService.cancelPayment(payment);
 
         addOrUpdateCustomerOrder(customerOrder, false, true);
 
@@ -895,23 +897,26 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     private void generatePaymentOnInvoiceForCbPayment(Invoice invoice,
             CentralPayPaymentRequest centralPayPaymentRequest) throws OsirisException, OsirisClientMessageException {
         // Generate payment to materialize CB payment
-        Payment payment = getCentralPayPayment(centralPayPaymentRequest, false);
+        Payment payment = getCentralPayPayment(centralPayPaymentRequest, false, invoice);
 
         accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, payment);
         accountingRecordService.generateAccountingRecordsForCentralPayPayment(centralPayPaymentRequest, payment,
                 null, invoice.getCustomerOrder(), invoice);
     }
 
-    private Payment getCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest, boolean isForDepostit)
+    private Payment getCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest, boolean isForDepostit,
+            Invoice invoice)
             throws OsirisException {
         Payment payment = new Payment();
         payment.setIsExternallyAssociated(false);
+        payment.setBankId(centralPayPaymentRequest.getPaymentRequestId());
         payment.setLabel(centralPayPaymentRequest.getDescription());
         payment.setPaymentAmount(centralPayPaymentRequest.getTotalAmount() / 100f);
         payment.setPaymentDate(centralPayPaymentRequest.getCreationDate());
         payment.setPaymentWay(constantService.getPaymentWayInbound());
         payment.setPaymentType(constantService.getPaymentTypeCB());
         payment.setIsCancelled(isForDepostit);
+        payment.setInvoice(invoice);
         paymentService.addOrUpdatePayment(payment);
         return payment;
     }

@@ -152,7 +152,10 @@ public class InvoiceServiceImpl implements InvoiceService {
             for (AccountingRecord accountingRecord : invoice.getAccountingRecords()) {
                 accountingRecordService.unassociateCustomerOrderPayementAndDeposit(accountingRecord);
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
-                    accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart);
+                    // Do not touch deposit records, they are already handled before
+                    if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountDeposit().getId()))
+                        accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart);
             }
 
         // Refresh invoice
@@ -226,7 +229,10 @@ public class InvoiceServiceImpl implements InvoiceService {
             for (AccountingRecord accountingRecord : invoice.getAccountingRecords()) {
                 accountingRecordService.unassociateCustomerOrderPayementAndDeposit(accountingRecord);
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
-                    accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart);
+                    // Do not touch deposit records, they are already handled before
+                    if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountDepositProvider().getId()))
+                        accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart);
             }
 
         // Refresh invoice

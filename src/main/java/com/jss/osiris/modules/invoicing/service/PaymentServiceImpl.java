@@ -342,18 +342,22 @@ public class PaymentServiceImpl implements PaymentService {
                         if (foundEntity.getEntityType().equals(Debour.class.getSimpleName())) {
                             Debour debour = debourService.getDebour(foundEntity.getEntityId());
                             if (debour != null) {
+                                generateWaitingAccountAccountingRecords = new MutableBoolean(true);
                                 // Check case
                                 if (debour.getPaymentType().getId()
                                         .equals(constantService.getPaymentTypeCheques().getId())
                                         && debour.getCheckNumber() != null
                                         && payment.getLabel().contains(debour.getCheckNumber())) {
                                     associateOutboundPaymentAndDebour(payment, Arrays.asList(debour));
-                                    generateWaitingAccountAccountingRecords = new MutableBoolean(false);
+                                    generateWaitingAccountAccountingRecords = new MutableBoolean(
+                                            debour.getInvoiceItem() == null);
                                 }
                                 // Bank transfert case
                                 if (debour.getPaymentType().getId()
                                         .equals(constantService.getPaymentTypeVirement().getId())) {
                                     associateOutboundPaymentAndDebour(payment, Arrays.asList(debour));
+                                    generateWaitingAccountAccountingRecords = new MutableBoolean(
+                                            debour.getInvoiceItem() == null);
                                 }
                             }
                         }
@@ -505,26 +509,19 @@ public class PaymentServiceImpl implements PaymentService {
 
                 Payment newPayment = payment;
                 // If more than 1 invoice to associate, cut payment
-                if (correspondingInvoices.size() > 1)
+                if (correspondingInvoices.size() > 1) {
                     newPayment = generateNewPaymentFromPayment(payment, effectivePayment);
+                    accountingRecordService.generateBankAccountingRecordsForInboundPayment(newPayment);
+                }
 
-                // associate
+                // associate and remove waiting accounting record
                 accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(
                         correspondingInvoices.get(i), newPayment);
 
                 if (correspondingInvoices.size() > 1) {
                     cancelPayment(payment);
-                } else {
-                    // if payment completly use and not cancelled, do counter part of waiting record
-                    if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0)
-                        for (AccountingRecord record : payment.getAccountingRecords())
-                            if ((record.getIsCounterPart() == null || !record.getIsCounterPart())
-                                    && record.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                                            .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
-                                accountingRecordService.letterWaitingRecords(record,
-                                        accountingRecordService.generateCounterPart(record, payment.getId()));
-                            }
                 }
+
                 newPayment.setInvoice(correspondingInvoices.get(i));
                 addOrUpdatePayment(newPayment);
                 if ((remainingToPayForCurrentInvoice - newPayment.getPaymentAmount()) <= 0) {
@@ -685,6 +682,7 @@ public class PaymentServiceImpl implements PaymentService {
         return associateOutboundPaymentAndDebour(payment, debours);
     }
 
+    // Return true if associated to invoice, false otherwise
     private Float associateOutboundPaymentAndDebour(Payment payment, List<Debour> debours)
             throws OsirisException {
 
@@ -798,9 +796,10 @@ public class PaymentServiceImpl implements PaymentService {
                 List<InvoiceSearchResult> invoices = invoiceService
                         .getInvoiceForCustomerOrder(foundEntity.getEntityId());
                 if (invoices != null && invoices.size() > 0)
-                    for (InvoiceSearchResult invoice : invoices){
+                    for (InvoiceSearchResult invoice : invoices) {
                         Invoice completeInvoice = invoiceService.getInvoice(invoice.getInvoiceId());
-                        if (completeInvoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId()))
+                        if (completeInvoice.getInvoiceStatus().getId()
+                                .equals(constantService.getInvoiceStatusSend().getId()))
                             return completeInvoice;
                     }
             }
@@ -812,7 +811,7 @@ public class PaymentServiceImpl implements PaymentService {
                         List<InvoiceSearchResult> invoices = invoiceService
                                 .getInvoiceForCustomerOrder(customerOrder.getId());
                         if (invoices != null && invoices.size() > 0)
-                            for (InvoiceSearchResult invoice : invoices){
+                            for (InvoiceSearchResult invoice : invoices) {
                                 Invoice completeInvoice = invoiceService.getInvoice(invoice.getInvoiceId());
                                 if (completeInvoice.getInvoiceStatus().getId()
                                         .equals(constantService.getInvoiceStatusSend().getId()))
@@ -948,13 +947,16 @@ public class PaymentServiceImpl implements PaymentService {
         automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords();
     }
 
-    private Payment cancelPayment(Payment payment) throws OsirisException {
+    @Override
+    public Payment cancelPayment(Payment payment) throws OsirisException {
         Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
         if (payment.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : payment.getAccountingRecords()) {
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                     if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                            .equals(constantService.getPrincipalAccountingAccountBank().getId()))
+                            .equals(constantService.getPrincipalAccountingAccountBank().getId())
+                            && !accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                                    .equals(constantService.getPrincipalAccountingAccountCharge().getId()))
                         if (accountingRecord.getAccountingId() == null) {
                             accountingRecordService.deleteAccountingRecord(accountingRecord);
                         } else {
@@ -986,5 +988,6 @@ public class PaymentServiceImpl implements PaymentService {
         associateInboundPaymentAndCustomerOrders(getPayment(cashPayment.getId()), Arrays.asList(customerOrder),
                 new ArrayList<Invoice>(),
                 new MutableBoolean(false), null, cashPayment.getPaymentAmount());
+        cancelPayment(getPayment(cashPayment.getId()));
     }
 }

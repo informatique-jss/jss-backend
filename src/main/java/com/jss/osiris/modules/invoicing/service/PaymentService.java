@@ -59,4 +59,6 @@ public interface PaymentService {
         public void addCashPaymentForCustomerOrder(Payment cashPayment, CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
+        public Payment cancelPayment(Payment payment) throws OsirisException;
+
 }

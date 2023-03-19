@@ -173,7 +173,7 @@ public class DepositServiceImpl implements DepositService {
                                 byPassAmount.get(i));
 
                 getNewDepositForInvoice(remainingToPayForInvoice, LocalDateTime.now(), invoice, deposit.getId(),
-                        deposit.getOriginPayment(), true);
+                        deposit.getOriginPayment(), false);
 
                 remainingToPayForInvoice = Math.min(invoiceService.getRemainingAmountToPayForInvoice(invoice),
                         byPassAmount.get(i));
@@ -192,7 +192,7 @@ public class DepositServiceImpl implements DepositService {
                 Float remainingToPayForCustomerOrder = byPassAmount.get(i + correspondingInvoiceSize);
 
                 getNewDepositForCustomerOrder(remainingToPayForCustomerOrder, LocalDateTime.now(), customerOrder,
-                        deposit.getId(), deposit.getOriginPayment(), true);
+                        deposit.getId(), deposit.getOriginPayment(), false);
 
                 // Try unlocked customer order
                 customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
