@@ -310,8 +310,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     AccountingJournal journal = payment.getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId())
         ? constantService.getAccountingJournalCash()
         : constantService.getAccountingJournalBank();
-    if (payment.getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId()))
-      journal = constantService.getAccountingJournalCash();
 
     AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForInvoice(invoice);
 
@@ -323,8 +321,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         for (AccountingRecord accountingRecord : payment.getAccountingRecords())
           // Counter part waiting account record
           if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
-            letterWaitingRecords(accountingRecord,
-                generateCounterPart(accountingRecord, operationIdCounterPart));
+            if (accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                .equals(constantService.getPrincipalAccountingAccountWaiting().getId()))
+              letterWaitingRecords(accountingRecord,
+                  generateCounterPart(accountingRecord, operationIdCounterPart));
       }
       operationId = invoice.getId() + payment.getId();
     }
@@ -437,17 +437,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           "Appoint pour le paiement n°" + payment.getId(),
           remainingMoney, null, accountingAccountService.getProfitAccountingAccount(), null, null, null,
           bankJournal, payment, null, null);
-      generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
-          "Appoint pour le paiement n°" + payment.getId(), null, remainingMoney, accountingAccountCustomer, null,
-          null, null, bankJournal, payment, null, null);
     } else if (remainingMoney < 0) {
       generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
           "Appoint pour le paiement n°" + payment.getId(),
           null, remainingMoney, accountingAccountService.getLostAccountingAccount(), null, null, null,
           bankJournal, payment, null, null);
-      generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
-          "Appoint pour le paiement n°" + payment.getId(), remainingMoney, null, accountingAccountCustomer, null,
-          null, null, bankJournal, payment, null, null);
     }
   }
 
@@ -455,24 +449,18 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   public void generateAppointForDeposit(Deposit deposit, float remainingMoney, ITiers customerOrder)
       throws OsirisException {
     AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForITiers(customerOrder);
-    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
+    AccountingJournal miscellaneousJournal = constantService.getAccountingJournalMiscellaneousOperations();
 
     if (remainingMoney > 0) {
       generateNewAccountingRecord(LocalDateTime.now(), deposit.getId(), null, null,
           "Appoint pour l'acompte n°" + deposit.getId(),
           remainingMoney, null, accountingAccountService.getProfitAccountingAccount(), null, null, null,
-          bankJournal, null, deposit, null);
-      generateNewAccountingRecord(LocalDateTime.now(), deposit.getId(), null, null,
-          "Appoint pour le paiement n°" + deposit.getId(), null, remainingMoney, accountingAccountCustomer, null,
-          null, null, bankJournal, null, deposit, null);
+          miscellaneousJournal, null, deposit, null);
     } else if (remainingMoney < 0) {
       generateNewAccountingRecord(LocalDateTime.now(), deposit.getId(), null, null,
-          "Appoint pour le paiement n°" + deposit.getId(),
+          "Appoint pour l'acompte n°" + deposit.getId(),
           null, remainingMoney, accountingAccountService.getLostAccountingAccount(), null, null, null,
-          bankJournal, null, deposit, null);
-      generateNewAccountingRecord(LocalDateTime.now(), deposit.getId(), null, null,
-          "Appoint pour le paiement n°" + deposit.getId(), remainingMoney, null, accountingAccountCustomer, null,
-          null, null, bankJournal, null, deposit, null);
+          miscellaneousJournal, null, deposit, null);
     }
   }
 
@@ -576,7 +564,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public void generateAccountingRecordsForRefundOnGeneration(Refund refund) throws OsirisException {
-    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
+    // Bank if refund payment, miscellaneous if we refund deposit
+    AccountingJournal bankJournal = refund.getPayment() != null ? constantService.getAccountingJournalBank()
+        : constantService.getAccountingJournalMiscellaneousOperations();
     AccountingAccount customerAccountingAccount = null;
     if (refund.getConfrere() != null) {
       customerAccountingAccount = getCustomerAccountingAccountForITiers(refund.getConfrere());

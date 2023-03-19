@@ -141,7 +141,10 @@ public class InvoiceServiceImpl implements InvoiceService {
             for (AccountingRecord accountingRecord : invoice.getAccountingRecords()) {
                 accountingRecordService.unassociateCustomerOrderPayementAndDeposit(accountingRecord);
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
-                    accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart);
+                    // Do not touch deposit records, they are already handled before
+                    if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountDeposit().getId()))
+                        accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart);
             }
 
         // Unlink invoice item from customer order
@@ -192,7 +195,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setInvoiceStatus(constantService.getInvoiceStatusCancelled());
         addOrUpdateInvoice(invoice);
 
-        mailHelper.sendCreditNoteToCustomer(customerOrder, false, creditNote, invoice);
+        if (customerOrder != null) {
+            mailHelper.sendCreditNoteToCustomer(customerOrder, false, creditNote, invoice);
+        }
 
         return invoice;
     }
