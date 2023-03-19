@@ -504,6 +504,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.invoiceStatusCreditNoteEmited;
   }
 
+  getInvoiceStatusCreditNoteReceived() {
+    return this.constant.invoiceStatusCreditNoteReceived;
+  }
+
   getPaymentWayInbound() {
     return this.constant.paymentWayInbound;
   }

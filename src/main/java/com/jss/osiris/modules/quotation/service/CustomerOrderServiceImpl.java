@@ -446,7 +446,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         break;
                     }
             moveInvoiceDepositToCustomerOrderDeposit(customerOrder, invoiceToCancel);
-            invoiceService.cancelInvoice(invoiceToCancel, customerOrder);
+            invoiceService.cancelInvoiceEmitted(invoiceToCancel, customerOrder);
         }
 
         CustomerOrderStatus customerOrderStatus = customerOrderStatusService

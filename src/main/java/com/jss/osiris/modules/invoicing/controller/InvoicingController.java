@@ -814,7 +814,7 @@ public class InvoicingController {
                 && !invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusPayed().getId()))
             throw new OsirisValidationException("Invoice must be at sent or payed status to be cancelled");
 
-        return new ResponseEntity<Invoice>(invoiceService.cancelInvoice(invoice, null), HttpStatus.OK);
+        return new ResponseEntity<Invoice>(invoiceService.cancelInvoiceEmitted(invoice, null), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/invoice-status-list")

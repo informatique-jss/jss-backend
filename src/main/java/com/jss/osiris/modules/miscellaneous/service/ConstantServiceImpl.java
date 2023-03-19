@@ -674,6 +674,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public InvoiceStatus getInvoiceStatusCreditNoteReceived() throws OsirisException {
+        return getConstants().getInvoiceStatusCreditNoteReceived();
+    }
+
+    @Override
     public PaymentWay getPaymentWayInbound() throws OsirisException {
         return getConstants().getPaymentWayInbound();
     }

@@ -497,6 +497,10 @@ public class Constant implements Serializable, IId {
 	private InvoiceStatus invoiceStatusCreditNoteEmited;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_invoice_status_credit_note_received")
+	private InvoiceStatus invoiceStatusCreditNoteReceived;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_payment_way_inbound")
 	private PaymentWay paymentWayInbound;
 
@@ -1930,6 +1934,14 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeBaloNormalization(BillingType billingTypeBaloNormalization) {
 		this.billingTypeBaloNormalization = billingTypeBaloNormalization;
+	}
+
+	public InvoiceStatus getInvoiceStatusCreditNoteReceived() {
+		return invoiceStatusCreditNoteReceived;
+	}
+
+	public void setInvoiceStatusCreditNoteReceived(InvoiceStatus invoiceStatusCreditNoteReceived) {
+		this.invoiceStatusCreditNoteReceived = invoiceStatusCreditNoteReceived;
 	}
 
 }

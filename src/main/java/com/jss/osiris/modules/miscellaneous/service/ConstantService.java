@@ -284,6 +284,8 @@ public interface ConstantService {
 
     public InvoiceStatus getInvoiceStatusCreditNoteEmited() throws OsirisException;
 
+    public InvoiceStatus getInvoiceStatusCreditNoteReceived() throws OsirisException;
+
     public PaymentWay getPaymentWayInbound() throws OsirisException;
 
     public PaymentWay getPaymentWayOutboud() throws OsirisException;

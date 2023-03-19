@@ -45,11 +45,11 @@ public interface InvoiceService {
 
         public void reindexInvoices();
 
-        public void unletterInvoice(Invoice invoice) throws OsirisException;
+        public void unletterInvoiceEmitted(Invoice invoice) throws OsirisException;
 
         public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws OsirisException, OsirisClientMessageException;
 
-        public Invoice cancelInvoice(Invoice invoice, CustomerOrder customerOrder)
+        public Invoice cancelInvoiceEmitted(Invoice invoice, CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public Invoice cancelInvoiceFromUser(Invoice invoice)

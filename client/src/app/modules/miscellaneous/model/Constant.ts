@@ -155,6 +155,7 @@ export interface Constant {
   invoiceStatusPayed: InvoiceStatus;
   invoiceStatusCancelled: InvoiceStatus;
   invoiceStatusCreditNoteEmited: InvoiceStatus;
+  invoiceStatusCreditNoteReceived: InvoiceStatus;
   paymentWayInbound: PaymentWay;
   paymentWayOutboud: PaymentWay;
   vatTwenty: Vat;

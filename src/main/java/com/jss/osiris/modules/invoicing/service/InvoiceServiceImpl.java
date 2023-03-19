@@ -134,14 +134,17 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Transactional(rollbackFor = Exception.class)
     public Invoice cancelInvoiceFromUser(Invoice invoice)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        return cancelInvoice(invoice, null);
+        if (invoice.getIsInvoiceFromProvider())
+            return cancelInvoiceReceived(invoice);
+        else
+            return cancelInvoiceEmitted(invoice, null);
     }
 
     @Override
-    public Invoice cancelInvoice(Invoice invoice, CustomerOrder customerOrder)
+    public Invoice cancelInvoiceEmitted(Invoice invoice, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Unletter
-        unletterInvoice(invoice);
+        unletterInvoiceEmitted(invoice);
 
         // Remove accounting records
         Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
@@ -208,6 +211,57 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (customerOrder != null) {
             mailHelper.sendCreditNoteToCustomer(customerOrder, false, creditNote, invoice);
         }
+
+        return invoice;
+    }
+
+    private Invoice cancelInvoiceReceived(Invoice invoice)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        // Unletter
+        unletterInvoiceReceived(invoice);
+
+        // Remove accounting records
+        Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
+        if (invoice.getAccountingRecords() != null)
+            for (AccountingRecord accountingRecord : invoice.getAccountingRecords()) {
+                accountingRecordService.unassociateCustomerOrderPayementAndDeposit(accountingRecord);
+                if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
+                    accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart);
+            }
+
+        // Refresh invoice
+        invoice = getInvoice(invoice.getId());
+
+        // Create credit note
+        Invoice creditNote = cloneInvoice(invoice);
+        creditNote = addOrUpdateInvoice(creditNote);
+        if (invoice.getInvoiceItems() != null) {
+            ArrayList<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
+            for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+                InvoiceItem newInvoiceItem = invoiceItemService.cloneInvoiceItem(invoiceItem);
+                newInvoiceItem.setInvoice(creditNote);
+                invoiceItemService.addOrUpdateInvoiceItem(newInvoiceItem);
+                invoiceItems.add(newInvoiceItem);
+
+                // Remove debours / fees link
+                if (invoiceItem.getDebours() != null)
+                    for (Debour debour : invoiceItem.getDebours()) {
+                        debour.setInvoiceItem(null);
+                        debourService.addOrUpdateDebour(debour);
+                    }
+            }
+            creditNote.setInvoiceItems(invoiceItems);
+            creditNote.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
+            creditNote.setIsCreditNote(true);
+        }
+
+        invoice.setCreditNote(creditNote);
+        invoice = addOrUpdateInvoice(invoice);
+        creditNote = addOrUpdateInvoice(creditNote);
+
+        // Cancel invoice
+        invoice.setInvoiceStatus(constantService.getInvoiceStatusCancelled());
+        addOrUpdateInvoice(invoice);
 
         return invoice;
     }
@@ -516,7 +570,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public void unletterInvoice(Invoice invoice) throws OsirisException {
+    public void unletterInvoiceEmitted(Invoice invoice) throws OsirisException {
         AccountingAccount accountingAccountCustomer = accountingRecordService
                 .getCustomerAccountingAccountForInvoice(invoice);
 
@@ -530,6 +584,23 @@ public class InvoiceServiceImpl implements InvoiceService {
                 accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
             }
         invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
+        addOrUpdateInvoice(invoice);
+    }
+
+    private void unletterInvoiceReceived(Invoice invoice) throws OsirisException {
+        AccountingAccount accountingAccountProvider = accountingRecordService
+                .getProviderAccountingAccountForInvoice(invoice);
+
+        List<AccountingRecord> accountingRecords = accountingRecordService
+                .findByAccountingAccountAndInvoice(accountingAccountProvider, invoice);
+
+        if (accountingRecords != null)
+            for (AccountingRecord accountingRecord : accountingRecords) {
+                accountingRecord.setLetteringDateTime(null);
+                accountingRecord.setLetteringNumber(null);
+                accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
+            }
+        invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
         addOrUpdateInvoice(invoice);
     }
 
@@ -621,6 +692,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         newInvoice.setResponsable(invoice.getResponsable());
         newInvoice.setTiers(invoice.getTiers());
         newInvoice.setTotalPrice(invoice.getTotalPrice());
+        newInvoice.setIsInvoiceFromProvider(invoice.getIsInvoiceFromProvider());
         return newInvoice;
     }
 

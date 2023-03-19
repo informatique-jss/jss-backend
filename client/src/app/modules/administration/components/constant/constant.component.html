@@ -934,6 +934,14 @@
           </tr>
           <tr>
             <td>
+              <select-invoice-status-one [(model)]="constant.invoiceStatusCreditNoteReceived"
+                label="Statut de facture - avoir reçu" [form]="constantForm"
+                propertyName="invoiceStatusCreditNoteReceived" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-invoice-status-one>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-payment-way-one [(model)]="constant.paymentWayInbound" label="Sens de paiement - entrant"
                 [form]="constantForm" propertyName="paymentWayInbound" [isMandatory]="true" [isDisabled]="!editMode">
               </select-payment-way-one>
