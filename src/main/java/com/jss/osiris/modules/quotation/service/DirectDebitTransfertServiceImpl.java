@@ -306,7 +306,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
                 DbtrBean customerOrder = new DbtrBean();
                 prelevement.setDbtrBean(customerOrder);
-                customerOrder.setNm(completeTransfert.getCustomerOrderLabel().substring(0, 139));
+                customerOrder.setNm(StringUtils.substring(completeTransfert.getCustomerOrderLabel(), 0, 139));
 
                 DbtrAcctBean customerAccount = new DbtrAcctBean();
                 prelevement.setDbtrAcctBean(customerAccount);
@@ -316,7 +316,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
                 RmtInfBean virementLabel = new RmtInfBean();
                 prelevement.setRmtInfBean(virementLabel);
-                virementLabel.setUstrd(completeTransfert.getLabel().substring(0, 139));
+                virementLabel.setUstrd(StringUtils.substring(completeTransfert.getLabel(), 0, 139));
 
                 body.getDrctDbtTxInfBeanList().add(prelevement);
 

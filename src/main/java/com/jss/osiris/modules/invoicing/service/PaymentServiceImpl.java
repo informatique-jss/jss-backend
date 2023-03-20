@@ -897,6 +897,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<Payment> getAdvisedPaymentForCustomerOrder(CustomerOrder customerOrder) {
+        customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
         List<Payment> advisedPayments = new ArrayList<Payment>();
         if (payments != null && payments.size() > 0) {

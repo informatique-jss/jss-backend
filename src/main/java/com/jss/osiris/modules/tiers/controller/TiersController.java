@@ -388,7 +388,7 @@ public class TiersController {
 
   @GetMapping(inputEntryPoint + "/tiers")
   public ResponseEntity<Tiers> getTiersById(@RequestParam Integer id) {
-    return new ResponseEntity<Tiers>(tiersService.getTiers(id), HttpStatus.OK);
+    return new ResponseEntity<Tiers>(tiersService.getTiersFromUser(id), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/responsable")

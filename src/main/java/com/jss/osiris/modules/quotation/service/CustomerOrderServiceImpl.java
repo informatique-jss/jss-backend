@@ -59,6 +59,7 @@ import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.controller.QuotationController;
+import com.jss.osiris.modules.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
@@ -167,6 +168,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Value("${payment.cb.redirect.invoice.entry.point}")
     private String paymentCbRedirectInvoice;
+
+    @Autowired
+    QuotationValidationHelper quotationValidationHelper;
 
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
@@ -345,7 +349,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (targetStatusCode.equals(CustomerOrderStatus.OPEN)) {
                 boolean hasError = false;
                 try {
-                    quotationController.validateQuotationAndCustomerOrder(customerOrder,
+                    quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder,
                             CustomerOrderStatus.BEING_PROCESSED);
                 } catch (Exception e) {
                     hasError = true;

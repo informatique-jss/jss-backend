@@ -211,7 +211,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
             GrpHdrBean header = new GrpHdrBean();
             document.getCstmrCdtTrfInitnBean().setGrpHdrBean(header);
 
-            header.setMsgId(("Virement JSS du " + LocalDateTime.now().format(formatterDate)).substring(0, 34));
+            header.setMsgId(("Virement JSS du " + LocalDateTime.now().format(formatterDate)));
             header.setCreDtTm(LocalDateTime.now().format(formatterDateTime));
             header.setNbOfTxs(bankTransferts.size());
             header.setCtrlSum(totalAmount);
@@ -301,7 +301,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                 virement.setCdtrBean(customerOrder);
                 customerOrder.setNm(
                         (bankTransfert.getCompetentAuthorityLabel() != null ? bankTransfert.getCompetentAuthorityLabel()
-                                : bankTransfert.getInvoiceBillingLabel()).substring(0, 139));
+                                : StringUtils.substring(bankTransfert.getInvoiceBillingLabel(), 0, 139)));
 
                 CdtrAcctBean customerAccount = new CdtrAcctBean();
                 virement.setCdtrAcctBean(customerAccount);
@@ -311,7 +311,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
                 RmtInfBean virementLabel = new RmtInfBean();
                 virement.setRmtInfBean(virementLabel);
-                virementLabel.setUstrd(completeTransfert.getLabel().substring(0, 139));
+                virementLabel.setUstrd(StringUtils.substring(completeTransfert.getLabel(), 0, 139));
 
                 body.getCdtTrfTxInfBeanList().add(virement);
 

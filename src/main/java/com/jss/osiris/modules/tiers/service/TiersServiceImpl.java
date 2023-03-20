@@ -53,6 +53,12 @@ public class TiersServiceImpl implements TiersService {
     ConstantService constantService;
 
     @Override
+    @Transactional
+    public Tiers getTiersFromUser(Integer id) {
+        return getTiers(id);
+    }
+
+    @Override
     public Tiers getTiers(Integer id) {
         Optional<Tiers> tiers = tiersRepository.findById(id);
         if (tiers.isPresent()) {

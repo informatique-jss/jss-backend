@@ -130,6 +130,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     public AssoAffaireOrder addOrUpdateAssoAffaireOrderFromUser(
             AssoAffaireOrder assoAffaireOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        // To avoid laizy failed of customerOrder subcollections
+        assoAffaireOrder
+                .setCustomerOrder(customerOrderService.getCustomerOrder(assoAffaireOrder.getCustomerOrder().getId()));
         return addOrUpdateAssoAffaireOrder(assoAffaireOrder);
     }
 

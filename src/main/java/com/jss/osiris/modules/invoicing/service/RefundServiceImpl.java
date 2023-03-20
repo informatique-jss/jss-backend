@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -304,7 +305,7 @@ public class RefundServiceImpl implements RefundService {
 
                 CdtrBean customerOrder = new CdtrBean();
                 virement.setCdtrBean(customerOrder);
-                customerOrder.setNm(customerLabel.substring(0, 139));
+                customerOrder.setNm(StringUtils.substring(customerLabel, 0, 139));
 
                 CdtrAcctBean customerAccount = new CdtrAcctBean();
                 virement.setCdtrAcctBean(customerAccount);
@@ -314,7 +315,7 @@ public class RefundServiceImpl implements RefundService {
 
                 RmtInfBean virementLabel = new RmtInfBean();
                 virement.setRmtInfBean(virementLabel);
-                virementLabel.setUstrd(("JSS - " + refund.getRefundLabel()).substring(0, 139));
+                virementLabel.setUstrd(("JSS - " + StringUtils.substring(refund.getRefundLabel(), 0, 139)));
 
                 body.getCdtTrfTxInfBeanList().add(virement);
 
