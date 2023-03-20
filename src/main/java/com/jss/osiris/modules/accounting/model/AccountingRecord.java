@@ -98,7 +98,8 @@ public class AccountingRecord implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_refund")
-	@JsonIgnoreProperties(value = { "accountingRecords", "customerOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "accountingRecords", "tiers", "confrere", "affaire", "payment",
+			"deposit" }, allowSetters = true)
 	private Refund refund;
 
 	@ManyToOne
