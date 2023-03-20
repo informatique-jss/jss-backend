@@ -84,6 +84,11 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
 
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW, AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE);
+
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
                                 AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER);
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
