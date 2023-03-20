@@ -29,9 +29,6 @@ public class QuotationReportingServiceImpl implements QuotationReportingService 
     @Override
     @Cacheable(value = "quotationReportingList", key = "#tiersId")
     public List<IQuotationReporting> getQuotationReporting(Integer tiersId) throws OsirisException {
-        if (tiersId == null)
-            tiersId = 0;
-
         ArrayList<Integer> invoiceStatusIds = new ArrayList<Integer>();
         invoiceStatusIds.add(constantService.getInvoiceStatusSend().getId());
         invoiceStatusIds.add(constantService.getInvoiceStatusPayed().getId());
