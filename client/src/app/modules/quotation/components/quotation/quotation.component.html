@@ -136,7 +136,7 @@
                 <mat-tab *ngFor="let asso of quotation.assoAffaireOrders">
                   <ng-template mat-tab-label>
                     {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' ' +
-                    asso.affaire.lastname)}} <mat-icon matTooltip="Supprimer l'affaire"
+                    asso.affaire.lastname)}} - {{asso.affaire.city.label}} <mat-icon matTooltip="Supprimer l'affaire"
                       (click)="deleteAffaire(asso.affaire);$event.stopPropagation();" class="pointer">delete</mat-icon>
                   </ng-template>
                   <div class="mat-accordion-container full-width">
