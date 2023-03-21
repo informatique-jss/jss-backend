@@ -300,6 +300,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 // Handle status change
                 if (announcement.getAnnouncementStatus() != null && announcement.getConfrere() != null) {
 
+                    if (announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId()) &&
+                            announcement.getAnnouncementStatus().getCode()
+                                    .equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)) {
+                        announcement.setAnnouncementStatus(announcementStatusService
+                                .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
+                    }
+
                     // If JSS generate publication receipt if user accept
                     if (announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
                         if (announcement.getAnnouncementStatus().getCode()
