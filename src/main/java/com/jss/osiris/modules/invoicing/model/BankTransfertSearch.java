@@ -13,6 +13,8 @@ public class BankTransfertSearch {
     private String label;
     @JsonProperty("isHideExportedBankTransfert")
     private boolean isHideExportedBankTransfert;
+    @JsonProperty("isDisplaySelectedForExportBankTransfert")
+    private boolean isDisplaySelectedForExportBankTransfert;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -60,6 +62,14 @@ public class BankTransfertSearch {
 
     public void setHideExportedBankTransfert(boolean isHideExportedBankTransfert) {
         this.isHideExportedBankTransfert = isHideExportedBankTransfert;
+    }
+
+    public boolean isDisplaySelectedForExportBankTransfert() {
+        return isDisplaySelectedForExportBankTransfert;
+    }
+
+    public void setDisplaySelectedForExportBankTransfert(boolean isDisplaySelectedForExportBankTransfert) {
+        this.isDisplaySelectedForExportBankTransfert = isDisplaySelectedForExportBankTransfert;
     }
 
 }

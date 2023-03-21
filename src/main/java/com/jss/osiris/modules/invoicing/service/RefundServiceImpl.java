@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,31 +22,15 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
-import com.jss.osiris.libs.transfer.AmtBean;
-import com.jss.osiris.libs.transfer.CdtTrfTxInfBean;
-import com.jss.osiris.libs.transfer.CdtrAcctBean;
-import com.jss.osiris.libs.transfer.CdtrAgtBean;
-import com.jss.osiris.libs.transfer.CdtrBean;
 import com.jss.osiris.libs.transfer.CstmrCdtTrfInitnBean;
-import com.jss.osiris.libs.transfer.CtgyPurpBean;
-import com.jss.osiris.libs.transfer.DbtrAcctBean;
-import com.jss.osiris.libs.transfer.DbtrAgtBean;
-import com.jss.osiris.libs.transfer.DbtrBean;
 import com.jss.osiris.libs.transfer.DocumentBean;
-import com.jss.osiris.libs.transfer.FinInstnIdBean;
 import com.jss.osiris.libs.transfer.GrpHdrBean;
-import com.jss.osiris.libs.transfer.IdBean;
 import com.jss.osiris.libs.transfer.InitgPtyBean;
-import com.jss.osiris.libs.transfer.InstdAmtBean;
 import com.jss.osiris.libs.transfer.OrgIdBean;
 import com.jss.osiris.libs.transfer.OthrBean;
 import com.jss.osiris.libs.transfer.OthrIdBean;
-import com.jss.osiris.libs.transfer.PmtIdBean;
 import com.jss.osiris.libs.transfer.PmtInfBean;
-import com.jss.osiris.libs.transfer.PmtTpInfBean;
 import com.jss.osiris.libs.transfer.PstlAdrBean;
-import com.jss.osiris.libs.transfer.RmtInfBean;
-import com.jss.osiris.libs.transfer.SvcLvlBean;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Payment;
@@ -60,6 +43,7 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -86,6 +70,9 @@ public class RefundServiceImpl implements RefundService {
 
     @Value("${jss.bic}")
     private String bicJss;
+
+    @Autowired
+    BankTransfertService bankTransfertService;
 
     @Override
     public List<Refund> getRefunds() {
@@ -228,68 +215,9 @@ public class RefundServiceImpl implements RefundService {
             document.getCstmrCdtTrfInitnBean().setPmtInfBean(new ArrayList<PmtInfBean>());
 
             for (RefundSearchResult refund : refunds) {
-                PmtInfBean body = new PmtInfBean();
-                document.getCstmrCdtTrfInitnBean().getPmtInfBean().add(body);
-                body.setPmtInfId(header.getMsgId());
-                body.setPmtMtd("TRF");
-                body.setBtchBookg(false);
-                body.setNbOfTxs(refunds.size());
-                body.setCtrlSum(totalAmount);
-
-                PmtTpInfBean bodyTransfertType = new PmtTpInfBean();
-                body.setPmtTpInfBean(bodyTransfertType);
-                bodyTransfertType.setInstrPrty("NORM");
-
-                SvcLvlBean transfertNorm = new SvcLvlBean();
-                bodyTransfertType.setSvcLvlBean(transfertNorm);
-                transfertNorm.setCd("SEPA");
-
-                CtgyPurpBean transfertPurpose = new CtgyPurpBean();
-                bodyTransfertType.setCtgyPurpBean(transfertPurpose);
-                transfertPurpose.setCd("FOUR");
-
-                body.setReqdExctnDt(refund.getRefundDate().format(formatterDate));
-
-                DbtrBean debiteur = new DbtrBean();
-                body.setDbtrBean(debiteur);
-                debiteur.setNm("SPPS - JSS REMBOURSEMENT");
-
-                DbtrAcctBean account = new DbtrAcctBean();
-                body.setDbtrAcctBean(account);
-                IdBean accountId = new IdBean();
-                accountId.setIban(ibanJss.replaceAll(" ", ""));
-                account.setIdBean(accountId);
-
-                DbtrAgtBean bic = new DbtrAgtBean();
-                body.setDbtrAgtBean(bic);
-                FinInstnIdBean financialInstitution = new FinInstnIdBean();
-                financialInstitution.setBic(bicJss);
-                bic.setFinInstnIdBean(financialInstitution);
-
-                body.setCdtTrfTxInfBeanList(new ArrayList<CdtTrfTxInfBean>());
-
-                Refund completeRefund = getRefund(refund.getId());
-
-                CdtTrfTxInfBean virement = new CdtTrfTxInfBean();
-                PmtIdBean virementId = new PmtIdBean();
-                virement.setPmtIdBean(virementId);
-                virementId.setEndToEndId("2-Virement JSS du " + LocalDateTime.now().format(formatterDateTime));
-                virementId.setInstrId("2-Virement JSS du " + LocalDateTime.now().format(formatterDateTime));
-
-                AmtBean currency = new AmtBean();
-                virement.setAmtBean(currency);
-                InstdAmtBean currencyDetails = new InstdAmtBean();
-                currencyDetails.setCcy("EUR");
-                currencyDetails.setValue(refund.getRefundAmount() + "");
-                currency.setInstdAmtBean(currencyDetails);
-
-                CdtrAgtBean bicVirement = new CdtrAgtBean();
-                virement.setCdtrAgtBeanList(Arrays.asList(bicVirement));
-                FinInstnIdBean bicVirementId = new FinInstnIdBean();
-                bicVirement.setFinInstnIdBean(financialInstitution);
-                bicVirementId.setBic(bicJss);
 
                 String customerLabel = "";
+                Refund completeRefund = getRefund(refund.getId());
                 if (completeRefund.getAffaire() != null)
                     customerLabel = completeRefund.getAffaire().getDenomination() != null
                             ? completeRefund.getAffaire().getDenomination()
@@ -303,21 +231,12 @@ public class RefundServiceImpl implements RefundService {
                             : (completeRefund.getTiers().getFirstname() + " "
                                     + completeRefund.getTiers().getLastname());
 
-                CdtrBean customerOrder = new CdtrBean();
-                virement.setCdtrBean(customerOrder);
-                customerOrder.setNm(StringUtils.substring(customerLabel, 0, 139));
-
-                CdtrAcctBean customerAccount = new CdtrAcctBean();
-                virement.setCdtrAcctBean(customerAccount);
-                IdBean customerAccountId = new IdBean();
-                customerAccount.setIdBean(customerAccountId);
-                customerAccountId.setIban(completeRefund.getRefundIBAN());
-
-                RmtInfBean virementLabel = new RmtInfBean();
-                virement.setRmtInfBean(virementLabel);
-                virementLabel.setUstrd(("JSS - " + StringUtils.substring(refund.getRefundLabel(), 0, 139)));
-
-                body.getCdtTrfTxInfBeanList().add(virement);
+                document.getCstmrCdtTrfInitnBean().getPmtInfBean()
+                        .add(bankTransfertService.generateBodyForBankTransfert(header.getMsgId(),
+                                refund.getRefundAmount(), refund.getRefundDate().toLocalDate(), customerLabel,
+                                refund.getRefundIban().replaceAll(" ", ""),
+                                completeRefund.getRefundBic().replaceAll(" ", ""),
+                                StringUtils.substring(("JSS - " + refund.getRefundLabel()), 0, 139)));
 
                 completeRefund.setIsAlreadyExported(true);
                 addOrUpdateRefund(completeRefund);

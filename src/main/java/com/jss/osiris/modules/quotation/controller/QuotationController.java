@@ -328,6 +328,26 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/bank-transfert/export/select")
+  public ResponseEntity<BankTransfert> selectBankTransfertForExport(@RequestParam Integer idBankTranfert)
+      throws OsirisValidationException {
+    BankTransfert bankTransfert = bankTransfertService.getBankTransfert(idBankTranfert);
+    if (bankTransfert == null)
+      throw new OsirisValidationException("bankTransfert");
+    return new ResponseEntity<BankTransfert>(bankTransfertService.selectBankTransfertForExport(bankTransfert, true),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/bank-transfert/export/unselect")
+  public ResponseEntity<BankTransfert> unselectBankTransfertForExport(@RequestParam Integer idBankTranfert)
+      throws OsirisValidationException {
+    BankTransfert bankTransfert = bankTransfertService.getBankTransfert(idBankTranfert);
+    if (bankTransfert == null)
+      throw new OsirisValidationException("bankTransfert");
+    return new ResponseEntity<BankTransfert>(bankTransfertService.selectBankTransfertForExport(bankTransfert, false),
+        HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/simple-provision-status")
   public ResponseEntity<List<SimpleProvisionStatus>> getSimpleProvisionStatus() {
     return new ResponseEntity<List<SimpleProvisionStatus>>(simpleProvisonStatusService.getSimpleProvisionStatus(),

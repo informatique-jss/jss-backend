@@ -143,6 +143,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Invoice cancelInvoiceEmitted(Invoice invoice, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        // TODO : penser à basculer les paiements / déposit
+        // Bien nettoyer les débours frais, notamment les ordres de virement
         // Unletter
         unletterInvoiceEmitted(invoice);
 
@@ -394,8 +396,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         boolean isNewInvoice = invoice.getId() == null;
         HashMap<Integer, Debour> debourPayments = new HashMap<Integer, Debour>();
+        ArrayList<Debour> usedDebours = new ArrayList<Debour>();
 
         if (isNewInvoice) {
+            Integer nbrOfDayFromDueDate = 30;
+            if (invoice.getDueDate() == null)
+                invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
+
             invoice.setCreatedDate(LocalDateTime.now());
             invoice.setIsCreditNote(false);
 
@@ -417,18 +424,6 @@ public class InvoiceServiceImpl implements InvoiceService {
                                     for (Debour debour : provision.getDebours()) {
                                         if (debour.getNonTaxableAmount() != null && debour.getInvoiceItem() == null) {
 
-                                            Float nonTaxableAmount = debour.getNonTaxableAmount();
-
-                                            if (debour.getBankTransfert() == null && debour.getPaymentType().getId()
-                                                    .equals(constantService.getPaymentTypeVirement().getId())) {
-                                                debour = debourService.getDebour(debour.getId());
-                                                debour.setBankTransfert(
-                                                        bankTransfertService.generateBankTransfertForDebour(debour,
-                                                                debour.getProvision().getAssoAffaireOrder(),
-                                                                invoice.getCustomerOrderForInboundInvoice()));
-                                                debour = debourService.addOrUpdateDebour(debour);
-                                            }
-
                                             if (debour.getPaymentType().getId()
                                                     .equals(constantService.getPaymentTypeAccount().getId()))
                                                 accountingRecordService
@@ -439,8 +434,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                                             if (debour.getPayment() != null)
                                                 debourPayments.put(debour.getPayment().getId(), debour);
 
-                                            if (nonTaxableAmount > 0
-                                                    && nonTaxableAmount < debour.getDebourAmount()) {
+                                            if (debour.getNonTaxableAmount() > 0
+                                                    && debour.getNonTaxableAmount() < debour.getDebourAmount()) {
                                                 nonTaxableDebour = new Debour();
                                                 nonTaxableDebour
                                                         .setBillingType(
@@ -460,7 +455,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                                                 debour.setDebourAmount(
                                                         debour.getDebourAmount() - debour.getNonTaxableAmount());
-                                                debourService.addOrUpdateDebour(nonTaxableDebour);
+                                                usedDebours.add(debourService.addOrUpdateDebour(nonTaxableDebour));
                                             }
 
                                             InvoiceItem invoiceItem = getInvoiceItemFromDebour(debour,
@@ -474,16 +469,11 @@ public class InvoiceServiceImpl implements InvoiceService {
                                             invoice.setManualPaymentType(debour.getPaymentType());
 
                                             debour.setNonTaxableAmount(null);
-                                            debourService.addOrUpdateDebour(debour);
+                                            usedDebours.add(debourService.addOrUpdateDebour(debour));
                                         }
                                     }
                 }
             }
-
-            Integer nbrOfDayFromDueDate = 30;
-            if (invoice.getDueDate() == null)
-                invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
-
         }
 
         // Defined billing label
@@ -527,9 +517,13 @@ public class InvoiceServiceImpl implements InvoiceService {
         // Do not generate bank transfert if invoice from Competent Authority
         // It's done when debour is filled in provision
         if (invoice.getIsInvoiceFromProvider()
-                && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())
-                && invoice.getCompetentAuthority() == null)
+                && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())) {
             invoice.setBankTransfert(bankTransfertService.generateBankTransfertForManualInvoice(invoice));
+            for (Debour debour : usedDebours) {
+                debour.setBankTransfert(invoice.getBankTransfert());
+                debourService.addOrUpdateDebour(debour);
+            }
+        }
 
         addOrUpdateInvoice(invoice);
 

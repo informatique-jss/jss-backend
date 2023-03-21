@@ -232,6 +232,7 @@ public class PricingHelper {
             }
         } else if (billingItem.getBillingType().getId()
                 .equals(constantService.getBillingTypeShippingCosts().getId())) {
+            invoiceItem.setPreTaxPrice(0f);
             Integer nbr = getPublicationPaperNbr(provision);
             Confrere confrere = provision.getAnnouncement().getConfrere();
             if (nbr > 0)
@@ -331,6 +332,8 @@ public class PricingHelper {
 
                             if (invoiceItem.getIsOverridePrice() == null)
                                 invoiceItem.setIsOverridePrice(false);
+
+                            invoiceItem.setPreTaxPrice(0f);
 
                             if (!invoiceItem.getIsOverridePrice() || !billingType.getCanOverridePrice()
                                     || invoiceItem.getPreTaxPrice() == null

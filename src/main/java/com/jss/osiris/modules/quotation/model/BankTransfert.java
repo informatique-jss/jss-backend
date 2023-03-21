@@ -52,6 +52,7 @@ public class BankTransfert implements Serializable, IId {
 	List<Invoice> invoices;
 
 	private Boolean isCancelled;
+	private Boolean isSelectedForExport;
 
 	public Integer getId() {
 		return id;
@@ -131,6 +132,14 @@ public class BankTransfert implements Serializable, IId {
 
 	public void setIsCancelled(Boolean isCancelled) {
 		this.isCancelled = isCancelled;
+	}
+
+	public Boolean getIsSelectedForExport() {
+		return isSelectedForExport;
+	}
+
+	public void setIsSelectedForExport(Boolean isSelectedForExport) {
+		this.isSelectedForExport = isSelectedForExport;
 	}
 
 }

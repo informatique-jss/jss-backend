@@ -123,6 +123,7 @@ export class AddInvoiceComponent implements OnInit {
 
     this.tableAction.push({
       actionIcon: "delete", actionName: "Supprimer la ligne de facturation", actionClick: (action: SortTableAction, element: any) => {
+        element.nonTaxableAmount = null;
         this.invoiceItems.splice(this.invoiceItems.indexOf(element), 1);
         this.refreshTable.next();
       }, display: true,
@@ -130,20 +131,20 @@ export class AddInvoiceComponent implements OnInit {
 
     // Debours
     this.displayedColumnsDebours = [];
-    this.displayedColumnsDebours.push({ id: "billingType", fieldName: "billingType.label", label: "Débour" } as SortTableColumn);
+    this.displayedColumnsDebours.push({ id: "billingType", fieldName: "billingType.label", label: "Débours" } as SortTableColumn);
     this.displayedColumnsDebours.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
     this.displayedColumnsDebours.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumnsDebours.push({ id: "invoicedAmount", fieldName: "invoicedAmount", label: "Montant facuré TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumnsDebours.push({ id: "invoicedAmount", fieldName: "invoicedAmount", label: "Montant facturé TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumnsDebours.push({ id: "paymentType", fieldName: "paymentType.label", label: "Type de paiement" } as SortTableColumn);
     this.displayedColumnsDebours.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
     this.displayedColumnsDebours.push({ id: "comments", fieldName: "comments", label: "Commentaires", isShrinkColumn: true } as SortTableColumn);
 
     // Debours
     this.displayedColumnsSelectedDebours = [];
-    this.displayedColumnsSelectedDebours.push({ id: "billingType", fieldName: "billingType.label", label: "Débour" } as SortTableColumn);
+    this.displayedColumnsSelectedDebours.push({ id: "billingType", fieldName: "billingType.label", label: "Débours" } as SortTableColumn);
     this.displayedColumnsSelectedDebours.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
     this.displayedColumnsSelectedDebours.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumnsSelectedDebours.push({ id: "invoicedAmount", fieldName: "invoicedAmount", label: "Montant facuré TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumnsSelectedDebours.push({ id: "invoicedAmount", fieldName: "invoicedAmount", label: "Montant facturé TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumnsSelectedDebours.push({ id: "nonTaxableAmount", fieldName: "nonTaxableAmount", label: "Dont montant non taxable", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumnsSelectedDebours.push({ id: "paymentType", fieldName: "paymentType.label", label: "Type de paiement" } as SortTableColumn);
     this.displayedColumnsSelectedDebours.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);

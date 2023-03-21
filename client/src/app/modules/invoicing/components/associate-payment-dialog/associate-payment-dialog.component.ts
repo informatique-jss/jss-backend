@@ -278,6 +278,11 @@ export class AssociatePaymentDialogComponent implements OnInit {
 
   isSameCustomerOrder(newCustomerOrder: ITiers): boolean {
     let currentCustomerOrder: ITiers | undefined = undefined;
+
+    // If responsable, consider tiers
+    if ((newCustomerOrder as Responsable).tiers)
+      newCustomerOrder = (newCustomerOrder as Responsable).tiers;
+
     if (this.associationSummaryTable)
       for (let asso of this.associationSummaryTable) {
         let customerOrder;
@@ -288,11 +293,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
         if (currentCustomerOrder == undefined)
           currentCustomerOrder = customerOrder;
 
-        // If responsable, consider tiers
-        if ((newCustomerOrder as Responsable).tiers)
-          newCustomerOrder = (newCustomerOrder as Responsable).tiers;
-        if ((customerOrder as Responsable).tiers)
-          customerOrder = (customerOrder as Responsable).tiers;
+        if ((currentCustomerOrder as Responsable).tiers)
+          currentCustomerOrder = (currentCustomerOrder as Responsable).tiers;
 
         if (currentCustomerOrder != undefined && newCustomerOrder != undefined && currentCustomerOrder?.id != newCustomerOrder.id)
           return false;

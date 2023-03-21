@@ -28,6 +28,7 @@ public interface BankTransfertRepository extends CrudRepository<BankTransfert, I
                         + " left join competent_authority on competent_authority.id = invoice.id_competent_authority "
                         + " left join confrere on confrere.id = invoice.id_confrere "
                         + " where is_cancelled=false and (:isHideExportedRefunds=false OR r.is_already_exported=false) "
+                        + " and (:isDisplaySelectedForExportBankTransfert=false OR r.is_selected_for_export=true) "
                         + " and r.transfert_date_time>=:startDate and r.transfert_date_time<=:endDate "
                         + "  and (:minAmount is null or r.transfert_amount>=CAST(CAST(:minAmount as text) as real) ) "
                         + "  and (:maxAmount is null or r.transfert_amount<=CAST(CAST(:maxAmount as text) as real) )"
@@ -36,5 +37,6 @@ public interface BankTransfertRepository extends CrudRepository<BankTransfert, I
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                         @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount,
                         @Param("label") String label,
-                        @Param("isHideExportedRefunds") boolean isHideExportedRefunds);
+                        @Param("isHideExportedRefunds") boolean isHideExportedRefunds,
+                        @Param("isDisplaySelectedForExportBankTransfert") boolean isDisplaySelectedForExportBankTransfert);
 }

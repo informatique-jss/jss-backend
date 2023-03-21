@@ -162,7 +162,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                 + invoice.getCommandNumber());
         directDebitTransfert.setIsAlreadyExported(false);
         directDebitTransfert.setTransfertAmount(invoice.getTotalPrice());
-        directDebitTransfert.setTransfertDateTime(LocalDateTime.now());
+        directDebitTransfert.setTransfertDateTime(invoice.getDueDate().atTime(12, 0));
         directDebitTransfert.setTransfertIban(invoiceHelper.getIbanOfOrderingCustomer(invoice));
         directDebitTransfert.setTransfertBic(invoiceHelper.getBicOfOrderingCustomer(invoice));
 
