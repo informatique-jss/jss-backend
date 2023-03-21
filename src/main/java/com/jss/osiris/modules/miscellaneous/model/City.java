@@ -33,7 +33,7 @@ public class City implements Serializable, IId {
 	@Column(nullable = false, length = 20)
 	private String code;
 
-	@Column(length = 6)
+	@Column(length = 10)
 	@IndexedField
 	private String postalCode;
 

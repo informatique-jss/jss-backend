@@ -514,15 +514,16 @@ public class InvoiceServiceImpl implements InvoiceService {
                 accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(invoice);
         }
 
-        // Do not generate bank transfert if invoice from Competent Authority
-        // It's done when debour is filled in provision
+        // Generate bank transfert if invoice from Provider
         if (invoice.getIsInvoiceFromProvider()
-                && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())) {
+                && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())
+                && invoice.getBankTransfert() == null) {
             invoice.setBankTransfert(bankTransfertService.generateBankTransfertForManualInvoice(invoice));
-            for (Debour debour : usedDebours) {
-                debour.setBankTransfert(invoice.getBankTransfert());
-                debourService.addOrUpdateDebour(debour);
-            }
+            if (usedDebours.size() > 0)
+                for (Debour debour : usedDebours) {
+                    debour.setBankTransfert(invoice.getBankTransfert());
+                    debourService.addOrUpdateDebour(debour);
+                }
         }
 
         addOrUpdateInvoice(invoice);

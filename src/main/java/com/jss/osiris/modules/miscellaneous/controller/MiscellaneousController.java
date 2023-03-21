@@ -457,7 +457,7 @@ public class MiscellaneousController {
         validationHelper.validateString(regie.getLabel(), true, "Label");
         validationHelper.validateReferential(regie.getCountry(), true, "Country");
         validationHelper.validateReferential(regie.getCity(), true, "City");
-        validationHelper.validateString(regie.getPostalCode(), false, 6, "PostalCode");
+        validationHelper.validateString(regie.getPostalCode(), false, 10, "PostalCode");
         validationHelper.validateString(regie.getCedexComplement(), false, 20, "CedexComplement");
         validationHelper.validateString(regie.getAddress(), true, 100, "Address");
         validationHelper.validateString(regie.getIban(), true, 40, "Iban");
@@ -580,7 +580,7 @@ public class MiscellaneousController {
             validationHelper.validateReferential(cities, true, "cities");
         validationHelper.validateString(cities.getCode(), true, 20, "Code");
         validationHelper.validateString(cities.getLabel(), true, 100, "Label");
-        validationHelper.validateString(cities.getPostalCode(), false, 6, "PostalCode");
+        validationHelper.validateString(cities.getPostalCode(), false, 10, "PostalCode");
         validationHelper.validateReferential(cities.getDepartment(), false, "Department");
         validationHelper.validateReferential(cities.getCountry(), true, "Country");
 
