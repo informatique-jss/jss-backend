@@ -44,4 +44,6 @@ public interface IQuotationReporting {
     public String getInvoiceDateMonth();
 
     public Integer getCharacterNumber();
+
+    public String getWeeklyCharReport();
 }
