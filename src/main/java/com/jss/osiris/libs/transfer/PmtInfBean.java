@@ -3,12 +3,14 @@ package com.jss.osiris.libs.transfer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 @JsonPropertyOrder({ "PmtInfId", "PmtMtd", "BtchBookg", "NbOfTxs", "CtrlSum", "PmtTpInf", "InstrPrty", "SvcLvl", "Cd",
 		"CtgyPurp", "ReqdExctnDt" })
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PmtInfBean {
 	@JacksonXmlProperty(localName = "BtchBookg")
 	Boolean btchBookg = true;
@@ -20,16 +22,16 @@ public class PmtInfBean {
 	Integer nbOfTxs = 0;
 
 	@JacksonXmlProperty(localName = "PmtInfId")
-	String pmtInfId = "";
+	String pmtInfId;
 
 	@JacksonXmlProperty(localName = "PmtMtd")
-	String pmtMtd = "";
+	String pmtMtd;
 
 	@JacksonXmlProperty(localName = "ReqdExctnDt")
-	String reqdExctnDt = "";
+	String reqdExctnDt;
 
 	@JacksonXmlProperty(localName = "ReqdColltnDt")
-	String reqdColltnDt = "";
+	String reqdColltnDt;
 
 	@JacksonXmlProperty(localName = "PmtTpInf")
 	PmtTpInfBean pmtTpInfBean;

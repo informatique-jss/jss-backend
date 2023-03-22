@@ -55,9 +55,7 @@ import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
-import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.repository.BankTransfertRepository;
@@ -140,35 +138,6 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                 bankTransfertSearch.getMaxAmount(),
                 bankTransfertSearch.getLabel(), bankTransfertSearch.isHideExportedBankTransfert(),
                 bankTransfertSearch.isDisplaySelectedForExportBankTransfert());
-    }
-
-    @Override
-    public BankTransfert generateBankTransfertForDebour(Debour debour, AssoAffaireOrder asso,
-            CustomerOrder customerOrder, LocalDate dueDate)
-            throws OsirisException, OsirisClientMessageException {
-
-        if (debour.getCompetentAuthority().getIban() == null || debour.getCompetentAuthority().getIban().equals(""))
-            throw new OsirisClientMessageException(
-                    "IBAN non renseigné pour l'autorité compétente " + debour.getCompetentAuthority().getLabel());
-
-        if (debour.getCompetentAuthority().getBic() == null || debour.getCompetentAuthority().getBic().equals(""))
-            throw new OsirisClientMessageException(
-                    "BIC non renseigné pour l'autorité compétente " + debour.getCompetentAuthority().getLabel());
-
-        BankTransfert bankTransfert = new BankTransfert();
-        bankTransfert.setLabel("Débours " + debour.getId() + " / JSS / " + customerOrder.getId() + " / "
-                + (asso.getAffaire().getDenomination() == null
-                        ? asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()
-                        : asso.getAffaire().getDenomination()));
-        bankTransfert.setIsAlreadyExported(false);
-        bankTransfert.setTransfertAmount(debour.getDebourAmount());
-        bankTransfert.setTransfertDateTime(dueDate.atTime(12, 0));
-        bankTransfert.setTransfertIban(debour.getCompetentAuthority().getIban());
-        bankTransfert.setTransfertBic(debour.getCompetentAuthority().getBic());
-        bankTransfert.setTransfertIban(bankTransfert.getTransfertIban().replaceAll(" ", ""));
-        bankTransfert.setTransfertBic(bankTransfert.getTransfertBic().replaceAll(" ", ""));
-        bankTransfert.setIsCancelled(false);
-        return this.addOrUpdateBankTransfert(bankTransfert);
     }
 
     @Override

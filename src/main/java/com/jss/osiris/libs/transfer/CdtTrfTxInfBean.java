@@ -3,11 +3,13 @@ package com.jss.osiris.libs.transfer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 @JsonPropertyOrder({ "PmtId", "InstrId", "EndToEndId", "Amt", "InstdAmt", "UltmtDbtr" })
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class CdtTrfTxInfBean {
 	@JacksonXmlProperty(localName = "IsMulti")
 	String isMulti = "";

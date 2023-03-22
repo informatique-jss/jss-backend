@@ -10,10 +10,7 @@ import com.jss.osiris.libs.transfer.PmtInfBean;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
-import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.Debour;
 
 public interface BankTransfertService {
         public List<BankTransfert> getBankTransfers();
@@ -25,10 +22,6 @@ public interface BankTransfertService {
         public BankTransfert getBankTransfert(Integer id);
 
         public BankTransfert addOrUpdateBankTransfert(BankTransfert bankTransfert);
-
-        public BankTransfert generateBankTransfertForDebour(Debour debour, AssoAffaireOrder asso,
-                        CustomerOrder customerOrder, LocalDate dueDate)
-                        throws OsirisException, OsirisClientMessageException;
 
         public BankTransfert generateBankTransfertForManualInvoice(Invoice invoice)
                         throws OsirisException, OsirisClientMessageException;

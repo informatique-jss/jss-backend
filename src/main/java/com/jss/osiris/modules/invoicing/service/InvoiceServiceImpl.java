@@ -460,6 +460,15 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                                             InvoiceItem invoiceItem = getInvoiceItemFromDebour(debour,
                                                     debour.getBillingType().getIsNonTaxable());
+
+                                            if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable()) {
+                                                invoiceItem.setVatPrice(0f);
+                                                invoiceItem.setVat(constantService.getVatZero());
+                                            } else {
+                                                invoiceItem.setVat(constantService.getVatDeductible());
+                                                invoiceItem.setVatPrice(invoiceItem.getVat().getRate()
+                                                        * invoiceItem.getPreTaxPrice() / 100f);
+                                            }
                                             invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
                                             invoice.getInvoiceItems().add(invoiceItem);
                                             debour.setInvoiceItem(invoiceItem);
