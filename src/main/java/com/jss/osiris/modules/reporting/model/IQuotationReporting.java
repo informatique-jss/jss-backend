@@ -45,5 +45,5 @@ public interface IQuotationReporting {
 
     public Integer getCharacterNumber();
 
-    public String getWeeklyCharReport();
+    public String getPublicationDateWeek();
 }

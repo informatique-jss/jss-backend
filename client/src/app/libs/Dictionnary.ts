@@ -1,6 +1,6 @@
 
 export const Dictionnary = {
-  "weeklyCharReport": "semaine de publication",
+
   "notice": "Texte de l'annonce",
   "affaireId": "N° de l'affaire",
   "affaireSiren": "SIREN de l'affaire",
@@ -24,6 +24,6 @@ export const Dictionnary = {
   "customerOrderCreatedDateMonth": "Mois de la commande",
   "invoiceDateMonth": "Mois de la facture",
   "characterNumber": "Nombre de caractères",
-
+  "publicationDateWeek": "Semaine de publication",
 };
 
