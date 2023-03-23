@@ -31,8 +31,8 @@ export class ProvisionOptionsComponent implements OnInit {
   billingTypeLogo = this.constantService.getBillingTypeLogo();
   billingTypeRedactedByJss = this.constantService.getBillingTypeRedactedByJss();
   billingTypeBaloPackage = this.constantService.getBillingTypeBaloPackage();
-  billingTypeBaloNormalization = this.constantService.getBillingTypeBaloNormalization();
-  billingTypeBaloPublicationFlag = this.constantService.getBillingTypeBaloPublicationFlag();
+  billingTypeBaloNormalization = this.constantService.getBillingTypeBaloNormalization(); 
+  billingTypeBaloPublicationFlag = this.constantService.getBillingTypeBaloPublicationFlag(); 
   billingTypePublicationPaper = this.constantService.getBillingTypePublicationPaper();
   billingTypePublicationReceipt = this.constantService.getBillingTypePublicationReceipt();
   billingTypePublicationFlag = this.constantService.getBillingTypePublicationFlag();

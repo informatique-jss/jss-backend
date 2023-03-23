@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -1313,10 +1314,10 @@ public class QuotationController {
   }
 
   private void validateQuotationAndCustomerOrder(IQuotation quotation)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException { 
     quotationValidationHelper.validateQuotationAndCustomerOrder(quotation, null);
   }
-
+ 
   @PostMapping(inputEntryPoint + "/affaire")
   public ResponseEntity<Affaire> addOrUpdateAffaire(@RequestBody Affaire affaire)
       throws OsirisValidationException, OsirisException {

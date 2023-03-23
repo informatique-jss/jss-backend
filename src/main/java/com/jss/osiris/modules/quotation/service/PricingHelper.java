@@ -394,10 +394,11 @@ public class PricingHelper {
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeBaloNormalization().getId())
                 && provision.getIsBaloNormalization() != null && provision.getIsBaloNormalization())
-            return true;
+            return true; 
         if (billingType.getId().equals(constantService.getBillingTypeBaloPublicationFlag().getId())
                 && provision.getIsBaloPublicationFlag() != null && provision.getIsBaloPublicationFlag())
             return true;
+ 
         if (billingType.getId().equals(constantService.getBillingTypePublicationReceipt().getId())
                 && provision.getIsPublicationReceipt() != null && provision.getIsPublicationReceipt())
             return true;
@@ -539,8 +540,8 @@ public class PricingHelper {
         // default
 
         // No VAT abroad (France and Monaco)
-        Country country = null;
-        City city = null;
+        Country country = null; 
+        City city = null; 
         if (billingDocument == null || billingDocument.getBillingLabelType() == null
                 || billingDocument.getBillingLabelType().getId()
                         .equals(constantService.getBillingLabelTypeCustomer().getId())) {

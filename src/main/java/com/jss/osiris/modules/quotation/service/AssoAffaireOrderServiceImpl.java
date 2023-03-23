@@ -201,8 +201,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     if (isNewDebour)
                         debourService.addOrUpdateDebour(debour);
 
-                    if (isNewDebour && debour.getPaymentType().getId()
-                            .equals(constantService.getPaymentTypeCheques().getId())) {
+                    if (isNewDebour && debour.getPaymentType().getId().equals(constantService.getPaymentTypeCheques().getId())) {
                         debourService.addOrUpdateDebour(debour);
                         accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
                                 (CustomerOrder) customerOrder);

@@ -50,10 +50,10 @@ public class BankTransfert implements Serializable, IId {
 			"deposits", "accountingRecords", "customerOrderForInboundInvoice", "creditNote",
 			"reverseCreditNote" }, allowSetters = true)
 	List<Invoice> invoices;
-
+ 
 	private Boolean isCancelled;
 	private Boolean isSelectedForExport;
-
+ 
 	public Integer getId() {
 		return id;
 	}
@@ -125,7 +125,7 @@ public class BankTransfert implements Serializable, IId {
 	public void setInvoices(List<Invoice> invoices) {
 		this.invoices = invoices;
 	}
-
+ 
 	public Boolean getIsCancelled() {
 		return isCancelled;
 	}
@@ -141,5 +141,5 @@ public class BankTransfert implements Serializable, IId {
 	public void setIsSelectedForExport(Boolean isSelectedForExport) {
 		this.isSelectedForExport = isSelectedForExport;
 	}
-
+ 
 }

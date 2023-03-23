@@ -205,11 +205,11 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_billing_type_balo_normalization")
 	private BillingType billingTypeBaloNormalization;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER) 
 	@JoinColumn(name = "id_billing_type_balo_publication_flag")
 	private BillingType billingTypeBaloPublicationFlag;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER)  
 	@JoinColumn(name = "id_billing_type_publication_paper")
 	private BillingType billingTypePublicationPaper;
 
@@ -1911,7 +1911,7 @@ public class Constant implements Serializable, IId {
 	public void setCompetentAuthorityInfogreffe(CompetentAuthority competentAuthorityInfogreffe) {
 		this.competentAuthorityInfogreffe = competentAuthorityInfogreffe;
 	}
-
+ 
 	public CompetentAuthorityType getCompetentAuthorityTypePrefecture() {
 		return competentAuthorityTypePrefecture;
 	}
@@ -1927,21 +1927,20 @@ public class Constant implements Serializable, IId {
 	public void setBillingTypeBaloPublicationFlag(BillingType billingTypeBaloPublicationFlag) {
 		this.billingTypeBaloPublicationFlag = billingTypeBaloPublicationFlag;
 	}
-
+ 
 	public BillingType getBillingTypeBaloNormalization() {
 		return billingTypeBaloNormalization;
 	}
 
 	public void setBillingTypeBaloNormalization(BillingType billingTypeBaloNormalization) {
 		this.billingTypeBaloNormalization = billingTypeBaloNormalization;
-	}
-
+	} 
+  
 	public InvoiceStatus getInvoiceStatusCreditNoteReceived() {
 		return invoiceStatusCreditNoteReceived;
 	}
 
 	public void setInvoiceStatusCreditNoteReceived(InvoiceStatus invoiceStatusCreditNoteReceived) {
 		this.invoiceStatusCreditNoteReceived = invoiceStatusCreditNoteReceived;
-	}
-
+	} 
 }

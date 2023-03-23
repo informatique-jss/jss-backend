@@ -24,9 +24,9 @@
               step="0,01"></generic-input>
           </td>
           <td *ngIf="newDebour.competentAuthority">
-            <select-payment-types [(model)]="newDebour.paymentType" label="Mode de paiement" [form]="debourForm"
+            <select-payment-types [(model)]="newDebour.paymentType" label="Mode de paiement" [form]="debourForm" 
               [filteredPaymentType]="newDebour.competentAuthority.paymentTypes" propertyName="paymentType"
-              [isMandatory]="true" [isDisabled]="!editMode"></select-payment-types>
+              [isMandatory]="true" [isDisabled]="!editMode"></select-payment-types> 
           </td>
           <td *ngIf="newDebour.paymentType && newDebour.paymentType.id ==paymentTypeCb.id">
             <generic-datepicker [(model)]="newDebour.paymentDateTime" label="Date de paiement" [form]="debourForm"
