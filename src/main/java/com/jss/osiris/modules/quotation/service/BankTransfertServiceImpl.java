@@ -29,6 +29,7 @@ import com.jss.osiris.libs.transfer.AmtBean;
 import com.jss.osiris.libs.transfer.CdtTrfTxInfBean;
 import com.jss.osiris.libs.transfer.CdtrAcctBean;
 import com.jss.osiris.libs.transfer.CdtrAgtBean;
+import com.jss.osiris.libs.transfer.CdtrBean;
 import com.jss.osiris.libs.transfer.CstmrCdtTrfInitnBean;
 import com.jss.osiris.libs.transfer.CtgyPurpBean;
 import com.jss.osiris.libs.transfer.DbtrAcctBean;
@@ -55,7 +56,6 @@ import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.repository.BankTransfertRepository;
@@ -214,7 +214,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
             for (BankTransfertSearchResult bankTransfert : bankTransferts) {
                 BankTransfert completeTransfert = getBankTransfert(bankTransfert.getId());
- 
+
                 document.getCstmrCdtTrfInitnBean().getPmtInfBean().add(generateBodyForBankTransfert(
                         header.getMsgId(), bankTransfert.getTransfertAmount(),
                         bankTransfert.getTransfertDate().toLocalDate(),
@@ -223,7 +223,6 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                         completeTransfert.getTransfertIban().replaceAll(" ", ""),
                         completeTransfert.getTransfertBic().replaceAll(" ", ""),
                         StringUtils.substring(completeTransfert.getLabel(), 0, 139)));
- 
 
                 if (completeTransfert.getIsAlreadyExported() == false && completeTransfert.getDebours() != null
                         && completeTransfert.getDebours().size() > 0) {
