@@ -130,6 +130,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     public AssoAffaireOrder addOrUpdateAssoAffaireOrderFromUser(
             AssoAffaireOrder assoAffaireOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        // To avoid laizy failed of customerOrder subcollections
+        assoAffaireOrder
+                .setCustomerOrder(customerOrderService.getCustomerOrder(assoAffaireOrder.getCustomerOrder().getId()));
         return addOrUpdateAssoAffaireOrder(assoAffaireOrder);
     }
 
@@ -198,16 +201,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     if (isNewDebour)
                         debourService.addOrUpdateDebour(debour);
 
-                    if (debour.getBankTransfert() == null && debour.getPaymentType().getId()
-                            .equals(constantService.getPaymentTypeVirement().getId())) {
-
-                        debourService.addOrUpdateDebour(debour);
-                        debour.setBankTransfert(
-                                bankTransfertService.generateBankTransfertForDebour(debour, assoAffaireOrder,
-                                        (CustomerOrder) customerOrder));
-                        debour = debourService.addOrUpdateDebour(debour);
-                    } else if (isNewDebour && debour.getPaymentType().getId()
-                            .equals(constantService.getPaymentTypeCheques().getId())) {
+                    if (isNewDebour && debour.getPaymentType().getId().equals(constantService.getPaymentTypeCheques().getId())) {
                         debourService.addOrUpdateDebour(debour);
                         accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
                                 (CustomerOrder) customerOrder);
@@ -304,6 +298,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 // Handle status change
                 if (announcement.getAnnouncementStatus() != null && announcement.getConfrere() != null) {
+
+                    if (announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId()) &&
+                            announcement.getAnnouncementStatus().getCode()
+                                    .equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)) {
+                        announcement.setAnnouncementStatus(announcementStatusService
+                                .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
+                    }
 
                     // If JSS generate publication receipt if user accept
                     if (announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {

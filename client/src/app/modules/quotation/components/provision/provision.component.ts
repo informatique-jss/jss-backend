@@ -24,6 +24,7 @@ import { AnnouncementStatusService } from '../../services/announcement.status.se
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { AttachmentTypeMailQueryService } from '../../services/attachment-type-mail-query.service';
 import { BodaccStatusService } from '../../services/bodacc.status.service';
+import { ConfrereService } from '../../services/confrere.service';
 import { DomiciliationStatusService } from '../../services/domiciliation-status.service';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
 import { ProvisionService } from '../../services/provision.service';
@@ -84,6 +85,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private domiciliationStatusService: DomiciliationStatusService,
     private simpleProvisionStatusService: SimpleProvisionStatusService,
     private announcementStatusService: AnnouncementStatusService,
+    private confrereService: ConfrereService,
   ) { }
 
   affaireForm = this.formBuilder.group({});
@@ -373,6 +375,9 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
   setCurrentProvisionWorkflow(provision: Provision) {
     this.currentProvisionWorkflow = provision;
+
+    if (provision && provision.announcement && !provision.announcement.confrere)
+      this.confrereService.getConfrereForAnnouncement(provision.announcement).subscribe(confrere => provision.announcement!.confrere = confrere);
   }
 
   generatePublicationReceipt(announcement: Announcement, provision: Provision) {

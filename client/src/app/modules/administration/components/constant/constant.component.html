@@ -317,7 +317,15 @@
             </td>
           </tr>
           <tr>
-            <td>
+            <td> 
+              <autocomplete-billing-type [(model)]="constant.billingTypeBaloPublicationFlag"
+                label="Type de poste de facturation - Justificatif numérique BALO" [form]="constantForm"
+                propertyName="billingTypeBaloPublicationFlag" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td> 
               <autocomplete-billing-type [(model)]="constant.billingTypePublicationReceipt"
                 label="Type de poste de facturation - Journal justificatif PDF" [form]="constantForm"
                 propertyName="billingTypePublicationReceipt" [isMandatory]="true" [isDisabled]="!editMode">
@@ -450,7 +458,7 @@
           <tr>
             <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeChronopostFees"
-                label="Type de poste de facturation - Frais de Chronopost" [form]="constantForm"
+                label="Type de poste de facturation - Frais de ports" [form]="constantForm"
                 propertyName="billingTypeChronopostFees" [isMandatory]="true" [isDisabled]="!editMode">
               </autocomplete-billing-type>
             </td>
@@ -466,7 +474,7 @@
           <tr>
             <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeShippingCosts"
-                label="Type de poste de facturation - Frais de ports" [form]="constantForm"
+                label="Type de poste de facturation - Frais de ports du confrère" [form]="constantForm"
                 propertyName="billingTypeShippingCosts" [isMandatory]="true" [isDisabled]="!editMode">
               </autocomplete-billing-type>
             </td>
@@ -880,6 +888,14 @@
           </tr>
           <tr>
             <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypePrefecture"
+                label="Type d'authorité compétente - Préfecture" [form]="constantForm"
+                propertyName="competentAuthorityTypePrefecture" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-invoice-status-one [(model)]="constant.invoiceStatusPayed" label="Statut de facture - payée"
                 [form]="constantForm" propertyName="invoiceStatusPayed" [isMandatory]="true" [isDisabled]="!editMode">
               </select-invoice-status-one>
@@ -913,6 +929,14 @@
               <select-invoice-status-one [(model)]="constant.invoiceStatusCreditNoteEmited"
                 label="Statut de facture - avoir émis" [form]="constantForm"
                 propertyName="invoiceStatusCreditNoteEmited" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-invoice-status-one>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-invoice-status-one [(model)]="constant.invoiceStatusCreditNoteReceived"
+                label="Statut de facture - avoir reçu" [form]="constantForm"
+                propertyName="invoiceStatusCreditNoteReceived" [isMandatory]="true" [isDisabled]="!editMode">
               </select-invoice-status-one>
             </td>
           </tr>

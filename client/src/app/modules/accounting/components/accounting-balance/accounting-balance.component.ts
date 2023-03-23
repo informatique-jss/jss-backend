@@ -113,12 +113,13 @@ export class AccountingBalanceComponent implements OnInit {
       let balance: number = 0;
       for (let accountingBalance of this.accountingBalances) {
         if (accountingBalance.creditAmount) {
-          credit += accountingBalance.creditAmount;
-          balance += accountingBalance.creditAmount;
-        }
-        if (accountingBalance.debitAmount) {
-          debit += accountingBalance.debitAmount;
-          balance -= accountingBalance.debitAmount;
+          credit += Math.round(accountingBalance.creditAmount * 100) / 100;
+          balance += Math.round(accountingBalance.creditAmount * 100) / 100;
+
+          if (accountingBalance.debitAmount) {
+            debit += Math.round(accountingBalance.debitAmount * 100) / 100;
+            balance -= Math.round(accountingBalance.debitAmount * 100) / 100;
+          }
         }
       }
 

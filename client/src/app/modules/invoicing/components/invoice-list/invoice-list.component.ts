@@ -101,14 +101,6 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
           return undefined;
         }, display: true,
       } as SortTableAction);
-
-      this.tableAction.push({
-        actionIcon: "edit", actionName: "Editer la facture", actionLinkFunction: (action: SortTableAction, element: any) => {
-          if (element)
-            return ['/invoicing/add/', element.invoiceId];
-          return undefined;
-        }, display: true,
-      } as SortTableAction);
     } else {
       this.tableAction.push({
         actionIcon: this.overrideIconAction, actionName: this.overrideTooltipAction, actionClick: (action: SortTableAction, element: any) => {

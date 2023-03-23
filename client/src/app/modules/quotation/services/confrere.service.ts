@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { Department } from '../../miscellaneous/model/Department';
 import { Confrere } from '../../quotation/model/Confrere';
+import { Announcement } from '../model/Announcement';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,10 @@ export class ConfrereService extends AppRestService<Confrere>{
 
   getConfrereById(id: number) {
     return this.getById("confrere", id);
+  }
+
+  getConfrereForAnnouncement(announcement: Announcement) {
+    return this.get(new HttpParams().set("idAnnouncement", announcement.id), "announcement/confrere");
   }
 
   getConfrereFilteredByDepartmentAndName(department: Department | undefined, label: string) {

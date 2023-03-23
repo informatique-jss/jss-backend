@@ -27,6 +27,7 @@ import { Provision } from '../../model/Provision';
 import { AnnouncementNoticeTemplateService } from '../../services/announcement.notice.template.service';
 import { CharacterNumberService } from '../../services/character.number.service';
 import { CharacterPriceService } from '../../services/character.price.service';
+import { ConfrereService } from '../../services/confrere.service';
 import { JournalTypeService } from '../../services/journal.type.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
 
@@ -36,8 +37,6 @@ import { NoticeTypeService } from '../../services/notice.type.service';
   styleUrls: ['./announcement.component.css']
 })
 export class AnnouncementComponent implements OnInit {
-
-
   @Input() announcement: Announcement = {} as Announcement;
   @Input() provision: Provision | undefined;
   @Input() editMode: boolean = false;
@@ -83,9 +82,13 @@ export class AnnouncementComponent implements OnInit {
     private journalTypeService: JournalTypeService,
     private announcementNoticeTemplateService: AnnouncementNoticeTemplateService,
     private characterNumberService: CharacterNumberService,
+    private confrereService: ConfrereService
   ) { }
 
   ngOnInit() {
+
+    if (this.announcement)
+      this.confrereService.getConfrereForAnnouncement(this.announcement).subscribe(confrere => this.announcement.confrere = confrere);
 
     this.journalTypeService.getJournalTypes().subscribe(response => {
       this.journalTypes = response;

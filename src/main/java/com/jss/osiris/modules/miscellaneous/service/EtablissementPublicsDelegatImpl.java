@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,7 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
     private String cciUrl = "/cci";
     private String direccteUrl = "/direccte";
     private String chambreMetierUrl = "/chambre_metier";
+    private String prefectureUrl = "/prefecture";
 
     @Autowired
     CompetentAuthorityService competentAuthorityService;
@@ -61,6 +63,7 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
         updateCci();
         updateChambreMetier();
         updateDireccte();
+        updatePrefecture();
         geoCities = new ArrayList<GeoCity>();
         localCities = new ArrayList<City>();
     }
@@ -110,6 +113,8 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
 
         competentAuthority.setCountry(constantService.getCountryFrance());
         competentAuthority.setLabel(organisme.getProperties().getNom());
+        if (competentAuthority.getLabel() != null)
+            competentAuthority.setLabel(StringUtils.stripAccents(competentAuthority.getLabel()).toUpperCase());
 
         if (organisme.getProperties().getEmail() != null
                 && !isMailInList(organisme.getProperties().getEmail(), competentAuthority.getMails())) {
@@ -239,6 +244,27 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
                     competentAuthority = new CompetentAuthority();
 
                 competentAuthority.setCompetentAuthorityType(constantService.getCompetentAuthorityTypeDireccte());
+                competentAuthority = mergeCompetentAuthorityWithCityZonage(competentAuthority, organisme);
+                competentAuthorityService.addOrUpdateCompetentAuthority(competentAuthority);
+            }
+    }
+
+    @SuppressWarnings({ "null" })
+    private void updatePrefecture() throws OsirisException {
+        ResponseEntity<Organisme> response = new RestTemplate().getForEntity(
+                etablissementPublicEntryPoint + prefectureUrl,
+                Organisme.class);
+        if (response.getBody() != null && response.getBody().getFeatures() != null
+                && response.getBody().getFeatures().size() > 0
+                && response.getBody().getFeatures().get(0) != null)
+            for (Feature organisme : response.getBody().getFeatures().get(0)) {
+                CompetentAuthority competentAuthority = null;
+                competentAuthority = competentAuthorityService
+                        .getCompetentAuthorityByApiId(organisme.getProperties().getId());
+                if (competentAuthority == null)
+                    competentAuthority = new CompetentAuthority();
+
+                competentAuthority.setCompetentAuthorityType(constantService.getCompetentAuthorityTypePrefecture());
                 competentAuthority = mergeCompetentAuthorityWithCityZonage(competentAuthority, organisme);
                 competentAuthorityService.addOrUpdateCompetentAuthority(competentAuthority);
             }

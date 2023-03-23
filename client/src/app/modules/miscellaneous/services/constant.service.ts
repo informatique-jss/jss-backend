@@ -197,7 +197,11 @@ export class ConstantService extends AppRestService<Constant>{
   getBillingTypeBaloNormalization() {
     return this.constant.billingTypeBaloNormalization;
   }
-
+ 
+  getBillingTypeBaloPublicationFlag() {
+    return this.constant.billingTypeBaloPublicationFlag;
+  }
+ 
   getBillingTypePublicationPaper() {
     return this.constant.billingTypePublicationPaper;
   }
@@ -484,6 +488,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.competentAuthorityTypeDireccte;
   }
 
+  getCompetentAuthorityTypePrefecture() {
+    return this.constant.competentAuthorityTypePrefecture;
+  }
+
   getInvoiceStatusSend() {
     return this.constant.invoiceStatusSend;
   }
@@ -494,6 +502,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getInvoiceStatusCreditNoteEmited() {
     return this.constant.invoiceStatusCreditNoteEmited;
+  }
+
+  getInvoiceStatusCreditNoteReceived() {
+    return this.constant.invoiceStatusCreditNoteReceived;
   }
 
   getPaymentWayInbound() {

@@ -125,7 +125,9 @@ public interface ConstantService {
     public BillingType getBillingTypeBaloPackage() throws OsirisException;
 
     public BillingType getBillingTypeBaloNormalization() throws OsirisException;
-
+ 
+    public BillingType getBillingTypeBaloPublicationFlag() throws OsirisException;
+ 
     public BillingType getBillingTypePublicationPaper() throws OsirisException;
 
     public BillingType getBillingTypePublicationReceipt() throws OsirisException;
@@ -270,6 +272,8 @@ public interface ConstantService {
 
     public CompetentAuthorityType getCompetentAuthorityTypeDireccte() throws OsirisException;
 
+    public CompetentAuthorityType getCompetentAuthorityTypePrefecture() throws OsirisException;
+
     public InvoiceStatus getInvoiceStatusSend() throws OsirisException;
 
     public InvoiceStatus getInvoiceStatusReceived() throws OsirisException;
@@ -279,6 +283,8 @@ public interface ConstantService {
     public InvoiceStatus getInvoiceStatusCancelled() throws OsirisException;
 
     public InvoiceStatus getInvoiceStatusCreditNoteEmited() throws OsirisException;
+
+    public InvoiceStatus getInvoiceStatusCreditNoteReceived() throws OsirisException;
 
     public PaymentWay getPaymentWayInbound() throws OsirisException;
 

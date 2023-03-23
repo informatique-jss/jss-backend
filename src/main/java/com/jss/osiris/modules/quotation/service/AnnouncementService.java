@@ -10,6 +10,7 @@ import com.jss.osiris.modules.quotation.model.AnnouncementListSearch;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearch;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearchResult;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 
@@ -53,5 +54,7 @@ public interface AnnouncementService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void sendRemindersToConfrereForAnnouncement() throws OsirisException, OsirisClientMessageException;
+
+        public Confrere getConfrereForAnnouncement(Integer idAnnouncement);
 
 }

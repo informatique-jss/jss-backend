@@ -18,11 +18,13 @@ import { AppService } from 'src/app/services/app.service';
 import { CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
 import { OrderingSearchResult } from '../../../quotation/model/OrderingSearchResult';
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
+import { Responsable } from '../../../tiers/model/Responsable';
 import { AssociationSummaryTable } from '../../model/AssociationSummaryTable';
 import { Deposit } from '../../model/Deposit';
 import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
 import { PaymentAssociate } from '../../model/PaymentAssociate';
 import { DepositService } from '../../services/deposit.service';
+import { InvoiceSearchResultService } from '../../services/invoice.search.result.service';
 import { InvoiceService } from '../../services/invoice.service';
 import { AmountDialogComponent } from '../amount-dialog/amount-dialog.component';
 import { getAmountPayed, getCustomerOrderForInvoice, getCustomerOrderForIQuotation, getCustomerOrderNameForITiers, getRemainingToPay } from '../invoice-tools';
@@ -57,8 +59,8 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
     public amountDialog: MatDialog,
     private depositService: DepositService,
     private customerOrderService: CustomerOrderService,
+    private invoiceSearchResultService: InvoiceSearchResultService,
     private invoiceService: InvoiceService,
-    private InvoiceService: InvoiceService,
     private changeDetectorRef: ChangeDetectorRef,
     private constantService: ConstantService,
     private formBuilder: FormBuilder,
@@ -177,7 +179,7 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
       if (invoice.confrere)
         customerOrderId = invoice.confrere.id
       if (invoice.responsable)
-        customerOrderId = invoice.responsable.id
+        customerOrderId = invoice.responsable.tiers.id
       if (invoice.tiers)
         customerOrderId = invoice.tiers.id
 
@@ -216,7 +218,7 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
       if (order.confrere)
         customerOrderId = order.confrere.id
       if (order.responsable)
-        customerOrderId = order.responsable.id
+        customerOrderId = order.responsable.tiers.id
       if (order.tiers)
         customerOrderId = order.tiers.id
 
@@ -238,10 +240,15 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
 
       let asso = {} as AssociationSummaryTable;
       // If invoice found on CustomerOrder, associate invoice, not customer order
-      if (orderAs && orderAs.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED && orderAs.invoices) {
-        for (let invoice of orderAs.invoices)
-          if (invoice.invoiceStatus && invoice.invoiceStatus.id == this.constantService.getInvoiceStatusSend().id)
-            asso = { deposit: this.deposit, invoice: invoice, } as AssociationSummaryTable;
+      if (orderAs && orderAs.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED) {
+        this.invoiceSearchResultService.getInvoiceForCustomerOrder(orderAs).subscribe(invoices => {
+          for (let invoice of invoices)
+            if (invoice.invoiceStatus && invoice.invoiceStatusId == this.constantService.getInvoiceStatusSend().id) {
+              this.invoiceService.getInvoiceById(invoice.invoiceId).subscribe(invoice => {
+                asso = { deposit: this.deposit, invoice: invoice, } as AssociationSummaryTable;
+              })
+            }
+        })
       } else
         asso = { deposit: this.deposit, customerOrder: order, } as AssociationSummaryTable;
       let maxAmount = Math.round((this.amountRemaining()) * 100) / 100;
@@ -269,7 +276,12 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
           customerOrder = getCustomerOrderForIQuotation(asso.customerOrder);
         if (currentCustomerOrder == undefined)
           currentCustomerOrder = customerOrder;
-        if (currentCustomerOrder != undefined && newCustomerOrder != undefined && currentCustomerOrder?.id != newCustomerOrder)
+
+        // If responsable, consider associated Tiers
+        if ((customerOrder as Responsable).tiers)
+          currentCustomerOrder = (customerOrder as Responsable).tiers;
+
+        if (currentCustomerOrder && newCustomerOrder && currentCustomerOrder.id != newCustomerOrder)
           return false;
       }
     return true;

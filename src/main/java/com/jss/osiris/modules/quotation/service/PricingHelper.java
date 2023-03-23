@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.quotation.service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -151,7 +152,7 @@ public class PricingHelper {
             if (characterPrice != null) {
                 Float price = characterPrice.getPrice()
                         * characterPriceService.getCharacterNumber(provision);
-                invoiceItem.setPreTaxPrice(Math.round(price * 100f) / 100f);
+                invoiceItem.setPreTaxPrice(price);
 
                 // Add notice type indication for announcements
                 String noticeFamiliyType = (provision.getAnnouncement() != null
@@ -167,7 +168,17 @@ public class PricingHelper {
                 if (noticeFamiliyType != null && noticeTypes.size() > 0)
                     invoiceItem.setLabel(invoiceItem.getLabel() + " ("
                             + characterPriceService.getCharacterNumber(provision)
-                            + " caractères, rubrique " + noticeFamiliyType + ", "
+                            + " caractères"
+                            + (provision.getAnnouncement() != null
+                                    && provision.getAnnouncement().getPublicationDate() != null
+                                            ? ", " + (provision.getAnnouncement().getPublicationDate()
+                                                    .isAfter(LocalDate.now())
+                                                            ? "sera publiée le "
+                                                            : "publiée le ")
+                                                    + provision.getAnnouncement().getPublicationDate()
+                                                            .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                            : "")
+                            + ", rubrique " + noticeFamiliyType + ", "
                             + String.join(" / ", noticeTypes) + ")");
                 else
                     invoiceItem.setLabel(invoiceItem.getLabel() + " ("
@@ -187,9 +198,7 @@ public class PricingHelper {
                 Confrere confrere = provision.getAnnouncement().getConfrere();
                 invoiceItem.setLabel(invoiceItem.getLabel() + " (quantité : " + nbr + ")");
 
-                invoiceItem.setPreTaxPrice(
-                        Math.round((confrere.getPaperPrice() != null ? confrere.getPaperPrice() : 0f) * nbr * 100f)
-                                / 100f);
+                invoiceItem.setPreTaxPrice((confrere.getPaperPrice() != null ? confrere.getPaperPrice() : 0f) * nbr);
             }
         } else if (billingItem.getBillingType().getId()
                 .equals(constantService.getBillingTypeConfrereFees().getId())) {
@@ -223,6 +232,7 @@ public class PricingHelper {
             }
         } else if (billingItem.getBillingType().getId()
                 .equals(constantService.getBillingTypeShippingCosts().getId())) {
+            invoiceItem.setPreTaxPrice(0f);
             Integer nbr = getPublicationPaperNbr(provision);
             Confrere confrere = provision.getAnnouncement().getConfrere();
             if (nbr > 0)
@@ -241,10 +251,13 @@ public class PricingHelper {
                 else
                     total += debourAmount / ((100 + constantService.getVatDeductible().getRate()) / 100f);
             }
-            invoiceItem.setPreTaxPrice(Math.round(total * 100f) / 100f);
+            invoiceItem.setPreTaxPrice(total);
         } else {
-            invoiceItem.setPreTaxPrice(Math.round(billingItem.getPreTaxPrice() * 100f) / 100f);
+            invoiceItem.setPreTaxPrice(billingItem.getPreTaxPrice());
         }
+
+        if (invoiceItem.getPreTaxPrice() != null)
+            invoiceItem.setPreTaxPrice(Math.round(invoiceItem.getPreTaxPrice() * 100f) / 100f);
 
         if (invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()) {
             invoiceItem.setPreTaxPrice(0f);
@@ -320,6 +333,8 @@ public class PricingHelper {
                             if (invoiceItem.getIsOverridePrice() == null)
                                 invoiceItem.setIsOverridePrice(false);
 
+                            invoiceItem.setPreTaxPrice(0f);
+
                             if (!invoiceItem.getIsOverridePrice() || !billingType.getCanOverridePrice()
                                     || invoiceItem.getPreTaxPrice() == null
                                     || invoiceItem.getPreTaxPrice() <= 0
@@ -379,7 +394,11 @@ public class PricingHelper {
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeBaloNormalization().getId())
                 && provision.getIsBaloNormalization() != null && provision.getIsBaloNormalization())
+            return true; 
+        if (billingType.getId().equals(constantService.getBillingTypeBaloPublicationFlag().getId())
+                && provision.getIsBaloPublicationFlag() != null && provision.getIsBaloPublicationFlag())
             return true;
+ 
         if (billingType.getId().equals(constantService.getBillingTypePublicationReceipt().getId())
                 && provision.getIsPublicationReceipt() != null && provision.getIsPublicationReceipt())
             return true;
@@ -521,18 +540,26 @@ public class PricingHelper {
         // default
 
         // No VAT abroad (France and Monaco)
-        Country country = null;
+        Country country = null; 
+        City city = null; 
         if (billingDocument == null || billingDocument.getBillingLabelType() == null
                 || billingDocument.getBillingLabelType().getId()
                         .equals(constantService.getBillingLabelTypeCustomer().getId())) {
             country = customerOrder.getCountry();
+            city = cityService.getCity(customerOrder.getCity().getId());
         } else if (billingDocument.getBillingLabelType().getId()
                 .equals(constantService.getBillingLabelTypeCodeAffaire().getId())) {
-            country = invoiceItem.getProvision().getAssoAffaireOrder().getAffaire().getCountry();
+            Affaire affaire = invoiceItem.getProvision().getAssoAffaireOrder().getAffaire();
+            city = affaire.getCity();
+            country = affaire.getCountry();
         } else {
             if (billingDocument.getBillingLabelCountry() == null)
                 throw new OsirisClientMessageException(
                         "Pays non trouvé dans l'adresse indiquée dans la configuration de facturation de la commande");
+            if (billingDocument.getBillingLabelCountry() == null)
+                throw new OsirisClientMessageException(
+                        "Pays non trouvé dans l'adresse indiquée dans la configuration de facturation de la commande");
+            city = billingDocument.getBillingLabelCity();
             country = billingDocument.getBillingLabelCountry();
         }
 
@@ -546,26 +573,7 @@ public class PricingHelper {
                 || invoiceItem.getBillingItem().getBillingType().getIsFee()) {
             vat = constantService.getVatDeductible();
         } else {
-            if (billingDocument == null || billingDocument.getBillingLabelType() == null
-                    || billingDocument.getBillingLabelType().getId()
-                            .equals(constantService.getBillingLabelTypeCustomer().getId())) {
-                City city = cityService.getCity(customerOrder.getCity().getId());
-                vat = vatService.getGeographicalApplicableVat(customerOrder.getCountry(),
-                        city.getDepartment());
-            } else if (billingDocument.getBillingLabelType().getId()
-                    .equals(constantService.getBillingLabelTypeCodeAffaire().getId())) {
-                Affaire affaire = invoiceItem.getProvision().getAssoAffaireOrder().getAffaire();
-                vat = vatService.getGeographicalApplicableVat(affaire.getCountry(), affaire.getCity().getDepartment());
-            } else {
-                if (billingDocument.getBillingLabelCity() == null)
-                    throw new OsirisClientMessageException(
-                            "Ville non trouvée dans l'adresse indiquée dans la configuration de facturation de la commande");
-                if (billingDocument.getBillingLabelCountry() == null)
-                    throw new OsirisClientMessageException(
-                            "Pays non trouvé dans l'adresse indiquée dans la configuration de facturation de la commande");
-                vat = vatService.getGeographicalApplicableVat(billingDocument.getBillingLabelCountry(),
-                        billingDocument.getBillingLabelCity().getDepartment());
-            }
+            vat = vatService.getGeographicalApplicableVat(country, city.getDepartment());
         }
 
         if (vat != null && (invoiceItem.getIsGifted() == null || !invoiceItem.getIsGifted())) {

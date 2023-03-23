@@ -1,5 +1,9 @@
 package com.jss.osiris.libs.transfer;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 public class CstmrCdtTrfInitnBean {
@@ -7,7 +11,8 @@ public class CstmrCdtTrfInitnBean {
 	GrpHdrBean grpHdrBean;
 
 	@JacksonXmlProperty(localName = "PmtInf")
-	PmtInfBean pmtInfBean;
+	@JacksonXmlElementWrapper(useWrapping = false)
+	List<PmtInfBean> pmtInfBean;
 
 	public GrpHdrBean getGrpHdrBean() {
 		if (grpHdrBean == null)
@@ -19,13 +24,13 @@ public class CstmrCdtTrfInitnBean {
 		this.grpHdrBean = grpHdrBean;
 	}
 
-	public PmtInfBean getPmtInfBean() {
+	public List<PmtInfBean> getPmtInfBean() {
 		if (pmtInfBean == null)
-			pmtInfBean = new PmtInfBean();
+			pmtInfBean = new ArrayList<PmtInfBean>();
 		return pmtInfBean;
 	}
 
-	public void setPmtInfBean(PmtInfBean pmtInfBean) {
+	public void setPmtInfBean(List<PmtInfBean> pmtInfBean) {
 		this.pmtInfBean = pmtInfBean;
 	}
 

@@ -4,11 +4,13 @@ import { City } from "./City";
 import { CompetentAuthorityType } from "./CompetentAuthorityType";
 import { Country } from "./Country";
 import { Department } from "./Department";
+import { IAttachment } from './IAttachment';
 import { Mail } from "./Mail";
+import { PaymentType } from './PaymentType';
 import { Phone } from "./Phone";
 import { Region } from "./Region";
 
-export interface CompetentAuthority extends IReferential {
+export interface CompetentAuthority extends IReferential, IAttachment {
   competentAuthorityType: CompetentAuthorityType;
   departments: Department[];
   phones: Phone[];
@@ -16,7 +18,6 @@ export interface CompetentAuthority extends IReferential {
   accountingMails: Mail[];
   iban: string;
   bic: string;
-  jssAccount: string;
   cities: City[];
   regions: Region[];
   contact: string;
@@ -32,4 +33,5 @@ export interface CompetentAuthority extends IReferential {
   reinvoicing: number;
   schedulle: string;
   observations: string;
+  paymentTypes: PaymentType[];
 }

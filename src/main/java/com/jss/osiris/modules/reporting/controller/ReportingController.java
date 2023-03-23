@@ -39,7 +39,7 @@ public class ReportingController {
 	public ResponseEntity<List<IQuotationReporting>> getQuotationReporting()
 			throws OsirisValidationException, OsirisException {
 
-		return new ResponseEntity<List<IQuotationReporting>>(quotationReportingService.getQuotationReporting(null),
+		return new ResponseEntity<List<IQuotationReporting>>(quotationReportingService.getQuotationReporting(0),
 				HttpStatus.OK);
 	}
 

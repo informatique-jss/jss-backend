@@ -4,7 +4,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 public class IdBean {
 	@JacksonXmlProperty(localName = "IBAN")
-	String iban = "";
+	String iban;
 
 	public String getIban() {
 		return iban;

@@ -1199,7 +1199,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     // Unleter invoices
     if (invoicesToUnleter.size() > 0)
       for (Invoice invoice : invoicesToUnleter)
-        invoiceService.unletterInvoice(invoice);
+        invoiceService.unletterInvoiceEmitted(invoice);
     return null;
   }
 
@@ -1229,7 +1229,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     // Unleter invoices
     if (invoicesToUnleter.size() > 0)
       for (Invoice invoice : invoicesToUnleter)
-        invoiceService.unletterInvoice(invoice);
+        invoiceService.unletterInvoiceEmitted(invoice);
     return null;
   }
 

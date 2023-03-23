@@ -3,9 +3,13 @@ package com.jss.osiris.libs.transfer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+@JsonPropertyOrder({ "PmtId", "InstrId", "EndToEndId", "Amt", "InstdAmt", "UltmtDbtr" })
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class CdtTrfTxInfBean {
 	@JacksonXmlProperty(localName = "IsMulti")
 	String isMulti = "";
@@ -22,7 +26,7 @@ public class CdtTrfTxInfBean {
 
 	@JacksonXmlProperty(localName = "Cdtr")
 	@JacksonXmlElementWrapper(useWrapping = false)
-	List<CdtrBean> cdtrBeanList;
+	CdtrBean cdtrBean;
 
 	@JacksonXmlProperty(localName = "CdtrAcct")
 	CdtrAcctBean cdtrAcctBean;
@@ -68,14 +72,14 @@ public class CdtTrfTxInfBean {
 		return cdtrAgtBeanList;
 	}
 
-	public void setCdtrBeanList(List<CdtrBean> cdtrBeanList) {
-		this.cdtrBeanList = cdtrBeanList;
+	public void setCdtrBean(CdtrBean cdtrBean) {
+		this.cdtrBean = cdtrBean;
 	}
 
-	public List<CdtrBean> getCdtrBeanList() {
-		if (cdtrBeanList == null)
-			cdtrBeanList = new ArrayList<CdtrBean>();
-		return cdtrBeanList;
+	public CdtrBean getCdtrBean() {
+		if (cdtrBean == null)
+			cdtrBean = new CdtrBean();
+		return cdtrBean;
 	}
 
 	public CdtrAcctBean getCdtrAcctBean() {

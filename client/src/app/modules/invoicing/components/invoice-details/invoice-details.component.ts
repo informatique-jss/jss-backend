@@ -10,6 +10,7 @@ import { VatBase } from 'src/app/modules/quotation/model/VatBase';
 import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { instanceOfConfrere, instanceOfResponsable, instanceOfTiers } from '../../../../libs/TypeHelper';
+import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { InvoiceService } from '../../services/invoice.service';
 import { getAffaireList, getAffaireListArray, getCustomerOrderForInvoice, getCustomerOrderNameForInvoice, getLetteringDate, getRemainingToPay, getResponsableName } from '../invoice-tools';
@@ -32,9 +33,11 @@ export class InvoiceDetailsComponent implements OnInit {
     private appService: AppService,
     private activatedRoute: ActivatedRoute,
     private constantService: ConstantService,
+    private customerOrderService: CustomerOrderService,
   ) { }
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
+  invoiceStatusPayed = this.constantService.getInvoiceStatusPayed();
   invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
   attachmentTypeInvoice = this.constantService.getAttachmentTypeInvoice();
 
@@ -170,6 +173,19 @@ export class InvoiceDetailsComponent implements OnInit {
 
   openRoute(event: any, link: string) {
     this.appService.openRoute(event, link, null);
+  }
+
+  editInvoice(event: any) {
+    if (this.invoice)
+      this.appService.openRoute(event, "/invoicing/add/" + this.invoice.id, undefined);
+  }
+
+  cancelInvoice(event: any) {
+    if (this.invoice)
+      this.invoiceService.cancelInvoice(this.invoice).subscribe(response => {
+        if (response && response.creditNote)
+          this.appService.openRoute(null, 'invoicing/view/' + response.creditNote.id, undefined);
+      })
   }
 
 }

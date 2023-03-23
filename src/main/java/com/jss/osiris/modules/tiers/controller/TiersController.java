@@ -17,6 +17,8 @@ import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.search.service.SearchService;
+import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
@@ -27,6 +29,8 @@ import com.jss.osiris.modules.miscellaneous.service.DocumentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
@@ -122,6 +126,12 @@ public class TiersController {
   @Autowired
   SearchService searchService;
 
+  @Autowired
+  ConfrereService confrereService;
+
+  @Autowired
+  InvoiceService invoiceService;
+
   @GetMapping(inputEntryPoint + "/competitors")
   public ResponseEntity<List<Competitor>> getCompetitors() {
     return new ResponseEntity<List<Competitor>>(competitorService.getCompetitors(), HttpStatus.OK);
@@ -176,15 +186,56 @@ public class TiersController {
         tiersFollowupTypeService.addOrUpdateTiersFollowupType(tiersFollowupTypes), HttpStatus.OK);
   }
 
-  @PostMapping(inputEntryPoint + "/tiers-followup")
-  public ResponseEntity<List<TiersFollowup>> addTiersFollowup(@RequestBody TiersFollowup tiersFollowup)
+  @PostMapping(inputEntryPoint + "/tiers-followup/tiers")
+  public ResponseEntity<List<TiersFollowup>> addTiersFollowupForTiers(@RequestBody TiersFollowup tiersFollowup,
+      @RequestParam Integer idTiers)
       throws OsirisValidationException, OsirisException {
-    if (tiersFollowup.getTiers() == null && tiersFollowup.getResponsable() == null
-        && tiersFollowup.getConfrere() == null && tiersFollowup.getInvoice() == null)
-      throw new OsirisValidationException("tiers or responsable");
-    validationHelper.validateReferential(tiersFollowup.getTiers(), false, "Tiers");
-    validationHelper.validateReferential(tiersFollowup.getResponsable(), false, "Responsable");
-    validationHelper.validateReferential(tiersFollowup.getConfrere(), false, "Responsable");
+    Tiers tiers = tiersService.getTiers(idTiers);
+    if (tiers == null)
+      throw new OsirisValidationException("Tiers");
+
+    tiersFollowup.setTiers(tiers);
+    return saveTiersFollomUp(tiersFollowup);
+  }
+
+  @PostMapping(inputEntryPoint + "/tiers-followup/responsable")
+  public ResponseEntity<List<TiersFollowup>> addTiersFollowupForResponsable(@RequestBody TiersFollowup tiersFollowup,
+      @RequestParam Integer idResponsable)
+      throws OsirisValidationException, OsirisException {
+    Responsable responsable = responsableService.getResponsable(idResponsable);
+    if (responsable == null)
+      throw new OsirisValidationException("Responsable");
+
+    tiersFollowup.setResponsable(responsable);
+    return saveTiersFollomUp(tiersFollowup);
+  }
+
+  @PostMapping(inputEntryPoint + "/tiers-followup/confrere")
+  public ResponseEntity<List<TiersFollowup>> addTiersFollowupForConfrere(@RequestBody TiersFollowup tiersFollowup,
+      @RequestParam Integer idConfrere)
+      throws OsirisValidationException, OsirisException {
+    Confrere confrere = confrereService.getConfrere(idConfrere);
+    if (confrere == null)
+      throw new OsirisValidationException("Confrere");
+
+    tiersFollowup.setConfrere(confrere);
+    return saveTiersFollomUp(tiersFollowup);
+  }
+
+  @PostMapping(inputEntryPoint + "/tiers-followup/invoice")
+  public ResponseEntity<List<TiersFollowup>> addTiersFollowupForInvoice(@RequestBody TiersFollowup tiersFollowup,
+      @RequestParam Integer idInvoice)
+      throws OsirisValidationException, OsirisException {
+    Invoice invoice = invoiceService.getInvoice(idInvoice);
+    if (invoice == null)
+      throw new OsirisValidationException("Invoice");
+
+    tiersFollowup.setInvoice(invoice);
+    return saveTiersFollomUp(tiersFollowup);
+  }
+
+  private ResponseEntity<List<TiersFollowup>> saveTiersFollomUp(TiersFollowup tiersFollowup)
+      throws OsirisValidationException, OsirisException {
     validationHelper.validateReferential(tiersFollowup.getTiersFollowupType(), true, "TiersFollowupType");
     validationHelper.validateReferential(tiersFollowup.getSalesEmployee(), true, "SalesEmployee");
     validationHelper.validateDate(tiersFollowup.getFollowupDate(), true, "FollowupDate");
@@ -337,7 +388,7 @@ public class TiersController {
 
   @GetMapping(inputEntryPoint + "/tiers")
   public ResponseEntity<Tiers> getTiersById(@RequestParam Integer id) {
-    return new ResponseEntity<Tiers>(tiersService.getTiers(id), HttpStatus.OK);
+    return new ResponseEntity<Tiers>(tiersService.getTiersFromUser(id), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/responsable")
@@ -493,19 +544,6 @@ public class TiersController {
                 && document.getMailsClient().size() > 0)
               if (!validationHelper.validateMailList(document.getMailsClient()))
                 throw new OsirisValidationException("MailsClient");
-            if (document.getMailsCCResponsableAffaire() != null
-                && document.getMailsCCResponsableAffaire().size() > 0) {
-              for (Responsable res : document.getMailsCCResponsableAffaire()) {
-                if (res.getId() == null || responsableService.getResponsable(res.getId()) == null)
-                  throw new OsirisValidationException("Responsable");
-              }
-            }
-            if (document.getMailsCCResponsableClient() != null && document.getMailsCCResponsableClient().size() > 0) {
-              for (Responsable res : document.getMailsCCResponsableClient()) {
-                if (res.getId() == null || responsableService.getResponsable(res.getId()) == null)
-                  throw new OsirisValidationException("Responsable");
-              }
-            }
 
             validationHelper.validateString(document.getAffaireAddress(), false, 200, "AffaireAddress");
             validationHelper.validateString(document.getClientAddress(), false, 100, "ClientAddress");

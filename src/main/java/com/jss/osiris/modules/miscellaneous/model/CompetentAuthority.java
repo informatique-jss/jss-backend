@@ -1,8 +1,8 @@
 package com.jss.osiris.modules.miscellaneous.model;
 
-import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,13 +12,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
-public class CompetentAuthority implements Serializable, IId {
+public class CompetentAuthority implements IId, IAttachment {
 
 	@Id
 	@SequenceGenerator(name = "competent_authority_sequence", sequenceName = "competent_authority_sequence", allocationSize = 1)
@@ -59,9 +60,6 @@ public class CompetentAuthority implements Serializable, IId {
 
 	@Column(length = 40)
 	private String bic;
-
-	@Column(length = 40)
-	private String jssAccount;
 
 	@Column(length = 60)
 	private String contact;
@@ -113,6 +111,13 @@ public class CompetentAuthority implements Serializable, IId {
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
+
+	@OneToMany(mappedBy = "competentAuthority")
+	private List<Attachment> attachments;
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_competent_authority_payment_type", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_payment_type"))
+	private List<PaymentType> paymentTypes;
 
 	public Integer getId() {
 		return id;
@@ -200,14 +205,6 @@ public class CompetentAuthority implements Serializable, IId {
 
 	public void setCities(List<City> cities) {
 		this.cities = cities;
-	}
-
-	public String getJssAccount() {
-		return jssAccount;
-	}
-
-	public void setJssAccount(String jssAccount) {
-		this.jssAccount = jssAccount;
 	}
 
 	public List<Region> getRegions() {
@@ -328,6 +325,22 @@ public class CompetentAuthority implements Serializable, IId {
 
 	public void setObservations(String observations) {
 		this.observations = observations;
+	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
+	}
+
+	public List<PaymentType> getPaymentTypes() {
+		return paymentTypes;
+	}
+
+	public void setPaymentTypes(List<PaymentType> paymentTypes) {
+		this.paymentTypes = paymentTypes;
 	}
 
 }

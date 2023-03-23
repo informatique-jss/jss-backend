@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Montant à utiliser</h1>
 <div mat-dialog-content>
-  <p>Indiquer le montant à utiliser (max : {{maxAmount}} €) :</p>
+  <p>{{label}}</p>
   <generic-input [(model)]="amount" label="Montant à utiliser" [form]="amountForm" propertyName="amount"
     [isMandatory]="true" [isDisabled]="false" type="number" (onInputChange)="valueModified()"></generic-input>
 </div>

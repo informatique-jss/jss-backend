@@ -2,8 +2,10 @@ import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
+import { AmountDialogComponent } from 'src/app/modules/invoicing/components/amount-dialog/amount-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
+import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { formatDateForSortTable, formatEurosForSortTable } from '../../../../libs/FormatHelper';
@@ -28,6 +30,7 @@ export class AddDebourComponent implements OnInit {
   @Input() customerOrder: IQuotation | undefined;
   newDebour: Debour | undefined;
   displayedColumns: SortTableColumn[] = [];
+  tableAction: SortTableAction[] = [];
   paymentTypeVirement: PaymentType = this.constantService.getPaymentTypeVirement();
   paymentTypePrelevement: PaymentType = this.constantService.getPaymentTypePrelevement();
   paymentTypeCb: PaymentType = this.constantService.getPaymentTypeCB();
@@ -39,6 +42,7 @@ export class AddDebourComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
     public confirmationDialog: MatDialog,
     public selectDeboursDialog: MatDialog,
+    public invoicedAmountDialog: MatDialog,
     private constantService: ConstantService,
     private habilitationService: HabilitationsService,
     private appService: AppService,
@@ -57,12 +61,40 @@ export class AddDebourComponent implements OnInit {
     this.displayedColumns.push({ id: "payment", fieldName: "payment.id", label: "Paiement associé" } as SortTableColumn);
     this.displayedColumns.push({ id: "invoice", fieldName: "invoiceItem.invoice.id", label: "Facture associée" } as SortTableColumn);
     this.displayedColumns.push({ id: "comments", fieldName: "comments", label: "Commentaires", isShrinkColumn: true } as SortTableColumn);
+
+    this.addInvoicedAmountColumn();
     this.refreshTable.next();
+  }
+
+  addInvoicedAmountColumn() {
+    if (this.editMode)
+      this.tableAction.push({
+        actionIcon: 'edit', actionName: 'Modifier le montant facturé', actionClick: (action: SortTableAction, element: Debour) => {
+          if (element.billingType && element.billingType.isFee) {
+            let amountDialogRef = this.invoicedAmountDialog.open(AmountDialogComponent, {
+              width: '100%'
+            });
+            if (element.invoicedAmount)
+              amountDialogRef.componentInstance.amount = parseFloat(element.invoicedAmount + "");
+            amountDialogRef.componentInstance.label = "Indiquer le montant à facturer :";
+            amountDialogRef.afterClosed().subscribe(response => {
+              if (response != null) {
+                element.invoicedAmount = parseFloat(response);
+              } else {
+                return;
+              }
+            });
+          }
+        }, display: true,
+      } as SortTableAction);
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.provision) {
       this.setData();
+    }
+    if (changes.editMode) {
+      this.addInvoicedAmountColumn();
     }
   }
 

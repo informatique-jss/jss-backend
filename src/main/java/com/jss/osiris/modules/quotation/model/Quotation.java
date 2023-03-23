@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
@@ -103,6 +104,7 @@ public class Quotation implements IQuotation {
 	@ManyToMany
 	@JoinTable(name = "asso_quotation_customer_order", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_customer_order"))
 	@JsonIgnoreProperties(value = { "quotations" }, allowSetters = true)
+	@JsonIgnore // For client-side performance purpose
 	private List<CustomerOrder> customerOrders;
 
 	private Boolean isCreatedFromWebSite;

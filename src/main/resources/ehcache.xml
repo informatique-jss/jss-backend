@@ -6,7 +6,7 @@
 
     <cache-template name="default">
         <expiry>
-            <ttl unit="minutes">60</ttl>
+            <ttl unit="minutes">15</ttl>
         </expiry>
         <heap unit="entries">50000</heap>
     </cache-template>
@@ -553,5 +553,69 @@
     <cache alias="quotationReportingList" uses-template="default">
         <key-type>java.lang.String</key-type>
         <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="employee" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.profile.model.Employee</value-type>
+    </cache>
+    <cache alias="employeeList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="provisionType" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.quotation.model.ProvisionType</value-type>
+    </cache>
+    <cache alias="provisionTypeList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="announcementNoticeTemplate" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.quotation.model.AnnouncementNoticeTemplate</value-type>
+    </cache>
+    <cache alias="announcementNoticeTemplateList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="provisionFamilyType" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.quotation.model.ProvisionFamilyType</value-type>
+    </cache>
+    <cache alias="provisionFamilyTypeList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="department" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.miscellaneous.model.Department</value-type>
+    </cache>
+    <cache alias="departmentList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="attachmentType" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.miscellaneous.model.AttachmentType</value-type>
+    </cache>
+    <cache alias="attachmentTypeList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="billingType" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.miscellaneous.model.BillingType</value-type>
+    </cache>
+    <cache alias="billingTypeDebourList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="billingTypeDebourList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="constant" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type> com.jss.osiris.modules.miscellaneous.model.Constant</value-type>
     </cache>
 </config>

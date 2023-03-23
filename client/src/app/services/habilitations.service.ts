@@ -91,6 +91,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
+  canCancelBankTransfert() {
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+  }
+
 }
 
 

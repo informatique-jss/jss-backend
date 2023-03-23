@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,7 +96,8 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
         List<CompetentAuthority> outAuthorities = new ArrayList<CompetentAuthority>();
         List<CompetentAuthority> authorities;
         if (authority != null)
-            authorities = competentAuthorityRepository.findByLabelContainingIgnoreCase(authority);
+            authorities = competentAuthorityRepository
+                    .findByLabelContainingIgnoreCase(StringUtils.stripAccents(authority));
         else
             authorities = IterableUtils.toList(competentAuthorityRepository.findAll());
         if (departmentId != null && authorities != null && authorities.size() > 0) {

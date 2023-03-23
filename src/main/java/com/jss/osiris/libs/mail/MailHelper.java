@@ -1247,8 +1247,8 @@ public class MailHelper {
                 }
             }
 
-            letterModel.setAffaireLabel(String.join("<br/>", affaireLabels));
-            letterModel.setEventLabel(String.join(" / ", eventLabels));
+            letterModel.setAffaireLabel(String.join("<br/>", affaireLabels).replaceAll("&", " "));
+            letterModel.setEventLabel(String.join(" / ", eventLabels).replaceAll("&", " "));
             if (signatureEmployee != null)
                 letterModel.setSignatureLabel(signatureEmployee.getFirstname() + " " + signatureEmployee.getLastname()
                         + "<br/>" + signatureEmployee.getTitle() + "<br/>" + signatureEmployee.getMail());

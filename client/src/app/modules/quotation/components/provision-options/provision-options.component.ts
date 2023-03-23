@@ -9,6 +9,7 @@ import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/
 import { PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { Provision } from '../../model/Provision';
+import { ConfrereService } from '../../services/confrere.service';
 
 @Component({
   selector: 'provision-options',
@@ -30,7 +31,8 @@ export class ProvisionOptionsComponent implements OnInit {
   billingTypeLogo = this.constantService.getBillingTypeLogo();
   billingTypeRedactedByJss = this.constantService.getBillingTypeRedactedByJss();
   billingTypeBaloPackage = this.constantService.getBillingTypeBaloPackage();
-  billingTypeBaloNormalization = this.constantService.getBillingTypeBaloNormalization();
+  billingTypeBaloNormalization = this.constantService.getBillingTypeBaloNormalization(); 
+  billingTypeBaloPublicationFlag = this.constantService.getBillingTypeBaloPublicationFlag(); 
   billingTypePublicationPaper = this.constantService.getBillingTypePublicationPaper();
   billingTypePublicationReceipt = this.constantService.getBillingTypePublicationReceipt();
   billingTypePublicationFlag = this.constantService.getBillingTypePublicationFlag();
@@ -68,11 +70,14 @@ export class ProvisionOptionsComponent implements OnInit {
     private uploadAttachmentService: UploadAttachmentService,
     private constantService: ConstantService,
     private sanitizer: DomSanitizer,
+    private confrereService: ConfrereService,
   ) { }
 
   optionForm = this.formBuilder.group({});
 
   ngOnInit() {
+    if (this.provision && this.provision.announcement && !this.provision.announcement.confrere)
+      this.confrereService.getConfrereForAnnouncement(this.provision.announcement).subscribe(confrere => this.provision!.announcement!.confrere = confrere);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -84,6 +89,7 @@ export class ProvisionOptionsComponent implements OnInit {
       }
       if (!this.provision.isRedactedByJss) this.provision.isRedactedByJss = false;
       if (!this.provision.isBaloPackage) this.provision.isBaloPackage = false;
+      if (!this.provision.isBaloPublicationFlag) this.provision.isBaloPublicationFlag = false;
       if (!this.provision.isPublicationReceipt) this.provision.isPublicationReceipt = false;
       if (this.provision.isPublicationFlag == undefined || this.provision.isPublicationFlag == null) this.provision.isPublicationFlag = this.displayOption(this.billingTypePublicationFlag) && this.provision.announcement != undefined && this.provision.announcement.confrere != undefined && this.provision.announcement.confrere.journalType.id == this.journalTypeSpel.id;
       if (!this.provision.isPublicationPaper) this.provision.isPublicationPaper = false;

@@ -6,4 +6,5 @@ export interface BankTransfertSearch {
   maxAmount: number;
   label: string;
   isHideExportedBankTransfert: boolean;
+  isDisplaySelectedForExportBankTransfert: boolean;
 }

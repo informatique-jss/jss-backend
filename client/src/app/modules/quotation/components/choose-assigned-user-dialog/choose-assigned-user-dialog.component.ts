@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { AmountDialogComponent } from 'src/app/modules/invoicing/components/amount-dialog/amount-dialog.component';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 
 @Component({
@@ -11,7 +10,7 @@ import { Employee } from 'src/app/modules/profile/model/Employee';
 })
 export class ChooseAssignedUserDialogComponent implements OnInit {
 
-  constructor(public dialogRef: MatDialogRef<AmountDialogComponent>,
+  constructor(public dialogRef: MatDialogRef<ChooseAssignedUserDialogComponent>,
     private formBuilder: FormBuilder) { }
 
   userList: Employee[] = [] as Array<Employee>;

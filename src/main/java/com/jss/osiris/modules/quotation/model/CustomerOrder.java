@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
@@ -125,6 +126,7 @@ public class CustomerOrder implements IQuotation {
 
 	@ManyToMany(mappedBy = "customerOrders")
 	@JsonIgnoreProperties(value = { "customerOrders" }, allowSetters = true)
+	@JsonIgnore // For client-side performance purpose
 	private List<Quotation> quotations;
 
 	@Column(nullable = false)
@@ -135,6 +137,7 @@ public class CustomerOrder implements IQuotation {
 
 	@OneToMany(mappedBy = "customerOrder")
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	@JsonIgnore // For client-side performance purpose
 	private List<Invoice> invoices;
 
 	@OneToMany(targetEntity = Deposit.class, mappedBy = "customerOrder")
@@ -143,6 +146,7 @@ public class CustomerOrder implements IQuotation {
 
 	@OneToMany(targetEntity = AccountingRecord.class, mappedBy = "customerOrder")
 	@JsonIgnoreProperties(value = { "customerOrder", "invoice", "deposit", "payment" }, allowSetters = true)
+	@JsonIgnore // For client-side performance purpose
 	private List<AccountingRecord> accountingRecords;
 
 	private String centralPayPaymentRequestId;
@@ -155,6 +159,7 @@ public class CustomerOrder implements IQuotation {
 
 	@OneToMany(targetEntity = Invoice.class, mappedBy = "customerOrderForInboundInvoice")
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	@JsonIgnore // For client-side performance purpose
 	private List<Invoice> providerInvoices;
 
 	@Column(columnDefinition = "TEXT")

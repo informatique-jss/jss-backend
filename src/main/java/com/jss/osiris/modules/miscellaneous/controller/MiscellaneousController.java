@@ -457,7 +457,7 @@ public class MiscellaneousController {
         validationHelper.validateString(regie.getLabel(), true, "Label");
         validationHelper.validateReferential(regie.getCountry(), true, "Country");
         validationHelper.validateReferential(regie.getCity(), true, "City");
-        validationHelper.validateString(regie.getPostalCode(), false, 6, "PostalCode");
+        validationHelper.validateString(regie.getPostalCode(), false, 10, "PostalCode");
         validationHelper.validateString(regie.getCedexComplement(), false, 20, "CedexComplement");
         validationHelper.validateString(regie.getAddress(), true, 100, "Address");
         validationHelper.validateString(regie.getIban(), true, 40, "Iban");
@@ -580,7 +580,7 @@ public class MiscellaneousController {
             validationHelper.validateReferential(cities, true, "cities");
         validationHelper.validateString(cities.getCode(), true, 20, "Code");
         validationHelper.validateString(cities.getLabel(), true, 100, "Label");
-        validationHelper.validateString(cities.getPostalCode(), false, 6, "PostalCode");
+        validationHelper.validateString(cities.getPostalCode(), false, 10, "PostalCode");
         validationHelper.validateReferential(cities.getDepartment(), false, "Department");
         validationHelper.validateReferential(cities.getCountry(), true, "Country");
 
@@ -826,45 +826,48 @@ public class MiscellaneousController {
 
     @PostMapping(inputEntryPoint + "/competent-authority")
     public ResponseEntity<CompetentAuthority> addOrUpdateCompetentAuthority(
-            @RequestBody CompetentAuthority competentAuthorities) throws OsirisValidationException, OsirisException {
-        if (competentAuthorities.getId() != null)
-            validationHelper.validateReferential(competentAuthorities, true, "competentAuthorities");
-        validationHelper.validateString(competentAuthorities.getCode(), true, 20, "code");
-        validationHelper.validateString(competentAuthorities.getLabel(), true, 200, "label");
-        validationHelper.validateString(competentAuthorities.getSchedulle(), false, 2000, "Schedulle");
-        validationHelper.validateReferential(competentAuthorities.getCompetentAuthorityType(), true,
+            @RequestBody CompetentAuthority competentAuthority) throws OsirisValidationException, OsirisException {
+        if (competentAuthority.getId() != null)
+            validationHelper.validateReferential(competentAuthority, true, "competentAuthorities");
+        validationHelper.validateString(competentAuthority.getCode(), true, 20, "code");
+        validationHelper.validateString(competentAuthority.getLabel(), true, 200, "label");
+        validationHelper.validateString(competentAuthority.getSchedulle(), false, 2000, "Schedulle");
+        validationHelper.validateReferential(competentAuthority.getCompetentAuthorityType(), true,
                 "CompetentAuthorityType");
-        if (competentAuthorities.getCities() == null && competentAuthorities.getDepartments() == null
-                && competentAuthorities.getRegions() == null)
+        if (competentAuthority.getCities() == null && competentAuthority.getDepartments() == null
+                && competentAuthority.getRegions() == null)
             throw new OsirisValidationException("Cities or Departments or Regions");
 
-        if (competentAuthorities.getCities() != null)
-            for (City city : competentAuthorities.getCities())
+        if (competentAuthority.getCities() != null)
+            for (City city : competentAuthority.getCities())
                 validationHelper.validateReferential(city, false, "city");
 
-        if (competentAuthorities.getRegions() != null)
-            for (Region region : competentAuthorities.getRegions())
+        if (competentAuthority.getRegions() != null)
+            for (Region region : competentAuthority.getRegions())
                 validationHelper.validateReferential(region, false, "region");
 
-        if (competentAuthorities.getDepartments() != null)
-            for (Department department : competentAuthorities.getDepartments())
+        if (competentAuthority.getDepartments() != null)
+            for (Department department : competentAuthority.getDepartments())
                 validationHelper.validateReferential(department, false, "department");
 
-        validationHelper.validateString(competentAuthorities.getIban(), false, 40,
+        validationHelper.validateString(competentAuthority.getIban(), false, 40,
                 "Iban");
-        validationHelper.validateString(competentAuthorities.getBic(), false, 40,
+        validationHelper.validateString(competentAuthority.getBic(), false, 40,
                 "Bic");
-        validationHelper.validateString(competentAuthorities.getJssAccount(), false, 40, "JssAccount");
-        validationHelper.validateString(competentAuthorities.getContact(), false, 40, "Contact");
-        validationHelper.validateString(competentAuthorities.getMailRecipient(), false, 60, "MailRecipient");
-        validationHelper.validateString(competentAuthorities.getAddress(), false, 200, "Address");
-        validationHelper.validateString(competentAuthorities.getPostalCode(), false, 10, "PostalCode");
-        validationHelper.validateString(competentAuthorities.getCedexComplement(), false, 40, "CedexComplement");
-        validationHelper.validateReferential(competentAuthorities.getCity(), false, "City");
-        validationHelper.validateReferential(competentAuthorities.getCountry(), false, "Country");
+        validationHelper.validateString(competentAuthority.getContact(), false, 40, "Contact");
+        validationHelper.validateString(competentAuthority.getMailRecipient(), false, 60, "MailRecipient");
+        validationHelper.validateString(competentAuthority.getAddress(), false, 200, "Address");
+        validationHelper.validateString(competentAuthority.getPostalCode(), false, 10, "PostalCode");
+        validationHelper.validateString(competentAuthority.getCedexComplement(), false, 40, "CedexComplement");
+        validationHelper.validateReferential(competentAuthority.getCity(), false, "City");
+        validationHelper.validateReferential(competentAuthority.getCountry(), false, "Country");
+
+        if (competentAuthority.getPaymentTypes() != null)
+            for (PaymentType paymentType : competentAuthority.getPaymentTypes())
+                validationHelper.validateReferential(paymentType, true, "Payment type");
 
         return new ResponseEntity<CompetentAuthority>(
-                competentAuthorityService.addOrUpdateCompetentAuthority(competentAuthorities), HttpStatus.OK);
+                competentAuthorityService.addOrUpdateCompetentAuthority(competentAuthority), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/weekdays")
@@ -981,6 +984,8 @@ public class MiscellaneousController {
                 && !entityType.equals(Responsable.class.getSimpleName())
                 && !entityType.equals(Quotation.class.getSimpleName())
                 && !entityType.equals(CustomerOrder.class.getSimpleName())
+                && !entityType.equals(Provider.class.getSimpleName())
+                && !entityType.equals(CompetentAuthority.class.getSimpleName())
                 && !entityType.equals(Provision.class.getSimpleName())
                 && !entityType.equals(Invoice.class.getSimpleName()))
             throw new OsirisValidationException("entityType");

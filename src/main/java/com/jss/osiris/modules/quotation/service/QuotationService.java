@@ -43,4 +43,6 @@ public interface QuotationService {
         public void updateAssignedToForQuotation(Quotation quotation, Employee employee)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
+        public List<QuotationSearchResult> searchByCustomerOrderId(Integer idCustomerOrder);
+
 }

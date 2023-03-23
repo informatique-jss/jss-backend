@@ -1,7 +1,7 @@
 import { Attachment } from "./Attachment";
 
 export interface IAttachment {
-  id: number;
+  id: number | undefined;
   attachments: Attachment[];
 }
 

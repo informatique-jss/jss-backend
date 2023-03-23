@@ -216,7 +216,8 @@
         </fieldset>
         <mat-tab label="Facturation" *ngIf="quotation && quotation.id">
           <invoice-management [quotation]="quotation" [editMode]="editMode"
-            (invoiceItemChange)="invoiceItemChange($event)" [instanceOfCustomerOrder]="instanceOfCustomerOrder">
+            [customerOrderInvoices]="customerOrderInvoices" (invoiceItemChange)="invoiceItemChange($event)"
+            [instanceOfCustomerOrder]="instanceOfCustomerOrder">
           </invoice-management>
         </mat-tab>
         <mat-tab [label]="'Eléments '+(instanceOfCustomerOrder ? 'de la commande' : 'du devis')">

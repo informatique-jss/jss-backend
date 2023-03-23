@@ -130,6 +130,11 @@ public class MailComputeHelper {
                 if (quotationDocument.getMailsAffaire() != null && quotationDocument.getMailsAffaire().size() > 0) {
                     mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsAffaire());
                     mailComputeResult.setMailToAffaireOrigin("mails indiqués dans la commande");
+                }
+
+                if (mailComputeResult.getRecipientsMailTo().size() > 0
+                        && !quotationDocument.getAddToAffaireMailList()) {
+                    // do nothing
                 } else if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0
                         && quotation.getAssoAffaireOrders().get(0).getAffaire().getMails() != null
                         && quotation.getAssoAffaireOrders().get(0).getAffaire().getMails().size() > 0) {
@@ -138,16 +143,6 @@ public class MailComputeHelper {
                     mailComputeResult.setMailToAffaireOrigin("mails indiqués sur l'affaire");
                 } else
                     throw new OsirisClientMessageException("Aucun mail trouvé pour l'affaire");
-
-                if (quotationDocument.getMailsCCResponsableAffaire() != null
-                        && quotationDocument.getMailsCCResponsableAffaire().size() > 0) {
-                    for (Responsable responsable : quotationDocument.getMailsCCResponsableAffaire())
-                        if (responsable.getMails() != null
-                                && responsable.getMails().size() > 0) {
-                            mailComputeResult.getRecipientsMailCc().addAll(responsable.getMails());
-                            mailComputeResult.setMailCcAffaireOrigin("mails des responsables choisis");
-                        }
-                }
             }
 
             if (quotationDocument.getIsRecipientClient()
@@ -157,6 +152,9 @@ public class MailComputeHelper {
                         && quotationDocument.getMailsClient().size() > 0) {
                     mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsClient());
                     mailComputeResult.setMailToClientOrigin("mails indiqués dans la commande");
+                }
+                if (mailComputeResult.getRecipientsMailTo().size() > 0 && !quotationDocument.getAddToClientMailList()) {
+                    // do nothing
                 } else if (customerOrder instanceof Responsable
                         && ((Responsable) customerOrder).getMails() != null
                         && ((Responsable) customerOrder).getMails().size() > 0) {
@@ -180,15 +178,6 @@ public class MailComputeHelper {
                 } else
                     throw new OsirisClientMessageException("Aucun mail trouvé pour le client");
 
-                if (quotationDocument.getMailsCCResponsableClient() != null
-                        && quotationDocument.getMailsCCResponsableClient().size() > 0) {
-                    for (Responsable responsable : quotationDocument.getMailsCCResponsableClient())
-                        if (responsable.getMails() != null
-                                && responsable.getMails().size() > 0) {
-                            mailComputeResult.getRecipientsMailCc().addAll(responsable.getMails());
-                            mailComputeResult.setMailCcClientOrigin("mails des responsables choisis");
-                        }
-                }
             }
         }
         return mailComputeResult;

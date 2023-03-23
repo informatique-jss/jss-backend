@@ -68,6 +68,7 @@ import { ChipsCompetitorComponent } from '../forms/chips-competitor/chips-compet
 import { ChipsConfrereComponent } from '../forms/chips-confrere/chips-confrere.component';
 import { ChipsEmployeeComponent } from '../forms/chips-employee/chips-employee.component';
 import { ChipsMailComponent } from '../forms/chips-mail/chips-mail.component';
+import { ChipsPaymentTypeComponent } from '../forms/chips-payment-type/chips-payment-type.component';
 import { ChipsPhoneComponent } from '../forms/chips-phone/chips-phone.component';
 import { ChipsProvisionFamilyTypeComponent } from '../forms/chips-provision-family/chips-provision-family.component';
 import { ChipsSpecialOffersComponent } from '../forms/chips-special-offers/chips-special-offers.component';
@@ -390,6 +391,7 @@ const routes: Routes = [
     AutomaticMailListComponent,
     GenericChipsInputComponent,
     SelectReportingDatasetComponent,
+    ChipsPaymentTypeComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     ChipsTypeDocumentComponent,
@@ -597,6 +599,7 @@ const routes: Routes = [
     AutocompletePrincipalAccountingAccountComponent,
     GenericChipsInputComponent,
     SelectReportingDatasetComponent,
+    ChipsPaymentTypeComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     RadioGroupMotifRejetCmaComponent,

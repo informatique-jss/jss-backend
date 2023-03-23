@@ -87,10 +87,15 @@
     <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
         <th:block th:each="asso : ${assos}">
             <tr>
-                <td style="padding-top: 20px;">
+                <td style="padding-top: 20px;" th:if="${asso.affaire.denomination!=null} ">
                     <strong>Société <span th:text="${asso.affaire.denomination}"></span><span
                             th:text="${asso.affaire.firstname}"></span>
                         <span th:text="${asso.affaire.lastname}"></span></strong>
+                </td>
+                <td style="padding-top: 20px;" th:if="${asso.affaire.denomination==null} ">
+                    <strong><span th:text="${asso.affaire.civility.label}"></span> <span
+                            th:text="${asso.affaire.firstname}"></span> <span
+                            th:text="${asso.affaire.lastname}"></span></strong>
                 </td>
                 <td></td>
             </tr>

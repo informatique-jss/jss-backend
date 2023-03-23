@@ -36,7 +36,7 @@ public class Regie implements Serializable, IId {
 	@JoinColumn(name = "id_city")
 	private City city;
 
-	@Column(length = 6)
+	@Column(length = 10)
 	private String postalCode;
 
 	@Column(length = 20)

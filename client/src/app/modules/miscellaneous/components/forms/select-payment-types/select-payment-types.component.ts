@@ -30,10 +30,10 @@ export class SelectPaymentTypesComponent extends GenericSelectComponent<PaymentT
   initTypes(): void {
     this.paymentTypeService.getPaymentTypes().subscribe(response => {
       this.types = [];
-      if (!this.filteredPaymentType) {
+      if (!this.filteredPaymentType || this.filteredPaymentType.length == 0) {
         this.types = response;
       } else {
-        if (this.filteredPaymentType) {
+        if (this.filteredPaymentType && this.filteredPaymentType.length > 0) {
           for (let paymentType of response) {
             for (let filter of this.filteredPaymentType)
               if (filter && filter.code == paymentType.code && this.types.indexOf(paymentType) < 0)

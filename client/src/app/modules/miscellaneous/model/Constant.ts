@@ -73,7 +73,8 @@ export interface Constant {
   billingTypeDeboursNonTaxable: BillingType;
   billingTypeLogo: BillingType;
   billingTypeRedactedByJss: BillingType;
-  billingTypeBaloPackage: BillingType;
+  billingTypeBaloPackage: BillingType; 
+  billingTypeBaloPublicationFlag: BillingType; 
   billingTypeBaloNormalization: BillingType;
   billingTypePublicationPaper: BillingType;
   billingTypePublicationReceipt: BillingType;
@@ -148,11 +149,13 @@ export interface Constant {
   competentAuthorityTypeCci: CompetentAuthorityType;
   competentAuthorityTypeChambreMetier: CompetentAuthorityType;
   competentAuthorityTypeDireccte: CompetentAuthorityType;
+  competentAuthorityTypePrefecture: CompetentAuthorityType;
   invoiceStatusSend: InvoiceStatus;
   invoiceStatusReceived: InvoiceStatus;
   invoiceStatusPayed: InvoiceStatus;
   invoiceStatusCancelled: InvoiceStatus;
   invoiceStatusCreditNoteEmited: InvoiceStatus;
+  invoiceStatusCreditNoteReceived: InvoiceStatus;
   paymentWayInbound: PaymentWay;
   paymentWayOutboud: PaymentWay;
   vatTwenty: Vat;

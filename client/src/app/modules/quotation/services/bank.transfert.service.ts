@@ -15,9 +15,17 @@ export class BankTransfertService extends AppRestService<BankTransfert>{
   getBankTransfers() {
     return this.getList(new HttpParams(), "bank-transferts");
   }
-  
-   addOrUpdateBankTransfert(bankTransfert: BankTransfert) {
-    return this.addOrUpdate(new HttpParams(), "bank-transfert", bankTransfert, "Enregistré", "Erreur lors de l'enregistrement");
+
+  cancelBankTransfert(bankTransfert: BankTransfert) {
+    return this.get(new HttpParams().set("idBankTranfert", bankTransfert.id), "bank-transfert/cancel");
+  }
+
+  selectBankTransfertForExport(bankTransfert: BankTransfert) {
+    return this.get(new HttpParams().set("idBankTranfert", bankTransfert.id), "bank-transfert/export/select");
+  }
+
+  unselectBankTransfertForExport(bankTransfert: BankTransfert) {
+    return this.get(new HttpParams().set("idBankTranfert", bankTransfert.id), "bank-transfert/export/unselect");
   }
 
 }

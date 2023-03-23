@@ -1,24 +1,11 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
-import com.jss.osiris.libs.JacksonLocalDateDeserializer;
-import com.jss.osiris.libs.JacksonLocalDateSerializer;
-import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
-import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
@@ -61,37 +48,14 @@ import com.jss.osiris.modules.tiers.model.TiersType;
 public class ConstantServiceImpl implements ConstantService {
 
     @Autowired
-    ConstantRepository constantRepository;
+    ConstantServiceProxyImpl constantServiceProxyImpl;
 
-    Constant constantsSingleton = null;
+    @Autowired
+    ConstantRepository constantRepository;
 
     @Override
     public Constant getConstants() throws OsirisException {
-        if (constantsSingleton != null)
-            return constantsSingleton;
-        List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
-        if (constants == null || constants.size() != 1)
-            throw new OsirisException(null, "Constants not defined or multiple");
-        fecthAllProperty(constants.get(0));
-        constantsSingleton = constants.get(0);
-        return constantsSingleton;
-    }
-
-    private void fecthAllProperty(Constant contants) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        SimpleModule simpleModule = new SimpleModule("SimpleModule");
-        simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
-        simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
-        simpleModule.addDeserializer(LocalDateTime.class, new JacksonLocalDateTimeDeserializer());
-        simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
-        objectMapper.registerModule(simpleModule);
-        Hibernate5Module module = new Hibernate5Module();
-        module.enable(Feature.FORCE_LAZY_LOADING);
-        objectMapper.registerModule(module);
-        try {
-            objectMapper.writeValueAsString(contants);
-        } catch (JsonProcessingException e) {
-        }
+        return constantServiceProxyImpl.getConstants();
     }
 
     @Override
@@ -105,9 +69,8 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Constant addOrUpdateConstant(
-            Constant constant) {
-        constantsSingleton = constantRepository.save(constant);
-        return constantsSingleton;
+            Constant constant) throws OsirisException {
+        return constantServiceProxyImpl.addOrUpdateConstant(constant);
     }
 
     @Override
@@ -315,7 +278,12 @@ public class ConstantServiceImpl implements ConstantService {
         return getConstants().getBillingTypeBaloNormalization();
     }
 
-    @Override
+    @Override 
+    public BillingType getBillingTypeBaloPublicationFlag() throws OsirisException {
+        return getConstants().getBillingTypeBaloPublicationFlag();
+    }
+
+    @Override 
     public BillingType getBillingTypePublicationPaper() throws OsirisException {
         return getConstants().getBillingTypePublicationPaper();
     }
@@ -671,6 +639,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public CompetentAuthorityType getCompetentAuthorityTypePrefecture() throws OsirisException {
+        return getConstants().getCompetentAuthorityTypePrefecture();
+    }
+
+    @Override
     public CompetentAuthorityType getCompetentAuthorityTypeCfp() throws OsirisException {
         return getConstants().getCompetentAuthorityTypeCfp();
     }
@@ -698,6 +671,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public InvoiceStatus getInvoiceStatusCreditNoteEmited() throws OsirisException {
         return getConstants().getInvoiceStatusCreditNoteEmited();
+    }
+
+    @Override
+    public InvoiceStatus getInvoiceStatusCreditNoteReceived() throws OsirisException {
+        return getConstants().getInvoiceStatusCreditNoteReceived();
     }
 
     @Override

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +21,15 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -96,6 +100,18 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     CustomerMailService customerMailService;
+
+    @Autowired
+    CompetentAuthorityService competentAuthorityService;
+
+    @Autowired
+    ProviderService providerService;
+
+    @Autowired
+    ConstantService constantService;
+
+    @Autowired
+    MailHelper mailHelper;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -173,6 +189,16 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (responsable == null)
                 return new ArrayList<Attachment>();
             attachment.setResponsable(responsable);
+        } else if (entityType.equals(Provider.class.getSimpleName())) {
+            Provider provider = providerService.getProvider(idEntity);
+            if (provider == null)
+                return new ArrayList<Attachment>();
+            attachment.setProvider(provider);
+        } else if (entityType.equals(CompetentAuthority.class.getSimpleName())) {
+            CompetentAuthority competentAuthority = competentAuthorityService.getCompetentAuthority(idEntity);
+            if (competentAuthority == null)
+                return new ArrayList<Attachment>();
+            attachment.setCompetentAuthority(competentAuthority);
         } else if (entityType.equals(Quotation.class.getSimpleName())) {
             Quotation quotation = quotationService.getQuotation(idEntity);
             if (quotation == null)
@@ -183,6 +209,13 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (provision == null)
                 return new ArrayList<Attachment>();
             attachment.setProvision(provision);
+
+            // Send Kbis immediatly to customer order
+            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeKbisUpdated().getId())) {
+                addOrUpdateAttachment(attachment);
+                mailHelper.sendCustomerOrderAttachmentsToCustomer(provision.getAssoAffaireOrder().getCustomerOrder(),
+                        provision.getAssoAffaireOrder(), false, Arrays.asList(attachment));
+            }
         } else if (entityType.equals(CustomerOrder.class.getSimpleName())) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idEntity);
             if (customerOrder == null)
@@ -239,6 +272,10 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByInvoiceId(idEntity);
         } else if (entityType.equals(CustomerMail.class.getSimpleName())) {
             attachments = attachmentRepository.findByCustomerMailId(idEntity);
+        } else if (entityType.equals(Provider.class.getSimpleName())) {
+            attachments = attachmentRepository.findByProviderId(idEntity);
+        } else if (entityType.equals(CompetentAuthority.class.getSimpleName())) {
+            attachments = attachmentRepository.findByCompetentAuthorityId(idEntity);
         }
         return attachments;
     }

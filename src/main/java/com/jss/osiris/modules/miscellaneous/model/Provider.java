@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.miscellaneous.model;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -12,13 +11,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
-public class Provider implements Serializable, IId {
+public class Provider implements IId, IAttachment {
 
 	@Id
 	@SequenceGenerator(name = "provider_sequence", sequenceName = "provider_sequence", allocationSize = 1)
@@ -73,6 +73,9 @@ public class Provider implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type")
 	private PaymentType paymentType;
+
+	@OneToMany(mappedBy = "provider")
+	private List<Attachment> attachments;
 
 	public Integer getId() {
 		return id;
@@ -184,6 +187,14 @@ public class Provider implements Serializable, IId {
 
 	public void setBic(String bic) {
 		this.bic = bic;
+	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
 	}
 
 }

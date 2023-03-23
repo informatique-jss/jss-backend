@@ -286,3 +286,12 @@
     </mat-tab>
   </mat-tab-group>
 </div>
+<button matTooltip="Editer la facture" mat-fab color="accent" class="fab-button" (click)="editInvoice($event)"
+  (auxclick)="editInvoice($event)">
+  <mat-icon>edit</mat-icon>
+</button>
+<button
+  *ngIf="false && invoice && (invoice.invoiceStatus.code==invoiceStatusSend.code || invoice.invoiceStatus.code==invoiceStatusPayed.code  || invoice.invoiceStatus.code==invoiceStatusReceived.code) "
+  matTooltip="Annuler la facture" mat-fab color="accent" class="second-fab-button" (click)="cancelInvoice($event)">
+  <mat-icon>close</mat-icon>
+</button>

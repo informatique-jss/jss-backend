@@ -162,9 +162,16 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                 + invoice.getCommandNumber());
         directDebitTransfert.setIsAlreadyExported(false);
         directDebitTransfert.setTransfertAmount(invoice.getTotalPrice());
-        directDebitTransfert.setTransfertDateTime(LocalDateTime.now());
+        directDebitTransfert.setTransfertDateTime(invoice.getDueDate().atTime(12, 0));
         directDebitTransfert.setTransfertIban(invoiceHelper.getIbanOfOrderingCustomer(invoice));
         directDebitTransfert.setTransfertBic(invoiceHelper.getBicOfOrderingCustomer(invoice));
+
+        if (directDebitTransfert.getTransfertIban() == null || directDebitTransfert.getTransfertBic() == null)
+            throw new OsirisException(null, "IBAN or BIC not found for direct debit transfert");
+
+        directDebitTransfert.setTransfertIban(directDebitTransfert.getTransfertIban().replaceAll(" ", ""));
+        directDebitTransfert.setTransfertBic(directDebitTransfert.getTransfertBic().replaceAll(" ", ""));
+
         directDebitTransfert.setSepaMandateReference(sepaReference);
         directDebitTransfert.setSepaMandateSignatureDate(sepaDate);
         directDebitTransfert.setCustomerOrderLabel(customerOrderLabel);
@@ -205,67 +212,70 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
             header.setInitgPtyBean(emiterDetails);
             emiterDetails.setNm("JOURNAL SPECIAL DES SOCIETES");
 
-            PmtInfBean body = new PmtInfBean();
-            document.getCstmrCdtTrfInitnBean().setPmtInfBean(body);
-            body.setPmtInfId("REF PRELVT");
-            body.setPmtMtd("DD");
-            body.setBtchBookg(false);
-            body.setNbOfTxs(bankTransferts.size());
-            body.setCtrlSum(totalAmount);
-
-            PmtTpInfBean bodyTransfertType = new PmtTpInfBean();
-
-            SvcLvlBean transfertNorm = new SvcLvlBean();
-            bodyTransfertType.setSvcLvlBean(transfertNorm);
-            transfertNorm.setCd("SEPA");
-
-            CtgyPurpBean transfertPurpose = new CtgyPurpBean();
-            bodyTransfertType.setLclInstrmBean(transfertPurpose);
-            transfertPurpose.setCd("CORE");
-
-            bodyTransfertType.setSeqTp("RCUR");
-
-            body.setReqdColltnDt(LocalDateTime.now().plusDays(1).format(formatterDate));
-
-            DbtrBean debiteur = new DbtrBean();
-            body.setCdtrBean(debiteur);
-            debiteur.setNm("JOURNAL SPECIAL DES SOCIETES");
-
-            DbtrAcctBean account = new DbtrAcctBean();
-            body.setCdtrAcctBean(account);
-            IdBean accountId = new IdBean();
-            accountId.setIban(ibanJss.replaceAll(" ", ""));
-            account.setIdBean(accountId);
-
-            DbtrAgtBean bic = new DbtrAgtBean();
-            body.setCdtrAgtBean(bic);
-            FinInstnIdBean financialInstitution = new FinInstnIdBean();
-            financialInstitution.setBic(bicJss);
-            bic.setFinInstnIdBean(financialInstitution);
-
-            body.setChrgBr("SLEV");
-
-            CdtrSchmeIdBean cdtrSchmeIdBean = new CdtrSchmeIdBean();
-            body.setCdtrSchmeIdBean(cdtrSchmeIdBean);
-
-            CdtrSchmeIdBeanIdBean cdtrSchmeIdBeanIdBean = new CdtrSchmeIdBeanIdBean();
-            cdtrSchmeIdBean.setIdBean(cdtrSchmeIdBeanIdBean);
-
-            PrvtIdBean prvtIdBean = new PrvtIdBean();
-            cdtrSchmeIdBeanIdBean.setPrvtIdBean(prvtIdBean);
-
-            PrvtOtherBean prvtOtherBean = new PrvtOtherBean();
-            prvtIdBean.setPrvtOtherBean(prvtOtherBean);
-
-            SchmeNmBean schmeNmBean = new SchmeNmBean();
-            prvtOtherBean.setSchmeNmBean(schmeNmBean);
-
-            schmeNmBean.setPrtry("SEPA");
-            prvtOtherBean.setId(jssSepaIdentification);
-
-            body.setDrctDbtTxInfBeanList(new ArrayList<DrctDbtTxInfBean>());
+            document.getCstmrCdtTrfInitnBean().setPmtInfBean(new ArrayList<PmtInfBean>());
 
             for (DirectDebitTransfertSearchResult bankTransfert : bankTransferts) {
+
+                PmtInfBean body = new PmtInfBean();
+                document.getCstmrCdtTrfInitnBean().getPmtInfBean().add(body);
+                body.setPmtInfId("REF PRELVT");
+                body.setPmtMtd("DD");
+                body.setBtchBookg(false);
+                body.setNbOfTxs(bankTransferts.size());
+                body.setCtrlSum(totalAmount);
+
+                PmtTpInfBean bodyTransfertType = new PmtTpInfBean();
+
+                SvcLvlBean transfertNorm = new SvcLvlBean();
+                bodyTransfertType.setSvcLvlBean(transfertNorm);
+                transfertNorm.setCd("SEPA");
+
+                CtgyPurpBean transfertPurpose = new CtgyPurpBean();
+                bodyTransfertType.setLclInstrmBean(transfertPurpose);
+                transfertPurpose.setCd("CORE");
+
+                bodyTransfertType.setSeqTp("RCUR");
+
+                body.setReqdColltnDt(bankTransfert.getTransfertDate().format(formatterDate));
+
+                DbtrBean debiteur = new DbtrBean();
+                body.setCdtrBean(debiteur);
+                debiteur.setNm("JOURNAL SPECIAL DES SOCIETES");
+
+                DbtrAcctBean account = new DbtrAcctBean();
+                body.setCdtrAcctBean(account);
+                IdBean accountId = new IdBean();
+                accountId.setIban(ibanJss.replaceAll(" ", ""));
+                account.setIdBean(accountId);
+
+                DbtrAgtBean bic = new DbtrAgtBean();
+                body.setCdtrAgtBean(bic);
+                FinInstnIdBean financialInstitution = new FinInstnIdBean();
+                financialInstitution.setBic(bicJss);
+                bic.setFinInstnIdBean(financialInstitution);
+
+                body.setChrgBr("SLEV");
+
+                CdtrSchmeIdBean cdtrSchmeIdBean = new CdtrSchmeIdBean();
+                body.setCdtrSchmeIdBean(cdtrSchmeIdBean);
+
+                CdtrSchmeIdBeanIdBean cdtrSchmeIdBeanIdBean = new CdtrSchmeIdBeanIdBean();
+                cdtrSchmeIdBean.setIdBean(cdtrSchmeIdBeanIdBean);
+
+                PrvtIdBean prvtIdBean = new PrvtIdBean();
+                cdtrSchmeIdBeanIdBean.setPrvtIdBean(prvtIdBean);
+
+                PrvtOtherBean prvtOtherBean = new PrvtOtherBean();
+                prvtIdBean.setPrvtOtherBean(prvtOtherBean);
+
+                SchmeNmBean schmeNmBean = new SchmeNmBean();
+                prvtOtherBean.setSchmeNmBean(schmeNmBean);
+
+                schmeNmBean.setPrtry("SEPA");
+                prvtOtherBean.setId(jssSepaIdentification);
+
+                body.setDrctDbtTxInfBeanList(new ArrayList<DrctDbtTxInfBean>());
+
                 DirectDebitTransfert completeTransfert = getDirectDebitTransfert(bankTransfert.getId());
 
                 DrctDbtTxInfBean prelevement = new DrctDbtTxInfBean();
@@ -296,7 +306,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
                 DbtrBean customerOrder = new DbtrBean();
                 prelevement.setDbtrBean(customerOrder);
-                customerOrder.setNm(completeTransfert.getCustomerOrderLabel());
+                customerOrder.setNm(StringUtils.substring(completeTransfert.getCustomerOrderLabel(), 0, 139));
 
                 DbtrAcctBean customerAccount = new DbtrAcctBean();
                 prelevement.setDbtrAcctBean(customerAccount);
@@ -306,7 +316,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
                 RmtInfBean virementLabel = new RmtInfBean();
                 prelevement.setRmtInfBean(virementLabel);
-                virementLabel.setUstrd(completeTransfert.getLabel());
+                virementLabel.setUstrd(StringUtils.substring(completeTransfert.getLabel(), 0, 139));
 
                 body.getDrctDbtTxInfBeanList().add(prelevement);
 

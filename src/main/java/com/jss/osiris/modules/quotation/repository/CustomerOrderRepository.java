@@ -29,6 +29,7 @@ public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, I
                         + " coalesce(t2.id,t.id) as tiersId,"
                         + " cf.id as confrereId,"
                         + " sum(COALESCE(i.pre_tax_price,0)+COALESCE(i.vat_price,0)-COALESCE(i.discount_amount,0)) as totalPrice ,"
+                        + " (select sum(COALESCE(deposit.deposit_amount,0)) from deposit where deposit.id_customer_order = co.id and deposit.is_cancelled=false ) as depositTotalAmount ,"
                         + " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')' ,', ' ) as affaireLabel,"
                         + " STRING_AGG(DISTINCT af.siren ,', '  ) as affaireSiren,"
                         + " STRING_AGG(DISTINCT af.address ||' '||af.postal_code||' '||city.label ||' '||country.label ,', '  ) as affaireAddress,"
@@ -51,8 +52,10 @@ public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, I
                         + " left join responsable r on r.id = co.id_responsable"
                         + " left join tiers t on t.id = co.id_tiers"
                         + " left join tiers t2 on t2.id = r.id_tiers"
+                        + " left join asso_quotation_customer_order asso_co on asso_co.id_customer_order = co.id "
                         + " where ( COALESCE(:customerOrderStatus) =0 or co.id_customer_order_status in (:customerOrderStatus)) "
                         + " and co.created_date>=:startDate and co.created_date<=:endDate "
+                        + " and ( :quotationId =0 or asso_co.id_quotation = :quotationId)"
                         + " and ( COALESCE(:assignedToEmployee) =0 or co.id_assigned_to in (:assignedToEmployee))"
                         + " and ( COALESCE(:salesEmployee) =0 or cf.id_commercial in (:salesEmployee) or r.id_commercial in (:salesEmployee) or t.id_commercial in (:salesEmployee) or t.id_commercial is null and t2.id_commercial in (:salesEmployee))"
                         + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder))"
@@ -63,7 +66,8 @@ public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, I
                         @Param("assignedToEmployee") List<Integer> assignedToEmployee,
                         @Param("customerOrderStatus") List<Integer> customerOrderStatus,
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                        @Param("customerOrder") List<Integer> customerOrder, @Param("affaire") List<Integer> affaire);
+                        @Param("customerOrder") List<Integer> customerOrder, @Param("affaire") List<Integer> affaire,
+                        @Param("quotationId") Integer quotationId);
 
         @Query(value = "select n from CustomerOrder n where customerOrderStatus=:customerOrderStatus and thirdReminderDateTime is null ")
         List<CustomerOrder> findCustomerOrderForReminder(
@@ -71,5 +75,7 @@ public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, I
 
         @Query(value = "select c.* from customer_order c where exists (select 1 from asso_affaire_order a join provision p on p.id_asso_affaire_order = a.id where a.id_customer_order = c.id and  p.id_announcement = :announcementId)", nativeQuery = true)
         Optional<CustomerOrder> findCustomerOrderForAnnouncement(@Param("announcementId") Integer announcementId);
+
+        List<CustomerOrder> findByQuotations_Id(Integer idQuotation);
 
 }

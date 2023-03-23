@@ -1,10 +1,12 @@
 package com.jss.osiris.libs.transfer;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PmtTpInfBean {
 	@JacksonXmlProperty(localName = "InstrPrty")
-	String instrPrty = "";
+	String instrPrty;
 
 	@JacksonXmlProperty(localName = "SvcLvl")
 	SvcLvlBean svcLvlBean;
@@ -16,7 +18,7 @@ public class PmtTpInfBean {
 	CtgyPurpBean lclInstrmBean;
 
 	@JacksonXmlProperty(localName = "SeqTp")
-	String seqTp = "";
+	String seqTp;
 
 	public void setInstrPrty(String instrPrty) {
 		this.instrPrty = instrPrty;

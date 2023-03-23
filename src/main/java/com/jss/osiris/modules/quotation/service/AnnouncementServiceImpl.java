@@ -31,6 +31,7 @@ import com.jss.osiris.modules.quotation.model.AnnouncementSearch;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearchResult;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -457,6 +458,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 }
             }
         }
+    }
+
+    @Override
+    public Confrere getConfrereForAnnouncement(Integer idAnnouncement) {
+        Announcement announcement = getAnnouncement(idAnnouncement);
+        if (announcement != null)
+            return announcement.getConfrere();
+        return null;
     }
 
 }

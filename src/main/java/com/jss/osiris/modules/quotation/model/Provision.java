@@ -89,7 +89,9 @@ public class Provision implements IId, IAttachment {
 
 	@Column(nullable = false)
 	private Boolean isBaloPackage;
-
+ 
+	private Boolean isBaloPublicationFlag; 
+  
 	private Boolean isBaloNormalization;
 
 	@Column(nullable = false)
@@ -539,7 +541,15 @@ public class Provision implements IId, IAttachment {
 	public void setDebours(List<Debour> debours) {
 		this.debours = debours;
 	}
+ 
+	public Boolean getIsBaloPublicationFlag() {
+		return isBaloPublicationFlag;
+	}
 
+	public void setIsBaloPublicationFlag(Boolean isBaloPublicationFlag) {
+		this.isBaloPublicationFlag = isBaloPublicationFlag;
+	}
+ 
 	public Boolean getIsBaloNormalization() {
 		return isBaloNormalization;
 	}

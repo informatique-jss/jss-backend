@@ -59,6 +59,7 @@ import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.controller.QuotationController;
+import com.jss.osiris.modules.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
@@ -167,6 +168,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Value("${payment.cb.redirect.invoice.entry.point}")
     private String paymentCbRedirectInvoice;
+
+    @Autowired
+    QuotationValidationHelper quotationValidationHelper;
 
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
@@ -345,7 +349,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (targetStatusCode.equals(CustomerOrderStatus.OPEN)) {
                 boolean hasError = false;
                 try {
-                    quotationController.validateQuotationAndCustomerOrder(customerOrder,
+                    quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder,
                             CustomerOrderStatus.BEING_PROCESSED);
                 } catch (Exception e) {
                     hasError = true;
@@ -446,7 +450,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         break;
                     }
             moveInvoiceDepositToCustomerOrderDeposit(customerOrder, invoiceToCancel);
-            invoiceService.cancelInvoice(invoiceToCancel, customerOrder);
+            invoiceService.cancelInvoiceEmitted(invoiceToCancel, customerOrder);
         }
 
         CustomerOrderStatus customerOrderStatus = customerOrderStatusService
@@ -673,7 +677,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 salesEmployeeId, assignedToEmployeeId,
                 statusId,
                 orderingSearch.getStartDate().withHour(0).withMinute(0),
-                orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId);
+                orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId, 0);
         return customerOrders;
     }
 
@@ -1053,5 +1057,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         customerOrder.setAssignedTo(employee);
         addOrUpdateCustomerOrder(customerOrder, true, false);
+    }
+
+    @Override
+    public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation) {
+        return customerOrderRepository.findCustomerOrders(
+                Arrays.asList(0), Arrays.asList(0), Arrays.asList(0), LocalDateTime.now().minusYears(100),
+                LocalDateTime.now().plusYears(100), Arrays.asList(0), Arrays.asList(0), idQuotation);
     }
 }

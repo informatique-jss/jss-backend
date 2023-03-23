@@ -35,7 +35,7 @@ public interface InvoiceService {
          */
         public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer) throws OsirisException;
 
-        public List<Invoice> getInvoiceForCustomerOrder(Integer customerOrderId);
+        public List<InvoiceSearchResult> getInvoiceForCustomerOrder(Integer customerOrderId) throws OsirisException;
 
         public LocalDate getFirstBillingDateForTiers(Tiers tiers);
 
@@ -45,16 +45,24 @@ public interface InvoiceService {
 
         public void reindexInvoices();
 
-        public void unletterInvoice(Invoice invoice) throws OsirisException;
+        public void unletterInvoiceEmitted(Invoice invoice) throws OsirisException;
 
         public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws OsirisException, OsirisClientMessageException;
 
-        public Invoice cancelInvoice(Invoice invoice, CustomerOrder customerOrder)
+        public Invoice cancelInvoiceEmitted(Invoice invoice, CustomerOrder customerOrder)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
+        public Invoice cancelInvoiceFromUser(Invoice invoice)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void sendRemindersForInvoices()
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException;
+
+        public List<InvoiceSearchResult> getProviderInvoiceForCustomerOrder(Integer customerOrderId)
+                        throws OsirisException;
+
+        public CustomerOrder getCustomerOrderByIdInvoice(Integer idInvoice);
 
 }

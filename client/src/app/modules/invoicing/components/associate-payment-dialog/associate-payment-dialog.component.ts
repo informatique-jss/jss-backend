@@ -23,6 +23,7 @@ import { DebourSearchResult } from '../../../quotation/model/DebourSearchResult'
 import { OrderingSearchResult } from '../../../quotation/model/OrderingSearchResult';
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
 import { DebourService } from '../../../quotation/services/debour.service';
+import { Responsable } from '../../../tiers/model/Responsable';
 import { AssociationSummaryTable } from '../../model/AssociationSummaryTable';
 import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
 import { Payment } from '../../model/Payment';
@@ -192,8 +193,10 @@ export class AssociatePaymentDialogComponent implements OnInit {
       let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
         width: '100%'
       });
+
       let asso = { payment: this.payment, invoice: invoice } as AssociationSummaryTable;
       let maxAmount = Math.round((Math.min(this.getLeftMaxAmountPayed(asso), this.getInitialAmount(asso) - this.getInitialPayedAmount(asso))) * 100) / 100;
+      amountDialogRef.componentInstance.label = "Indiquer le montant à utiliser (max : " + maxAmount + " €) :";
       amountDialogRef.componentInstance.maxAmount = maxAmount;
       amountDialogRef.afterClosed().subscribe(response => {
         if (response != null) {
@@ -231,6 +234,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
       });
       let asso = { payment: this.payment, customerOrder: order, } as AssociationSummaryTable;
       let maxAmount = Math.round((this.getLeftMaxAmountPayed(asso)) * 100) / 100;
+      amountDialogRef.componentInstance.label = "Indiquer le montant à utiliser (max : " + maxAmount + " €) :";
       amountDialogRef.componentInstance.maxAmount = maxAmount;
       amountDialogRef.afterClosed().subscribe(response => {
         if (response != null) {
@@ -274,6 +278,11 @@ export class AssociatePaymentDialogComponent implements OnInit {
 
   isSameCustomerOrder(newCustomerOrder: ITiers): boolean {
     let currentCustomerOrder: ITiers | undefined = undefined;
+
+    // If responsable, consider tiers
+    if ((newCustomerOrder as Responsable).tiers)
+      newCustomerOrder = (newCustomerOrder as Responsable).tiers;
+
     if (this.associationSummaryTable)
       for (let asso of this.associationSummaryTable) {
         let customerOrder;
@@ -283,6 +292,10 @@ export class AssociatePaymentDialogComponent implements OnInit {
           customerOrder = getCustomerOrderForIQuotation(asso.customerOrder);
         if (currentCustomerOrder == undefined)
           currentCustomerOrder = customerOrder;
+
+        if ((currentCustomerOrder as Responsable).tiers)
+          currentCustomerOrder = (currentCustomerOrder as Responsable).tiers;
+
         if (currentCustomerOrder != undefined && newCustomerOrder != undefined && currentCustomerOrder?.id != newCustomerOrder.id)
           return false;
       }

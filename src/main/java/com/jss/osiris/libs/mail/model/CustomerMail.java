@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.profile.model.Employee;
@@ -127,6 +128,7 @@ public class CustomerMail {
 
     @ManyToOne
     @JoinColumn(name = "id_customer_order")
+    @JsonIgnore // For client-side performance purpose
     @JsonIgnoreProperties(value = { "assoAffaireOrders", "tiers", "responsable", "confrere", "invoices",
             "providerInvoices" }, allowSetters = true)
     CustomerOrder customerOrder;

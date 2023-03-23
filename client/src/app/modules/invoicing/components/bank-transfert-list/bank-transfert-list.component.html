@@ -19,6 +19,11 @@
             [form]="transfertForm" propertyName="isHideExportedBankTransfert"></generic-toggle>
         </td>
         <td>
+          <generic-toggle [(model)]="transfertSearch.isDisplaySelectedForExportBankTransfert"
+            label="Afficher la sélection" [form]="transfertForm"
+            propertyName="isDisplaySelectedForExportBankTransfert"></generic-toggle>
+        </td>
+        <td>
           <generic-date-range-picker [(modelStart)]="transfertSearch.startDate" [(modelEnd)]="transfertSearch.endDate"
             label="Plage de recherche" [form]="transfertForm" propertyNameStart="startDate" propertyNameEnd="endDate">
           </generic-date-range-picker>

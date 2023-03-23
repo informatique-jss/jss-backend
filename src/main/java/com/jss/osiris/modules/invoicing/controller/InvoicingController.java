@@ -804,6 +804,19 @@ public class InvoicingController {
         return new ResponseEntity<Invoice>(invoiceService.addOrUpdateInvoiceFromUser(invoice), HttpStatus.OK);
     }
 
+    @PostMapping(inputEntryPoint + "/invoice/cancel")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<Invoice> cancelInvoice(@RequestBody Invoice invoice)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        validationHelper.validateReferential(invoice, true, "Invoice");
+
+        if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
+                && !invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusPayed().getId()))
+            throw new OsirisValidationException("Invoice must be at sent or payed status to be cancelled");
+
+        return new ResponseEntity<Invoice>(invoiceService.cancelInvoiceEmitted(invoice, null), HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/invoice-status-list")
     public ResponseEntity<List<InvoiceStatus>> getInvoiceStatus() {
         return new ResponseEntity<List<InvoiceStatus>>(invoiceStatusService.getInvoiceStatus(), HttpStatus.OK);
@@ -823,8 +836,17 @@ public class InvoicingController {
     }
 
     @GetMapping(inputEntryPoint + "/invoice/customer-order")
-    public ResponseEntity<List<Invoice>> getInvoiceForCustomerOrder(@RequestParam Integer customerOrderId) {
-        return new ResponseEntity<List<Invoice>>(invoiceService.getInvoiceForCustomerOrder(customerOrderId),
+    public ResponseEntity<List<InvoiceSearchResult>> getInvoiceForCustomerOrder(@RequestParam Integer customerOrderId)
+            throws OsirisException {
+        return new ResponseEntity<List<InvoiceSearchResult>>(invoiceService.getInvoiceForCustomerOrder(customerOrderId),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/invoice/customer-order/provider")
+    public ResponseEntity<List<InvoiceSearchResult>> getProviderInvoiceForCustomerOrder(
+            @RequestParam Integer customerOrderId) throws OsirisException {
+        return new ResponseEntity<List<InvoiceSearchResult>>(
+                invoiceService.getProviderInvoiceForCustomerOrder(customerOrderId),
                 HttpStatus.OK);
     }
 

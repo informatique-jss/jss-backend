@@ -11,6 +11,7 @@ export class AmountDialogComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<AmountDialogComponent>, private formBuilder: FormBuilder) { }
 
+  label: string = "";
   maxAmount: number = 0;
   amount: number = 0;
 

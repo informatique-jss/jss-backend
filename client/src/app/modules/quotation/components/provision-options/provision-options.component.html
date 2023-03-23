@@ -36,7 +36,14 @@
               [form]="optionForm" (onToggleChange)="provisionChangeFunction()"
               propertyName="isBaloNormalization"></generic-toggle>
           </td>
-        </tr>
+        </tr> 
+        <tr *ngIf="displayOption(billingTypeBaloPublicationFlag)">
+          <td>
+            <generic-toggle [(model)]="provision.isBaloPublicationFlag" label="Justificatif numérique BALO ?"
+              [form]="optionForm" (onToggleChange)="provisionChangeFunction()"
+              propertyName="isBaloPublicationFlag"></generic-toggle>
+          </td>
+        </tr> 
         <tr *ngIf="displayOption(billingTypePublicationReceipt) && provision.announcement && provision.announcement.confrere
          && provision.announcement.confrere.journalType.id==journalTypePaper.id">
           <td>
@@ -160,7 +167,7 @@
         </tr>
         <tr *ngIf="displayOption(billingTypeChronopostFees)">
           <td>
-            <generic-toggle [(model)]="provision.isChronopostFees" label="Frais de Chronopost ?" [form]="optionForm"
+            <generic-toggle [(model)]="provision.isChronopostFees" label="Frais de ports ?" [form]="optionForm"
               (onToggleChange)="provisionChangeFunction()" propertyName="isChronopostFees"></generic-toggle>
           </td>
         </tr>

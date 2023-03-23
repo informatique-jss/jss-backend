@@ -1,13 +1,17 @@
 package com.jss.osiris.libs.transfer;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+@JsonPropertyOrder({ "InstrId", "EndToEndId" })
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PmtIdBean {
 	@JacksonXmlProperty(localName = "EndToEndId")
-	String endToEndId = "";
+	String endToEndId;
 
 	@JacksonXmlProperty(localName = "InstrId")
-	String instrId = "";
+	String instrId;
 
 	public void setEndToEndId(String endToEndId) {
 		this.endToEndId = endToEndId;

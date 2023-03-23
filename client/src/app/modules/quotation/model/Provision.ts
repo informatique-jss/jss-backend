@@ -26,7 +26,8 @@ export interface Provision extends IAttachment {
   assignedTo: Employee;
   isLogo: boolean;
   isRedactedByJss: boolean;
-  isBaloPackage: boolean;
+  isBaloPackage: boolean; 
+  isBaloPublicationFlag: boolean; 
   isBaloNormalization: boolean;
   isPublicationReceipt: boolean;
   isPublicationPaper: boolean;
@@ -57,5 +58,4 @@ export interface Provision extends IAttachment {
   isVacationUpdateBeneficialOwners: boolean;
   isFormalityAdditionalDeclaration: boolean;
   isCorrespondenceFees: boolean;
-
 }

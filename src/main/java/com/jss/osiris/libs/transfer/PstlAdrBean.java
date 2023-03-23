@@ -1,10 +1,12 @@
 package com.jss.osiris.libs.transfer;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PstlAdrBean {
 	@JacksonXmlProperty(localName = "Ctry")
-	String ctry = "";
+	String ctry;
 
 	@JacksonXmlProperty(localName = "AdrLine")
 	String adrLine;

@@ -205,7 +205,11 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_billing_type_balo_normalization")
 	private BillingType billingTypeBaloNormalization;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER) 
+	@JoinColumn(name = "id_billing_type_balo_publication_flag")
+	private BillingType billingTypeBaloPublicationFlag;
+
+	@ManyToOne(fetch = FetchType.EAGER)  
 	@JoinColumn(name = "id_billing_type_publication_paper")
 	private BillingType billingTypePublicationPaper;
 
@@ -469,6 +473,10 @@ public class Constant implements Serializable, IId {
 	private CompetentAuthorityType competentAuthorityTypeDireccte;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_competent_authority_type_prefecture")
+	private CompetentAuthorityType competentAuthorityTypePrefecture;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_invoice_status_send")
 	private InvoiceStatus invoiceStatusSend;
 
@@ -487,6 +495,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_invoice_status_credit_note_emited")
 	private InvoiceStatus invoiceStatusCreditNoteEmited;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_invoice_status_credit_note_received")
+	private InvoiceStatus invoiceStatusCreditNoteReceived;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_payment_way_inbound")
@@ -1899,12 +1911,36 @@ public class Constant implements Serializable, IId {
 	public void setCompetentAuthorityInfogreffe(CompetentAuthority competentAuthorityInfogreffe) {
 		this.competentAuthorityInfogreffe = competentAuthorityInfogreffe;
 	}
+ 
+	public CompetentAuthorityType getCompetentAuthorityTypePrefecture() {
+		return competentAuthorityTypePrefecture;
+	}
 
+	public void setCompetentAuthorityTypePrefecture(CompetentAuthorityType competentAuthorityTypePrefecture) {
+		this.competentAuthorityTypePrefecture = competentAuthorityTypePrefecture;
+	}
+
+	public BillingType getBillingTypeBaloPublicationFlag() {
+		return billingTypeBaloPublicationFlag;
+	}
+
+	public void setBillingTypeBaloPublicationFlag(BillingType billingTypeBaloPublicationFlag) {
+		this.billingTypeBaloPublicationFlag = billingTypeBaloPublicationFlag;
+	}
+ 
 	public BillingType getBillingTypeBaloNormalization() {
 		return billingTypeBaloNormalization;
 	}
 
 	public void setBillingTypeBaloNormalization(BillingType billingTypeBaloNormalization) {
 		this.billingTypeBaloNormalization = billingTypeBaloNormalization;
+	} 
+  
+	public InvoiceStatus getInvoiceStatusCreditNoteReceived() {
+		return invoiceStatusCreditNoteReceived;
 	}
+
+	public void setInvoiceStatusCreditNoteReceived(InvoiceStatus invoiceStatusCreditNoteReceived) {
+		this.invoiceStatusCreditNoteReceived = invoiceStatusCreditNoteReceived;
+	} 
 }
