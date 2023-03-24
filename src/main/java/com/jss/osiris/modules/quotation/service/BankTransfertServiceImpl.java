@@ -286,7 +286,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
         CtgyPurpBean transfertPurpose = new CtgyPurpBean();
         bodyTransfertType.setCtgyPurpBean(transfertPurpose);
-        transfertPurpose.setCd("FOUR");
+        transfertPurpose.setCd("CASH");
 
         body.setReqdExctnDt(executionDate.format(formatterDate));
 
