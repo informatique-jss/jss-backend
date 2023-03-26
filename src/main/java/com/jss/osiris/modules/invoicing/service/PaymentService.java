@@ -8,6 +8,7 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
@@ -59,6 +60,6 @@ public interface PaymentService {
         public void addCashPaymentForCustomerOrder(Payment cashPayment, CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public Payment cancelPayment(Payment payment) throws OsirisException;
+        public Payment cancelPayment(Payment payment, AccountingJournal journal) throws OsirisException;
 
 }
