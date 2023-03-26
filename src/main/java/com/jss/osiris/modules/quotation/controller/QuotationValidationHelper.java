@@ -49,6 +49,7 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.NatureCreation;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -74,6 +75,9 @@ public class QuotationValidationHelper {
 
         @Autowired
         AnnouncementService announcementService;
+
+        @Autowired
+        ProvisionService provisionService;
 
         @Transactional
         public void validateQuotationAndCustomerOrder(IQuotation quotation, String targetStatusCode)
@@ -331,13 +335,13 @@ public class QuotationValidationHelper {
         @Transactional
         public void validateProvisionTransactionnal(Provision provision, boolean isOpen, boolean isCustomerOrder,
                         IQuotation quotation)
-                        throws OsirisValidationException, OsirisException {
+                        throws OsirisValidationException, OsirisException, OsirisClientMessageException {
                 validateProvision(provision, isOpen, isCustomerOrder, quotation);
         }
 
         private void validateProvision(Provision provision, boolean isOpen, boolean isCustomerOrder,
                         IQuotation quotation)
-                        throws OsirisValidationException, OsirisException {
+                        throws OsirisValidationException, OsirisException, OsirisClientMessageException {
 
                 validationHelper.validateReferential(provision.getProvisionFamilyType(), true, "Famille de prestation");
                 validationHelper.validateReferential(provision.getProvisionType(), true, "Type de prestation");
@@ -369,6 +373,33 @@ public class QuotationValidationHelper {
                                         debour.setInvoicedAmount(invoicedAmount);
                                 }
                         }
+
+                // Check deleted debours
+                if (provision.getId() != null) {
+                        Provision currentProvision = provisionService.getProvision(provision.getId());
+                        if (currentProvision.getDebours() != null && currentProvision.getDebours().size() > 0) {
+                                for (Debour debour : currentProvision.getDebours()) {
+                                        boolean isDeleted = true;
+                                        if (provision.getDebours() != null && provision.getDebours().size() > 0)
+                                                for (Debour newDebour : provision.getDebours())
+                                                        if (newDebour.getId() != null
+                                                                        && newDebour.getId().equals(debour.getId()))
+                                                                isDeleted = false;
+
+                                        if (isDeleted && (debour.getPaymentType().getId()
+                                                        .equals(constantService.getPaymentTypeEspeces().getId())
+                                                        || debour.getPaymentType().getId()
+                                                                        .equals(constantService.getPaymentTypeCheques()
+                                                                                        .getId())
+                                                        || debour.getInvoiceItem() != null
+                                                        || debour.getPayment() != null
+                                                        || debour.getIsAssociated() != null
+                                                                        && debour.getIsAssociated() == true))
+                                                throw new OsirisClientMessageException(
+                                                                "Impossible de supprimer ce débours, merci de contacter l'administrateur pour cela");
+                                }
+                        }
+                }
 
                 // Domiciliation
                 if (provision.getDomiciliation() != null) {

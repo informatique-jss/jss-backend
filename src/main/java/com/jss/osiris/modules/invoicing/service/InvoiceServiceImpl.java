@@ -157,7 +157,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                     // Do not touch deposit records, they are already handled before
                     if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
                             .equals(constantService.getPrincipalAccountingAccountDeposit().getId()))
-                        accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart);
+                        accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart,
+                                constantService.getAccountingJournalSales());
             }
 
         // Refresh invoice
@@ -233,8 +234,11 @@ public class InvoiceServiceImpl implements InvoiceService {
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                     // Do not touch deposit records, they are already handled before
                     if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                            .equals(constantService.getPrincipalAccountingAccountDepositProvider().getId()))
-                        accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart);
+                            .equals(constantService.getPrincipalAccountingAccountDepositProvider().getId())) {
+                        accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart,
+                                constantService.getAccountingJournalPurchases());
+                        accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
+                    }
             }
 
         // Refresh invoice
@@ -615,6 +619,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    @Transactional
     public void sendRemindersForInvoices()
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         List<Invoice> invoices = invoiceRepository.findInvoiceForReminder(constantService.getInvoiceStatusSend());

@@ -413,7 +413,8 @@ public class InvoicingController {
             throw new OsirisValidationException("not all payment used");
 
         if (paymentAssociate.getPayment().getPaymentAmount() > totalAmount
-                && paymentAssociate.getTiersRefund() == null && paymentAssociate.getAffaire() == null)
+                && paymentAssociate.getTiersRefund() == null && paymentAssociate.getAffaire() == null
+                && Math.abs(paymentAssociate.getPayment().getPaymentAmount()) > payementLimitRefundInEuros)
             throw new OsirisValidationException("no refund tiers set");
 
         ITiers commonCustomerOrder = null;

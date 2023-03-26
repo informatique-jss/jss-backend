@@ -570,9 +570,6 @@ public class PricingHelper {
         } else if (invoiceItem.getBillingItem() != null && invoiceItem.getBillingItem().getBillingType() != null
                 && invoiceItem.getBillingItem().getBillingType().getIsOverrideVat()) {
             vat = invoiceItem.getBillingItem().getBillingType().getVat();
-        } else if (invoiceItem.getBillingItem().getBillingType().getIsDebour()
-                || invoiceItem.getBillingItem().getBillingType().getIsFee()) {
-            vat = constantService.getVatDeductible();
         } else {
             vat = vatService.getGeographicalApplicableVat(country, city.getDepartment());
         }

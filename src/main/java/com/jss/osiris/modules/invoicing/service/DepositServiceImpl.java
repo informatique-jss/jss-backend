@@ -142,8 +142,11 @@ public class DepositServiceImpl implements DepositService {
             for (AccountingRecord accountingRecord : deposit.getAccountingRecords()) {
                 if ((accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                         && !accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                                .equals(constantService.getPrincipalAccountingAccountBank().getId()))
-                    accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart);
+                                .equals(constantService.getPrincipalAccountingAccountBank().getId())
+                        && !accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                                .equals(constantService.getPrincipalAccountingAccountCharge().getId()))
+                    accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart,
+                            constantService.getAccountingJournalMiscellaneousOperations());
             }
         deposit.setIsCancelled(true);
         deposit.setCustomerOrder(null);

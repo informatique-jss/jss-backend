@@ -1445,7 +1445,7 @@ public class QuotationController {
     try {
       CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
       if (customerOrder == null)
-        throw new OsirisValidationException("customerOrder");
+        throw new OsirisValidationException("customerOrder n°" + customerOrderId);
 
       String link = customerOrderService.getCardPaymentLinkForCustomerOrderDeposit(customerOrder, mail,
           "Paiement de l'acompte pour la commande n°" + customerOrderId);

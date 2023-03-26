@@ -112,6 +112,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     PaymentService paymentService;
 
+    @Autowired
+    ProvisionService provisionService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -215,6 +218,24 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 (CustomerOrder) customerOrder);
                     }
                 }
+
+            // Delete debours
+            if (provision.getId() != null) {
+                Provision currentProvision = provisionService.getProvision(provision.getId());
+                if (currentProvision.getDebours() != null && currentProvision.getDebours().size() > 0) {
+                    for (Debour debour : currentProvision.getDebours()) {
+                        boolean isDeleted = true;
+                        if (provision.getDebours() != null && provision.getDebours().size() > 0)
+                            for (Debour newDebour : provision.getDebours())
+                                if (newDebour.getId() != null
+                                        && newDebour.getId().equals(debour.getId()))
+                                    isDeleted = false;
+
+                        if (isDeleted)
+                            debourService.deleteDebour(debour);
+                    }
+                }
+            }
 
             if (provision.getDomiciliation() != null) {
                 Domiciliation domiciliation = provision.getDomiciliation();
