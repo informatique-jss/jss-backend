@@ -24,6 +24,7 @@ import com.jss.osiris.libs.ofx.OFXStatement;
 import com.jss.osiris.libs.ofx.StatementTransaction;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
+import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -280,7 +281,7 @@ public class PaymentServiceImpl implements PaymentService {
                 if (correspondingCustomerOrder.size() > 0 && remainingMoney > 0) {
                     associateInboundPaymentAndCustomerOrders(payment, correspondingCustomerOrder, correspondingInvoices,
                             generateWaitingAccountAccountingRecords, null, payment.getPaymentAmount());
-                    cancelPayment(payment);
+                    cancelPayment(payment, constantService.getAccountingJournalBank());
                 }
 
                 // If payment not used, put it in waiting account
@@ -400,7 +401,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
             if (cancelPayment) {
-                cancelPayment(payment);
+                cancelPayment(payment, constantService.getAccountingJournalBank());
             }
 
             if (Math.abs(Math.round(remainingMoney * 100f) / 100f) > 0) {
@@ -519,7 +520,7 @@ public class PaymentServiceImpl implements PaymentService {
                         correspondingInvoices.get(i), newPayment);
 
                 if (correspondingInvoices.size() > 1) {
-                    cancelPayment(payment);
+                    cancelPayment(payment, constantService.getAccountingJournalBank());
                 }
 
                 newPayment.setInvoice(correspondingInvoices.get(i));
@@ -703,7 +704,8 @@ public class PaymentServiceImpl implements PaymentService {
                             if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
                                     .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
                                 accountingRecordService.letterWaitingRecords(record,
-                                        accountingRecordService.generateCounterPart(record, payment.getId()));
+                                        accountingRecordService.generateCounterPart(record, payment.getId(),
+                                                constantService.getAccountingJournalBank()));
                             }
                         }
 
@@ -949,7 +951,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment cancelPayment(Payment payment) throws OsirisException {
+    public Payment cancelPayment(Payment payment, AccountingJournal journal) throws OsirisException {
         Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
         if (payment.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : payment.getAccountingRecords()) {
@@ -963,7 +965,7 @@ public class PaymentServiceImpl implements PaymentService {
                         } else {
                             accountingRecordService.letterWaitingRecords(accountingRecord,
                                     accountingRecordService.generateCounterPart(accountingRecord,
-                                            operationIdCounterPart));
+                                            operationIdCounterPart, journal));
                         }
             }
         payment.setIsCancelled(true);
@@ -989,6 +991,6 @@ public class PaymentServiceImpl implements PaymentService {
         associateInboundPaymentAndCustomerOrders(getPayment(cashPayment.getId()), Arrays.asList(customerOrder),
                 new ArrayList<Invoice>(),
                 new MutableBoolean(false), null, cashPayment.getPaymentAmount());
-        cancelPayment(getPayment(cashPayment.getId()));
+        cancelPayment(getPayment(cashPayment.getId()), constantService.getAccountingJournalBank());
     }
 }

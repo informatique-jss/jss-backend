@@ -892,7 +892,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         deposit.setCustomerOrder(customerOrder);
         depositService.addOrUpdateDeposit(deposit);
 
-        paymentService.cancelPayment(payment);
+        paymentService.cancelPayment(payment, constantService.getAccountingJournalBank());
 
         addOrUpdateCustomerOrder(customerOrder, false, true);
 
