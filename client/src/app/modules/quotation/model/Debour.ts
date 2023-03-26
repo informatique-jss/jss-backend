@@ -19,4 +19,5 @@ export interface Debour {
   payment: Payment;
   checkNumber: string;
   invoiceItem: InvoiceItem;
+  isAssociated: boolean;
 }

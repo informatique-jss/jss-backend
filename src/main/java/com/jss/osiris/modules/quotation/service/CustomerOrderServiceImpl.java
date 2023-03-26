@@ -865,7 +865,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                     break;
                                 }
                     } else {
-                        generateDepositOnCustomerOrderForCbPayment(customerOrder, centralPayPaymentRequest);
+                        Payment payment = generateDepositOnCustomerOrderForCbPayment(customerOrder,
+                                centralPayPaymentRequest);
+                        accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment);
                         customerOrder.setCentralPayPaymentRequestId(null);
                         addOrUpdateCustomerOrder(customerOrder, false, true);
                         unlockCustomerOrderFromDeposit(customerOrder);
@@ -878,7 +880,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public void generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
+    public Payment generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
             CentralPayPaymentRequest centralPayPaymentRequest)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Generate payment to materialize CB payment
@@ -894,8 +896,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         addOrUpdateCustomerOrder(customerOrder, false, true);
 
-        accountingRecordService.generateAccountingRecordsForCentralPayPayment(centralPayPaymentRequest, payment,
-                deposit, customerOrder, null);
+        accountingRecordService.generateAccountingRecordsForCentralPayPayment(centralPayPaymentRequest,
+                payment, deposit, customerOrder, null);
+
+        return payment;
     }
 
     private void generatePaymentOnInvoiceForCbPayment(Invoice invoice,
@@ -903,6 +907,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         // Generate payment to materialize CB payment
         Payment payment = getCentralPayPayment(centralPayPaymentRequest, false, invoice);
 
+        accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment);
         accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, payment);
         accountingRecordService.generateAccountingRecordsForCentralPayPayment(centralPayPaymentRequest, payment,
                 null, invoice.getCustomerOrder(), invoice);

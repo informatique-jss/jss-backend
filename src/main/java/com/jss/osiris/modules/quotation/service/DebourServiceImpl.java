@@ -47,6 +47,10 @@ public class DebourServiceImpl implements DebourService {
         return debour;
     }
 
+    public void deleteDebour(Debour debour) {
+        debourRepository.delete(debour);
+    }
+
     @Override
     public List<DebourSearchResult> searchDebours(DebourSearch debourSearch) throws OsirisException {
         return debourRepository.findDebours(

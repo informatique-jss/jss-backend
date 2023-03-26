@@ -14,12 +14,12 @@
               label="Autorité compétente"></autocomplete-competent-authority>
           </td>
           <td>
-            <generic-input [(model)]="newDebour.debourAmount" label="Montant" [form]="debourForm"
+            <generic-input [(model)]="newDebour.debourAmount" label="Montant TTC" [form]="debourForm"
               propertyName="debourAmount" [isMandatory]="true" [isDisabled]="!editMode" type="number" step="0,01"
               (onFormChange)="fillInvoicedAmount()"></generic-input>
           </td>
           <td *ngIf="newDebour.billingType && newDebour.billingType.isFee">
-            <generic-input [(model)]="newDebour.invoicedAmount" label="Montant facturé" [form]="debourForm"
+            <generic-input [(model)]="newDebour.invoicedAmount" label="Montant facturé TTC" [form]="debourForm"
               propertyName="invoicedAmount" [isMandatory]="false" [isDisabled]="!editMode" type="number"
               step="0,01"></generic-input>
           </td>

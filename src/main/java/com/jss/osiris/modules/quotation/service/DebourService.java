@@ -10,6 +10,8 @@ import com.jss.osiris.modules.quotation.model.Debour;
 public interface DebourService {
     public Debour getDebour(Integer id);
 
+    public void deleteDebour(Debour debour);
+
     public Debour addOrUpdateDebour(Debour debour);
 
     public List<DebourSearchResult> searchDebours(DebourSearch debourSearch) throws OsirisException;

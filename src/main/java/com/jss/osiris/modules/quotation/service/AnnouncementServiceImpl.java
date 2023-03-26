@@ -248,7 +248,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 || announcement.getPublicationDate().isEqual(LocalDate.now())) {
             if ((announcement.getIsPublicationFlagAlreadySent() == null
                     || !announcement.getIsPublicationFlagAlreadySent()) && announcement.getNotice() != null) {
-                generateAndStorePublicationFlag(announcement, currentProvision);
+
+                if (announcement.getConfrere() != null
+                        && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId()))
+                    generateAndStorePublicationFlag(announcement, currentProvision);
                 mailHelper.sendPublicationFlagToCustomer(customerOrder, false, announcement);
                 announcement.setIsPublicationFlagAlreadySent(true);
                 addOrUpdateAnnouncement(announcement);
@@ -294,8 +297,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                     throw new OsirisException(null,
                             "Impossible to find Customer Order for Announcement n°" + announcement.getId());
 
-                generateStoreAndSendPublicationFlag(customerOrderService.getCustomerOrderForAnnouncement(announcement),
-                        announcement);
+                try {
+                    generateStoreAndSendPublicationFlag(
+                            customerOrderService.getCustomerOrderForAnnouncement(announcement),
+                            announcement);
+                } catch (OsirisClientMessageException e) {
+                } // Do nothing, it's when publication flag not upload from user
             }
     }
 

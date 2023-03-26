@@ -118,7 +118,8 @@ public interface AccountingRecordService {
         public List<AccountingRecord> findByAccountingAccountAndInvoice(AccountingAccount accountingAccount,
                         Invoice invoice);
 
-        public AccountingRecord generateCounterPart(AccountingRecord originalAccountingRecord, Integer operationId);
+        public AccountingRecord generateCounterPart(AccountingRecord originalAccountingRecord, Integer operationId,
+                        AccountingJournal journal);
 
         public void deleteAccountingRecord(AccountingRecord accountingRecord);
 

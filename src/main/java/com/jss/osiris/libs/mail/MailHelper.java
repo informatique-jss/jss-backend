@@ -1451,10 +1451,14 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
+    @Transactional
     public void sendCustomerOrderAttachmentsToCustomer(CustomerOrder customerOrder, AssoAffaireOrder asso,
             boolean sendToMe,
             List<Attachment> attachmentsToSend)
             throws OsirisException, OsirisClientMessageException {
+
+        customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
+        asso = assoAffaireOrderService.getAssoAffaireOrder(asso.getId());
 
         if (attachmentsToSend == null || attachmentsToSend.size() == 0)
             return;

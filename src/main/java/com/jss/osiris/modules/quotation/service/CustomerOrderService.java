@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -69,7 +70,7 @@ public interface CustomerOrderService {
 
         public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder);
 
-        public void generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
+        public Payment generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
                         CentralPayPaymentRequest centralPayPaymentRequest)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 

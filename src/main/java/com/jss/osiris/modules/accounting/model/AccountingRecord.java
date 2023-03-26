@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -106,7 +107,7 @@ public class AccountingRecord implements Serializable, IId {
 	@JoinColumn(name = "id_accounting_journal")
 	private AccountingJournal accountingJournal;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "id_contre_passe")
 	@JsonIgnoreProperties(value = { "accountingRecords", "deposit", "payment", "invoice",
 			"customerOrder" }, allowSetters = true)

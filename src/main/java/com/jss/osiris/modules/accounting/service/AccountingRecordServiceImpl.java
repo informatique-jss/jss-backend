@@ -325,7 +325,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             if (accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
                 .equals(constantService.getPrincipalAccountingAccountWaiting().getId()))
               letterWaitingRecords(accountingRecord,
-                  generateCounterPart(accountingRecord, operationIdCounterPart));
+                  generateCounterPart(accountingRecord, operationIdCounterPart, journal));
       }
       operationId = invoice.getId() + payment.getId();
     }
@@ -368,7 +368,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             if ((accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                 && accountingRecord.getAccountingAccount().getId().equals(waitingAccountingAccount.getId()))
               letterWaitingRecords(accountingRecord,
-                  generateCounterPart(accountingRecord, operationIdCounterPart));
+                  generateCounterPart(accountingRecord, operationIdCounterPart, bankJournal));
       }
 
     // One write on customer account to equilibrate invoice
@@ -1136,10 +1136,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public AccountingRecord generateCounterPart(AccountingRecord originalAccountingRecord, Integer operationId) {
+  public AccountingRecord generateCounterPart(AccountingRecord originalAccountingRecord, Integer operationId,
+      AccountingJournal journal) {
     AccountingRecord newAccountingRecord = new AccountingRecord();
     newAccountingRecord.setAccountingAccount(originalAccountingRecord.getAccountingAccount());
-    newAccountingRecord.setAccountingJournal(originalAccountingRecord.getAccountingJournal());
+    newAccountingRecord.setAccountingJournal(journal);
     newAccountingRecord.setCreditAmount(originalAccountingRecord.getDebitAmount());
     newAccountingRecord.setDebitAmount(originalAccountingRecord.getCreditAmount());
     newAccountingRecord.setDeposit(originalAccountingRecord.getDeposit());
@@ -1212,7 +1213,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
     if (accountingRecords != null) {
       for (AccountingRecord accountingRecord : accountingRecords) {
-        generateCounterPart(accountingRecord, operationIdCounterPart);
+        generateCounterPart(accountingRecord, operationIdCounterPart, accountingRecord.getAccountingJournal());
         accountingRecord.setInvoice(null);
         accountingRecord.setPayment(null);
         accountingRecord.setDeposit(null);

@@ -53,8 +53,8 @@ export class AddDebourComponent implements OnInit {
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn);
     this.displayedColumns.push({ id: "billingType", fieldName: "billingType.label", label: "Débour" } as SortTableColumn);
     this.displayedColumns.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
-    this.displayedColumns.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "invoicedAmount", fieldName: "invoicedAmount", label: "Montant facturé", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "invoicedAmount", fieldName: "invoicedAmount", label: "Montant facturé TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "paymentType", fieldName: "paymentType.label", label: "Type de paiement" } as SortTableColumn);
     this.displayedColumns.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "checkNumber", fieldName: "checkNumber", label: "N° de chèque" } as SortTableColumn);
@@ -63,6 +63,7 @@ export class AddDebourComponent implements OnInit {
     this.displayedColumns.push({ id: "comments", fieldName: "comments", label: "Commentaires", isShrinkColumn: true } as SortTableColumn);
 
     this.addInvoicedAmountColumn();
+    this.addDeleteDeboursColumn();
     this.refreshTable.next();
   }
 
@@ -89,12 +90,34 @@ export class AddDebourComponent implements OnInit {
       } as SortTableAction);
   }
 
+  addDeleteDeboursColumn() {
+    if (this.editMode)
+      this.tableAction.push({
+        actionIcon: 'delete', actionName: 'Supprimer le débours', actionClick: (action: SortTableAction, element: Debour) => {
+          if (element && this.provision) {
+            if (element.id && (element.paymentType.id == this.paymentTypeEspeces.id || element.paymentType.id == this.paymentTypeCheques.id
+              || element.invoiceItem || element.payment || element.isAssociated))
+              this.appService.displaySnackBar("Impossible de supprimer ce débours, merci de contacter l'administrateur pour cela", true, 15);
+            else if (element.id) {
+              for (let i = 0; i < this.provision.debours.length; i++)
+                if (this.provision.debours[i].id == element.id) {
+                  this.provision.debours.splice(i, 1);
+                  this.provisionChange.next(this.provision);
+                  break;
+                }
+            }
+          }
+        }, display: true,
+      } as SortTableAction);
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes.provision) {
       this.setData();
     }
     if (changes.editMode) {
       this.addInvoicedAmountColumn();
+      this.addDeleteDeboursColumn();
     }
   }
 
@@ -188,7 +211,7 @@ export class AddDebourComponent implements OnInit {
       this.newDebour.billingType = this.constantService.getBillingTypeInfogreffeDebour();
       this.newDebour.competentAuthority = this.constantService.getCompetentAuthorityInfogreffe();
       this.newDebour.debourAmount = 3.37;
-      this.newDebour.invoicedAmount = 3.37;
+      this.fillInvoicedAmount();
       this.newDebour.comments = 'Kbis';
       this.newDebour.paymentType = this.constantService.getPaymentTypeVirement();
     }
