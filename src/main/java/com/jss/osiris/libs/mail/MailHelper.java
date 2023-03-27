@@ -1769,9 +1769,9 @@ public class MailHelper {
 
         mail.setHeaderPicture("images/reading-proof-header.png");
         if (announcement.getFirstClientReviewReminderDateTime() == null) {
-            mail.setTitle("Votre épreuve de relecture de publication");
+            mail.setTitle("Votre épreuve de relecture");
         } else {
-            mail.setTitle("Nous sommes toujours en attente de votre épreuve de relecture de publication");
+            mail.setTitle("Nous sommes toujours en attente de votre épreuve de relecture");
         }
         mail.setLabel("Commande n°" + customerOrder.getId());
 
