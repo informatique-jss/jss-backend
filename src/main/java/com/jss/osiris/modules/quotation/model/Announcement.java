@@ -88,6 +88,13 @@ public class Announcement implements IId, IDocument {
 	private LocalDateTime secondConfrereReminderDateTime;
 	private LocalDateTime thirdConfrereReminderDateTime;
 
+	private Boolean isAnnouncementAlreadySentToClient;
+
+	private LocalDateTime firstClientReviewSentMailDateTime;
+	private LocalDateTime firstClientReviewReminderDateTime;
+	private LocalDateTime secondClientReviewReminderDateTime;
+	private LocalDateTime thirdClientReviewReminderDateTime;
+
 	private Integer actuLegaleId;
 
 	public Integer getId() {
@@ -256,6 +263,46 @@ public class Announcement implements IId, IDocument {
 
 	public void setFirstConfrereSentMailDateTime(LocalDateTime firstConfrereSentMailDateTime) {
 		this.firstConfrereSentMailDateTime = firstConfrereSentMailDateTime;
+	}
+
+	public Boolean getIsAnnouncementAlreadySentToClient() {
+		return isAnnouncementAlreadySentToClient;
+	}
+
+	public void setIsAnnouncementAlreadySentToClient(Boolean isAnnouncementAlreadySentToClient) {
+		this.isAnnouncementAlreadySentToClient = isAnnouncementAlreadySentToClient;
+	}
+
+	public LocalDateTime getFirstClientReviewSentMailDateTime() {
+		return firstClientReviewSentMailDateTime;
+	}
+
+	public void setFirstClientReviewSentMailDateTime(LocalDateTime firstClientReviewSentMailDateTime) {
+		this.firstClientReviewSentMailDateTime = firstClientReviewSentMailDateTime;
+	}
+
+	public LocalDateTime getFirstClientReviewReminderDateTime() {
+		return firstClientReviewReminderDateTime;
+	}
+
+	public void setFirstClientReviewReminderDateTime(LocalDateTime firstClientReviewReminderDateTime) {
+		this.firstClientReviewReminderDateTime = firstClientReviewReminderDateTime;
+	}
+
+	public LocalDateTime getSecondClientReviewReminderDateTime() {
+		return secondClientReviewReminderDateTime;
+	}
+
+	public void setSecondClientReviewReminderDateTime(LocalDateTime secondClientReviewReminderDateTime) {
+		this.secondClientReviewReminderDateTime = secondClientReviewReminderDateTime;
+	}
+
+	public LocalDateTime getThirdClientReviewReminderDateTime() {
+		return thirdClientReviewReminderDateTime;
+	}
+
+	public void setThirdClientReviewReminderDateTime(LocalDateTime thirdClientReviewReminderDateTime) {
+		this.thirdClientReviewReminderDateTime = thirdClientReviewReminderDateTime;
 	}
 
 }

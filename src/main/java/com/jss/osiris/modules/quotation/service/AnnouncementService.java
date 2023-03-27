@@ -55,6 +55,8 @@ public interface AnnouncementService {
 
         public void sendRemindersToConfrereForAnnouncement() throws OsirisException, OsirisClientMessageException;
 
+        public void sendRemindersToClientReviewForAnnouncement() throws OsirisException, OsirisClientMessageException;
+
         public Confrere getConfrereForAnnouncement(Integer idAnnouncement);
 
 }

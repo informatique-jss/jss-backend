@@ -1772,10 +1772,14 @@ public class MailHelper {
         mail.setCustomerOrder(customerOrder);
 
         mail.setHeaderPicture("images/reading-proof-header.png");
-        mail.setTitle("Votre épreuve de relecture de publication");
+        if (announcement.getFirstClientReviewReminderDateTime() == null) {
+            mail.setTitle("Votre épreuve de relecture");
+        } else {
+            mail.setTitle("Nous sommes toujours en attente de votre épreuve de relecture");
+        }
         mail.setLabel("Commande n°" + customerOrder.getId());
-        String explainationText = "Vous trouverez ci-joint votre épreuve de relecture pour validation ";
 
+        String explainationText = "Vous trouverez ci-joint votre épreuve de relecture pour validation ";
         Provision currentProvision = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
