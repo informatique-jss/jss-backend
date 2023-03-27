@@ -80,4 +80,8 @@ public interface AnnouncementRepository extends CrudRepository<Announcement, Int
         @Query("select a from Announcement a where a.announcementStatus=:announcementStatus and publicationDate is not null and firstConfrereSentMailDateTime is not null ")
         List<Announcement> getAnnouncementForConfrereReminder(
                         @Param("announcementStatus") AnnouncementStatus announcementStatus);
+
+        @Query("select a from Announcement a where a.announcementStatus=:announcementStatus and publicationDate is not null and firstClientReviewSentMailDateTime is not null ")
+        List<Announcement> getAnnouncementForClientReviewReminder(
+                        @Param("announcementStatus") AnnouncementStatus announcementStatus);
 }

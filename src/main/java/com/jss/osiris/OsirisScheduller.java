@@ -175,6 +175,16 @@ public class OsirisScheduller {
 		}
 	}
 
+	@Scheduled(cron = "${schedulling.log.osiris.client.review.query.reminder}")
+	private void reminderClientReviewQuery() {
+		try {
+			announcementService.sendRemindersToClientReviewForAnnouncement();
+
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
+		}
+	}
+
 	@Scheduled(cron = "${schedulling.account.receipt.generation.sender}")
 	private void sendBillingClosureReceipt() {
 		try {

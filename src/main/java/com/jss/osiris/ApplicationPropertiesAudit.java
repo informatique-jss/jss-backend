@@ -36,6 +36,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.announcement.publication.flag");
         isOk = isOk && checkProperty("schedulling.competant.authorities.update");
         isOk = isOk && checkProperty("schedulling.log.osiris.announcement.confrere.query.reminder");
+        isOk = isOk && checkProperty("schedulling.log.osiris.client.review.query.reminder");
         isOk = isOk && checkProperty("ldap.dc.level.0");
         isOk = isOk && checkProperty("ldap.dc.level.1");
         isOk = isOk && checkProperty("ldap.ou.osiris");

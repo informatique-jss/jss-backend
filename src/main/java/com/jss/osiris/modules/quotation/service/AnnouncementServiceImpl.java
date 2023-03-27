@@ -345,6 +345,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         }
 
         mailHelper.sendProofReadingToCustomer(customerOrder, false, announcement);
+        announcement.setIsAnnouncementAlreadySentToClient(true);
+        announcement.setFirstClientReviewSentMailDateTime(LocalDateTime.now());
+
+        addOrUpdateAnnouncement(announcement);
     }
 
     @Override
@@ -458,6 +462,64 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 }
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public void sendRemindersToClientReviewForAnnouncement() throws OsirisException, OsirisClientMessageException {
+
+        List<Announcement> announcements = announcementRepository
+                .getAnnouncementForClientReviewReminder(announcementStatusService
+                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER));
+
+        if (announcements != null && announcements.size() > 0) {
+            for (Announcement announcement : announcements) {
+                CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+
+                // Get provision
+                Provision currentProvision = null;
+                AssoAffaireOrder currentAsso = null;
+                if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
+                    for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                        if (asso.getProvisions() != null)
+                            for (Provision provision : asso.getProvisions())
+                                if (provision.getAnnouncement() != null
+                                        && provision.getAnnouncement().getId().equals(announcement.getId())) {
+                                    currentProvision = provision;
+                                    currentAsso = asso;
+                                    break;
+                                }
+
+                    boolean toSend = false;
+                    if (announcement.getFirstClientReviewReminderDateTime() == null) {
+                        if (announcement.getFirstClientReviewSentMailDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 2))) {
+                            toSend = true;
+                            announcement.setFirstClientReviewReminderDateTime(LocalDateTime.now());
+                        }
+                    } else if (announcement.getSecondClientReviewReminderDateTime() == null) {
+                        if (announcement.getFirstClientReviewSentMailDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 4))) {
+                            toSend = true;
+                            announcement.setSecondClientReviewReminderDateTime(LocalDateTime.now());
+                        }
+                    } else if (announcement.getThirdClientReviewReminderDateTime() == null) {
+                        if (announcement.getFirstClientReviewReminderDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 6))) {
+                            toSend = true;
+                            announcement.setThirdClientReviewReminderDateTime(LocalDateTime.now());
+                        }
+                    }
+
+                    if (toSend) {
+                        mailHelper.sendProofReadingToCustomer(
+                                customerOrderService.getCustomerOrder(customerOrder.getId()), false, announcement);
+                        addOrUpdateAnnouncement(announcement);
+                    }
+                }
+            }
+        }
+
     }
 
     @Override
