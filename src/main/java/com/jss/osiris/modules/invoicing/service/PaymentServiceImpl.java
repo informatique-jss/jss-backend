@@ -858,7 +858,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional
     public List<Payment> getAdvisedPaymentForInvoice(Invoice invoice) {
+        invoice = invoiceService.getInvoice(invoice.getId());
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
         List<Payment> advisedPayments = new ArrayList<Payment>();
         if (payments != null && payments.size() > 0) {

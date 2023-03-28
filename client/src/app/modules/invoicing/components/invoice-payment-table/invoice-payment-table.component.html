@@ -19,7 +19,7 @@
         N°{{deposit.id}} du {{formatDate(deposit.depositDate)}} - {{deposit.label}}
       </td>
       <td class="td-price mat-cell">
-        {{deposit.depositAmount}} €
+        {{deposit.depositAmount}} € (montant du paiement : {{deposit.originPayment.paymentAmount}} €)
       </td>
     </tr>
   </ng-container>
