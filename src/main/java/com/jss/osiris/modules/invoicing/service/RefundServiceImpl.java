@@ -236,7 +236,8 @@ public class RefundServiceImpl implements RefundService {
                                 refund.getRefundAmount(), refund.getRefundDate().toLocalDate(), customerLabel,
                                 refund.getRefundIban().replaceAll(" ", ""),
                                 completeRefund.getRefundBic().replaceAll(" ", ""),
-                                StringUtils.substring(("JSS - " + refund.getRefundLabel()), 0, 139)));
+                                StringUtils.substring(("JSS - " + refund.getId() + " - " + refund.getRefundLabel()), 0,
+                                        139)));
 
                 completeRefund.setIsAlreadyExported(true);
                 addOrUpdateRefund(completeRefund);
