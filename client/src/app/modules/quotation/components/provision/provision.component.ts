@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS,ANNOUNCEMENT_STATUS_WAITING_READ_COSTUMER, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS,ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
@@ -299,13 +299,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           }
           this.saveAsso();
         });
-      } else if (!provision.announcement.isPublicationFlagAlreadySent &&
-        (
-          provision.announcement.confrere.id == this.confrereJssSpel.id && status.code == ANNOUNCEMENT_PUBLISHED
-          ||
-          provision.announcement.confrere.id != this.confrereJssSpel.id && status.code == ANNOUNCEMENT_STATUS_DONE
-        )
-      ) {
+      } else if (status.code == ANNOUNCEMENT_STATUS_DONE && !provision.announcement.isPublicationFlagAlreadySent) {
         saveAsso = false;
         const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
           maxWidth: "400px",
@@ -336,7 +330,8 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
             validationActionText: "Ne pas envoyer"
           }
         });
-      } else if (status.code == ANNOUNCEMENT_STATUS_WAITING_READ_COSTUMER /*&&!provision.announcement.isAnnouncementAlreadySentToClient*/) {
+      } else if (status.code == ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER &&
+        !provision.announcement.isProofReadingDocument && !provision.announcement.isAnnouncementAlreadySentToClient) {
         saveAsso = false;
         const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
           maxWidth: "400px",
@@ -353,7 +348,8 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           if (dialogResult == true || dialogResult == false) {
             if (provision.announcement) {
               provision.announcement.isAnnouncementAlreadySentToConfrere = dialogResult;
-              provision.announcement.isAnnouncementAlreadySentToClient = dialogResult;
+              provision.announcement.isAnnouncementAlreadySentToClient = !dialogResult;
+              provision.announcement.isProofReadingDocument = !dialogResult;
             }
           }
           this.saveAsso();
