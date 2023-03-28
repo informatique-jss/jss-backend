@@ -684,9 +684,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         if (asso.affaire && asso.affaire.id == affaire.id) {
           if (asso.provisions) {
             for (let provision of asso.provisions)
-              if (provision.debours && provision.debours.length > 0)
+              if (provision.debours && provision.debours.length > 0) {
                 this.appService.displaySnackBar("Impossible de supprimer cette affaire : des débours/frais ont déjà été saisis sur une prestation", true, 15);
-            return;
+                return;
+              }
           }
         }
       }
