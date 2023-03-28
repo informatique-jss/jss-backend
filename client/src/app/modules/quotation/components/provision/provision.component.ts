@@ -336,7 +336,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
             validationActionText: "Ne pas envoyer"
           }
         });
-      } else if (status.code == ANNOUNCEMENT_STATUS_WAITING_READ_COSTUMER && !provision.announcement.isAnnouncementAlreadySentToClient) {
+      } else if (status.code == ANNOUNCEMENT_STATUS_WAITING_READ_COSTUMER /*&&!provision.announcement.isAnnouncementAlreadySentToClient*/) {
         saveAsso = false;
         const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
           maxWidth: "400px",
