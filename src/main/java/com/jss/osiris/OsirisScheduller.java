@@ -175,10 +175,10 @@ public class OsirisScheduller {
 		}
 	}
 
-	@Scheduled(cron = "${schedulling.log.osiris.client.review.query.reminder}")
+	@Scheduled(cron = "${schedulling.log.osiris.customer.proof.reading.reminder}")
 	private void reminderClientReviewQuery() {
 		try {
-			announcementService.sendRemindersToClientReviewForAnnouncement();
+			announcementService.sendRemindersToCustomerForProofReading();
 
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);

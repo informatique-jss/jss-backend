@@ -344,8 +344,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             }
         }
 
-        mailHelper.sendProofReadingToCustomer(customerOrder, false, announcement);
-        announcement.setIsAnnouncementAlreadySentToClient(true);
+        mailHelper.sendProofReadingToCustomer(customerOrder, false, announcement, false);
         announcement.setFirstClientReviewSentMailDateTime(LocalDateTime.now());
 
         addOrUpdateAnnouncement(announcement);
@@ -466,31 +465,18 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     @Transactional
-    public void sendRemindersToClientReviewForAnnouncement() throws OsirisException, OsirisClientMessageException {
+    public void sendRemindersToCustomerForProofReading() throws OsirisException, OsirisClientMessageException {
 
         List<Announcement> announcements = announcementRepository
-                .getAnnouncementForClientReviewReminder(announcementStatusService
+                .getAnnouncementForCustomerProofReadingReminder(announcementStatusService
                         .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER));
 
         if (announcements != null && announcements.size() > 0) {
             for (Announcement announcement : announcements) {
                 CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
 
-                // Get provision
-                Provision currentProvision = null;
-                AssoAffaireOrder currentAsso = null;
-                if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
-                    for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                        if (asso.getProvisions() != null)
-                            for (Provision provision : asso.getProvisions())
-                                if (provision.getAnnouncement() != null
-                                        && provision.getAnnouncement().getId().equals(announcement.getId())) {
-                                    currentProvision = provision;
-                                    currentAsso = asso;
-                                    break;
-                                }
-
-                    boolean toSend = false;
+                boolean toSend = false;
+                if (announcement.getFirstClientReviewSentMailDateTime() != null) {
                     if (announcement.getFirstClientReviewReminderDateTime() == null) {
                         if (announcement.getFirstClientReviewSentMailDateTime()
                                 .isBefore(LocalDateTime.now().minusDays(1 * 2))) {
@@ -504,7 +490,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                             announcement.setSecondClientReviewReminderDateTime(LocalDateTime.now());
                         }
                     } else if (announcement.getThirdClientReviewReminderDateTime() == null) {
-                        if (announcement.getFirstClientReviewReminderDateTime()
+                        if (announcement.getFirstClientReviewSentMailDateTime()
                                 .isBefore(LocalDateTime.now().minusDays(1 * 6))) {
                             toSend = true;
                             announcement.setThirdClientReviewReminderDateTime(LocalDateTime.now());
@@ -513,13 +499,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
                     if (toSend) {
                         mailHelper.sendProofReadingToCustomer(
-                                customerOrderService.getCustomerOrder(customerOrder.getId()), false, announcement);
+                                customerOrderService.getCustomerOrder(customerOrder.getId()), false, announcement,
+                                true);
                         addOrUpdateAnnouncement(announcement);
                     }
                 }
             }
         }
-
     }
 
     @Override

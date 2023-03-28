@@ -62,9 +62,9 @@
                 <p th:if="${externalReference!=null}">Référence client : <span th:text="${externalReference}"></span>
                 </p>
 
-                <p><span
-                        th:text="(${invoice.commandNumber} != null ? 'Votre n° de commande : ' + ${invoice.commandNumber} : '')"></span></p>
-                <p>Paris le <span th:text="${invoiceCreatedDate}"></span></p>
+                <p<p th:if="${invoice.isCommandNumberMandatory}">Commande externe n°<span
+                        th:text="${invoice.commandNumber}"></span></p>
+                    <p>Paris le <span th:text="${invoiceCreatedDate}"></span></p>
             </td>
             <td></td>
             <td colspan="2">
