@@ -12,7 +12,7 @@ import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
 
 public interface PaymentRepository extends CrudRepository<Payment, Integer> {
 
-        @Query(nativeQuery = true, value = "select p.* from payment p  where p.id_invoice is null and p.is_externally_associated=false and p.is_cancelled=false and not exists (select 1 from debour d where d.id_payment = p.id) ")
+        @Query(nativeQuery = true, value = "select p.* from payment p  where p.id_invoice is null and p.is_externally_associated=false and p.is_cancelled=false and not exists (select 1 from debour d where d.id_payment = p.id)  and not exists (select 1 from refund d where d.id_payment = p.id) ")
         List<Payment> findNotAssociatedPayments();
 
         @Query(nativeQuery = true, value = " select p.id as id,"
@@ -23,11 +23,12 @@ public interface PaymentRepository extends CrudRepository<Payment, Integer> {
                         + " p.label as paymentLabel,"
                         + " p.is_externally_associated  as isExternallyAssociated ,"
                         + " p.is_cancelled  as isCancelled ,"
-                        + " p.id_invoice is not null or d.id is not null  or p.is_cancelled=true  as isAssociated ,"
+                        + " p.id_invoice is not null or d.id is not null  or refund.id is not null  or p.is_cancelled=true  as isAssociated ,"
                         + " p.id_invoice as invoiceId"
                         + " from payment p "
                         + " join payment_way pw on pw.id = p.id_payment_way"
                         + "  left join debour d on d.id_payment = p.id "
+                        + "  left join refund on refund.id_payment = p.id "
                         + " where (:isHideAssociatedPayments=false OR (p.id_invoice is null and d.id is null  and p.is_externally_associated=false and p.is_cancelled=false)) "
                         + "  and ( COALESCE(:paymentWays)=0 or p.id_payment_way in (:paymentWays) )"
                         + " and p.payment_date>=:startDate and p.payment_date<=:endDate "

@@ -146,7 +146,8 @@ public class ValidationHelper {
                 throw new OsirisException(e,
                         "Invocation target error to methode in ValidationHelper generic check method. Bean : "
                                 + serviceClass
-                                + ". Method : " + "get" + value.getClass().getSimpleName());
+                                + ". Method : " + "get" + value.getClass().getSimpleName() + ". Value id : "
+                                + value.getId());
             }
             if (returnValue == null)
                 throw new OsirisValidationException(className);
