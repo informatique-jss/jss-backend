@@ -1765,16 +1765,24 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
-    public void sendProofReadingToCustomer(CustomerOrder customerOrder, boolean sendToMe, Announcement announcement)
+    public void sendProofReadingToCustomer(CustomerOrder customerOrder, boolean sendToMe, Announcement announcement,
+            boolean isReminder)
             throws OsirisException, OsirisClientMessageException {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
 
         mail.setHeaderPicture("images/reading-proof-header.png");
-        mail.setTitle("Votre épreuve de relecture de publication");
+        mail.setTitle("Votre épreuve de relecture");
         mail.setLabel("Commande n°" + customerOrder.getId());
-        String explainationText = "Vous trouverez ci-joint votre épreuve de relecture pour validation ";
+
+        String explainationText = "";
+
+        if (!isReminder) {
+            explainationText = "Vous trouverez ci-joint votre épreuve de relecture pour validation ";
+        } else {
+            explainationText = "Nous sommes toujours en attente de votre épreuve de relecture. Vous trouverez ci-joint cette dernière pour validation et ";
+        }
 
         Provision currentProvision = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)

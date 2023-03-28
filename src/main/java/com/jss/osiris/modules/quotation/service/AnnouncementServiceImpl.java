@@ -351,7 +351,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             }
         }
 
-        mailHelper.sendProofReadingToCustomer(customerOrder, false, announcement);
+        mailHelper.sendProofReadingToCustomer(customerOrder, false, announcement, false);
+        announcement.setFirstClientReviewSentMailDateTime(LocalDateTime.now());
+
+        addOrUpdateAnnouncement(announcement);
     }
 
     @Override
@@ -460,6 +463,51 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                         mailHelper.sendAnnouncementRequestToConfrere(
                                 customerOrderService.getCustomerOrder(customerOrder.getId()), currentAsso,
                                 false, currentProvision, announcement, true);
+                        addOrUpdateAnnouncement(announcement);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void sendRemindersToCustomerForProofReading() throws OsirisException, OsirisClientMessageException {
+
+        List<Announcement> announcements = announcementRepository
+                .getAnnouncementForCustomerProofReadingReminder(announcementStatusService
+                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER));
+
+        if (announcements != null && announcements.size() > 0) {
+            for (Announcement announcement : announcements) {
+                CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+
+                boolean toSend = false;
+                if (announcement.getFirstClientReviewSentMailDateTime() != null) {
+                    if (announcement.getFirstClientReviewReminderDateTime() == null) {
+                        if (announcement.getFirstClientReviewSentMailDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 2))) {
+                            toSend = true;
+                            announcement.setFirstClientReviewReminderDateTime(LocalDateTime.now());
+                        }
+                    } else if (announcement.getSecondClientReviewReminderDateTime() == null) {
+                        if (announcement.getFirstClientReviewSentMailDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 4))) {
+                            toSend = true;
+                            announcement.setSecondClientReviewReminderDateTime(LocalDateTime.now());
+                        }
+                    } else if (announcement.getThirdClientReviewReminderDateTime() == null) {
+                        if (announcement.getFirstClientReviewSentMailDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 6))) {
+                            toSend = true;
+                            announcement.setThirdClientReviewReminderDateTime(LocalDateTime.now());
+                        }
+                    }
+
+                    if (toSend) {
+                        mailHelper.sendProofReadingToCustomer(
+                                customerOrderService.getCustomerOrder(customerOrder.getId()), false, announcement,
+                                true);
                         addOrUpdateAnnouncement(announcement);
                     }
                 }
