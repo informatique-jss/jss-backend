@@ -21,4 +21,5 @@ export interface QuotationReporting {
   customerOrderCreatedDateMonth: string;
   characterNumber: number;
   invoiceDateMonth: string;
+  publicationDateWeek: string;
 }
