@@ -491,7 +491,7 @@ public class PaymentServiceImpl implements PaymentService {
                     : invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoices.get(i));
         }
         // If payment is not over total of remaining to pay on all invoices
-        if (byPassAmount != null || remainingToPay >= remainingMoney) {
+        if (byPassAmount != null || Math.round(remainingToPay * 100f) >= Math.round(remainingMoney * 100f)) {
             // Payment will be used, not necessary to put it in wainting account
             generateWaitingAccountAccountingRecords.setValue(false);
 
@@ -671,6 +671,7 @@ public class PaymentServiceImpl implements PaymentService {
             accountingRecordService.generateAccountingRecordsForRefundOnVirement(refund);
 
             refund.setIsMatched(true);
+            refund.setPayment(payment);
             refundService.addOrUpdateRefund(refund);
         }
         return 0f;
@@ -934,6 +935,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public void setExternallyAssociated(Payment payment) {
+        payment = getPayment(payment.getId());
         payment.setIsExternallyAssociated(true);
         if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0)
             for (AccountingRecord record : payment.getAccountingRecords())
