@@ -193,7 +193,7 @@ public class RefundServiceImpl implements RefundService {
             header.setMsgId("Virement JSS du " + LocalDateTime.now().format(formatterDate));
             header.setCreDtTm(LocalDateTime.now().format(formatterDateTime));
             header.setNbOfTxs(refunds.size());
-            header.setCtrlSum(totalAmount);
+            header.setCtrlSum(Math.round(totalAmount * 100f) / 100f);
 
             InitgPtyBean emiterDetails = new InitgPtyBean();
             header.setInitgPtyBean(emiterDetails);

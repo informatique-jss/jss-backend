@@ -191,7 +191,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
             header.setMsgId(("Virement JSS du " + LocalDateTime.now().format(formatterDate)));
             header.setCreDtTm(LocalDateTime.now().format(formatterDateTime));
             header.setNbOfTxs(bankTransferts.size());
-            header.setCtrlSum(totalAmount);
+            header.setCtrlSum(Math.round(totalAmount * 100f) / 100f);
 
             InitgPtyBean emiterDetails = new InitgPtyBean();
             header.setInitgPtyBean(emiterDetails);
@@ -275,7 +275,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
         body.setPmtMtd("TRF");
         body.setBtchBookg(false);
         body.setNbOfTxs(1);
-        body.setCtrlSum(transfertAmount);
+        body.setCtrlSum(Math.round(transfertAmount * 100f) / 100f);
 
         PmtTpInfBean bodyTransfertType = new PmtTpInfBean();
         body.setPmtTpInfBean(bodyTransfertType);

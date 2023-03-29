@@ -206,7 +206,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
             header.setMsgId("Prélèvements JSS du " + LocalDateTime.now().format(formatterDate));
             header.setCreDtTm(LocalDateTime.now().format(formatterDateTime));
             header.setNbOfTxs(bankTransferts.size());
-            header.setCtrlSum(totalAmount);
+            header.setCtrlSum(Math.round(totalAmount * 100f) / 100f);
 
             InitgPtyBean emiterDetails = new InitgPtyBean();
             header.setInitgPtyBean(emiterDetails);
@@ -222,7 +222,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                 body.setPmtMtd("DD");
                 body.setBtchBookg(false);
                 body.setNbOfTxs(bankTransferts.size());
-                body.setCtrlSum(totalAmount);
+                body.setCtrlSum(Math.round(totalAmount * 100f) / 100f);
 
                 PmtTpInfBean bodyTransfertType = new PmtTpInfBean();
 
