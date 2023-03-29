@@ -222,7 +222,8 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                                 : StringUtils.substring(bankTransfert.getInvoiceBillingLabel(), 0, 139)),
                         completeTransfert.getTransfertIban().replaceAll(" ", ""),
                         completeTransfert.getTransfertBic().replaceAll(" ", ""),
-                        StringUtils.substring(completeTransfert.getLabel(), 0, 139)));
+                        StringUtils.substring(completeTransfert.getId() + " - " + completeTransfert.getLabel(), 0,
+                                139)));
 
                 if (completeTransfert.getIsAlreadyExported() == false && completeTransfert.getDebours() != null
                         && completeTransfert.getDebours().size() > 0) {
