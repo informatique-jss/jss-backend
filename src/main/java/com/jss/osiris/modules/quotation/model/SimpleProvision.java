@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -23,6 +24,7 @@ public class SimpleProvision implements IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_simple_provision_status")
+	@IndexedField
 	private SimpleProvisionStatus simpleProvisionStatus;
 
 	@Column(columnDefinition = "TEXT")

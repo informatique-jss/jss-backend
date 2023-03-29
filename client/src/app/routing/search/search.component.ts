@@ -165,7 +165,11 @@ export class SearchComponent implements OnInit {
     let out = [];
     if (entity.text.provisions)
       for (let provision of entity.text.provisions)
-        out.push(provision.provisionFamilyType ? provision.provisionFamilyType.label : "") + " - " + (provision.provisionType ? provision.provisionType.label : "");
+        out.push((provision.provisionFamilyType ? provision.provisionFamilyType.label : "")
+          + " - " + (provision.provisionType ? provision.provisionType.label : "")
+          + " - " + (provision.assignedTo ? provision.assignedTo.firstname + " " + provision.assignedTo.lastname : "")
+          + (provision.simpleProvision && provision.simpleProvision.simpleProvisionStatus ? " - " + provision.simpleProvision.simpleProvisionStatus.label : "")
+        );
     return out.join(" / ");
   }
 

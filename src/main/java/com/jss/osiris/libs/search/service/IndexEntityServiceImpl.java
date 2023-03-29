@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -70,6 +71,9 @@ public class IndexEntityServiceImpl implements IndexEntityService {
                                 .getMethod("get" + StringUtils.capitalize(field.getName()));
 
                         Object fieldResult = getter.invoke(entity);
+
+                        if (fieldResult != null && fieldResult.getClass().getSimpleName().contains("HibernateProxy"))
+                            fieldResult = Hibernate.unproxy(fieldResult);
 
                         if (fieldResult instanceof String || fieldResult instanceof Integer
                                 || fieldResult instanceof LocalDate || fieldResult instanceof LocalDateTime
