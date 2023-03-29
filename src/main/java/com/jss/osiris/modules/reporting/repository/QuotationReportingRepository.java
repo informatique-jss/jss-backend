@@ -34,6 +34,9 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         +
                         " coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname) as tiersLabel, " +
                         " coalesce(ast.label, sps.label, ds.label, bs.label, fs.label) as provisionStatus, " +
+                        " confrere_a.label as confrereAnnouncementLabel, " +
+                        " ntf.label as noticeTypeFamilyLabel, " +
+                        "  STRING_AGG(DISTINCT nt.label ,', '  ) as noticeTypeLabel, " +
                         " e1.firstname || ' ' || e1.lastname as provisionAssignedToLabel, " +
                         " e2.firstname || ' ' || e2.lastname as salesEmployeeLabel, " +
                         " max((substring(invoice_item.label,'(\\d+)(?=\\s*caract)'))) as characterNumber, " +
@@ -60,6 +63,10 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " left join billing_item on billing_item.id = invoice_item.id_billing_item " +
                         " left join billing_type on billing_item.id_billing_type = billing_type.id " +
                         " left join announcement a on a.id = provision.id_announcement  " +
+                        " left join confrere confrere_a on confrere_a.id = a.id_confrere  " +
+                        " left join notice_type_family ntf on ntf.id = a.id_notice_type_family  " +
+                        " left join asso_announcement_notice_type nta on nta.id_announcement = a.id  " +
+                        " left join notice_type nt on nt.id = nta.id_notice_type  " +
                         " left join announcement_status ast on ast.id = a.id_announcement_status " +
                         " left join simple_provision sp on sp.id = provision.id_simple_provision " +
                         " left join simple_provision_status sps on sps.id = sp.id_simple_provision_status " +
@@ -89,6 +96,8 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " coalesce(affaire.denomination, affaire.firstname || ' '||affaire.lastname) , " +
                         " customer_order.id  , " +
                         " provision.id  , " +
+                        " confrere_a.label , " +
+                        " ntf.label , " +
                         " invoice.created_date  , " +
                         " provision_t.label  , " +
                         " provision_ft.label , " +

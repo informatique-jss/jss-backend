@@ -25,5 +25,8 @@ export const Dictionnary = {
   "invoiceDateMonth": "Mois de la facture",
   "characterNumber": "Nombre de caractères",
   "publicationDateWeek": "Semaine de publication",
+  "confrereAnnouncementLabel": "Confrère de l'annonce",
+  "noticeTypeFamilyLabel": "Rubrique de l'annonce",
+  "noticeTypeLabel": "Sous-rubrique de l'annonce",
 };
 

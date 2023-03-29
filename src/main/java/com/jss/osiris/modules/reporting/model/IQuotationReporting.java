@@ -46,4 +46,10 @@ public interface IQuotationReporting {
     public Integer getCharacterNumber();
 
     public String getPublicationDateWeek();
+
+    public String getConfrereAnnouncementLabel();
+
+    public String getNoticeTypeFamilyLabel();
+
+    public String getNoticeTypeLabel();
 }
