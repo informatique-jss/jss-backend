@@ -10,6 +10,7 @@
 
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #sidenav mode="side" position="end" [fixedInViewport]="true" [fixedTopGap]="165" [fixedBottomGap]="100">
+    <div class="table-wrapper">
     <table>
       <ng-container *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index">
         <tr>
@@ -49,6 +50,7 @@
         </ng-container>
       </ng-container>
     </table>
+  </div>
     <table class="total-table">
       <tr>
         <td>
@@ -250,6 +252,7 @@
   class="second-fab-button" *ngIf="editMode==false" (click)="openSearch()">
   <mat-icon>search</mat-icon>
 </button>
+
 <button [matTooltip]='sidenav.opened?"Cacher le détail":"Voir le détail"' mat-fab color="accent"
   class="second-fab-button" *ngIf="(editMode==false && quotation.id!=undefined && quotation.id!=null || editMode)"
   (click)=" sidenav.toggle()">
