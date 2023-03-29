@@ -18,7 +18,7 @@
               propertyName="debourAmount" [isMandatory]="true" [isDisabled]="!editMode" type="number" step="0,01"
               (onFormChange)="fillInvoicedAmount()"></generic-input>
           </td>
-          <td *ngIf="newDebour.billingType && newDebour.billingType.isFee">
+          <td *ngIf="newDebour.billingType  ">
             <generic-input [(model)]="newDebour.invoicedAmount" label="Montant facturé TTC" [form]="debourForm"
               propertyName="invoicedAmount" [isMandatory]="false" [isDisabled]="!editMode" type="number"
               step="0,01"></generic-input>
