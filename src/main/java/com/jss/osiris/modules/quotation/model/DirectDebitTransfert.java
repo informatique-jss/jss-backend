@@ -40,6 +40,7 @@ public class DirectDebitTransfert implements Serializable, IId {
 	private String customerOrderLabel;
 
 	private Boolean isAlreadyExported;
+	private Boolean isCancelled;
 
 	public Integer getId() {
 		return id;
@@ -119,6 +120,14 @@ public class DirectDebitTransfert implements Serializable, IId {
 
 	public void setCustomerOrderLabel(String customerOrderLabel) {
 		this.customerOrderLabel = customerOrderLabel;
+	}
+
+	public Boolean getIsCancelled() {
+		return isCancelled;
+	}
+
+	public void setIsCancelled(Boolean isCancelled) {
+		this.isCancelled = isCancelled;
 	}
 
 }

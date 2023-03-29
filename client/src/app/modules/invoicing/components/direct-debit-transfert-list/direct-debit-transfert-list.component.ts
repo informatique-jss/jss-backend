@@ -6,6 +6,8 @@ import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableCo
 import { DirectDebitTransfertSearch } from '../../model/DirectDebitTransfertSearch';
 import { DirectDebitTransfertSearchResult } from '../../model/DirectDebitTransfertSearchResult';
 import { DirectDebitTransfertSearchResultService } from '../../services/direct.debit.transfert.search.result.service';
+import { DirectDebitTransfert } from '../../../quotation/model/DirectDebitTransfert';
+import { DirectDebitTransfertService } from '../../../quotation/services/direct.debit.transfert.service';
 
 @Component({
   selector: 'direct-debit-transfer-list',
@@ -24,6 +26,7 @@ export class DirectDebitTransfertListComponent implements OnInit, AfterContentCh
     private directDebitTransfertSearchResultService: DirectDebitTransfertSearchResultService,
     private changeDetectorRef: ChangeDetectorRef,
     private formBuilder: FormBuilder,
+    private directDebitTransfertService: DirectDebitTransfertService
   ) { }
 
   ngAfterContentChecked(): void {
@@ -39,6 +42,13 @@ export class DirectDebitTransfertListComponent implements OnInit, AfterContentCh
     this.availableColumns.push({ id: "isAlreadyExported", fieldName: "isAlreadyExported", label: "A été exporté", valueFonction: (element: any) => { return (element.isAlreadyExported) ? "Oui" : "Non" } } as SortTableColumn);
 
     this.setColumns();
+
+    this.tableAction.push({
+        actionIcon: 'delete', actionName: 'Supprimer ce virement', actionClick: (action: SortTableAction, element: any) => {
+         this.directDebitTransfertService.cancelDirectDebitTransfert(element).subscribe(response => this.searchTransferts());
+        }, display: true,
+      } as SortTableAction);
+
 
     this.transfertSearch.isHideExportedDirectDebitTransfert = true;
   }

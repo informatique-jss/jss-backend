@@ -101,6 +101,7 @@ import com.jss.osiris.modules.quotation.model.RecordType;
 import com.jss.osiris.modules.quotation.model.Rna;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.Siren;
+import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.Siret;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentShortRequest;
@@ -141,6 +142,7 @@ import com.jss.osiris.modules.quotation.service.SireneDelegateService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
+import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 
 @RestController
 public class QuotationController {
@@ -310,6 +312,9 @@ public class QuotationController {
   InvoiceService invoiceService;
 
   @Autowired
+  DirectDebitTransfertService directDebitTransfertService;
+
+  @Autowired
   QuotationValidationHelper quotationValidationHelper;
 
   @GetMapping(inputEntryPoint + "/bank-transferts")
@@ -325,6 +330,21 @@ public class QuotationController {
     if (bankTransfert == null)
       throw new OsirisValidationException("bankTransfert");
     return new ResponseEntity<BankTransfert>(bankTransfertService.cancelBankTransfert(bankTransfert),
+        HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" +
+      ActiveDirectoryHelper.ACCOUNTING)
+
+  @GetMapping(inputEntryPoint + "/direct-debit-transfert/cancel")
+  public ResponseEntity<DirectDebitTransfert> cancelDirectDebitTransfert(@RequestParam Integer idDirectDebitTranfert)
+      throws OsirisValidationException {
+    DirectDebitTransfert directDebitTransfert = directDebitTransfertService
+        .getDirectDebitTransfert(idDirectDebitTranfert);
+    if (directDebitTransfert == null)
+      throw new OsirisValidationException("bankTransfert");
+    return new ResponseEntity<DirectDebitTransfert>(
+        directDebitTransfertService.cancelDirectDebitTransfert(directDebitTransfert),
         HttpStatus.OK);
   }
 
