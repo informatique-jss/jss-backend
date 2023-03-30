@@ -327,6 +327,7 @@ public class QuotationServiceImpl implements QuotationService {
     @Transactional(rollbackFor = Exception.class)
     public Boolean validateCardPaymentLinkForQuotationDeposit(Quotation quotation)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        quotation = getQuotation(quotation.getId());
         if (quotation.getCentralPayPaymentRequestId() != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
                     .getPaymentRequest(quotation.getCentralPayPaymentRequestId());

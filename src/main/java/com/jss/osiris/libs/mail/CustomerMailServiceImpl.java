@@ -204,7 +204,7 @@ public class CustomerMailServiceImpl implements CustomerMailService {
         if (recipients != null && mailDomainFilter != null && !mailDomainFilter.equals(""))
             for (Address address : recipients) {
                 String[] chunk = address.toString().split("@");
-                if (chunk.length != 2 || !chunk[1].equals(mailDomainFilter))
+                if (chunk.length != 2 || !chunk[1].toLowerCase().trim().equals(mailDomainFilter.toLowerCase().trim()))
                     canSend = false;
             }
         try {
@@ -212,7 +212,7 @@ public class CustomerMailServiceImpl implements CustomerMailService {
         } catch (MessagingException e) {
             throw new OsirisException(e, "Unable to find recipients Cc for mail " + mail.getId());
         }
-        if (recipients != null)
+        if (recipients != null && mailDomainFilter != null && !mailDomainFilter.equals(""))
             for (Address address : recipients) {
                 String[] chunk = address.toString().split("@");
                 if (chunk.length != 2

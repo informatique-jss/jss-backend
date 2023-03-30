@@ -784,6 +784,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Transactional(rollbackFor = Exception.class)
     public String getCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder, String mail, String subject)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        customerOrder = getCustomerOrder(customerOrder.getId());
         return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject, paymentCbRedirectDeposit);
     }
 
@@ -791,6 +792,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Transactional(rollbackFor = Exception.class)
     public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        customerOrder = getCustomerOrder(customerOrder.getId());
         return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject, paymentCbRedirectInvoice);
     }
 
@@ -848,6 +850,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Transactional(rollbackFor = Exception.class)
     public Boolean validateCardPaymentLinkForCustomerOrder(CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        customerOrder = getCustomerOrder(customerOrder.getId());
         if (customerOrder.getCentralPayPaymentRequestId() != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
                     .getPaymentRequest(customerOrder.getCentralPayPaymentRequestId());
@@ -883,6 +886,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public Payment generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
             CentralPayPaymentRequest centralPayPaymentRequest)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        customerOrder = getCustomerOrder(customerOrder.getId());
         // Generate payment to materialize CB payment
         Payment payment = getCentralPayPayment(centralPayPaymentRequest, true, null);
 
