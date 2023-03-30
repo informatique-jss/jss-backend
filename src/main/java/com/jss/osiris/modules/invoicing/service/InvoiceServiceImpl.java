@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import java.time.temporal.ChronoField;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -56,12 +57,16 @@ import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.TiersService;
+import com.jss.osiris.modules.accounting.repository.AccountingRecordRepository;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     InvoiceRepository invoiceRepository;
+
+    @Autowired
+    AccountingRecordRepository accountingRecordRepository;
 
     @Autowired
     DocumentService documentService;
@@ -591,10 +596,19 @@ public class InvoiceServiceImpl implements InvoiceService {
         List<AccountingRecord> accountingRecords = accountingRecordService
                 .findByAccountingAccountAndInvoice(accountingAccountCustomer, invoice);
 
+        Integer maxLetteringNumber = accountingRecordRepository
+                .findMaxLetteringNumberForMinLetteringDateTime(LocalDateTime.now().with(ChronoField.DAY_OF_YEAR, 1)
+                        .with(ChronoField.HOUR_OF_DAY, 0)
+                        .with(ChronoField.MINUTE_OF_DAY, 0).with(ChronoField.SECOND_OF_DAY, 0));
+
+        if (maxLetteringNumber == null)
+            maxLetteringNumber = 0;
+        maxLetteringNumber++;
+
         if (accountingRecords != null)
             for (AccountingRecord accountingRecord : accountingRecords) {
-                accountingRecord.setLetteringDateTime(null);
-                accountingRecord.setLetteringNumber(null);
+                accountingRecord.setLetteringDateTime(LocalDateTime.now());
+                accountingRecord.setLetteringNumber(maxLetteringNumber);
                 accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
             }
         invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
