@@ -238,7 +238,7 @@
           </automatic-mail-list>
         </mat-tab>
         <mat-tab label="Associer un paiement"
-          *ngIf="getRemainingToPay()>0 && instanceOfCustomerOrderFn(quotation) && quotation.customerOrderStatus && quotation.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_BILLED">
+          *ngIf="  instanceOfCustomerOrderFn(quotation) && quotation.customerOrderStatus && quotation.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_BILLED  && quotation.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_ABANDONED">
           <customer-order-payment (stateChanged)="onStateChange()" [customerOrder]="quotation">
           </customer-order-payment>
         </mat-tab>
