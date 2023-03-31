@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.invoicing.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -48,6 +49,10 @@ public class InvoiceItem implements Serializable, IId {
 	private Float vatPrice;
 
 	private Float discountAmount;
+
+	private Integer letteringNumber;
+
+	private LocalDateTime letteringDateTime;
 
 	@ManyToOne
 	@JoinColumn(name = "id_provision")
@@ -158,6 +163,22 @@ public class InvoiceItem implements Serializable, IId {
 
 	public void setDebours(List<Debour> debours) {
 		this.debours = debours;
+	}
+
+	public Integer getLetteringNumber() {
+		return letteringNumber;
+	}
+
+	public void setLetteringNumber(Integer letteringNumber) {
+		this.letteringNumber = letteringNumber;
+	}
+
+	public LocalDateTime getLetteringDateTime() {
+		return letteringDateTime;
+	}
+
+	public void setLetteringDateTime(LocalDateTime letteringDateTime) {
+		this.letteringDateTime = letteringDateTime;
 	}
 
 }

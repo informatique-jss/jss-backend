@@ -157,6 +157,9 @@ public class Invoice implements IId, IAttachment {
 	private LocalDateTime secondReminderDateTime;
 	private LocalDateTime thirdReminderDateTime;
 
+	private Integer letteringNumber;
+	private LocalDateTime letteringDateTime;
+
 	private LocalDate manualAccountingDocumentDate;
 	@Column(length = 150)
 	private String manualAccountingDocumentNumber;
@@ -507,6 +510,22 @@ public class Invoice implements IId, IAttachment {
 
 	public void setBankTransfert(BankTransfert bankTransfert) {
 		this.bankTransfert = bankTransfert;
+	}
+
+	public Integer getLetteringNumber() {
+		return letteringNumber;
+	}
+
+	public void setLetteringNumber(Integer letteringNumber) {
+		this.letteringNumber = letteringNumber;
+	}
+
+	public LocalDateTime getLetteringDateTime() {
+		return letteringDateTime;
+	}
+
+	public void setLetteringDateTime(LocalDateTime letteringDateTime) {
+		this.letteringDateTime = letteringDateTime;
 	}
 
 }
