@@ -57,6 +57,7 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DebourService;
@@ -530,7 +531,8 @@ public class InvoicingController {
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
 
-        if (customerOrder == null)
+        if (customerOrder == null || customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)
+                || customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED))
             throw new OsirisValidationException("customerOrder");
 
         if (cashPayment == null)

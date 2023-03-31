@@ -66,6 +66,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
   CUSTOMER_ORDER_STATUS_BILLED = CUSTOMER_ORDER_STATUS_BILLED;
+  CUSTOMER_ORDER_STATUS_ABANDONED = CUSTOMER_ORDER_STATUS_ABANDONED;
 
   billingLabelTypeAffaire: BillingLabelType = this.constantService.getBillingLabelTypeCodeAffaire();
 
