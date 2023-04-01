@@ -76,8 +76,6 @@ export class ProvisionOptionsComponent implements OnInit {
   optionForm = this.formBuilder.group({});
 
   ngOnInit() {
-    if (this.provision && this.provision.announcement && !this.provision.announcement.confrere)
-      this.confrereService.getConfrereForAnnouncement(this.provision.announcement).subscribe(confrere => this.provision!.announcement!.confrere = confrere);
   }
 
   ngOnChanges(changes: SimpleChanges) {

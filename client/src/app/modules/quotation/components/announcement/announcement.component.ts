@@ -87,9 +87,6 @@ export class AnnouncementComponent implements OnInit {
 
   ngOnInit() {
 
-    if (this.announcement)
-      this.confrereService.getConfrereForAnnouncement(this.announcement).subscribe(confrere => this.announcement.confrere = confrere);
-
     this.journalTypeService.getJournalTypes().subscribe(response => {
       this.journalTypes = response;
     })

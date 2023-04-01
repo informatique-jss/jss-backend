@@ -381,9 +381,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
   setCurrentProvisionWorkflow(provision: Provision) {
     this.currentProvisionWorkflow = provision;
-
-    if (provision && provision.announcement && !provision.announcement.confrere)
-      this.confrereService.getConfrereForAnnouncement(provision.announcement).subscribe(confrere => provision.announcement!.confrere = confrere);
   }
 
   generatePublicationReceipt(announcement: Announcement, provision: Provision) {

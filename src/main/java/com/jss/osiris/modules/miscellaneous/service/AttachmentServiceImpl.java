@@ -297,4 +297,27 @@ public class AttachmentServiceImpl implements AttachmentService {
             });
         return attachments;
     }
+
+    @Override
+    public Attachment cloneAttachment(Attachment attachment) throws OsirisException {
+        if (attachment == null)
+            throw new OsirisException(null, "Empty attachment to clone");
+
+        Attachment newAttachment = new Attachment();
+        newAttachment.setAttachmentType(attachment.getAttachmentType());
+        newAttachment.setCompetentAuthority(attachment.getCompetentAuthority());
+        newAttachment.setCreatDateTime(LocalDateTime.now());
+        newAttachment.setCustomerMail(attachment.getCustomerMail());
+        newAttachment.setCustomerOrder(attachment.getCustomerOrder());
+        newAttachment.setDescription(attachment.getDescription());
+        newAttachment.setInvoice(attachment.getInvoice());
+        newAttachment.setIsDisabled(attachment.getIsDisabled());
+        newAttachment.setProvider(attachment.getProvider());
+        newAttachment.setProvision(attachment.getProvision());
+        newAttachment.setQuotation(attachment.getQuotation());
+        newAttachment.setResponsable(attachment.getResponsable());
+        newAttachment.setTiers(attachment.getTiers());
+        newAttachment.setUploadedFile(attachment.getUploadedFile());
+        return newAttachment;
+    }
 }

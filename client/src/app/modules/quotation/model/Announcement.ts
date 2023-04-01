@@ -21,10 +21,5 @@ export interface Announcement extends IDocument {
   isAnnouncementAlreadySentToConfrere: boolean;
   announcementStatus: AnnouncementStatus;
   actuLegaleId: number;
-
-  /**
-   * WARNING : property not directly fethed from server
-   * User ConfrereService.getConfrereForAnnouncement to fetch it !
-   */
   confrere: Confrere;
 }
