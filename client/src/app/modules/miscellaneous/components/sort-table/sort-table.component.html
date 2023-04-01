@@ -56,7 +56,7 @@
     </tr>
   </table>
   <mat-icon class="export-icon pointer" matTooltip="Exporter en Excel"
-    (click)="exporter.exportTable('xlsx', {fileName:tableName, sheet: tableName,ignoreEC:false})">file_download
+    (click)="exporter.exportTable('csv', {fileName:tableName, sheet: tableName, delimiter:';', bookSST :true})">file_download
   </mat-icon>
   <mat-icon class="column-icon pointer" matTooltip="Afficher/masquer des colonnes" [matMenuTriggerFor]="colors_menu">
     view_column
