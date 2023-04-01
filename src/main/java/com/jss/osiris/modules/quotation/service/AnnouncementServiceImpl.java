@@ -324,15 +324,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         if (currentProvision == null)
             return;
 
-        // Check if publication receipt already exists
-        boolean proofReading = false;
-        if (currentProvision.getAttachments() != null)
-            for (Attachment attachment : currentProvision.getAttachments())
-                if (attachment.getAttachmentType().getId()
-                        .equals(constantService.getAttachmentTypeProofReading().getId()))
-                    proofReading = true;
-
-        if (!proofReading && announcement.getNotice() != null) {
+        if (announcement.getNotice() != null) {
             File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, false,
                     currentProvision);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
