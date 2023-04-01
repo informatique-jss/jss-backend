@@ -27,6 +27,7 @@ import { TiersModule } from '../../../tiers/components/tiers/tiers.module';
 import { CompetentAuthorityComponent } from '../competent-authority/competent-authority.component';
 import { ConstantComponent } from '../constant/constant.component';
 import { LogComponent } from '../log/log.component';
+import { ProviderComponent } from '../provider/provider.component';
 import { ReferentialAccountingAccountClassComponent } from '../referentials/referential-accounting-account-class/referential-accounting-account-class.component';
 import { ReferentialAccountingAccountComponent } from '../referentials/referential-accounting-account/referential-accounting-account.component';
 import { ReferentialAccountingJournalComponent } from '../referentials/referential-accounting-journal/referential-accounting-journal.component';
@@ -85,6 +86,7 @@ import { AdministrationComponent } from './administration.component';
 const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
   { path: 'administration/competent/authority', component: CompetentAuthorityComponent },
+  { path: 'administration/provider', component: ProviderComponent },
   { path: 'administration/log/:id', component: ViewLogComponent },
 ];
 
@@ -174,6 +176,7 @@ const routes: Routes = [
     LogComponent,
     ViewLogComponent,
     CompetentAuthorityComponent,
+    ProviderComponent,
   ], exports: [LogComponent]
 })
 export class AdministrationModule { }

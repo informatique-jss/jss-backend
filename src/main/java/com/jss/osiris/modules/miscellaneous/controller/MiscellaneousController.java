@@ -471,7 +471,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<Provider>>(providerService.getProviders(), HttpStatus.OK);
     }
 
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/provider")
     public ResponseEntity<Provider> addOrUpdateProvider(
             @RequestBody Provider provider) throws OsirisValidationException, OsirisException {

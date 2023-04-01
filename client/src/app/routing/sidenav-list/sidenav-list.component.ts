@@ -49,6 +49,10 @@ export class SidenavListComponent implements OnInit {
     return this.habilitationService.canViewCompetentAuthorityModule();
   }
 
+  canViewProviderModule() {
+    return this.habilitationService.canViewProviderModule();
+  }
+
   canViewQuotationModule() {
     return this.habilitationService.canViewQuotationModule();
   }
