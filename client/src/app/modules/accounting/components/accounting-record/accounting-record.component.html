@@ -58,8 +58,7 @@
     </table>
   </div>
 </div>
-<button matTooltip="Exporter" mat-fab color="accent" class="second-fab-button" *ngIf="accountingRecords"
-  [matMenuTriggerFor]="menu">
+<button matTooltip="Exporter" mat-fab color="accent" class="second-fab-button" [matMenuTriggerFor]="menu">
   <mat-icon>file_download</mat-icon>
   <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
     <button mat-menu-item (click)="exportGrandLivre()"

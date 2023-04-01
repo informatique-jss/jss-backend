@@ -1677,7 +1677,9 @@ public class MailHelper {
                 }
         }
 
-        if (attachments.size() == 0)
+        // Do not check when send to me because we don't necessarily already generate
+        // publication receipt
+        if (attachments.size() == 0 && !sendToMe)
             if (announcement.getConfrere() != null
                     && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId()))
                 throw new OsirisException(null,
@@ -1744,7 +1746,9 @@ public class MailHelper {
                 break;
             }
 
-        if (attachments.size() == 0)
+        // Do not check when send to me because we don't necessarily already generate
+        // publication flag
+        if (attachments.size() == 0 && !sendToMe)
             if (announcement.getConfrere() != null
                     && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId()))
                 throw new OsirisException(null,

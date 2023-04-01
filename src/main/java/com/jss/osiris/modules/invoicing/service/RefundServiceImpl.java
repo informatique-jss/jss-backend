@@ -141,7 +141,7 @@ public class RefundServiceImpl implements RefundService {
             }
         }
 
-        if (refund.getRefundIBAN() == null || refund.getRefundBic() == null || refund.getRefundType() == null)
+        if (refund.getRefundIBAN() == null || refund.getRefundBic() == null)
             throw new OsirisClientMessageException(
                     "IBAN non trouvé pour effectuer le remboursement. Merci de renseigner le tiers ou l'affaire. L'opération est annulée.");
 

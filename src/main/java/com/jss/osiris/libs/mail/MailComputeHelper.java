@@ -192,6 +192,10 @@ public class MailComputeHelper {
         if (announcement.getConfrere() == null)
             throw new OsirisException(null, "Confrere not found in announce " + announcement.getId());
 
+        if (announcement.getConfrere().getMails() == null || announcement.getConfrere().getMails().size() == 0)
+            throw new OsirisClientMessageException("Aucune adresse mail renseignée sur le confrère "
+                    + announcement.getConfrere().getLabel() + " (" + announcement.getConfrere().getId() + ")");
+
         // Compute recipients
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());

@@ -401,7 +401,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                     wordFile.delete();
                 }
 
-                // Try to send whereas it was JSS or not
                 mailHelper.sendAnnouncementRequestToConfrere(
                         customerOrderService.getCustomerOrder(customerOrder.getId()), asso,
                         false, provision, announcement, false);
