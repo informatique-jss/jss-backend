@@ -14,7 +14,8 @@
   </ng-container>
   <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) &&  customerOrderProviderInvoices">
     <h3 class="invoice-title" *ngFor="let invoice of customerOrderProviderInvoices">
-      Facture fournisseur n°{{invoice.invoiceId}}, saisie le {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}, pour un
+      Facture fournisseur n°{{invoice.invoiceId}}, {{invoice.providerLabel}}, saisie le
+      {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}, pour un
       total
       de {{invoice.totalPrice}} €
       <chips-status class="invoice-chip" [status]="invoice.invoiceStatusCode" [value]="invoice.invoiceStatus">

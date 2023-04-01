@@ -33,7 +33,7 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
                         + " case when co.id is not null then co.label"
                         + " when r1.id is not null then  r1.firstname || ' '||r1.lastname "
                         + " else case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end end as customerOrderLabel,"
-                        + " pro.label as providerLabel, "
+                        + " coalesce(pro.label,competent_authority.label, co2.label) as providerLabel, "
                         + " co.id as confrereId, "
                         + " r1.id as responsableId, "
                         + " t.id as tiersId, "
@@ -60,7 +60,9 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
                         + " left join responsable r1 on r1.id = c.id_responsable"
                         + " left join tiers t on t.id = c.id_tiers or r1.id_tiers =t.id "
                         + " left join confrere co on co.id = c.id_confrere"
+                        + " left join confrere co2 on co2.id = i.id_confrere"
                         + " left join provider pro on pro.id = i.id_provider"
+                        + " left join competent_authority on competent_authority.id = i.id_competent_authority"
                         + " left join payment p on p.id_invoice = i.id and p.is_cancelled = false"
                         + " left join deposit on deposit.id_invoice = i.id and deposit.is_cancelled = false"
                         + " left join tiers_followup follow on follow.id_invoice = i.id"
@@ -73,7 +75,7 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
                         + " and (:minAmount is null or total_price>=CAST(CAST(:minAmount as text) as real) ) "
                         + " and (:maxAmount is null or total_price<=CAST(CAST(:maxAmount as text) as real) )"
                         + " and (:showToRecover is false or (  i.first_reminder_date_time is not null and  i.second_reminder_date_time  is not null and  i.third_reminder_date_time  is not null and i.id_invoice_status<>:invoicePayedStatusId ) )"
-                        + " group by i.id, ist.label,ist.code,ist.id, pro.label,c.id, co.id, co.label, r1.id, r1.firstname,t.id, r1.lastname,"
+                        + " group by i.id, ist.label,ist.code,ist.id, pro.label,competent_authority.label,co2.label, c.id, co.id, co.label, r1.id, r1.firstname,t.id, r1.lastname,"
                         + " t.denomination, t.firstname, t.lastname, r1.firstname, r1.lastname, i.billing_label, i.created_date, i.total_price,"
                         + " i.first_reminder_date_time , i.second_reminder_date_time,i.third_reminder_date_time, i.due_date ,c.description")
         List<InvoiceSearchResult> findInvoice(@Param("invoiceStatus") List<Integer> invoiceStatus,
