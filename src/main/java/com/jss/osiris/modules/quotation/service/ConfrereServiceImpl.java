@@ -5,6 +5,9 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,11 +37,13 @@ public class ConfrereServiceImpl implements ConfrereService {
     AccountingAccountService accountingAccountService;
 
     @Override
+    @Cacheable(value = "confrereList", key = "#root.methodName")
     public List<Confrere> getConfreres() {
         return IterableUtils.toList(confrereRepository.findAll());
     }
 
     @Override
+    @Cacheable(value = "confrere", key = "#id")
     public Confrere getConfrere(Integer id) {
         Optional<Confrere> confrere = confrereRepository.findById(id);
         if (confrere.isPresent())
@@ -56,6 +61,10 @@ public class ConfrereServiceImpl implements ConfrereService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @Caching(evict = {
+            @CacheEvict(value = "confrereList", allEntries = true),
+            @CacheEvict(value = "confrere", key = "#confrere.id")
+    })
     public Confrere addOrUpdateConfrere(Confrere confrere) throws OsirisException {
         if (confrere == null)
             throw new OsirisException(null, "Confrere provided is null");
