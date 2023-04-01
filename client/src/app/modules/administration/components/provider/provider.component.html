@@ -94,7 +94,7 @@
                 <td>
                   <select-payment-types [(model)]="selectedProvider.paymentType" label="Type" [form]="entityForm2"
                     propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
-                    [filteredPaymentType]="[paymentTypePrelevement,paymentTypeVirement]"></select-payment-types>
+                    [filteredPaymentType]="[paymentTypePrelevement,paymentTypeVirement,paymentTypeCB]"></select-payment-types>
                 </td>
                 <td>
                   <select-vat-collection-type [(model)]="selectedProvider.vatCollectionType"

@@ -37,6 +37,7 @@ export class ProviderComponent implements OnInit {
 
   paymentTypePrelevement = this.constantService.getPaymentTypePrelevement();
   paymentTypeVirement = this.constantService.getPaymentTypeVirement();
+  paymentTypeCB = this.constantService.getPaymentTypeCB();
 
 
   ngOnInit(): void {
