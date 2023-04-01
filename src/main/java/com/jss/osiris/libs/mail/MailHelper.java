@@ -1084,6 +1084,7 @@ public class MailHelper {
         DateTimeFormatter formatter = DateTimeFormatter
                 .ofPattern("dd/MM/yyyy");
         ctx.setVariable("invoiceCreatedDate", localDate.format(formatter));
+        ctx.setVariable("invoiceDueDate", invoice.getDueDate().format(formatter));
 
         // Create the HTML body using Thymeleaf
         final String htmlContent = emailTemplateEngine().process("invoice-page", ctx);
