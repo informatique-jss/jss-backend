@@ -191,19 +191,8 @@ export class AnnouncementComponent implements OnInit {
     }
   }
 
-  setNoticeModel(event: any) {
-    if (this.announcement)
-      this.announcement.notice = event.html;
-    this.noticeChangeFunction();
-  }
-
-  setNoticeHeaderModel(event: any) {
-    if (this.announcement)
-      this.announcement.noticeHeader = event.html;
-    this.noticeChangeFunction();
-  }
-
   noticeChangeFunction() {
+    this.cleanNotice();
     setTimeout(() => {
       if (this.provision)
         this.characterNumberService.getCharacterNumber(this.provision).subscribe(response => {
@@ -211,6 +200,14 @@ export class AnnouncementComponent implements OnInit {
         })
     }, 0);
     this.provisionChange.emit(this.provision);
+  }
+
+  cleanNotice() {
+    // remove img tag
+    if (this.announcement.notice)
+      this.announcement.notice = this.announcement.notice.replace(/<img[^>]*>/g, "");
+    if (this.announcement.noticeHeader)
+      this.announcement.noticeHeader = this.announcement.notice.replace(/<img[^>]*>/g, "");
   }
 
   toggleTabs() {
