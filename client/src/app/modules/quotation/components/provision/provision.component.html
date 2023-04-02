@@ -157,24 +157,14 @@
 </button>
 <mat-menu #menu4="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
   <button mat-menu-item
-    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.id==confrereJssSpel.id"
-    (click)="generatePublicationReceipt(currentProvisionWorkflow.announcement,currentProvisionWorkflow)">
-    <span>Générer un justificatif de parution</span>
-  </button>
-  <button mat-menu-item
     *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.isProofReadingDocument"
     (click)="generateProofReading(currentProvisionWorkflow.announcement,currentProvisionWorkflow)">
     <span>Générer une épreuve de relecture</span>
   </button>
   <button mat-menu-item
-    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id==journalTypeSpel.id"
-    (click)="generatePublicationReceiptMail(currentProvisionWorkflow.announcement)">
-    <span>Recevoir le mail d'attestation de parution</span>
-  </button>
-  <button mat-menu-item
-    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id!=journalTypeSpel.id"
-    (click)="generateAnnouncementRequestToConfrereMail(currentProvisionWorkflow.announcement)">
-    <span>Recevoir le mail d'envoi au confrère</span>
+    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.id==confrereJssSpel.id"
+    (click)="generatePublicationReceipt(currentProvisionWorkflow.announcement,currentProvisionWorkflow)">
+    <span>Générer une attestation de parution</span>
   </button>
   <button mat-menu-item
     *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.id==confrereJssSpel.id"
@@ -191,5 +181,15 @@
   </button>
   <button mat-menu-item *ngIf="currentProvisionWorkflow" (click)="generateAttachmentsMail()">
     <span>Envoyer des pièces jointes</span>
+  </button>
+  <button mat-menu-item
+    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id==journalTypeSpel.id"
+    (click)="generatePublicationReceiptMail(currentProvisionWorkflow.announcement)">
+    <span>Recevoir le mail d'attestation de parution</span>
+  </button>
+  <button mat-menu-item
+    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id!=journalTypeSpel.id"
+    (click)="generateAnnouncementRequestToConfrereMail(currentProvisionWorkflow.announcement)">
+    <span>Recevoir le mail d'envoi au confrère</span>
   </button>
 </mat-menu>
