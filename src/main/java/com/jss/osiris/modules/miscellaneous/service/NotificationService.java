@@ -20,34 +20,37 @@ public interface NotificationService {
 
         public void deleteNotification(Notification notification);
 
-        public Notification notifyNewQuotation(Quotation quotation)
+        public void notifyNewQuotation(Quotation quotation)
                         throws OsirisException, OsirisClientMessageException;
 
-        public Notification notifyQuotationToVerify(Quotation quotation)
+        public void notifyQuotationToVerify(Quotation quotation)
                         throws OsirisException, OsirisClientMessageException;
 
-        public Notification notifyQuotationSent(Quotation quotation)
+        public void notifyQuotationSent(Quotation quotation)
                         throws OsirisException, OsirisClientMessageException;
 
-        public Notification notifyQuotationValidatedByCustomer(Quotation quotation)
+        public void notifyQuotationValidatedByCustomer(Quotation quotation)
                         throws OsirisException, OsirisClientMessageException;
 
-        public Notification notifyQuotationRefusedByCustomer(Quotation quotation)
+        public void notifyQuotationRefusedByCustomer(Quotation quotation)
                         throws OsirisException, OsirisClientMessageException;
 
-        public List<Notification> notifyNewCustomerOrderQuotation(CustomerOrder customerOrder) throws OsirisException;
+        public void notifyNewCustomerOrderQuotation(CustomerOrder customerOrder) throws OsirisException;
 
-        public List<Notification> notifyCustomerOrderToVerify(CustomerOrder customerOrder) throws OsirisException;
+        public void notifyCustomerOrderToVerify(CustomerOrder customerOrder) throws OsirisException;
 
-        public List<Notification> notifyCustomerOrderToBeingProcessed(CustomerOrder customerOrder, boolean isFromHuman)
+        public void notifyCustomerOrderToBeingProcessed(CustomerOrder customerOrder, boolean isFromHuman)
                         throws OsirisException;
 
-        public List<Notification> notifyCustomerOrderToBeingToBilled(CustomerOrder customerOrder)
+        public void notifyCustomerOrderToBeingProcessedFromDeposit(CustomerOrder customerOrder, boolean isFromHuman)
+                        throws OsirisException;
+
+        public void notifyCustomerOrderToBeingToBilled(CustomerOrder customerOrder)
                         throws OsirisException;
 
         public Notification addOrUpdatePersonnalNotification(Notification notifications);
 
         public void purgeNotification();
 
-        public List<Notification> notifyInvoiceToReminder(Invoice invoice) throws OsirisException;
+        public void notifyInvoiceToReminder(Invoice invoice) throws OsirisException;
 }

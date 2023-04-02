@@ -365,11 +365,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             resetDeboursManuelAmount(customerOrder);
             // Confirm deposit taken into account or customer order starting and only if not
             // from to billed
-            if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED)) {
+            if (!customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED)) {
                 if (!isFromUser
                         && customerOrder.getCustomerOrderStatus().getCode()
                                 .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
                     mailHelper.sendCustomerOrderDepositConfirmationToCustomer(customerOrder, false);
+                    notificationService.notifyCustomerOrderToBeingProcessedFromDeposit(customerOrder, true);
                 } else
                     notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, true);
             }

@@ -182,7 +182,6 @@ public class QuotationServiceImpl implements QuotationService {
             if (quotation.getCustomerOrders() == null)
                 quotation.setCustomerOrders(new ArrayList<CustomerOrder>());
             quotation.getCustomerOrders().add(customerOrder);
-            notificationService.notifyQuotationValidatedByCustomer(quotation);
             customerOrder.setQuotations(new ArrayList<Quotation>());
             customerOrder.getQuotations().add(quotation);
         }
