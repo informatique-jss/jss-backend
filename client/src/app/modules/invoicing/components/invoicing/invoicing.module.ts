@@ -16,6 +16,7 @@ import { RouterModule, Routes } from "@angular/router";
 import { QuotationModule } from "src/app/modules/quotation/components/quotation/quotation.module";
 import { MiscellaneousModule } from "../../../miscellaneous/components/miscellaneous/miscellaneous.module";
 import { AddInvoiceComponent } from "../add-invoice/add-invoice.component";
+import { AddPaymentComponent } from "../add-payment/add-payment.component";
 import { AmountDialogComponent } from "../amount-dialog/amount-dialog.component";
 import { AssociateDepositDialogComponent } from '../associate-deposit-dialog/associate-deposit-dialog.component';
 import { AssociatePaymentDialogComponent } from "../associate-payment-dialog/associate-payment-dialog.component";
@@ -33,6 +34,7 @@ const routes: Routes = [
   { path: 'invoicing', component: InvoiceComponent },
   { path: 'invoicing/view/:id', component: InvoiceDetailsComponent },
   { path: 'invoicing/add/:id', component: AddInvoiceComponent },
+  { path: 'invoicing/payment/add', component: AddPaymentComponent },
   { path: 'invoicing/add/debour/:idCompetentAuhority/:idCustomerOrder', component: AddInvoiceComponent },
 ];
 
@@ -68,6 +70,7 @@ const routes: Routes = [
     BankTransfertListComponent,
     DeboursAmountTaxableDialogComponent,
     DeboursAmountInvoicedDialogComponent,
+    AddPaymentComponent,
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,

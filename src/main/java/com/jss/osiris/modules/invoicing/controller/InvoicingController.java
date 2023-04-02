@@ -545,6 +545,23 @@ public class InvoicingController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    @PostMapping(inputEntryPoint + "/payment/check/add")
+    public ResponseEntity<Boolean> addCheckPayment(@RequestBody Payment checkPayment)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        if (checkPayment == null)
+            throw new OsirisValidationException("payment");
+
+        checkPayment.setPaymentType(constantService.getPaymentTypeCheques());
+        checkPayment.setPaymentWay(constantService.getPaymentWayInbound());
+        validationHelper.validateString(checkPayment.getLabel(), true, 250, "paymentType");
+        validationHelper.validateDateTimeMax(checkPayment.getPaymentDate(), true, LocalDateTime.now(), "paymentType");
+
+        this.paymentService.addCheckPayment(checkPayment);
+
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
     @PostMapping(inputEntryPoint + "/deposits/associate")
     public ResponseEntity<Boolean> associateDepositsAndInvoiceAndCustomerOrder(
             @RequestBody PaymentAssociate paymentAssociate)
