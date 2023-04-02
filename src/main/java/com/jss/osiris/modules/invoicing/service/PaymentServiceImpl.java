@@ -513,15 +513,14 @@ public class PaymentServiceImpl implements PaymentService {
                 if (correspondingInvoices.size() > 1) {
                     newPayment = generateNewPaymentFromPayment(payment, effectivePayment);
                     accountingRecordService.generateBankAccountingRecordsForInboundPayment(newPayment);
+
+                    if (payment.getIsCancelled() == false)
+                        cancelPayment(payment, constantService.getAccountingJournalBank());
                 }
 
                 // associate and remove waiting accounting record
                 accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(
                         correspondingInvoices.get(i), newPayment);
-
-                if (correspondingInvoices.size() > 1) {
-                    cancelPayment(payment, constantService.getAccountingJournalBank());
-                }
 
                 newPayment.setInvoice(correspondingInvoices.get(i));
                 addOrUpdatePayment(newPayment);
