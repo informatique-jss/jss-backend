@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { DirectDebitTransfert } from '../../quotation/model/DirectDebitTransfert';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,12 +13,7 @@ export class DirectDebitTransfertService extends AppRestService<DirectDebitTrans
     super(http, "quotation");
   }
 
-  getDirectDebitTransferts() {
-    return this.getList(new HttpParams(), "direct-debit-transferts");
+  cancelDirectDebitTransfert(directDebitTransfert: DirectDebitTransfert) {
+    return this.get(new HttpParams().set("idDirectDebitTranfert", directDebitTransfert.id), "direct-debit-transfert/cancel");
   }
-  
-   addOrUpdateDirectDebitTransfert(directDebitTransfert: DirectDebitTransfert) {
-    return this.addOrUpdate(new HttpParams(), "direct-debit-transfert", directDebitTransfert, "Enregistré", "Erreur lors de l'enregistrement");
-  }
-
 }
