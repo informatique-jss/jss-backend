@@ -77,6 +77,7 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Debour;
+import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
@@ -101,7 +102,6 @@ import com.jss.osiris.modules.quotation.model.RecordType;
 import com.jss.osiris.modules.quotation.model.Rna;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.Siren;
-import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.Siret;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentShortRequest;
@@ -120,6 +120,7 @@ import com.jss.osiris.modules.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
+import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
@@ -142,7 +143,6 @@ import com.jss.osiris.modules.quotation.service.SireneDelegateService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
-import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 
 @RestController
 public class QuotationController {
@@ -333,16 +333,14 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" +
-      ActiveDirectoryHelper.ACCOUNTING)
-
+  @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
   @GetMapping(inputEntryPoint + "/direct-debit-transfert/cancel")
   public ResponseEntity<DirectDebitTransfert> cancelDirectDebitTransfert(@RequestParam Integer idDirectDebitTranfert)
       throws OsirisValidationException {
     DirectDebitTransfert directDebitTransfert = directDebitTransfertService
         .getDirectDebitTransfert(idDirectDebitTranfert);
     if (directDebitTransfert == null)
-      throw new OsirisValidationException("bankTransfert");
+      throw new OsirisValidationException("directDebitTransfert");
     return new ResponseEntity<DirectDebitTransfert>(
         directDebitTransfertService.cancelDirectDebitTransfert(directDebitTransfert),
         HttpStatus.OK);

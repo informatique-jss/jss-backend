@@ -3,11 +3,10 @@ import { FormBuilder } from '@angular/forms';
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { DirectDebitTransfertService } from '../../../quotation/services/direct.debit.transfert.service';
 import { DirectDebitTransfertSearch } from '../../model/DirectDebitTransfertSearch';
 import { DirectDebitTransfertSearchResult } from '../../model/DirectDebitTransfertSearchResult';
 import { DirectDebitTransfertSearchResultService } from '../../services/direct.debit.transfert.search.result.service';
-import { DirectDebitTransfert } from '../../../quotation/model/DirectDebitTransfert';
-import { DirectDebitTransfertService } from '../../../quotation/services/direct.debit.transfert.service';
 
 @Component({
   selector: 'direct-debit-transfer-list',
@@ -44,10 +43,10 @@ export class DirectDebitTransfertListComponent implements OnInit, AfterContentCh
     this.setColumns();
 
     this.tableAction.push({
-        actionIcon: 'delete', actionName: 'Supprimer ce virement', actionClick: (action: SortTableAction, element: any) => {
-         this.directDebitTransfertService.cancelDirectDebitTransfert(element).subscribe(response => this.searchTransferts());
-        }, display: true,
-      } as SortTableAction);
+      actionIcon: 'delete', actionName: 'Supprimer ce prélèvement', actionClick: (action: SortTableAction, element: any) => {
+        this.directDebitTransfertService.cancelDirectDebitTransfert(element).subscribe(response => this.searchTransferts());
+      }, display: true,
+    } as SortTableAction);
 
 
     this.transfertSearch.isHideExportedDirectDebitTransfert = true;
