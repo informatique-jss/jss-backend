@@ -176,7 +176,9 @@
             </tr>
             <tr>
               <td>
-                <p>Annonce :</p>
+                <p>Annonce <span *ngIf="editMode" (click)="importComplexAnnouncement()" class="pointer">(importer une
+                    annonce
+                    complexe)</span> : </p>
                 <div *ngIf="!editMode">
                   <span [innerHTML]="announcement.notice | trustHtml" class="announce-container"></span>
                 </div>

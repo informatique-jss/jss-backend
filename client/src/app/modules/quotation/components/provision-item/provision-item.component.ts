@@ -131,6 +131,9 @@ export class ProvisionItemComponent implements OnInit {
         return;
       }
 
+      if (!this.provision.provisionType)
+        return;
+
       if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_DOMICILIATION) {
         this.provision.domiciliation = undefined;
       } else if (!this.provision.domiciliation) {

@@ -19,6 +19,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -1126,8 +1127,9 @@ public class MailHelper {
                                 .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
                         : null);
         ctx.setVariable("notice",
-                announcement.getNotice().replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
-                        .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " "));
+                StringEscapeUtils.unescapeHtml4(announcement.getNotice()
+                        .replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
+                        .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")));
         LocalDate localDate = announcement.getPublicationDate();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         ctx.setVariable("date", localDate.format(formatter));
@@ -1173,8 +1175,9 @@ public class MailHelper {
                                 .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
                         : null);
         ctx.setVariable("notice",
-                announcement.getNotice().replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
-                        .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " "));
+                StringEscapeUtils.unescapeHtml4(announcement.getNotice()
+                        .replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
+                        .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")));
         if (announcement.getDepartment() != null)
             ctx.setVariable("department",
                     announcement.getDepartment().getCode() + " - " + announcement.getDepartment().getLabel());

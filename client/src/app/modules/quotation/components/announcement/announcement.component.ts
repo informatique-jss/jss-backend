@@ -30,6 +30,7 @@ import { CharacterPriceService } from '../../services/character.price.service';
 import { ConfrereService } from '../../services/confrere.service';
 import { JournalTypeService } from '../../services/journal.type.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
+import { ImportHtmlAnnouncementDialogComponent } from '../import-html-announcement-dialog/import-html-announcement-dialog.component';
 
 @Component({
   selector: 'announcement',
@@ -77,7 +78,7 @@ export class AnnouncementComponent implements OnInit {
     private characterPriceService: CharacterPriceService,
     private constantService: ConstantService,
     private noticeTypeService: NoticeTypeService,
-    public confrereDialog: MatDialog,
+    public importHtmlAnnouncementDialog: MatDialog,
     private appService: AppService,
     private journalTypeService: JournalTypeService,
     private announcementNoticeTemplateService: AnnouncementNoticeTemplateService,
@@ -312,4 +313,14 @@ export class AnnouncementComponent implements OnInit {
     return this.announcement.publicationDate.getTime() < (new Date()).getTime();
   }
 
+  importComplexAnnouncement() {
+    let importHtmlDialogRef = this.importHtmlAnnouncementDialog.open(ImportHtmlAnnouncementDialogComponent, {
+      width: '100%'
+    });
+    importHtmlDialogRef.afterClosed().subscribe(response => {
+      if (response) {
+        this.announcement.notice = response;
+      }
+    })
+  }
 }
