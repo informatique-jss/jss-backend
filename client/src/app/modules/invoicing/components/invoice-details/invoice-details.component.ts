@@ -4,8 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { QuotationComponent } from 'src/app/modules/quotation/components/quotation/quotation.component';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
-import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
+import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { VatBase } from 'src/app/modules/quotation/model/VatBase';
 import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
@@ -13,7 +13,7 @@ import { instanceOfConfrere, instanceOfResponsable, instanceOfTiers } from '../.
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { InvoiceService } from '../../services/invoice.service';
-import { getAffaireList, getAffaireListArray, getCustomerOrderForInvoice, getCustomerOrderNameForInvoice, getLetteringDate, getRemainingToPay, getResponsableName } from '../invoice-tools';
+import { getAffaireList, getAffaireListArray, getCustomerOrderForInvoice, getCustomerOrderNameForInvoice, getLetteringDate, getProviderLabelForInvoice, getRemainingToPay, getResponsableName } from '../invoice-tools';
 
 @Component({
   selector: 'app-invoice-details',
@@ -69,6 +69,7 @@ export class InvoiceDetailsComponent implements OnInit {
   });
 
   getCustomerOrderName = getCustomerOrderNameForInvoice;
+  getProviderName = getProviderLabelForInvoice;
 
   getCustomerOrder(invoice: Invoice): any {
     if (invoice) {

@@ -129,7 +129,7 @@
           <td>
             <select-payment-types [(model)]="invoice.manualPaymentType" label="Type de paiement" [form]="invoiceForm"
               *ngIf="!displayDeboursTable()" propertyName="manualPaymentType" [isMandatory]="true"
-              [isDisabled]="!editMode"></select-payment-types>
+              [isDisabled]="!editMode || invoice.id!=undefined"></select-payment-types>
           </td>
           <td>
             <generic-datepicker [(model)]="invoice.dueDate" label="Date d'échéance" [form]="invoiceForm"

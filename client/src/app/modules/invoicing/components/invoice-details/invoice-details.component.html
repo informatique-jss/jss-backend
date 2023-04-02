@@ -6,8 +6,13 @@
           <chips-status [status]="invoice.invoiceStatus.code" [value]="invoice.invoiceStatus.label"></chips-status>
         </div>
         <p>Emis<span *ngIf="!invoice.isCreditNote">e</span> à Paris, le {{invoice.createdDate|date:'dd/MM/yyyy à
-          HH:mm'}}<span *ngIf="getLetteringDate(invoice)">,
-            lettrée le {{getLetteringDate(invoice)|date:'dd/MM/yyyy à HH:mm'}}</span></p>
+          HH:mm'}}<span *ngIf="getLetteringDate(invoice)">, lettrée le {{getLetteringDate(invoice)|date:'dd/MM/yyyy à
+            HH:mm'}}</span><span *ngIf="invoice.commandNumber">,<br> Numéro de commande :
+            {{invoice.commandNumber}}</span><span *ngIf="invoice.manualAccountingDocumentNumber">,<br> Référence de
+            pièce la comptable : {{invoice.manualAccountingDocumentNumber}}</span>
+          <span *ngIf="invoice.manualAccountingDocumentDate">,<br> Date de la
+            pièce comptable : {{invoice.manualAccountingDocumentDate|date:'dd/MM/yyyy'}}</span>
+        </p>
         <div class="invoice-title" *ngIf="invoice.creditNote">
           <span>Avoir n°{{invoice.creditNote.id}} émis à Paris, le
             {{invoice.creditNote.createdDate|date:'dd/MM/yyyy à HH:mm'}}</span>
@@ -41,24 +46,31 @@
             [attachmentTypeToDisplay]="attachmentTypeInvoice">
           </single-attachment>
         </p>
-        <table class="full-width mat-table description-table "
-          *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">
+        <table class="full-width mat-table description-table ">
           <tr class=" mat-header-row">
-            <th class="mat-header-cell">Affaire(s)</th>
-            <th class="mat-header-cell">Payeur</th>
-            <th class="mat-header-cell">Donneur d'ordre</th>
+            <th class="mat-header-cell"
+              *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">Affaire(s)</th>
+            <th class="mat-header-cell"
+              *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">Payeur</th>
+            <th class="mat-header-cell"
+              *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">Donneur d'ordre
+            </th>
+            <th class="mat-header-cell" *ngIf="invoice.isInvoiceFromProvider">Fournisseur</th>
           </tr>
           <tr class=" mat-row">
-            <td class="mat-cell td-info">
+            <td class="mat-cell td-info"
+              *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">
               <p>{{getAffaireList(invoice)}}</p>
             </td>
-            <td class="mat-cell td-info">
+            <td class="mat-cell td-info"
+              *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">
               <p>{{invoice.billingLabel}}</p>
               <p>{{invoice.billingLabelAddress}}</p>
               <p>{{invoice.billingLabelPostalCode}} {{invoice.billingLabelCity?invoice.billingLabelCity.label:""}}
                 {{invoice.billingLabelCountry?invoice.billingLabelCountry.label:""}}</p>
             </td>
-            <td class="mat-cell td-info">
+            <td class="mat-cell td-info"
+              *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">
               <p>{{getCustomerOrderName(invoice)}} <mat-icon matTooltip="Voir le donneur d'ordre" color="accent"
                   class="pointer" (click)="openCustomerOrderLink($event )"
                   (auxclick)="openCustomerOrderLink($event)">visibility</mat-icon></p>
@@ -70,6 +82,10 @@
                 {{getCustomerOrder(invoice).accountingAccountCustomer.principalAccountingAccount.code+"-"+getCustomerOrder(invoice).accountingAccountCustomer.accountingAccountSubNumber}}
                 <br />Compte fournisseur :
                 {{getCustomerOrder(invoice).accountingAccountProvider.principalAccountingAccount.code+"-"+getCustomerOrder(invoice).accountingAccountProvider.accountingAccountSubNumber}}
+              </p>
+            </td>
+            <td class="mat-cell td-info" *ngIf="invoice.isInvoiceFromProvider">
+              <p>Fournisseur : {{getProviderName(invoice)}}
               </p>
             </td>
           </tr>
