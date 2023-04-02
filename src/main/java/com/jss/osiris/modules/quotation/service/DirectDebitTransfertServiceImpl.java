@@ -124,6 +124,12 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
     }
 
     @Override
+    public DirectDebitTransfert cancelDirectDebitTransfert(DirectDebitTransfert directDebitTransfert) {
+        directDebitTransfert.setIsCancelled(true);
+        return addOrUpdateDirectDebitTransfert(directDebitTransfert);
+    }
+
+    @Override
     public DirectDebitTransfert generateDirectDebitTransfertForOutboundInvoice(Invoice invoice)
             throws OsirisException, OsirisClientMessageException {
 
