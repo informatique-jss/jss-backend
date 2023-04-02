@@ -60,6 +60,8 @@ export interface Constant {
   attachmentTypeInvoice: AttachmentType;
   attachmentTypeCreditNote: AttachmentType;
   attachmentTypeKbisUpdated: AttachmentType;
+  attachmentTypeRbe: AttachmentType;
+  attachmentTypeDepositReceipt: AttachmentType;
   attachmentTypePublicationFlag: AttachmentType;
   attachmentTypePublicationReceipt: AttachmentType;
   attachmentTypePublicationProof: AttachmentType;

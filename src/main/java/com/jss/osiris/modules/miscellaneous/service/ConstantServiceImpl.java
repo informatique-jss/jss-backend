@@ -199,6 +199,16 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AttachmentType getAttachmentTypeRbe() throws OsirisException {
+        return getConstants().getAttachmentTypeRbe();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeDepositReceipt() throws OsirisException {
+        return getConstants().getAttachmentTypeDepositReceipt();
+    }
+
+    @Override
     public AttachmentType getAttachmentTypePublicationFlag() throws OsirisException {
         return getConstants().getAttachmentTypePublicationFlag();
     }

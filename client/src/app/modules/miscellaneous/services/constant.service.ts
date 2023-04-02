@@ -134,6 +134,14 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.attachmentTypeKbisUpdated;
   }
 
+  getAttachmentTypeDepositReceipt() {
+    return this.constant.attachmentTypeDepositReceipt;
+  }
+
+  getAttachmentTypeRbe() {
+    return this.constant.attachmentTypeRbe;
+  }
+
   getAttachmentTypePublicationFlag() {
     return this.constant.attachmentTypePublicationFlag;
   }

@@ -142,6 +142,14 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeKbisUpdated;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_rbe")
+	private AttachmentType attachmentTypeRbe;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_deposit_receipt")
+	private AttachmentType attachmentTypeDepositReceipt;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_attachment_type_publication_flag")
 	private AttachmentType attachmentTypePublicationFlag;
 
@@ -1942,6 +1950,22 @@ public class Constant implements Serializable, IId {
 
 	public void setInvoiceStatusCreditNoteReceived(InvoiceStatus invoiceStatusCreditNoteReceived) {
 		this.invoiceStatusCreditNoteReceived = invoiceStatusCreditNoteReceived;
+	}
+
+	public AttachmentType getAttachmentTypeRbe() {
+		return attachmentTypeRbe;
+	}
+
+	public void setAttachmentTypeRbe(AttachmentType attachmentTypeRbe) {
+		this.attachmentTypeRbe = attachmentTypeRbe;
+	}
+
+	public AttachmentType getAttachmentTypeDepositReceipt() {
+		return attachmentTypeDepositReceipt;
+	}
+
+	public void setAttachmentTypeDepositReceipt(AttachmentType attachmentTypeDepositReceipt) {
+		this.attachmentTypeDepositReceipt = attachmentTypeDepositReceipt;
 	}
 
 }

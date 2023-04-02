@@ -214,7 +214,10 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachment.setProvision(provision);
 
             // Send Kbis immediatly to customer order
-            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeKbisUpdated().getId())) {
+            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeKbisUpdated().getId())
+                    || attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeRbe().getId())
+                    || attachment.getAttachmentType().getId()
+                            .equals(constantService.getAttachmentTypeDepositReceipt().getId())) {
                 addOrUpdateAttachment(attachment);
                 mailHelper.sendCustomerOrderAttachmentsToCustomer(provision.getAssoAffaireOrder().getCustomerOrder(),
                         provision.getAssoAffaireOrder(), false, Arrays.asList(attachment));
