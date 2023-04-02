@@ -11,12 +11,12 @@ import { Announcement } from '../../model/Announcement';
 import { Bodacc } from '../../model/Bodacc';
 import { Confrere } from '../../model/Confrere';
 import { Domiciliation } from '../../model/Domiciliation';
-import { Formalite } from '../../model/guichet-unique/Formalite';
 import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { ProvisionFamilyType } from '../../model/ProvisionFamilyType';
 import { ProvisionType } from '../../model/ProvisionType';
 import { SimpleProvision } from '../../model/SimpleProvision';
+import { Formalite } from '../../model/guichet-unique/Formalite';
 import { ProvisionFamilyTypeService } from '../../services/provision.family.type.service';
 import { ProvisionService } from '../../services/provision.service';
 import { ProvisionTypeService } from '../../services/provision.type.service';
@@ -121,7 +121,7 @@ export class ProvisionItemComponent implements OnInit {
 
   changeProvisionType() {
     if (this.provision) {
-      if (!this.provision.provisionFamilyType || !this.provision.provisionType) {
+      if (!this.provision.provisionFamilyType && !this.provision.provisionType) {
         this.provision.announcement = undefined;
         this.provision.domiciliation = undefined;
         this.provision.bodacc = undefined;
