@@ -105,6 +105,10 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     public List<RefundSearchResult> searchRefunds(RefundSearch refundSearch) {
+        if (refundSearch.getStartDate() == null)
+            refundSearch.setStartDate(LocalDateTime.now().minusYears(100));
+        if (refundSearch.getEndDate() == null)
+            refundSearch.setEndDate(LocalDateTime.now().plusYears(100));
         return refundRepository.findRefunds(
                 refundSearch.getStartDate().withHour(0).withMinute(0),
                 refundSearch.getEndDate().withHour(23).withMinute(59), refundSearch.getMinAmount(),

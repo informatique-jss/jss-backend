@@ -4,6 +4,7 @@ export interface RefundSearchResult {
   refundDate: Date;
   refundAmount: number;
   refundLabel: string;
+  refundTiersLabel: string;
   refundIban: string;
   isMatched: boolean;
   isAlreadyExported: boolean;

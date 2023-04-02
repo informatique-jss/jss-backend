@@ -206,9 +206,6 @@ public class InvoicingController {
         if (refundSearch == null)
             throw new OsirisValidationException("refundSearch");
 
-        if (refundSearch.getStartDate() == null || refundSearch.getEndDate() == null)
-            throw new OsirisValidationException("StartDate or EndDate");
-
         return new ResponseEntity<List<RefundSearchResult>>(refundService.searchRefunds(refundSearch),
                 HttpStatus.OK);
     }
