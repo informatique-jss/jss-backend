@@ -165,7 +165,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
         DirectDebitTransfert directDebitTransfert = new DirectDebitTransfert();
         directDebitTransfert.setLabel("Facture " + invoice.getId() + " / Journal Spécial des Sociétés / "
-                + invoice.getCommandNumber());
+                + (invoice.getCustomerOrder() != null ? invoice.getCustomerOrder().getId() : ""));
         directDebitTransfert.setIsAlreadyExported(false);
         directDebitTransfert.setTransfertAmount(invoice.getTotalPrice());
         directDebitTransfert.setTransfertDateTime(invoice.getDueDate().atTime(12, 0));
@@ -224,7 +224,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
                 PmtInfBean body = new PmtInfBean();
                 document.getCstmrCdtTrfInitnBean().getPmtInfBean().add(body);
-                body.setPmtInfId("REF PRELVT");
+                body.setPmtInfId(bankTransfert.getTransfertLabel());
                 body.setPmtMtd("DD");
                 body.setBtchBookg(false);
                 body.setNbOfTxs(bankTransferts.size());
