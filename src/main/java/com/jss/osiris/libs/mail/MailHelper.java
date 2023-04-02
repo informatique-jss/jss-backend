@@ -1643,6 +1643,14 @@ public class MailHelper {
         mail.setLabel("Commande n°" + customerOrder.getId());
         String explainationText = "Vous trouverez ci-joint l'attestation de parution ";
 
+        Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
+        if (billingDocument != null) {
+            if (billingDocument.getIsCommandNumberMandatory() && billingDocument.getCommandNumber() != null)
+                explainationText += "(référence annuelle :" + billingDocument.getCommandNumber() + ") ";
+            if (billingDocument.getExternalReference() != null)
+                explainationText += "(référence :" + billingDocument.getExternalReference() + ") ";
+        }
+
         Provision currentProvision = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
@@ -1711,6 +1719,14 @@ public class MailHelper {
         mail.setTitle("Votre témoin de publication");
         mail.setLabel("Commande n°" + customerOrder.getId());
         String explainationText = "Vous trouverez ci-joint le témoin de publication ";
+
+        Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
+        if (billingDocument != null) {
+            if (billingDocument.getIsCommandNumberMandatory() && billingDocument.getCommandNumber() != null)
+                explainationText += "(référence annuelle :" + billingDocument.getCommandNumber() + ") ";
+            if (billingDocument.getExternalReference() != null)
+                explainationText += "(référence :" + billingDocument.getExternalReference() + ") ";
+        }
 
         Provision currentProvision = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
