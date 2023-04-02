@@ -30,7 +30,8 @@
         <td>
           <div>
             <mat-tab-group animationDuration="0ms">
-              <mat-tab [label]="getTabLabel(QUOTATION_ENTITY_TYPE)">
+              <mat-tab [label]="getTabLabel(QUOTATION_ENTITY_TYPE)"
+                *ngIf="getEntitiesForTab(QUOTATION_ENTITY_TYPE).length>0">
                 <mat-dialog-content class="mat-content">
                   <mat-card class="pointer" *ngFor="let notification of getEntitiesForTab(QUOTATION_ENTITY_TYPE)"
                     (click)="openEntity($event,notification,QUOTATION_ENTITY_TYPE)"
@@ -101,10 +102,14 @@
                           [ngTemplateOutletContext]="{notification:notification}">
                         </ng-container>
                       </mat-card-title-group>
-                      <mat-card-content>
+                      <mat-card-content *ngIf="!notification.createdBy">
                         <avatar-chip [employee]="notification.createdBy" [disableEmployeeDialog]="true"></avatar-chip> a
                         indiqué que le devis n°{{notification.entityId}} pour
                         {{notification.detail1}} a été validé </mat-card-content>
+                      <mat-card-content *ngIf="!notification.createdBy">
+                        Suite à réception d'un acompte suffisant, le devis n°{{notification.entityId}} pour
+                        {{notification.detail1}} a été validé
+                      </mat-card-content>
                     </ng-container>
                     <ng-container *ngIf="notification.notificationType==QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY">
                       <mat-card-title-group>
@@ -127,7 +132,8 @@
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>
-              <mat-tab [label]="getTabLabel(CUSTOMER_ORDER_ENTITY_TYPE)">
+              <mat-tab [label]="getTabLabel(CUSTOMER_ORDER_ENTITY_TYPE)"
+                *ngIf="getEntitiesForTab(CUSTOMER_ORDER_ENTITY_TYPE).length>0">
                 <mat-dialog-content class="mat-content">
                   <mat-card class="pointer" *ngFor="let notification of getEntitiesForTab(CUSTOMER_ORDER_ENTITY_TYPE)"
                     (click)="openEntity($event,notification,CUSTOMER_ORDER_ENTITY_TYPE)"
@@ -191,6 +197,28 @@
                         compte de {{notification.detail1}} débute
                       </mat-card-content>
                     </ng-container>
+                    <ng-container *ngIf="notification.notificationType==CUSTOMER_ORDER_BEING_PROCESSED">
+                      <mat-card-title-group>
+                        <mat-card-title matBadge="X" matBadgePosition="above before"
+                          [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
+                          class="hide-text">Commande démarrée</mat-card-title>
+                        <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
+                            HH:mm'}}</span>
+                        </mat-card-subtitle>
+                        <ng-container [ngTemplateOutlet]="cardActions"
+                          [ngTemplateOutletContext]="{notification:notification}">
+                        </ng-container>
+                      </mat-card-title-group>
+                      <mat-card-content *ngIf="notification.createdBy">
+                        Suite à un geste manuel de <avatar-chip [employee]="notification.createdBy"
+                          [disableEmployeeDialog]="true"></avatar-chip>, la
+                        commande n°{{notification.entityId}} pour le compte de {{notification.detail1}} débute
+                      </mat-card-content>
+                      <mat-card-content *ngIf="!notification.createdBy">
+                        Suite à réception d'un acompte suffisant, la commande {{notification.entityId}} pour le
+                        compte de {{notification.detail1}} débute
+                      </mat-card-content>
+                    </ng-container>
                     <ng-container *ngIf="notification.notificationType==CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN">
                       <mat-card-title-group>
                         <mat-card-title matBadge="X" matBadgePosition="above before"
@@ -229,7 +257,8 @@
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>
-              <mat-tab [label]="getTabLabel(INVOICE_ENTITY_TYPE)">
+              <mat-tab [label]="getTabLabel(INVOICE_ENTITY_TYPE)"
+                *ngIf="getEntitiesForTab(INVOICE_ENTITY_TYPE).length>0">
                 <mat-dialog-content class="mat-content">
                   <mat-card class="pointer" *ngFor="let notification of getEntitiesForTab(INVOICE_ENTITY_TYPE)"
                     (click)="openEntity($event,notification,INVOICE_ENTITY_TYPE)"
@@ -248,6 +277,32 @@
                       </mat-card-title-group>
                       <mat-card-content>
                         La facture n°{{notification.entityId}} a été relancé pour paiement pour la troisème fois
+                      </mat-card-content>
+                    </ng-container>
+                    <mat-divider></mat-divider>
+                  </mat-card>
+                </mat-dialog-content>
+              </mat-tab>
+              <mat-tab [label]="getTabLabel(PROVISION_ENTITY_TYPE)"
+                *ngIf="getEntitiesForTab(PROVISION_ENTITY_TYPE).length>0">
+                <mat-dialog-content class="mat-content">
+                  <mat-card class="pointer" *ngFor="let notification of getEntitiesForTab(PROVISION_ENTITY_TYPE)"
+                    (click)="openEntity($event,notification,PROVISION_ENTITY_TYPE)"
+                    (auxclick)="openEntity($event,notification,PROVISION_ENTITY_TYPE)">
+                    <ng-container *ngIf="notification.notificationType==PROVISION_ADD_ATTACHMENT">
+                      <mat-card-title-group>
+                        <mat-card-title matBadge="X" matBadgePosition="above before"
+                          [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
+                          class="hide-text">Document ajouté</mat-card-title>
+                        <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
+                            HH:mm'}}</span>
+                        </mat-card-subtitle>
+                        <ng-container [ngTemplateOutlet]="cardActions"
+                          [ngTemplateOutletContext]="{notification:notification}">
+                        </ng-container>
+                      </mat-card-title-group>
+                      <mat-card-content>
+                        Un document a été ajouté sur une prestation : {{notification.detail1}}
                       </mat-card-content>
                     </ng-container>
                     <mat-divider></mat-divider>

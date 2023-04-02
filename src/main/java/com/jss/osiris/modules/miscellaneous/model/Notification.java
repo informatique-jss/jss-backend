@@ -37,6 +37,8 @@ public class Notification implements Serializable, IId {
 
   public static String INVOICE_REMINDER_PAYMENT = "INVOICE_REMINDER_PAYMENT";
 
+  public static String PROVISION_ADD_ATTACHMENT = "PROVISION_ADD_ATTACHMENT";
+
   @Id
   @SequenceGenerator(name = "notification_sequence", sequenceName = "notification_sequence", allocationSize = 1)
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_sequence")

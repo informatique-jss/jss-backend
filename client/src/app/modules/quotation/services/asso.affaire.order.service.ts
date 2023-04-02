@@ -22,6 +22,10 @@ export class AssoAffaireOrderService extends AppRestService<AssoAffaireOrder>{
     return this.getById("asso/affaire/order", idAssoAffaireOrder);
   }
 
+  getAssoAffaireOrderFromProvision(idProvision: number) {
+    return this.getById("asso/affaire/order/provision", idProvision);
+  }
+
   updateAsso(asso: AssoAffaireOrder): Observable<AssoAffaireOrder> {
     return this.postItem(new HttpParams(), "asso/affaire/order/update", asso, "Prestations mises à jour", "Erreur lors de la mise à jour de l'affaire / prestations");
   }

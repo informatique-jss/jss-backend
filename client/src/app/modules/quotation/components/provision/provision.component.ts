@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
@@ -92,7 +92,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
   ngOnInit() {
     this.appService.changeHeaderTitle("Prestation");
-    this.idAffaire = this.activatedRoute.snapshot.params.id;
+    this.idAffaire = this.activatedRoute.snapshot.params.id != "null" ? this.activatedRoute.snapshot.params.id : null;
     this.inputProvisionId = this.activatedRoute.snapshot.params.idProvision;
     this.refreshAffaire();
 
@@ -121,8 +121,13 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
 
   refreshAffaire() {
+    let promise: Observable<AssoAffaireOrder> | undefined;
     if (this.idAffaire)
-      this.assoAffaireOrderService.getAssoAffaireOrder(this.idAffaire).subscribe(response => {
+      promise = this.assoAffaireOrderService.getAssoAffaireOrder(this.idAffaire);
+    else if (this.inputProvisionId)
+      promise = this.assoAffaireOrderService.getAssoAffaireOrderFromProvision(this.inputProvisionId);
+    if (promise)
+      promise.subscribe(response => {
         this.asso = response;
         if (this.asso.affaire)
           this.appService.changeHeaderTitle("Prestation - " + (this.asso.affaire.denomination ? this.asso.affaire.denomination : (this.asso.affaire.firstname + " " + this.asso.affaire.lastname)));

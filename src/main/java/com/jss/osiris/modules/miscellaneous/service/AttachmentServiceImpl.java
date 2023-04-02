@@ -113,6 +113,9 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     MailHelper mailHelper;
 
+    @Autowired
+    NotificationService notificationService;
+
     @Override
     public List<Attachment> getAttachments() {
         return IterableUtils.toList(attachmentRepository.findAll());
@@ -216,6 +219,9 @@ public class AttachmentServiceImpl implements AttachmentService {
                 mailHelper.sendCustomerOrderAttachmentsToCustomer(provision.getAssoAffaireOrder().getCustomerOrder(),
                         provision.getAssoAffaireOrder(), false, Arrays.asList(attachment));
             }
+
+            // Notify user
+            notificationService.notifyAttachmentAddToProvision(provision, attachment);
         } else if (entityType.equals(CustomerOrder.class.getSimpleName())) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idEntity);
             if (customerOrder == null)

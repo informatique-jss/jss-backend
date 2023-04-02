@@ -13,14 +13,17 @@ import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Notification;
 import com.jss.osiris.modules.miscellaneous.repository.NotificationRepository;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -98,7 +101,8 @@ public class NotificationServiceImpl implements NotificationService {
         notificationRepository.delete(notification);
     }
 
-    private Notification genericNotificationForQuotation(Quotation quotation, String notificationType)
+    private Notification genericNotificationForQuotation(Quotation quotation, String notificationType,
+            boolean isFromHuman)
             throws OsirisException, OsirisClientMessageException {
         ITiers customerOrder = quotationService.getCustomerOrderOfQuotation(quotation);
 
@@ -124,7 +128,8 @@ public class NotificationServiceImpl implements NotificationService {
             customerOrderName = ((Confrere) customerOrder).getLabel();
 
         if (!createdByMe)
-            return generateNewNotification(employeeService.getCurrentEmployee(), quotation.getAssignedTo(),
+            return generateNewNotification(!isFromHuman ? null : employeeService.getCurrentEmployee(),
+                    quotation.getAssignedTo(),
                     notificationType,
                     quotation, customerOrderName, null, false);
 
@@ -151,9 +156,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void notifyQuotationValidatedByCustomer(Quotation quotation)
+    public void notifyQuotationValidatedByCustomer(Quotation quotation, boolean isFromHuman)
             throws OsirisException, OsirisClientMessageException {
-        genericNotificationForQuotation(quotation, Notification.QUOTATION_VALIDATED_BY_CUSOMER);
+        genericNotificationForQuotation(quotation, Notification.QUOTATION_VALIDATED_BY_CUSOMER, isFromHuman);
     }
 
     @Override
@@ -328,4 +333,31 @@ public class NotificationServiceImpl implements NotificationService {
      * return notifications;
      * }
      */
+
+    @Override
+    public void notifyAttachmentAddToProvision(Provision provision, Attachment attachment) throws OsirisException {
+        boolean createdByMe = false;
+        List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
+
+        if (compareEmployee != null)
+            for (Employee employee : compareEmployee)
+                if (provision.getAssignedTo() != null && employee.getId().equals(provision.getAssignedTo().getId()))
+                    createdByMe = false;
+
+        if (!createdByMe && provision.getAssignedTo() != null) {
+            String details = "";
+            Affaire affaire = provision.getAssoAffaireOrder().getAffaire();
+            if (affaire != null)
+                details += affaire.getDenomination() != null ? affaire.getDenomination()
+                        : (affaire.getFirstname() + " " + affaire.getLastname());
+            details += " - ";
+            if (provision.getProvisionFamilyType() != null && provision.getProvisionType() != null)
+                details += provision.getProvisionFamilyType().getLabel() + " - "
+                        + provision.getProvisionType().getLabel();
+            details += " - ";
+            details += attachment.getAttachmentType().getLabel() + " (" + attachment.getDescription() + ")";
+            generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
+                    Notification.PROVISION_ADD_ATTACHMENT, provision, details, null, false);
+        }
+    }
 }

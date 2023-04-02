@@ -5,8 +5,10 @@ import java.util.List;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Notification;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 
 public interface NotificationService {
@@ -29,7 +31,7 @@ public interface NotificationService {
         public void notifyQuotationSent(Quotation quotation)
                         throws OsirisException, OsirisClientMessageException;
 
-        public void notifyQuotationValidatedByCustomer(Quotation quotation)
+        public void notifyQuotationValidatedByCustomer(Quotation quotation, boolean isFromHuman)
                         throws OsirisException, OsirisClientMessageException;
 
         public void notifyQuotationRefusedByCustomer(Quotation quotation)
@@ -53,4 +55,6 @@ public interface NotificationService {
         public void purgeNotification();
 
         public void notifyInvoiceToReminder(Invoice invoice) throws OsirisException;
+
+        public void notifyAttachmentAddToProvision(Provision provision, Attachment attachment) throws OsirisException;
 }
