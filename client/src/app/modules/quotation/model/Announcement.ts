@@ -19,7 +19,7 @@ export interface Announcement extends IDocument {
   isPublicationFlagAlreadySent: boolean;
   isPublicationReciptAlreadySent: boolean;
   isAnnouncementAlreadySentToConfrere: boolean;
-  isAnnouncementAlreadySentToClient: boolean ;
+  firstClientReviewSentMailDateTime: Date | null;
   announcementStatus: AnnouncementStatus;
   actuLegaleId: number;
 

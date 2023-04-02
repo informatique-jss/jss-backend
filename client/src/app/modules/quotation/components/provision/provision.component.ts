@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS,ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
@@ -299,7 +299,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           }
           this.saveAsso();
         });
-      } else if (status.code == ANNOUNCEMENT_STATUS_DONE && !provision.announcement.isPublicationFlagAlreadySent) {
+      } else if ((status.code == ANNOUNCEMENT_STATUS_DONE || status.code == ANNOUNCEMENT_PUBLISHED) && !provision.announcement.isPublicationFlagAlreadySent) {
         saveAsso = false;
         const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
           maxWidth: "400px",
@@ -312,10 +312,8 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
         });
 
         dialogRef.afterClosed().subscribe(dialogResult => {
-          if (dialogResult == true || dialogResult == false) {
-            if (provision.announcement) {
-              provision.announcement.isPublicationFlagAlreadySent = dialogResult;
-            }
+          if (provision.announcement) {
+            provision.announcement.isPublicationFlagAlreadySent = dialogResult;
           }
           this.saveAsso();
         });
@@ -331,26 +329,23 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           }
         });
       } else if (status.code == ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER &&
-        !provision.announcement.isProofReadingDocument && !provision.announcement.isAnnouncementAlreadySentToClient) {
+        !provision.announcement.isProofReadingDocument && !provision.announcement.firstClientReviewSentMailDateTime) {
         saveAsso = false;
         const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
           maxWidth: "400px",
           data: {
             title: "Epreuve de relecture ?",
-            content: "Le statut a été changé à En attente de relecture client mais l’option Epreuve de relecture"+
-            " n’est pas sélectionnée. Voulez vous sélectionner cette option ou annuler le changement de statut ?",
-            closeActionText: "Ajouter l’option",
-            validationActionText: "Annuler"
+            content: "Le statut a été changé à En attente de relecture client mais l’option Epreuve de relecture" +
+              " n’est pas sélectionnée. Voulez vous sélectionner cette option et envoyer le BAT ou annuler le changement de statut ?",
+            closeActionText: "Annuler",
+            validationActionText: "Ajouter l’option"
           }
         });
 
         dialogRef.afterClosed().subscribe(dialogResult => {
-          if (dialogResult == true || dialogResult == false) {
-            if (provision.announcement) {
-              provision.announcement.isAnnouncementAlreadySentToConfrere = dialogResult;
-              provision.announcement.isAnnouncementAlreadySentToClient = !dialogResult;
-              provision.announcement.isProofReadingDocument = !dialogResult;
-            }
+          if (provision.announcement && dialogResult == true) {
+            provision.announcement.firstClientReviewSentMailDateTime = null;
+            provision.announcement.isProofReadingDocument = true;
           }
           this.saveAsso();
         });

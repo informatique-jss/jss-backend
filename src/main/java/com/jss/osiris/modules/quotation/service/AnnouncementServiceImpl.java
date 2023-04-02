@@ -352,7 +352,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         }
 
         mailHelper.sendProofReadingToCustomer(customerOrder, false, announcement);
-        announcement.setIsAnnouncementAlreadySentToClient(true);
         announcement.setFirstClientReviewSentMailDateTime(LocalDateTime.now());
 
         addOrUpdateAnnouncement(announcement);
@@ -483,20 +482,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             for (Announcement announcement : announcements) {
                 CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
 
-                // Get provision
-                Provision currentProvision = null;
-                AssoAffaireOrder currentAsso = null;
                 if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
-                    for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                        if (asso.getProvisions() != null)
-                            for (Provision provision : asso.getProvisions())
-                                if (provision.getAnnouncement() != null
-                                        && provision.getAnnouncement().getId().equals(announcement.getId())) {
-                                    currentProvision = provision;
-                                    currentAsso = asso;
-                                    break;
-                                }
-
                     boolean toSend = false;
                     if (announcement.getFirstClientReviewReminderDateTime() == null) {
                         if (announcement.getFirstClientReviewSentMailDateTime()
