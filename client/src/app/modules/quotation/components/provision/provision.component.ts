@@ -333,6 +333,15 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
             validationActionText: "Ne pas envoyer"
           }
         });
+
+        dialogRef.afterClosed().subscribe(dialogResult => {
+          if (dialogResult == true || dialogResult == false) {
+            if (provision.announcement) {
+              provision.announcement.isAnnouncementAlreadySentToConfrere = dialogResult;
+            }
+          }
+          this.saveAsso();
+        });
       } else if (status.code == ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER &&
         !provision.announcement.isProofReadingDocument && !provision.announcement.firstClientReviewSentMailDateTime) {
         saveAsso = false;
