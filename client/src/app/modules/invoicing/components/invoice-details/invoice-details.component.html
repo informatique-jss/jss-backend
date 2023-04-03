@@ -97,8 +97,8 @@
           <tr class=" mat-row">
             <td class="mat-cell td-info">
               <p>{{invoice.provider.label}} <mat-icon matTooltip="Voir le fournisseur" color="accent" class="pointer"
-                  (click)="openRoute($event,'/referential/provider/'+invoice.provider.id)"
-                  (auxclick)="openRoute($event,'/referential/provider/'+invoice.provider.id)">visibility
+                  (click)="openRoute($event,'/administration/provider/'+invoice.provider.id)"
+                  (auxclick)="openRoute($event,'/administration/provider/'+invoice.provider.id)">visibility
                 </mat-icon></p>
               <p>IBAN : {{invoice.provider.iban}}</p>
               <p>Compte fournisseur :

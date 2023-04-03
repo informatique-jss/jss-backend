@@ -242,7 +242,6 @@ import { MiscellaneousComponent } from './miscellaneous.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
-  { path: 'referential/provider/:id', component: AdministrationComponent },
 ];
 
 @NgModule({
