@@ -656,37 +656,42 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoices != null && invoices.size() > 0)
             for (Invoice invoice : invoices) {
                 boolean toSend = false;
-                if (invoice.getFirstReminderDateTime() == null
-                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8))) {
-                    toSend = true;
-                    invoice.setFirstReminderDateTime(LocalDateTime.now());
 
-                    // Reminder once, next time provision will be mandatory :)
-                    ITiers customerOrderToSetProvision = invoiceHelper.getCustomerOrder(invoice);
-                    if (customerOrderToSetProvision instanceof Responsable)
-                        customerOrderToSetProvision = ((Responsable) customerOrderToSetProvision).getTiers();
-                    if (customerOrderToSetProvision instanceof Tiers) {
-                        ((Tiers) customerOrderToSetProvision).setIsProvisionalPaymentMandatory(true);
-                        tiersService.addOrUpdateTiers((Tiers) customerOrderToSetProvision);
-                    } else if (customerOrderToSetProvision instanceof Confrere) {
-                        ((Confrere) customerOrderToSetProvision).setIsProvisionalPaymentMandatory(true);
-                        confrereService.addOrUpdateConfrere((Confrere) customerOrderToSetProvision);
+                // Do not remind on direct debit transfert
+                if (invoice.getManualPaymentType() == null
+                        || !invoice.getManualPaymentType().equals(constantService.getPaymentTypePrelevement())) {
+                    if (invoice.getFirstReminderDateTime() == null
+                            && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8))) {
+                        toSend = true;
+                        invoice.setFirstReminderDateTime(LocalDateTime.now());
+
+                        // Reminder once, next time provision will be mandatory :)
+                        ITiers customerOrderToSetProvision = invoiceHelper.getCustomerOrder(invoice);
+                        if (customerOrderToSetProvision instanceof Responsable)
+                            customerOrderToSetProvision = ((Responsable) customerOrderToSetProvision).getTiers();
+                        if (customerOrderToSetProvision instanceof Tiers) {
+                            ((Tiers) customerOrderToSetProvision).setIsProvisionalPaymentMandatory(true);
+                            tiersService.addOrUpdateTiers((Tiers) customerOrderToSetProvision);
+                        } else if (customerOrderToSetProvision instanceof Confrere) {
+                            ((Confrere) customerOrderToSetProvision).setIsProvisionalPaymentMandatory(true);
+                            confrereService.addOrUpdateConfrere((Confrere) customerOrderToSetProvision);
+                        }
+                    } else if (invoice.getSecondReminderDateTime() == null
+                            && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))) {
+                        toSend = true;
+                        invoice.setSecondReminderDateTime(LocalDateTime.now());
+                    } else if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15 + 15))) {
+                        toSend = true;
+                        invoice.setThirdReminderDateTime(LocalDateTime.now());
+                        notificationService.notifyInvoiceToReminder(invoice);
                     }
-                } else if (invoice.getSecondReminderDateTime() == null
-                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))) {
-                    toSend = true;
-                    invoice.setSecondReminderDateTime(LocalDateTime.now());
-                } else if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15 + 15))) {
-                    toSend = true;
-                    invoice.setThirdReminderDateTime(LocalDateTime.now());
-                    notificationService.notifyInvoiceToReminder(invoice);
-                }
 
-                if (toSend) {
-                    mailHelper.sendCustomerOrderFinalisationToCustomer(
-                            customerOrderService.getCustomerOrder(invoice.getCustomerOrder().getId()), false, true,
-                            invoice.getThirdReminderDateTime() != null);
-                    addOrUpdateInvoice(invoice);
+                    if (toSend) {
+                        mailHelper.sendCustomerOrderFinalisationToCustomer(
+                                customerOrderService.getCustomerOrder(invoice.getCustomerOrder().getId()), false, true,
+                                invoice.getThirdReminderDateTime() != null);
+                        addOrUpdateInvoice(invoice);
+                    }
                 }
             }
     }

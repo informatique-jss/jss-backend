@@ -413,6 +413,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 debitTransfertService.generateDirectDebitTransfertForOutboundInvoice(invoice);
             }
 
+            invoice.setManualPaymentType(paymentType);
+            invoiceService.addOrUpdateInvoice(invoice);
+
             // Check invoice payed
             Float remainingToPayForCurrentInvoice = Math
                     .round(invoiceService.getRemainingAmountToPayForInvoice(invoice) * 100f) / 100f;
