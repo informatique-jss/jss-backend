@@ -628,7 +628,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             for (Invoice invoice : invoices) {
                 boolean toSend = false;
                 if (invoice.getFirstReminderDateTime() == null
-                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(1 * 30))) {
+                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8))) {
                     toSend = true;
                     invoice.setFirstReminderDateTime(LocalDateTime.now());
 
@@ -644,10 +644,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                         confrereService.addOrUpdateConfrere((Confrere) customerOrderToSetProvision);
                     }
                 } else if (invoice.getSecondReminderDateTime() == null
-                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(3 * 60))) {
+                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))) {
                     toSend = true;
                     invoice.setSecondReminderDateTime(LocalDateTime.now());
-                } else if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(6 * 90))) {
+                } else if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15 + 15))) {
                     toSend = true;
                     invoice.setThirdReminderDateTime(LocalDateTime.now());
                     notificationService.notifyInvoiceToReminder(invoice);

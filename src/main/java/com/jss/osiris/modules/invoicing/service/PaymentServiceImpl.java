@@ -994,8 +994,6 @@ public class PaymentServiceImpl implements PaymentService {
     public void addCheckPayment(Payment checkPayment)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         addOrUpdatePayment(checkPayment);
-        accountingRecordService.generateBankAccountingRecordsForInboundCashPayment(checkPayment);
-        accountingRecordService.generateAccountingRecordsForWaitingInboundPayment(checkPayment);
         automatchPaymentInvoicesAndGeneratePaymentAccountingRecords(checkPayment);
     }
 
