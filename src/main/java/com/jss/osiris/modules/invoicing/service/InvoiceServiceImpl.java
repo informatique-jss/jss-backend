@@ -289,10 +289,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer) throws OsirisException {
         Invoice invoice = new Invoice();
         invoice.setCreatedDate(LocalDateTime.now());
-        Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
-
-        if (billingDocument == null)
-            throw new OsirisException(null, "Billing document not found for ordering customer provided");
 
         if (orderingCustomer instanceof Tiers)
             invoice.setTiers((Tiers) orderingCustomer);
@@ -303,10 +299,25 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (orderingCustomer instanceof Confrere)
             invoice.setConfrere((Confrere) orderingCustomer);
 
+        ITiers masterOrderingCustomer = orderingCustomer;
+        if (orderingCustomer instanceof Responsable)
+            masterOrderingCustomer = ((Responsable) orderingCustomer).getTiers();
+
+        Document dunningDocument = documentService.getDocumentByDocumentType(masterOrderingCustomer.getDocuments(),
+                constantService.getDocumentTypeDunning());
+
+        if (dunningDocument == null)
+            throw new OsirisException(null, "Dunning document not found for ordering customer provided");
+
         Integer nbrOfDayFromDueDate = 30;
-        if (billingDocument.getPaymentDeadlineType() != null)
-            nbrOfDayFromDueDate = billingDocument.getPaymentDeadlineType().getNumberOfDay();
+        if (dunningDocument.getPaymentDeadlineType() != null)
+            nbrOfDayFromDueDate = dunningDocument.getPaymentDeadlineType().getNumberOfDay();
         invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
+
+        Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
+
+        if (billingDocument == null)
+            throw new OsirisException(null, "Billing document not found for ordering customer provided");
 
         invoiceHelper.setInvoiceLabel(invoice, billingDocument, customerOrder, orderingCustomer);
         invoice.setIsCreditNote(false);
@@ -403,7 +414,25 @@ public class InvoiceServiceImpl implements InvoiceService {
         ArrayList<Debour> usedDebours = new ArrayList<Debour>();
 
         if (isNewInvoice) {
+
+            ITiers masterOrderingCustomer = null;
             Integer nbrOfDayFromDueDate = 30;
+            if (invoice.getResponsable() != null)
+                masterOrderingCustomer = invoice.getResponsable().getTiers();
+            if (invoice.getConfrere() != null)
+                masterOrderingCustomer = invoice.getConfrere();
+            if (invoice.getTiers() != null)
+                masterOrderingCustomer = invoice.getTiers();
+
+            if (masterOrderingCustomer != null) {
+                Document dunningDocument = documentService.getDocumentByDocumentType(
+                        masterOrderingCustomer.getDocuments(),
+                        constantService.getDocumentTypeDunning());
+
+                if (dunningDocument.getPaymentDeadlineType() != null)
+                    nbrOfDayFromDueDate = dunningDocument.getPaymentDeadlineType().getNumberOfDay();
+            }
+
             if (invoice.getDueDate() == null)
                 invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
 
