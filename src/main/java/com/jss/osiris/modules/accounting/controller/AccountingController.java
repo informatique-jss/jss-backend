@@ -416,7 +416,7 @@ public class AccountingController {
 
             headers = new HttpHeaders();
             headers.add("filename",
-                    "SPPS - Compte - " + accountingAccount.getPrincipalAccountingAccount().getCode() + "-"
+                    "SPPS - Compte - " + accountingAccount.getPrincipalAccountingAccount().getCode()
                             + accountingAccount.getAccountingAccountSubNumber() + " - "
                             + startDate.format(dateFormatter) + " - "
                             + endDate.format(dateFormatter) + ".xlsx");
