@@ -22,16 +22,31 @@ export class AutocompleteBillingItemComponent extends GenericLocalAutocompleteCo
   filterEntities(types: BillingItem[], value: string): BillingItem[] {
     const filterValue = (value != undefined && value != null && value.toLowerCase != undefined) ? value.toLowerCase() : "";
     return types.filter(billingItem =>
-      billingItem && billingItem.billingType && billingItem.billingType.label
-      && (billingItem.billingType.label.toLowerCase().includes(filterValue) || billingItem.billingType.code.includes(filterValue)));
+      billingItem &&
+      billingItem.billingType &&
+      billingItem.billingType.label &&
+      (
+        billingItem.billingType.label.toLowerCase().includes(filterValue) ||
+        billingItem.billingType.code.includes(filterValue) ||
+        (
+          billingItem.billingType.accountingAccountCharge &&
+          billingItem.billingType.accountingAccountCharge.principalAccountingAccount &&
+          billingItem.billingType.accountingAccountCharge.principalAccountingAccount.code &&
+          billingItem.billingType.accountingAccountCharge.accountingAccountSubNumber &&
+          (billingItem.billingType.accountingAccountCharge.principalAccountingAccount.code + billingItem.billingType.accountingAccountCharge.accountingAccountSubNumber).includes(filterValue)
+        )
+      )
+    );
   }
+
 
   initTypes(): void {
     this.billingItemService.getBillingItems().subscribe(response => this.types = response);
   }
 
   displayLabel(object: BillingItem): string {
-    return object ? object.billingType.label + " (" + object.billingType.code + " / " + formatDate(object.startDate) + ")" : '';
+    return object ? object.billingType.label + " (" + object.billingType.code + " / " + formatDate(object.startDate)
+    + " / "+ object.billingType.accountingAccountCharge.principalAccountingAccount.code+object.billingType.accountingAccountCharge.accountingAccountSubNumber+ ")" : '';
   }
 
 }
