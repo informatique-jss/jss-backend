@@ -37,7 +37,7 @@ public class InvoiceHelper {
 
     public Invoice setPriceTotal(Invoice invoice) {
         if (invoice != null) {
-            invoice.setTotalPrice(this.getPriceTotal(invoice));
+            invoice.setTotalPrice(Math.round(this.getPriceTotal(invoice) * 100f) / 100f);
         }
         return invoice;
     }
