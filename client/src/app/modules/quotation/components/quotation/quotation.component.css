@@ -6,6 +6,15 @@
   padding-top: 15px;
 }
 
+.scrollable-table {
+  overflow-y: auto;
+  height: calc(100vh - 265px);
+
+  @media (min-width: 1280px) {
+    height: calc(100vh - 265px - 112px);
+  }
+}
+
 td {
   padding-right: 8px;
 }
