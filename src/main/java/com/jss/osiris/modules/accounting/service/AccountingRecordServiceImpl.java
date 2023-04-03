@@ -1151,6 +1151,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     newAccountingRecord.setLabel("Contre passe de : " + originalAccountingRecord.getLabel());
     newAccountingRecord.setManualAccountingDocumentDate(originalAccountingRecord.getManualAccountingDocumentDate());
     newAccountingRecord.setManualAccountingDocumentNumber(originalAccountingRecord.getManualAccountingDocumentNumber());
+    newAccountingRecord.setLetteringDateTime(originalAccountingRecord.getLetteringDateTime());
+    newAccountingRecord.setLetteringNumber(originalAccountingRecord.getLetteringNumber());
     newAccountingRecord.setPayment(originalAccountingRecord.getPayment());
     newAccountingRecord.setTemporaryOperationId(operationId);
     newAccountingRecord.setOperationDateTime(LocalDateTime.now());
