@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,7 +87,14 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setCreatedDateTime(LocalDateTime.now());
         notification.setEmployee(toEmployee);
         notification.setEntityId(entity.getId());
-        notification.setEntityType(entity.getClass().getSimpleName());
+
+        Object entityObject = null;
+        ;
+        if (entity != null && entity.getClass().getSimpleName().contains("HibernateProxy"))
+            entityObject = Hibernate.unproxy(entity);
+
+        if (entityObject != null)
+            notification.setEntityType(entityObject.getClass().getSimpleName());
         notification.setIsRead(false);
         notification.setNotificationType(notificationType);
         notification.setDetail1(detail1);
@@ -266,12 +274,14 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void notifyCustomerOrderToBeingProcessed(CustomerOrder customerOrder, boolean isFromHuman)
             throws OsirisException {
-        ArrayList<Notification> notifications = new ArrayList<Notification>();
-        notifications.addAll(
-                genericNotificationForCustomerOrder(customerOrder, Notification.CUSTOMER_ORDER_BEING_PROCESSED, false,
-                        true, false, isFromHuman));
-        notifications.addAll(genericNotificationForCustomerOrder(customerOrder,
-                Notification.CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN, true, false, false, isFromHuman));
+        // ArrayList<Notification> notifications = new ArrayList<Notification>();
+        // notifications.addAll(
+        // genericNotificationForCustomerOrder(customerOrder,
+        // Notification.CUSTOMER_ORDER_BEING_PROCESSED, false,
+        // true, false, isFromHuman));
+        // notifications.addAll(genericNotificationForCustomerOrder(customerOrder,
+        // Notification.CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN, true, false, false,
+        // isFromHuman));
         // return notifications;
     }
 
