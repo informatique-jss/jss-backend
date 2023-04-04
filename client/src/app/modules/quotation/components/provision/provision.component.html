@@ -167,6 +167,11 @@
     <span>Générer une attestation de parution</span>
   </button>
   <button mat-menu-item
+    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id==journalTypeSpel.id"
+    (click)="generatePublicationReceiptMail(currentProvisionWorkflow.announcement)">
+    <span>Recevoir le mail d'attestation de parution</span>
+  </button>
+  <button mat-menu-item
     *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.id==confrereJssSpel.id"
     (click)="generatePublicationFlag(currentProvisionWorkflow.announcement,currentProvisionWorkflow)">
     <span>Générer un témoin de publication</span>
@@ -181,11 +186,6 @@
   </button>
   <button mat-menu-item *ngIf="currentProvisionWorkflow" (click)="generateAttachmentsMail()">
     <span>Envoyer des pièces jointes</span>
-  </button>
-  <button mat-menu-item
-    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id==journalTypeSpel.id"
-    (click)="generatePublicationReceiptMail(currentProvisionWorkflow.announcement)">
-    <span>Recevoir le mail d'attestation de parution</span>
   </button>
   <button mat-menu-item
     *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id!=journalTypeSpel.id"

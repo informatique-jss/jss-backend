@@ -336,7 +336,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void notifyAttachmentAddToProvision(Provision provision, Attachment attachment) throws OsirisException {
-        boolean createdByMe = false;
+        boolean createdByMe = true;
         List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
 
         if (compareEmployee != null)

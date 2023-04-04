@@ -180,6 +180,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
         directDebitTransfert.setSepaMandateReference(sepaReference);
         directDebitTransfert.setSepaMandateSignatureDate(sepaDate);
+        directDebitTransfert.setIsCancelled(false);
         directDebitTransfert.setCustomerOrderLabel(customerOrderLabel);
         return this.addOrUpdateDirectDebitTransfert(directDebitTransfert);
     }
