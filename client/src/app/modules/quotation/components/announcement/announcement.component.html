@@ -165,18 +165,20 @@
      menubar: false,
      entity_encoding : 'raw',
      plugins: [
-       'table'
+       'table','fullscreen'
      ],
      toolbar:
-       'undo redo | formatselect | bold italic backcolor | \
+       'undo redo | formatselect | fontname fontsize | bold italic underline forecolor backcolor | \
        alignleft aligncenter alignright alignjustify | \
-       bullist numlist outdent indent | removeformat | help'
+       bullist numlist outdent indent | removeformat | fullscreen '
    }"></editor>
               </td>
             </tr>
             <tr>
               <td>
-                <p>Annonce :</p>
+                <p>Annonce <span *ngIf="editMode" (click)="importComplexAnnouncement()" class="pointer">(importer une
+                    annonce
+                    complexe)</span> : </p>
                 <div *ngIf="!editMode">
                   <span [innerHTML]="announcement.notice | trustHtml" class="announce-container"></span>
                 </div>
@@ -186,12 +188,12 @@
      menubar: false,
      entity_encoding : 'raw',
      plugins: [
-       'table'
+       'table','fullscreen', 'lists'
      ],
      toolbar:
-       'undo redo | formatselect | bold italic backcolor | \
-       alignleft aligncenter alignright alignjustify | \
-       bullist numlist outdent indent | removeformat | help'
+     'undo redo | formatselect | fontname fontsize | bold italic underline forecolor backcolor | \
+     alignleft aligncenter alignright alignjustify | numlist bullist | \
+     bullist numlist outdent indent | removeformat | fullscreen |  table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
    }"></editor>
               </td>
             </tr>

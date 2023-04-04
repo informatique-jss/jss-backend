@@ -95,6 +95,18 @@ export function getCustomerOrderForIQuotation(customerOrder: IQuotation): ITiers
   return {} as ITiers;
 }
 
+export function getProviderLabelForInvoice(invoice: Invoice): any {
+  if (invoice.confrere)
+    return invoice.confrere.label;
+  if (invoice.tiers)
+    return invoice.tiers.denomination ? invoice.tiers.denomination : (invoice.tiers.firstname + " " + invoice.tiers.lastname);
+  if (invoice.responsable)
+    return invoice.responsable.firstname + " " + invoice.responsable.lastname;
+  if (invoice.competentAuthority)
+    return invoice.competentAuthority.label;
+  return null;
+}
+
 export function getAffaireList(invoice: Invoice): string {
   if (invoice && invoice.customerOrder)
     return invoice.customerOrder.assoAffaireOrders.map(asso => (asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + ' ' + asso.affaire.lastname)) + (asso.affaire.city ? " (" + asso.affaire.city.label + ")" : "")).join(", ");

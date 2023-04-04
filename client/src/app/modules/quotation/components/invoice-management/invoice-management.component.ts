@@ -9,9 +9,9 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { AppService } from '../../../../services/app.service';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
 import { CustomerOrder } from '../../model/CustomerOrder';
+import { IQuotation } from '../../model/IQuotation';
 import { InvoiceItem } from '../../model/InvoiceItem';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
-import { IQuotation } from '../../model/IQuotation';
 import { VatBase } from '../../model/VatBase';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { QuotationComponent } from '../quotation/quotation.component';
@@ -115,9 +115,9 @@ export class InvoiceManagementComponent implements OnInit {
       if (this.quotation.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_BILLED)
         return Math.round((QuotationComponent.computePriceTotal(this.quotation) - QuotationComponent.computePayed(this.quotation)) * 100) / 100;
       else if (this.getCurrentInvoiceForCustomerOrder() != undefined) {
-        return this.getCurrentInvoiceForCustomerOrder()!.remainingToPay;
+        return Math.round((this.getCurrentInvoiceForCustomerOrder()!.remainingToPay) * 100) / 100;
       }
-    return this.getPriceTotal();
+    return Math.round((this.getPriceTotal()) * 100) / 100;
   }
 
   openRoute(event: any, link: string) {

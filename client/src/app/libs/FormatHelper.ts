@@ -29,7 +29,7 @@ export function toIsoString(date: Date) {
 
 export function formatEurosForSortTable(element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string {
   if (element && column && (getObjectPropertybyString(element, column.fieldName) || getObjectPropertybyString(element, column.fieldName) == 0) && !isNaN(getObjectPropertybyString(element, column.fieldName)))
-    return Math.round(getObjectPropertybyString(element, column.fieldName) * 100) / 100 + " €";
+    return ((Math.round(getObjectPropertybyString(element, column.fieldName) * 100) / 100) + "").replace(".", ",") + " €";
   return "";
 }
 

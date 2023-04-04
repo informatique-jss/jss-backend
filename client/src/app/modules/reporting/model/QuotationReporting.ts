@@ -21,4 +21,8 @@ export interface QuotationReporting {
   customerOrderCreatedDateMonth: string;
   characterNumber: number;
   invoiceDateMonth: string;
+  publicationDateWeek: string;
+  confrereAnnouncementLabel: string;
+  noticeTypeFamilyLabel: string;
+  noticeTypeLabel: string;
 }

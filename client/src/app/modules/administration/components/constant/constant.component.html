@@ -194,6 +194,21 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeRbe" label="Type de pièce-jointe - RBE"
+                [form]="constantForm" propertyName="attachmentTypeRbe" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeDepositReceipt"
+                label="Type de pièce-jointe - Récépissé de dépot" [form]="constantForm"
+                propertyName="attachmentTypeDepositReceipt" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-attachment-type [(model)]="constant.attachmentTypePublicationFlag"
                 label="Type de pièce-jointe - Témoin de publication" [form]="constantForm"
                 propertyName="attachmentTypePublicationFlag" [isMandatory]="true" [isDisabled]="!editMode">

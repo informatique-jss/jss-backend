@@ -48,6 +48,7 @@ import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
@@ -364,11 +365,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             resetDeboursManuelAmount(customerOrder);
             // Confirm deposit taken into account or customer order starting and only if not
             // from to billed
-            if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED)) {
-                if (!isFromUser
-                        && customerOrder.getCustomerOrderStatus().getCode()
-                                .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
-                    mailHelper.sendCustomerOrderDepositConfirmationToCustomer(customerOrder, false);
+            if (!customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED)) {
+                if (customerOrder.getCustomerOrderStatus().getCode()
+                        .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
+                    if (!isFromUser)
+                        mailHelper.sendCustomerOrderDepositConfirmationToCustomer(customerOrder, false);
+                    notificationService.notifyCustomerOrderToBeingProcessedFromDeposit(customerOrder, isFromUser);
                 } else
                     notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, true);
             }
@@ -410,6 +412,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     && paymentType.getId().equals(constantService.getPaymentTypePrelevement().getId())) {
                 debitTransfertService.generateDirectDebitTransfertForOutboundInvoice(invoice);
             }
+
+            invoice.setManualPaymentType(paymentType);
+            invoiceService.addOrUpdateInvoice(invoice);
 
             // Check invoice payed
             Float remainingToPayForCurrentInvoice = Math
@@ -770,6 +775,35 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         addOrUpdateCustomerOrder(customerOrder2, false, true);
 
+        // Attach attachments
+        if (quotation.getAttachments() != null) {
+            ArrayList<Attachment> attachments = new ArrayList<Attachment>();
+            for (Attachment attachment : quotation.getAttachments()) {
+                attachment.setCustomerOrder(customerOrder2);
+                attachments.add(attachment);
+                attachmentService.addOrUpdateAttachment(attachment);
+            }
+            customerOrder2.setAttachments(attachments);
+        }
+
+        if (quotation.getAssoAffaireOrders() != null)
+            for (int assoIndex = 0; assoIndex < quotation.getAssoAffaireOrders().size(); assoIndex++) {
+                AssoAffaireOrder quotationAsso = quotation.getAssoAffaireOrders().get(assoIndex);
+                if (quotationAsso.getProvisions() != null)
+                    for (int provisionIndex = 0; provisionIndex < quotationAsso.getProvisions()
+                            .size(); provisionIndex++) {
+                        Provision quotationProvision = quotationAsso.getProvisions().get(provisionIndex);
+                        if (quotationProvision.getAttachments() != null
+                                && quotationProvision.getAttachments().size() > 0)
+                            for (Attachment attachment : quotationProvision.getAttachments()) {
+                                Attachment newAttachment = attachmentService.cloneAttachment(attachment);
+                                newAttachment.setQuotation(null);
+                                newAttachment.setProvision(customerOrder2.getAssoAffaireOrders().get(assoIndex)
+                                        .getProvisions().get(provisionIndex));
+                                attachmentService.addOrUpdateAttachment(newAttachment);
+                            }
+                    }
+            }
         return customerOrder2;
     }
 

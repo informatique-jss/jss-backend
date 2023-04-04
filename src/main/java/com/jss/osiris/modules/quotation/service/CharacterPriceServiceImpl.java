@@ -84,6 +84,8 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
 
     private String cleanString(String string) {
         if (string != null) {
+            // Escape HTML entities
+            string = StringEscapeUtils.unescapeHtml4(string);
             // Remove w:data office string
             string = string.replaceAll("<w:data>(.*?)</w:data>", " ");
             string = string.replaceAll("FORMTEXT", " ");

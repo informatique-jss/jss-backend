@@ -113,6 +113,9 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     MailHelper mailHelper;
 
+    @Autowired
+    NotificationService notificationService;
+
     @Override
     public List<Attachment> getAttachments() {
         return IterableUtils.toList(attachmentRepository.findAll());
@@ -211,11 +214,17 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachment.setProvision(provision);
 
             // Send Kbis immediatly to customer order
-            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeKbisUpdated().getId())) {
+            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeKbisUpdated().getId())
+                    || attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeRbe().getId())
+                    || attachment.getAttachmentType().getId()
+                            .equals(constantService.getAttachmentTypeDepositReceipt().getId())) {
                 addOrUpdateAttachment(attachment);
                 mailHelper.sendCustomerOrderAttachmentsToCustomer(provision.getAssoAffaireOrder().getCustomerOrder(),
                         provision.getAssoAffaireOrder(), false, Arrays.asList(attachment));
             }
+
+            // Notify user
+            notificationService.notifyAttachmentAddToProvision(provision, attachment);
         } else if (entityType.equals(CustomerOrder.class.getSimpleName())) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idEntity);
             if (customerOrder == null)
@@ -296,5 +305,28 @@ public class AttachmentServiceImpl implements AttachmentService {
                 }
             });
         return attachments;
+    }
+
+    @Override
+    public Attachment cloneAttachment(Attachment attachment) throws OsirisException {
+        if (attachment == null)
+            throw new OsirisException(null, "Empty attachment to clone");
+
+        Attachment newAttachment = new Attachment();
+        newAttachment.setAttachmentType(attachment.getAttachmentType());
+        newAttachment.setCompetentAuthority(attachment.getCompetentAuthority());
+        newAttachment.setCreatDateTime(LocalDateTime.now());
+        newAttachment.setCustomerMail(attachment.getCustomerMail());
+        newAttachment.setCustomerOrder(attachment.getCustomerOrder());
+        newAttachment.setDescription(attachment.getDescription());
+        newAttachment.setInvoice(attachment.getInvoice());
+        newAttachment.setIsDisabled(attachment.getIsDisabled());
+        newAttachment.setProvider(attachment.getProvider());
+        newAttachment.setProvision(attachment.getProvision());
+        newAttachment.setQuotation(attachment.getQuotation());
+        newAttachment.setResponsable(attachment.getResponsable());
+        newAttachment.setTiers(attachment.getTiers());
+        newAttachment.setUploadedFile(attachment.getUploadedFile());
+        return newAttachment;
     }
 }

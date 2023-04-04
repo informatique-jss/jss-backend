@@ -13,14 +13,17 @@ import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Notification;
 import com.jss.osiris.modules.miscellaneous.repository.NotificationRepository;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -98,7 +101,8 @@ public class NotificationServiceImpl implements NotificationService {
         notificationRepository.delete(notification);
     }
 
-    private Notification genericNotificationForQuotation(Quotation quotation, String notificationType)
+    private Notification genericNotificationForQuotation(Quotation quotation, String notificationType,
+            boolean isFromHuman)
             throws OsirisException, OsirisClientMessageException {
         ITiers customerOrder = quotationService.getCustomerOrderOfQuotation(quotation);
 
@@ -124,7 +128,8 @@ public class NotificationServiceImpl implements NotificationService {
             customerOrderName = ((Confrere) customerOrder).getLabel();
 
         if (!createdByMe)
-            return generateNewNotification(employeeService.getCurrentEmployee(), quotation.getAssignedTo(),
+            return generateNewNotification(!isFromHuman ? null : employeeService.getCurrentEmployee(),
+                    quotation.getAssignedTo(),
                     notificationType,
                     quotation, customerOrderName, null, false);
 
@@ -132,31 +137,35 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Notification notifyNewQuotation(Quotation quotation) throws OsirisException, OsirisClientMessageException {
-        return genericNotificationForQuotation(quotation, Notification.QUOTATION_CREATE);
+    public void notifyNewQuotation(Quotation quotation) throws OsirisException, OsirisClientMessageException {
+        // return genericNotificationForQuotation(quotation,
+        // Notification.QUOTATION_CREATE);
     }
 
     @Override
-    public Notification notifyQuotationToVerify(Quotation quotation)
+    public void notifyQuotationToVerify(Quotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return genericNotificationForQuotation(quotation, Notification.QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY);
+        // return genericNotificationForQuotation(quotation,
+        // Notification.QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY);
     }
 
     @Override
-    public Notification notifyQuotationSent(Quotation quotation) throws OsirisException, OsirisClientMessageException {
-        return genericNotificationForQuotation(quotation, Notification.QUOTATION_SENT);
+    public void notifyQuotationSent(Quotation quotation) throws OsirisException, OsirisClientMessageException {
+        // return genericNotificationForQuotation(quotation,
+        // Notification.QUOTATION_SENT);
     }
 
     @Override
-    public Notification notifyQuotationValidatedByCustomer(Quotation quotation)
+    public void notifyQuotationValidatedByCustomer(Quotation quotation, boolean isFromHuman)
             throws OsirisException, OsirisClientMessageException {
-        return genericNotificationForQuotation(quotation, Notification.QUOTATION_VALIDATED_BY_CUSOMER);
+        genericNotificationForQuotation(quotation, Notification.QUOTATION_VALIDATED_BY_CUSOMER, isFromHuman);
     }
 
     @Override
-    public Notification notifyQuotationRefusedByCustomer(Quotation quotation)
+    public void notifyQuotationRefusedByCustomer(Quotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return genericNotificationForQuotation(quotation, Notification.QUOTATION_REFUSED_BY_CUSOMER);
+        // return genericNotificationForQuotation(quotation,
+        // Notification.QUOTATION_REFUSED_BY_CUSOMER);
     }
 
     private List<Notification> genericNotificationForCustomerOrder(CustomerOrder customerOrder, String notificationType,
@@ -242,20 +251,20 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> notifyNewCustomerOrderQuotation(CustomerOrder customerOrder) throws OsirisException {
-        return genericNotificationForCustomerOrder(customerOrder, Notification.CUSTOMER_ORDER_CREATE, false, true,
-                false,
-                true);
+    public void notifyNewCustomerOrderQuotation(CustomerOrder customerOrder) throws OsirisException {
+        // return genericNotificationForCustomerOrder(customerOrder,
+        // Notification.CUSTOMER_ORDER_CREATE, false, true,false,true);
     }
 
     @Override
-    public List<Notification> notifyCustomerOrderToVerify(CustomerOrder customerOrder) throws OsirisException {
-        return genericNotificationForCustomerOrder(customerOrder, Notification.CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY,
-                true, true, false, true);
+    public void notifyCustomerOrderToVerify(CustomerOrder customerOrder) throws OsirisException {
+        // return genericNotificationForCustomerOrder(customerOrder,
+        // Notification.CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY,true, true, false,
+        // true);
     }
 
     @Override
-    public List<Notification> notifyCustomerOrderToBeingProcessed(CustomerOrder customerOrder, boolean isFromHuman)
+    public void notifyCustomerOrderToBeingProcessed(CustomerOrder customerOrder, boolean isFromHuman)
             throws OsirisException {
         ArrayList<Notification> notifications = new ArrayList<Notification>();
         notifications.addAll(
@@ -263,13 +272,24 @@ public class NotificationServiceImpl implements NotificationService {
                         true, false, isFromHuman));
         notifications.addAll(genericNotificationForCustomerOrder(customerOrder,
                 Notification.CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN, true, false, false, isFromHuman));
-        return notifications;
+        // return notifications;
     }
 
     @Override
-    public List<Notification> notifyCustomerOrderToBeingToBilled(CustomerOrder customerOrder) throws OsirisException {
-        return genericNotificationForCustomerOrder(customerOrder, Notification.CUSTOMER_ORDER_TO_BE_BILLED,
-                false, false, true, true);
+    public void notifyCustomerOrderToBeingProcessedFromDeposit(CustomerOrder customerOrder, boolean isFromHuman)
+            throws OsirisException {
+        ArrayList<Notification> notifications = new ArrayList<Notification>();
+        notifications.addAll(
+                genericNotificationForCustomerOrder(customerOrder,
+                        Notification.CUSTOMER_ORDER_BEING_PROCESSED_FROM_DEPOSIT, true,
+                        false, false, isFromHuman));
+        // return notifications;
+    }
+
+    @Override
+    public void notifyCustomerOrderToBeingToBilled(CustomerOrder customerOrder) throws OsirisException {
+        // return genericNotificationForCustomerOrder(customerOrder,
+        // Notification.CUSTOMER_ORDER_TO_BE_BILLED,false, false, true, true);
     }
 
     @Override
@@ -295,17 +315,49 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> notifyInvoiceToReminder(Invoice invoice) throws OsirisException {
-        return genericNotificationForInvoice(invoice, Notification.INVOICE_REMINDER_PAYMENT, true);
+    public void notifyInvoiceToReminder(Invoice invoice) throws OsirisException {
+        // return genericNotificationForInvoice(invoice,
+        // Notification.INVOICE_REMINDER_PAYMENT, true);
     }
 
-    private List<Notification> genericNotificationForInvoice(Invoice invoice, String notificationType,
-            boolean notifiyInvoiceReminderResponsible) throws OsirisException {
-        ArrayList<Notification> notifications = new ArrayList<Notification>();
+    /*
+     * private List<Notification> genericNotificationForInvoice(Invoice invoice,
+     * String notificationType,
+     * boolean notifiyInvoiceReminderResponsible) throws OsirisException {
+     * ArrayList<Notification> notifications = new ArrayList<Notification>();
+     * 
+     * notifications.add(generateNewNotification(null,
+     * constantService.getEmployeeInvoiceReminderResponsible(),
+     * notificationType, invoice, null, null, false));
+     * 
+     * return notifications;
+     * }
+     */
 
-        notifications.add(generateNewNotification(null, constantService.getEmployeeInvoiceReminderResponsible(),
-                notificationType, invoice, null, null, false));
+    @Override
+    public void notifyAttachmentAddToProvision(Provision provision, Attachment attachment) throws OsirisException {
+        boolean createdByMe = true;
+        List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
 
-        return notifications;
+        if (compareEmployee != null)
+            for (Employee employee : compareEmployee)
+                if (provision.getAssignedTo() != null && employee.getId().equals(provision.getAssignedTo().getId()))
+                    createdByMe = false;
+
+        if (!createdByMe && provision.getAssignedTo() != null) {
+            String details = "";
+            Affaire affaire = provision.getAssoAffaireOrder().getAffaire();
+            if (affaire != null)
+                details += affaire.getDenomination() != null ? affaire.getDenomination()
+                        : (affaire.getFirstname() + " " + affaire.getLastname());
+            details += " - ";
+            if (provision.getProvisionFamilyType() != null && provision.getProvisionType() != null)
+                details += provision.getProvisionFamilyType().getLabel() + " - "
+                        + provision.getProvisionType().getLabel();
+            details += " - ";
+            details += attachment.getAttachmentType().getLabel() + " (" + attachment.getDescription() + ")";
+            generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
+                    Notification.PROVISION_ADD_ATTACHMENT, provision, details, null, false);
+        }
     }
 }

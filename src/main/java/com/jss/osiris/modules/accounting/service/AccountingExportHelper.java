@@ -723,10 +723,13 @@ public class AccountingExportHelper {
 
                 // Accumulation
                 currentRow = currentSheet.createRow(currentLine++);
-                currentColumn = 7;
+                currentColumn = 8;
                 currentCell = currentRow.createCell(currentColumn++);
                 currentCell.setCellValue("Total");
                 currentCell.setCellStyle(recordCellStyle);
+                currentCell.setCellStyle(recordCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("");
                 currentCell = currentRow.createCell(currentColumn++);
                 currentCell.setCellValue(debit);
                 currentCell.setCellStyle(styleCurrency);
@@ -736,10 +739,13 @@ public class AccountingExportHelper {
 
                 // Balance
                 currentRow = currentSheet.createRow(currentLine++);
-                currentColumn = 7;
+                currentColumn = 8;
                 currentCell = currentRow.createCell(currentColumn++);
                 currentCell.setCellValue("Solde");
                 currentCell.setCellStyle(recordCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("");
+                currentCell.setCellStyle(styleCurrency);
                 currentCell = currentRow.createCell(currentColumn++);
                 currentCell.setCellValue("");
                 currentCell.setCellStyle(styleCurrency);

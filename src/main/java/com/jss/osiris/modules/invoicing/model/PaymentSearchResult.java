@@ -24,4 +24,6 @@ public interface PaymentSearchResult {
 
     public Integer getInvoiceId();
 
+    public String getPaymentTypeLabel();
+
 }

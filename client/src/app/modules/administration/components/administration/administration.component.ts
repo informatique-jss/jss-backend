@@ -73,7 +73,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   CONFRERE_REFERENTIAL = "Confrère";
   COMPETITOR_REFERENTIAL = "Concurrent";
   VAT_COLLECTION_TYPE_REFERENTIAL = "Type d'encaissement de la TVA";
-  PROVIDER_REFERENTIAL = "Fournisseur";
   ACCOUNTING_JOURNAL_REFERENTIAL = "Journal comptable";
   INVOICE_STAUTS_REFERENTIAL = "Statut de facture";
   PAYMENT_WAY_REFERENTIAL = "Sens de paiement";
@@ -135,7 +134,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.ACCOUNTING_ACCOUNT_REFERENTIAL);
     this.referentials.push(this.COMPETITOR_REFERENTIAL);
     this.referentials.push(this.VAT_COLLECTION_TYPE_REFERENTIAL);
-    this.referentials.push(this.PROVIDER_REFERENTIAL);
     this.referentials.push(this.ACCOUNTING_JOURNAL_REFERENTIAL);
     this.referentials.push(this.INVOICE_STAUTS_REFERENTIAL);
     this.referentials.push(this.PAYMENT_WAY_REFERENTIAL);
@@ -151,9 +149,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
     if (url != undefined && url != null && url[0] != undefined && url[1] != undefined && url[1].path == "confrere") {
       this.selectedReferential = this.CONFRERE_REFERENTIAL;
-    }
-    if (url != undefined && url != null && url[0] != undefined && url[1] != undefined && url[1].path == "provider") {
-      this.selectedReferential = this.PROVIDER_REFERENTIAL;
     }
 
     this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {

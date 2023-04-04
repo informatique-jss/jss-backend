@@ -77,6 +77,7 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Debour;
+import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
@@ -119,6 +120,7 @@ import com.jss.osiris.modules.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
+import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
@@ -310,6 +312,9 @@ public class QuotationController {
   InvoiceService invoiceService;
 
   @Autowired
+  DirectDebitTransfertService directDebitTransfertService;
+
+  @Autowired
   QuotationValidationHelper quotationValidationHelper;
 
   @GetMapping(inputEntryPoint + "/bank-transferts")
@@ -325,6 +330,19 @@ public class QuotationController {
     if (bankTransfert == null)
       throw new OsirisValidationException("bankTransfert");
     return new ResponseEntity<BankTransfert>(bankTransfertService.cancelBankTransfert(bankTransfert),
+        HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+  @GetMapping(inputEntryPoint + "/direct-debit-transfert/cancel")
+  public ResponseEntity<DirectDebitTransfert> cancelDirectDebitTransfert(@RequestParam Integer idDirectDebitTranfert)
+      throws OsirisValidationException {
+    DirectDebitTransfert directDebitTransfert = directDebitTransfertService
+        .getDirectDebitTransfert(idDirectDebitTranfert);
+    if (directDebitTransfert == null)
+      throw new OsirisValidationException("directDebitTransfert");
+    return new ResponseEntity<DirectDebitTransfert>(
+        directDebitTransfertService.cancelDirectDebitTransfert(directDebitTransfert),
         HttpStatus.OK);
   }
 
@@ -690,6 +708,15 @@ public class QuotationController {
       throw new OsirisValidationException("Id");
 
     return new ResponseEntity<AssoAffaireOrder>(assoAffaireOrderService.getAssoAffaireOrder(id), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/asso/affaire/order/provision")
+  public ResponseEntity<AssoAffaireOrder> getAssoFromProvision(@RequestParam Integer id)
+      throws OsirisValidationException {
+    if (id == null)
+      throw new OsirisValidationException("Id");
+
+    return new ResponseEntity<AssoAffaireOrder>(provisionService.getProvision(id).getAssoAffaireOrder(), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/assignation-types")
@@ -1511,7 +1538,7 @@ public class QuotationController {
     try {
       CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
       if (customerOrder == null)
-        throw new OsirisValidationException("customerOrder");
+        throw new OsirisValidationException("customerOrder n°" + customerOrderId);
 
       String link = customerOrderService.getCardPaymentLinkForPaymentInvoice(customerOrder, mail,
           "Paiement de la facture pour la commande n°" + customerOrderId);

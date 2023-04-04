@@ -92,26 +92,6 @@
           {{getPriceTotal()|number}} €
         </td>
       </tr>
-      <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.deposits">
-        <ng-container *ngFor="let deposit of quotation.deposits">
-          <tr>
-            <td>
-              Acompte n°{{deposit.id}}
-            </td>
-            <td class="td-price">
-              - {{deposit.depositAmount|number}} €
-            </td>
-          </tr>
-        </ng-container>
-        <tr>
-          <td>Reste à payer</td>
-          <td class="td-price">{{getRemainingToPay()}} €</td>
-        </tr>
-        <tr *ngIf="quotation.centralPayPendingPaymentAmount  && quotation.centralPayPendingPaymentAmount >0">
-          <td>Paiement reçu par CB en attente de réception</td>
-          <td class="td-price">{{quotation.centralPayPendingPaymentAmount | number}} €</td>
-        </tr>
-      </ng-container>
     </table>
   </mat-sidenav>
 
@@ -136,7 +116,7 @@
                 <mat-tab *ngFor="let asso of quotation.assoAffaireOrders">
                   <ng-template mat-tab-label>
                     {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' ' +
-                    asso.affaire.lastname)}} <mat-icon matTooltip="Supprimer l'affaire"
+                    asso.affaire.lastname)}} {{asso.affaire.city?('- ' + asso.affaire.city.label):''}} <mat-icon matTooltip="Supprimer l'affaire"
                       (click)="deleteAffaire(asso.affaire);$event.stopPropagation();" class="pointer">delete</mat-icon>
                   </ng-template>
                   <div class="mat-accordion-container full-width">

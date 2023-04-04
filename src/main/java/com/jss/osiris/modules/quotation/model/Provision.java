@@ -58,6 +58,7 @@ public class Provision implements IId, IAttachment {
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_simple_provision")
+	@IndexedField
 	private SimpleProvision simpleProvision;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

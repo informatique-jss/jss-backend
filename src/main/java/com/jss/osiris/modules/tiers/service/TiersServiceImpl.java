@@ -59,6 +59,7 @@ public class TiersServiceImpl implements TiersService {
     }
 
     @Override
+    @Transactional
     public Tiers getTiers(Integer id) {
         Optional<Tiers> tiers = tiersRepository.findById(id);
         if (tiers.isPresent()) {

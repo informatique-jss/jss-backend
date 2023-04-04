@@ -19,7 +19,7 @@ public interface DirectDebitTransfertRepository extends CrudRepository<DirectDeb
                         + " r.transfert_iban as transfertIban,"
                         + " r.is_already_exported  as isAlreadyExported "
                         + " from direct_debit_transfert r "
-                        + " where (:isHideExportedDirectDebitTransfert=false OR r.is_already_exported=false) "
+                        + " where is_cancelled=false and (:isHideExportedDirectDebitTransfert=false OR r.is_already_exported=false) "
                         + " and r.transfert_date_time>=:startDate and r.transfert_date_time<=:endDate "
                         + "  and (:minAmount is null or r.transfert_amount>=CAST(CAST(:minAmount as text) as real) ) "
                         + "  and (:maxAmount is null or r.transfert_amount<=CAST(CAST(:maxAmount as text) as real) )"

@@ -105,6 +105,10 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     public List<RefundSearchResult> searchRefunds(RefundSearch refundSearch) {
+        if (refundSearch.getStartDate() == null)
+            refundSearch.setStartDate(LocalDateTime.now().minusYears(100));
+        if (refundSearch.getEndDate() == null)
+            refundSearch.setEndDate(LocalDateTime.now().plusYears(100));
         return refundRepository.findRefunds(
                 refundSearch.getStartDate().withHour(0).withMinute(0),
                 refundSearch.getEndDate().withHour(23).withMinute(59), refundSearch.getMinAmount(),
@@ -141,7 +145,7 @@ public class RefundServiceImpl implements RefundService {
             }
         }
 
-        if (refund.getRefundIBAN() == null || refund.getRefundBic() == null || refund.getRefundType() == null)
+        if (refund.getRefundIBAN() == null || refund.getRefundBic() == null)
             throw new OsirisClientMessageException(
                     "IBAN non trouvé pour effectuer le remboursement. Merci de renseigner le tiers ou l'affaire. L'opération est annulée.");
 
@@ -193,7 +197,7 @@ public class RefundServiceImpl implements RefundService {
             header.setMsgId("Virement JSS du " + LocalDateTime.now().format(formatterDate));
             header.setCreDtTm(LocalDateTime.now().format(formatterDateTime));
             header.setNbOfTxs(refunds.size());
-            header.setCtrlSum(totalAmount);
+            header.setCtrlSum(Math.round(totalAmount * 100f) / 100f);
 
             InitgPtyBean emiterDetails = new InitgPtyBean();
             header.setInitgPtyBean(emiterDetails);

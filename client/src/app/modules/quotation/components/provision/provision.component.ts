@@ -3,8 +3,8 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { Observable, Subscription } from 'rxjs';
+import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
@@ -92,7 +92,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
   ngOnInit() {
     this.appService.changeHeaderTitle("Prestation");
-    this.idAffaire = this.activatedRoute.snapshot.params.id;
+    this.idAffaire = this.activatedRoute.snapshot.params.id != "null" ? this.activatedRoute.snapshot.params.id : null;
     this.inputProvisionId = this.activatedRoute.snapshot.params.idProvision;
     this.refreshAffaire();
 
@@ -121,8 +121,13 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
 
   refreshAffaire() {
+    let promise: Observable<AssoAffaireOrder> | undefined;
     if (this.idAffaire)
-      this.assoAffaireOrderService.getAssoAffaireOrder(this.idAffaire).subscribe(response => {
+      promise = this.assoAffaireOrderService.getAssoAffaireOrder(this.idAffaire);
+    else if (this.inputProvisionId)
+      promise = this.assoAffaireOrderService.getAssoAffaireOrderFromProvision(this.inputProvisionId);
+    if (promise)
+      promise.subscribe(response => {
         this.asso = response;
         if (this.asso.affaire)
           this.appService.changeHeaderTitle("Prestation - " + (this.asso.affaire.denomination ? this.asso.affaire.denomination : (this.asso.affaire.firstname + " " + this.asso.affaire.lastname)));
@@ -299,13 +304,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           }
           this.saveAsso();
         });
-      } else if (!provision.announcement.isPublicationFlagAlreadySent &&
-        (
-          provision.announcement.confrere.id == this.confrereJssSpel.id && status.code == ANNOUNCEMENT_PUBLISHED
-          ||
-          provision.announcement.confrere.id != this.confrereJssSpel.id && status.code == ANNOUNCEMENT_STATUS_DONE
-        )
-      ) {
+      } else if ((status.code == ANNOUNCEMENT_STATUS_DONE || status.code == ANNOUNCEMENT_PUBLISHED) && !provision.announcement.isPublicationFlagAlreadySent) {
         saveAsso = false;
         const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
           maxWidth: "400px",
@@ -318,10 +317,8 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
         });
 
         dialogRef.afterClosed().subscribe(dialogResult => {
-          if (dialogResult == true || dialogResult == false) {
-            if (provision.announcement) {
-              provision.announcement.isPublicationFlagAlreadySent = dialogResult;
-            }
+          if (provision.announcement) {
+            provision.announcement.isPublicationFlagAlreadySent = dialogResult;
           }
           this.saveAsso();
         });
@@ -345,6 +342,46 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           }
           this.saveAsso();
         });
+      } else if (status.code == ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER) {
+        if (!provision.announcement.isProofReadingDocument && !provision.announcement.firstClientReviewSentMailDateTime) {
+          saveAsso = false;
+          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+            maxWidth: "400px",
+            data: {
+              title: "Epreuve de relecture ?",
+              content: "Le statut a été changé à En attente de relecture client mais l’option Epreuve de relecture" +
+                " n’est pas sélectionnée. Voulez vous sélectionner cette option et envoyer le BAT ou annuler le changement de statut ?",
+              closeActionText: "Annuler",
+              validationActionText: "Ajouter l’option"
+            }
+          });
+
+          dialogRef.afterClosed().subscribe(dialogResult => {
+            if (provision.announcement && dialogResult == true) {
+              provision.announcement.firstClientReviewSentMailDateTime = null;
+              provision.announcement.isProofReadingDocument = true;
+            }
+            this.saveAsso();
+          });
+        } else if (provision.announcement.firstClientReviewSentMailDateTime) {
+          saveAsso = false;
+          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+            maxWidth: "400px",
+            data: {
+              title: "Epreuve de relecture ?",
+              content: "L'épreuve de relecture a déjà été envoyée au client. Voulez-vous la renvoyer ?",
+              closeActionText: "Ne pas renvoyer",
+              validationActionText: "Renvoyer"
+            }
+          });
+
+          dialogRef.afterClosed().subscribe(dialogResult => {
+            if (provision.announcement && dialogResult == true) {
+              provision.announcement.firstClientReviewSentMailDateTime = null;
+            }
+            this.saveAsso();
+          });
+        }
       }
     }
     if (provision.formalite)
@@ -381,9 +418,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
   setCurrentProvisionWorkflow(provision: Provision) {
     this.currentProvisionWorkflow = provision;
-
-    if (provision && provision.announcement && !provision.announcement.confrere)
-      this.confrereService.getConfrereForAnnouncement(provision.announcement).subscribe(confrere => provision.announcement!.confrere = confrere);
   }
 
   generatePublicationReceipt(announcement: Announcement, provision: Provision) {

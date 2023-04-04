@@ -19,12 +19,8 @@ export interface Announcement extends IDocument {
   isPublicationFlagAlreadySent: boolean;
   isPublicationReciptAlreadySent: boolean;
   isAnnouncementAlreadySentToConfrere: boolean;
+  firstClientReviewSentMailDateTime: Date | null;
   announcementStatus: AnnouncementStatus;
   actuLegaleId: number;
-
-  /**
-   * WARNING : property not directly fethed from server
-   * User ConfrereService.getConfrereForAnnouncement to fetch it !
-   */
   confrere: Confrere;
 }

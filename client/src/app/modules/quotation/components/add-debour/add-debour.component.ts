@@ -71,7 +71,7 @@ export class AddDebourComponent implements OnInit {
     if (this.editMode)
       this.tableAction.push({
         actionIcon: 'edit', actionName: 'Modifier le montant facturé', actionClick: (action: SortTableAction, element: Debour) => {
-          if (element.billingType && element.billingType.isFee) {
+          if (element.billingType) {
             let amountDialogRef = this.invoicedAmountDialog.open(AmountDialogComponent, {
               width: '100%'
             });
@@ -129,7 +129,7 @@ export class AddDebourComponent implements OnInit {
   }
 
   fillInvoicedAmount() {
-    if (this.newDebour && this.newDebour.billingType && this.newDebour.billingType.isFee && this.newDebour.debourAmount)
+    if (this.newDebour && this.newDebour.billingType && this.newDebour.debourAmount)
       this.newDebour.invoicedAmount = this.newDebour.debourAmount;
   }
 

@@ -360,6 +360,11 @@ public class QuotationValidationHelper {
                                                 debour.getBillingType().getIsFee(),
                                                 "invoicedAmount");
 
+                                if (debour.getBillingType().getIsDebour())
+                                        debour.setInvoicedAmount(Math.min(debour.getDebourAmount(),
+                                                        debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
+                                                                        : 0f));
+
                                 if (debour.getPaymentDateTime() == null)
                                         debour.setPaymentDateTime(LocalDateTime.now());
                                 validationHelper.validateDateMax(debour.getPaymentDateTime().toLocalDate(), true,

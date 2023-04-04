@@ -17,8 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -41,7 +39,6 @@ public class Announcement implements IId, IDocument {
 
 	@ManyToOne
 	@JoinColumn(name = "id_confrere")
-	@JsonProperty(access = Access.WRITE_ONLY) // For client-side performance purpose
 	private Confrere confrere;
 
 	@ManyToOne
@@ -87,6 +84,11 @@ public class Announcement implements IId, IDocument {
 	private LocalDateTime firstConfrereReminderDateTime;
 	private LocalDateTime secondConfrereReminderDateTime;
 	private LocalDateTime thirdConfrereReminderDateTime;
+
+	private LocalDateTime firstClientReviewSentMailDateTime;
+	private LocalDateTime firstClientReviewReminderDateTime;
+	private LocalDateTime secondClientReviewReminderDateTime;
+	private LocalDateTime thirdClientReviewReminderDateTime;
 
 	private Integer actuLegaleId;
 
@@ -256,6 +258,38 @@ public class Announcement implements IId, IDocument {
 
 	public void setFirstConfrereSentMailDateTime(LocalDateTime firstConfrereSentMailDateTime) {
 		this.firstConfrereSentMailDateTime = firstConfrereSentMailDateTime;
+	}
+
+	public LocalDateTime getFirstClientReviewSentMailDateTime() {
+		return firstClientReviewSentMailDateTime;
+	}
+
+	public void setFirstClientReviewSentMailDateTime(LocalDateTime firstClientReviewSentMailDateTime) {
+		this.firstClientReviewSentMailDateTime = firstClientReviewSentMailDateTime;
+	}
+
+	public LocalDateTime getFirstClientReviewReminderDateTime() {
+		return firstClientReviewReminderDateTime;
+	}
+
+	public void setFirstClientReviewReminderDateTime(LocalDateTime firstClientReviewReminderDateTime) {
+		this.firstClientReviewReminderDateTime = firstClientReviewReminderDateTime;
+	}
+
+	public LocalDateTime getSecondClientReviewReminderDateTime() {
+		return secondClientReviewReminderDateTime;
+	}
+
+	public void setSecondClientReviewReminderDateTime(LocalDateTime secondClientReviewReminderDateTime) {
+		this.secondClientReviewReminderDateTime = secondClientReviewReminderDateTime;
+	}
+
+	public LocalDateTime getThirdClientReviewReminderDateTime() {
+		return thirdClientReviewReminderDateTime;
+	}
+
+	public void setThirdClientReviewReminderDateTime(LocalDateTime thirdClientReviewReminderDateTime) {
+		this.thirdClientReviewReminderDateTime = thirdClientReviewReminderDateTime;
 	}
 
 }

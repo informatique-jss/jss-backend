@@ -1,4 +1,4 @@
-import { Directive, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Observable } from 'rxjs';
@@ -22,11 +22,15 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
 
   @Input() byPassAutocompletValidator: boolean = false;
 
+  @ViewChild('inputField') input: ElementRef | undefined;
+
   expectedMinLengthInput: number = 2;
 
   filteredTypes: T[] | undefined;
 
   doNotOpenTwice: boolean = false;
+
+  isLoading: boolean = false;
 
   @ViewChild(MatAutocompleteTrigger) trigger: MatAutocompleteTrigger | undefined;
 
@@ -47,9 +51,13 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
       this.form.addValidators(this.checkAutocompleteField());
       this.form.get(this.propertyName)?.valueChanges.pipe(
         filter(res => {
-          return res != undefined && res !== null && res.length > this.expectedMinLengthInput
+          if (!this.model && res != undefined && res !== null && res.length >= this.expectedMinLengthInput) {
+            this.isLoading = true;
+            return true;
+          }
+          return false;
         }),
-        debounceTime(300),
+        debounceTime(100),
         tap((value) => {
           this.filteredTypes = [];
           this.modelChange.emit(this.model);
@@ -58,6 +66,7 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
         )
       ).subscribe(response => {
         this.filteredTypes = this.mapResponse(response);
+        this.isLoading = false;
         if (!this.isDisabled && !this.doNotOpenTwice)
           this.trigger?.openPanel();
       });
@@ -109,8 +118,11 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
     this.doNotOpenTwice = false;
     this.modelChange.emit(this.model);
     this.onOptionSelected.emit(undefined);
+    if (this.input)
+      this.input.nativeElement.value = "";
     if (this.form) {
       this.form.get(this.propertyName)?.setValue(null);
+      this.filteredTypes = [];
       this.form.markAllAsTouched();
       this.form.updateValueAndValidity();
     }

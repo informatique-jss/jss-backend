@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -130,8 +131,8 @@ public class ActuLegaleDelegateImpl implements ActuLegaleDelegate {
         } catch (Exception e) {
         } // Completely a foul to expect an Integer here ...
         actuLegaleAnnouncement.setTest(actuLegaleIsTest);
-        actuLegaleAnnouncement.setText(announcement.getNotice().replaceAll("\r?\n", " ")
-                .replaceAll("\\<.*?>", "").replaceAll("&nbsp;", " ").replaceAll("\\\\", " "));
+        actuLegaleAnnouncement.setText(StringEscapeUtils.unescapeHtml4(announcement.getNotice().replaceAll("\r?\n", " ")
+                .replaceAll("\\<.*?>", "").replaceAll("&nbsp;", " ").replaceAll("\\\\", " ")));
 
         HttpEntity<ActuLegaleAnnouncement> request = new HttpEntity<ActuLegaleAnnouncement>(actuLegaleAnnouncement,
                 headers);

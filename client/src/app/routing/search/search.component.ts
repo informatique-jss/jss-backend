@@ -5,21 +5,21 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { AppService } from '../../services/app.service';
 import { EntityType } from './EntityType';
-import { IndexEntityService } from './index.entity.service';
 import { IndexEntity } from './IndexEntity';
+import { IndexEntityService } from './index.entity.service';
 
 export const OFX_ENTITY_TYPE: EntityType = { entityType: 'Ofx', tabName: 'Ofx', entryPoint: 'ofx' };
 export const TIERS_ENTITY_TYPE: EntityType = { entityType: 'Tiers', tabName: 'Tiers', entryPoint: 'tiers' };
 export const RESPONSABLE_ENTITY_TYPE: EntityType = { entityType: 'Responsable', tabName: 'Responsable', entryPoint: 'tiers/responsable' };
 export const CONFRERE_ENTITY_TYPE: EntityType = { entityType: 'Confrere', tabName: 'Confrère', entryPoint: 'confrere/confrere' };
-export const PROVIDER_ENTITY_TYPE: EntityType = { entityType: 'Provider', tabName: 'Fournisseur', entryPoint: 'referential/provider' };
+export const PROVIDER_ENTITY_TYPE: EntityType = { entityType: 'Provider', tabName: 'Fournisseur', entryPoint: 'administration/provider' };
 export const COMPETENT_AUTHORITY_ENTITY_TYPE: EntityType = { entityType: 'CompetentAuthority', tabName: 'Autorité compétente', entryPoint: 'administration/competent/authority' };
 export const QUOTATION_ENTITY_TYPE: EntityType = { entityType: 'Quotation', tabName: 'Devis', entryPoint: 'quotation' };
 export const CUSTOMER_ORDER_ENTITY_TYPE: EntityType = { entityType: 'CustomerOrder', tabName: 'Commande', entryPoint: 'order' };
 export const DOMICILIATION_ENTITY_TYPE: EntityType = { entityType: 'Domiciliation', tabName: 'Domiciliation', entryPoint: 'quotation/domiciliation' };
 export const ANNOUNCEMENT_ENTITY_TYPE: EntityType = { entityType: 'Announcement', tabName: 'Announcement', entryPoint: 'quotation/announcement' };
 export const FORMALITE_ENTITY_TYPE: EntityType = { entityType: 'Formalite', tabName: 'Formalité', entryPoint: 'quotation/formalite' };
-export const PROVISION_ENTITY_TYPE: EntityType = { entityType: 'Provision', tabName: 'Provision', entryPoint: 'quotation/provision' };
+export const PROVISION_ENTITY_TYPE: EntityType = { entityType: 'Provision', tabName: 'Prestation', entryPoint: 'provision/null' };
 export const BODACC_ENTITY_TYPE: EntityType = { entityType: 'Bodacc', tabName: 'BODACC', entryPoint: 'quotation/bodacc  ' };
 export const ASSO_AFFAIRE_ENTITY_TYPE: EntityType = { entityType: 'AssoAffaireOrder', tabName: 'Prestations', entryPoint: 'provision' };
 export const AFFAIRE_ENTITY_TYPE: EntityType = { entityType: 'Affaire', tabName: 'Affaires', entryPoint: 'affaire' };
@@ -165,7 +165,11 @@ export class SearchComponent implements OnInit {
     let out = [];
     if (entity.text.provisions)
       for (let provision of entity.text.provisions)
-        out.push(provision.provisionFamilyType ? provision.provisionFamilyType.label : "") + " - " + (provision.provisionType ? provision.provisionType.label : "");
+        out.push((provision.provisionFamilyType ? provision.provisionFamilyType.label : "")
+          + " - " + (provision.provisionType ? provision.provisionType.label : "")
+          + " - " + (provision.assignedTo ? provision.assignedTo.firstname + " " + provision.assignedTo.lastname : "")
+          + (provision.simpleProvision && provision.simpleProvision.simpleProvisionStatus ? " - " + provision.simpleProvision.simpleProvisionStatus.label : "")
+        );
     return out.join(" / ");
   }
 

@@ -33,4 +33,6 @@ public interface AttachmentService {
 
         public List<Attachment> sortAttachmentByDateDesc(List<Attachment> attachments);
 
+        public Attachment cloneAttachment(Attachment attachment) throws OsirisException;
+
 }

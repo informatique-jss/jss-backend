@@ -94,6 +94,10 @@ public interface ConstantService {
 
     public AttachmentType getAttachmentTypeKbisUpdated() throws OsirisException;
 
+    public AttachmentType getAttachmentTypeRbe() throws OsirisException;
+
+    public AttachmentType getAttachmentTypeDepositReceipt() throws OsirisException;
+
     public AttachmentType getAttachmentTypePublicationFlag() throws OsirisException;
 
     public AttachmentType getAttachmentTypePublicationReceipt() throws OsirisException;

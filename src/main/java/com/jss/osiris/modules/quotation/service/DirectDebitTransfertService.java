@@ -26,4 +26,6 @@ public interface DirectDebitTransfertService {
                         throws OsirisException, OsirisClientMessageException;
 
         public File getDirectDebitTransfertExport(DirectDebitTransfertSearch transfertSearch) throws OsirisException;
+
+        public DirectDebitTransfert cancelDirectDebitTransfert(DirectDebitTransfert directDebitTransfert);
 }

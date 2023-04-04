@@ -81,7 +81,7 @@ public class VatServiceImpl implements VatService {
         }
 
         if (departement == null)
-            throw new OsirisException(null, "Department not provided");
+            throw new OsirisClientMessageException("Département non trouvé pour le calcul de la TVA");
 
         // 8 % for individual of DOM excepted Guyane and Mayotte (0 %), 20 % for
         // professionals

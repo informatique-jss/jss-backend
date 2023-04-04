@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <link href="./codemirror.css" rel="stylesheet">
+  <link href="./bootstrap.min.css" rel="stylesheet">
+  <link href="./froala_editor.pkgd.min.css" rel="stylesheet">
+  <script async="" src="./analytics.js.téléchargement"></script>
+  <script async="" src="./matomo.js.téléchargement"></script>
+  <script>window.s2options_3267a624 = { "themeCss": ".select2-container--krajee-bs3", "sizeCss": "", "doReset": true, "doToggle": false, "doOrder": false };
+    window.select2_3d86372b = { "theme": "krajee-bs3", "width": "100%", "placeholder": "Ouvrir un document enregistré", "language": "fr" };
+
+    var language = 'fr';
+    const WTH_DOMAIN = " ";
+    var isP = false; var isBusinessUser = false;
+    var isR = false;
+    var gup = [];
+    var mdgupc = 20;
+    var documentIDToLoad = null;
+    var onlyShowVisualEditorMode = false;
+    var isT = false;
+    var settings = JSON.parse('{"editorType":2,"fullPageHtml":false,"gotoHtmlElement":true,"entityEncoding":"named","imageSizeInHtml":true,"legacyHtml":false,"autoLink":true,"keepAllStyles":true,"pasteMode":3,"compactToolbar":true,"editorHeight":400,"fontSizeUnit":"px","autoCloseTags":true,"showLineNumbers":true,"lineWrappig":true,"codeFolding":true,"customFontUrls":"","customFontNames":"","customCss":"","copyToClipboardAfterCleanup":true,"theme":1,"autoSaveHTML":true,"autoSaveConvertedDoc":false,"showCleanupOptions":false}');
+    var customCSSObject = null;
+    window.strength_40879144 = { "language": "fr", "inputTemplate": "\u003Cdiv class=\u0022input-group\u0022\u003E{input}\u003Cspan class=\u0022input-group-addon\u0022\u003E{toggle}\u003C\/span\u003E\u003C\/div\u003E" };
+
+    window.slider_6b609596 = { "handle": "triangle", "tooltip": "always", "min": 1, "max": 100, "step": 1, "value": 50, "id": "imageSizeSlider-slider" };
+
+    window.slider_d1edffde = { "handle": "triangle", "tooltip": "always", "min": 5, "max": 100, "step": 1, "value": 85, "id": "jpgQualitySlider-slider" };
+
+    window.bootstrapSwitch_25202257 = { "size": "mini", "animate": true, "indeterminate": false, "disabled": false, "readonly": false };
+
+    window.slider_81d74f9b = { "min": -40, "max": 40, "step": 1, "tooltip": "show", "value": 3, "id": "textShadowRight-slider" };
+
+    window.slider_396210aa = { "min": -40, "max": 40, "step": 1, "tooltip": "show", "value": 3, "id": "textShadowDown-slider" };
+
+    window.slider_917ed298 = { "min": 0, "max": 20, "step": 1, "tooltip": "show", "value": 2, "id": "textShadowBlur-slider" };
+
+    window.slider_b3e59206 = { "min": 0, "max": 1, "step": 0.05, "tooltip": "show", "value": 0.8, "id": "textShadowOpacity-slider" };
+  </script>
+</head>
+
+<body>
+  <textarea id="pastedContent" class="pastedContent" name="pastedContent"
+    style="width: 100%; height: 481px; display: none;"></textarea>
+  <div id="code" class="col-lg-6">
+    <div id="codeEditorTitleRow">
+    </div>
+    <textarea id="htmlOutput" name="htmlOutput" style="width: 100%; height: 430px; display: none;"></textarea>
+  </div>
+  <div id="templateNameModal" class="modal fade templateNameModal" tabindex="-1" role="dialog"
+    aria-labelledby="templateModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">×</span></button>
+          <h4 class="modal-title" id="templateModalLabel">Nom du modèle</h4>
+        </div>
+        <div class="modal-body">
+
+          <div class="row">
+            <div class="col-lg-12">
+              <input type="text" id="templateName" name="templateName" placeholder="Veuillez entrer le nom du modèle"
+                maxlength="128" class="form-control">
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <label id="shareWithTeamLabel" class="pull-left" style="display: none">
+            <input type="checkbox" id="shareWithTeam" name="shareWithTeam"> Partagez ce modèle avec votre
+            équipe </label>
+          <button id="templateCloseModalButton" type="button" class="btn btn-default"
+            data-dismiss="modal">Fermer</button>
+          <button id="templateSaveModalButton" type="button" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="docNameModal" class="modal fade docNameModal" tabindex="-1" role="dialog" aria-labelledby="docModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">×</span></button>
+          <h4 class="modal-title" id="docModalLabel">Nom du document</h4>
+        </div>
+        <div class="modal-body">
+
+          <div class="row">
+            <div class="col-lg-12">
+              <input type="text" id="docName" name="docName" placeholder="Veuillez entrer le nom du document"
+                maxlength="128" class="form-control">
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button id="docCloseModalButton" type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+          <button id="docSaveModalButton" type="button" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="./froala_editor.pkgd.min.js.téléchargement"></script>
+  <script src="./pl.js.téléchargement"></script>
+  <script src="./fr.js.téléchargement"></script>
+  <script src="./codemirror.min.js.téléchargement"></script>
+  <script src="./xml.js.téléchargement"></script>
+  <script src="./closetag.js.téléchargement"></script>
+  <script src="./beautify-css.min.js.téléchargement"></script>
+  <script src="./beautify-html.min.js.téléchargement"></script>
+  <script src="./lajax.js.téléchargement"></script>
+  <script src="./jquery.min.js.téléchargement"></script>
+  <script src="./common.min.js.téléchargement"></script>
+  <script src="./main.min.js.téléchargement"></script>
+  <script src="./ajax.min.js.téléchargement"></script>
+  <script>jQuery(function ($) {
+      jQuery && jQuery.pjax && (jQuery.pjax.defaults.maxCacheLength = 0);
+      if (jQuery('#document').data('select2')) { jQuery('#document').select2('destroy'); }
+      jQuery.when(jQuery('#document').select2(select2_3d86372b)).done(initS2Loading('document', 's2options_3267a624'));
+      jQuery('#document').on('change', function () { loadDocument(); });
+
+      $('[data-toggle="tooltip"]').tooltip({ delay: { "show": 750, "hide": 100 }, trigger: "hover focus", html: false });
+
+      $('[data-toggle="tooltip"]').on("click", function () {
+        $(this).tooltip("hide");
+      });
+
+      $('[data-toggle="tooltipHtml"]').tooltip({ delay: { "show": 500, "hide": 10000 }, trigger: "hover focus", html: true });
+
+      $('[data-toggle="tooltipHtml"]').on("click", function () {
+        $(this).tooltip("hide");
+      });
+
+      $(".alert-success").fadeTo(10000, 500).slideUp(500, function () {
+        $(".alert-success").slideUp(500);
+      });
+      $(".alert-warning").fadeTo(10000, 500).slideUp(500, function () {
+        $(".alert-warning").slideUp(500);
+      });
+      if (jQuery('#registerform-password').data('strength')) { jQuery('#registerform-password').strength('destroy'); }
+      jQuery('#registerform-password').strength(strength_40879144);
+
+      jQuery('#form-signup').yiiActiveForm([{ "id": "registerform-email", "name": "email", "container": ".field-registerform-email", "input": "#registerform-email", "error": ".help-block.help-block-error", "enableAjaxValidation": true, "validate": function (attribute, value, messages, deferred, $form) { value = yii.validation.trim($form, attribute, [], value); yii.validation.required(value, messages, { "message": "Email ne peut être vide." }); yii.validation.email(value, messages, { "pattern": /^[a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/, "fullPattern": /^[^@]*<[a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?>$/, "allowName": false, "message": "Email n\u0027est pas une adresse email valide.", "enableIDN": false, "skipOnEmpty": 1 }); yii.validation.string(value, messages, { "message": "Email doit être au format texte.", "max": 255, "tooLong": "Email doit comporter au plus 255 caractères.", "skipOnEmpty": 1 }); } }, { "id": "registerform-password", "name": "password", "container": ".field-registerform-password", "input": "#registerform-password", "error": ".help-block.help-block-error", "enableAjaxValidation": true, "validate": function (attribute, value, messages, deferred, $form) { yii.validation.required(value, messages, { "message": "Password ne peut être vide." }); kvStrengthValidator.validate(value, messages, { "strError": "Password doit être une chaîne", "userField": "#registerform-email", "min": 6, "minError": "Password devrait contenir au moins 6 caractères! ({found} trouvé)!", "allowSpaces": false, "allowSpacesError": "Password ne peut pas contenir d&#039;espaces", "hasUser": false, "hasUserError": "Password ne peut pas contenir le nom d&#039;utilisateur", "hasEmail": false, "hasEmailError": "Password ne peut pas contenir l&#039;adresse e-mail", "lower": 1, "lowerError": "Password 1 doit contenir au moins caractères minuscules! ({found} trouvé)!", "upper": 0, "upperError": "Password 0 doit contenir au moins caractères majuscules! ({found} trouvé)!", "digit": 1, "digitError": "Password 1 doit contenir au moins caractères numérique / chiffres! ({found} trouvé)!", "special": 0, "specialError": "Password 0 doit contenir au moins caractères spéciaux ({found} trouvé)!", "repeat": 6, "repeatError": "Password cannot contain more than 6 repeating characters!", "haveIBeenPwned": false, "haveIBeenPwnedError": "Password is present in compromised password list" }); } }], []);
+      if (jQuery('#imageSizeSlider').data('slider')) { jQuery('#imageSizeSlider').slider('destroy'); }
+      jQuery('#imageSizeSlider').slider(slider_6b609596);
+      jQuery('#imageSizeSlider').on('slide', resizeImageViaTimeout);
+
+      $('#imageSizeSlider').on('slideStop', function () { $('#imageSizeSlider').trigger('change') });
+      if (jQuery('#jpgQualitySlider').data('slider')) { jQuery('#jpgQualitySlider').slider('destroy'); }
+      jQuery('#jpgQualitySlider').slider(slider_d1edffde);
+      jQuery('#jpgQualitySlider').on('slide', resizeImageViaTimeout);
+
+      $('#jpgQualitySlider').on('slideStop', function () { $('#jpgQualitySlider').trigger('change') });
+      if (jQuery('#jpegMode').data('bootstrapSwitch')) { jQuery('#jpegMode').bootstrapSwitch('destroy'); }
+      jQuery("#jpegMode").bootstrapSwitch(bootstrapSwitch_25202257);
+      jQuery("#jpegMode").on('switchChange.bootstrapSwitch', function () { if (jpegModeFirstEvent) resizeInputImage(); else jpegModeFirstEvent = true; if ($(this).bootstrapSwitch('state')) $('#jpegQualityDiv').fadeIn(); else $('#jpegQualityDiv').fadeOut(); });
+
+      if (jQuery('#textShadowRight').data('slider')) { jQuery('#textShadowRight').slider('destroy'); }
+      jQuery('#textShadowRight').slider(slider_81d74f9b);
+      jQuery('#textShadowRight').on('slide', function () { updateTextShadowPreview() });
+
+      $('#textShadowRight').on('slideStop', function () { $('#textShadowRight').trigger('change') });
+      if (jQuery('#textShadowDown').data('slider')) { jQuery('#textShadowDown').slider('destroy'); }
+      jQuery('#textShadowDown').slider(slider_396210aa);
+      jQuery('#textShadowDown').on('slide', function () { updateTextShadowPreview() });
+
+      $('#textShadowDown').on('slideStop', function () { $('#textShadowDown').trigger('change') });
+      if (jQuery('#textShadowBlur').data('slider')) { jQuery('#textShadowBlur').slider('destroy'); }
+      jQuery('#textShadowBlur').slider(slider_917ed298);
+      jQuery('#textShadowBlur').on('slide', function () { updateTextShadowPreview() });
+
+      $('#textShadowBlur').on('slideStop', function () { $('#textShadowBlur').trigger('change') });
+      if (jQuery('#textShadowOpacity').data('slider')) { jQuery('#textShadowOpacity').slider('destroy'); }
+      jQuery('#textShadowOpacity').slider(slider_b3e59206);
+      jQuery('#textShadowOpacity').on('slide', function () { updateTextShadowPreview() });
+
+      $('#textShadowOpacity').on('slideStop', function () { $('#textShadowOpacity').trigger('change') });
+    });</script>
+  <div id="alertModal" class="modal fade alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">×</span></button>
+          <h4 class="modal-title" id="alertModalTitle">&nbsp;</h4>
+        </div>
+        <div class="modal-body">
+
+          <h3 id="alertModalInfo" class="alertText text-center"></h3>
+
+        </div>
+        <div class="modal-footer">
+          <button id="alertModalOK" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

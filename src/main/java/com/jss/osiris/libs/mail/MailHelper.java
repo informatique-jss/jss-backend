@@ -19,6 +19,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -1083,6 +1084,7 @@ public class MailHelper {
         DateTimeFormatter formatter = DateTimeFormatter
                 .ofPattern("dd/MM/yyyy");
         ctx.setVariable("invoiceCreatedDate", localDate.format(formatter));
+        ctx.setVariable("invoiceDueDate", invoice.getDueDate().format(formatter));
 
         // Create the HTML body using Thymeleaf
         final String htmlContent = emailTemplateEngine().process("invoice-page", ctx);
@@ -1124,8 +1126,9 @@ public class MailHelper {
                                 .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
                         : null);
         ctx.setVariable("notice",
-                announcement.getNotice().replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
-                        .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " "));
+                StringEscapeUtils.unescapeHtml4(announcement.getNotice()
+                        .replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
+                        .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")));
         LocalDate localDate = announcement.getPublicationDate();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         ctx.setVariable("date", localDate.format(formatter));
@@ -1143,7 +1146,9 @@ public class MailHelper {
             throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
-        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ").replaceAll("<col (.*?)>", ""));
+        renderer.setDocumentFromString(
+                htmlContent.replaceAll("\\p{C}", " ").replaceAll("<col (.*?)>", "").replaceAll("line-height: normal",
+                        "line-height: normal;padding:0;margin:0"));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
@@ -1171,8 +1176,9 @@ public class MailHelper {
                                 .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
                         : null);
         ctx.setVariable("notice",
-                announcement.getNotice().replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
-                        .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " "));
+                StringEscapeUtils.unescapeHtml4(announcement.getNotice()
+                        .replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
+                        .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")));
         if (announcement.getDepartment() != null)
             ctx.setVariable("department",
                     announcement.getDepartment().getCode() + " - " + announcement.getDepartment().getLabel());
@@ -1200,7 +1206,9 @@ public class MailHelper {
             throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
-        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ").replaceAll("<col (.*?)>", ""));
+        renderer.setDocumentFromString(
+                htmlContent.replaceAll("\\p{C}", " ").replaceAll("<col (.*?)>", "").replaceAll("line-height: normal",
+                        "line-height: normal;padding:0;margin:0"));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
@@ -1269,7 +1277,9 @@ public class MailHelper {
             throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
-        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " "));
+        renderer.setDocumentFromString(
+                htmlContent.replaceAll("\\p{C}", " ").replaceAll("<col (.*?)>", "").replaceAll("line-height: normal",
+                        "line-height: normal;padding:0;margin:0"));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
@@ -1641,6 +1651,14 @@ public class MailHelper {
         mail.setLabel("Commande n°" + customerOrder.getId());
         String explainationText = "Vous trouverez ci-joint l'attestation de parution ";
 
+        Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
+        if (billingDocument != null) {
+            if (billingDocument.getIsCommandNumberMandatory() && billingDocument.getCommandNumber() != null)
+                explainationText += "(référence annuelle :" + billingDocument.getCommandNumber() + ") ";
+            if (billingDocument.getExternalReference() != null)
+                explainationText += "(référence :" + billingDocument.getExternalReference() + ") ";
+        }
+
         Provision currentProvision = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
@@ -1676,7 +1694,9 @@ public class MailHelper {
                 }
         }
 
-        if (attachments.size() == 0)
+        // Do not check when send to me because we don't necessarily already generate
+        // publication receipt
+        if (attachments.size() == 0 && !sendToMe)
             if (announcement.getConfrere() != null
                     && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId()))
                 throw new OsirisException(null,
@@ -1707,6 +1727,14 @@ public class MailHelper {
         mail.setTitle("Votre témoin de publication");
         mail.setLabel("Commande n°" + customerOrder.getId());
         String explainationText = "Vous trouverez ci-joint le témoin de publication ";
+
+        Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
+        if (billingDocument != null) {
+            if (billingDocument.getIsCommandNumberMandatory() && billingDocument.getCommandNumber() != null)
+                explainationText += "(référence annuelle :" + billingDocument.getCommandNumber() + ") ";
+            if (billingDocument.getExternalReference() != null)
+                explainationText += "(référence :" + billingDocument.getExternalReference() + ") ";
+        }
 
         Provision currentProvision = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
@@ -1743,7 +1771,9 @@ public class MailHelper {
                 break;
             }
 
-        if (attachments.size() == 0)
+        // Do not check when send to me because we don't necessarily already generate
+        // publication flag
+        if (attachments.size() == 0 && !sendToMe)
             if (announcement.getConfrere() != null
                     && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId()))
                 throw new OsirisException(null,
@@ -1764,16 +1794,24 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
-    public void sendProofReadingToCustomer(CustomerOrder customerOrder, boolean sendToMe, Announcement announcement)
+    public void sendProofReadingToCustomer(CustomerOrder customerOrder, boolean sendToMe, Announcement announcement,
+            boolean isReminder)
             throws OsirisException, OsirisClientMessageException {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
 
         mail.setHeaderPicture("images/reading-proof-header.png");
-        mail.setTitle("Votre épreuve de relecture de publication");
+        mail.setTitle("Votre épreuve de relecture");
         mail.setLabel("Commande n°" + customerOrder.getId());
-        String explainationText = "Vous trouverez ci-joint votre épreuve de relecture pour validation ";
+
+        String explainationText = "";
+
+        if (!isReminder) {
+            explainationText = "Vous trouverez ci-joint votre épreuve de relecture pour validation ";
+        } else {
+            explainationText = "Nous sommes toujours en attente de votre épreuve de relecture. Vous trouverez ci-joint cette dernière pour validation et ";
+        }
 
         Provision currentProvision = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)

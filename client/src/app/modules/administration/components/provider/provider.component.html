@@ -1,0 +1,128 @@
+<div class="mat-elevation-z2 form-div">
+  <div>
+    <mat-form-field class="full-width">
+      <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+    </mat-form-field>
+  </div>
+  <div class="table-container-scroll">
+    <sort-table [columns]="displayedColumns" (onRowClick)="selectProvider($event)" [values]="providers"
+      tableName="Référentiel" [idRowSelected]="selectedProviderId" [filterText]="searchText">
+    </sort-table>
+  </div>
+</div>
+<div *ngIf="selectedProvider " class="mat-elevation-z2 form-div min-height">
+  <mat-tab-group animationDuration="0ms">
+    <mat-tab label="Fiche du fournisseur">
+      <form [formGroup]="entityForm2">
+        <div class="full-width">
+          <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+            <table class="full-width">
+              <tr *ngIf="selectedProvider.id">
+                <td>
+                  <generic-input [(model)]="selectedProvider.id" label="Identifiant technique" [form]="entityForm2"
+                    propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <generic-input [(model)]="selectedProvider.label" label="Nom fonctionnel" [maxLength]="100"
+                    [form]="entityForm2" propertyName="label" [isMandatory]="true"
+                    [isDisabled]="!editMode"></generic-input>
+                </td>
+              </tr>
+            </table>
+            <table class="full-width">
+              <tr>
+                <td *ngIf="selectedProvider.accountingAccountProvider">
+                  <autocomplete-accounting-account [(model)]="selectedProvider.accountingAccountProvider"
+                    [form]="entityForm2" propertyName="accountingAccountProvider" [isMandatory]="false"
+                    [isDisabled]="true" label="Compte comptable fournisseur">
+                  </autocomplete-accounting-account>
+                </td>
+                <td *ngIf="selectedProvider.accountingAccountCustomer">
+                  <autocomplete-accounting-account [(model)]="selectedProvider.accountingAccountCustomer"
+                    [form]="entityForm2" propertyName="accountingAccountCustomer" [isMandatory]="false"
+                    [isDisabled]="true" label="Compte comptable client">
+                  </autocomplete-accounting-account>
+                </td>
+                <td *ngIf="selectedProvider.accountingAccountDeposit">
+                  <autocomplete-accounting-account [(model)]="selectedProvider.accountingAccountDeposit"
+                    [form]="entityForm2" propertyName="accountingAccountDeposit" [isMandatory]="false"
+                    [isDisabled]="true" label="Compte comptable d'acompte">
+                  </autocomplete-accounting-account>
+                </td>
+                <td>
+                  <autocomplete-billing-item [(model)]="selectedProvider.defaultBillingItem" [form]="entityForm2"
+                    label="Poste de facturation par défaut" propertyName="defaultBillingItem" [isMandatory]="false"
+                    [isDisabled]="!editMode">
+                  </autocomplete-billing-item>
+                </td>
+              </tr>
+            </table>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <chips-mail [(model)]="selectedProvider.mails" label="Mails" [form]="entityForm2" propertyName="mails"
+                    [isMandatory]="true" [isDisabled]="!editMode"></chips-mail>
+                </td>
+                <td>
+                  <chips-mail [(model)]="selectedProvider.accountingMails" label="Mails (comptabilité)"
+                    [form]="entityForm2" propertyName="accountingMails" [isMandatory]="false"
+                    [isDisabled]="!editMode"></chips-mail>
+                </td>
+                <td>
+                  <chips-phone [(model)]="selectedProvider.phones" label="Téléphones" [form]="entityForm2"
+                    propertyName="phones" [isMandatory]="true" [isDisabled]="!editMode"></chips-phone>
+                </td>
+                <td>
+                  <generic-input [(model)]="selectedProvider.jssReference" label="Référence client chez le fournisseur"
+                    [form]="entityForm2" propertyName="jssReference" [isMandatory]="false" [isDisabled]="!editMode"
+                    [maxLength]="20"></generic-input>
+                </td>
+              </tr>
+            </table>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <generic-input [(model)]="selectedProvider.iban" label="IBAN" [form]="entityForm2" propertyName="iban"
+                    [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
+                </td>
+                <td>
+                  <generic-input [(model)]="selectedProvider.bic" label="BIC" [form]="entityForm2" propertyName="bic"
+                    [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
+                </td>
+                <td>
+                  <select-payment-types [(model)]="selectedProvider.paymentType" label="Type" [form]="entityForm2"
+                    propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
+                    [filteredPaymentType]="[paymentTypePrelevement,paymentTypeVirement,paymentTypeCB]"></select-payment-types>
+                </td>
+                <td>
+                  <select-vat-collection-type [(model)]="selectedProvider.vatCollectionType"
+                    label="Type d'encaissement de la TVA" [form]="entityForm2" propertyName="vatCollectionType"
+                    [isMandatory]="true" [isDisabled]="!editMode"></select-vat-collection-type>
+                </td>
+              </tr>
+            </table>
+          </fieldset>
+        </div>
+      </form>
+    </mat-tab>
+    <mat-tab label="Documents" *ngIf="selectedProvider.id">
+      <attachments [entity]="selectedProvider" [editMode]="editMode" [entityType]="PROVIDER_ENTITY_TYPE.entityType">
+      </attachments>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+
+<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true"
+  (click)="saveProvider()">
+  <mat-icon>save</mat-icon>
+</button>
+<button matTooltip="Modifier le confrère" mat-fab color="accent" class="second-fab-button"
+  *ngIf="editMode==false && selectedProvider &&  selectedProvider.id" (click)="editProvider()">
+  <mat-icon>edit</mat-icon>
+</button>
+<button matTooltip="Ajouter un confrère" mat-fab color="accent" class="fab-button" *ngIf="editMode==false"
+  (click)="addProvider()">
+  <mat-icon>add</mat-icon>
+</button>

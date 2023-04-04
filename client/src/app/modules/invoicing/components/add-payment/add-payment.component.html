@@ -1,0 +1,33 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" advise">
+    <h3>Déclarer un paiement entrant par chèque</h3>
+    <div>
+      <form [formGroup]="addPaymentForm">
+        <div class="full-width">
+          <table>
+            <tr>
+              <td>
+                <generic-input [(model)]="newPayment.paymentAmount" label="Montant" [form]="addPaymentForm"
+                  propertyName="paymentAmount" [isMandatory]="true" [isDisabled]="false" type="number"></generic-input>
+              </td>
+              <td>
+                <generic-datetime-picker [(model)]="newPayment.paymentDate" label="Date de paiement"
+                  [form]="addPaymentForm" propertyName="paymentDate" [isMandatory]="true"
+                  [isDisabled]="false"></generic-datetime-picker>
+              </td>
+              <td>
+                <generic-input [(model)]="newPayment.label" label="Libellé du paiement" [form]="addPaymentForm"
+                  propertyName="label" [isMandatory]="true" [isDisabled]="false" [maxLength]="250"></generic-input>
+              </td>
+              <td class="button-td">
+                <button (click)="addPayment()" mat-mini-fab color="warn" class="mini-fab-add add-button">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

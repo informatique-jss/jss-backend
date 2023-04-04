@@ -142,6 +142,14 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeKbisUpdated;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_rbe")
+	private AttachmentType attachmentTypeRbe;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_deposit_receipt")
+	private AttachmentType attachmentTypeDepositReceipt;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_attachment_type_publication_flag")
 	private AttachmentType attachmentTypePublicationFlag;
 
@@ -205,11 +213,11 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_billing_type_balo_normalization")
 	private BillingType billingTypeBaloNormalization;
 
-	@ManyToOne(fetch = FetchType.EAGER) 
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_balo_publication_flag")
 	private BillingType billingTypeBaloPublicationFlag;
 
-	@ManyToOne(fetch = FetchType.EAGER)  
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_publication_paper")
 	private BillingType billingTypePublicationPaper;
 
@@ -1911,7 +1919,7 @@ public class Constant implements Serializable, IId {
 	public void setCompetentAuthorityInfogreffe(CompetentAuthority competentAuthorityInfogreffe) {
 		this.competentAuthorityInfogreffe = competentAuthorityInfogreffe;
 	}
- 
+
 	public CompetentAuthorityType getCompetentAuthorityTypePrefecture() {
 		return competentAuthorityTypePrefecture;
 	}
@@ -1927,20 +1935,37 @@ public class Constant implements Serializable, IId {
 	public void setBillingTypeBaloPublicationFlag(BillingType billingTypeBaloPublicationFlag) {
 		this.billingTypeBaloPublicationFlag = billingTypeBaloPublicationFlag;
 	}
- 
+
 	public BillingType getBillingTypeBaloNormalization() {
 		return billingTypeBaloNormalization;
 	}
 
 	public void setBillingTypeBaloNormalization(BillingType billingTypeBaloNormalization) {
 		this.billingTypeBaloNormalization = billingTypeBaloNormalization;
-	} 
-  
+	}
+
 	public InvoiceStatus getInvoiceStatusCreditNoteReceived() {
 		return invoiceStatusCreditNoteReceived;
 	}
 
 	public void setInvoiceStatusCreditNoteReceived(InvoiceStatus invoiceStatusCreditNoteReceived) {
 		this.invoiceStatusCreditNoteReceived = invoiceStatusCreditNoteReceived;
-	} 
+	}
+
+	public AttachmentType getAttachmentTypeRbe() {
+		return attachmentTypeRbe;
+	}
+
+	public void setAttachmentTypeRbe(AttachmentType attachmentTypeRbe) {
+		this.attachmentTypeRbe = attachmentTypeRbe;
+	}
+
+	public AttachmentType getAttachmentTypeDepositReceipt() {
+		return attachmentTypeDepositReceipt;
+	}
+
+	public void setAttachmentTypeDepositReceipt(AttachmentType attachmentTypeDepositReceipt) {
+		this.attachmentTypeDepositReceipt = attachmentTypeDepositReceipt;
+	}
+
 }

@@ -618,4 +618,12 @@
         <key-type>java.lang.String</key-type>
         <value-type> com.jss.osiris.modules.miscellaneous.model.Constant</value-type>
     </cache>
+    <cache alias="confrere" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.quotation.model.Confrere</value-type>
+    </cache>
+    <cache alias="confrereList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
 </config>

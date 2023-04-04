@@ -31,10 +31,13 @@ public class Notification implements Serializable, IId {
   public static String CUSTOMER_ORDER_CREATE = "CUSTOMER_ORDER_CREATE";
   public static String CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY = "CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY";
   public static String CUSTOMER_ORDER_BEING_PROCESSED = "CUSTOMER_ORDER_BEING_PROCESSED";
+  public static String CUSTOMER_ORDER_BEING_PROCESSED_FROM_DEPOSIT = "CUSTOMER_ORDER_BEING_PROCESSED_FROM_DEPOSIT";
   public static String CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN = "CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN";
   public static String CUSTOMER_ORDER_TO_BE_BILLED = "CUSTOMER_ORDER_TO_BE_BILLED";
 
   public static String INVOICE_REMINDER_PAYMENT = "INVOICE_REMINDER_PAYMENT";
+
+  public static String PROVISION_ADD_ATTACHMENT = "PROVISION_ADD_ATTACHMENT";
 
   @Id
   @SequenceGenerator(name = "notification_sequence", sequenceName = "notification_sequence", allocationSize = 1)

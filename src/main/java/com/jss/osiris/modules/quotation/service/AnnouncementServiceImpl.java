@@ -324,15 +324,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         if (currentProvision == null)
             return;
 
-        // Check if publication receipt already exists
-        boolean proofReading = false;
-        if (currentProvision.getAttachments() != null)
-            for (Attachment attachment : currentProvision.getAttachments())
-                if (attachment.getAttachmentType().getId()
-                        .equals(constantService.getAttachmentTypeProofReading().getId()))
-                    proofReading = true;
-
-        if (!proofReading && announcement.getNotice() != null) {
+        if (announcement.getNotice() != null) {
             File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, false,
                     currentProvision);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
@@ -351,7 +343,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             }
         }
 
-        mailHelper.sendProofReadingToCustomer(customerOrder, false, announcement);
+        mailHelper.sendProofReadingToCustomer(customerOrder, false, announcement, false);
+        announcement.setFirstClientReviewSentMailDateTime(LocalDateTime.now());
+
+        addOrUpdateAnnouncement(announcement);
     }
 
     @Override
@@ -398,7 +393,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                     wordFile.delete();
                 }
 
-                // Try to send whereas it was JSS or not
                 mailHelper.sendAnnouncementRequestToConfrere(
                         customerOrderService.getCustomerOrder(customerOrder.getId()), asso,
                         false, provision, announcement, false);
@@ -460,6 +454,51 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                         mailHelper.sendAnnouncementRequestToConfrere(
                                 customerOrderService.getCustomerOrder(customerOrder.getId()), currentAsso,
                                 false, currentProvision, announcement, true);
+                        addOrUpdateAnnouncement(announcement);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void sendRemindersToCustomerForProofReading() throws OsirisException, OsirisClientMessageException {
+
+        List<Announcement> announcements = announcementRepository
+                .getAnnouncementForCustomerProofReadingReminder(announcementStatusService
+                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER));
+
+        if (announcements != null && announcements.size() > 0) {
+            for (Announcement announcement : announcements) {
+                CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+
+                boolean toSend = false;
+                if (announcement.getFirstClientReviewSentMailDateTime() != null) {
+                    if (announcement.getFirstClientReviewReminderDateTime() == null) {
+                        if (announcement.getFirstClientReviewSentMailDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 2))) {
+                            toSend = true;
+                            announcement.setFirstClientReviewReminderDateTime(LocalDateTime.now());
+                        }
+                    } else if (announcement.getSecondClientReviewReminderDateTime() == null) {
+                        if (announcement.getFirstClientReviewSentMailDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 4))) {
+                            toSend = true;
+                            announcement.setSecondClientReviewReminderDateTime(LocalDateTime.now());
+                        }
+                    } else if (announcement.getThirdClientReviewReminderDateTime() == null) {
+                        if (announcement.getFirstClientReviewSentMailDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 6))) {
+                            toSend = true;
+                            announcement.setThirdClientReviewReminderDateTime(LocalDateTime.now());
+                        }
+                    }
+
+                    if (toSend) {
+                        mailHelper.sendProofReadingToCustomer(
+                                customerOrderService.getCustomerOrder(customerOrder.getId()), false, announcement,
+                                true);
                         addOrUpdateAnnouncement(announcement);
                     }
                 }

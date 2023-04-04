@@ -182,7 +182,6 @@ public class QuotationServiceImpl implements QuotationService {
             if (quotation.getCustomerOrders() == null)
                 quotation.setCustomerOrders(new ArrayList<CustomerOrder>());
             quotation.getCustomerOrders().add(customerOrder);
-            notificationService.notifyQuotationValidatedByCustomer(quotation);
             customerOrder.setQuotations(new ArrayList<Quotation>());
             customerOrder.getQuotations().add(quotation);
         }
@@ -353,7 +352,7 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
             // Generate customer order
             quotation = addOrUpdateQuotationStatus(quotation, QuotationStatus.VALIDATED_BY_CUSTOMER);
-            notificationService.notifyQuotationValidatedByCustomer(quotation);
+            notificationService.notifyQuotationValidatedByCustomer(quotation, false);
             quotation.setCentralPayPaymentRequestId(null);
             addOrUpdateQuotation(quotation);
             customerOrderService.generateDepositOnCustomerOrderForCbPayment(quotation.getCustomerOrders().get(0),

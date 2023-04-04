@@ -206,9 +206,6 @@ public class InvoicingController {
         if (refundSearch == null)
             throw new OsirisValidationException("refundSearch");
 
-        if (refundSearch.getStartDate() == null || refundSearch.getEndDate() == null)
-            throw new OsirisValidationException("StartDate or EndDate");
-
         return new ResponseEntity<List<RefundSearchResult>>(refundService.searchRefunds(refundSearch),
                 HttpStatus.OK);
     }
@@ -544,6 +541,23 @@ public class InvoicingController {
         validationHelper.validateDateTimeMax(cashPayment.getPaymentDate(), true, LocalDateTime.now(), "paymentDate");
 
         this.paymentService.addCashPaymentForCustomerOrder(cashPayment, customerOrder);
+
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    @PostMapping(inputEntryPoint + "/payment/check/add")
+    public ResponseEntity<Boolean> addCheckPayment(@RequestBody Payment checkPayment)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        if (checkPayment == null)
+            throw new OsirisValidationException("payment");
+
+        checkPayment.setPaymentType(constantService.getPaymentTypeCheques());
+        checkPayment.setPaymentWay(constantService.getPaymentWayInbound());
+        validationHelper.validateString(checkPayment.getLabel(), true, 250, "paymentType");
+        validationHelper.validateDateTimeMax(checkPayment.getPaymentDate(), true, LocalDateTime.now(), "paymentType");
+
+        this.paymentService.addCheckPayment(checkPayment);
 
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }

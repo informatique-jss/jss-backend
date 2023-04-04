@@ -31,6 +31,10 @@ export class HabilitationsService {
     return true;
   }
 
+  canViewProviderModule() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
   canViewQuotationModule() {
     return true;
   }
@@ -84,6 +88,10 @@ export class HabilitationsService {
   }
 
   canImportOfxFile() {
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+  }
+
+  canAddCheckPayment() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 

@@ -59,12 +59,19 @@
                 <p th:if="${invoice.isCreditNote==false}">Facture n°<span th:text="${invoice.id}"></span></p>
                 <p>Commande n°<span th:text="${customerOrder.id}"></span></p>
                 <p th:if="${quotation!=null}">Devis n°<span th:text="${quotation.id}"></span></p>
-                <p th:if="${externalReference!=null}">Référence client : <span th:text="${externalReference}"></span>
+                <p th:if="${externalReference!=null}">Votre référence : <span th:text="${externalReference}"></span>
                 </p>
+
+                <p th:if="${invoice.isCommandNumberMandatory}">Votre référence annuelle :<span
+                        th:text="${invoice.commandNumber}"></span>
+                </p>
+<<<<<<< HEAD
 
                 <p th:if="${invoice.isCommandNumberMandatory}">Votre référence de commande :<span
                         th:text="${invoice.commandNumber}"></span>
                 </p>
+=======
+>>>>>>> release/6.0
                 <p>Paris le <span th:text="${invoiceCreatedDate}"></span></p>
             </td>
             <td></td>
@@ -263,6 +270,7 @@
             </td>
         </tr>
     </table>
+    <p style="font-size: 12px;">Echéance de paiement : <span th:text="${invoiceDueDate}"></span></p>
     <p style="font-size: 12px;">Retard de paiement. Maj de 3 fois le taux d’intérêt légal (Application du CC - Article
         L441-6)<br />
         TVA acquittée sur les débits</p>

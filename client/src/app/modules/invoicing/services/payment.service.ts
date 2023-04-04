@@ -45,4 +45,8 @@ export class PaymentService extends AppRestService<Payment>{
   addCashPaymentForCustomerOrder(payment: Payment, customerOrder: CustomerOrder) {
     return this.postItem(new HttpParams().set("idCustomerOrder", customerOrder.id), "payment/cash/add/customer-order", payment);
   }
+
+  addCheckPayment(payment: Payment) {
+    return this.postItem(new HttpParams(), "payment/check/add", payment);
+  }
 }

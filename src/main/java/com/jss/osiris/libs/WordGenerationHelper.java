@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -50,7 +51,7 @@ public class WordGenerationHelper {
 
             myXWPFHtmlDocument = createHtmlDoc(document, "htmlDoc1");
             myXWPFHtmlDocument.setHtml(myXWPFHtmlDocument.getHtml().replace("<body></body>",
-                    "<body>" + html + "</body>"));
+                    "<body>" + StringEscapeUtils.unescapeHtml4(html) + "</body>"));
             document.getDocument().getBody().addNewAltChunk().setId(myXWPFHtmlDocument.getId());
 
             out = new FileOutputStream(tempFile);

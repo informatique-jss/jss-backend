@@ -43,3 +43,8 @@
   color="accent" class="fab-button" (click)="importOfxFile()">
   <mat-icon>upload</mat-icon>
 </button>
+<button *ngIf="!isForDashboard && canAddCheckPayment()" matTooltip="Ajouter un paiement par chèque" mat-fab
+  color="accent" class="second-fab-button" (click)="openRoute($event,'/invoicing/payment/add/')"
+  (auxclick)="openRoute($event,'/invoicing/payment/add/')">
+  <mat-icon>attach_money</mat-icon>
+</button>

@@ -124,6 +124,12 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
     }
 
     @Override
+    public DirectDebitTransfert cancelDirectDebitTransfert(DirectDebitTransfert directDebitTransfert) {
+        directDebitTransfert.setIsCancelled(true);
+        return addOrUpdateDirectDebitTransfert(directDebitTransfert);
+    }
+
+    @Override
     public DirectDebitTransfert generateDirectDebitTransfertForOutboundInvoice(Invoice invoice)
             throws OsirisException, OsirisClientMessageException {
 
@@ -159,7 +165,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
         DirectDebitTransfert directDebitTransfert = new DirectDebitTransfert();
         directDebitTransfert.setLabel("Facture " + invoice.getId() + " / Journal Spécial des Sociétés / "
-                + invoice.getCommandNumber());
+                + (invoice.getCustomerOrder() != null ? invoice.getCustomerOrder().getId() : ""));
         directDebitTransfert.setIsAlreadyExported(false);
         directDebitTransfert.setTransfertAmount(invoice.getTotalPrice());
         directDebitTransfert.setTransfertDateTime(invoice.getDueDate().atTime(12, 0));
@@ -174,6 +180,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
         directDebitTransfert.setSepaMandateReference(sepaReference);
         directDebitTransfert.setSepaMandateSignatureDate(sepaDate);
+        directDebitTransfert.setIsCancelled(false);
         directDebitTransfert.setCustomerOrderLabel(customerOrderLabel);
         return this.addOrUpdateDirectDebitTransfert(directDebitTransfert);
     }
@@ -206,7 +213,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
             header.setMsgId("Prélèvements JSS du " + LocalDateTime.now().format(formatterDate));
             header.setCreDtTm(LocalDateTime.now().format(formatterDateTime));
             header.setNbOfTxs(bankTransferts.size());
-            header.setCtrlSum(totalAmount);
+            header.setCtrlSum(Math.round(totalAmount * 100f) / 100f);
 
             InitgPtyBean emiterDetails = new InitgPtyBean();
             header.setInitgPtyBean(emiterDetails);
@@ -218,11 +225,11 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
                 PmtInfBean body = new PmtInfBean();
                 document.getCstmrCdtTrfInitnBean().getPmtInfBean().add(body);
-                body.setPmtInfId("REF PRELVT");
+                body.setPmtInfId(bankTransfert.getTransfertLabel());
                 body.setPmtMtd("DD");
                 body.setBtchBookg(false);
                 body.setNbOfTxs(bankTransferts.size());
-                body.setCtrlSum(totalAmount);
+                body.setCtrlSum(Math.round(totalAmount * 100f) / 100f);
 
                 PmtTpInfBean bodyTransfertType = new PmtTpInfBean();
 

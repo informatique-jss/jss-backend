@@ -17,6 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -241,7 +242,6 @@ import { MiscellaneousComponent } from './miscellaneous.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
-  { path: 'referential/provider/:id', component: AdministrationComponent },
 ];
 
 @NgModule({
@@ -274,6 +274,7 @@ const routes: Routes = [
     MatSlideToggleModule,
     MatCheckboxModule,
     MatAutocompleteModule,
+    MatProgressSpinnerModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts'),
     }),

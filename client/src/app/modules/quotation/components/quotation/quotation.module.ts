@@ -47,6 +47,7 @@ import { EntrepriseComponent } from '../guichet-unique/entreprise/entreprise.com
 import { IdentiteComponent } from '../guichet-unique/identite/identite.component';
 import { NatureCreationComponent } from '../guichet-unique/nature-creation/nature-creation.component';
 import { PersonnePhysiqueComponent } from '../guichet-unique/personne-physique/personne-physique.component';
+import { ImportHtmlAnnouncementDialogComponent } from '../import-html-announcement-dialog/import-html-announcement-dialog.component';
 import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
 import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
@@ -110,6 +111,7 @@ const routes: Routes = [
     QuotationManagementComponent,
     DomiciliationComponent,
     OrderSimilaritiesDialogComponent,
+    ImportHtmlAnnouncementDialogComponent,
     BodaccMainComponent,
     AddAffaireDialogComponent,
     ProvisionItemComponent,

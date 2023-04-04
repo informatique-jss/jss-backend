@@ -59,12 +59,21 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     return this.habilitationService.canImportOfxFile();
   }
 
+  canAddCheckPayment() {
+    return this.habilitationService.canAddCheckPayment();
+  }
+
+  openRoute(event: any, link: string) {
+    this.appService.openRoute(event, link, null);
+  }
+
   ngOnInit() {
     this.availableColumns = [];
     this.availableColumns.push({ id: "id", fieldName: "id", label: "N° du paiement" } as SortTableColumn);
     this.availableColumns.push({ id: "paymentWay", fieldName: "paymentWayLabel", label: "Sens" } as SortTableColumn);
     this.availableColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.availableColumns.push({ id: "payemntAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.availableColumns.push({ id: "paymentTypeLabel", fieldName: "paymentTypeLabel", label: "Type" } as SortTableColumn);
     this.availableColumns.push({ id: "label", fieldName: "paymentLabel", label: "Libellé" } as SortTableColumn);
     this.availableColumns.push({ id: "isInternallyAssociated", fieldName: "isInternallyAssociated", label: "Associé dans Osiris", valueFonction: (element: any) => { return (element.isAssociated) ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "isExternallyAssociated", fieldName: "isExternallyAssociated", label: "Associé hors Osiris", valueFonction: (element: any) => { return element.isExternallyAssociated ? "Oui" : "Non" } } as SortTableColumn);
