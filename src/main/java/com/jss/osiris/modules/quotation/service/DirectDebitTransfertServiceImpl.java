@@ -197,7 +197,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
         Float totalAmount = 0f;
         for (DirectDebitTransfertSearchResult bankTransfert : bankTransferts)
-            totalAmount += bankTransfert.getTransfertAmount();
+            totalAmount += Math.round(bankTransfert.getTransfertAmount() * 100f) / 100f;
 
         XmlMapper xmlMapper = new XmlMapper();
         xmlMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
@@ -293,7 +293,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
                 InstdAmtBean currencyDetails = new InstdAmtBean();
                 currencyDetails.setCcy("EUR");
-                currencyDetails.setValue(bankTransfert.getTransfertAmount() + "");
+                currencyDetails.setValue(Math.round(bankTransfert.getTransfertAmount() * 100f) / 100f + "");
                 prelevement.setInstdAmtBean(currencyDetails);
 
                 DrctDbtTxBean debitIdentifier = new DrctDbtTxBean();
