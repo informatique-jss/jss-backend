@@ -257,7 +257,7 @@ public class MailHelper {
             message.setSubject(mail.getSubject());
 
             // Create the HTML body using Thymeleaf
-            final String htmlContent = emailTemplateEngine().process("model", ctx);
+            final String htmlContent = StringEscapeUtils.unescapeHtml4(emailTemplateEngine().process("model", ctx));
             message.setText(htmlContent, true);
 
             // header picture
@@ -318,7 +318,7 @@ public class MailHelper {
         String htmlContent = "";
         // Create the HTML body using Thymeleaf
         try {
-            htmlContent = emailTemplateEngine().process("model", ctx);
+            htmlContent = StringEscapeUtils.unescapeHtml4(emailTemplateEngine().process("model", ctx));
         } catch (Exception e) {
             throw new OsirisException(e, "Unable to parse HTML for mail " + mail.getId());
         }
@@ -1088,7 +1088,7 @@ public class MailHelper {
         ctx.setVariable("invoiceDueDate", invoice.getDueDate().format(formatter));
 
         // Create the HTML body using Thymeleaf
-        final String htmlContent = emailTemplateEngine().process("invoice-page", ctx);
+        final String htmlContent = StringEscapeUtils.unescapeHtml4(emailTemplateEngine().process("invoice-page", ctx));
 
         File tempFile;
         OutputStream outputStream;
@@ -1136,7 +1136,8 @@ public class MailHelper {
         ctx.setVariable("withStamp", withStamp);
 
         // Create the HTML body using Thymeleaf
-        final String htmlContent = emailTemplateEngine().process("publication-receipt", ctx);
+        final String htmlContent = StringEscapeUtils
+                .unescapeHtml4(emailTemplateEngine().process("publication-receipt", ctx));
 
         File tempFile;
         OutputStream outputStream;
@@ -1197,7 +1198,8 @@ public class MailHelper {
         ctx.setVariable("date", StringUtils.capitalize(localDate.format(formatter)));
 
         // Create the HTML body using Thymeleaf
-        final String htmlContent = emailTemplateEngine().process("publication-flag", ctx);
+        final String htmlContent = StringEscapeUtils
+                .unescapeHtml4(emailTemplateEngine().process("publication-flag", ctx));
 
         File tempFile;
         OutputStream outputStream;
@@ -1269,7 +1271,7 @@ public class MailHelper {
         ctx.setVariable("letterModels", letterModels);
 
         // Create the HTML body using Thymeleaf
-        String htmlContent = emailTemplateEngine().process("letter-page", ctx);
+        String htmlContent = StringEscapeUtils.unescapeHtml4(emailTemplateEngine().process("letter-page", ctx));
 
         File tempFile;
         OutputStream outputStream;
