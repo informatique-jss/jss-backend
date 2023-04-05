@@ -363,7 +363,7 @@ public class QuotationValidationHelper {
                                 if (debour.getBillingType().getIsDebour())
                                         debour.setInvoicedAmount(Math.min(debour.getDebourAmount(),
                                                         debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
-                                                                        : 0f));
+                                                                        : debour.getDebourAmount()));
 
                                 if (debour.getPaymentDateTime() == null)
                                         debour.setPaymentDateTime(LocalDateTime.now());

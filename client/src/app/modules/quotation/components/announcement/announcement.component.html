@@ -161,17 +161,19 @@
                 </div>
                 <editor apiKey="tuyvqqbiskpltllm13hwnc00n4gjq5sc3gzrhlocmr75s1fw" *ngIf="editMode"
                   formControlName="noticeHeader" [disabled]="!editMode" [(ngModel)]="announcement.noticeHeader" [init]="{
-     height: 500,
-     menubar: false,
-     entity_encoding : 'raw',
-     plugins: [
-       'table','fullscreen'
-     ],
-     toolbar:
-       'undo redo | formatselect | fontname fontsize | bold italic underline forecolor backcolor | \
-       alignleft aligncenter alignright alignjustify | \
-       bullist numlist outdent indent | removeformat | fullscreen '
-   }"></editor>
+                    height: 500,
+                    menubar: true,
+                    entity_encoding : 'raw',
+                    language: 'fr_FR',
+                    plugins: [
+                      'table','fullscreen', 'lists', 'advlist'
+                    ],
+                    font_formats:'Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino;Calibri=Calibri;  Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats',
+                    toolbar:
+                    'undo redo | styleselect  | fontselect  | fontsize | bold italic underline forecolor backcolor | \
+                    alignleft aligncenter alignright alignjustify | numlist bullist | \
+                    bullist numlist outdent indent | removeformat | fullscreen |  table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
+                  }"></editor>
               </td>
             </tr>
             <tr>
@@ -185,13 +187,15 @@
                 <editor apiKey="tuyvqqbiskpltllm13hwnc00n4gjq5sc3gzrhlocmr75s1fw" *ngIf="editMode"
                   formControlName="notice" [disabled]="!editMode" [(ngModel)]="announcement.notice" [init]="{
      height: 500,
-     menubar: false,
+     menubar: true,
      entity_encoding : 'raw',
+     language: 'fr_FR',
      plugins: [
-       'table','fullscreen', 'lists'
+       'table','fullscreen', 'lists', 'advlist'
      ],
+     font_formats:'Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino;Calibri=Calibri;  Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats',
      toolbar:
-     'undo redo | formatselect | fontname fontsize | bold italic underline forecolor backcolor | \
+     'undo redo | styleselect  | fontselect  | fontsize | bold italic underline forecolor backcolor | \
      alignleft aligncenter alignright alignjustify | numlist bullist | \
      bullist numlist outdent indent | removeformat | fullscreen |  table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
    }"></editor>
