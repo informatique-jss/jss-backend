@@ -1148,8 +1148,9 @@ public class MailHelper {
         }
         ITextRenderer renderer = new ITextRenderer();
         renderer.setDocumentFromString(
-                htmlContent.replaceAll("\\p{C}", " ").replaceAll("<col (.*?)>", "").replaceAll("line-height: normal",
-                        "line-height: normal;padding:0;margin:0"));
+                htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
+                        .replaceAll("line-height: normal",
+                                "line-height: normal;padding:0;margin:0"));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
@@ -1208,8 +1209,9 @@ public class MailHelper {
         }
         ITextRenderer renderer = new ITextRenderer();
         renderer.setDocumentFromString(
-                htmlContent.replaceAll("\\p{C}", " ").replaceAll("<col (.*?)>", "").replaceAll("line-height: normal",
-                        "line-height: normal;padding:0;margin:0"));
+                htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
+                        .replaceAll("line-height: normal",
+                                "line-height: normal;padding:0;margin:0"));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
@@ -1279,8 +1281,9 @@ public class MailHelper {
         }
         ITextRenderer renderer = new ITextRenderer();
         renderer.setDocumentFromString(
-                htmlContent.replaceAll("\\p{C}", " ").replaceAll("<col (.*?)>", "").replaceAll("line-height: normal",
-                        "line-height: normal;padding:0;margin:0"));
+                htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
+                        .replaceAll("line-height: normal",
+                                "line-height: normal;padding:0;margin:0"));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
