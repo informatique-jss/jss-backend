@@ -1335,7 +1335,16 @@ public class MailHelper {
             remainingToPay = Math
                     .round(customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
 
-        List<Attachment> attachments = findAttachmentForCustomerOrder(customerOrder, isReminder);
+        List<Attachment> attachments = new ArrayList<Attachment>();
+
+        if (customerOrder.getAttachments() != null) {
+
+            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(customerOrder.getAttachments())) {
+                if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeInvoice().getId()))
+                    attachments.add(attachment);
+                break;
+            }
+        }
 
         mail.setAttachments(attachments);
 
@@ -1603,44 +1612,6 @@ public class MailHelper {
                 "Commande n°" + customerOrder.getId() + " - demande de parution" + (isReminder ? " - Relance" : ""));
 
         mailService.addMailToQueue(mail);
-    }
-
-    private List<Attachment> findAttachmentForCustomerOrder(CustomerOrder customerOrder, boolean isReminder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        ArrayList<Attachment> attachments = new ArrayList<Attachment>();
-        boolean updateCustomerOrder = false;
-
-        if (customerOrder != null && customerOrder.getAttachments() != null) {
-
-            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(customerOrder.getAttachments())) {
-                if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeInvoice().getId()))
-                    attachments.add(attachment);
-                break;
-            }
-        }
-
-        if (!isReminder && customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
-            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
-                        if (provision.getFormalite() != null) {
-                            if (provision.getAttachments() != null)
-                                for (Attachment attachment : provision.getAttachments())
-                                    if (attachment.getAttachmentType().getId()
-                                            .equals(constantService.getAttachmentTypeKbisUpdated().getId()))
-                                        attachments.add(attachment);
-                        } else if (provision.getBodacc() != null) {
-                            if (provision.getAttachments() != null)
-                                for (Attachment attachment : provision.getAttachments())
-                                    if (attachment.getAttachmentType().getId()
-                                            .equals(constantService.getAttachmentTypeKbisUpdated().getId()))
-                                        attachments.add(attachment);
-                        }
-
-        if (updateCustomerOrder)
-            customerOrderService.addOrUpdateCustomerOrder(customerOrder, false, true);
-
-        return attachments;
     }
 
     public void sendPublicationReceiptToCustomer(CustomerOrder customerOrder, boolean sendToMe,

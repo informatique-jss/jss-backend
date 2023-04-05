@@ -24,8 +24,10 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -48,6 +50,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    ProvisionService provisionService;
 
     @Override
     public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture) {
@@ -348,26 +353,31 @@ public class NotificationServiceImpl implements NotificationService {
     public void notifyAttachmentAddToProvision(Provision provision, Attachment attachment) throws OsirisException {
         boolean createdByMe = false;
         List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
+        provision = provisionService.getProvision(provision.getId());
 
-        if (compareEmployee != null)
-            for (Employee employee : compareEmployee)
-                if (provision.getAssignedTo() != null && employee.getId().equals(provision.getAssignedTo().getId()))
-                    createdByMe = true;
+        if (provision.getAssoAffaireOrder() != null && provision.getAssoAffaireOrder().getCustomerOrder() != null
+                && !provision.getAssoAffaireOrder().getCustomerOrder().getCustomerOrderStatus().getCode()
+                        .equals(CustomerOrderStatus.OPEN)) {
+            if (compareEmployee != null)
+                for (Employee employee : compareEmployee)
+                    if (provision.getAssignedTo() != null && employee.getId().equals(provision.getAssignedTo().getId()))
+                        createdByMe = true;
 
-        if (!createdByMe && provision.getAssignedTo() != null) {
-            String details = "";
-            Affaire affaire = provision.getAssoAffaireOrder().getAffaire();
-            if (affaire != null)
-                details += affaire.getDenomination() != null ? affaire.getDenomination()
-                        : (affaire.getFirstname() + " " + affaire.getLastname());
-            details += " - ";
-            if (provision.getProvisionFamilyType() != null && provision.getProvisionType() != null)
-                details += provision.getProvisionFamilyType().getLabel() + " - "
-                        + provision.getProvisionType().getLabel();
-            details += " - ";
-            details += attachment.getAttachmentType().getLabel() + " (" + attachment.getDescription() + ")";
-            generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                    Notification.PROVISION_ADD_ATTACHMENT, provision, details, null, false);
+            if (!createdByMe && provision.getAssignedTo() != null) {
+                String details = "";
+                Affaire affaire = provision.getAssoAffaireOrder().getAffaire();
+                if (affaire != null)
+                    details += affaire.getDenomination() != null ? affaire.getDenomination()
+                            : (affaire.getFirstname() + " " + affaire.getLastname());
+                details += " - ";
+                if (provision.getProvisionFamilyType() != null && provision.getProvisionType() != null)
+                    details += provision.getProvisionFamilyType().getLabel() + " - "
+                            + provision.getProvisionType().getLabel();
+                details += " - ";
+                details += attachment.getAttachmentType().getLabel() + " (" + attachment.getDescription() + ")";
+                generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
+                        Notification.PROVISION_ADD_ATTACHMENT, provision, details, null, false);
+            }
         }
     }
 }
