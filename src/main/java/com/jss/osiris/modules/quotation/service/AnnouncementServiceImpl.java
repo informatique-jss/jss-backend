@@ -297,12 +297,16 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                     throw new OsirisException(null,
                             "Impossible to find Customer Order for Announcement n°" + announcement.getId());
 
-                try {
-                    generateStoreAndSendPublicationFlag(
-                            customerOrderService.getCustomerOrderForAnnouncement(announcement),
-                            announcement);
-                } catch (OsirisClientMessageException e) {
-                } // Do nothing, it's when publication flag not upload from user
+                if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)) {
+                    announcement.setIsPublicationFlagAlreadySent(true);
+                    addOrUpdateAnnouncement(announcement);
+                } else
+                    try {
+                        generateStoreAndSendPublicationFlag(
+                                customerOrderService.getCustomerOrderForAnnouncement(announcement),
+                                announcement);
+                    } catch (OsirisClientMessageException e) {
+                    } // Do nothing, it's when publication flag not upload from user
             }
     }
 

@@ -263,7 +263,8 @@ public class MailComputeHelper {
             throw new OsirisException(null, "Paper document not found in iQuotation n°" + customerOrder.getId());
 
         if (paperDocument.getIsRecipientAffaire()) {
-            if (paperDocument.getAffaireRecipient() != null || paperDocument.getAffaireAddress() != null) {
+            if (paperDocument.getAffaireRecipient() != null && !paperDocument.getAffaireRecipient().equals("")
+                    || paperDocument.getAffaireAddress() != null && !paperDocument.getAffaireAddress().equals("")) {
                 invoiceLabelResult.setBillingLabel(paperDocument.getAffaireRecipient());
                 invoiceLabelResult.setBillingLabelAddress(paperDocument.getAffaireAddress());
                 invoiceLabelResult.setBillingLabelCity(null);
@@ -290,7 +291,8 @@ public class MailComputeHelper {
         if (paperDocument.getIsRecipientClient()
                 || !paperDocument.getIsRecipientClient() && !paperDocument.getIsRecipientAffaire()) {
             ITiers customer = quotationService.getCustomerOrderOfQuotation(customerOrder);
-            if (paperDocument.getClientRecipient() != null || paperDocument.getClientAddress() != null) {
+            if (paperDocument.getClientRecipient() != null && !paperDocument.getClientRecipient().equals("")
+                    || paperDocument.getClientAddress() != null && !paperDocument.getClientAddress().equals("")) {
                 invoiceLabelResult.setBillingLabel(paperDocument.getClientRecipient());
                 invoiceLabelResult.setBillingLabelAddress(paperDocument.getClientAddress());
                 invoiceLabelResult.setLabelOrigin("l'adresse indiquée dans la commande");

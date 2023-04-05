@@ -659,7 +659,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                 // Do not remind on direct debit transfert
                 if (invoice.getManualPaymentType() == null
-                        || !invoice.getManualPaymentType().equals(constantService.getPaymentTypePrelevement())) {
+                        || !invoice.getManualPaymentType().getId()
+                                .equals(constantService.getPaymentTypePrelevement().getId())) {
                     if (invoice.getFirstReminderDateTime() == null
                             && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8))) {
                         toSend = true;

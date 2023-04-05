@@ -772,6 +772,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         }
 
       invoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
+      invoiceService.addOrUpdateInvoice(invoice);
     }
 
   }
