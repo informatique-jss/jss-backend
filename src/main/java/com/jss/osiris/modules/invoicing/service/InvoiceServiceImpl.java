@@ -475,7 +475,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                                                                 constantService.getBillingTypeDeboursNonTaxable());
                                                 nonTaxableDebour.setCompetentAuthority(debour.getCompetentAuthority());
                                                 nonTaxableDebour.setDebourAmount(debour.getNonTaxableAmount());
-                                                nonTaxableDebour.setInvoicedAmount(debour.getDebourAmount());
+                                                nonTaxableDebour.setInvoicedAmount(debour.getNonTaxableAmount());
                                                 nonTaxableDebour.setPaymentDateTime(debour.getPaymentDateTime());
                                                 nonTaxableDebour.setPaymentType(debour.getPaymentType());
                                                 nonTaxableDebour.setProvision(provision);
