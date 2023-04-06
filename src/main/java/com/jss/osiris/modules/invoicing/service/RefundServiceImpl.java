@@ -182,7 +182,7 @@ public class RefundServiceImpl implements RefundService {
 
         Float totalAmount = 0f;
         for (RefundSearchResult refund : refunds)
-            totalAmount += refund.getRefundAmount();
+            totalAmount += Math.round(refund.getRefundAmount() * 100f) / 100f;
 
         XmlMapper xmlMapper = new XmlMapper();
         DateTimeFormatter formatterDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
