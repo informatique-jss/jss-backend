@@ -1374,13 +1374,13 @@ public class MailHelper {
                             + (affaire.getAddress() + ", "
                                     + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"))
                     + ". Vous trouverez en pièces-jointes les éléments suivants : ";
-
-            ArrayList<String> attachementNames = new ArrayList<String>();
-            for (Attachment attachment : attachments)
-                attachementNames
-                        .add(attachment.getDescription() + " (" + attachment.getUploadedFile().getFilename() + ")");
-            mail.setExplainationElements(String.join("forgetThis", attachementNames));
         }
+
+        ArrayList<String> attachementNames = new ArrayList<String>();
+        for (Attachment attachment : attachments)
+            attachementNames
+                    .add(attachment.getDescription() + " (" + attachment.getUploadedFile().getFilename() + ")");
+        mail.setExplainationElements(String.join("forgetThis", attachementNames));
 
         mail.setExplaination(explainationText);
 

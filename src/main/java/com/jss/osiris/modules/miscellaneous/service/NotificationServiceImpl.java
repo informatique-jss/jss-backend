@@ -94,9 +94,11 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setEntityId(entity.getId());
 
         Object entityObject = null;
-        ;
+
         if (entity != null && entity.getClass().getSimpleName().contains("HibernateProxy"))
             entityObject = Hibernate.unproxy(entity);
+        else
+            entityObject = entity;
 
         if (entityObject != null)
             notification.setEntityType(entityObject.getClass().getSimpleName());
