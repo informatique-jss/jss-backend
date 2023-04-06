@@ -216,7 +216,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         if (customerOrder != null) {
             mailHelper.sendCreditNoteToCustomer(customerOrder, false, creditNote, invoice);
-        } 
+        }
 
         return invoice;
     }
@@ -273,7 +273,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         // Cancel invoice
         invoice.setInvoiceStatus(constantService.getInvoiceStatusCancelled());
-        addOrUpdateInvoice(invoice); 
+        addOrUpdateInvoice(invoice);
 
         return invoice;
     }
@@ -475,6 +475,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                                                                 constantService.getBillingTypeDeboursNonTaxable());
                                                 nonTaxableDebour.setCompetentAuthority(debour.getCompetentAuthority());
                                                 nonTaxableDebour.setDebourAmount(debour.getNonTaxableAmount());
+                                                nonTaxableDebour.setInvoicedAmount(debour.getDebourAmount());
                                                 nonTaxableDebour.setPaymentDateTime(debour.getPaymentDateTime());
                                                 nonTaxableDebour.setPaymentType(debour.getPaymentType());
                                                 nonTaxableDebour.setProvision(provision);
@@ -488,6 +489,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                                                 debour.setDebourAmount(
                                                         debour.getDebourAmount() - debour.getNonTaxableAmount());
+                                                debour.setInvoicedAmount(debour.getDebourAmount());
                                                 usedDebours.add(debourService.addOrUpdateDebour(nonTaxableDebour));
                                             }
 
@@ -558,7 +560,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         // Generate bank transfert if invoice from Provider
         if (invoice.getIsInvoiceFromProvider()
-                && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId()) 
+                && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())
                 && invoice.getBankTransfert() == null) {
             invoice.setBankTransfert(bankTransfertService.generateBankTransfertForManualInvoice(invoice));
             if (usedDebours.size() > 0)
@@ -567,7 +569,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                     debourService.addOrUpdateDebour(debour);
                 }
         }
- 
+
         addOrUpdateInvoice(invoice);
 
         if (isNewInvoice && debourPayments.size() > 0) {
