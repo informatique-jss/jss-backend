@@ -79,6 +79,8 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
         setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS, SimpleProvisionStatus.SIMPLE_PROVISION_DONE);
         setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT,
                 SimpleProvisionStatus.SIMPLE_PROVISION_DONE);
+        setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT,
+                SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY);
         setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY,
                 SimpleProvisionStatus.SIMPLE_PROVISION_DONE);
 
