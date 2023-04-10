@@ -79,9 +79,9 @@
                 {{getCustomerOrder(invoice).city?getCustomerOrder(invoice).city.label:""}}{{getCustomerOrder(invoice).country?getCustomerOrder(invoice).country.label:""}}
               </p>
               <p>Compte client :
-                {{getCustomerOrder(invoice).accountingAccountCustomer.principalAccountingAccount.code + getCustomerOrder(invoice).accountingAccountCustomer.accountingAccountSubNumber}}
+                {{getCustomerOrder(invoice).accountingAccountCustomer.principalAccountingAccount.code}}{{getCustomerOrder(invoice).accountingAccountCustomer.accountingAccountSubNumber}}
                 <br />Compte fournisseur :
-                {{getCustomerOrder(invoice).accountingAccountProvider.principalAccountingAccount.code + getCustomerOrder(invoice).accountingAccountProvider.accountingAccountSubNumber}}
+                {{getCustomerOrder(invoice).accountingAccountProvider.principalAccountingAccount.code}}{{getCustomerOrder(invoice).accountingAccountProvider.accountingAccountSubNumber}}
               </p>
             </td>
             <td class="mat-cell td-info" *ngIf="invoice.isInvoiceFromProvider">
@@ -102,7 +102,7 @@
                 </mat-icon></p>
               <p>IBAN : {{invoice.provider.iban}}</p>
               <p>Compte fournisseur :
-                {{invoice.provider.accountingAccountProvider.principalAccountingAccount.code + invoice.provider.accountingAccountProvider.accountingAccountSubNumber}}
+                {{invoice.provider.accountingAccountProvider.principalAccountingAccount.code}}{{invoice.provider.accountingAccountProvider.accountingAccountSubNumber}}
               </p>
             </td>
           </tr>
