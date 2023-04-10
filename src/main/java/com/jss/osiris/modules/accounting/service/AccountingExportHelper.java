@@ -420,8 +420,9 @@ public class AccountingExportHelper {
                                 currentColumn = 0;
                                 currentCell = currentRow.createCell(currentColumn++);
                                 currentCell.setCellValue(
-                                                balanceRecord.getPrincipalAccountingAccountCode() + (!isGenerale ? "-"
-                                                                + balanceRecord.getAccountingAccountSubNumber() : ""));
+                                                balanceRecord.getPrincipalAccountingAccountCode() + (!isGenerale
+                                                                ? +balanceRecord.getAccountingAccountSubNumber()
+                                                                : ""));
                                 currentCell.setCellStyle(styleDate);
                                 if (!isGenerale) {
                                         currentCell = currentRow.createCell(currentColumn++);
@@ -872,7 +873,7 @@ public class AccountingExportHelper {
                 styleDate.setDataFormat(createHelper.createDataFormat().getFormat("dd/mm/yyyy"));
 
                 XSSFSheet currentSheet = wb.createSheet(
-                                "Compte " + accountingAccount.getPrincipalAccountingAccount().getCode() + "-"
+                                "Compte " + accountingAccount.getPrincipalAccountingAccount().getCode()
                                                 + accountingAccount.getAccountingAccountSubNumber());
 
                 // Title
@@ -1369,11 +1370,10 @@ public class AccountingExportHelper {
                 if (accountingRecords != null)
                         for (AccountingRecordSearchResult accountingRecord : accountingRecords)
                                 if (!accountingAccounts
-                                                .contains(accountingRecord.getPrincipalAccountingAccountCode() + " - " +
-                                                                +accountingRecord.getAccountingAccountSubNumber()))
+                                                .contains(accountingRecord.getPrincipalAccountingAccountCode() +
+                                                                accountingRecord.getAccountingAccountSubNumber()))
                                         accountingAccounts.add(accountingRecord.getPrincipalAccountingAccountCode()
-                                                        + " - " +
-                                                        +accountingRecord.getAccountingAccountSubNumber());
+                                                        + accountingRecord.getAccountingAccountSubNumber());
                 return accountingAccounts;
         }
 
@@ -1381,8 +1381,8 @@ public class AccountingExportHelper {
                         List<AccountingRecordSearchResult> accountingRecords, String accountingAccount) {
                 if (accountingRecords != null)
                         for (AccountingRecordSearchResult accountingRecord : accountingRecords)
-                                if ((accountingRecord.getPrincipalAccountingAccountCode() + " - " +
-                                                +accountingRecord.getAccountingAccountSubNumber())
+                                if ((accountingRecord.getPrincipalAccountingAccountCode()
+                                                + accountingRecord.getAccountingAccountSubNumber())
                                                 .equals(accountingAccount))
                                         return accountingRecord.getAccountingAccountLabel();
                 return "";
@@ -1395,8 +1395,8 @@ public class AccountingExportHelper {
                 if (accountingAccountNumber != null && accountingRecordsIn != null)
                         for (AccountingRecordSearchResult accountingRecord : accountingRecordsIn)
                                 if (accountingAccountNumber
-                                                .equals(accountingRecord.getPrincipalAccountingAccountCode() + " - " +
-                                                                +accountingRecord.getAccountingAccountSubNumber()))
+                                                .equals(accountingRecord.getPrincipalAccountingAccountCode() +
+                                                                accountingRecord.getAccountingAccountSubNumber()))
                                         accountingRecords.add(accountingRecord);
                 accountingRecords.sort(new Comparator<AccountingRecordSearchResult>() {
                         @Override

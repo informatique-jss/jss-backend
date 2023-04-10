@@ -73,7 +73,7 @@
     <button mat-menu-item (click)="exportAccountingAccount()"
       *ngIf="accountingRecordSearch && accountingRecordSearch.accountingAccount && accountingRecordSearch.startDate && accountingRecordSearch.endDate">Exporter
       le compte
-      {{accountingRecordSearch.accountingAccount.principalAccountingAccount.code}}-{{accountingRecordSearch.accountingAccount.accountingAccountSubNumber}}
+      {{accountingRecordSearch.accountingAccount.principalAccountingAccount.code}}{{accountingRecordSearch.accountingAccount.accountingAccountSubNumber}}
     </button>
     <button mat-menu-item (click)="exportAllGrandLivre()"
       *ngIf="accountingRecordSearch &&  accountingRecordSearch.startDate && accountingRecordSearch.endDate">Exporter
