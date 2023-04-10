@@ -26,6 +26,10 @@ public class AttachmentType implements Serializable, IId {
 	@Column(length = 400)
 	private String description;
 
+	private Boolean isToSentOnUpload;
+
+	private Boolean isToSentOnFinalizationMail;
+
 	public Integer getId() {
 		return id;
 	}
@@ -56,6 +60,22 @@ public class AttachmentType implements Serializable, IId {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Boolean getIsToSentOnUpload() {
+		return isToSentOnUpload;
+	}
+
+	public void setIsToSentOnUpload(Boolean isToSentOnUpload) {
+		this.isToSentOnUpload = isToSentOnUpload;
+	}
+
+	public Boolean getIsToSentOnFinalizationMail() {
+		return isToSentOnFinalizationMail;
+	}
+
+	public void setIsToSentOnFinalizationMail(Boolean isToSentOnFinalizationMail) {
+		this.isToSentOnFinalizationMail = isToSentOnFinalizationMail;
 	}
 
 }

@@ -1460,13 +1460,15 @@ public class MailHelper {
                     .round(customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
 
         List<Attachment> attachments = new ArrayList<Attachment>();
+        List<Integer> attachmentTypeIdsDone = new ArrayList<Integer>();
 
         if (customerOrder.getAttachments() != null) {
-
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(customerOrder.getAttachments())) {
-                if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeInvoice().getId()))
+                if (attachment.getAttachmentType().getIsToSentOnFinalizationMail()
+                        && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())) {
                     attachments.add(attachment);
-                break;
+                    attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
+                }
             }
         }
 
