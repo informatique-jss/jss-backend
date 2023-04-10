@@ -3,7 +3,9 @@ package com.jss.osiris.modules.accounting.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -33,14 +35,19 @@ import com.jss.osiris.modules.accounting.model.AccountingBalance;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceViewItem;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceViewTitle;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
+import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 
 @Service
 public class AccountingExportHelper {
 
         @Autowired
         AccountingRecordService accountingRecordService;
+
+        @Autowired
+        ConstantService constantService;
 
         public File getGrandLivre(AccountingAccountClass accountingAccountClass, LocalDateTime startDate,
                         LocalDateTime endDate) throws OsirisException {
@@ -1531,7 +1538,8 @@ public class AccountingExportHelper {
 
                 XSSFRow currentRow = currentSheet.createRow(currentLine++);
                 XSSFCell currentCell = currentRow.createCell(0);
-                currentCell.setCellValue(tiersLabel);
+                currentCell.setCellValue(tiersLabel + " - relevé du "
+                                + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
                 CellRangeAddress region = new CellRangeAddress(0, 1, 0, 5);
                 cleanBeforeMergeOnValidCells(currentSheet, region, titleCellStyle);
@@ -1566,7 +1574,26 @@ public class AccountingExportHelper {
                 if (accountingRecords != null) {
                         String currentAffaire = "";
                         for (AccountingRecordSearchResult accountingRecord : accountingRecords) {
-                                if (showAffaireDetails && !currentAffaire.equals(accountingRecord.getAffaireLabel())) {
+
+                                // By pass counter part and appoint
+                                AccountingRecord completeAccountingRecord = accountingRecordService
+                                                .getAccountingRecord(accountingRecord.getRecordId());
+                                if (completeAccountingRecord.getIsCounterPart()
+                                                || completeAccountingRecord.getContrePasse() != null)
+                                        continue;
+
+                                if (completeAccountingRecord.getAccountingAccount().getPrincipalAccountingAccount()
+                                                .getId()
+                                                .equals(constantService.getPrincipalAccountingAccountProfit().getId())
+                                                || completeAccountingRecord.getAccountingAccount()
+                                                                .getPrincipalAccountingAccount().getId()
+                                                                .equals(constantService
+                                                                                .getPrincipalAccountingAccountLost()
+                                                                                .getId()))
+                                        continue;
+
+                                if (showAffaireDetails
+                                                && !currentAffaire.equals(accountingRecord.getAffaireLabel())) {
                                         currentAffaire = accountingRecord.getAffaireLabel();
                                         currentRow = currentSheet.createRow(currentLine++);
                                         currentRow = currentSheet.createRow(currentLine++);
@@ -1587,7 +1614,8 @@ public class AccountingExportHelper {
                                         currentCell.setCellValue(accountingRecord.getInvoiceId());
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
-                                currentCell.setCellValue(accountingRecord.getLabel());
+                                currentCell.setCellValue(accountingRecord.getLabel() + " - "
+                                                + accountingRecord.getAffaireLabel());
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 if (accountingRecord.getResponsable() != null)

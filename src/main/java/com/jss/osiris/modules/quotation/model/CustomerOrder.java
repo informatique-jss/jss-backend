@@ -16,6 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -164,6 +165,9 @@ public class CustomerOrder implements IQuotation {
 
 	@Column(columnDefinition = "TEXT")
 	private String customerMailCustomMessage;
+
+	@Transient
+	private Float totalPrice;
 
 	public Integer getId() {
 		return id;
@@ -379,6 +383,14 @@ public class CustomerOrder implements IQuotation {
 
 	public void setAssignedTo(Employee assignedTo) {
 		this.assignedTo = assignedTo;
+	}
+
+	public Float getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(Float totalPrice) {
+		this.totalPrice = totalPrice;
 	}
 
 }

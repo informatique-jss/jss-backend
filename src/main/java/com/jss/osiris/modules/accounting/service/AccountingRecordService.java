@@ -24,8 +24,12 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Tiers;
 
 public interface AccountingRecordService {
+
+        public AccountingRecord getAccountingRecord(Integer id);
+
         public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord);
 
         public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws OsirisException;
@@ -141,5 +145,9 @@ public interface AccountingRecordService {
         public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException;
 
         public void letterWaitingRecords(AccountingRecord record, AccountingRecord counterPart) throws OsirisException;
+
+        public File getBillingClosureReceiptFile(Tiers tier) throws OsirisException;
+
+        public File getBillingClosureReceiptFileV2(Tiers tier) throws OsirisException, OsirisClientMessageException;
 
 }

@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface AccountingRecordSearchResult {
+  Integer getRecordId();
+
   Integer getId();
 
   Integer getOperationId();

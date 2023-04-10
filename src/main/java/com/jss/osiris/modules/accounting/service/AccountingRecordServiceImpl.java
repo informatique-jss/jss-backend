@@ -10,6 +10,7 @@ import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +121,14 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   CentralPayDelegateService centralPayDelegateService;
+
+  @Override
+  public AccountingRecord getAccountingRecord(Integer id) {
+    Optional<AccountingRecord> accountingRecord = accountingRecordRepository.findById(id);
+    if (accountingRecord.isPresent())
+      return accountingRecord.get();
+    return null;
+  }
 
   public AccountingRecord addOrUpdateAccountingRecord(
       AccountingRecord accountingRecord) {
@@ -1348,6 +1357,60 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       }
 
     // TODO confrères
+  }
+
+  // TODO : remove
+  @Override
+  public File getBillingClosureReceiptFile(Tiers tier) throws OsirisException {
+    Document billingClosureDocument = documentService.getBillingClosureDocument(tier.getDocuments());
+    if (billingClosureDocument != null)
+      if (billingClosureDocument.getBillingClosureRecipientType() != null
+          && (billingClosureDocument.getBillingClosureRecipientType().getId()
+              .equals(constantService.getBillingClosureRecipientTypeClient().getId())
+              || billingClosureDocument.getBillingClosureRecipientType().getId()
+                  .equals(constantService.getBillingClosureRecipientTypeOther().getId()))) {
+        AccountingRecordSearch search = new AccountingRecordSearch();
+        search.setTiersId(tier.getId());
+        search.setHideLettered(true);
+        search.setStartDate(LocalDateTime.now().minusYears(90));
+        search.setEndDate(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
+        List<AccountingRecordSearchResult> accountingRecords = searchAccountingRecords(search);
+
+        if (accountingRecords != null && accountingRecords.size() > 0) {
+          return accountingExportHelper.generateBillingClosure(accountingRecords,
+              tier.getDenomination() != null ? tier.getDenomination()
+                  : (tier.getFirstname() + " " + tier.getLastname()),
+              billingClosureDocument.getBillingClosureType().getId()
+                  .equals(constantService.getBillingClosureTypeAffaire().getId()));
+        }
+      } else if (billingClosureDocument.getBillingClosureRecipientType() != null
+          && billingClosureDocument.getBillingClosureRecipientType().getId()
+              .equals(constantService.getBillingClosureRecipientTypeResponsable().getId())) {
+        if (tier.getResponsables() != null && tier.getResponsables().size() > 0) {
+          for (Responsable responsable : tier.getResponsables()) {
+            AccountingRecordSearch search = new AccountingRecordSearch();
+            search.setResponsableId(responsable.getId());
+            search.setHideLettered(true);
+            search.setStartDate(LocalDateTime.now().minusYears(90));
+            search.setEndDate(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
+            List<AccountingRecordSearchResult> accountingRecords = searchAccountingRecords(search);
+
+            if (accountingRecords != null && accountingRecords.size() > 0) {
+              return accountingExportHelper.generateBillingClosure(accountingRecords,
+                  responsable.getFirstname() + " " + responsable.getLastname(),
+                  billingClosureDocument.getBillingClosureType().getId()
+                      .equals(constantService.getBillingClosureTypeAffaire().getId()));
+            }
+          }
+        }
+      }
+    return null;
+  }
+
+  // TODO remove
+  @Override
+  public File getBillingClosureReceiptFileV2(Tiers tier) throws OsirisException, OsirisClientMessageException {
+    return mailHelper.getBillingClosureReceiptFileV2(tier);
   }
 
 }

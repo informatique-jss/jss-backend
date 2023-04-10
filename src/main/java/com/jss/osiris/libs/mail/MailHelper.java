@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Properties;
@@ -56,6 +57,8 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -74,14 +77,18 @@ import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AttachmentTypeMailQuery;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.NoticeType;
+import com.jss.osiris.modules.quotation.model.OrderingSearch;
+import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -133,6 +140,9 @@ public class MailHelper {
 
     @Autowired
     CustomerOrderService customerOrderService;
+
+    @Autowired
+    CustomerOrderStatusService customerOrderStatusService;
 
     @Autowired
     InvoiceService invoiceService;
@@ -1296,6 +1306,118 @@ public class MailHelper {
         return tempFile;
     }
 
+    public File getBillingClosureReceiptFileV2(Tiers tier) throws OsirisException, OsirisClientMessageException {
+        final Context ctx = new Context();
+
+        Document billingDocument = documentService.getBillingDocument(tier.getDocuments());
+
+        Float balance = 0f;
+
+        ctx.setVariable("commandNumber", null);
+        if (billingDocument != null && billingDocument.getIsCommandNumberMandatory()
+                && billingDocument.getCommandNumber() != null)
+            ctx.setVariable("commandNumber", billingDocument.getCommandNumber());
+        ctx.setVariable("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        ctx.setVariable("denomination", tier.getDenomination() != null ? tier.getDenomination()
+                : (tier.getFirstname() + " " + tier.getLastname()));
+
+        OrderingSearch search = new OrderingSearch();
+        ArrayList<Tiers> tiersList = new ArrayList<Tiers>();
+        tiersList.add(tier);
+        if (tier.getResponsables() != null && tier.getResponsables().size() > 0) {
+            for (Responsable responsable : tier.getResponsables()) {
+                Tiers fakeTiers = new Tiers();
+                fakeTiers.setId(responsable.getId());
+                tiersList.add(fakeTiers);
+            }
+        }
+        search.setCustomerOrders(tiersList);
+
+        search.setCustomerOrderStatus(customerOrderStatusService.getCustomerOrderStatus().stream()
+                .filter(status -> !status.getCode().equals(CustomerOrderStatus.BILLED) &&
+                        !status.getCode().equals(CustomerOrderStatus.ABANDONED))
+                .collect(Collectors.toList()));
+
+        List<OrderingSearchResult> customerOrdersList = customerOrderService.searchOrders(search);
+        ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
+
+        if (customerOrdersList != null && customerOrdersList.size() > 0) {
+            for (OrderingSearchResult customerOrder : customerOrdersList) {
+                CustomerOrder completeCustomerOrder = customerOrderService
+                        .getCustomerOrder(customerOrder.getCustomerOrderId());
+                completeCustomerOrder
+                        .setTotalPrice(customerOrderService.getTotalForCustomerOrder(completeCustomerOrder));
+                customerOrders.add(completeCustomerOrder);
+
+                balance -= completeCustomerOrder.getTotalPrice();
+                if (completeCustomerOrder.getDeposits() != null && completeCustomerOrder.getDeposits().size() > 0)
+                    for (Deposit deposit : completeCustomerOrder.getDeposits())
+                        balance += deposit.getDepositAmount();
+            }
+
+            MailComputeResult mailComputeResult = mailComputeHelper
+                    .computeMailForCustomerOrderFinalizationAndInvoice(customerOrders.get(0));
+            ctx.setVariable("depositLink", paymentCbEntryPoint + "/order/deposit?mail="
+                    + mailComputeResult.getRecipientsMailTo().get(0).getMail() + "&customerOrderId=");
+        }
+
+        ctx.setVariable("customerOrders", customerOrders);
+        ctx.setVariable("waitingDepositCode", CustomerOrderStatus.WAITING_DEPOSIT);
+
+        ctx.setVariable("ibanJss", ibanJss);
+        ctx.setVariable("bicJss", bicJss);
+
+        InvoiceSearch invoiceSearch = new InvoiceSearch();
+        invoiceSearch.setCustomerOrders(tiersList);
+        invoiceSearch.setInvoiceStatus(Arrays.asList(constantService.getInvoiceStatusSend()));
+
+        List<InvoiceSearchResult> invoiceList = invoiceService.searchInvoices(invoiceSearch);
+        ArrayList<Invoice> invoices = new ArrayList<Invoice>();
+        if (invoiceList != null && invoiceList.size() > 0) {
+            for (InvoiceSearchResult invoice : invoiceList) {
+                Invoice completeInvoice = invoiceService.getInvoice(invoice.getInvoiceId());
+                invoices.add(completeInvoice);
+
+                balance -= invoice.getTotalPrice();
+                if (completeInvoice.getDeposits() != null && completeInvoice.getDeposits().size() > 0)
+                    for (Deposit deposit : completeInvoice.getDeposits())
+                        balance += deposit.getDepositAmount();
+            }
+
+            if (invoices.get(0).getCustomerOrder() != null) {
+                MailComputeResult mailComputeResult = mailComputeHelper
+                        .computeMailForCustomerOrderFinalizationAndInvoice(invoices.get(0).getCustomerOrder());
+                ctx.setVariable("invoiceDepositLink", paymentCbEntryPoint + "/order/invoice?mail="
+                        + mailComputeResult.getRecipientsMailTo().get(0).getMail() + "&customerOrderId=");
+            }
+        }
+        ctx.setVariable("invoices", invoices);
+        ctx.setVariable("balance", balance);
+
+        // Create the HTML body using Thymeleaf
+        final String htmlContent = emailTemplateEngine().process("billing-closure-receipt", ctx);
+
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("billing-closure-receipt", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " "));
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e,
+                    "Unable to create PDF file for biling closure receipt, tiers n°" + tier.getId());
+        }
+        return tempFile;
+    }
+
     public void sendCustomerOrderFinalisationToCustomer(CustomerOrder customerOrder, boolean sendToMe,
             boolean isReminder, boolean isLastReminder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
@@ -1855,8 +1977,15 @@ public class MailHelper {
 
         mail.setHeaderPicture("images/billing-receipt-header.png");
         mail.setTitle("Votre relevé de compte");
-        String explainationText = "Vous trouverez ci-joint votre relevé de compte à date.";
+        String explainationText = "Bonjour, vous trouverez ci-joint votre relevé de compte à date.";
         mail.setExplaination(explainationText);
+
+        mail.setPaymentExplaination("Vous pouvez payer par virement en utilisant les informations ci-dessous : ");
+
+        mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
+
+        mail.setPaymentExplainationWarning(
+                "Veuillez indiquer absolument la référence de la commande et / ou de la facture dans le libellé de votre virement");
 
         if (attachments.size() == 0)
             return;
