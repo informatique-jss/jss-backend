@@ -360,6 +360,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         }
 
+        // Target : CANCELLED => vérifiy there is no more deposit
+        if (targetStatusCode.equals(CustomerOrderStatus.ABANDONED)) {
+            if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
+                throw new OsirisClientMessageException(
+                        "Impossible d'abandonner cette commande, elle possède encore des acomptes associés");
+        }
+
         // Target : BEING PROCESSED => notify customer
         if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)) {
             resetDeboursManuelAmount(customerOrder);
@@ -412,6 +419,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     && paymentType.getId().equals(constantService.getPaymentTypePrelevement().getId())) {
                 debitTransfertService.generateDirectDebitTransfertForOutboundInvoice(invoice);
             }
+
+            invoice.setManualPaymentType(paymentType);
+            invoiceService.addOrUpdateInvoice(invoice);
 
             // Check invoice payed
             Float remainingToPayForCurrentInvoice = Math

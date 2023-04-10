@@ -289,10 +289,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer) throws OsirisException {
         Invoice invoice = new Invoice();
         invoice.setCreatedDate(LocalDateTime.now());
-        Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
-
-        if (billingDocument == null)
-            throw new OsirisException(null, "Billing document not found for ordering customer provided");
 
         if (orderingCustomer instanceof Tiers)
             invoice.setTiers((Tiers) orderingCustomer);
@@ -303,10 +299,25 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (orderingCustomer instanceof Confrere)
             invoice.setConfrere((Confrere) orderingCustomer);
 
+        ITiers masterOrderingCustomer = orderingCustomer;
+        if (orderingCustomer instanceof Responsable)
+            masterOrderingCustomer = ((Responsable) orderingCustomer).getTiers();
+
+        Document dunningDocument = documentService.getDocumentByDocumentType(masterOrderingCustomer.getDocuments(),
+                constantService.getDocumentTypeDunning());
+
+        if (dunningDocument == null)
+            throw new OsirisException(null, "Dunning document not found for ordering customer provided");
+
         Integer nbrOfDayFromDueDate = 30;
-        if (billingDocument.getPaymentDeadlineType() != null)
-            nbrOfDayFromDueDate = billingDocument.getPaymentDeadlineType().getNumberOfDay();
+        if (dunningDocument.getPaymentDeadlineType() != null)
+            nbrOfDayFromDueDate = dunningDocument.getPaymentDeadlineType().getNumberOfDay();
         invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
+
+        Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
+
+        if (billingDocument == null)
+            throw new OsirisException(null, "Billing document not found for ordering customer provided");
 
         invoiceHelper.setInvoiceLabel(invoice, billingDocument, customerOrder, orderingCustomer);
         invoice.setIsCreditNote(false);
@@ -403,7 +414,25 @@ public class InvoiceServiceImpl implements InvoiceService {
         ArrayList<Debour> usedDebours = new ArrayList<Debour>();
 
         if (isNewInvoice) {
+
+            ITiers masterOrderingCustomer = null;
             Integer nbrOfDayFromDueDate = 30;
+            if (invoice.getResponsable() != null)
+                masterOrderingCustomer = invoice.getResponsable().getTiers();
+            if (invoice.getConfrere() != null)
+                masterOrderingCustomer = invoice.getConfrere();
+            if (invoice.getTiers() != null)
+                masterOrderingCustomer = invoice.getTiers();
+
+            if (masterOrderingCustomer != null) {
+                Document dunningDocument = documentService.getDocumentByDocumentType(
+                        masterOrderingCustomer.getDocuments(),
+                        constantService.getDocumentTypeDunning());
+
+                if (dunningDocument.getPaymentDeadlineType() != null)
+                    nbrOfDayFromDueDate = dunningDocument.getPaymentDeadlineType().getNumberOfDay();
+            }
+
             if (invoice.getDueDate() == null)
                 invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
 
@@ -446,6 +475,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                                                                 constantService.getBillingTypeDeboursNonTaxable());
                                                 nonTaxableDebour.setCompetentAuthority(debour.getCompetentAuthority());
                                                 nonTaxableDebour.setDebourAmount(debour.getNonTaxableAmount());
+                                                nonTaxableDebour.setInvoicedAmount(debour.getNonTaxableAmount());
                                                 nonTaxableDebour.setPaymentDateTime(debour.getPaymentDateTime());
                                                 nonTaxableDebour.setPaymentType(debour.getPaymentType());
                                                 nonTaxableDebour.setProvision(provision);
@@ -459,6 +489,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                                                 debour.setDebourAmount(
                                                         debour.getDebourAmount() - debour.getNonTaxableAmount());
+                                                debour.setInvoicedAmount(debour.getDebourAmount());
                                                 usedDebours.add(debourService.addOrUpdateDebour(nonTaxableDebour));
                                             }
 
@@ -627,37 +658,43 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoices != null && invoices.size() > 0)
             for (Invoice invoice : invoices) {
                 boolean toSend = false;
-                if (invoice.getFirstReminderDateTime() == null
-                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(1 * 30))) {
-                    toSend = true;
-                    invoice.setFirstReminderDateTime(LocalDateTime.now());
 
-                    // Reminder once, next time provision will be mandatory :)
-                    ITiers customerOrderToSetProvision = invoiceHelper.getCustomerOrder(invoice);
-                    if (customerOrderToSetProvision instanceof Responsable)
-                        customerOrderToSetProvision = ((Responsable) customerOrderToSetProvision).getTiers();
-                    if (customerOrderToSetProvision instanceof Tiers) {
-                        ((Tiers) customerOrderToSetProvision).setIsProvisionalPaymentMandatory(true);
-                        tiersService.addOrUpdateTiers((Tiers) customerOrderToSetProvision);
-                    } else if (customerOrderToSetProvision instanceof Confrere) {
-                        ((Confrere) customerOrderToSetProvision).setIsProvisionalPaymentMandatory(true);
-                        confrereService.addOrUpdateConfrere((Confrere) customerOrderToSetProvision);
+                // Do not remind on direct debit transfert
+                if (invoice.getManualPaymentType() == null
+                        || !invoice.getManualPaymentType().getId()
+                                .equals(constantService.getPaymentTypePrelevement().getId())) {
+                    if (invoice.getFirstReminderDateTime() == null
+                            && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8))) {
+                        toSend = true;
+                        invoice.setFirstReminderDateTime(LocalDateTime.now());
+
+                        // Reminder once, next time provision will be mandatory :)
+                        ITiers customerOrderToSetProvision = invoiceHelper.getCustomerOrder(invoice);
+                        if (customerOrderToSetProvision instanceof Responsable)
+                            customerOrderToSetProvision = ((Responsable) customerOrderToSetProvision).getTiers();
+                        if (customerOrderToSetProvision instanceof Tiers) {
+                            ((Tiers) customerOrderToSetProvision).setIsProvisionalPaymentMandatory(true);
+                            tiersService.addOrUpdateTiers((Tiers) customerOrderToSetProvision);
+                        } else if (customerOrderToSetProvision instanceof Confrere) {
+                            ((Confrere) customerOrderToSetProvision).setIsProvisionalPaymentMandatory(true);
+                            confrereService.addOrUpdateConfrere((Confrere) customerOrderToSetProvision);
+                        }
+                    } else if (invoice.getSecondReminderDateTime() == null
+                            && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))) {
+                        toSend = true;
+                        invoice.setSecondReminderDateTime(LocalDateTime.now());
+                    } else if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15 + 15))) {
+                        toSend = true;
+                        invoice.setThirdReminderDateTime(LocalDateTime.now());
+                        notificationService.notifyInvoiceToReminder(invoice);
                     }
-                } else if (invoice.getSecondReminderDateTime() == null
-                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(3 * 60))) {
-                    toSend = true;
-                    invoice.setSecondReminderDateTime(LocalDateTime.now());
-                } else if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(6 * 90))) {
-                    toSend = true;
-                    invoice.setThirdReminderDateTime(LocalDateTime.now());
-                    notificationService.notifyInvoiceToReminder(invoice);
-                }
 
-                if (toSend) {
-                    mailHelper.sendCustomerOrderFinalisationToCustomer(
-                            customerOrderService.getCustomerOrder(invoice.getCustomerOrder().getId()), false, true,
-                            invoice.getThirdReminderDateTime() != null);
-                    addOrUpdateInvoice(invoice);
+                    if (toSend) {
+                        mailHelper.sendCustomerOrderFinalisationToCustomer(
+                                customerOrderService.getCustomerOrder(invoice.getCustomerOrder().getId()), false, true,
+                                invoice.getThirdReminderDateTime() != null);
+                        addOrUpdateInvoice(invoice);
+                    }
                 }
             }
     }

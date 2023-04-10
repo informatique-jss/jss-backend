@@ -360,8 +360,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                     if (announcement.getIsProofReadingDocument() && announcement.getAnnouncementStatus().getCode()
                             .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER)) {
-                        announcementService.generateStoreAndSendProofReading(announcement,
-                                (CustomerOrder) customerOrder);
+                        if (announcement.getFirstClientReviewSentMailDateTime() == null) {
+                            announcement.setFirstClientReviewReminderDateTime(null);
+                            announcement.setSecondClientReviewReminderDateTime(null);
+                            announcement.setThirdClientReviewReminderDateTime(null);
+                            announcementService.generateStoreAndSendProofReading(announcement,
+                                    (CustomerOrder) customerOrder);
+                        }
                     }
 
                     if (announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE)) {

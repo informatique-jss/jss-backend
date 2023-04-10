@@ -64,7 +64,6 @@ import { ReferentialPaymentDeadlineTypeComponent } from '../referentials/referen
 import { ReferentialPaymentTypeComponent } from '../referentials/referential-payment-type/referential-payment-type.component';
 import { ReferentialPaymentWayComponent } from '../referentials/referential-payment-way/referential-payment-way.component';
 import { ReferentialPrincipalAccountingAccountComponent } from '../referentials/referential-principal-accounting-account/referential-principal-accounting-account.component';
-import { ReferentialProviderComponent } from '../referentials/referential-provider/referential-provider.component';
 import { ReferentialProvisionTypeComponent } from '../referentials/referential-provision-type/referential-provision-type.component';
 import { ReferentialRefundTypeComponent } from '../referentials/referential-refund-type/referential-refund-type.component';
 import { ReferentialRegieComponent } from '../referentials/referential-regie/referential-regie.component';
@@ -87,6 +86,7 @@ const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
   { path: 'administration/competent/authority', component: CompetentAuthorityComponent },
   { path: 'administration/provider', component: ProviderComponent },
+  { path: 'administration/provider/:id', component: ProviderComponent },
   { path: 'administration/log/:id', component: ViewLogComponent },
 ];
 
@@ -167,7 +167,6 @@ const routes: Routes = [
     ReferentialDepartmentComponent,
     ConstantComponent,
     ReferentialBillingTypeComponent,
-    ReferentialProviderComponent,
     ReferentialRegieComponent,
     ReferentialAccountingJournalComponent,
     ReferentialInvoiceStatusComponent,

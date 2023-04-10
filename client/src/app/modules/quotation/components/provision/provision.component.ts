@@ -333,27 +333,55 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
             validationActionText: "Ne pas envoyer"
           }
         });
-      } else if (status.code == ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER &&
-        !provision.announcement.isProofReadingDocument && !provision.announcement.firstClientReviewSentMailDateTime) {
-        saveAsso = false;
-        const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-          maxWidth: "400px",
-          data: {
-            title: "Epreuve de relecture ?",
-            content: "Le statut a été changé à En attente de relecture client mais l’option Epreuve de relecture" +
-              " n’est pas sélectionnée. Voulez vous sélectionner cette option et envoyer le BAT ou annuler le changement de statut ?",
-            closeActionText: "Annuler",
-            validationActionText: "Ajouter l’option"
-          }
-        });
 
         dialogRef.afterClosed().subscribe(dialogResult => {
-          if (provision.announcement && dialogResult == true) {
-            provision.announcement.firstClientReviewSentMailDateTime = null;
-            provision.announcement.isProofReadingDocument = true;
+          if (dialogResult == true || dialogResult == false) {
+            if (provision.announcement) {
+              provision.announcement.isAnnouncementAlreadySentToConfrere = dialogResult;
+            }
           }
           this.saveAsso();
         });
+      } else if (status.code == ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER) {
+        if (!provision.announcement.isProofReadingDocument && !provision.announcement.firstClientReviewSentMailDateTime) {
+          saveAsso = false;
+          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+            maxWidth: "400px",
+            data: {
+              title: "Epreuve de relecture ?",
+              content: "Le statut a été changé à En attente de relecture client mais l’option Epreuve de relecture" +
+                " n’est pas sélectionnée. Voulez vous sélectionner cette option et envoyer le BAT ou annuler le changement de statut ?",
+              closeActionText: "Annuler",
+              validationActionText: "Ajouter l’option"
+            }
+          });
+
+          dialogRef.afterClosed().subscribe(dialogResult => {
+            if (provision.announcement && dialogResult == true) {
+              provision.announcement.firstClientReviewSentMailDateTime = null;
+              provision.announcement.isProofReadingDocument = true;
+            }
+            this.saveAsso();
+          });
+        } else if (provision.announcement.firstClientReviewSentMailDateTime) {
+          saveAsso = false;
+          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+            maxWidth: "400px",
+            data: {
+              title: "Epreuve de relecture ?",
+              content: "L'épreuve de relecture a déjà été envoyée au client. Voulez-vous la renvoyer ?",
+              closeActionText: "Ne pas renvoyer",
+              validationActionText: "Renvoyer"
+            }
+          });
+
+          dialogRef.afterClosed().subscribe(dialogResult => {
+            if (provision.announcement && dialogResult == true) {
+              provision.announcement.firstClientReviewSentMailDateTime = null;
+            }
+            this.saveAsso();
+          });
+        }
       }
     }
     if (provision.formalite)

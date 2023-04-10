@@ -20,7 +20,6 @@ export interface Tiers extends ITiers {
   paymentIban: string;
   paymentBic: string;
   isProvisionalPaymentMandatory: boolean;
-  sepaMandateReference: string;
   sepaMandateSignatureDate: Date;
   isSepaMandateReceived: boolean;
   responsables: Responsable[];

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Provider } from 'src/app/modules/miscellaneous/model/Provider';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -21,7 +22,9 @@ export class ProviderComponent implements OnInit {
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
     private appService: AppService,
-    protected paymentTypeService: PaymentTypeService,) {
+    protected paymentTypeService: PaymentTypeService,
+    protected activatedRoute: ActivatedRoute,
+  ) {
   }
 
   providers: Provider[] = [];
@@ -43,6 +46,8 @@ export class ProviderComponent implements OnInit {
   ngOnInit(): void {
     this.appService.changeHeaderTitle("Fournisseurs");
 
+    this.selectedProviderId = this.activatedRoute.snapshot.params.id;
+
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);
     this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle" } as SortTableColumn);
@@ -56,7 +61,14 @@ export class ProviderComponent implements OnInit {
           this.editProvider()
     });
 
-    this.providerService.getProviders().subscribe(providers => this.providers = providers);
+    this.providerService.getProviders().subscribe(providers => {
+      this.providers = providers
+      if (this.selectedProviderId && this.providers)
+        for (let provider of this.providers)
+          if (provider.id == this.selectedProviderId)
+            this.selectedProvider = provider;
+    });
+
   }
 
   ngOnDestroy() {

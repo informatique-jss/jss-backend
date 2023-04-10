@@ -96,8 +96,15 @@ public class CustomerMailServiceImpl implements CustomerMailService {
 
         if (mail.getAttachments() != null)
             for (Attachment attachment : mail.getAttachments()) {
-                attachment.setCustomerMail(mail);
-                attachmentService.addOrUpdateAttachment(attachment);
+                Attachment newAttachment = new Attachment();
+                newAttachment.setAttachmentType(attachment.getAttachmentType());
+                newAttachment.setCreatDateTime(LocalDateTime.now());
+                newAttachment.setCustomerMail(mail);
+                newAttachment.setIsDisabled(false);
+                newAttachment.setCustomerMail(mail);
+                newAttachment.setUploadedFile(attachment.getUploadedFile());
+                newAttachment.setDescription(attachment.getDescription());
+                attachmentService.addOrUpdateAttachment(newAttachment);
             }
     }
 

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        * {
+            font-family: 'Times New Roman', Times, serif
+        }
+
+        @page {
+            size: a4 portrait;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .td-with-price {
+            width: 130px;
+        }
+    </style>
+</head>
+
+<body style="background-color: #FFFFFF; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+    <table>
+        <tr>
+            <td><img width="690px" th:src="@{classpath:/images/invoice-page1-header.png}" src="picture.png" />
+            </td>
+        </tr>
+    </table>
+    <table style="table-layout: fixed;width: 690px;margin-top: 20px;">
+        <tr>
+            <td style="text-align: left;">
+                <p th:if="${commandNumber!=null}">Votre référence annuelle :<span th:text="${commandNumber}"></span>
+                </p>
+                <p>Paris le <span th:text="${currentDate}"></span></p>
+            </td>
+            <td></td>
+            <td colspan="2">
+                <table style="border : solid; border-color: rgb(0,83,159);width: 100%;">
+                    <tr>
+                        <td>
+                            <span th:text="${denomination}"></span><br />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
+        <thead>
+            <tr>
+                <td style="text-align: center;">Description</td>
+                <td>Débit</td>
+                <td>Crédit</td>
+            </tr>
+        </thead>
+        <th:block th:each="customerOrder : ${customerOrders}" th:if="${customerOrders!=null} ">
+            <tr>
+                <td style="padding-top: 20px;"
+                    th:if="${customerOrder.assoAffaireOrders[0].affaire.denomination!=null} ">
+                    <strong>Société <span
+                            th:text="${customerOrder.assoAffaireOrders[0].affaire.denomination}"></span></strong>
+                </td>
+                <td style="padding-top: 20px;"
+                    th:if="${customerOrder.assoAffaireOrders[0].affaire.denomination==null} ">
+                    <strong><span th:text="${customerOrder.assoAffaireOrders[0].affaire.firstname}"></span>
+                        <span th:text="${customerOrder.assoAffaireOrders[0].affaire.lastname}"></span></strong>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    Commande n°<span th:text="${customerOrder.id}"></span> - <span
+                        th:text="${customerOrder.customerOrderStatus.label}"></span><span
+                        th:if="${customerOrder.customerOrderStatus.code==waitingDepositCode}"> (payer <a
+                            th:href="${depositLink}+${customerOrder.id}" target="_blank">ici</a>)</span>
+                </td>
+                <td class="td-with-price"><span
+                        th:text="${#numbers.formatDecimal(customerOrder.totalPrice,1,2)}"></span> €</td>
+                <td></td>
+            </tr>
+            <th:block th:each="deposit : ${customerOrder.deposits}">
+                <tr>
+                    <td>
+                        Acompte n°<span th:text="${deposit.id}"></span>
+                    </td>
+                    <td></td>
+                    <td class="td-with-price"><span
+                            th:text="${#numbers.formatDecimal(deposit.depositAmount,1,2)}"></span> €</td>
+                </tr>
+            </th:block>
+        </th:block>
+
+        <th:block th:each="invoice : ${invoices}" th:if="${invoices!=null} ">
+            <tr th:if="${invoice.customerOrder!=null}">
+                <td style=" padding-top: 20px;"
+                    th:if="${invoice.customerOrder.assoAffaireOrders[0].affaire.denomination!=null} ">
+                    <strong>Société <span
+                            th:text="${invoice.customerOrder.assoAffaireOrders[0].affaire.denomination}"></span></strong>
+                </td>
+                <td style="padding-top: 20px;"
+                    th:if="${invoice.customerOrder.assoAffaireOrders[0].affaire.denomination==null} ">
+                    <strong><span th:text="${invoice.customerOrder.assoAffaireOrders[0].affaire.firstname}"></span>
+                        <span th:text="${invoice.customerOrder.assoAffaireOrders[0].affaire.lastname}"></span></strong>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    Facture n°<span th:text="${invoice.id}"></span> - <span
+                        th:if="${invoice.customerOrder!=null}">(payer <a
+                            th:href="${invoiceDepositLink}+${invoice.customerOrder.id}" target="_blank">ici</a>)</span>
+                </td>
+                <td class="td-with-price"><span th:text="${#numbers.formatDecimal(invoice.totalPrice,1,2)}"></span> €
+                </td>
+                <td></td>
+            </tr>
+            <th:block th:each="deposit : ${invoice.deposits}">
+                <tr>
+                    <td>
+                        Acompte n°<span th:text="${deposit.id}"></span>
+                    </td>
+                    <td></td>
+                    <td class="td-with-price"><span
+                            th:text="${#numbers.formatDecimal(deposit.depositAmount,1,2)}"></span> €</td>
+                </tr>
+            </th:block>
+        </th:block>
+    </table>
+    <p style="margin-top: 10px;">&#160;</p>
+    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
+        <tr>
+            <td>
+                Solde
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(balance,1,2)}"></span> €
+            </td>
+        </tr>
+    </table>
+    <p style="font-size: 16px;">Vous pouvez effectuer les paiements par virements en utilisant les informations
+        ci-dessous. <strong>Veuillez indiquer absolument la référence de la commande et / ou de la facture dans le
+            libellé de votre virement</strong></p>
+    <p style="font-size: 16px;">IBAN / BIC : <span th:text="${ibanJss}"></span> <span th:text="${bicJss}"></span>
+    </p>
+</body>
+
+</html>

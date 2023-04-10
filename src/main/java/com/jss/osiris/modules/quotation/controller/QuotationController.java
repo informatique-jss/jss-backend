@@ -978,7 +978,6 @@ public class QuotationController {
 
     if (confrere.getPaymentType() != null
         && confrere.getPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())) {
-      validationHelper.validateString(confrere.getSepaMandateReference(), true, 250, "SepaMandateReference");
       validationHelper.validateDate(confrere.getSepaMandateSignatureDate(), true, "SepaMandateSignatureDate");
     }
 
