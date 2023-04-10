@@ -167,7 +167,6 @@ public class Confrere implements ITiers {
 	@Column(length = 40)
 	private String paymentBic;
 
-	private String sepaMandateReference;
 	private LocalDate sepaMandateSignatureDate;
 
 	@ManyToOne
@@ -554,14 +553,6 @@ public class Confrere implements ITiers {
 
 	public void setPaymentBic(String paymentBic) {
 		this.paymentBic = paymentBic;
-	}
-
-	public String getSepaMandateReference() {
-		return sepaMandateReference;
-	}
-
-	public void setSepaMandateReference(String sepaMandateReference) {
-		this.sepaMandateReference = sepaMandateReference;
 	}
 
 	public LocalDate getSepaMandateSignatureDate() {

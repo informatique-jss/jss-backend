@@ -1,6 +1,5 @@
 package com.jss.osiris.libs.transfer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -62,6 +61,7 @@ public class PmtInfBean {
 	List<CdtTrfTxInfBean> cdtTrfTxInfBeanList;
 
 	@JacksonXmlProperty(localName = "DrctDbtTxInf")
+	@JacksonXmlElementWrapper(useWrapping = false)
 	List<DrctDbtTxInfBean> drctDbtTxInfBeanList;
 
 	@JacksonXmlProperty(localName = "ChrgBr")
@@ -116,8 +116,6 @@ public class PmtInfBean {
 	}
 
 	public PmtTpInfBean getPmtTpInfBean() {
-		if (pmtTpInfBean == null)
-			pmtTpInfBean = new PmtTpInfBean();
 		return pmtTpInfBean;
 	}
 
@@ -126,8 +124,6 @@ public class PmtInfBean {
 	}
 
 	public DbtrBean getDbtrBean() {
-		if (dbtrBean == null)
-			dbtrBean = new DbtrBean();
 		return dbtrBean;
 	}
 
@@ -136,8 +132,6 @@ public class PmtInfBean {
 	}
 
 	public DbtrAcctBean getDbtrAcctBean() {
-		if (dbtrAcctBean == null)
-			dbtrAcctBean = new DbtrAcctBean();
 		return dbtrAcctBean;
 	}
 
@@ -146,8 +140,6 @@ public class PmtInfBean {
 	}
 
 	public DbtrAgtBean getDbtrAgtBean() {
-		if (dbtrAgtBean == null)
-			dbtrAgtBean = new DbtrAgtBean();
 		return dbtrAgtBean;
 	}
 
@@ -160,8 +152,6 @@ public class PmtInfBean {
 	}
 
 	public List<CdtTrfTxInfBean> getCdtTrfTxInfBeanList() {
-		if (cdtTrfTxInfBeanList == null)
-			cdtTrfTxInfBeanList = new ArrayList<CdtTrfTxInfBean>();
 		return cdtTrfTxInfBeanList;
 	}
 

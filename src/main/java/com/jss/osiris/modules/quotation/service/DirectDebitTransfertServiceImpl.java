@@ -26,7 +26,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.transfer.CdtrSchmeIdBean;
 import com.jss.osiris.libs.transfer.CdtrSchmeIdBeanIdBean;
-import com.jss.osiris.libs.transfer.CstmrCdtTrfInitnBean;
+import com.jss.osiris.libs.transfer.CstmrDrctDbtInitnBean;
 import com.jss.osiris.libs.transfer.CtgyPurpBean;
 import com.jss.osiris.libs.transfer.DbtrAcctBean;
 import com.jss.osiris.libs.transfer.DbtrAgtBean;
@@ -134,25 +134,25 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
             throws OsirisException, OsirisClientMessageException {
 
         ITiers tiers = invoiceHelper.getCustomerOrder(invoice);
-        String sepaReference = null;
+        Integer sepaReference = null;
         LocalDate sepaDate = null;
         String customerOrderLabel = "";
         if (tiers instanceof Responsable) {
-            sepaReference = ((Responsable) tiers).getTiers().getSepaMandateReference();
+            sepaReference = ((Responsable) tiers).getTiers().getId();
             sepaDate = ((Responsable) tiers).getTiers().getSepaMandateSignatureDate();
             customerOrderLabel = ((Responsable) tiers).getTiers().getDenomination() != null
                     ? ((Responsable) tiers).getTiers().getDenomination()
                     : ((Responsable) tiers).getTiers().getFirstname() + " "
                             + ((Responsable) tiers).getTiers().getLastname();
         } else if (tiers instanceof Tiers) {
-            sepaReference = ((Tiers) tiers).getSepaMandateReference();
+            sepaReference = ((Tiers) tiers).getId();
             sepaDate = ((Tiers) tiers).getSepaMandateSignatureDate();
             customerOrderLabel = ((Tiers) tiers).getDenomination() != null
                     ? ((Tiers) tiers).getDenomination()
                     : ((Tiers) tiers).getFirstname() + " "
                             + ((Tiers) tiers).getLastname();
         } else if (tiers instanceof Confrere) {
-            sepaReference = ((Confrere) tiers).getSepaMandateReference();
+            sepaReference = ((Confrere) tiers).getId();
             sepaDate = ((Confrere) tiers).getSepaMandateSignatureDate();
             customerOrderLabel = ((Confrere) tiers).getLabel();
         }
@@ -178,7 +178,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
         directDebitTransfert.setTransfertIban(directDebitTransfert.getTransfertIban().replaceAll(" ", ""));
         directDebitTransfert.setTransfertBic(directDebitTransfert.getTransfertBic().replaceAll(" ", ""));
 
-        directDebitTransfert.setSepaMandateReference(sepaReference);
+        directDebitTransfert.setSepaMandateReference(sepaReference + "");
         directDebitTransfert.setSepaMandateSignatureDate(sepaDate);
         directDebitTransfert.setIsCancelled(false);
         directDebitTransfert.setCustomerOrderLabel(customerOrderLabel);
@@ -205,10 +205,10 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
         DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
             DocumentBean document = new DocumentBean();
-            document.setCstmrCdtTrfInitnBean(new CstmrCdtTrfInitnBean());
+            document.setCstmrDrctDbtInitn(new CstmrDrctDbtInitnBean());
 
             GrpHdrBean header = new GrpHdrBean();
-            document.getCstmrCdtTrfInitnBean().setGrpHdrBean(header);
+            document.getCstmrDrctDbtInitn().setGrpHdrBean(header);
 
             header.setMsgId("Prélèvements JSS du " + LocalDateTime.now().format(formatterDate));
             header.setCreDtTm(LocalDateTime.now().format(formatterDateTime));
@@ -219,25 +219,30 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
             header.setInitgPtyBean(emiterDetails);
             emiterDetails.setNm("JOURNAL SPECIAL DES SOCIETES");
 
-            document.getCstmrCdtTrfInitnBean().setPmtInfBean(new ArrayList<PmtInfBean>());
+            document.getCstmrDrctDbtInitn().setPmtInfBean(new ArrayList<PmtInfBean>());
 
             for (DirectDebitTransfertSearchResult bankTransfert : bankTransferts) {
 
                 PmtInfBean body = new PmtInfBean();
-                document.getCstmrCdtTrfInitnBean().getPmtInfBean().add(body);
-                body.setPmtInfId(bankTransfert.getTransfertLabel());
+                document.getCstmrDrctDbtInitn().getPmtInfBean().add(body);
+                body.setPmtInfId(bankTransfert.getId() + "");
                 body.setPmtMtd("DD");
                 body.setBtchBookg(false);
                 body.setNbOfTxs(bankTransferts.size());
                 body.setCtrlSum(Math.round(totalAmount * 100f) / 100f);
 
                 PmtTpInfBean bodyTransfertType = new PmtTpInfBean();
+                body.setPmtTpInfBean(bodyTransfertType);
 
                 SvcLvlBean transfertNorm = new SvcLvlBean();
+                bodyTransfertType.setSvcLvlBean(transfertNorm);
+
                 bodyTransfertType.setSvcLvlBean(transfertNorm);
                 transfertNorm.setCd("SEPA");
 
                 CtgyPurpBean transfertPurpose = new CtgyPurpBean();
+                bodyTransfertType.setCtgyPurpBean(transfertPurpose);
+
                 bodyTransfertType.setLclInstrmBean(transfertPurpose);
                 transfertPurpose.setCd("CORE");
 
@@ -260,8 +265,6 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                 FinInstnIdBean financialInstitution = new FinInstnIdBean();
                 financialInstitution.setBic(bicJss);
                 bic.setFinInstnIdBean(financialInstitution);
-
-                body.setChrgBr("SLEV");
 
                 CdtrSchmeIdBean cdtrSchmeIdBean = new CdtrSchmeIdBean();
                 body.setCdtrSchmeIdBean(cdtrSchmeIdBean);
@@ -323,7 +326,8 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
                 RmtInfBean virementLabel = new RmtInfBean();
                 prelevement.setRmtInfBean(virementLabel);
-                virementLabel.setUstrd(StringUtils.substring(completeTransfert.getLabel(), 0, 139));
+                virementLabel.setUstrd(
+                        StringUtils.substring(completeTransfert.getId() + " " + completeTransfert.getLabel(), 0, 139));
 
                 body.getDrctDbtTxInfBeanList().add(prelevement);
 
@@ -331,6 +335,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                 addOrUpdateDirectDebitTransfert(completeTransfert);
             }
 
+            document.setXmlns("urn:iso:std:iso:20022:tech:xsd:pain.008.001.02");
             xml = xmlMapper.writeValueAsString(document);
 
             xml = StringUtils.stripAccents(xml).replaceAll("[^a-zA-Z0-9 /?:().,'+<>=\"-]", " ");
