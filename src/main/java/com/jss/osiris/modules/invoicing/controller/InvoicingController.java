@@ -545,7 +545,7 @@ public class InvoicingController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
-    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     @PostMapping(inputEntryPoint + "/payment/check/add")
     public ResponseEntity<Boolean> addCheckPayment(@RequestBody Payment checkPayment)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
