@@ -1244,6 +1244,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Transactional
+  @Override
   public void sendBillingClosureReceipt()
       throws OsirisException, OsirisClientMessageException, OsirisValidationException {
     List<Tiers> tiers = tiersService.findAllTiersTypeClient();
