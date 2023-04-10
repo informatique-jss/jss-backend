@@ -9,19 +9,36 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 public class DocumentBean {
 
 	@JacksonXmlProperty(isAttribute = true)
-	private final String xmlns = "urn:iso:std:iso:20022:tech:xsd:pain.001.001.03";
+	private String xmlns = "urn:iso:std:iso:20022:tech:xsd:pain.001.001.03";
 
 	@JacksonXmlProperty(localName = "CstmrCdtTrfInitn")
 	CstmrCdtTrfInitnBean cstmrCdtTrfInitnBean;
 
+	@JacksonXmlProperty(localName = "CstmrDrctDbtInitn")
+	CstmrDrctDbtInitnBean cstmrDrctDbtInitn;
+
 	public CstmrCdtTrfInitnBean getCstmrCdtTrfInitnBean() {
-		if (cstmrCdtTrfInitnBean == null)
-			cstmrCdtTrfInitnBean = new CstmrCdtTrfInitnBean();
 		return cstmrCdtTrfInitnBean;
 	}
 
 	public void setCstmrCdtTrfInitnBean(CstmrCdtTrfInitnBean cstmrCdtTrfInitnBean) {
 		this.cstmrCdtTrfInitnBean = cstmrCdtTrfInitnBean;
+	}
+
+	public String getXmlns() {
+		return xmlns;
+	}
+
+	public void setXmlns(String xmlns) {
+		this.xmlns = xmlns;
+	}
+
+	public CstmrDrctDbtInitnBean getCstmrDrctDbtInitn() {
+		return cstmrDrctDbtInitn;
+	}
+
+	public void setCstmrDrctDbtInitn(CstmrDrctDbtInitnBean cstmrDrctDbtInitn) {
+		this.cstmrDrctDbtInitn = cstmrDrctDbtInitn;
 	}
 
 }
