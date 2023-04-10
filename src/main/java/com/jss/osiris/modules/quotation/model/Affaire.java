@@ -105,6 +105,9 @@ public class Affaire implements Serializable, IId {
 
 	private Boolean isUnregistered;
 
+	@Column(length = 20)
+	private String intercommunityVat;
+
 	public String getPaymentIban() {
 		return paymentIban;
 	}
@@ -279,6 +282,14 @@ public class Affaire implements Serializable, IId {
 
 	public void setPaymentBic(String paymentBic) {
 		this.paymentBic = paymentBic;
+	}
+
+	public String getIntercommunityVat() {
+		return intercommunityVat;
+	}
+
+	public void setIntercommunityVat(String intercommunityVat) {
+		this.intercommunityVat = intercommunityVat;
 	}
 
 }

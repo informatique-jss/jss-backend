@@ -1350,6 +1350,7 @@ public class QuotationController {
     validationHelper.validateReferential(affaire.getCity(), true, "City");
     validationHelper.validateReferential(affaire.getCountry(), true, "Country");
     validationHelper.validateString(affaire.getExternalReference(), false, 60, "ExternalReference");
+    validationHelper.validateString(affaire.getIntercommunityVat(), false, 20, "IntercommunityVat");
     if (affaire.getCountry() != null && affaire.getCountry().getId().equals(constantService.getCountryFrance().getId()))
       validationHelper.validateString(affaire.getPostalCode(), true, 10, "PostalCode");
     validationHelper.validateString(affaire.getCedexComplement(), false, 20, "CedexComplement");

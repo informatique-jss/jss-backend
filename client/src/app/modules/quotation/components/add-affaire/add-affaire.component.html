@@ -128,6 +128,12 @@
         <generic-input [(model)]="affaire.paymentBic" label="BIC" [form]="affaireForm" propertyName="paymentBic"
           [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
       </td>
+      <td>
+        <generic-input [(model)]="affaire.intercommunityVat" label="TVA intercommunaitaire" [form]="affaireForm"
+          propertyName="intercommunityVat" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"
+          [customValidators]="[checkVAT('intercommunityVat')]"></generic-input>
+        >
+      </td>
     </tr>
   </table>
 
