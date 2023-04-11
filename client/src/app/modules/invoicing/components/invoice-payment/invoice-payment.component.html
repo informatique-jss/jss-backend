@@ -21,7 +21,8 @@
             <tr>
               <td>
                 <generic-input [(model)]="newPayment.paymentAmount" label="Montant" [form]="invoicePaymentForm"
-                  propertyName="paymentAmount" [isMandatory]="true" [isDisabled]="true" type="number"></generic-input>
+                  propertyName="paymentAmount" [isMandatory]="true" [isDisabled]="false"
+                  (onFormChange)="onModifyAmount()" type="number"></generic-input>
               </td>
               <td>
                 <generic-datetime-picker [(model)]="newPayment.paymentDate" label="Date de paiement"
