@@ -42,7 +42,7 @@ import com.jss.osiris.modules.tiers.model.TiersFollowup;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_invoice_status", columnList = "id_invoice_status") })
-public class Invoice implements IId, IAttachment {
+public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@Id
 	// @SequenceGenerator(name = "invoice_sequence", sequenceName =

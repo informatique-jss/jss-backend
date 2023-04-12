@@ -86,13 +86,7 @@
   (auxclick)=" createAccountingRecords($event)">
   <mat-icon>add</mat-icon>
 </button>
-<!-- TODO : remove -->
 <button matTooltip="Télécharger un relevé de comptes" mat-fab color="accent" class="third-fab-button"
   *ngIf="tiersToDisplay" (click)="downloadBillingClosureReceipt()">
   <mat-icon>download</mat-icon>
 </button>
-<button matTooltip="Télécharger un relevé de comptes v2" mat-fab color="accent" class="fourth-fab-button"
-  *ngIf="tiersToDisplay" (click)="downloadBillingClosureReceiptV2()">
-  <mat-icon>download</mat-icon>
-</button>
-<!-- TODO : end remove -->

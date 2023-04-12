@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Properties;
@@ -53,12 +52,11 @@ import com.jss.osiris.libs.mail.model.CustomerMailAssoAffaireOrder;
 import com.jss.osiris.libs.mail.model.LetterModel;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.libs.mail.model.VatMail;
+import com.jss.osiris.modules.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
-import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
-import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -77,18 +75,14 @@ import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AttachmentTypeMailQuery;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.NoticeType;
-import com.jss.osiris.modules.quotation.model.OrderingSearch;
-import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
-import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -140,9 +134,6 @@ public class MailHelper {
 
     @Autowired
     CustomerOrderService customerOrderService;
-
-    @Autowired
-    CustomerOrderStatusService customerOrderStatusService;
 
     @Autowired
     InvoiceService invoiceService;
@@ -1306,7 +1297,8 @@ public class MailHelper {
         return tempFile;
     }
 
-    public File getBillingClosureReceiptFileV2(Tiers tier) throws OsirisException, OsirisClientMessageException {
+    public File getBillingClosureReceiptFileV2(ITiers tier, List<BillingClosureReceiptValue> billingClosureValues)
+            throws OsirisException, OsirisClientMessageException {
         final Context ctx = new Context();
 
         Document billingDocument = documentService.getBillingDocument(tier.getDocuments());
@@ -1316,82 +1308,42 @@ public class MailHelper {
         ctx.setVariable("commandNumber", null);
         if (billingDocument != null && billingDocument.getIsCommandNumberMandatory()
                 && billingDocument.getCommandNumber() != null)
-            ctx.setVariable("commandNumber", billingDocument.getCommandNumber());
+            ctx.setVariable("commandNumber", billingDocument.getCommandNumber().replaceAll("&", "<![CDATA[&]]>"));
         ctx.setVariable("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        ctx.setVariable("denomination", tier.getDenomination() != null ? tier.getDenomination()
-                : (tier.getFirstname() + " " + tier.getLastname()));
 
-        OrderingSearch search = new OrderingSearch();
-        ArrayList<Tiers> tiersList = new ArrayList<Tiers>();
-        tiersList.add(tier);
-        if (tier.getResponsables() != null && tier.getResponsables().size() > 0) {
-            for (Responsable responsable : tier.getResponsables()) {
-                Tiers fakeTiers = new Tiers();
-                fakeTiers.setId(responsable.getId());
-                tiersList.add(fakeTiers);
-            }
-        }
-        search.setCustomerOrders(tiersList);
-
-        search.setCustomerOrderStatus(customerOrderStatusService.getCustomerOrderStatus().stream()
-                .filter(status -> !status.getCode().equals(CustomerOrderStatus.BILLED) &&
-                        !status.getCode().equals(CustomerOrderStatus.ABANDONED))
-                .collect(Collectors.toList()));
-
-        List<OrderingSearchResult> customerOrdersList = customerOrderService.searchOrders(search);
-        ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
-
-        if (customerOrdersList != null && customerOrdersList.size() > 0) {
-            for (OrderingSearchResult customerOrder : customerOrdersList) {
-                CustomerOrder completeCustomerOrder = customerOrderService
-                        .getCustomerOrder(customerOrder.getCustomerOrderId());
-                completeCustomerOrder
-                        .setTotalPrice(customerOrderService.getTotalForCustomerOrder(completeCustomerOrder));
-                customerOrders.add(completeCustomerOrder);
-
-                balance -= completeCustomerOrder.getTotalPrice();
-                if (completeCustomerOrder.getDeposits() != null && completeCustomerOrder.getDeposits().size() > 0)
-                    for (Deposit deposit : completeCustomerOrder.getDeposits())
-                        balance += deposit.getDepositAmount();
-            }
-
-            MailComputeResult mailComputeResult = mailComputeHelper
-                    .computeMailForCustomerOrderFinalizationAndInvoice(customerOrders.get(0));
-            ctx.setVariable("depositLink", paymentCbEntryPoint + "/order/deposit?mail="
-                    + mailComputeResult.getRecipientsMailTo().get(0).getMail() + "&customerOrderId=");
+        if (tier instanceof Tiers) {
+            ctx.setVariable("denomination",
+                    ((Tiers) tier).getDenomination() != null
+                            ? ((Tiers) tier).getDenomination().replaceAll("&", "<![CDATA[&]]>")
+                            : (((Tiers) tier).getFirstname() + " " + ((Tiers) tier).getLastname()));
+            ctx.setVariable("address", ((Tiers) tier).getAddress());
+            ctx.setVariable("postalCode", ((Tiers) tier).getPostalCode());
+            ctx.setVariable("city", ((Tiers) tier).getCity() != null ? ((Tiers) tier).getCity().getLabel() : "");
+        } else if (tier instanceof Responsable) {
+            ctx.setVariable("denomination",
+                    (((Responsable) tier).getFirstname() + " " + ((Responsable) tier).getLastname()));
+            ctx.setVariable("address", ((Responsable) tier).getTiers().getAddress());
+            ctx.setVariable("postalCode", ((Responsable) tier).getTiers().getPostalCode());
+            ctx.setVariable("city",
+                    ((Responsable) tier).getTiers().getCity() != null
+                            ? ((Responsable) tier).getTiers().getCity().getLabel()
+                            : "");
+        } else if (tier instanceof Confrere) {
+            ctx.setVariable("denomination", (((Confrere) tier).getLabel().replaceAll("&", "<![CDATA[&]]>")));
+            ctx.setVariable("address", ((Confrere) tier).getAddress());
+            ctx.setVariable("postalCode", ((Confrere) tier).getPostalCode());
+            ctx.setVariable("city", ((Confrere) tier).getCity() != null ? ((Confrere) tier).getCity().getLabel() : "");
         }
 
-        ctx.setVariable("customerOrders", customerOrders);
-        ctx.setVariable("waitingDepositCode", CustomerOrderStatus.WAITING_DEPOSIT);
-
+        ctx.setVariable("billingClosureValues", billingClosureValues);
         ctx.setVariable("ibanJss", ibanJss);
         ctx.setVariable("bicJss", bicJss);
 
-        InvoiceSearch invoiceSearch = new InvoiceSearch();
-        invoiceSearch.setCustomerOrders(tiersList);
-        invoiceSearch.setInvoiceStatus(Arrays.asList(constantService.getInvoiceStatusSend()));
-
-        List<InvoiceSearchResult> invoiceList = invoiceService.searchInvoices(invoiceSearch);
-        ArrayList<Invoice> invoices = new ArrayList<Invoice>();
-        if (invoiceList != null && invoiceList.size() > 0) {
-            for (InvoiceSearchResult invoice : invoiceList) {
-                Invoice completeInvoice = invoiceService.getInvoice(invoice.getInvoiceId());
-                invoices.add(completeInvoice);
-
-                balance -= invoice.getTotalPrice();
-                if (completeInvoice.getDeposits() != null && completeInvoice.getDeposits().size() > 0)
-                    for (Deposit deposit : completeInvoice.getDeposits())
-                        balance += deposit.getDepositAmount();
+        if (billingClosureValues != null && billingClosureValues.size() > 0)
+            for (BillingClosureReceiptValue billingClosureValue : billingClosureValues) {
+                balance += billingClosureValue.getCreditAmount() != null ? billingClosureValue.getCreditAmount() : 0;
+                balance -= billingClosureValue.getDebitAmount() != null ? billingClosureValue.getDebitAmount() : 0;
             }
-
-            if (invoices.get(0).getCustomerOrder() != null) {
-                MailComputeResult mailComputeResult = mailComputeHelper
-                        .computeMailForCustomerOrderFinalizationAndInvoice(invoices.get(0).getCustomerOrder());
-                ctx.setVariable("invoiceDepositLink", paymentCbEntryPoint + "/order/invoice?mail="
-                        + mailComputeResult.getRecipientsMailTo().get(0).getMail() + "&customerOrderId=");
-            }
-        }
-        ctx.setVariable("invoices", invoices);
         ctx.setVariable("balance", balance);
 
         // Create the HTML body using Thymeleaf
@@ -1406,7 +1358,7 @@ public class MailHelper {
             throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
-        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>"));
+        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " "));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);

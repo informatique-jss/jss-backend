@@ -55,8 +55,4 @@ export class AccountingRecordService extends AppRestService<AccountingRecord>{
   downloadBillingClosureReceipt(tiers: ITiers) {
     this.downloadGet(new HttpParams().set("tiersId", tiers.id), "billing-closure-receipt/download");
   }
-
-  downloadBillingClosureReceiptV2(tiers: ITiers) {
-    this.downloadGet(new HttpParams().set("tiersId", tiers.id), "billing-closure-receipt/download/2");
-  }
 }

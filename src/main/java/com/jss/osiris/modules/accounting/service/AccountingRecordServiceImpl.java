@@ -8,12 +8,16 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +27,9 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
@@ -34,10 +40,14 @@ import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
+import com.jss.osiris.modules.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.invoicing.model.Deposit;
+import com.jss.osiris.modules.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
@@ -51,19 +61,33 @@ import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
+import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Debour;
+import com.jss.osiris.modules.quotation.model.OrderingSearch;
+import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayTransaction;
 import com.jss.osiris.modules.quotation.service.CentralPayDelegateService;
+import com.jss.osiris.modules.quotation.service.ConfrereService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
 @Service
 public class AccountingRecordServiceImpl implements AccountingRecordService {
+
+  @Value("${payment.cb.entry.point}")
+  private String paymentCbEntryPoint;
 
   @Autowired
   AccountingRecordRepository accountingRecordRepository;
@@ -102,6 +126,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   TiersService tiersService;
 
   @Autowired
+  ResponsableService responsableService;
+
+  @Autowired
+  ConfrereService confrereService;
+
+  @Autowired
   DocumentService documentService;
 
   @Autowired
@@ -114,6 +144,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   MailHelper mailHelper;
 
   @Autowired
+  MailComputeHelper mailComputeHelper;
+
+  @Autowired
   ActiveDirectoryHelper activeDirectoryHelper;
 
   @Autowired
@@ -121,6 +154,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   CentralPayDelegateService centralPayDelegateService;
+
+  @Autowired
+  CustomerOrderStatusService customerOrderStatusService;
+
+  @Autowired
+  CustomerOrderService customerOrderService;
 
   @Override
   public AccountingRecord getAccountingRecord(Integer id) {
@@ -1252,165 +1291,384 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return addOrUpdateAccountingRecord(accountingRecord);
   }
 
-  @Transactional
   @Override
   public void sendBillingClosureReceipt()
       throws OsirisException, OsirisClientMessageException, OsirisValidationException {
     List<Tiers> tiers = tiersService.findAllTiersTypeClient();
-    if (tiers != null)
-      for (Tiers tier : tiers) {
-        Document billingClosureDocument = documentService.getBillingClosureDocument(tier.getDocuments());
-        if (billingClosureDocument != null)
-          if (billingClosureDocument.getBillingClosureRecipientType() != null
-              && (billingClosureDocument.getBillingClosureRecipientType().getId()
-                  .equals(constantService.getBillingClosureRecipientTypeClient().getId())
-                  || billingClosureDocument.getBillingClosureRecipientType().getId()
-                      .equals(constantService.getBillingClosureRecipientTypeOther().getId()))) {
-            AccountingRecordSearch search = new AccountingRecordSearch();
-            search.setTiersId(tier.getId());
-            search.setHideLettered(true);
-            search.setStartDate(LocalDateTime.now().minusYears(90));
-            search.setEndDate(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
-            List<AccountingRecordSearchResult> accountingRecords = searchAccountingRecords(search);
+    if (tiers != null && tiers.size() > 0)
+      for (Tiers tier : tiers)
+        getBillingClosureReceiptFile(tier.getId(), false);
 
-            if (accountingRecords != null && accountingRecords.size() > 0) {
-              File billingClosureReceipt = accountingExportHelper.generateBillingClosure(accountingRecords,
-                  tier.getDenomination() != null ? tier.getDenomination()
-                      : (tier.getFirstname() + " " + tier.getLastname()),
-                  billingClosureDocument.getBillingClosureType().getId()
-                      .equals(constantService.getBillingClosureTypeAffaire().getId()));
-
-              List<Attachment> attachments = new ArrayList<Attachment>();
-              try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-                List<Attachment> attachmentsList = attachmentService.addAttachment(
-                    new FileInputStream(billingClosureReceipt), tier.getId(),
-                    Tiers.class.getSimpleName(), constantService.getAttachmentTypeBillingClosure(),
-                    "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".xlsx", false,
-                    "Relevé de compte du " + LocalDateTime.now().format(formatter));
-
-                for (Attachment attachment : attachmentsList)
-                  if (attachment.getUploadedFile().getFilename()
-                      .equals("Relevé de compte du " + LocalDateTime.now().format(formatter) + ".xlsx")) {
-                    attachments.add(attachment);
-                    break;
-                  }
-              } catch (FileNotFoundException e) {
-                throw new OsirisException(e, "Impossible to read excel of billing closure for tiers " + tier.getId());
-              }
-              try {
-                mailHelper.sendBillingClosureToCustomer(attachments, tier, false);
-              } catch (Exception e) {
-                globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
-              }
-            }
-
-          } else if (billingClosureDocument.getBillingClosureRecipientType() != null
-              && billingClosureDocument.getBillingClosureRecipientType().getId()
-                  .equals(constantService.getBillingClosureRecipientTypeResponsable().getId())) {
-            if (tier.getResponsables() != null && tier.getResponsables().size() > 0) {
-              for (Responsable responsable : tier.getResponsables()) {
-                AccountingRecordSearch search = new AccountingRecordSearch();
-                search.setResponsableId(responsable.getId());
-                search.setHideLettered(true);
-                search.setStartDate(LocalDateTime.now().minusYears(90));
-                search.setEndDate(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
-                List<AccountingRecordSearchResult> accountingRecords = searchAccountingRecords(search);
-
-                if (accountingRecords != null && accountingRecords.size() > 0) {
-                  File billingClosureReceipt = accountingExportHelper.generateBillingClosure(accountingRecords,
-                      responsable.getFirstname() + " " + responsable.getLastname(),
-                      billingClosureDocument.getBillingClosureType().getId()
-                          .equals(constantService.getBillingClosureTypeAffaire().getId()));
-
-                  List<Attachment> attachments = new ArrayList<Attachment>();
-                  try {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-                    List<Attachment> attachmentsList = attachmentService.addAttachment(
-                        new FileInputStream(billingClosureReceipt), responsable.getId(),
-                        Responsable.class.getSimpleName(), constantService.getAttachmentTypeBillingClosure(),
-                        "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".xlsx", false,
-                        "Relevé de compte du " + LocalDateTime.now().format(formatter));
-
-                    for (Attachment attachment : attachmentsList)
-                      if (attachment.getUploadedFile().getFilename()
-                          .equals("Relevé de compte du " + LocalDateTime.now().format(formatter) + ".xlsx")) {
-                        attachments.add(attachment);
-                        break;
-                      }
-                  } catch (FileNotFoundException e) {
-                    throw new OsirisException(e,
-                        "Impossible to read excel of billing closure for responsable " + responsable.getId());
-                  }
-
-                  try {
-                    mailHelper.sendBillingClosureToCustomer(attachments, responsable, false);
-                  } catch (Exception e) {
-                    globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
-                  }
-                }
-              }
-            }
-          }
-      }
-
-    // TODO confrères
+    List<Confrere> confreres = confrereService.getConfreres();
+    if (confreres != null && confreres.size() > 0)
+      for (Confrere confrere : confreres)
+        getBillingClosureReceiptFile(confrere.getId(), false);
   }
 
-  // TODO : remove
   @Override
-  public File getBillingClosureReceiptFile(Tiers tier) throws OsirisException {
-    Document billingClosureDocument = documentService.getBillingClosureDocument(tier.getDocuments());
-    if (billingClosureDocument != null)
+  @Transactional
+  public File getBillingClosureReceiptFile(Integer tiersId, boolean downloadFile)
+      throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+
+    ITiers tier = null;
+    tier = tiersService.getTiers(tiersId);
+
+    if (tier == null)
+      tier = responsableService.getResponsable(tiersId);
+
+    if (tier == null)
+      tier = confrereService.getConfrere(tiersId);
+
+    Document billingClosureDocument = null;
+    if (tier instanceof Responsable)
+      billingClosureDocument = documentService
+          .getBillingClosureDocument(((Responsable) tier).getTiers().getDocuments());
+    else
+      billingClosureDocument = documentService.getBillingClosureDocument(tier.getDocuments());
+
+    boolean isOrderingByEventDate = billingClosureDocument.getBillingClosureType() != null && !billingClosureDocument
+        .getBillingClosureType().getId().equals(constantService.getBillingClosureTypeAffaire().getId());
+
+    if (downloadFile) {
+      ArrayList<ITiers> tiers = new ArrayList<ITiers>();
+      tiers.add(tier);
+      if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
+        tiers.addAll(((Tiers) tier).getResponsables());
+      List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers,
+          isOrderingByEventDate);
+      return mailHelper.getBillingClosureReceiptFileV2(tier, values);
+    }
+
+    // Send all to tiers
+    if (billingClosureDocument != null) {
       if (billingClosureDocument.getBillingClosureRecipientType() != null
           && (billingClosureDocument.getBillingClosureRecipientType().getId()
               .equals(constantService.getBillingClosureRecipientTypeClient().getId())
               || billingClosureDocument.getBillingClosureRecipientType().getId()
                   .equals(constantService.getBillingClosureRecipientTypeOther().getId()))) {
-        AccountingRecordSearch search = new AccountingRecordSearch();
-        search.setTiersId(tier.getId());
-        search.setHideLettered(true);
-        search.setStartDate(LocalDateTime.now().minusYears(90));
-        search.setEndDate(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
-        List<AccountingRecordSearchResult> accountingRecords = searchAccountingRecords(search);
 
-        if (accountingRecords != null && accountingRecords.size() > 0) {
-          return accountingExportHelper.generateBillingClosure(accountingRecords,
-              tier.getDenomination() != null ? tier.getDenomination()
-                  : (tier.getFirstname() + " " + tier.getLastname()),
-              billingClosureDocument.getBillingClosureType().getId()
-                  .equals(constantService.getBillingClosureTypeAffaire().getId()));
-        }
+        ArrayList<ITiers> tiers = new ArrayList<ITiers>();
+        tiers.add(tier);
+        if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
+          tiers.addAll(((Tiers) tier).getResponsables());
+
+        List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers, isOrderingByEventDate);
+        if (values.size() > 0)
+          sendBillingClosureReceiptFile(
+              mailHelper.getBillingClosureReceiptFileV2(tier, values),
+              tier);
+
       } else if (billingClosureDocument.getBillingClosureRecipientType() != null
           && billingClosureDocument.getBillingClosureRecipientType().getId()
               .equals(constantService.getBillingClosureRecipientTypeResponsable().getId())) {
-        if (tier.getResponsables() != null && tier.getResponsables().size() > 0) {
-          for (Responsable responsable : tier.getResponsables()) {
-            AccountingRecordSearch search = new AccountingRecordSearch();
-            search.setResponsableId(responsable.getId());
-            search.setHideLettered(true);
-            search.setStartDate(LocalDateTime.now().minusYears(90));
-            search.setEndDate(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
-            List<AccountingRecordSearchResult> accountingRecords = searchAccountingRecords(search);
+        // Send to each responsable
+        if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
+          for (Responsable responsable : ((Tiers) tier).getResponsables()) {
 
-            if (accountingRecords != null && accountingRecords.size() > 0) {
-              return accountingExportHelper.generateBillingClosure(accountingRecords,
-                  responsable.getFirstname() + " " + responsable.getLastname(),
-                  billingClosureDocument.getBillingClosureType().getId()
-                      .equals(constantService.getBillingClosureTypeAffaire().getId()));
-            }
+            ArrayList<ITiers> tiers = new ArrayList<ITiers>();
+            tiers.add(responsable);
+            List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers,
+                isOrderingByEventDate);
+            if (values.size() > 0)
+              sendBillingClosureReceiptFile(
+                  mailHelper.getBillingClosureReceiptFileV2(responsable, values),
+                  responsable);
+
           }
-        }
       }
+    }
     return null;
   }
 
-  // TODO remove
-  @Override
-  public File getBillingClosureReceiptFileV2(Tiers tier) throws OsirisException, OsirisClientMessageException {
-    return mailHelper.getBillingClosureReceiptFileV2(tier);
+  private List<BillingClosureReceiptValue> generateBillingClosureValuesForITiers(ArrayList<ITiers> tiers,
+      boolean isOrderingByEventDate) throws OsirisException, OsirisClientMessageException {
+
+    // Find all elements
+
+    // Find customer orders
+    OrderingSearch search = new OrderingSearch();
+    ArrayList<Tiers> tiersList = new ArrayList<Tiers>();
+    for (ITiers tiersIn : tiers) {
+      if (tiersIn instanceof Tiers)
+        tiersList.add((Tiers) tiersIn);
+      if (tiersIn instanceof Confrere) {
+        Tiers fakeTiers = new Tiers();
+        fakeTiers.setId(tiersIn.getId());
+        tiersList.add(fakeTiers);
+      }
+      if (tiersIn instanceof Responsable) {
+        Tiers fakeTiers = new Tiers();
+        fakeTiers.setId(tiersIn.getId());
+        tiersList.add(fakeTiers);
+      }
+    }
+
+    search.setCustomerOrders(tiersList);
+
+    search.setCustomerOrderStatus(customerOrderStatusService.getCustomerOrderStatus().stream()
+        .filter(status -> !status.getCode().equals(CustomerOrderStatus.BILLED) &&
+            !status.getCode().equals(CustomerOrderStatus.ABANDONED))
+        .collect(Collectors.toList()));
+
+    List<OrderingSearchResult> customerOrdersList = customerOrderService.searchOrders(search);
+    ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
+
+    if (customerOrdersList != null && customerOrdersList.size() > 0) {
+      for (OrderingSearchResult customerOrder : customerOrdersList) {
+        CustomerOrder completeCustomerOrder = customerOrderService.getCustomerOrder(customerOrder.getCustomerOrderId());
+        customerOrders.add(completeCustomerOrder);
+      }
+    }
+
+    // Find invoices
+    InvoiceSearch invoiceSearch = new InvoiceSearch();
+    invoiceSearch.setCustomerOrders(tiersList);
+    invoiceSearch.setInvoiceStatus(Arrays.asList(constantService.getInvoiceStatusSend()));
+
+    List<InvoiceSearchResult> invoiceList = invoiceService.searchInvoices(invoiceSearch);
+    ArrayList<Invoice> invoices = new ArrayList<Invoice>();
+    if (invoiceList != null && invoiceList.size() > 0) {
+      for (InvoiceSearchResult invoice : invoiceList) {
+        Invoice completeInvoice = invoiceService.getInvoice(invoice.getInvoiceId());
+        invoices.add(completeInvoice);
+      }
+    }
+
+    ArrayList<BillingClosureReceiptValue> values = new ArrayList<BillingClosureReceiptValue>();
+
+    if (isOrderingByEventDate) {
+      ArrayList<ICreatedDate> allInputs = new ArrayList<ICreatedDate>();
+      if (customerOrders != null && customerOrders.size() > 0) {
+        for (CustomerOrder customerOrder : customerOrders) {
+          allInputs.add(customerOrder);
+          if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
+            for (Deposit deposit : customerOrder.getDeposits())
+              allInputs.add(deposit);
+        }
+      }
+
+      if (invoices != null && invoices.size() > 0) {
+        for (Invoice invoice : invoices) {
+          allInputs.add(invoice);
+          if (invoice.getDeposits() != null && invoice.getDeposits().size() > 0)
+            for (Deposit deposit : invoice.getDeposits())
+              allInputs.add(deposit);
+          if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
+            for (Payment payment : invoice.getPayments())
+              allInputs.add(payment);
+        }
+      }
+
+      if (allInputs.size() > 0) {
+        allInputs.sort(new Comparator<ICreatedDate>() {
+          @Override
+          public int compare(ICreatedDate o1, ICreatedDate o2) {
+            return o1.getCreatedDate().compareTo(o2.getCreatedDate());
+          }
+        });
+
+        for (ICreatedDate input : allInputs) {
+          if (input instanceof CustomerOrder)
+            values.add(getBillingClosureReceiptValueForCustomerOrder((CustomerOrder) input));
+          if (input instanceof Invoice)
+            values.add(getBillingClosureReceiptValueForInvoice((Invoice) input));
+          if (input instanceof Deposit)
+            values.add(getBillingClosureReceiptValueForDeposit((Deposit) input));
+          if (input instanceof Payment)
+            values.add(getBillingClosureReceiptValueForPayment((Payment) input));
+        }
+      }
+    } else {
+      // Order by affaire
+      ArrayList<Object> allInputs = new ArrayList<Object>();
+      if (customerOrders != null && customerOrders.size() > 0)
+        allInputs.addAll(customerOrders);
+      if (invoices != null && invoices.size() > 0)
+        allInputs.addAll(invoices);
+
+      if (allInputs.size() > 0) {
+        allInputs.sort(new Comparator<Object>() {
+
+          @Override
+          public int compare(Object o1, Object o2) {
+            Affaire affaire1 = null;
+            Affaire affaire2 = null;
+            if (o1 instanceof CustomerOrder)
+              affaire1 = ((CustomerOrder) o1).getAssoAffaireOrders().get(0).getAffaire();
+            if (o1 instanceof Invoice && ((Invoice) o1).getCustomerOrder() != null)
+              affaire1 = ((Invoice) o1).getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
+            if (o2 instanceof CustomerOrder)
+              affaire2 = ((CustomerOrder) o2).getAssoAffaireOrders().get(0).getAffaire();
+            if (o2 instanceof Invoice && ((Invoice) o2).getCustomerOrder() != null)
+              affaire2 = ((Invoice) o1).getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
+
+            if (affaire1 != null && affaire2 == null)
+              return 1;
+            if (affaire1 == null && affaire2 != null)
+              return -1;
+            if (affaire1 == null && affaire2 == null)
+              return 0;
+
+            if (affaire1 != null && affaire2 != null)
+              return (affaire1.getDenomination() != null ? affaire1.getDenomination()
+                  : (affaire1.getFirstname() + affaire1.getLastname()))
+                  .compareTo((affaire2.getDenomination() != null ? affaire2.getDenomination()
+                      : (affaire2.getFirstname() + affaire2.getLastname())));
+            return 0;
+          }
+        });
+      }
+
+      for (Object input : allInputs) {
+        if (input instanceof CustomerOrder) {
+          CustomerOrder customerOrder = (CustomerOrder) input;
+          values.add(getBillingClosureReceiptValueForCustomerOrder(customerOrder));
+          if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
+            for (Deposit deposit : customerOrder.getDeposits())
+              values.add(getBillingClosureReceiptValueForDeposit(deposit));
+        }
+        if (input instanceof Invoice) {
+          Invoice invoice = (Invoice) input;
+          values.add(getBillingClosureReceiptValueForInvoice(invoice));
+          if (invoice.getDeposits() != null && invoice.getDeposits().size() > 0)
+            for (Deposit deposit : invoice.getDeposits())
+              values.add(getBillingClosureReceiptValueForDeposit(deposit));
+          if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
+            for (Payment payment : invoice.getPayments())
+              values.add(getBillingClosureReceiptValueForPayment(payment));
+        }
+      }
+    }
+    return values;
   }
 
+  private BillingClosureReceiptValue getBillingClosureReceiptValueForCustomerOrder(CustomerOrder customerOrder)
+      throws OsirisException, OsirisClientMessageException {
+    BillingClosureReceiptValue value = new BillingClosureReceiptValue();
+    value.setDebitAmount(customerOrderService.getTotalForCustomerOrder(customerOrder));
+    value.setCreditAmount(null);
+    value.setEventDateTime(customerOrder.getCreatedDate());
+    value.setEventDateString(customerOrder.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+    value.setEventDescription(
+        "Commande n°" + customerOrder.getId() + " - " + customerOrder.getCustomerOrderStatus().getLabel()
+            + "<br/>"
+            + String.join("<br/>", getAllAffairesLabelForCustomerOrder(customerOrder))
+            + "<br/>"
+            + String.join("<br/>", getAllProvisionLabelForCustomerOrder(customerOrder)));
+
+    if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
+      MailComputeResult mailComputeResult = mailComputeHelper
+          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
+      value.setEventCbLink(paymentCbEntryPoint + "/order/deposit?mail="
+          + mailComputeResult.getRecipientsMailTo().get(0).getMail() + "&customerOrderId=" + customerOrder.getId());
+    }
+
+    return value;
+  }
+
+  private BillingClosureReceiptValue getBillingClosureReceiptValueForInvoice(Invoice invoice)
+      throws OsirisException, OsirisClientMessageException {
+    BillingClosureReceiptValue value = new BillingClosureReceiptValue();
+    value.setDebitAmount(invoice.getTotalPrice());
+    value.setCreditAmount(null);
+    value.setEventDateTime(invoice.getCreatedDate());
+    value.setEventDateString(invoice.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+    value.setEventDescription("Facture n°" + invoice.getId());
+
+    if (invoice.getCustomerOrder() != null) {
+      value.setEventDescription(
+          "Facture n°" + invoice.getId()
+              + "<br/>"
+              + String.join("<br/>", getAllAffairesLabelForCustomerOrder(invoice.getCustomerOrder()))
+              + "<br/>"
+              + String.join("<br/>", getAllProvisionLabelForCustomerOrder(invoice.getCustomerOrder())));
+
+      MailComputeResult mailComputeResult = mailComputeHelper
+          .computeMailForCustomerOrderFinalizationAndInvoice(invoice.getCustomerOrder());
+      value.setEventCbLink(paymentCbEntryPoint + "/order/invoice?mail="
+          + mailComputeResult.getRecipientsMailTo().get(0).getMail() + "&customerOrderId="
+          + invoice.getCustomerOrder().getId());
+    }
+
+    return value;
+  }
+
+  private BillingClosureReceiptValue getBillingClosureReceiptValueForDeposit(Deposit deposit) {
+    BillingClosureReceiptValue value = new BillingClosureReceiptValue();
+    value.setDebitAmount(null);
+    value.setCreditAmount(deposit.getDepositAmount());
+    value.setEventDateTime(deposit.getDepositDate());
+    value.setEventDateString(deposit.getDepositDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+    value.setEventDescription(deposit.getLabel().replaceAll("&", "<![CDATA[&]]>"));
+
+    return value;
+  }
+
+  private BillingClosureReceiptValue getBillingClosureReceiptValueForPayment(Payment payment) {
+
+    BillingClosureReceiptValue value = new BillingClosureReceiptValue();
+    value.setDebitAmount(null);
+    value.setCreditAmount(payment.getPaymentAmount());
+    value.setEventDateTime(payment.getPaymentDate());
+    value.setEventDateString(payment.getPaymentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+    value.setEventDescription(payment.getLabel().replaceAll("&", "<![CDATA[&]]>"));
+
+    return value;
+  }
+
+  private List<String> getAllAffairesLabelForCustomerOrder(CustomerOrder customerOrder) {
+    ArrayList<String> affaires = new ArrayList<String>();
+    if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null
+        && customerOrder.getAssoAffaireOrders().size() > 0)
+      for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+        Affaire affaire = asso.getAffaire();
+        affaires.add((affaire.getDenomination() != null ? affaire.getDenomination()
+            : (affaire.getFirstname() + " " + affaire.getLastname())) + ", " + affaire.getAddress() + ", "
+            + (affaire.getCity() != null ? affaire.getCity().getLabel() : ""));
+      }
+    return affaires;
+  }
+
+  private List<String> getAllProvisionLabelForCustomerOrder(CustomerOrder customerOrder) {
+    ArrayList<String> provisions = new ArrayList<String>();
+    if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null
+        && customerOrder.getAssoAffaireOrders().size() > 0)
+      for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+        if (asso.getProvisions() != null && asso.getProvisions().size() > 0)
+          for (Provision provision : asso.getProvisions())
+            provisions
+                .add(provision.getProvisionFamilyType().getLabel() + " - " + provision.getProvisionType().getLabel());
+      }
+    return provisions;
+  }
+
+  private void sendBillingClosureReceiptFile(File billingClosureReceipt, ITiers tiers)
+      throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+    List<Attachment> attachments = new ArrayList<Attachment>();
+    try {
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+      List<Attachment> attachmentsList = attachmentService.addAttachment(
+          new FileInputStream(billingClosureReceipt), tiers.getId(),
+          Responsable.class.getSimpleName(), constantService.getAttachmentTypeBillingClosure(),
+          "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".pdf", false,
+          "Relevé de compte du " + LocalDateTime.now().format(formatter));
+
+      for (Attachment attachment : attachmentsList)
+        if (attachment.getUploadedFile().getFilename()
+            .equals("Relevé de compte du " + LocalDateTime.now().format(formatter) + ".pdf")) {
+          attachments.add(attachment);
+          break;
+        }
+    } catch (FileNotFoundException e) {
+      throw new OsirisException(e,
+          "Impossible to read excel of billing closure for ITiers " + tiers.getId());
+    }
+
+    try {
+      mailHelper.sendBillingClosureToCustomer(attachments, tiers, false);
+    } catch (Exception e) {
+      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+    }
+  }
 }

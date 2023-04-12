@@ -250,16 +250,9 @@ export class AccountingRecordComponent implements OnInit {
     this.restoreTotalDivPosition();
   }
 
-  // TODO : remove
   downloadBillingClosureReceipt() {
     if (this.tiersToDisplay)
       this.accountingRecordService.downloadBillingClosureReceipt(this.tiersToDisplay);
-  }
-
-  // TODO : remove
-  downloadBillingClosureReceiptV2() {
-    if (this.tiersToDisplay)
-      this.accountingRecordService.downloadBillingClosureReceiptV2(this.tiersToDisplay);
   }
 
 }

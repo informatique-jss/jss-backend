@@ -23,7 +23,7 @@ import com.jss.osiris.modules.quotation.model.Debour;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_bank_id", columnList = "bankId", unique = true) })
-public class Payment implements Serializable, IId {
+public class Payment implements Serializable, IId, ICreatedDate {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -173,6 +173,10 @@ public class Payment implements Serializable, IId {
 
 	public void setDebours(List<Debour> debours) {
 		this.debours = debours;
+	}
+
+	public LocalDateTime getCreatedDate() {
+		return getPaymentDate();
 	}
 
 }

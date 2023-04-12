@@ -21,6 +21,14 @@
         .td-with-price {
             width: 130px;
         }
+
+        .td-date {
+            width: 100px;
+        }
+
+        .border-table {
+            border-bottom: 1px solid rgb(0, 83, 159);
+        }
     </style>
 </head>
 
@@ -44,92 +52,35 @@
                     <tr>
                         <td>
                             <span th:text="${denomination}"></span><br />
+                            <span th:text="${address}"></span><br />
+                            <span th:text="${postalCode}"></span> <span th:text="${city}"></span><br />
                         </td>
                     </tr>
                 </table>
             </td>
         </tr>
     </table>
-    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
+    <table
+        style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px; border-collapse: collapse;">
         <thead>
             <tr>
-                <td style="text-align: center;">Description</td>
-                <td>Débit</td>
-                <td>Crédit</td>
+                <td style="text-align: center;" class="border-table">Date</td>
+                <td style="text-align: center;" class="border-table">Description</td>
+                <td class="border-table">Débit</td>
+                <td class="border-table">Crédit</td>
             </tr>
         </thead>
-        <th:block th:each="customerOrder : ${customerOrders}" th:if="${customerOrders!=null} ">
-            <tr>
-                <td style="padding-top: 20px;"
-                    th:if="${customerOrder.assoAffaireOrders[0].affaire.denomination!=null} ">
-                    <strong>Société <span
-                            th:text="${customerOrder.assoAffaireOrders[0].affaire.denomination}"></span></strong>
-                </td>
-                <td style="padding-top: 20px;"
-                    th:if="${customerOrder.assoAffaireOrders[0].affaire.denomination==null} ">
-                    <strong><span th:text="${customerOrder.assoAffaireOrders[0].affaire.firstname}"></span>
-                        <span th:text="${customerOrder.assoAffaireOrders[0].affaire.lastname}"></span></strong>
-                </td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>
-                    Commande n°<span th:text="${customerOrder.id}"></span> - <span
-                        th:text="${customerOrder.customerOrderStatus.label}"></span><span
-                        th:if="${customerOrder.customerOrderStatus.code==waitingDepositCode}"> (payer <a
-                            th:href="${depositLink}+${customerOrder.id}" target="_blank">ici</a>)</span>
-                </td>
-                <td class="td-with-price"><span
-                        th:text="${#numbers.formatDecimal(customerOrder.totalPrice,1,2)}"></span> €</td>
-                <td></td>
-            </tr>
-            <th:block th:each="deposit : ${customerOrder.deposits}">
-                <tr>
-                    <td>
-                        Acompte n°<span th:text="${deposit.id}"></span>
-                    </td>
-                    <td></td>
-                    <td class="td-with-price"><span
-                            th:text="${#numbers.formatDecimal(deposit.depositAmount,1,2)}"></span> €</td>
-                </tr>
-            </th:block>
-        </th:block>
-
-        <th:block th:each="invoice : ${invoices}" th:if="${invoices!=null} ">
-            <tr th:if="${invoice.customerOrder!=null}">
-                <td style=" padding-top: 20px;"
-                    th:if="${invoice.customerOrder.assoAffaireOrders[0].affaire.denomination!=null} ">
-                    <strong>Société <span
-                            th:text="${invoice.customerOrder.assoAffaireOrders[0].affaire.denomination}"></span></strong>
-                </td>
-                <td style="padding-top: 20px;"
-                    th:if="${invoice.customerOrder.assoAffaireOrders[0].affaire.denomination==null} ">
-                    <strong><span th:text="${invoice.customerOrder.assoAffaireOrders[0].affaire.firstname}"></span>
-                        <span th:text="${invoice.customerOrder.assoAffaireOrders[0].affaire.lastname}"></span></strong>
-                </td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>
-                    Facture n°<span th:text="${invoice.id}"></span> - <span
-                        th:if="${invoice.customerOrder!=null}">(payer <a
-                            th:href="${invoiceDepositLink}+${invoice.customerOrder.id}" target="_blank">ici</a>)</span>
-                </td>
-                <td class="td-with-price"><span th:text="${#numbers.formatDecimal(invoice.totalPrice,1,2)}"></span> €
-                </td>
-                <td></td>
-            </tr>
-            <th:block th:each="deposit : ${invoice.deposits}">
-                <tr>
-                    <td>
-                        Acompte n°<span th:text="${deposit.id}"></span>
-                    </td>
-                    <td></td>
-                    <td class="td-with-price"><span
-                            th:text="${#numbers.formatDecimal(deposit.depositAmount,1,2)}"></span> €</td>
-                </tr>
-            </th:block>
-        </th:block>
+        <tr th:each="values : ${billingClosureValues}">
+            <td class="td-date border-table"><span th:text="${values.eventDateString}"></span></td>
+            <td class="border-table"><span th:utext="${values.eventDescription}"></span> <span
+                    th:if="${values.eventCbLink!=null}"> (payer <a th:href="${values.eventCbLink}">ici</a>)</span></td>
+            <td class="td-with-price border-table" th:if="${values.debitAmount!=null}"><span
+                    th:text="${#numbers.formatDecimal(values.debitAmount,1,2)}"></span> €</td>
+            <td class="td-with-price border-table" th:if="${values.debitAmount==null}"></td>
+            <td class="td-with-price border-table" th:if="${values.creditAmount!=null}"><span
+                    th:text="${#numbers.formatDecimal(values.creditAmount,1,2)}"></span> €</td>
+            <td class="td-with-price border-table" th:if="${values.creditAmount==null}"></td>
+        </tr>
     </table>
     <p style="margin-top: 10px;">&#160;</p>
     <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
@@ -142,10 +93,13 @@
             </td>
         </tr>
     </table>
-    <p style="font-size: 16px;">Vous pouvez effectuer les paiements par virements en utilisant les informations
+    <p style="font-size: 16px;">Vous pouvez effectuer les paiements par virement en utilisant les informations
         ci-dessous. <strong>Veuillez indiquer absolument la référence de la commande et / ou de la facture dans le
             libellé de votre virement</strong></p>
-    <p style="font-size: 16px;">IBAN / BIC : <span th:text="${ibanJss}"></span> <span th:text="${bicJss}"></span>
+    <p style="font-size: 16px;">IBAN / BIC : <span th:text="${ibanJss}"></span> <span th:text="${bicJss}"></span></p>
+    <p style="font-size: 16px; text-align: right;">Dans l’attente,<br />
+        Cordialement.<br />
+        La comptabilité
     </p>
 </body>
 

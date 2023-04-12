@@ -44,7 +44,6 @@ import com.jss.osiris.modules.accounting.service.AccountingJournalService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.accounting.service.PrincipalAccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
-import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
 @RestController
@@ -437,43 +436,7 @@ public class AccountingController {
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
     }
 
-    // TODO : remove
     @GetMapping(inputEntryPoint + "/billing-closure-receipt/download")
-    public ResponseEntity<byte[]> downloadBillingClosureReceipt(@RequestParam("tiersId") Integer tiersId)
-            throws OsirisValidationException, OsirisException {
-        byte[] data = null;
-        HttpHeaders headers = null;
-
-        if (tiersId == null)
-            throw new OsirisValidationException("tiersId");
-
-        Tiers tiers = tiersService.getTiers(tiersId);
-
-        File billingClosureExport = accountingRecordService.getBillingClosureReceiptFile(tiers);
-
-        if (billingClosureExport != null) {
-            try {
-                data = Files.readAllBytes(billingClosureExport.toPath());
-            } catch (IOException e) {
-                throw new OsirisException(e, "Unable to read file " + billingClosureExport.toPath());
-            }
-
-            headers = new HttpHeaders();
-            headers.add("filename",
-                    "SPPS - Relevé de comptes - " + tiers.getDenomination() + " - "
-                            + LocalDate.now().format(dateFormatter) + ".xlsx");
-            headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
-            headers.setContentLength(data.length);
-            headers.set("content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-
-            billingClosureExport.delete();
-
-        }
-        return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
-    }
-
-    // TODO : remove
-    @GetMapping(inputEntryPoint + "/billing-closure-receipt/download/2")
     public ResponseEntity<byte[]> downloadBillingClosureReceiptV2(@RequestParam("tiersId") Integer tiersId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         byte[] data = null;
@@ -482,9 +445,7 @@ public class AccountingController {
         if (tiersId == null)
             throw new OsirisValidationException("tiersId");
 
-        Tiers tiers = tiersService.getTiers(tiersId);
-
-        File billingClosureExport = accountingRecordService.getBillingClosureReceiptFileV2(tiers);
+        File billingClosureExport = accountingRecordService.getBillingClosureReceiptFile(tiersId, true);
 
         if (billingClosureExport != null) {
             try {
@@ -495,7 +456,7 @@ public class AccountingController {
 
             headers = new HttpHeaders();
             headers.add("filename",
-                    "SPPS - Relevé de comptes - " + tiers.getDenomination() + " - "
+                    "SPPS - Relevé de comptes - "
                             + LocalDate.now().format(dateFormatter) + ".pdf");
             headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
             headers.setContentLength(data.length);
