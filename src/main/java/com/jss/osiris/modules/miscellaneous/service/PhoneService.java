@@ -4,14 +4,12 @@ import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
-import com.jss.osiris.modules.miscellaneous.model.PhoneTeams;
+import com.jss.osiris.modules.miscellaneous.model.PhoneSearch;
 
 public interface PhoneService {
-    public List<Phone> findPhones(String phone);
-
     public Phone getPhone(Integer id);
 
     public List<Phone> populatePhoneIds(List<Phone> phones);
 
-    public List<PhoneTeams> getByTelNumber(String phone) throws OsirisException;
+    public List<PhoneSearch> getByPhoneNumber(String phone) throws OsirisException;
 }

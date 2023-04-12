@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.miscellaneous.model.Phone;
-import com.jss.osiris.modules.miscellaneous.model.PhoneTeams;
-import org.springframework.data.repository.query.Param;
+import com.jss.osiris.modules.miscellaneous.model.PhoneSearch;
 
 public interface PhoneRepository extends CrudRepository<Phone, Integer> {
 
@@ -19,7 +19,8 @@ public interface PhoneRepository extends CrudRepository<Phone, Integer> {
             "WHEN r.id IS NOT NULL THEN 'Responsable' " +
             "WHEN c.id IS NOT NULL THEN 'Confrere' " +
             "WHEN p.id IS NOT NULL THEN 'Provider' " +
-            "END as ENTITY_TYPE, COALESCE(t.id, r.id, c.id, p.id) as ENTITY_ID " +
+            "END as entityType, " +
+            " COALESCE(t.id, r.id, c.id, p.id) as entityId " +
             "FROM phone " +
             "LEFT OUTER JOIN asso_tiers_phone atp ON phone.id = atp.id_phone " +
             "LEFT OUTER JOIN tiers t ON atp.id_tiers = t.id " +
@@ -30,5 +31,5 @@ public interface PhoneRepository extends CrudRepository<Phone, Integer> {
             "LEFT OUTER JOIN asso_confrere_phone acp ON phone.id = acp.id_phone " +
             "LEFT OUTER JOIN confrere c ON acp.id_confrere = c.id " +
             "WHERE phone.phone_number = :phoneNumber")
-    List<PhoneTeams> findByPhoneNumber(@Param("phoneNumber") String phoneNumber);
+    List<PhoneSearch> findByPhoneNumber(@Param("phoneNumber") String phoneNumber);
 }
