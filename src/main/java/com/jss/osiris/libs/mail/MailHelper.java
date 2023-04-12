@@ -1470,6 +1470,16 @@ public class MailHelper {
                     attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
                 }
             }
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+                            for (Attachment attachment : provision.getAttachments())
+                                if (attachment.getAttachmentType().getIsToSentOnFinalizationMail()
+                                        && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())) {
+                                    attachments.add(attachment);
+                                    attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
+                                }
         }
 
         mail.setAttachments(attachments);
