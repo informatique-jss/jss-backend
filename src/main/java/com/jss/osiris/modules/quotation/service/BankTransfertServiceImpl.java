@@ -279,7 +279,6 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
         PmtTpInfBean bodyTransfertType = new PmtTpInfBean();
         body.setPmtTpInfBean(bodyTransfertType);
-        bodyTransfertType.setInstrPrty("NORM");
 
         SvcLvlBean transfertNorm = new SvcLvlBean();
         bodyTransfertType.setSvcLvlBean(transfertNorm);
