@@ -6,7 +6,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
+import com.jss.osiris.modules.miscellaneous.model.PhoneTeams;
 import com.jss.osiris.modules.miscellaneous.repository.PhoneRepository;
 
 @Service
@@ -15,11 +18,25 @@ public class PhoneServiceImpl implements PhoneService {
     @Autowired
     PhoneRepository phoneRepository;
 
+    @Autowired
+    ValidationHelper validationHelper;
+
     @Override
     public List<Phone> findPhones(String phone) {
         if (phone != null)
             return phoneRepository.findByPhoneNumberContainingIgnoreCase(phone);
         return null;
+    }
+
+    @Override
+    public List<PhoneTeams> getByTelNumber(String telNumber) throws OsirisException {
+        String normalizedNumber = validationHelper.validateFrenchPhone(telNumber) ? "+33" + telNumber.substring(1)
+                : telNumber;
+        List<PhoneTeams> entities = phoneRepository.findByPhoneNumber(normalizedNumber);
+        if (entities.isEmpty()) {
+            throw new OsirisException(null, "Aucun enregistrement trouvé pour le numéro de téléphone : " + telNumber);
+        }
+        return entities;
     }
 
     @Override

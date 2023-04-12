@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.tiers.controller;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
+import com.jss.osiris.modules.miscellaneous.model.PhoneTeams;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CountryService;
@@ -166,6 +168,12 @@ public class TiersController {
 
     return new ResponseEntity<SubscriptionPeriodType>(
         subscriptionPeriodTypeService.addOrUpdateSubscriptionPeriodType(subscriptionPeriodTypes), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/phone/{telNumber}")
+  public ResponseEntity<List<PhoneTeams>> getByTelNumber(@PathVariable String telNumber) throws OsirisException {
+
+    return new ResponseEntity<List<PhoneTeams>>(phoneService.getByTelNumber(telNumber), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/tiers-followup-types")

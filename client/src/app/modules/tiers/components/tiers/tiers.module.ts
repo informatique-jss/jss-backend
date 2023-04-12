@@ -1,6 +1,6 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { NgModule, Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
@@ -27,12 +27,15 @@ import { ResponsableMainComponent } from '../responsable-main/responsable-main.c
 import { SettlementBillingComponent } from '../settlement-billing/settlement-billing.component';
 import { PrincipalComponent } from '../tiers-main/tiers-main.component';
 import { TiersComponent } from './tiers.component';
+import { PhoneTeamsComponent } from '../phone-teams/phone-teams.component';
+
 
 const routes: Routes = [
   { path: 'tiers', component: TiersComponent },
   { path: 'tiers/:id', component: TiersComponent },
   { path: 'tiers/responsable/:id', component: TiersComponent },
-  { path: 'confrere/:id', component: ConfrereComponent }
+  { path: 'confrere/:id', component: ConfrereComponent },
+  { path: 'tiers/phone/:phoneNumber', component: PhoneTeamsComponent}
 ];
 
 @NgModule({

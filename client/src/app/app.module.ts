@@ -34,6 +34,8 @@ import { HeaderComponent } from './routing/header/header.component';
 import { RoutingModule } from './routing/routing.module';
 import { SidenavListComponent } from './routing/sidenav-list/sidenav-list.component';
 
+import { PhoneTeamsComponent } from "./modules/tiers/components/phone-teams/phone-teams.component";
+
 registerLocaleData(localeFr, 'fr');
 
 @NgModule({
@@ -41,7 +43,8 @@ registerLocaleData(localeFr, 'fr');
     AppComponent,
     SidenavListComponent,
     HeaderComponent,
-    MyProfilComponent
+    MyProfilComponent,
+    PhoneTeamsComponent
   ],
   imports: [
     // Core modules
