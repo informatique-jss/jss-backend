@@ -1292,6 +1292,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
+  @Transactional
   public void sendBillingClosureReceipt()
       throws OsirisException, OsirisClientMessageException, OsirisValidationException {
     List<Tiers> tiers = tiersService.findAllTiersTypeClient();
@@ -1326,21 +1327,21 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     else
       billingClosureDocument = documentService.getBillingClosureDocument(tier.getDocuments());
 
-    boolean isOrderingByEventDate = billingClosureDocument.getBillingClosureType() != null && !billingClosureDocument
-        .getBillingClosureType().getId().equals(constantService.getBillingClosureTypeAffaire().getId());
-
-    if (downloadFile) {
-      ArrayList<ITiers> tiers = new ArrayList<ITiers>();
-      tiers.add(tier);
-      if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
-        tiers.addAll(((Tiers) tier).getResponsables());
-      List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers,
-          isOrderingByEventDate);
-      return mailHelper.getBillingClosureReceiptFile(tier, values);
-    }
-
-    // Send all to tiers
     if (billingClosureDocument != null) {
+      boolean isOrderingByEventDate = billingClosureDocument.getBillingClosureType() != null && !billingClosureDocument
+          .getBillingClosureType().getId().equals(constantService.getBillingClosureTypeAffaire().getId());
+
+      if (downloadFile) {
+        ArrayList<ITiers> tiers = new ArrayList<ITiers>();
+        tiers.add(tier);
+        if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
+          tiers.addAll(((Tiers) tier).getResponsables());
+        List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers,
+            isOrderingByEventDate);
+        return mailHelper.getBillingClosureReceiptFile(tier, values);
+      }
+
+      // Send all to tiers
       if (billingClosureDocument.getBillingClosureRecipientType() != null
           && (billingClosureDocument.getBillingClosureRecipientType().getId()
               .equals(constantService.getBillingClosureRecipientTypeClient().getId())
@@ -1500,7 +1501,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             if (o2 instanceof CustomerOrder)
               affaire2 = ((CustomerOrder) o2).getAssoAffaireOrders().get(0).getAffaire();
             if (o2 instanceof Invoice && ((Invoice) o2).getCustomerOrder() != null)
-              affaire2 = ((Invoice) o1).getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
+              affaire2 = ((Invoice) o2).getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
 
             if (affaire1 != null && affaire2 == null)
               return 1;
@@ -1580,9 +1581,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       value.setEventDescription(
           "Facture n°" + invoice.getId()
               + "<br/>"
-              + String.join("<br/>", getAllAffairesLabelForCustomerOrder(invoice.getCustomerOrder()))
+              + String.join("<br/>", getAllAffairesLabelForCustomerOrder(invoice.getCustomerOrder())).replaceAll("&",
+                  "<![CDATA[&]]>")
               + "<br/>"
-              + String.join("<br/>", getAllProvisionLabelForCustomerOrder(invoice.getCustomerOrder())));
+              + String.join("<br/>", getAllProvisionLabelForCustomerOrder(invoice.getCustomerOrder())).replaceAll("&",
+                  "<![CDATA[&]]>"));
 
       MailComputeResult mailComputeResult = mailComputeHelper
           .computeMailForCustomerOrderFinalizationAndInvoice(invoice.getCustomerOrder());
@@ -1649,9 +1652,17 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     try {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
+      String tiersType = "";
+      if (tiers instanceof Tiers)
+        tiersType = Tiers.class.getSimpleName();
+      if (tiers instanceof Responsable)
+        tiersType = Responsable.class.getSimpleName();
+      if (tiers instanceof Confrere)
+        tiersType = Confrere.class.getSimpleName();
+
       List<Attachment> attachmentsList = attachmentService.addAttachment(
           new FileInputStream(billingClosureReceipt), tiers.getId(),
-          Responsable.class.getSimpleName(), constantService.getAttachmentTypeBillingClosure(),
+          tiersType, constantService.getAttachmentTypeBillingClosure(),
           "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".pdf", false,
           "Relevé de compte du " + LocalDateTime.now().format(formatter));
 

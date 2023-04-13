@@ -1306,15 +1306,16 @@ public class MailHelper {
         Float balance = 0f;
 
         ctx.setVariable("commandNumber", null);
-        if (billingDocument != null && billingDocument.getIsCommandNumberMandatory()
+        if (billingDocument != null && billingDocument.getIsCommandNumberMandatory() != null
+                && billingDocument.getIsCommandNumberMandatory()
                 && billingDocument.getCommandNumber() != null)
-            ctx.setVariable("commandNumber", billingDocument.getCommandNumber().replaceAll("&", "<![CDATA[&]]>"));
+            ctx.setVariable("commandNumber", billingDocument.getCommandNumber());
         ctx.setVariable("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
         if (tier instanceof Tiers) {
             ctx.setVariable("denomination",
                     ((Tiers) tier).getDenomination() != null
-                            ? ((Tiers) tier).getDenomination().replaceAll("&", "<![CDATA[&]]>")
+                            ? ((Tiers) tier).getDenomination()
                             : (((Tiers) tier).getFirstname() + " " + ((Tiers) tier).getLastname()));
             ctx.setVariable("address", ((Tiers) tier).getAddress());
             ctx.setVariable("postalCode", ((Tiers) tier).getPostalCode());
@@ -1329,7 +1330,7 @@ public class MailHelper {
                             ? ((Responsable) tier).getTiers().getCity().getLabel()
                             : "");
         } else if (tier instanceof Confrere) {
-            ctx.setVariable("denomination", (((Confrere) tier).getLabel().replaceAll("&", "<![CDATA[&]]>")));
+            ctx.setVariable("denomination", (((Confrere) tier).getLabel()));
             ctx.setVariable("address", ((Confrere) tier).getAddress());
             ctx.setVariable("postalCode", ((Confrere) tier).getPostalCode());
             ctx.setVariable("city", ((Confrere) tier).getCity() != null ? ((Confrere) tier).getCity().getLabel() : "");
