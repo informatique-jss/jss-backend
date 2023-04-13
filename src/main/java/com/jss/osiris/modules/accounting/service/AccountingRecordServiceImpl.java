@@ -1336,7 +1336,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         tiers.addAll(((Tiers) tier).getResponsables());
       List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers,
           isOrderingByEventDate);
-      return mailHelper.getBillingClosureReceiptFileV2(tier, values);
+      return mailHelper.getBillingClosureReceiptFile(tier, values);
     }
 
     // Send all to tiers
@@ -1355,7 +1355,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers, isOrderingByEventDate);
         if (values.size() > 0)
           sendBillingClosureReceiptFile(
-              mailHelper.getBillingClosureReceiptFileV2(tier, values),
+              mailHelper.getBillingClosureReceiptFile(tier, values),
               tier);
 
       } else if (billingClosureDocument.getBillingClosureRecipientType() != null
@@ -1371,7 +1371,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
                 isOrderingByEventDate);
             if (values.size() > 0)
               sendBillingClosureReceiptFile(
-                  mailHelper.getBillingClosureReceiptFileV2(responsable, values),
+                  mailHelper.getBillingClosureReceiptFile(responsable, values),
                   responsable);
 
           }
@@ -1552,9 +1552,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     value.setEventDescription(
         "Commande n°" + customerOrder.getId() + " - " + customerOrder.getCustomerOrderStatus().getLabel()
             + "<br/>"
-            + String.join("<br/>", getAllAffairesLabelForCustomerOrder(customerOrder))
+            + String.join("<br/>", getAllAffairesLabelForCustomerOrder(customerOrder)).replaceAll("&", "<![CDATA[&]]>")
             + "<br/>"
-            + String.join("<br/>", getAllProvisionLabelForCustomerOrder(customerOrder)));
+            + String.join("<br/>", getAllProvisionLabelForCustomerOrder(customerOrder)).replaceAll("&",
+                "<![CDATA[&]]>"));
 
     if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
       MailComputeResult mailComputeResult = mailComputeHelper

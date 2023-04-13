@@ -1297,7 +1297,7 @@ public class MailHelper {
         return tempFile;
     }
 
-    public File getBillingClosureReceiptFileV2(ITiers tier, List<BillingClosureReceiptValue> billingClosureValues)
+    public File getBillingClosureReceiptFile(ITiers tier, List<BillingClosureReceiptValue> billingClosureValues)
             throws OsirisException, OsirisClientMessageException {
         final Context ctx = new Context();
 
@@ -1599,7 +1599,8 @@ public class MailHelper {
         ArrayList<String> attachementNames = new ArrayList<String>();
         for (Attachment attachment : attachmentsToSend)
             attachementNames
-                    .add(attachment.getDescription() + " (" + attachment.getUploadedFile().getFilename() + ")");
+                    .add(attachment.getAttachmentType().getLabel() + " (" + attachment.getUploadedFile().getFilename()
+                            + ")");
         mail.setExplainationElements(String.join("forgetThis", attachementNames));
 
         mail.setGreetings("En vous remerciant pour votre confiance !");
