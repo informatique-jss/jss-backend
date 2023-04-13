@@ -1002,7 +1002,8 @@ public class MailHelper {
                     VatMail vatmail = new VatMail();
                     vatmail.setTotal(invoiceItem.getVatPrice());
                     vatmail.setLabel(invoiceItem.getVat().getLabel());
-                    vatmail.setBase(invoiceItem.getPreTaxPrice());
+                    vatmail.setBase(invoiceItem.getPreTaxPrice()
+                            - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
                     vats.add(vatmail);
                 }
             }
