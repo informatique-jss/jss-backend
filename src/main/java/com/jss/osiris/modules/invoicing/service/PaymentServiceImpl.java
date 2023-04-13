@@ -589,6 +589,11 @@ public class PaymentServiceImpl implements PaymentService {
         Float remainingMoney = Math.abs(payment.getPaymentAmount());
         remainingToPay += (byPassAmount != null) ? byPassAmount.get(0)
                 : invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoice);
+
+        // Round all
+        remainingMoney = Math.round(remainingMoney * 100f) / 100f;
+        remainingToPay = Math.round(remainingToPay * 100f) / 100f;
+
         // If payment is not over total of remaining to pay on all invoices
         if (byPassAmount != null || remainingToPay >= remainingMoney) {
             // Payment will be used, not necessary to put it in wainting account

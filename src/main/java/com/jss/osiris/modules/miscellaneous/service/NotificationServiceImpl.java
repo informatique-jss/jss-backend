@@ -357,7 +357,8 @@ public class NotificationServiceImpl implements NotificationService {
         List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
         provision = provisionService.getProvision(provision.getId());
 
-        if (provision.getAssoAffaireOrder() != null && provision.getAssoAffaireOrder().getCustomerOrder() != null
+        if (!isProvisionClosed(provision) && provision.getAssoAffaireOrder() != null
+                && provision.getAssoAffaireOrder().getCustomerOrder() != null
                 && !provision.getAssoAffaireOrder().getCustomerOrder().getCustomerOrderStatus().getCode()
                         .equals(CustomerOrderStatus.OPEN)) {
             if (compareEmployee != null)
@@ -381,5 +382,19 @@ public class NotificationServiceImpl implements NotificationService {
                         Notification.PROVISION_ADD_ATTACHMENT, provision, details, null, false);
             }
         }
+    }
+
+    private boolean isProvisionClosed(Provision provision) {
+        if (provision.getAnnouncement() != null)
+            return provision.getAnnouncement().getAnnouncementStatus().getIsCloseState();
+        if (provision.getBodacc() != null)
+            return provision.getBodacc().getBodaccStatus().getIsCloseState();
+        if (provision.getSimpleProvision() != null)
+            return provision.getSimpleProvision().getSimpleProvisionStatus().getIsCloseState();
+        if (provision.getFormalite() != null)
+            return provision.getFormalite().getFormaliteStatus().getIsCloseState();
+        if (provision.getDomiciliation() != null)
+            return provision.getDomiciliation().getDomiciliationStatus().getIsCloseState();
+        return false;
     }
 }
