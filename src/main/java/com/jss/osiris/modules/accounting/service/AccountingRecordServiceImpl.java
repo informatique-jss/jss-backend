@@ -1416,8 +1416,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     if (customerOrdersList != null && customerOrdersList.size() > 0) {
       for (OrderingSearchResult customerOrder : customerOrdersList) {
-        CustomerOrder completeCustomerOrder = customerOrderService.getCustomerOrder(customerOrder.getCustomerOrderId());
-        customerOrders.add(completeCustomerOrder);
+        if (customerOrder.getDepositTotalAmount() != null && customerOrder.getDepositTotalAmount() > 0) {
+          CustomerOrder completeCustomerOrder = customerOrderService
+              .getCustomerOrder(customerOrder.getCustomerOrderId());
+          customerOrders.add(completeCustomerOrder);
+        }
       }
     }
 
