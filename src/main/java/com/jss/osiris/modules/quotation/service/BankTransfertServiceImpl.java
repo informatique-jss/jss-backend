@@ -288,6 +288,9 @@ public class BankTransfertServiceImpl implements BankTransfertService {
         bodyTransfertType.setCtgyPurpBean(transfertPurpose);
         transfertPurpose.setCd("CASH");
 
+        if (executionDate.isBefore(LocalDate.now()))
+            executionDate = LocalDate.now();
+
         body.setReqdExctnDt(executionDate.format(formatterDate));
 
         DbtrBean debiteur = new DbtrBean();
