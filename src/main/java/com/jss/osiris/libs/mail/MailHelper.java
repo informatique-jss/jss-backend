@@ -1466,7 +1466,8 @@ public class MailHelper {
         ArrayList<String> attachementNames = new ArrayList<String>();
         for (Attachment attachment : attachments)
             attachementNames
-                    .add(attachment.getDescription() + " (" + attachment.getUploadedFile().getFilename() + ")");
+                    .add(attachment.getAttachmentType().getLabel() + " (" + attachment.getUploadedFile().getFilename()
+                            + ")");
         mail.setExplainationElements(String.join("forgetThis", attachementNames));
 
         mail.setExplaination(explainationText);
