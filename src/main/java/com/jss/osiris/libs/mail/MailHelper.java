@@ -1304,8 +1304,6 @@ public class MailHelper {
 
         Document billingDocument = documentService.getBillingDocument(tier.getDocuments());
 
-        Float balance = 0f;
-
         ctx.setVariable("commandNumber", null);
         if (billingDocument != null && billingDocument.getIsCommandNumberMandatory() != null
                 && billingDocument.getIsCommandNumberMandatory()
@@ -1341,12 +1339,21 @@ public class MailHelper {
         ctx.setVariable("ibanJss", ibanJss);
         ctx.setVariable("bicJss", bicJss);
 
+        Float balance = 0f;
+        Float creditBalance = 0f;
+        Float debitBalance = 0f;
+
         if (billingClosureValues != null && billingClosureValues.size() > 0)
             for (BillingClosureReceiptValue billingClosureValue : billingClosureValues) {
                 balance += billingClosureValue.getCreditAmount() != null ? billingClosureValue.getCreditAmount() : 0;
+                creditBalance += billingClosureValue.getCreditAmount() != null ? billingClosureValue.getCreditAmount()
+                        : 0;
                 balance -= billingClosureValue.getDebitAmount() != null ? billingClosureValue.getDebitAmount() : 0;
+                debitBalance += billingClosureValue.getDebitAmount() != null ? billingClosureValue.getDebitAmount() : 0;
             }
         ctx.setVariable("balance", balance);
+        ctx.setVariable("creditBalance", creditBalance);
+        ctx.setVariable("debitBalance", debitBalance);
 
         // Create the HTML body using Thymeleaf
         final String htmlContent = emailTemplateEngine().process("billing-closure-receipt", ctx);

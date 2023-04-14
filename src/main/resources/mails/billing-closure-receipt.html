@@ -90,23 +90,45 @@
         </tr>
     </table>
     <p style="margin-top: 10px;">&#160;</p>
-    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
+    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;border-collapse: collapse;">
         <tr>
-            <td>
+            <td class="td-date "></td>
+            <td style="text-align: right;padding-right: 10px;">
+                Débit
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;" colspan="2"><span
+                    th:text="${#numbers.formatDecimal(debitBalance,1,2)}"></span> €
+            </td>
+            <td class="td-with-price"></td>
+        </tr>
+        <tr>
+            <td class="td-date"></td>
+            <td style="text-align: right;;padding-right: 10px;">
+                Crédit
+            </td>
+            <td class="td-with-price"></td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;" colspan="2"><span
+                    th:text="${#numbers.formatDecimal(creditBalance,1,2)}"></span> €
+            </td>
+        </tr>
+        <tr>
+            <td class="td-date "></td>
+            <td style="text-align: right;;padding-right: 10px;">
                 Solde
             </td>
-            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
+            <td class="td-with-price"></td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;" colspan="2"><span
                     th:text="${#numbers.formatDecimal(balance,1,2)}"></span> €
             </td>
         </tr>
     </table>
     <p style="font-size: 16px;">Vous pouvez effectuer les paiements par virement en utilisant les informations
-        ci-dessous. <strong>Veuillez indiquer absolument la référence de la commande et / ou de la facture dans le
+        ci-dessous. <br /><strong>Veuillez indiquer absolument la référence de la commande et / ou de la facture dans le
             libellé de votre virement</strong></p>
     <p style="font-size: 16px;">IBAN / BIC : <span th:text="${ibanJss}"></span> <span th:text="${bicJss}"></span></p>
     <p style="font-size: 16px; text-align: left;">Dans l’attente,<br />
-        Cordialement.</p>
-    <p style="font-size: 16px; text-align: right;">La comptabilité
+        Cordialement.<br />
+        La comptabilité
     </p>
 </body>
 

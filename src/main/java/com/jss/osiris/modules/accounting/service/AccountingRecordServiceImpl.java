@@ -1556,7 +1556,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   private BillingClosureReceiptValue getBillingClosureReceiptValueForCustomerOrder(CustomerOrder customerOrder)
       throws OsirisException, OsirisClientMessageException {
     BillingClosureReceiptValue value = new BillingClosureReceiptValue();
-    value.setDebitAmount(customerOrderService.getTotalForCustomerOrder(customerOrder));
+    value.setDebitAmount(null);
     value.setCreditAmount(null);
     value.setEventDateTime(customerOrder.getCreatedDate());
     value.setEventDateString(customerOrder.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
