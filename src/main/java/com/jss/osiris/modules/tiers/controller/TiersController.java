@@ -169,7 +169,7 @@ public class TiersController {
         subscriptionPeriodTypeService.addOrUpdateSubscriptionPeriodType(subscriptionPeriodTypes), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/phone")
+  @GetMapping(inputEntryPoint + "/phone/search")
   public ResponseEntity<List<PhoneSearch>> getByPhoneNumber(@RequestParam String phoneNumber) throws OsirisException {
     validationHelper.validateFrenchPhone(phoneNumber);
     return new ResponseEntity<List<PhoneSearch>>(phoneService.getByPhoneNumber(phoneNumber), HttpStatus.OK);

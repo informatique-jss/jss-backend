@@ -1,4 +1,4 @@
-export interface PhoneTeams {
+export interface PhoneSearch {
   entityType: string;
   entityId: number;
 }
