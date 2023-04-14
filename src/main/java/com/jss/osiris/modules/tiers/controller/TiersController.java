@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.tiers.controller;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,7 @@ import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
-import com.jss.osiris.modules.miscellaneous.model.PhoneTeams;
+import com.jss.osiris.modules.miscellaneous.model.PhoneSearch;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CountryService;
@@ -170,10 +169,10 @@ public class TiersController {
         subscriptionPeriodTypeService.addOrUpdateSubscriptionPeriodType(subscriptionPeriodTypes), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/phone/{telNumber}")
-  public ResponseEntity<List<PhoneTeams>> getByTelNumber(@PathVariable String telNumber) throws OsirisException {
-
-    return new ResponseEntity<List<PhoneTeams>>(phoneService.getByTelNumber(telNumber), HttpStatus.OK);
+  @GetMapping(inputEntryPoint + "/phone")
+  public ResponseEntity<List<PhoneSearch>> getByPhoneNumber(@RequestParam String phoneNumber) throws OsirisException {
+    validationHelper.validateFrenchPhone(phoneNumber);
+    return new ResponseEntity<List<PhoneSearch>>(phoneService.getByPhoneNumber(phoneNumber), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/tiers-followup-types")
@@ -347,11 +346,6 @@ public class TiersController {
 
     return new ResponseEntity<BillingLabelType>(billingLabelTypeService.addOrUpdateBillingLabelType(billingLabelTypes),
         HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/phones/search")
-  public ResponseEntity<List<Phone>> findPhones(@RequestParam String phone) {
-    return new ResponseEntity<List<Phone>>(phoneService.findPhones(phone), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/mails/search")

@@ -38,6 +38,7 @@ export class SearchPhoneComponent {
     }else if(link.includes(PROVIDER_ENTITY_TYPE.entityType.toLowerCase())){
       const firstSlashIndex = PROVIDER_ENTITY_TYPE.entryPoint.indexOf('/');
       link = PROVIDER_ENTITY_TYPE.entryPoint.substring(0, firstSlashIndex) + link;
+
  }
     this.appService.openRoute(event, link, null);
   }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
-import com.jss.osiris.modules.miscellaneous.model.PhoneTeams;
+import com.jss.osiris.modules.miscellaneous.model.PhoneSearch;
 import com.jss.osiris.modules.miscellaneous.repository.PhoneRepository;
 
 @Service
@@ -22,21 +22,10 @@ public class PhoneServiceImpl implements PhoneService {
     ValidationHelper validationHelper;
 
     @Override
-    public List<Phone> findPhones(String phone) {
-        if (phone != null)
-            return phoneRepository.findByPhoneNumberContainingIgnoreCase(phone);
-        return null;
-    }
-
-    @Override
-    public List<PhoneTeams> getByTelNumber(String telNumber) throws OsirisException {
-        String normalizedNumber = validationHelper.validateFrenchPhone(telNumber) ? "+33" + telNumber.substring(1)
-                : telNumber;
-        List<PhoneTeams> entities = phoneRepository.findByPhoneNumber(normalizedNumber);
-        if (entities.isEmpty()) {
-            throw new OsirisException(null, "Aucun enregistrement trouvé pour le numéro de téléphone : " + telNumber);
-        }
-        return entities;
+    public List<PhoneSearch> getByPhoneNumber(String phoneNumber) throws OsirisException {
+        String normalizedNumber = validationHelper.validateFrenchPhone(phoneNumber) ? "+33" + phoneNumber.substring(1)
+                : phoneNumber;
+        return phoneRepository.findByPhoneNumber(normalizedNumber);
     }
 
     @Override
@@ -52,7 +41,8 @@ public class PhoneServiceImpl implements PhoneService {
         if (phones != null)
             for (Phone phone : phones) {
                 if (phone.getId() == null) {
-                    List<Phone> existingPhones = findPhones(phone.getPhoneNumber());
+                    List<Phone> existingPhones = phoneRepository
+                            .findByPhoneNumberContainingIgnoreCase(phone.getPhoneNumber());
                     if (existingPhones != null && existingPhones.size() == 1)
                         phone.setId(existingPhones.get(0).getId());
                     phoneRepository.save(phone);
