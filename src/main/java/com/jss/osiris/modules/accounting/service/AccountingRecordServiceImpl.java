@@ -1476,8 +1476,15 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             values.add(getBillingClosureReceiptValueForCustomerOrder((CustomerOrder) input));
           if (input instanceof Invoice)
             values.add(getBillingClosureReceiptValueForInvoice((Invoice) input));
-          if (input instanceof Deposit)
-            values.add(getBillingClosureReceiptValueForDeposit((Deposit) input));
+          if (input instanceof Deposit) {
+            CustomerOrder customerOrder = null;
+            Deposit deposit = (Deposit) input;
+            if (deposit.getCustomerOrder() != null)
+              customerOrder = deposit.getCustomerOrder();
+            else if (deposit.getInvoice() != null)
+              customerOrder = deposit.getInvoice().getCustomerOrder();
+            values.add(getBillingClosureReceiptValueForDeposit(deposit, customerOrder));
+          }
           if (input instanceof Payment)
             values.add(getBillingClosureReceiptValueForPayment((Payment) input));
         }
@@ -1529,14 +1536,14 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           values.add(getBillingClosureReceiptValueForCustomerOrder(customerOrder));
           if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
             for (Deposit deposit : customerOrder.getDeposits())
-              values.add(getBillingClosureReceiptValueForDeposit(deposit));
+              values.add(getBillingClosureReceiptValueForDeposit(deposit, customerOrder));
         }
         if (input instanceof Invoice) {
           Invoice invoice = (Invoice) input;
           values.add(getBillingClosureReceiptValueForInvoice(invoice));
           if (invoice.getDeposits() != null && invoice.getDeposits().size() > 0)
             for (Deposit deposit : invoice.getDeposits())
-              values.add(getBillingClosureReceiptValueForDeposit(deposit));
+              values.add(getBillingClosureReceiptValueForDeposit(deposit, invoice.getCustomerOrder()));
           if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
             for (Payment payment : invoice.getPayments())
               values.add(getBillingClosureReceiptValueForPayment(payment));
@@ -1600,13 +1607,21 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return value;
   }
 
-  private BillingClosureReceiptValue getBillingClosureReceiptValueForDeposit(Deposit deposit) {
+  private BillingClosureReceiptValue getBillingClosureReceiptValueForDeposit(Deposit deposit,
+      CustomerOrder customerOrder) {
     BillingClosureReceiptValue value = new BillingClosureReceiptValue();
     value.setDebitAmount(null);
     value.setCreditAmount(deposit.getDepositAmount());
     value.setEventDateTime(deposit.getDepositDate());
     value.setEventDateString(deposit.getDepositDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-    value.setEventDescription(deposit.getLabel().replaceAll("&", "<![CDATA[&]]>"));
+
+    String description = deposit.getLabel().replaceAll("&", "<![CDATA[&]]>");
+    if (customerOrder != null) {
+      description += "<br/>"
+          + String.join("<br/>", getAllAffairesLabelForCustomerOrder(customerOrder)).replaceAll("&",
+              "<![CDATA[&]]>");
+    }
+    value.setEventDescription(description);
 
     return value;
   }
