@@ -545,7 +545,7 @@ public class InvoicingController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
-    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     @PostMapping(inputEntryPoint + "/payment/check/add")
     public ResponseEntity<Boolean> addCheckPayment(@RequestBody Payment checkPayment)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
@@ -624,7 +624,8 @@ public class InvoicingController {
             throw new OsirisValidationException("not all payment used");
 
         if (paymentAssociate.getDeposit().getDepositAmount() > totalAmount
-                && paymentAssociate.getTiersRefund() == null && paymentAssociate.getAffaire() == null)
+                && paymentAssociate.getTiersRefund() == null && paymentAssociate.getAffaire() == null
+                && Math.abs(paymentAssociate.getDeposit().getDepositAmount()) > payementLimitRefundInEuros)
             throw new OsirisValidationException("no refund tiers set");
 
         ITiers commonCustomerOrder = paymentAssociate.getTiersRefund() != null ? paymentAssociate.getTiersRefund()

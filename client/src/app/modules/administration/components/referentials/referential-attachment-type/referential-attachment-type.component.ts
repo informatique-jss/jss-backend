@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AttachmentType } from 'src/app/modules/miscellaneous/model/AttachmentType';
@@ -16,6 +16,15 @@ export class ReferentialAttachmentTypeComponent extends GenericReferentialCompon
     private formBuilder2: FormBuilder,
     private appService2: AppService,) {
     super(formBuilder2, appService2);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (this.selectedEntity) {
+      if (!this.selectedEntity.isToSentOnFinalizationMail)
+        this.selectedEntity.isToSentOnFinalizationMail = false;
+      if (!this.selectedEntity.isToSentOnUpload)
+        this.selectedEntity.isToSentOnUpload = false;
+    }
   }
 
   getAddOrUpdateObservable(): Observable<AttachmentType> {

@@ -60,7 +60,7 @@ export class AccountingRecordComponent implements OnInit {
     this.displayedColumns.push({ id: "operationDateTime", fieldName: "operationDateTime", label: "Date d'opération", valueFonction: this.formatDateTimeForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "operationId", fieldName: "operationId", label: "N° d'écriture" } as SortTableColumn);
     this.displayedColumns.push({ id: "accountingJournal", fieldName: "accountingJournalLabel", label: "Journal" } as SortTableColumn);
-    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.principalAccountingAccountCode + "-" + element.accountingAccountSubNumber; return "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.principalAccountingAccountCode + element.accountingAccountSubNumber; return "" } } as SortTableColumn);
     this.displayedColumns.push({ id: "accountingAccountLabel", fieldName: "accountingAccountLabel", label: "Libellé du compte", isShrinkColumn: true } as SortTableColumn);
     this.displayedColumns.push({ id: "accountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N° de pièce justificative" } as SortTableColumn);
     this.displayedColumns.push({ id: "accountingDocumentDate", fieldName: "manualAccountingDocumentDate", label: "Date pièce justificative", valueFonction: this.formatDateForSortTable } as SortTableColumn);
@@ -248,6 +248,11 @@ export class AccountingRecordComponent implements OnInit {
   restoreDefaultTotalDivPosition() {
     this.userPreferenceService.setUserTotalDivPosition({ x: 0, y: 0 });
     this.restoreTotalDivPosition();
+  }
+
+  downloadBillingClosureReceipt() {
+    if (this.tiersToDisplay)
+      this.accountingRecordService.downloadBillingClosureReceipt(this.tiersToDisplay);
   }
 
 }

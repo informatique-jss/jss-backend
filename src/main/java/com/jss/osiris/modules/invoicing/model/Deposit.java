@@ -19,7 +19,7 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
 @Entity
-public class Deposit implements Serializable, IId {
+public class Deposit implements Serializable, IId, ICreatedDate {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -125,6 +125,10 @@ public class Deposit implements Serializable, IId {
 
   public void setIsCancelled(Boolean isCancelled) {
     this.isCancelled = isCancelled;
+  }
+
+  public LocalDateTime getCreatedDate() {
+    return getDepositDate();
   }
 
 }

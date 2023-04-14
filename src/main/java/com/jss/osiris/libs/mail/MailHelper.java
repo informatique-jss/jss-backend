@@ -52,6 +52,7 @@ import com.jss.osiris.libs.mail.model.CustomerMailAssoAffaireOrder;
 import com.jss.osiris.libs.mail.model.LetterModel;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.libs.mail.model.VatMail;
+import com.jss.osiris.modules.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -1001,7 +1002,8 @@ public class MailHelper {
                     VatMail vatmail = new VatMail();
                     vatmail.setTotal(invoiceItem.getVatPrice());
                     vatmail.setLabel(invoiceItem.getVat().getLabel());
-                    vatmail.setBase(invoiceItem.getPreTaxPrice());
+                    vatmail.setBase(invoiceItem.getPreTaxPrice()
+                            - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
                     vats.add(vatmail);
                 }
             }
@@ -1098,7 +1100,7 @@ public class MailHelper {
             throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
-        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " "));
+        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>"));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
@@ -1295,6 +1297,87 @@ public class MailHelper {
         return tempFile;
     }
 
+    public File getBillingClosureReceiptFile(ITiers tier, List<BillingClosureReceiptValue> billingClosureValues)
+            throws OsirisException, OsirisClientMessageException {
+        final Context ctx = new Context();
+
+        Document billingDocument = documentService.getBillingDocument(tier.getDocuments());
+
+        ctx.setVariable("commandNumber", null);
+        if (billingDocument != null && billingDocument.getIsCommandNumberMandatory() != null
+                && billingDocument.getIsCommandNumberMandatory()
+                && billingDocument.getCommandNumber() != null)
+            ctx.setVariable("commandNumber", billingDocument.getCommandNumber());
+        ctx.setVariable("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+        if (tier instanceof Tiers) {
+            ctx.setVariable("denomination",
+                    ((Tiers) tier).getDenomination() != null
+                            ? ((Tiers) tier).getDenomination()
+                            : (((Tiers) tier).getFirstname() + " " + ((Tiers) tier).getLastname()));
+            ctx.setVariable("address", ((Tiers) tier).getAddress());
+            ctx.setVariable("postalCode", ((Tiers) tier).getPostalCode());
+            ctx.setVariable("city", ((Tiers) tier).getCity() != null ? ((Tiers) tier).getCity().getLabel() : "");
+        } else if (tier instanceof Responsable) {
+            ctx.setVariable("denomination",
+                    (((Responsable) tier).getFirstname() + " " + ((Responsable) tier).getLastname()));
+            ctx.setVariable("address", ((Responsable) tier).getTiers().getAddress());
+            ctx.setVariable("postalCode", ((Responsable) tier).getTiers().getPostalCode());
+            ctx.setVariable("city",
+                    ((Responsable) tier).getTiers().getCity() != null
+                            ? ((Responsable) tier).getTiers().getCity().getLabel()
+                            : "");
+        } else if (tier instanceof Confrere) {
+            ctx.setVariable("denomination", (((Confrere) tier).getLabel()));
+            ctx.setVariable("address", ((Confrere) tier).getAddress());
+            ctx.setVariable("postalCode", ((Confrere) tier).getPostalCode());
+            ctx.setVariable("city", ((Confrere) tier).getCity() != null ? ((Confrere) tier).getCity().getLabel() : "");
+        }
+
+        ctx.setVariable("billingClosureValues", billingClosureValues);
+        ctx.setVariable("ibanJss", ibanJss);
+        ctx.setVariable("bicJss", bicJss);
+
+        Float balance = 0f;
+        Float creditBalance = 0f;
+        Float debitBalance = 0f;
+
+        if (billingClosureValues != null && billingClosureValues.size() > 0)
+            for (BillingClosureReceiptValue billingClosureValue : billingClosureValues) {
+                balance += billingClosureValue.getCreditAmount() != null ? billingClosureValue.getCreditAmount() : 0;
+                creditBalance += billingClosureValue.getCreditAmount() != null ? billingClosureValue.getCreditAmount()
+                        : 0;
+                balance -= billingClosureValue.getDebitAmount() != null ? billingClosureValue.getDebitAmount() : 0;
+                debitBalance += billingClosureValue.getDebitAmount() != null ? billingClosureValue.getDebitAmount() : 0;
+            }
+        ctx.setVariable("balance", balance);
+        ctx.setVariable("creditBalance", creditBalance);
+        ctx.setVariable("debitBalance", debitBalance);
+
+        // Create the HTML body using Thymeleaf
+        final String htmlContent = emailTemplateEngine().process("billing-closure-receipt", ctx);
+
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("billing-closure-receipt", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " "));
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e,
+                    "Unable to create PDF file for biling closure receipt, tiers n°" + tier.getId());
+        }
+        return tempFile;
+    }
+
     public void sendCustomerOrderFinalisationToCustomer(CustomerOrder customerOrder, boolean sendToMe,
             boolean isReminder, boolean isLastReminder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
@@ -1337,14 +1420,26 @@ public class MailHelper {
                     .round(customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
 
         List<Attachment> attachments = new ArrayList<Attachment>();
+        List<Integer> attachmentTypeIdsDone = new ArrayList<Integer>();
 
         if (customerOrder.getAttachments() != null) {
-
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(customerOrder.getAttachments())) {
-                if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeInvoice().getId()))
+                if (attachment.getAttachmentType().getIsToSentOnFinalizationMail()
+                        && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())) {
                     attachments.add(attachment);
-                break;
+                    attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
+                }
             }
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+                            for (Attachment attachment : provision.getAttachments())
+                                if (attachment.getAttachmentType().getIsToSentOnFinalizationMail()
+                                        && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())) {
+                                    attachments.add(attachment);
+                                    attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
+                                }
         }
 
         mail.setAttachments(attachments);
@@ -1379,18 +1474,15 @@ public class MailHelper {
         ArrayList<String> attachementNames = new ArrayList<String>();
         for (Attachment attachment : attachments)
             attachementNames
-                    .add(attachment.getDescription() + " (" + attachment.getUploadedFile().getFilename() + ")");
+                    .add(attachment.getAttachmentType().getLabel() + " (" + attachment.getUploadedFile().getFilename()
+                            + ")");
         mail.setExplainationElements(String.join("forgetThis", attachementNames));
 
         mail.setExplaination(explainationText);
 
         if (remainingToPay > 0 && !isPaymentTypePrelevement) {
-            mail.setPaymentExplaination(
-                    "Vous pouvez régler cette facture d'un montant de " + remainingToPay
-                            + " € par virement à l'aide des informations suivantes");
 
             mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
-
             if (!disableCbLink) {
                 mail.setCbExplanation(
                         "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
@@ -1511,7 +1603,8 @@ public class MailHelper {
         ArrayList<String> attachementNames = new ArrayList<String>();
         for (Attachment attachment : attachmentsToSend)
             attachementNames
-                    .add(attachment.getDescription() + " (" + attachment.getUploadedFile().getFilename() + ")");
+                    .add(attachment.getAttachmentType().getLabel() + " (" + attachment.getUploadedFile().getFilename()
+                            + ")");
         mail.setExplainationElements(String.join("forgetThis", attachementNames));
 
         mail.setGreetings("En vous remerciant pour votre confiance !");
@@ -1854,8 +1947,15 @@ public class MailHelper {
 
         mail.setHeaderPicture("images/billing-receipt-header.png");
         mail.setTitle("Votre relevé de compte");
-        String explainationText = "Vous trouverez ci-joint votre relevé de compte à date.";
+        String explainationText = "Bonjour, vous trouverez ci-joint votre relevé de compte à date.";
         mail.setExplaination(explainationText);
+
+        mail.setPaymentExplaination("Vous pouvez payer par virement en utilisant les informations ci-dessous : ");
+
+        mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
+
+        mail.setPaymentExplainationWarning(
+                "Veuillez indiquer absolument la référence de la commande et / ou de la facture dans le libellé de votre virement");
 
         if (attachments.size() == 0)
             return;

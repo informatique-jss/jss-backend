@@ -248,7 +248,11 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
                 bodyTransfertType.setSeqTp("RCUR");
 
-                body.setReqdColltnDt(bankTransfert.getTransfertDate().format(formatterDate));
+                LocalDateTime transfertDate = bankTransfert.getTransfertDate();
+                if (transfertDate.isBefore(LocalDateTime.now()))
+                    transfertDate = LocalDateTime.now();
+
+                body.setReqdColltnDt(transfertDate.format(formatterDate));
 
                 DbtrBean debiteur = new DbtrBean();
                 body.setCdtrBean(debiteur);

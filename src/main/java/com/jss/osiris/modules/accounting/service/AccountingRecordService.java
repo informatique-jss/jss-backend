@@ -26,6 +26,9 @@ import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentReques
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 public interface AccountingRecordService {
+
+        public AccountingRecord getAccountingRecord(Integer id);
+
         public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord);
 
         public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws OsirisException;
@@ -130,9 +133,6 @@ public interface AccountingRecordService {
 
         public AccountingRecord unassociateCustomerOrderPayementAndDeposit(AccountingRecord accountingRecord);
 
-        public void sendBillingClosureReceipt()
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
-
         public void generateAccountingRecordsForCentralPayPayment(
                         CentralPayPaymentRequest centralPayPaymentRequest,
                         Payment payment, Deposit deposit, CustomerOrder customerOrder, Invoice invoice)
@@ -141,5 +141,11 @@ public interface AccountingRecordService {
         public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException;
 
         public void letterWaitingRecords(AccountingRecord record, AccountingRecord counterPart) throws OsirisException;
+
+        public void sendBillingClosureReceipt()
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
+        public File getBillingClosureReceiptFile(Integer tiersId, boolean downloadFile)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
 }

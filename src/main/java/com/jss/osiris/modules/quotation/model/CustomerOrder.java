@@ -24,6 +24,7 @@ import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.invoicing.model.Deposit;
+import com.jss.osiris.modules.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -36,7 +37,7 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 @Table(indexes = { @Index(name = "idx_customer_order_status", columnList = "id_customer_order_status"),
 		@Index(name = "idx_customer_order_responsable", columnList = "id_responsable"),
 		@Index(name = "idx_customer_order_tiers", columnList = "id_tiers") })
-public class CustomerOrder implements IQuotation {
+public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public CustomerOrder() {
 	}

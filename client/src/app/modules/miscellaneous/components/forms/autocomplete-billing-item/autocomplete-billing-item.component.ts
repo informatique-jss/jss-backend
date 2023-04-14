@@ -21,10 +21,27 @@ export class AutocompleteBillingItemComponent extends GenericLocalAutocompleteCo
 
   filterEntities(types: BillingItem[], value: string): BillingItem[] {
     const filterValue = (value != undefined && value != null && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return types.filter(billingItem =>
-      billingItem && billingItem.billingType && billingItem.billingType.label
-      && (billingItem.billingType.label.toLowerCase().includes(filterValue) || billingItem.billingType.code.includes(filterValue)));
+    return types.filter(billingItem => this.filterBillingItem(billingItem, filterValue));
   }
+
+  filterBillingItem(billingItem: BillingItem, filterValue: string): boolean {
+    if (billingItem && billingItem.billingType) {
+      if (billingItem.billingType.label && billingItem.billingType.label.toLowerCase().includes(filterValue))
+        return true;
+      if (billingItem.billingType.code && billingItem.billingType.code.toLowerCase().includes(filterValue))
+        return true;
+      if (billingItem.billingType.accountingAccountCharge && billingItem.billingType.accountingAccountCharge.accountingAccountSubNumber
+        && billingItem.billingType.accountingAccountCharge.principalAccountingAccount.code
+        && (billingItem.billingType.accountingAccountCharge.principalAccountingAccount.code + billingItem.billingType.accountingAccountCharge.accountingAccountSubNumber).toLowerCase().includes(filterValue))
+        return true;
+      if (billingItem.billingType.accountingAccountProduct && billingItem.billingType.accountingAccountProduct.accountingAccountSubNumber
+        && billingItem.billingType.accountingAccountProduct.principalAccountingAccount.code
+        && (billingItem.billingType.accountingAccountProduct.principalAccountingAccount.code + billingItem.billingType.accountingAccountProduct.accountingAccountSubNumber).toLowerCase().includes(filterValue))
+        return true;
+    }
+    return false;
+  }
+
 
   initTypes(): void {
     this.billingItemService.getBillingItems().subscribe(response => this.types = response);

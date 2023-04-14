@@ -376,6 +376,15 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
     dialogRef.afterClosed().subscribe(response => {
       if (response != null) {
+
+        if (this.quotation && this.quotation.assoAffaireOrders)
+          for (let existingAsso of this.quotation.assoAffaireOrders)
+            if (existingAsso.affaire.id == response.id) {
+              this.appService.displaySnackBar("Cette affaire est déjà associée à la commande", true, 10);
+              return;
+            }
+
+
         let asso = {} as AssoAffaireOrder;
         asso.affaire = response;
         asso.provisions = [] as Array<Provision>;
