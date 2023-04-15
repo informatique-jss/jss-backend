@@ -371,11 +371,28 @@ public class PaymentServiceImpl implements PaymentService {
                 }
             }
 
-            // If not found and CB payment, try to match randomly a debour
+            // If not found and CB payment, try to match randomly a debour at same day or in
+            // 3 days range before
             if (payment.getLabel().contains("FACTURE CARTE")) {
                 List<Debour> debourList = debourService.findNonAssociatedDeboursForDateAndAmount(
                         payment.getPaymentDate().toLocalDate(),
                         payment.getPaymentAmount());
+
+                if (debourList == null || debourList.size() == 0)
+                    debourList = debourService.findNonAssociatedDeboursForDateAndAmount(
+                            payment.getPaymentDate().toLocalDate().minusDays(1),
+                            payment.getPaymentAmount());
+
+                if (debourList == null || debourList.size() == 0)
+                    debourList = debourService.findNonAssociatedDeboursForDateAndAmount(
+                            payment.getPaymentDate().toLocalDate().minusDays(2),
+                            payment.getPaymentAmount());
+
+                if (debourList == null || debourList.size() == 0)
+                    debourList = debourService.findNonAssociatedDeboursForDateAndAmount(
+                            payment.getPaymentDate().toLocalDate().minusDays(3),
+                            payment.getPaymentAmount());
+
                 if (debourList != null && debourList.size() > 0) {
                     generateWaitingAccountAccountingRecords = new MutableBoolean(true);
                     associateOutboundPaymentAndDebour(payment, Arrays.asList(debourList.get(0)));
