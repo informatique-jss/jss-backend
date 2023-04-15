@@ -405,8 +405,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws OsirisException, OsirisClientMessageException {
-        if (!hasAtLeastOneInvoiceItemNotNull(invoice)
-                && (invoice.getCompetentAuthority() == null || invoice.getCustomerOrderForInboundInvoice() == null))
+        if ((invoice.getCompetentAuthority() == null || invoice.getCustomerOrderForInboundInvoice() == null)
+                && !hasAtLeastOneInvoiceItemNotNull(invoice))
             throw new OsirisException(null, "No invoice item found on manual invoice");
 
         boolean isNewInvoice = invoice.getId() == null;

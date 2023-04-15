@@ -12,4 +12,6 @@ public interface ProvisionService {
     public void updateAssignedToForProvision(Provision provision, Employee employee);
 
     public List<ProvisionBoardResult> getDashboardEmployee(List<Employee> employees);
+
+    public Provision addOrUpdateProvision(Provision provision);
 }

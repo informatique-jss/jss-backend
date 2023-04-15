@@ -27,3 +27,15 @@ td {
 .margin-top {
   margin-top: 15px;
 }
+
+.add-button {
+  top: -8px;
+}
+
+.table-fixed-layout {
+  table-layout: fixed;
+}
+
+.fab-td-button {
+  width: 35px;
+}

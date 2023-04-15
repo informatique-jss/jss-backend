@@ -414,6 +414,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public BillingType getBillingTypeEmolumentsDeGreffeDebour() throws OsirisException {
+        return getConstants().getBillingTypeEmolumentsDeGreffeDebour();
+    }
+
+    @Override
     public BillingType getBillingTypeDocumentScanning() throws OsirisException {
         return getConstants().getBillingTypeDocumentScanning();
     }

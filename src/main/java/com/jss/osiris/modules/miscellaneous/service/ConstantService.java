@@ -180,6 +180,8 @@ public interface ConstantService {
 
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException;
 
+    public BillingType getBillingTypeEmolumentsDeGreffeDebour() throws OsirisException;
+
     public BillingType getBillingTypeDocumentScanning() throws OsirisException;
 
     public BillingType getBillingTypeEmergency() throws OsirisException;

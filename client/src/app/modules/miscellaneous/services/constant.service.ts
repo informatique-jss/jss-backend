@@ -306,6 +306,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.billingTypeInfogreffeDebour;
   }
 
+  getBillingTypeEmolumentsDeGreffeDebour() {
+    return this.constant.billingTypeEmolumentsDeGreffeDebour;
+  }
+
   getBillingTypeDocumentScanning() {
     return this.constant.billingTypeDocumentScanning;
   }

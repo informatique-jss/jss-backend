@@ -96,6 +96,16 @@
                       label="Type de paiements autorisés" [form]="entityForm2" propertyName="paymentTypes"
                       [isMandatory]="false" [isDisabled]="!editMode"></chips-payment-type>
                   </td>
+                  <td>
+                    <select-payment-types [(model)]="selectedcompetentAuthority.defaultPaymentType"
+                      label="Type de paiement par défaut" [form]="entityForm2" propertyName="defaultPaymentType"
+                      [isMandatory]="false" [isDisabled]="!editMode"></select-payment-types>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedcompetentAuthority.owncloudFolderName"
+                      label="Nom du dossier Owncloud" [form]="entityForm2" propertyName="owncloudFolderName"
+                      [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="250"></generic-input>
+                  </td>
                 </tr>
               </table>
               <table class="full-width">
