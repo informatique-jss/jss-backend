@@ -187,8 +187,7 @@ public class PaymentServiceImpl implements PaymentService {
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
 
         for (Payment payment : payments) {
-            if (payment.getId().equals(132273))
-                automatchPaymentInvoicesAndGeneratePaymentAccountingRecords(payment);
+            automatchPaymentInvoicesAndGeneratePaymentAccountingRecords(payment);
         }
     }
 
