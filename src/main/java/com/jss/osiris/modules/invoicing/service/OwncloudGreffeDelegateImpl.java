@@ -168,7 +168,8 @@ public class OwncloudGreffeDelegateImpl implements OwncloudGreffeDelegate {
                 owncloudGreffeInvoiceService.addOrUpdateOwncloudGreffeInvoice(owncloudGreffeInvoice);
 
                 // Auto create provider invoice
-                if (owncloudGreffeInvoice.getDebour() != null) {
+                if (owncloudGreffeInvoice.getDebour() != null
+                        && owncloudGreffeInvoice.getDebour().getInvoiceItem() == null) {
                     owncloudGreffeInvoice
                             .setInvoice(generateInvoiceFromDebourAndGreffeInvoice(owncloudGreffeInvoice));
                     owncloudGreffeInvoiceService.addOrUpdateOwncloudGreffeInvoice(owncloudGreffeInvoice);
