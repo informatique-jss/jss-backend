@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
@@ -19,4 +20,6 @@ public interface DebourService {
     public void reindexDebours();
 
     public void setDebourAsAssociated(Debour debour);
+
+    public List<Debour> findNonAssociatedDeboursForDateAndAmount(LocalDate date, Float amount) throws OsirisException;
 }

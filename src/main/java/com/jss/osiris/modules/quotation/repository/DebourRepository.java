@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -48,4 +49,8 @@ public interface DebourRepository extends CrudRepository<Debour, Integer> {
                         @Param("customerOrderId") Integer customerOrderId, @Param("maxAmount") Float maxAmount,
                         @Param("minAmount") Float minAmount, @Param("isNonAssociated") boolean isNonAssociated,
                         @Param("isCompetentAuthorityDirectCharge") boolean isCompetentAuthorityDirectCharge);
+
+        @Query(nativeQuery = true, value = "select d.* from Debour d where is_associated = false and d.id_payment_type = :paymentTypeCb and round(CAST (debour_amount as numeric),2) = round(CAST (:amount as numeric),2) and cast(payment_date_time as date)= cast(:date as date) ")
+        List<Debour> findNonAssociatedDeboursForDateAndAmount(@Param("date") LocalDate date,
+                        @Param("amount") Float amount, @Param("paymentTypeCb") Integer idPaymentTypeCb);
 }

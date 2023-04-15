@@ -187,7 +187,8 @@ public class PaymentServiceImpl implements PaymentService {
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
 
         for (Payment payment : payments) {
-            automatchPaymentInvoicesAndGeneratePaymentAccountingRecords(payment);
+            if (payment.getId().equals(132273))
+                automatchPaymentInvoicesAndGeneratePaymentAccountingRecords(payment);
         }
     }
 
@@ -368,6 +369,20 @@ public class PaymentServiceImpl implements PaymentService {
                         }
                     }
                 }
+            }
+
+            // If not found and CB payment, try to match randomly a debour
+            if (payment.getLabel().contains("FACTURE CARTE")) {
+                List<Debour> debourList = debourService.findNonAssociatedDeboursForDateAndAmount(
+                        payment.getPaymentDate().toLocalDate(),
+                        payment.getPaymentAmount());
+                if (debourList != null && debourList.size() > 0) {
+                    generateWaitingAccountAccountingRecords = new MutableBoolean(true);
+                    associateOutboundPaymentAndDebour(payment, Arrays.asList(debourList.get(0)));
+                    generateWaitingAccountAccountingRecords = new MutableBoolean(
+                            debourList.get(0).getInvoiceItem() == null);
+                }
+
             }
 
             // If payment not used, put it in waiting account
