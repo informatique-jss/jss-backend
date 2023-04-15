@@ -312,8 +312,7 @@ public class PaymentServiceImpl implements PaymentService {
                     Invoice invoice = getInvoiceForEntity(foundEntity);
                     if (invoice != null
                             && invoice.getInvoiceStatus().getId()
-                                    .equals(constantService.getInvoiceStatusReceived().getId())
-                            && invoice.getProvider() != null) {
+                                    .equals(constantService.getInvoiceStatusReceived().getId())) {
                         correspondingInvoices.add(invoice);
                         break;
                     }

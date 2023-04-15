@@ -12,8 +12,7 @@ import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
 
 public interface PaymentRepository extends CrudRepository<Payment, Integer> {
 
-        // TODO : remove limit 500
-        @Query(nativeQuery = true, value = "select p.* from payment p  where p.id_invoice is null and p.is_externally_associated=false and p.is_cancelled=false and not exists (select 1 from debour d where d.id_payment = p.id)  and not exists (select 1 from refund d where d.id_payment = p.id) order by p.payment_date desc limit 100 ")
+        @Query(nativeQuery = true, value = "select p.* from payment p  where p.id_invoice is null and p.is_externally_associated=false and p.is_cancelled=false and not exists (select 1 from debour d where d.id_payment = p.id)  and not exists (select 1 from refund d where d.id_payment = p.id)  ")
         List<Payment> findNotAssociatedPayments();
 
         @Query(nativeQuery = true, value = " select p.id as id,"
