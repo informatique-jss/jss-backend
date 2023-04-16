@@ -16,8 +16,4 @@ export class SimpleProvisionStatusService extends AppRestService<SimpleProvision
     return this.getList(new HttpParams(), "simple-provision-status");
   }
 
-  addOrUpdateSimpleProvisonStatus(simpleProvisonStatus: SimpleProvisionStatus) {
-    return this.addOrUpdate(new HttpParams(), "simple-provision-status", simpleProvisonStatus, "Enregistré", "Erreur lors de l'enregistrement");
-  }
-
 }

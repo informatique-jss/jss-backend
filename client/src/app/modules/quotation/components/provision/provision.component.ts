@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
-import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
@@ -384,8 +384,26 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
         }
       }
     }
-    if (provision.formalite)
-      provision.formalite.formaliteStatus = status;
+    if (provision.formalite) {
+      if (status.code == FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY) {
+        saveAsso = false;
+        const dialogRef = this.chooseCompetentAuthorityDialog.open(ChooseCompetentAuthorityDialogComponent, {
+          maxWidth: "400px",
+        });
+
+        dialogRef.componentInstance.title = "Choix de l'autorité compétente";
+        dialogRef.componentInstance.label = "Veuillez choisir l'autorité compétente associée au statut " + status.label;
+        dialogRef.afterClosed().subscribe(dialogResult => {
+          if (dialogResult && dialogResult != false && provision.formalite) {
+            provision.formalite.waitedCompetentAuthority = dialogResult;
+            provision.formalite.formaliteStatus = status;
+            this.saveAsso();
+          }
+        });
+      } else {
+        provision.formalite.formaliteStatus = status;
+      }
+    }
     if (provision.simpleProvision) {
       if (status.code == SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY) {
         saveAsso = false;

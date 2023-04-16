@@ -1,7 +1,7 @@
 import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, FORMALITE_STATUS_WAITING_DOCUMENT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { PaymentSearch } from 'src/app/modules/invoicing/model/PaymentSearch';
 import { RefundSearch } from 'src/app/modules/invoicing/model/RefundSearch';
@@ -178,9 +178,11 @@ export class DashboardComponent implements OnInit {
 
         this.affaireSearchWaitingDocument.assignedTo = this.currentEmployee;
         this.affaireSearchWaitingDocument.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT);
+        this.affaireSearchWaitingDocument.status.push(...this.formaliteStatus.filter(stauts => stauts.code == FORMALITE_STATUS_WAITING_DOCUMENT));
 
         this.affaireSearchWaitingAuthority.assignedTo = this.currentEmployee;
         this.affaireSearchWaitingAuthority.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY);
+        this.affaireSearchWaitingAuthority.status.push(...this.formaliteStatus.filter(stauts => stauts.code == FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY));
 
         this.orderingSearchOpen.assignedToEmployee = this.currentEmployee!;
         this.orderingSearchOpen.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_OPEN)!];

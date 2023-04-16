@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
-import { Formalite } from '../../../model/guichet-unique/Formalite';
 import { Provision } from '../../../model/Provision';
+import { Formalite } from '../../../model/guichet-unique/Formalite';
 
 @Component({
   selector: 'nature-creation',
@@ -34,7 +34,7 @@ export class NatureCreationComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.formalite && this.formalite.content && this.formalite.content.natureCreation) {
+    /*if (this.formalite && this.formalite.content && this.formalite.content.natureCreation) {
       if (!this.formalite.content.natureCreation.societeEtrangere)
         this.formalite.content.natureCreation.societeEtrangere = false;
       if (!this.formalite.content.natureCreation.microEntreprise)
@@ -55,7 +55,7 @@ export class NatureCreationComponent implements OnInit {
         this.formalite.content.natureCreation.seulsBeneficiairesModifies = false;
       if (!this.formalite.content.natureCreation.eirl)
         this.formalite.content.natureCreation.eirl = false;
-    }
+    }*/
   }
 
   getFormStatus() {

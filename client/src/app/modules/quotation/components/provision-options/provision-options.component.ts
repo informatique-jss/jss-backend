@@ -198,14 +198,7 @@ export class ProvisionOptionsComponent implements OnInit {
   }
 
   canDisplayNantissement(codeList: string) {
-    if (codeList && this.provision && this.provision.formalite) {
-      let codes = codeList.split(",");
-      if (codes)
-        for (let code of codes) {
-          if (this.provision.formalite.formeJuridique.code == code.trim())
-            return true;
-        }
-    } else if (this.provision && this.provision.simpleProvision)
+    if (this.provision && (this.provision.simpleProvision || this.provision.formalite))
       return true;
 
     return false;
