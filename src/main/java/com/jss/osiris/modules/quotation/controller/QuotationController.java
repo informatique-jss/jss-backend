@@ -1102,6 +1102,8 @@ public class QuotationController {
     validationHelper.validateString(provisionType.getLabel(), true, 100, "Label");
     validationHelper.validateReferential(provisionType.getProvisionScreenType(), true, "ProvisionScreenType");
     validationHelper.validateReferential(provisionType.getAssignationType(), true, "AssignationType");
+    validationHelper.validateReferential(provisionType.getDefaultCompetentAuthorityServiceProvider(), false,
+        "DefaultCompetentAuthorityServiceProvider");
     if (provisionType.getAssignationType().getCode().equals(AssignationType.EMPLOYEE))
       ;
     validationHelper.validateReferential(provisionType.getDefaultEmployee(), true, "DefaultEmployee");

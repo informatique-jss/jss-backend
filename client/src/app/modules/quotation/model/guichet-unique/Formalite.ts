@@ -6,5 +6,6 @@ export interface Formalite {
   observations: string;
   waitedCompetentAuthority: CompetentAuthority;
   formaliteStatus: FormaliteStatus;
+  competentAuthorityServiceProvider: CompetentAuthority;
 }
 

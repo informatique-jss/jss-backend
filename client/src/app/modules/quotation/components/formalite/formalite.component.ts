@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { IQuotation } from '../../model/IQuotation';
@@ -22,8 +22,11 @@ export class FormaliteComponent implements OnInit {
   @Input() quotation: IQuotation | undefined;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
 
-  SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY = SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY;
+  FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY = FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY;
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
+
+  competentAuthorityInpi = this.constantService.getCompetentAuthorityInpi();
+  competentAuthorityInfogreffe = this.constantService.getCompetentAuthorityInfogreffe();
 
   constructor(
     private formBuilder: FormBuilder,

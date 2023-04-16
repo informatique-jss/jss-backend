@@ -275,7 +275,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 if (customerOrder.getId() == null || formalite.getFormaliteStatus() == null)
                     formalite.setFormaliteStatus(
                             formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
-
             }
 
             if (provision.getBodacc() != null) {

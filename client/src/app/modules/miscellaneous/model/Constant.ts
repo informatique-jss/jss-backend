@@ -147,6 +147,7 @@ export interface Constant {
   transfertFundsTypeMoral: TransfertFundsType;
   transfertFundsTypeBail: TransfertFundsType;
   competentAuthorityInfogreffe: CompetentAuthority;
+  competentAuthorityInpi: CompetentAuthority;
   competentAuthorityTypeRcs: CompetentAuthorityType;
   competentAuthorityTypeCfp: CompetentAuthorityType;
   competentAuthorityTypeCci: CompetentAuthorityType;

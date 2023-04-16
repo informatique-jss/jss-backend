@@ -37,6 +37,11 @@ public class Formalite implements IId {
     @JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
     private CompetentAuthority waitedCompetentAuthority;
 
+    @ManyToOne
+    @JoinColumn(name = "id_competent_authority_service_provider")
+    @JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
+    private CompetentAuthority competentAuthorityServiceProvider;
+
     public Integer getId() {
         return id;
     }
@@ -67,5 +72,13 @@ public class Formalite implements IId {
 
     public void setFormaliteStatus(FormaliteStatus formaliteStatus) {
         this.formaliteStatus = formaliteStatus;
+    }
+
+    public CompetentAuthority getCompetentAuthorityServiceProvider() {
+        return competentAuthorityServiceProvider;
+    }
+
+    public void setCompetentAuthorityServiceProvider(CompetentAuthority competentAuthorityServiceProvider) {
+        this.competentAuthorityServiceProvider = competentAuthorityServiceProvider;
     }
 }

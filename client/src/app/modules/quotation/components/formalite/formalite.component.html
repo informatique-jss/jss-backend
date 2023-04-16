@@ -3,9 +3,15 @@
     <mat-tab [label]="provision.provisionType.label">
       <div class="form-div">
         <table class="full-width">
-          <tr
-            *ngIf="formalite.waitedCompetentAuthority && formalite.formaliteStatus && formalite.formaliteStatus.code ==SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY">
+          <tr>
             <td>
+              <autocomplete-competent-authority [(model)]="formalite.competentAuthorityServiceProvider"
+                [form]="formaliteForm" propertyName="competentAuthorityServiceProvider" [isMandatory]="false"
+                [filteredCompetentAuthority]="[competentAuthorityInfogreffe, competentAuthorityInpi]"
+                [isDisabled]="!editMode" label="Fournisseur de service"></autocomplete-competent-authority>
+            </td>
+            <td
+              *ngIf="formalite.waitedCompetentAuthority && formalite.formaliteStatus && formalite.formaliteStatus.code ==FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY">
               <autocomplete-competent-authority [(model)]="formalite.waitedCompetentAuthority" [form]="formaliteForm"
                 propertyName="waitedCompetentAuthority" [isMandatory]="false" label="Autorité compétente en attente"
                 [isDisabled]="true"></autocomplete-competent-authority>

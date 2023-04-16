@@ -480,6 +480,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.competentAuthorityInfogreffe;
   }
 
+  getCompetentAuthorityInpi() {
+    return this.constant.competentAuthorityInpi;
+  }
+
   getCompetentAuthorityTypeRcs() {
     return this.constant.competentAuthorityTypeRcs;
   }

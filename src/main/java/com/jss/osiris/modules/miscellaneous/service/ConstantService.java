@@ -268,6 +268,8 @@ public interface ConstantService {
 
     public CompetentAuthority getCompetentAuthorityInfogreffe() throws OsirisException;
 
+    public CompetentAuthority getCompetentAuthorityInpi() throws OsirisException;
+
     public CompetentAuthorityType getCompetentAuthorityTypeRcs() throws OsirisException;
 
     public CompetentAuthorityType getCompetentAuthorityTypeCfp() throws OsirisException;

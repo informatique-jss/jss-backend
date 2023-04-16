@@ -160,6 +160,9 @@ export class ProvisionItemComponent implements OnInit {
         this.provision.formalite = undefined;
       } else if (!this.provision.formalite) {
         this.provision.formalite = {} as Formalite;
+        if (this.provision.provisionType.defaultCompetentAuthorityServiceProvider && !this.provision.formalite.competentAuthorityServiceProvider)
+          this.provision.formalite.competentAuthorityServiceProvider = this.provision.provisionType.defaultCompetentAuthorityServiceProvider;
+
       }
 
       if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_STANDARD) {

@@ -18,6 +18,7 @@ import javax.persistence.ManyToMany;
 import org.springframework.ldap.core.AttributesMapper;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -49,6 +50,11 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 	@JoinTable(name = "asso_employee_backup", joinColumns = @JoinColumn(name = "id_employee"), inverseJoinColumns = @JoinColumn(name = "id_employee_backup"))
 	@JsonIgnoreProperties(value = { "backups" }, allowSetters = true)
 	private List<Employee> backups;
+
+	private String inpiLogin;
+
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	private String inpiPassword;
 
 	public Employee mapFromAttributes(Attributes attrs) throws NamingException {
 		if (attrs.get("givenName") == null || attrs.get("sn") == null || attrs.get("sAMAccountName") == null
@@ -138,6 +144,22 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 
 	public void setBackups(List<Employee> backups) {
 		this.backups = backups;
+	}
+
+	public String getInpiLogin() {
+		return inpiLogin;
+	}
+
+	public void setInpiLogin(String inpiLogin) {
+		this.inpiLogin = inpiLogin;
+	}
+
+	public String getInpiPassword() {
+		return inpiPassword;
+	}
+
+	public void setInpiPassword(String inpiPassword) {
+		this.inpiPassword = inpiPassword;
 	}
 
 }

@@ -816,6 +816,8 @@ public class QuotationValidationHelper {
                         Formalite formalite = provision.getFormalite();
                         validationHelper.validateReferential(formalite.getWaitedCompetentAuthority(), false,
                                         "WaitedCompetentAuthority");
+                        validationHelper.validateReferential(formalite.getCompetentAuthorityServiceProvider(), false,
+                                        "competentAuthorityServiceProvider");
                 }
 
                 // Simple provision

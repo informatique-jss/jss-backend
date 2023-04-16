@@ -874,6 +874,13 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-competent-authority [(model)]="constant.competentAuthorityInpi" [form]="constantForm"
+                propertyName="competentAuthorityInpi" [isMandatory]="true"
+                label="Autorité compétante - INPI"></autocomplete-competent-authority>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-competent-authority-type [(model)]="constant.competentAuthorityTypeCfp"
                 label="Type d'authorité compétente - CFP" [form]="constantForm" propertyName="competentAuthorityTypeCfp"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-competent-authority-type>
