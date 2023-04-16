@@ -11,6 +11,12 @@
                 [isDisabled]="!editMode" label="Fournisseur de service"></autocomplete-competent-authority>
             </td>
             <td
+              *ngIf="formalite.competentAuthorityServiceProvider && formalite.competentAuthorityServiceProvider.id == competentAuthorityInpi.id">
+              <autocomplete-guichet-unique-formalite [(model)]="formalite.formaliteGuichetUnique" [form]="formaliteForm"
+                propertyName="formaliteGuichetUnique" [isMandatory]="false" label="Nom du dossier GU"
+                [isDisabled]="!editMode" [provision]="provision"></autocomplete-guichet-unique-formalite>
+            </td>
+            <td
               *ngIf="formalite.waitedCompetentAuthority && formalite.formaliteStatus && formalite.formaliteStatus.code ==FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY">
               <autocomplete-competent-authority [(model)]="formalite.waitedCompetentAuthority" [form]="formaliteForm"
                 propertyName="waitedCompetentAuthority" [isMandatory]="false" label="Autorité compétente en attente"

@@ -51,6 +51,7 @@ import { AutocompleteCountryComponent } from '../forms/autocomplete-country/auto
 import { AutocompleteCustomerOrderComponent } from '../forms/autocomplete-customer-order/autocomplete-customer-order.component';
 import { AutocompleteDepartmentComponent } from '../forms/autocomplete-department/autocomplete-department.component';
 import { AutocompleteEmployeeComponent } from '../forms/autocomplete-employee/autocomplete-employee.component';
+import { AutocompleteGuichetUniqueFormaliteComponent } from '../forms/autocomplete-formalite-guichet-unique/autocomplete-formalite-guichet-unique.component';
 import { AutocompleteGreffeInvoiceComponent } from '../forms/autocomplete-greffe-invoice/autocomplete-greffe-invoice';
 import { AutocompleteLegalFormComponent } from '../forms/autocomplete-legal-form/autocomplete-legal-form.component';
 import { AutocompletePaymentComponent } from '../forms/autocomplete-payment/autocomplete-payment.component';
@@ -492,6 +493,7 @@ const routes: Routes = [
     RadioGroupTypeRepresentantComponent,
     AutocompleteTypeVoieComponent,
     AutocompleteGreffeInvoiceComponent,
+    AutocompleteGuichetUniqueFormaliteComponent,
   ],
   exports: [
     HistoryComponent,
@@ -704,6 +706,7 @@ const routes: Routes = [
     AutocompleteTypeVoieComponent,
     GenericDatetimePickerComponent,
     AutocompleteGreffeInvoiceComponent,
+    AutocompleteGuichetUniqueFormaliteComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
   ]

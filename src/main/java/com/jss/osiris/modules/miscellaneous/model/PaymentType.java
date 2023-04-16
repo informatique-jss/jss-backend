@@ -23,6 +23,9 @@ public class PaymentType implements Serializable, IId {
 	@Column(nullable = false, length = 20)
 	private String code;
 
+	@Column(length = 20)
+	private String codeInpi;
+
 	public Integer getId() {
 		return id;
 	}
@@ -45,6 +48,14 @@ public class PaymentType implements Serializable, IId {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getCodeInpi() {
+		return codeInpi;
+	}
+
+	public void setCodeInpi(String codeInpi) {
+		this.codeInpi = codeInpi;
 	}
 
 }

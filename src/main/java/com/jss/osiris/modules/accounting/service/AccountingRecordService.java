@@ -29,6 +29,8 @@ public interface AccountingRecordService {
 
         public AccountingRecord getAccountingRecord(Integer id);
 
+        public List<AccountingRecord> getAccountingRecordForDebour(Debour debour);
+
         public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord);
 
         public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws OsirisException;

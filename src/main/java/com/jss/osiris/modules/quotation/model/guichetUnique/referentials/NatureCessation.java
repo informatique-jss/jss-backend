@@ -21,7 +21,7 @@ public class NatureCessation implements Serializable, ICode {
     @Id
     private String code;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String label;
 
     public String getCode() {

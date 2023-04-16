@@ -20,23 +20,23 @@ public class LocataireGerantMandataire implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String nom;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String nomUsage;
 
     @OneToMany(mappedBy = "locataireGerantMandataire")
     @JsonIgnoreProperties(value = { "locataireGerantMandataire" }, allowSetters = true)
     List<Prenom> prenoms;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String denomination;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String siren;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String lieuRegistre;
 
     public Integer getId() {

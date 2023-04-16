@@ -3,13 +3,16 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -21,69 +24,70 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDoc
 public class PiecesJointe implements Serializable, IId {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "guichet_unique_piece_jointe_sequence", sequenceName = "guichet_unique_piece_jointe_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "guichet_unique_piece_jointe_sequence")
     private Integer id;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String nomDocument;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_content")
     @JsonIgnoreProperties(value = { "piecesJointes" }, allowSetters = true)
     Content content;
 
-    @ManyToOne
-    @JoinColumn(name = "id_type_document", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_type_document")
     TypeDocument typeDocument;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String langueDocument;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String numeroPiece;
 
-    @Column(nullable = false)
+    @Column()
     private LocalDate debutValidite;
 
-    @Column(nullable = false)
+    @Column()
     private LocalDate finValidite;
 
-    @ManyToOne
-    @JoinColumn(name = "id_tacite_reconduction", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_tacite_reconduction")
     TaciteReconduction taciteReconduction;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String autoriteDelivrance;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String paysLieuDelivrance;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String communeLieuDelivrance;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String observations;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String documentBase64;
 
-    @ManyToOne
-    @JoinColumn(name = "id_document_extension", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_document_extension")
     DocumentExtension documentExtension;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String sousTypeDocument;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String path;
 
-    @Column(nullable = false)
+    @Column()
     private Integer attachmentId;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String codeInseeCommuneLieuDelivrance;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String codePostalLieuDelivrance;
 
     public Integer getId() {

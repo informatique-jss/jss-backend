@@ -105,6 +105,7 @@ import com.jss.osiris.modules.quotation.model.Siren;
 import com.jss.osiris.modules.quotation.model.Siret;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentShortRequest;
+import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementNoticeTemplateService;
@@ -125,6 +126,7 @@ import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.quotation.service.FundTypeService;
+import com.jss.osiris.modules.quotation.service.GuichetUniqueDelegateService;
 import com.jss.osiris.modules.quotation.service.JournalTypeService;
 import com.jss.osiris.modules.quotation.service.MailRedirectionTypeService;
 import com.jss.osiris.modules.quotation.service.NoticeTypeFamilyService;
@@ -316,6 +318,9 @@ public class QuotationController {
 
   @Autowired
   QuotationValidationHelper quotationValidationHelper;
+
+  @Autowired
+  GuichetUniqueDelegateService guichetUniqueDelegateService;
 
   @GetMapping(inputEntryPoint + "/bank-transferts")
   public ResponseEntity<List<BankTransfert>> getBankTransfers() {
@@ -1924,6 +1929,26 @@ public class QuotationController {
 
     announcementService.publishAnnouncementsToActuLegale();
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/formalite-guichet-unique/search")
+  public ResponseEntity<List<FormaliteGuichetUnique>> findFormaliteGuichetUniqueServiceByReference(
+      @RequestParam String value, @RequestParam Integer provisionId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+
+    Provision provision = provisionService.getProvision(provisionId);
+    if (provision == null)
+      throw new OsirisValidationException("ProvisionId");
+
+    if (provision.getAssignedTo() == null)
+      throw new OsirisClientMessageException(
+          "La prestation doit être associée avant de pouvoir rechercher une formalité sur le GU");
+
+    List<FormaliteGuichetUnique> formalites = null;
+    if (value != null && value.length() > 2)
+      formalites = guichetUniqueDelegateService.getFormalitiesByRefenceMandataire(value, provision.getAssignedTo());
+
+    return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
   }
 
 }

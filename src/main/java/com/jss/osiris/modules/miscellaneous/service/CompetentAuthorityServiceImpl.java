@@ -63,6 +63,15 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     }
 
     @Override
+    public CompetentAuthority getCompetentAuthorityByInpiReference(String inpiReference) {
+        Optional<CompetentAuthority> competentAuthority = competentAuthorityRepository
+                .findByInpiReference(inpiReference);
+        if (competentAuthority.isPresent())
+            return competentAuthority.get();
+        return null;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public CompetentAuthority addOrUpdateCompetentAuthority(
             CompetentAuthority competentAuthority) throws OsirisException {

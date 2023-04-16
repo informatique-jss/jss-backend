@@ -2,8 +2,8 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,11 +20,10 @@ public class RegimeMicroSocial implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false)
     private Boolean optionMicroSocial;
 
-    @ManyToOne
-    @JoinColumn(name = "id_periodicite_versement", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_periodicite_versement")
     PeriodiciteVersement periodiciteVersement;
 
     public Integer getId() {

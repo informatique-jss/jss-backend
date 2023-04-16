@@ -4,8 +4,9 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,88 +33,72 @@ public class DetailCessationEntreprise implements Serializable, IId {
     @JsonIgnoreProperties(value = { "detailCessationEntreprise" }, allowSetters = true)
     List<Pouvoir> repreneurs;
 
-    @ManyToOne
-    @JoinColumn(name = "id_adresse_domicile", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_adresse_domicile")
     AdresseDomicile adresse;
 
-    @ManyToOne
-    @JoinColumn(name = "id_preneur_bail", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_preneur_bail")
     PreneurBail preneurBail;
 
-    @ManyToOne
-    @JoinColumn(name = "id_adresse_preneur_bail", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_adresse_preneur_bail")
     AdresseDomicile adressePreneurBail;
 
-    @ManyToOne
-    @JoinColumn(name = "id_publicite_nomination_liquidateur", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_publicite_nomination_liquidateur")
     Publication publiciteNominationLiquidateur;
 
-    @ManyToOne
-    @JoinColumn(name = "id_motif_cessation", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_motif_cessation")
     MotifCessation motifCessation;
 
-    @Column(nullable = false)
     private Boolean maintienRcs;
 
-    @Column(nullable = false)
     private Boolean maintienRm;
 
-    @Column(nullable = false)
     private LocalDate dateCessationActiviteSalariee;
 
-    @Column(nullable = false)
     private LocalDate dateEffet;
 
-    @ManyToOne
-    @JoinColumn(name = "id_lieu_de_liquidation", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_lieu_de_liquidation")
     LieuDeLiquidation lieuDeLiquidation;
 
-    @Column(nullable = false)
     private LocalDate dateCessationTotaleActivite;
 
-    @Column(nullable = false)
     private LocalDate dateClotureLiquidation;
 
-    @Column(nullable = false)
     private LocalDate dateTransfertPatrimoine;
 
-    @Column(nullable = false)
     private LocalDate dateDissolutionDisparition;
 
-    @Column(nullable = false)
     private Boolean indicateurCessationTemporaire;
 
-    @Column(nullable = false)
     private Boolean indicateurDecesEntrepreneur;
 
-    @Column(nullable = false)
     private Boolean indicateurPoursuiteActivite;
 
-    @Column(nullable = false)
     private Boolean indicateurMaintienImmatriculationRegistre;
 
-    @ManyToOne
-    @JoinColumn(name = "id_destination", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_destination")
     Destination destination;
 
-    @Column(nullable = false)
     private Boolean indicateurDissolution;
 
-    @ManyToOne
-    @JoinColumn(name = "id_type_dissolution", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_type_dissolution")
     TypeDissolution typeDissolution;
 
-    @Column(nullable = false)
     private Boolean indicateurDisparitionPM;
 
-    @ManyToOne
-    @JoinColumn(name = "id_motif_disparition", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_motif_disparition")
     MotifDisparition motifDisparition;
 
-    @Column(nullable = false)
     private Boolean indicateurPresenceSalarie;
 
-    @Column(nullable = false)
     private LocalDate dateMiseEnSommeil;
 
     public Integer getId() {

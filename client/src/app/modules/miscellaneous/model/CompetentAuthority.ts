@@ -36,4 +36,5 @@ export interface CompetentAuthority extends IReferential, IAttachment {
   paymentTypes: PaymentType[];
   owncloudFolderName: string;
   defaultPaymentType: PaymentType;
+  inpiReference: string;
 }

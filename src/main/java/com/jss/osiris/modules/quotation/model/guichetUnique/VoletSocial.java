@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,95 +29,85 @@ public class VoletSocial implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_nature_volet_social", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_nature_volet_social")
     NatureVoletSocial natureVoletSocial;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String dateEffetVoletSocial;
 
-    @ManyToOne
-    @JoinColumn(name = "id_situation_vis_a_vis_msa", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_situation_vis_a_vis_msa")
     SituationVisAVisMsa situationVisAVisMsa;
 
-    @ManyToOne
-    @JoinColumn(name = "id_activite_anterieure_activite", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_activite_anterieure_activite")
     Activite activiteAnterieureActivite;
 
-    @Column(nullable = false)
     private LocalDate activiteAnterieureDateFin;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String activiteAnterieureCodeGeo;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String activiteAnterieurePays;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String activiteAnterieureCommune;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String activiteAnterieureCodePostal;
 
-    @ManyToOne
-    @JoinColumn(name = "id_organisme_assurance_maladie_actue", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_organisme_assurance_maladie_actue")
     OrganismeAssuranceMaladieActue organismeAssuranceMaladieActuelle;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String autreOrganisme;
 
-    @Column(nullable = false)
     private Boolean demandeAcre;
 
-    @Column(nullable = false)
     private Boolean activiteSimultanee;
 
-    @ManyToOne
-    @JoinColumn(name = "id_statut_exercice_activite_simultan", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_statut_exercice_activite_simultan")
     StatutExerciceActiviteSimultan statutExerciceActiviteSimultanee;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String autreActiviteExercee;
 
-    @Column(nullable = false)
     private Boolean affiliationPamBiologiste;
 
-    @Column(nullable = false)
     private Boolean affiliationPamPharmacien;
 
-    @ManyToOne
-    @JoinColumn(name = "id_jeune_agriculteur", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_jeune_agriculteur")
     JeuneAgriculteur jeuneAgriculteur;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String organismePension;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String nonSalarieOuConjointBeneficiaireRsaRmi;
 
-    @ManyToOne
-    @JoinColumn(name = "id_choix_organisme_assurance_maladie", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_choix_organisme_assurance_maladie")
     OrganismeAssuranceMaladieActue choixOrganismeAssuranceMaladie;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String departementOrganismeAssuranceMaladie;
 
-    @Column(nullable = false)
     private Boolean indicateurRegimeAssuranceMaladie;
 
-    @Column(nullable = false)
     private Boolean declarationMineur;
 
-    @Column(nullable = false)
     private Integer nbMineursDeclares;
 
-    @Column(nullable = false)
     private Boolean activiteNonSalariee;
 
-    @Column(nullable = false)
     private Boolean indicateurActiviteAnterieure;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String ancienNumeroSiren;
 
     @OneToMany(mappedBy = "voletSocial")

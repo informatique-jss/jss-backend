@@ -3,14 +3,17 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -22,55 +25,55 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Succurs
 public class Content implements Serializable, IId {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "guichet_unique_content_sequence", sequenceName = "guichet_unique_content_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "guichet_unique_content_sequence")
     private Integer id;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String evenementCessation;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_nature_cessation")
     NatureCessation natureCessation;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_succursale_ou_filiale")
     SuccursaleOuFiliale succursaleOuFiliale;
 
-    @ManyToOne
-    @JoinColumn(name = "id_forme_exercice_activite_principale", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_forme_exercice_activite_principale")
     FormeExercice formeExerciceActivitePrincipale;
 
-    @Column(nullable = false)
+    @Column
     private Boolean indicateurPoursuiteCessation;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String tvaIntraCommunautaire;
 
-    @ManyToOne
-    @JoinColumn(name = "id_nature_creation", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_nature_creation")
     NatureCreation natureCreation;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_personne_physique")
     PersonnePhysique personnePhysique;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_personne_morale")
     PersonneMorale personneMorale;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_exploitation")
     Exploitation exploitation;
 
-    @ManyToOne
-    @JoinColumn(name = "id_declarant", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_declarant")
     Declarant declarant;
 
-    @OneToMany(mappedBy = "content")
+    @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "content" }, allowSetters = true)
     List<PiecesJointe> piecesJointes;
 
-    @Column(nullable = false)
     private Boolean indicateurActive;
 
     public Integer getId() {

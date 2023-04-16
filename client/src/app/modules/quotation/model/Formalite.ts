@@ -1,5 +1,6 @@
 import { CompetentAuthority } from 'src/app/modules/miscellaneous/model/CompetentAuthority';
-import { FormaliteStatus } from '../FormaliteStatus';
+import { FormaliteStatus } from './FormaliteStatus';
+import { FormaliteGuichetUnique } from './guichet-unique/FormaliteGuichetUnique';
 
 export interface Formalite {
   id: number;
@@ -7,5 +8,6 @@ export interface Formalite {
   waitedCompetentAuthority: CompetentAuthority;
   formaliteStatus: FormaliteStatus;
   competentAuthorityServiceProvider: CompetentAuthority;
+  formaliteGuichetUnique: FormaliteGuichetUnique;
 }
 

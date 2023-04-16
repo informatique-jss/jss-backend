@@ -22,4 +22,6 @@ public interface CompetentAuthorityService {
     public CompetentAuthority getCompetentAuthorityByOwncloudFolderName(String folderName);
 
     public List<CompetentAuthority> getCompetentAuthorityByAuthorityType(Integer competentAuthorityTypeId);
+
+    public CompetentAuthority getCompetentAuthorityByInpiReference(String inpiReference);
 }

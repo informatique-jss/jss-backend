@@ -1,19 +1,24 @@
-package com.jss.osiris.modules.quotation.model.guichetUnique;
+package com.jss.osiris.modules.quotation.model;
+
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.quotation.model.FormaliteStatus;
+import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 
 @Entity
 @JsonIgnoreProperties
@@ -25,7 +30,7 @@ public class Formalite implements IId {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "id_simple_provision_status")
+    @JoinColumn(name = "id_formalite_status")
     @IndexedField
     private FormaliteStatus formaliteStatus;
 
@@ -41,6 +46,15 @@ public class Formalite implements IId {
     @JoinColumn(name = "id_competent_authority_service_provider")
     @JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
     private CompetentAuthority competentAuthorityServiceProvider;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_formalite_guichet_unique")
+    @JsonIgnoreProperties(value = { "formalite", "content" })
+    private FormaliteGuichetUnique formaliteGuichetUnique;
+
+    @OneToMany(mappedBy = "formalite")
+    @JsonIgnore
+    private List<Provision> provision;
 
     public Integer getId() {
         return id;
@@ -81,4 +95,21 @@ public class Formalite implements IId {
     public void setCompetentAuthorityServiceProvider(CompetentAuthority competentAuthorityServiceProvider) {
         this.competentAuthorityServiceProvider = competentAuthorityServiceProvider;
     }
+
+    public FormaliteGuichetUnique getFormaliteGuichetUnique() {
+        return formaliteGuichetUnique;
+    }
+
+    public void setFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique) {
+        this.formaliteGuichetUnique = formaliteGuichetUnique;
+    }
+
+    public List<Provision> getProvision() {
+        return provision;
+    }
+
+    public void setProvision(List<Provision> provision) {
+        this.provision = provision;
+    }
+
 }

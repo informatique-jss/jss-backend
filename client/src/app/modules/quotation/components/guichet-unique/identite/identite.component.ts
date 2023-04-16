@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { Formalite } from '../../../model/Formalite';
 import { Provision } from '../../../model/Provision';
-import { Formalite } from '../../../model/guichet-unique/Formalite';
 import { Identite } from '../../../model/guichet-unique/Identite';
 import { EntrepriseComponent } from '../entreprise/entreprise.component';
 

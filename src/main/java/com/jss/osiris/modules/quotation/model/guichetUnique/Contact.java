@@ -18,25 +18,24 @@ public class Contact implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String roleDonneesContact;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String mail;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String telephone;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String telecopie;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String optionRgpd;
 
-    @Column(nullable = false)
     private LocalDate dateEffet;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String phoneCode;
 
     public Integer getId() {

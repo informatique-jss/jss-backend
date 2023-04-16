@@ -4,8 +4,9 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,154 +25,108 @@ public class Modalite implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false)
     private LocalDate dateEffet;
 
-    @Column(nullable = false)
     private Boolean detentionPartDirecte;
 
-    @Column(nullable = false)
     private Integer partsDirectesPleinePropriete;
 
-    @Column(nullable = false)
     private Integer partsDirectesNuePropriete;
 
-    @Column(nullable = false)
     private Boolean detentionPartIndirecte;
 
-    @Column(nullable = false)
     private Integer partsIndirectesIndivision;
 
-    @Column(nullable = false)
     private Integer partsIndirectesIndivisionPleinePropriete;
 
-    @Column(nullable = false)
     private Integer partsIndirectesIndivisionNuePropriete;
 
-    @Column(nullable = false)
     private Integer partsIndirectesPersonnesMorales;
 
-    @Column(nullable = false)
     private Integer partsIndirectesPmoralesPleinePropriete;
 
-    @Column(nullable = false)
     private Integer partsIndirectesPmoralesNuePropriete;
 
-    @Column(nullable = false)
     private Integer detentionPartTotale;
 
-    @Column(nullable = false)
     private Boolean detentionVoteDirecte;
 
-    @Column(nullable = false)
     private Integer voteDirectePleinePropriete;
 
-    @Column(nullable = false)
     private Integer voteDirecteNuePropriete;
 
-    @Column(nullable = false)
     private Integer voteDirecteUsufruit;
 
-    @Column(nullable = false)
     private Boolean detentionVoteIndirecte;
 
-    @Column(nullable = false)
     private Integer voteIndirecteIndivision;
 
-    @Column(nullable = false)
     private Integer voteIndirecteIndivisionPleinePropriete;
 
-    @Column(nullable = false)
     private Integer voteIndirecteIndivisionNuePropriete;
 
-    @Column(nullable = false)
     private Integer voteIndirecteIndivisionUsufruit;
 
-    @Column(nullable = false)
     private Integer voteIndirectePersonnesMorales;
 
-    @Column(nullable = false)
     private Integer voteIndirectePmoralesPleinePropriete;
 
-    @Column(nullable = false)
     private Integer voteIndirectePmoralesNuePropriete;
 
-    @Column(nullable = false)
     private Integer voteIndirectePmoralesUsufruit;
 
-    @Column(nullable = false)
     private Integer vocationTitulaireDirectePleinePropriete;
 
-    @Column(nullable = false)
     private Integer vocationTitulaireDirecteNuePropriete;
 
-    @Column(nullable = false)
     private Integer vocationTitulaireIndirecteIndivision;
 
-    @Column(nullable = false)
     private Integer vocationTitulaireIndirectePleinePropriete;
 
-    @Column(nullable = false)
     private Integer vocationTitulaireIndirecteNuePropriete;
 
-    @Column(nullable = false)
     private Integer vocationTitulaireIndirectePersonnesMorales;
 
-    @Column(nullable = false)
     private Integer vocationTitulaireIndirectePmoralesPleinePropriete;
 
-    @Column(nullable = false)
     private Integer vocationTitulaireIndirectePmoralesNuePropriete;
 
-    @Column(nullable = false)
     private Integer detentionVoteTotal;
 
-    @Column(nullable = false)
     private Boolean detentionPouvoirDecisionAG;
 
-    @Column(nullable = false)
     private Boolean detentionPouvoirNommageMembresConseilAdmin;
 
-    @Column(nullable = false)
     private Boolean detentionAutresMoyensControle;
 
-    @Column(nullable = false)
     private Boolean beneficiaireRepresentantLegal;
 
-    @Column(nullable = false)
     private Boolean gestionDelegueeSocieteGestion;
 
-    @Column(nullable = false)
     private Boolean representantLegalPlacementSansGestionDelegue;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "asso_modalite_modalite_de_controle", joinColumns = @JoinColumn(name = "id_modalite"), inverseJoinColumns = @JoinColumn(name = "code_modalite_de_controle"))
     private List<ModalitesDeControle> modalitesDeControle;
 
-    @Column(nullable = false)
     private Boolean detention25pCapital;
 
-    @Column(nullable = false)
     private Boolean detention25pDroitVote;
 
-    @Column(nullable = false)
     private Boolean detentionCapitalIndirecteIndivision;
 
-    @Column(nullable = false)
     private Boolean detentionCapitalIndirectesPersonnesMorales;
 
-    @Column(nullable = false)
     private Boolean detentionVoteIndirecteIndivision;
 
-    @Column(nullable = false)
     private Boolean detentionVoteIndirectePersonnesMorales;
 
-    @ManyToOne
-    @JoinColumn(name = "id_societe_gestion", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_societe_gestion")
     Entreprise societeGestion;
 
-    @ManyToOne
-    @JoinColumn(name = "id_adresse_domicile", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_adresse_domicile")
     AdresseDomicile adresse;
 
     public Integer getId() {

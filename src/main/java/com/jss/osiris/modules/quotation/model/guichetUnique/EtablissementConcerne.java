@@ -3,8 +3,10 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,20 +23,19 @@ public class EtablissementConcerne implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_pouvoir")
     @JsonIgnoreProperties(value = { "etablissementConcerne" }, allowSetters = true)
     Pouvoir pouvoir;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_lien_entreprise")
     @JsonIgnoreProperties(value = { "etablissementConcerne" }, allowSetters = true)
     LienEntreprise lienEntreprise;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String siret;
 
-    @Column(nullable = false)
     private LocalDate dateEffetEtablissementConcerne;
 
     public Integer getId() {

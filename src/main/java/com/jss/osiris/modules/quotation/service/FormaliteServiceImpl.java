@@ -1,12 +1,14 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
+import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.repository.FormaliteRepository;
 
 @Service
@@ -27,5 +29,10 @@ public class FormaliteServiceImpl implements FormaliteService {
     @Transactional(rollbackFor = Exception.class)
     public Formalite addOrUpdateFormalite(Formalite formalite) {
         return formaliteRepository.save(formalite);
+    }
+
+    @Override
+    public List<Formalite> getFormaliteForGURefresh(Employee assignedTo) {
+        return formaliteRepository.getFormaliteForGURefresh(assignedTo);
     }
 }

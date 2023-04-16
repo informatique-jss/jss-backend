@@ -570,6 +570,20 @@ public class InvoiceServiceImpl implements InvoiceService {
                 }
         }
 
+        // Associate accounting record of debours with invoice
+        if (invoice.getIsInvoiceFromProvider()
+                && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId())) {
+            if (usedDebours.size() > 0)
+                for (Debour debour : usedDebours) {
+                    List<AccountingRecord> accountingRecords = accountingRecordService
+                            .getAccountingRecordForDebour(debour);
+                    for (AccountingRecord accountingRecord : accountingRecords) {
+                        accountingRecord.setInvoice(invoice);
+                        accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
+                    }
+                }
+        }
+
         addOrUpdateInvoice(invoice);
 
         if (isNewInvoice && debourPayments.size() > 0) {
@@ -581,6 +595,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                             new MutableBoolean(false), null);
             }
         }
+
+        accountingRecordService.checkInvoiceForLettrage(invoice);
         return invoice;
     }
 

@@ -2,8 +2,10 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,30 +22,30 @@ public class Prenom implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String prenom;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_preneur_bail")
     @JsonIgnoreProperties(value = { "prenoms" }, allowSetters = true)
     PreneurBail preneurBail;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_locataire_gerant_mandataire")
     @JsonIgnoreProperties(value = { "prenoms" }, allowSetters = true)
     LocataireGerantMandataire locataireGerantMandataire;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "prenom" }, allowSetters = true)
     @JoinColumn(name = "id_ancien_exploitant")
     private AncienExploitant ancienExploitant;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_description_entrepreneur")
     @JsonIgnoreProperties(value = { "prenom" }, allowSetters = true)
     private DescriptionEntrepreneur descriptionEntrepreneur;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_description_personne")
     @JsonIgnoreProperties(value = { "prenom" }, allowSetters = true)
     private DescriptionPersonne descriptionPersonne;

@@ -39,14 +39,15 @@ import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
+import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
-import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.repository.AssoAffaireOrderRepository;
+import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 @Service
@@ -114,6 +115,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     ProvisionService provisionService;
+
+    @Autowired
+    FormaliteGuichetUniqueService formaliteGuichetUniqueService;
 
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
@@ -275,6 +279,17 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 if (customerOrder.getId() == null || formalite.getFormaliteStatus() == null)
                     formalite.setFormaliteStatus(
                             formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
+
+                if (formalite.getFormaliteGuichetUnique() != null && provision.getAssignedTo() != null)
+                    formalite.setFormaliteGuichetUnique(formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(
+                            formalite.getFormaliteGuichetUnique().getId(), provision.getAssignedTo()));
+
+                if (formalite.getFormaliteStatus().getIsCloseState()
+                        && formalite.getCompetentAuthorityServiceProvider().getId()
+                                .equals(constantService.getCompetentAuthorityInpi().getId())
+                        && formalite.getFormaliteGuichetUnique() == null)
+                    throw new OsirisClientMessageException(
+                            "Merci de compléter le nom du dossier GU avant de clôturer la formalité");
             }
 
             if (provision.getBodacc() != null) {

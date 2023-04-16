@@ -3,8 +3,9 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,50 +25,44 @@ public class ContratDAppui implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_role_contrat", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_role_contrat")
     RoleContrat roleContrat;
 
-    @ManyToOne
-    @JoinColumn(name = "id_statut_contrat", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_statut_contrat")
     StatutContrat statutContrat;
 
-    @Column(nullable = false)
     private LocalDate dateDebutContrat;
 
-    @Column(nullable = false)
     private LocalDate dateFinContrat;
 
-    @Column(nullable = false)
     private LocalDate dateEffetContrat;
 
-    @ManyToOne
-    @JoinColumn(name = "id_tacite_reconduction", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_tacite_reconduction")
     TaciteReconduction taciteReconduction;
 
-    @ManyToOne
-    @JoinColumn(name = "id_type_personne_contractante", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_type_personne_contractante")
     TypePersonneContractante typePersonneContractante;
 
-    @Column(nullable = false)
     private Boolean resiliationContrat;
 
-    @Column(nullable = false)
     private Boolean indicateurRenouvellementContrat;
 
-    @ManyToOne
-    @JoinColumn(name = "id_contractant", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_contractant")
     Repreneur contractant;
 
-    @ManyToOne
-    @JoinColumn(name = "id_entreprise", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_entreprise")
     Entreprise entreprise;
 
-    @ManyToOne
-    @JoinColumn(name = "id_adresse", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_adresse")
     AdresseDomicile adresse;
 
-    @Column(nullable = false)
     private LocalDate dateEffet;
 
     public Integer getId() {

@@ -125,6 +125,8 @@ public class CompetentAuthority implements IId, IAttachment {
 
 	private String owncloudFolderName;
 
+	private String inpiReference;
+
 	public Integer getId() {
 		return id;
 	}
@@ -363,6 +365,14 @@ public class CompetentAuthority implements IId, IAttachment {
 
 	public void setDefaultPaymentType(PaymentType defaultPaymentType) {
 		this.defaultPaymentType = defaultPaymentType;
+	}
+
+	public String getInpiReference() {
+		return inpiReference;
+	}
+
+	public void setInpiReference(String inpiReference) {
+		this.inpiReference = inpiReference;
 	}
 
 }

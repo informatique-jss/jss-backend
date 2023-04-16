@@ -2,8 +2,10 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,23 +22,23 @@ public class Origine implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_type_origine", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_type_origine")
     TypeOrigine typeOrigine;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String autreOrigine;
 
-    @ManyToOne
-    @JoinColumn(name = "id_contrat", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_contrat")
     Contrat contrat;
 
-    @ManyToOne
-    @JoinColumn(name = "id_ancien_exploitant", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_ancien_exploitant")
     AncienExploitant ancienExploitant;
 
-    @ManyToOne
-    @JoinColumn(name = "id_publication", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_publication")
     Publication publication;
 
     public Integer getId() {

@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChil
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { Formalite } from '../../../model/Formalite';
 import { Provision } from '../../../model/Provision';
-import { Formalite } from '../../../model/guichet-unique/Formalite';
 import { PersonnePhysiqueComponent } from '../personne-physique/personne-physique.component';
 
 @Component({

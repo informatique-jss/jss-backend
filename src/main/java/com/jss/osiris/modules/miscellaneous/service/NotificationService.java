@@ -57,4 +57,6 @@ public interface NotificationService {
         public void notifyInvoiceToReminder(Invoice invoice) throws OsirisException;
 
         public void notifyAttachmentAddToProvision(Provision provision, Attachment attachment) throws OsirisException;
+
+        public void notifyGuichetUniqueFormaliteStatus(Provision provision) throws OsirisException;
 }

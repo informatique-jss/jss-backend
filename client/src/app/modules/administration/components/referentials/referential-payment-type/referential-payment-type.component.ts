@@ -8,7 +8,7 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 
 @Component({
   selector: 'referential-payment-type',
-  templateUrl: './../generic-referential/generic-referential.component.html',
+  templateUrl: './referential-payment-type.component.html',
   styleUrls: ['./../generic-referential/generic-referential.component.css']
 })
 export class ReferentialPaymentTypeComponent extends GenericReferentialComponent<PaymentType> implements OnInit {

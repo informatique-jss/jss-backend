@@ -20,10 +20,10 @@ public class FormeJuridique implements Serializable, ICode {
     @Id
     private String code;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String label;
 
-    @Column(nullable = false)
+    
     private String labelShort;
 
     public String getCode() {

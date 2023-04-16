@@ -77,7 +77,7 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
 
     private void auditEntity(Object[] previousState, Object[] currentState, Object entity,
             Serializable id, String[] propertyNames) {
-        if (!entity.getClass().getName().equals(IndexEntity.class.getName())) {
+        if (!entity.getClass().getName().equals(IndexEntity.class.getName()) && id instanceof Integer) {
             for (int i = 0; i < previousState.length; i++) {
                 Object oldField = previousState[i];
                 Object newField = currentState[i];

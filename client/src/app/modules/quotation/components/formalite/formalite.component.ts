@@ -3,9 +3,9 @@ import { FormBuilder } from '@angular/forms';
 import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
+import { Formalite } from '../../model/Formalite';
 import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
-import { Formalite } from '../../model/guichet-unique/Formalite';
 
 @Component({
   selector: 'formalite',

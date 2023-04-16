@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
-import { Formalite } from '../model/guichet-unique/Formalite';
+import { Formalite } from '../model/Formalite';
 
 @Injectable({
   providedIn: 'root'
