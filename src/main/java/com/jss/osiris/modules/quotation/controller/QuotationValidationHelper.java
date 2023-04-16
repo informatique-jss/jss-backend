@@ -44,9 +44,7 @@ import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.SimpleProvision;
-import com.jss.osiris.modules.quotation.model.guichetUnique.Content;
 import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
-import com.jss.osiris.modules.quotation.model.guichetUnique.NatureCreation;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
@@ -816,61 +814,8 @@ public class QuotationValidationHelper {
                 // Formalite
                 if (provision.getFormalite() != null) {
                         Formalite formalite = provision.getFormalite();
-                        validationHelper.validateReferential(formalite.getTypePersonne(), true, "TypePersonne");
-                        validationHelper.validateString(formalite.getCompanyName(),
-                                        !constantService.getTypePersonnePersonnePhysique().getCode()
-                                                        .equals(formalite.getTypePersonne().getCode()),
-                                        255, "CompanyName");
-                        validationHelper.validateReferential(formalite.getTypeFormalite(), true, "TypeFormalite");
-                        validationHelper.validateReferential(formalite.getDiffusionINSEE(),
-                                        constantService.getTypePersonnePersonnePhysique().getCode()
-                                                        .equals(formalite.getTypePersonne().getCode()),
-                                        "DiffusionINSEE");
-                        validationHelper.validateReferential(formalite.getFormeJuridique(),
-                                        constantService.getTypePersonnePersonneMorale().getCode()
-                                                        .equals(formalite.getTypePersonne().getCode()),
-                                        "FormeJuridique");
-
-                        if (formalite.getContent() == null)
-                                throw new OsirisValidationException("Content");
-
-                        Content content = formalite.getContent();
-
-                        validationHelper.validateReferential(content.getSuccursaleOuFiliale(),
-                                        constantService.getTypePersonnePersonneMorale().getCode()
-                                                        .equals(formalite.getTypePersonne().getCode())
-                                                        && constantService.getTypeFormaliteCreation().getCode()
-                                                                        .equals(formalite.getTypeFormalite().getCode()),
-                                        "SuccursaleOuFiliale");
-                        validationHelper.validateReferential(content.getFormeExerciceActivitePrincipale(), true,
-                                        "FormeExerciceActivitePrincipale");
-                        validationHelper.validateReferential(content.getNatureCessation(),
-                                        formalite.getTypeFormalite().getCode()
-                                                        .equals(constantService.getTypeFormaliteCessation().getCode()),
-                                        "NatureCessation");
-                        validationHelper.validateString(content.getEvenementCessation(),
-                                        formalite.getTypeFormalite().getCode()
-                                                        .equals(constantService.getTypeFormaliteCessation().getCode()),
-                                        255,
-                                        "EvenementCessation");
-                        validationHelper.validateString(content.getTvaIntraCommunautaire(),
-                                        content.getNatureCreation() != null
-                                                        && content.getNatureCreation().getSocieteEtrangere(),
-                                        20,
-                                        "TvaIntraCommunautaire");
-
-                        if (content.getNatureCreation() == null)
-                                throw new OsirisValidationException("NatureCreation");
-
-                        NatureCreation natureCreation = content.getNatureCreation();
-
-                        validationHelper.validateReferential(natureCreation.getFormeJuridique(), true,
-                                        "FormeJuridique");
-                        validationHelper.validateReferential(natureCreation.getTypeExploitation(),
-                                        formalite.getTypePersonne().getCode()
-                                                        .equals(constantService.getTypePersonneExploitation()
-                                                                        .getCode()),
-                                        "TypeExploitation");
+                        validationHelper.validateReferential(formalite.getWaitedCompetentAuthority(), false,
+                                        "WaitedCompetentAuthority");
                 }
 
                 // Simple provision

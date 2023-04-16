@@ -276,18 +276,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     formalite.setFormaliteStatus(
                             formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
 
-                if (formalite.getReferenceMandataire() == null)
-                    // Play with fire ...
-                    formalite.setReferenceMandataire(formalite.getId() + "");
-                if (formalite.getNomDossier() == null)
-                    formalite
-                            .setNomDossier(assoAffaireOrder.getAffaire().getDenomination() != null
-                                    ? assoAffaireOrder.getAffaire().getDenomination()
-                                    : (assoAffaireOrder.getAffaire().getFirstname() + " "
-                                            + assoAffaireOrder.getAffaire().getLastname()));
-                if (formalite.getSignedPlace() == null)
-                    formalite.setSignedPlace("8 Rue Saint-Augustin, 75002 Paris");
-
             }
 
             if (provision.getBodacc() != null) {
