@@ -1727,7 +1727,8 @@ public class MailHelper {
 
         Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
         if (billingDocument != null) {
-            if (billingDocument.getIsCommandNumberMandatory() && billingDocument.getCommandNumber() != null)
+            if (billingDocument.getIsCommandNumberMandatory() != null && billingDocument.getIsCommandNumberMandatory()
+                    && billingDocument.getCommandNumber() != null)
                 explainationText += "(référence annuelle :" + billingDocument.getCommandNumber() + ") ";
             if (billingDocument.getExternalReference() != null)
                 explainationText += "(référence :" + billingDocument.getExternalReference() + ") ";
@@ -1804,7 +1805,8 @@ public class MailHelper {
 
         Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
         if (billingDocument != null) {
-            if (billingDocument.getIsCommandNumberMandatory() && billingDocument.getCommandNumber() != null)
+            if (billingDocument.getIsCommandNumberMandatory() != null && billingDocument.getIsCommandNumberMandatory()
+                    && billingDocument.getCommandNumber() != null)
                 explainationText += "(référence annuelle :" + billingDocument.getCommandNumber() + ") ";
             if (billingDocument.getExternalReference() != null)
                 explainationText += "(référence :" + billingDocument.getExternalReference() + ") ";
