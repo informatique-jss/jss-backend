@@ -801,7 +801,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       }
     }
 
-    if (Math.round(balance * 100f) / 100f == 0) {
+    if (Math.round(Math.abs(balance) * 100f) / 100f <= 0.01) {
 
       Integer maxLetteringNumber = accountingRecordRepository
           .findMaxLetteringNumberForMinLetteringDateTime(LocalDateTime.now().with(ChronoField.DAY_OF_YEAR, 1)

@@ -7,6 +7,8 @@ public class CentralPayTransaction {
     private Integer payoutAmount;
     private Integer commission;
     private Integer totalAmount;
+    private String captureStatus;
+    private String description;
 
     public Integer getFee() {
         return fee;
@@ -54,6 +56,22 @@ public class CentralPayTransaction {
 
     public void setPaymentRequestTransactionId(String paymentRequestTransactionId) {
         this.paymentRequestTransactionId = paymentRequestTransactionId;
+    }
+
+    public String getCaptureStatus() {
+        return captureStatus;
+    }
+
+    public void setCaptureStatus(String captureStatus) {
+        this.captureStatus = captureStatus;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 }
