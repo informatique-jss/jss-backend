@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.quotation.service.guichetUnique;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -180,6 +181,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         newDebour.setCompetentAuthority(competentAuthority);
         newDebour.setDebourAmount(Float.parseFloat(cartRate.getAmount() + "") / 100f);
         newDebour.setInvoicedAmount(newDebour.getDebourAmount());
+        newDebour
+                .setPaymentDateTime(LocalDateTime.parse(cart.getPaymentDate(), DateTimeFormatter.ISO_OFFSET_DATE_TIME));
 
         PaymentType paymentType = paymentTypeService.getPaymentTypeByCodeInpi(cart.getPaymentType());
 

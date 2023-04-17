@@ -264,6 +264,7 @@ public class OwncloudGreffeDelegateImpl implements OwncloudGreffeDelegate {
         newDebour.setCompetentAuthority(greffeInvoice.getOwncloudGreffeFile().getCompetentAuthority());
         newDebour.setDebourAmount(greffeInvoice.getTotalPrice());
         newDebour.setInvoicedAmount(newDebour.getDebourAmount());
+        newDebour.setPaymentDateTime(greffeInvoice.getDate().atTime(12, 0));
         newDebour.setPaymentType(newDebour.getCompetentAuthority().getDefaultPaymentType());
         newDebour.setProvision(provision);
         debourService.addOrUpdateDebour(newDebour);
