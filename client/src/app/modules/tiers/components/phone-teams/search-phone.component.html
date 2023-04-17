@@ -1,11 +1,11 @@
 <div *ngFor="let phone of phoneSearchs">
-  <ng-container *ngIf="!moreOptions">
+  <ng-container *ngIf="!soloOption">
     <p>Entity Type: {{ phone.entityType }}</p>
     <p>Entity ID: {{ phone.entityId }}</p>
     <button (click)="openRoute($event, '/' + phone.entityType.toLowerCase() + '/' + phone.entityId)">Info Window</button>
     --------------------------------------------------------------------
   </ng-container>
-  <ng-container *ngIf="moreOptions">
+  <ng-container *ngIf="soloOption">
     {{ openRoute(null, '/' + phone.entityType.toLowerCase() + '/' + phone.entityId) }}
   </ng-container>
 </div>
