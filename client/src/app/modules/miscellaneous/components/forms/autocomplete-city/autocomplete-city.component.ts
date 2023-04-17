@@ -32,7 +32,7 @@ export class AutocompleteCityComponent extends GenericAutocompleteComponent<City
   }
 
   searchEntities(value: string): Observable<City[]> {
-    return this.cityService.getCitiesFilteredByCountryAndNameAndPostalCode(value, this.modelCountry, this.preFilterPostalCode);
+    return this.cityService.getCitiesFilteredByCountryAndNameAndPostalCode(value.substring(0, 200), this.modelCountry, this.preFilterPostalCode);
   }
 
   ngOnChanges(changes: SimpleChanges) {
