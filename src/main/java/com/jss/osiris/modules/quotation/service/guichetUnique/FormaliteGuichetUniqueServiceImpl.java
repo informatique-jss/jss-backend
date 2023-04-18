@@ -147,20 +147,25 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (formalite != null && formalite.getCarts() != null && formalite.getCarts().size() > 0)
             for (Cart cart : formalite.getCarts()) {
-                Provision provision = cart.getFormaliteGuichetUnique().getFormalites().get(0).getProvision().get(0);
-                if (cart.getCartRates() != null && cart.getCartRates().size() > 0
-                        && (cart.getCartRates().get(0).getDebours() == null
-                                || cart.getCartRates().get(0).getDebours().size() == 0)) {
-                    if (cart.getCartRates() != null)
-                        for (CartRate cartRate : cart.getCartRates()) {
-                            if (cartRate.getAmount() > 0) {
-                                Debour newDebour = getDebourFromCart(cart, cartRate, provision);
-                                if (provision.getDebours() == null)
-                                    provision.setDebours(new ArrayList<Debour>());
-                                provision.getDebours().add(newDebour);
-                                provisionService.addOrUpdateProvision(provision);
+                if (cart.getFormaliteGuichetUnique().getFormalites() != null
+                        && cart.getFormaliteGuichetUnique().getFormalites().size() > 0
+                        && cart.getFormaliteGuichetUnique().getFormalites().get(0).getProvision() != null
+                        && cart.getFormaliteGuichetUnique().getFormalites().get(0).getProvision().size() > 0) {
+                    Provision provision = cart.getFormaliteGuichetUnique().getFormalites().get(0).getProvision().get(0);
+                    if (cart.getCartRates() != null && cart.getCartRates().size() > 0
+                            && (cart.getCartRates().get(0).getDebours() == null
+                                    || cart.getCartRates().get(0).getDebours().size() == 0)) {
+                        if (cart.getCartRates() != null)
+                            for (CartRate cartRate : cart.getCartRates()) {
+                                if (cartRate.getAmount() > 0) {
+                                    Debour newDebour = getDebourFromCart(cart, cartRate, provision);
+                                    if (provision.getDebours() == null)
+                                        provision.setDebours(new ArrayList<Debour>());
+                                    provision.getDebours().add(newDebour);
+                                    provisionService.addOrUpdateProvision(provision);
+                                }
                             }
-                        }
+                    }
                 }
             }
     }

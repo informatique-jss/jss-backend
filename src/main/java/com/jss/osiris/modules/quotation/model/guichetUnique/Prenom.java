@@ -22,6 +22,10 @@ public class Prenom implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    public Prenom(String prenom) {
+        this.prenom = prenom;
+    }
+
     @Column(length = 255)
     private String prenom;
 
