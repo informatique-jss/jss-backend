@@ -27,7 +27,8 @@ export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<I
   displayLabel(entity: IndexEntity): string {
     if (entity && entity.text) {
       let obj = JSON.parse((entity.text as string));
-      return (obj.firstname ? obj.firstname + " " : " ") + (obj.lastname ? obj.lastname + " " : "") + (obj.denomination ? obj.denomination : "");
+      return (obj.firstname ? obj.firstname + " " : " ") + (obj.lastname ? obj.lastname + " " : "") + (obj.denomination ? obj.denomination : "")+" - "+ (obj.address ? obj.address : "")+" - "+
+      (obj.postalCode ? obj.postalCode : "")+" - "+(obj.city.label ? obj.city.label : "")+" - "+(obj.siren ? "SIREN : "+obj.siren : "")+" - "+(obj.siret ? "SIRET : "+obj.siret : "");
     }
     return "";
   }
@@ -35,6 +36,7 @@ export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<I
   displayAffaire(obj: Affaire): string {
     if (obj)
       return (obj.firstname ? obj.firstname + " " : "") + (obj.lastname ? obj.lastname + " " : "") + (obj.denomination ? obj.denomination : "");
+
     return "";
   }
 
