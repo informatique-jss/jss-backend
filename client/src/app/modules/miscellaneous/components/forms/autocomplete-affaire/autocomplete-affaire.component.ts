@@ -28,7 +28,7 @@ export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<I
     if (entity && entity.text) {
       let obj = JSON.parse((entity.text as string));
       return (obj.firstname ? obj.firstname + " " : " ") + (obj.lastname ? obj.lastname + " " : "") + (obj.denomination ? obj.denomination : "")+" - "+ (obj.address ? obj.address : "")+" - "+
-      (obj.postalCode ? obj.postalCode : "")+" - "+(obj.city.label ? obj.city.label : "")+" - "+(obj.siren ? "SIREN : "+obj.siren : "")+" - "+(obj.siret ? "SIRET : "+obj.siret : "");
+      (obj.postalCode ? obj.postalCode : "")+" - "+(obj.city && obj.city.label ? obj.city.label : "")+" - "+(obj.siren ? "SIREN : "+obj.siren : "")+" - "+(obj.siret ? "SIRET : "+obj.siret : "");
     }
     return "";
   }
