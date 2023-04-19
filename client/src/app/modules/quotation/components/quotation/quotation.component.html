@@ -9,7 +9,7 @@
 </ng-template>
 
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #sidenav mode="side" position="end" [fixedInViewport]="true" [fixedTopGap]="165" [fixedBottomGap]="100" style="width: 20%; height: 70%; margin-right: 20px;">
+  <mat-sidenav #sidenav mode="side" position="end" [fixedInViewport]="true" class="sidenav-facture">
     <div class="scrollable-table">
     <table>
       <ng-container *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index">
@@ -51,6 +51,7 @@
       </ng-container>
     </table>
   </div>
+
     <table class="total-table">
       <tr>
         <td>

@@ -8,11 +8,14 @@
 
 .scrollable-table {
   overflow-y: auto;
-  height: calc(100vh - 265px);
+  height: calc(85vh - 265px);
+}
 
-  @media (min-width: 1280px) {
-    height: calc(100vh - 265px - 112px);
-  }
+.sidenav-facture {
+  width: 20%;
+  height: 100vh;
+  margin-right: 20px;
+  margin-top: 165px;
 }
 
 td {
