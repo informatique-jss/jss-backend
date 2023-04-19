@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -116,6 +118,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     PaymentService paymentService;
+
+    @Autowired
+    AccountingRecordRepository accountingRecordRepository;
 
     @Override
     public List<Invoice> getAllInvoices() {
@@ -631,6 +636,18 @@ public class InvoiceServiceImpl implements InvoiceService {
         return false;
     }
 
+    private Integer GetMaxLetteringNumber() {
+        Integer maxLetteringNumber = accountingRecordRepository
+                .findMaxLetteringNumberForMinLetteringDateTime(LocalDateTime.now().with(ChronoField.DAY_OF_YEAR, 1)
+                        .with(ChronoField.HOUR_OF_DAY, 0)
+                        .with(ChronoField.MINUTE_OF_DAY, 0).with(ChronoField.SECOND_OF_DAY, 0));
+
+        if (maxLetteringNumber == null)
+            maxLetteringNumber = 0;
+        maxLetteringNumber++;
+        return maxLetteringNumber;
+    }
+
     @Override
     public void unletterInvoiceEmitted(Invoice invoice) throws OsirisException {
         AccountingAccount accountingAccountCustomer = accountingRecordService
@@ -639,11 +656,19 @@ public class InvoiceServiceImpl implements InvoiceService {
         List<AccountingRecord> accountingRecords = accountingRecordService
                 .findByAccountingAccountAndInvoice(accountingAccountCustomer, invoice);
 
+        Integer maxLetteringNumber = GetMaxLetteringNumber();
+
         if (accountingRecords != null)
             for (AccountingRecord accountingRecord : accountingRecords) {
-                accountingRecord.setLetteringDateTime(null);
-                accountingRecord.setLetteringNumber(null);
-                accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
+                if (accountingAccountCustomer.getPrincipalAccountingAccount().getCode().equals("411")) {
+                    accountingRecord.setLetteringDateTime(LocalDateTime.now());
+                    accountingRecord.setLetteringNumber(maxLetteringNumber);
+                    accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
+                } else {
+                    accountingRecord.setLetteringDateTime(null);
+                    accountingRecord.setLetteringNumber(null);
+                    accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
+                }
             }
         invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
         addOrUpdateInvoice(invoice);
