@@ -416,6 +416,7 @@ public class PaymentServiceImpl implements PaymentService {
             List<Float> byPassAmount)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
+        payment = getPayment(payment.getId());
         String refundLabelSuffix = "";
         float remainingMoney = payment.getPaymentAmount();
         if (payment.getPaymentWay().getId().equals(constantService.getPaymentWayInbound().getId())) {
