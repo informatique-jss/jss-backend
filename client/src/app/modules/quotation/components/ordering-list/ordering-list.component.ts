@@ -11,7 +11,7 @@ import { EmployeeService } from '../../../profile/services/employee.service';
 import { OrderingSearch } from '../../model/OrderingSearch';
 import { OrderingSearchResult } from '../../model/OrderingSearchResult';
 import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
-
+import { formatDateTimeForSortTable } from '../../../../libs/FormatHelper';
 @Component({
   selector: 'ordering-list',
   templateUrl: './ordering-list.component.html',
@@ -95,7 +95,7 @@ export class OrderingListComponent implements OnInit {
       this.availableColumns.push({ id: "bodaccNbr", fieldName: "bodaccNbr", label: "Nombre de BODACC" } as SortTableColumn);
       this.availableColumns.push({ id: "domiciliationNbr", fieldName: "domiciliationNbr", label: "Nombre de domiciliations" } as SortTableColumn);
       this.availableColumns.push({ id: "simpleProvisionNbr", fieldName: "simpleProvisionNbr", label: "Nombre de formalités simples" } as SortTableColumn);
-
+      this.availableColumns.push({ id: "lastStatusUpdate", fieldName: "lastStatusUpdate", label: "Date de mise à jour", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
       this.setColumns();
 
       if (this.overrideIconAction == "") {

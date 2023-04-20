@@ -46,4 +46,6 @@ public interface OrderingSearchResult {
     public Integer getDomiciliationNbr();
 
     public Integer getSimpleProvisionNbr();
+
+    public LocalDateTime getLastStatusUpdate();
 }
