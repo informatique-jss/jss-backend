@@ -3,7 +3,6 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,43 +17,30 @@ public class EffectifSalarie implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false)
     private Boolean presenceSalarie;
 
-    @Column(nullable = false)
     private Integer nombreSalarie;
 
-    @Column(nullable = false)
     private Integer nombreApprenti;
 
-    @Column(nullable = false)
     private Integer nombreVrp;
 
-    @Column(nullable = false)
     private Boolean emploiPremierSalarie;
 
-    @Column(nullable = false)
     private LocalDate dateEffetFinEmploiSalarie;
 
-    @Column(nullable = false)
     private Integer nombreSaisonnier;
 
-    @Column(nullable = false)
     private Integer nombreSalariesMarin;
 
-    @Column(nullable = false)
     private Boolean employeurSalarieNonRegimeFr;
 
-    @Column(nullable = false)
     private LocalDate dateEffetDebutEmploiSalarie;
 
-    @Column(nullable = false)
     private LocalDate dateEffet;
 
-    @Column(nullable = false)
     private LocalDate dateCessationEmploiSalaries;
 
-    @Column(nullable = false)
     private Boolean finEmploiSalarie;
 
     public Integer getId() {

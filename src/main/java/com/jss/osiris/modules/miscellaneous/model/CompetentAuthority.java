@@ -119,6 +119,14 @@ public class CompetentAuthority implements IId, IAttachment {
 	@JoinTable(name = "asso_competent_authority_payment_type", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_payment_type"))
 	private List<PaymentType> paymentTypes;
 
+	@ManyToOne
+	@JoinColumn(name = "id_default_payment_type")
+	private PaymentType defaultPaymentType;
+
+	private String owncloudFolderName;
+
+	private String inpiReference;
+
 	public Integer getId() {
 		return id;
 	}
@@ -341,6 +349,30 @@ public class CompetentAuthority implements IId, IAttachment {
 
 	public void setPaymentTypes(List<PaymentType> paymentTypes) {
 		this.paymentTypes = paymentTypes;
+	}
+
+	public String getOwncloudFolderName() {
+		return owncloudFolderName;
+	}
+
+	public void setOwncloudFolderName(String owncloudFolderName) {
+		this.owncloudFolderName = owncloudFolderName;
+	}
+
+	public PaymentType getDefaultPaymentType() {
+		return defaultPaymentType;
+	}
+
+	public void setDefaultPaymentType(PaymentType defaultPaymentType) {
+		this.defaultPaymentType = defaultPaymentType;
+	}
+
+	public String getInpiReference() {
+		return inpiReference;
+	}
+
+	public void setInpiReference(String inpiReference) {
+		this.inpiReference = inpiReference;
 	}
 
 }

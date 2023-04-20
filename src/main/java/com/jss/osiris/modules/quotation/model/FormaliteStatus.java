@@ -28,10 +28,7 @@ public class FormaliteStatus implements Serializable, IId {
 	public static String FORMALITE_NEW = "FORMALITE_NEW";
 	public static String FORMALITE_IN_PROGRESS = "FORMALITE_IN_PROGRESS";
 	public static String FORMALITE_WAITING_DOCUMENT = "FORMALITE_WAITING_DOCUMENT";
-	public static String FORMALITE_SENT = "FORMALITE_SENT";
-	public static String FORMALITE_REFUSED = "FORMALITE_REFUSED";
-	public static String FORMALITE_WAITING_DOCUMENT_GREFFE = "FORMALITE_WAITING_DOCUMENT_GREFFE";
-	public static String FORMALITE_VALIDATE = "FORMALITE_VALIDATE";
+	public static String FORMALITE_WAITING_DOCUMENT_AUTHORITY = "FORMALITE_WAITING_DOCUMENT_AUTHORITY";
 	public static String FORMALITE_DONE = "FORMALITE_DONE";
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

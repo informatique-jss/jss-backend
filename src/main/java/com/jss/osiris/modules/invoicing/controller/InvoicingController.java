@@ -39,6 +39,7 @@ import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.invoicing.model.OwncloudGreffeInvoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentAssociate;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
@@ -50,6 +51,8 @@ import com.jss.osiris.modules.invoicing.service.DepositService;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceStatusService;
+import com.jss.osiris.modules.invoicing.service.OwncloudGreffeDelegateImpl;
+import com.jss.osiris.modules.invoicing.service.OwncloudGreffeInvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.invoicing.service.PaymentWayService;
 import com.jss.osiris.modules.invoicing.service.RefundService;
@@ -58,10 +61,12 @@ import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DebourService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
+import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -117,7 +122,16 @@ public class InvoicingController {
     DirectDebitTransfertService directDebitTransfertService;
 
     @Autowired
+    OwncloudGreffeInvoiceService owncloudGreffeInvoiceService;
+
+    @Autowired
     DebourService debourService;
+
+    @Autowired
+    OwncloudGreffeDelegateImpl owncloudGreffeDelegateImpl;
+
+    @Autowired
+    ProvisionService provisionService;
 
     @Value("${invoicing.payment.limit.refund.euros}")
     private Integer payementLimitRefundInEuros;
@@ -893,4 +907,43 @@ public class InvoicingController {
                 HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/greffe/invoice/search/order")
+    public ResponseEntity<List<OwncloudGreffeInvoice>> getCorrespondingGreffeInvoiceForCustomerOrder(
+            @RequestParam Integer customerOrderId)
+            throws OsirisValidationException {
+        CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+        if (customerOrder == null)
+            throw new OsirisValidationException("customerOrderId");
+
+        return new ResponseEntity<List<OwncloudGreffeInvoice>>(
+                owncloudGreffeInvoiceService.getCorrespondingGreffeInvoiceForCustomerOrder(customerOrder),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/greffe/invoice/search/numero")
+    public ResponseEntity<List<OwncloudGreffeInvoice>> getOwncloudGreffeInvoiceByNumero(
+            @RequestParam String numero)
+            throws OsirisValidationException {
+        return new ResponseEntity<List<OwncloudGreffeInvoice>>(
+                owncloudGreffeInvoiceService.getOwncloudGreffeInvoiceByNumero(numero),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/greffe/invoice/create")
+    public ResponseEntity<Invoice> createInvoiceFromGreffeInvoice(
+            @RequestParam Integer provisionId, @RequestParam Integer owncloudGreffeInvoiceId)
+            throws OsirisValidationException, OsirisClientMessageException, OsirisException {
+        Provision provision = provisionService.getProvision(provisionId);
+        if (provision == null)
+            throw new OsirisValidationException("provisionId");
+
+        OwncloudGreffeInvoice greffeInvoice = owncloudGreffeInvoiceService
+                .getOwncloudGreffeInvoice(owncloudGreffeInvoiceId);
+        if (greffeInvoice == null)
+            throw new OsirisValidationException("owncloudGreffeInvoiceId");
+
+        return new ResponseEntity<Invoice>(
+                owncloudGreffeDelegateImpl.generateInvoiceFromProvisionAndGreffeInvoice(greffeInvoice, provision),
+                HttpStatus.OK);
+    }
 }

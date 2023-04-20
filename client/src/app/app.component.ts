@@ -7,6 +7,7 @@ import { NOTIFICATION_KEY_CODE, SAVE_KEY_CODE, SEARCH_KEY_CODE } from './libs/Co
 import { ConfirmDialogComponent } from './modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { ConstantService } from './modules/miscellaneous/services/constant.service';
 import { NotificationService } from './modules/miscellaneous/services/notification.service';
+import { EmployeeService } from './modules/profile/services/employee.service';
 import { LoginDialogComponent } from './routing/login-dialog/login-dialog.component';
 import { LoginService } from './routing/login-dialog/login.service';
 import { AppService } from './services/app.service';
@@ -44,6 +45,7 @@ export class AppComponent {
     private notificationService: NotificationService,
     private userPreferenceService: UserPreferenceService,
     private constantService: ConstantService,
+    private employeeService: EmployeeService,
     protected searchService: SearchService) { }
   groups: string[] = [] as Array<string>;
 
@@ -59,6 +61,13 @@ export class AppComponent {
         this.loginDialogRef = this.loginDialog.open(LoginDialogComponent, {
           disableClose: true
         });
+      }
+
+      if (this.loggedIn) {
+        this.employeeService.getCurrentEmployee().subscribe(employee => {
+          if (employee && employee.adPath && employee.adPath.indexOf("OU=Formalites") >= 0 && !employee.inpiLogin)
+            this.appService.displaySnackBar("Merci de compléter vos logins INPI dans la rubrique Mon profil", false, 10);
+        })
       }
 
       if (environment.production == false && this.loginService.hasGroup(['toto']) == false)

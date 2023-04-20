@@ -3,8 +3,10 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,38 +24,37 @@ public class Identite implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_entreprise", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_entreprise")
     Entreprise entreprise;
 
-    @ManyToOne
-    @JoinColumn(name = "id_entrepreneur", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_entrepreneur")
     Entrepreneur entrepreneur;
 
     @OneToMany(mappedBy = "identite")
     @JsonIgnoreProperties(value = { "identite" }, allowSetters = true)
     List<Eirl> eirl;
 
-    @Column(nullable = false)
     private Boolean contratDAppuiDeclare;
 
-    @ManyToOne
-    @JoinColumn(name = "id_contrat_d_appui", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_contrat_d_appui")
     ContratDAppui contratDAppui;
 
-    @ManyToOne
-    @JoinColumn(name = "id_insaisissabilite", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_insaisissabilite")
     Insaisissabilite insaisissabilite;
 
-    @ManyToOne
-    @JoinColumn(name = "id_adresse_correspondance", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_adresse_correspondance")
     AdresseDomicile adresseCorrespondance;
 
-    @ManyToOne
-    @JoinColumn(name = "id_contact_correspondance", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_contact_correspondance")
     Contact contactCorrespondance;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String nomCorrespondance;
 
     public Integer getId() {

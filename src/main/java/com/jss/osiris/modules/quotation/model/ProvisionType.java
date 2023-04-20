@@ -17,6 +17,7 @@ import javax.persistence.SequenceGenerator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
 
@@ -57,6 +58,10 @@ public class ProvisionType implements Serializable, IId {
 	private Employee defaultEmployee;
 
 	private Integer assignationWeight;
+
+	@ManyToOne
+	@JoinColumn(name = "id_default_competent_authority_service_provider")
+	private CompetentAuthority defaultCompetentAuthorityServiceProvider;
 
 	public Integer getId() {
 		return id;
@@ -128,6 +133,15 @@ public class ProvisionType implements Serializable, IId {
 
 	public void setAssignationWeight(Integer assignationWeight) {
 		this.assignationWeight = assignationWeight;
+	}
+
+	public CompetentAuthority getDefaultCompetentAuthorityServiceProvider() {
+		return defaultCompetentAuthorityServiceProvider;
+	}
+
+	public void setDefaultCompetentAuthorityServiceProvider(
+			CompetentAuthority defaultCompetentAuthorityServiceProvider) {
+		this.defaultCompetentAuthorityServiceProvider = defaultCompetentAuthorityServiceProvider;
 	}
 
 }

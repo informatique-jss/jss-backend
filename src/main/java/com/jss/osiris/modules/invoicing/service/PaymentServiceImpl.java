@@ -370,6 +370,37 @@ public class PaymentServiceImpl implements PaymentService {
                 }
             }
 
+            // If not found and CB payment, try to match randomly a debour at same day or in
+            // 3 days range before
+            if (payment.getLabel().contains("FACTURE CARTE")) {
+                List<Debour> debourList = debourService.findNonAssociatedDeboursForDateAndAmount(
+                        payment.getPaymentDate().toLocalDate(),
+                        payment.getPaymentAmount());
+
+                if (debourList == null || debourList.size() == 0)
+                    debourList = debourService.findNonAssociatedDeboursForDateAndAmount(
+                            payment.getPaymentDate().toLocalDate().minusDays(1),
+                            payment.getPaymentAmount());
+
+                if (debourList == null || debourList.size() == 0)
+                    debourList = debourService.findNonAssociatedDeboursForDateAndAmount(
+                            payment.getPaymentDate().toLocalDate().minusDays(2),
+                            payment.getPaymentAmount());
+
+                if (debourList == null || debourList.size() == 0)
+                    debourList = debourService.findNonAssociatedDeboursForDateAndAmount(
+                            payment.getPaymentDate().toLocalDate().minusDays(3),
+                            payment.getPaymentAmount());
+
+                if (debourList != null && debourList.size() > 0) {
+                    generateWaitingAccountAccountingRecords = new MutableBoolean(true);
+                    associateOutboundPaymentAndDebour(payment, Arrays.asList(debourList.get(0)));
+                    generateWaitingAccountAccountingRecords = new MutableBoolean(
+                            debourList.get(0).getInvoiceItem() == null);
+                }
+
+            }
+
             // If payment not used, put it in waiting account
             if (generateWaitingAccountAccountingRecords.isTrue()) {
                 accountingRecordService.generateAccountingRecordsForWaintingOutboundPayment(payment);
@@ -385,6 +416,7 @@ public class PaymentServiceImpl implements PaymentService {
             List<Float> byPassAmount)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
+        payment = getPayment(payment.getId());
         String refundLabelSuffix = "";
         float remainingMoney = payment.getPaymentAmount();
         if (payment.getPaymentWay().getId().equals(constantService.getPaymentWayInbound().getId())) {

@@ -1,14 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
-import { Content } from '../../model/guichet-unique/Content';
-import { Formalite } from '../../model/guichet-unique/Formalite';
-import { NatureCreation } from '../../model/guichet-unique/NatureCreation';
+import { Formalite } from '../../model/Formalite';
 import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
-import { ContentComponent } from '../guichet-unique/content/content.component';
-import { NatureCreationComponent } from '../guichet-unique/nature-creation/nature-creation.component';
 
 @Component({
   selector: 'formalite',
@@ -18,20 +15,18 @@ import { NatureCreationComponent } from '../guichet-unique/nature-creation/natur
 export class FormaliteComponent implements OnInit {
 
   @Input() formalite: Formalite = {} as Formalite;
-  @Input() provision: Provision | undefined;;
+  @Input() provision: Provision | undefined;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
   @Input() quotation: IQuotation | undefined;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
-  @ViewChild(ContentComponent) contentComponent: ContentComponent | undefined;
-  @ViewChild(NatureCreationComponent) natureCreationComponent: NatureCreationComponent | undefined;
 
-  FORMALITE_ENTITY_TYPE = FORMALITE_ENTITY_TYPE;
+  FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY = FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY;
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
 
-  typePersonnePersonnePhysique = this.constantService.getTypePersonnePersonnePhysique();
-  typePersonnePersonneMorale = this.constantService.getTypePersonnePersonneMorale();
+  competentAuthorityInpi = this.constantService.getCompetentAuthorityInpi();
+  competentAuthorityInfogreffe = this.constantService.getCompetentAuthorityInfogreffe();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -40,35 +35,19 @@ export class FormaliteComponent implements OnInit {
 
   formaliteForm = this.formBuilder.group({});
 
+  FORMALITE_ENTITY_TYPE = FORMALITE_ENTITY_TYPE;
+
   ngOnInit() {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.formalite && !this.formalite.content)
-      this.formalite.content = {} as Content;
-    if (!this.formalite.content.natureCreation)
-      this.formalite.content.natureCreation = {} as NatureCreation;
-    if (!this.formalite.indicateurEntreeSortieRegistre)
-      this.formalite.indicateurEntreeSortieRegistre = false;
-    if (!this.formalite.hasRnippBeenCalled)
-      this.formalite.hasRnippBeenCalled = false;
-    if (!this.formalite.indicateurNouvelleEntreprise)
-      this.formalite.indicateurNouvelleEntreprise = false;
-    if (!this.formalite.optionEIRL)
-      this.formalite.optionEIRL = false;
-    if (!this.formalite.optionME)
-      this.formalite.optionME = false;
-    if (!this.formalite.regularisation)
-      this.formalite.regularisation = false;
+
   }
 
   getFormStatus() {
     this.formaliteForm.markAllAsTouched();
     let status = this.formaliteForm.valid;
-    if (this.contentComponent)
-      status = status && this.contentComponent.getFormStatus();
-    if (this.natureCreationComponent)
-      status = status && this.natureCreationComponent.getFormStatus();
+
     return status;
   }
 

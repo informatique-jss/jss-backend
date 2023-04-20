@@ -16,4 +16,8 @@ public interface CompetentAuthorityRepository extends CrudRepository<CompetentAu
     Optional<CompetentAuthority> findByApiId(String apiId);
 
     List<CompetentAuthority> findByCompetentAuthorityType_Id(Integer competentAuthorityTypeId);
+
+    Optional<CompetentAuthority> findByOwncloudFolderName(String folderName);
+
+    Optional<CompetentAuthority> findByInpiReference(String inpiReference);
 }

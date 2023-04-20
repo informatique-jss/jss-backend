@@ -24,6 +24,7 @@ export interface InvoiceSearchResult {
   customerOrderDescription: string;
   paymentId: string;
   remainingToPay: number;
+  invoiceRecipient: string;
 }
 
 

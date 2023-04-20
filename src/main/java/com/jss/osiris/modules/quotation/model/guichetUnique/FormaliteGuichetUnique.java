@@ -1,94 +1,106 @@
 package com.jss.osiris.modules.quotation.model.guichetUnique;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.quotation.model.FormaliteStatus;
+import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DiffusionINSEE;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Status;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
 
 @Entity
 @JsonIgnoreProperties
-public class Formalite implements IId {
+public class FormaliteGuichetUnique implements IId {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
+    @OneToMany(mappedBy = "formaliteGuichetUnique")
+    @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
+    private List<Formalite> formalites;
 
     private Integer formalityDraftId;
 
     @Column(length = 255)
     private String companyName;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_content", nullable = false)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_content")
     Content content;
 
     private String referenceMandataire;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String nomDossier;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String signedPlace;
 
-    @ManyToOne
-    @JoinColumn(name = "id_type_formalite", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_type_formalite")
     TypeFormalite typeFormalite;
-
-    @ManyToOne
-    @JoinColumn(name = "id_formalite_status")
-    private FormaliteStatus formaliteStatus;
 
     @Column(columnDefinition = "TEXT")
     private String observationSignature;
 
-    @ManyToOne
-    @JoinColumn(name = "id_diffusion_insee", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_diffusion_insee")
     DiffusionINSEE diffusionINSEE;
 
-    @Column(nullable = false)
     private Boolean indicateurEntreeSortieRegistre;
 
-    @ManyToOne
-    @JoinColumn(name = "id_type_personne", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_type_personne")
     TypePersonne typePersonne;
 
     private Boolean inscriptionOffice;
 
     private String inscriptionOfficePartnerCenter;
 
-    @Column(nullable = false)
     private Boolean hasRnippBeenCalled;
 
-    @Column(nullable = false)
     private Boolean indicateurNouvelleEntreprise;
 
-    @Column(nullable = false)
     private Boolean optionEIRL;
 
-    @Column(nullable = false)
     private Boolean optionME;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_forme_juridique")
     FormeJuridique formeJuridique;
 
     private Integer optionJqpaNumber;
 
-    @Column(nullable = false)
     private Boolean regularisation;
+
+    @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
+    private List<Cart> carts;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_status")
+    private Status status;
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
     public Integer getId() {
         return id;
@@ -250,19 +262,27 @@ public class Formalite implements IId {
         this.regularisation = regularisation;
     }
 
-    public FormaliteStatus getFormaliteStatus() {
-        return formaliteStatus;
-    }
-
-    public void setFormaliteStatus(FormaliteStatus formaliteStatus) {
-        this.formaliteStatus = formaliteStatus;
-    }
-
     public String getReferenceMandataire() {
         return referenceMandataire;
     }
 
     public void setReferenceMandataire(String referenceMandataire) {
         this.referenceMandataire = referenceMandataire;
+    }
+
+    public List<Cart> getCarts() {
+        return carts;
+    }
+
+    public void setCarts(List<Cart> carts) {
+        this.carts = carts;
+    }
+
+    public List<Formalite> getFormalites() {
+        return formalites;
+    }
+
+    public void setFormalites(List<Formalite> formalites) {
+        this.formalites = formalites;
     }
 }

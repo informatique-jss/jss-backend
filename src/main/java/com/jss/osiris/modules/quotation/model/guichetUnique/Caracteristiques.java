@@ -2,7 +2,6 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,16 +16,12 @@ public class Caracteristiques implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false)
     private Boolean ambulant;
 
-    @Column(nullable = false)
     private Boolean domiciliataire;
 
-    @Column(nullable = false)
     private Boolean indicateurDomicileEntrepreneur;
 
-    @Column(nullable = false)
     private Boolean indicateurAdresseEtablissement;
 
     public Integer getId() {

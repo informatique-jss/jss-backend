@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { PROVISION_SCREEN_TYPE_FORMALITE } from 'src/app/libs/Constants';
 import { BillingType } from 'src/app/modules/miscellaneous/model/BillingType';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { ProvisionType } from 'src/app/modules/quotation/model/ProvisionType';
@@ -22,6 +23,7 @@ export class ReferentialProvisionTypeComponent extends GenericReferentialCompone
   }
 
   assignationTypeEmployee = this.constantService.getAssignationTypeEmployee();
+  PROVISION_SCREEN_TYPE_FORMALITE = PROVISION_SCREEN_TYPE_FORMALITE;
 
   mapEntities() {
     if (this.selectedEntity)

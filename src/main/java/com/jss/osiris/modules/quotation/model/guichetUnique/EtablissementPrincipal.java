@@ -4,8 +4,9 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,39 +24,38 @@ public class EtablissementPrincipal implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_description_etablissement", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_description_etablissement")
     DescriptionEtablissement descriptionEtablissement;
 
-    @ManyToOne
-    @JoinColumn(name = "id_domiciliataire", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_domiciliataire")
     Entreprise domiciliataire;
 
-    @ManyToOne
-    @JoinColumn(name = "id_adresse_domiciliataire", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_adresse_domiciliataire")
     AdresseDomicile adresseDomiciliataire;
 
-    @ManyToOne
-    @JoinColumn(name = "id_effectif_salarie", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_effectif_salarie")
     EffectifSalarie effectifSalarie;
 
-    @ManyToOne
-    @JoinColumn(name = "id_adresse", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_adresse")
     AdresseDomicile adresse;
 
-    @OneToMany(mappedBy = "etablissementPrincipal")
+    @OneToMany(mappedBy = "etablissementPrincipal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "etablissementPrincipal" }, allowSetters = true)
     List<Activite> activites;
 
-    @OneToMany(mappedBy = "etablissementPrincipal")
+    @OneToMany(mappedBy = "etablissementPrincipal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "etablissementPrincipal" }, allowSetters = true)
     List<NomsDeDomaine> nomsDeDomaine;
 
-    @ManyToOne
-    @JoinColumn(name = "id_detail_cessation_etablissement", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_detail_cessation_etablissement")
     DetailCessationEtablissement detailCessationEtablissement;
 
-    @Column(nullable = false)
     private LocalDate dateEffetOuvertureEtablissement;
 
     public Integer getId() {

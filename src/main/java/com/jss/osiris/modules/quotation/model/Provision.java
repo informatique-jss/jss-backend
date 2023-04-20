@@ -22,7 +22,6 @@ import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
-import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 
 @Entity
 public class Provision implements IId, IAttachment {
@@ -66,6 +65,7 @@ public class Provision implements IId, IAttachment {
 	private Bodacc bodacc;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
 	@JoinColumn(name = "id_formalite")
 	private Formalite formalite;
 
@@ -74,7 +74,7 @@ public class Provision implements IId, IAttachment {
 	private List<InvoiceItem> invoiceItems;
 
 	@OneToMany(targetEntity = Debour.class, mappedBy = "provision", cascade = CascadeType.ALL)
-	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "provision", "accountingRecords" }, allowSetters = true)
 	private List<Debour> debours;
 
 	@ManyToOne

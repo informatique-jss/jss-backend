@@ -27,8 +27,10 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Status;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.StatusService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -53,6 +55,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     ProvisionService provisionService;
+
+    @Autowired
+    StatusService statusService;
 
     @Override
     public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture) {
@@ -396,5 +401,40 @@ public class NotificationServiceImpl implements NotificationService {
         if (provision.getDomiciliation() != null)
             return provision.getDomiciliation().getDomiciliationStatus().getIsCloseState();
         return false;
+    }
+
+    @Override
+    public void notifyGuichetUniqueFormaliteStatus(Provision provision) throws OsirisException {
+        provision = provisionService.getProvision(provision.getId());
+
+        if (!isProvisionClosed(provision) && provision.getAssoAffaireOrder() != null
+                && provision.getAssoAffaireOrder().getCustomerOrder() != null
+                && !provision.getAssoAffaireOrder().getCustomerOrder().getCustomerOrderStatus().getCode()
+                        .equals(CustomerOrderStatus.OPEN)) {
+
+            if (provision.getAssignedTo() != null) {
+                String details = "";
+                Affaire affaire = provision.getAssoAffaireOrder().getAffaire();
+                if (affaire != null)
+                    details += affaire.getDenomination() != null ? affaire.getDenomination()
+                            : (affaire.getFirstname() + " " + affaire.getLastname());
+                details += " - ";
+                if (provision.getProvisionFamilyType() != null && provision.getProvisionType() != null)
+                    details += provision.getProvisionFamilyType().getLabel() + " - "
+                            + provision.getProvisionType().getLabel();
+                details += " - ";
+
+                Status status = statusService
+                        .getStatus(provision.getFormalite().getFormaliteGuichetUnique().getStatus().getCode());
+                if (status == null)
+                    throw new OsirisException(null, "Guichet unique status not found for code "
+                            + provision.getFormalite().getFormaliteGuichetUnique().getStatus().getCode());
+
+                details += "nouveau statut : " + status.getLabel();
+
+                generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
+                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED, provision, details, null, false);
+            }
+        }
     }
 }

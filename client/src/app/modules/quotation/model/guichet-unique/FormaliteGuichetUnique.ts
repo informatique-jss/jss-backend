@@ -1,16 +1,16 @@
-import { FormaliteStatus } from '../FormaliteStatus';
+import { Cart } from "./Cart";
 import { Content } from "./Content";
 import { DiffusionINSEE } from "./referentials/DiffusionINSEE";
 import { FormeJuridique } from "./referentials/FormeJuridique";
 import { TypeFormalite } from "./referentials/TypeFormalite";
 import { TypePersonne } from "./referentials/TypePersonne";
 
-export interface Formalite {
+export interface FormaliteGuichetUnique {
   id: number;
   formalityDraftId: number;
   companyName: string;
   content: Content;
-  referenceMandataire: number;
+  referenceMandataire: string;
   nomDossier: string;
   signedPlace: string;
   typeFormalite: TypeFormalite;
@@ -27,6 +27,5 @@ export interface Formalite {
   formeJuridique: FormeJuridique;
   optionJqpaNumber: number; // TODO : à mettre à côté de la liste des activités plutôt qu'en page principale / applicable que dans le cas d'une société ou une personne physique dépendant de la chambre des métiers en plus du greffe
   regularisation: boolean;
-  formaliteStatus: FormaliteStatus;
+  carts: Cart[];
 }
-

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,96 +31,96 @@ public class DescriptionPersonne implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_role", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_role")
     Role role;
 
-    @Column(nullable = false)
+    @Column()
     private LocalDate dateEffetRoleDeclarant;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String numeroSecu;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String nom;
 
     @OneToMany(mappedBy = "descriptionPersonne")
     @JsonIgnoreProperties(value = { "descriptionPersonne" }, allowSetters = true)
     List<Prenom> prenoms;
 
-    @ManyToOne
-    @JoinColumn(name = "id_genre", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_genre")
     Genre genre;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String titre;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String nomUsage;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String pseudonyme;
 
-    @Column(nullable = false)
+    @Column()
     private LocalDate dateDeNaissance;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String paysNaissance;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String lieuDeNaissance;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String codePostalNaissance;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String codeInseeGeographique;
 
-    @ManyToOne
-    @JoinColumn(name = "id_code_nationalite", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_code_nationalite")
     CodeNationalite codeNationalite;
 
-    @ManyToOne
-    @JoinColumn(name = "id_situation_matrimoniale", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_situation_matrimoniale")
     SituationMatrimoniale situationMatrimoniale;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String optionRgpd;
 
-    @ManyToOne
-    @JoinColumn(name = "id_qualite_de_non_sedentarite", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_qualite_de_non_sedentarite")
     QualiteDeNonSedentarite qualiteDeNonSedentarite;
 
-    @ManyToOne
-    @JoinColumn(name = "id_statut_vis_a_vis_formalite", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_statut_vis_a_vis_formalite")
     StatutVisAVisFormalite statutVisAVisFormalite;
 
-    @ManyToOne
-    @JoinColumn(name = "id_forme_sociale", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_forme_sociale")
     FormeSociale formeSociale;
 
-    @Column(nullable = false)
+    @Column()
     private Boolean indicateurDeNonSedentarite;
 
-    @Column(nullable = false)
+    @Column()
     private Boolean confirmRnippMismatch;
 
-    @Column(nullable = false)
+    @Column()
     private LocalDate dateEffet15P;
 
-    @Column(nullable = false)
+    @Column()
     private LocalDate dateEffet10P;
 
-    @Column(nullable = false)
+    @Column()
     private LocalDate dateEffet17P;
 
-    @Column(nullable = false)
+    @Column()
     private Boolean is10PTriggered;
 
-    @Column(nullable = false)
+    @Column()
     private Boolean is15PTriggered;
 
-    @Column(nullable = false)
+    @Column()
     private Boolean is17PTriggered;
 
     public Integer getId() {

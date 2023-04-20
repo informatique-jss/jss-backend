@@ -1,145 +1,35 @@
-<form [formGroup]="formaliteForm" *ngIf="formalite">
+<form [formGroup]="formaliteForm" *ngIf="formalite && provision">
   <mat-tab-group animationDuration="0ms" #tabs>
-    <mat-tab label="Formalité">
+    <mat-tab [label]="provision.provisionType.label">
       <div class="form-div">
-        <table class="full-width" dummyTable>
-          <tr dummyTr *ngIf="formalite && formalite.nomDossier">
-            <td dummyTd>
-              <generic-input [maxLength]="255" [(model)]="formalite.nomDossier" label="Nom de dossier"
-                [form]="formaliteForm" propertyName="nomDossier" [isMandatory]="false" [isDisabled]="true"
-                [conditionnalRequired]="true" dummyInput dummyComponent> </generic-input>
+        <table class="full-width">
+          <tr>
+            <td>
+              <autocomplete-competent-authority [(model)]="formalite.competentAuthorityServiceProvider"
+                [form]="formaliteForm" propertyName="competentAuthorityServiceProvider" [isMandatory]="false"
+                [filteredCompetentAuthority]="[competentAuthorityInfogreffe, competentAuthorityInpi]"
+                [isDisabled]="!editMode" label="Fournisseur de service"></autocomplete-competent-authority>
+            </td>
+            <td
+              *ngIf="formalite.competentAuthorityServiceProvider && formalite.competentAuthorityServiceProvider.id == competentAuthorityInpi.id">
+              <autocomplete-guichet-unique-formalite [(model)]="formalite.formaliteGuichetUnique" [form]="formaliteForm"
+                propertyName="formaliteGuichetUnique" [isMandatory]="false" label="Nom du dossier GU"
+                [isDisabled]="!editMode" [provision]="provision"></autocomplete-guichet-unique-formalite>
+            </td>
+            <td
+              *ngIf="formalite.waitedCompetentAuthority && formalite.formaliteStatus && formalite.formaliteStatus.code ==FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY">
+              <autocomplete-competent-authority [(model)]="formalite.waitedCompetentAuthority" [form]="formaliteForm"
+                propertyName="waitedCompetentAuthority" [isMandatory]="false" label="Autorité compétente en attente"
+                [isDisabled]="true"></autocomplete-competent-authority>
             </td>
           </tr>
         </table>
         <table class="full-width">
           <tr>
             <td>
-              <select-type-formalite [(model)]="formalite.typeFormalite" label="Type de formalité"
-                [form]="formaliteForm" propertyName="typeFormalite" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="true"></select-type-formalite>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width" dummyTable>
-          <tr dummyTr>
-            <td dummyTd>
-              <generic-toggle [(model)]="formalite.regularisation" label="Est-une formalité de régularisation ?"
-                [form]="formaliteForm" propertyName="regularisation" [isDisabled]="!editMode" dummyToggle
-                dummyComponent></generic-toggle>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <radio-group-type-personne [(model)]="formalite.typePersonne" label="Type de personne"
-                [form]="formaliteForm" propertyName="typePersonne" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="true">
-              </radio-group-type-personne>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr *ngIf="formalite.typePersonne && formalite.typePersonne.code == typePersonnePersonneMorale.code">
-            <td>
-              <autocomplete-forme-juridique [(model)]="formalite.formeJuridique" label="Forme juridique"
-                [form]="formaliteForm" propertyName="formeJuridique" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="formalite.typePersonne.code == typePersonnePersonneMorale.code">
-              </autocomplete-forme-juridique>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width" dummyTable>
-          <tr dummyTr *ngIf="formalite.typePersonne && formalite.typePersonne.code!=typePersonnePersonnePhysique.code">
-            <td dummyTd>
-              <generic-input [maxLength]="255" [(model)]="formalite.companyName" label="Nom de l'entreprise"
-                [form]="formaliteForm" propertyName="companyName" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="true" dummyInput dummyComponent> </generic-input>
-            </td>
-          </tr>
-        </table>
-        <!--table class="full-width" dummyTable>
-          <tr dummyTr
-            *ngIf="formalite.formeJuridique && formalite.formeJuridique.code == formeJuridiqueEntrepreneurIndividuel.code">
-            <td dummyTd>
-              <generic-toggle [(model)]="formalite.optionEIRL"
-                label="L'entrepreneur souhaite-t-il bénéficier du statut de microentrepreneur ?" [form]="formaliteForm"
-                propertyName="optionEIRL" [isDisabled]="!editMode" dummyToggle dummyComponent></generic-toggle>
-            </td>
-          </tr>
-        </table-->
-        <table class="full-width">
-          <tr>
-            <td>
-              <radio-group-diffusion-insee [(model)]="formalite.diffusionINSEE"
-                label="Diffusion de la formalité à l'INSEE" [form]="formaliteForm" propertyName="diffusionINSEE"
-                [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="formalite.typePersonne && formalite.typePersonne.code==typePersonnePersonnePhysique.code">
-              </radio-group-diffusion-insee>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width" dummyTable>
-          <tr dummyTr>
-            <td dummyTd>
-              <generic-toggle [(model)]="formalite.indicateurEntreeSortieRegistre"
-                label="Nécessite une immatriculation / désimmatriculation au RCS / RM ?" [form]="formaliteForm"
-                propertyName="indicateurEntreeSortieRegistre" [isDisabled]="!editMode" dummyToggle dummyComponent>
-              </generic-toggle>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width" dummyTable>
-          <tr dummyTr>
-            <td dummyTd>
-              <generic-textarea [(model)]="formalite.observationSignature"
-                label="Commentaire à la signature de la formalité" [form]="formaliteForm"
-                propertyName="observationSignature" [isMandatory]="false" [isDisabled]="!editMode" dummyInput
-                dummyComponent> </generic-textarea>
-            </td>
-          </tr>
-        </table>
-        <content [formalite]="formalite" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
-          [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision"
-          (provisionChange)="provisionChangeFunction()"></content>
-        <nature-creation [formalite]="formalite" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
-          [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision"
-          (provisionChange)="provisionChangeFunction()"></nature-creation>
-        // TODO move / remove
-        <table class="full-width" dummyTable>
-          <tr dummyTr>
-            <td dummyTd>
-              <generic-input [maxLength]="255" [(model)]="formalite.optionJqpaNumber" label="optionJqpaNumber"
-                [form]="formaliteForm" propertyName="optionJqpaNumber" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="true" type="number" dummyInput dummyComponent> </generic-input>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width" dummyTable>
-          <tr dummyTr>
-            <td dummyTd>
-              <generic-toggle [(model)]="formalite.optionME" label="optionME" [form]="formaliteForm"
-                propertyName="optionME" [isDisabled]="!editMode" dummyToggle dummyComponent></generic-toggle>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width" dummyTable>
-          <tr dummyTr *ngIf="formalite && formalite.id">
-            <td dummyTd>
-              <generic-toggle [(model)]="formalite.hasRnippBeenCalled" label="A été vérifié auprès du RNIPP ?"
-                [form]="formaliteForm" propertyName="hasRnippBeenCalled" [isDisabled]="true" dummyToggle dummyComponent>
-              </generic-toggle>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width" dummyTable>
-          <tr dummyTr>
-            <td dummyTd>
-              <generic-toggle [(model)]="formalite.indicateurNouvelleEntreprise"
-                label="Création d'une société homonyme ?"
-                hint="A activer lorsque la création est en erreur pour cause de doublon détecté" [form]="formaliteForm"
-                propertyName="indicateurNouvelleEntreprise" [isDisabled]="!editMode" dummyToggle dummyComponent>
-              </generic-toggle>
+              <generic-textarea [(model)]="formalite.observations" label="Observations" [form]="formaliteForm"
+                propertyName="observations" [isMandatory]="false" [isDisabled]="!editMode"
+                [numberOfLines]="10"></generic-textarea>
             </td>
           </tr>
         </table>
@@ -153,7 +43,7 @@
       <add-debour [editMode]="editMode" [(provision)]="provision" [customerOrder]="quotation">
       </add-debour>
     </mat-tab>
-    <mat-tab label="Documents" *ngIf="formalite && formalite.id && provision">
+    <mat-tab label="Documents" *ngIf="formalite.id && provision ">
       <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>

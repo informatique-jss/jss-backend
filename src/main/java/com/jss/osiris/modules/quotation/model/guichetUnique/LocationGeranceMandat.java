@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,14 +22,13 @@ public class LocationGeranceMandat implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String destinationLocationGeranceMandat;
 
-    @ManyToOne
-    @JoinColumn(name = "id_type_locataire_gerant_mandataire", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_type_locataire_gerant_mandataire")
     TypeLocataireGerantMandataire typeLocataireGerantMandataire;
 
-    @Column(nullable = false)
     private LocalDate dateEffet;
 
     public Integer getId() {

@@ -77,7 +77,7 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
 
     private void auditEntity(Object[] previousState, Object[] currentState, Object entity,
             Serializable id, String[] propertyNames) {
-        if (!entity.getClass().getName().equals(IndexEntity.class.getName())) {
+        if (!entity.getClass().getName().equals(IndexEntity.class.getName()) && id instanceof Integer) {
             for (int i = 0; i < previousState.length; i++) {
                 Object oldField = previousState[i];
                 Object newField = currentState[i];
@@ -151,20 +151,22 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
         synchronized (auditToSave) {
             HashSet<Audit> auditsToDelete = new HashSet<Audit>();
             if (auditToSave != null && auditToSave.size() > 0) {
-                if (!tx.getStatus().equals(TransactionStatus.ACTIVE)
-                        && !tx.getStatus().equals(TransactionStatus.MARKED_ROLLBACK))
-                    tx.begin();
-                try {
-                    for (Audit audit : auditToSave) {
-                        auditsToDelete.add(audit);
-                        auditRepository.save(audit);
+                if (tx != null) {
+                    if (!tx.getStatus().equals(TransactionStatus.ACTIVE)
+                            && !tx.getStatus().equals(TransactionStatus.MARKED_ROLLBACK))
+                        tx.begin();
+                    try {
+                        for (Audit audit : auditToSave) {
+                            auditsToDelete.add(audit);
+                            auditRepository.save(audit);
+                        }
+                    } catch (Exception e) {
+                        tx.rollback();
+                        return;
                     }
-                } catch (Exception e) {
-                    tx.rollback();
-                    return;
+                    auditToSave.removeAll(auditsToDelete);
+                    tx.commit();
                 }
-                auditToSave.removeAll(auditsToDelete);
-                tx.commit();
             }
         }
     }

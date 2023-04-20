@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,5 +74,11 @@ public class DebourServiceImpl implements DebourService {
     public void setDebourAsAssociated(Debour debour) {
         debour.setIsAssociated(true);
         addOrUpdateDebour(debour);
+    }
+
+    @Override
+    public List<Debour> findNonAssociatedDeboursForDateAndAmount(LocalDate date, Float amount) throws OsirisException {
+        return debourRepository.findNonAssociatedDeboursForDateAndAmount(date, amount,
+                constantService.getPaymentTypeCB().getId());
     }
 }

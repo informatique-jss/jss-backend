@@ -12,6 +12,7 @@ import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.invoicing.service.OwncloudGreffeDelegate;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.service.EtablissementPublicsDelegate;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
@@ -24,6 +25,7 @@ import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
+import com.jss.osiris.modules.quotation.service.GuichetUniqueDelegateService;
 import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
@@ -95,6 +97,12 @@ public class OsirisScheduller {
 
 	@Autowired
 	EtablissementPublicsDelegate etablissementPublicsDelegate;
+
+	@Autowired
+	OwncloudGreffeDelegate owncloudGreffeDelegate;
+
+	@Autowired
+	GuichetUniqueDelegateService guichetUniqueDelegateService;
 
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
@@ -216,6 +224,33 @@ public class OsirisScheduller {
 	private void updateCompetentAuthorities() {
 		try {
 			etablissementPublicsDelegate.updateCompetentAuthorities();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.owncloud.greffe.invoice.update}")
+	private void updateOwncloudGreffeInvoices() {
+		try {
+			owncloudGreffeDelegate.grabAllFiles();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
+		}
+	}
+
+	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.opened}")
+	private void refreshAllOpenFormalities() {
+		try {
+			guichetUniqueDelegateService.refreshAllOpenFormalities();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
+		}
+	}
+
+	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.update.last.hour}")
+	private void refreshFormalitiesFromLastHour() {
+		try {
+			guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}

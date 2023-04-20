@@ -9,9 +9,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -22,8 +24,10 @@ import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
+import com.jss.osiris.modules.quotation.model.guichetUnique.CartRate;
 
 @Entity
+@Table(indexes = { @Index(name = "idx_debour_associated", columnList = "isAssociated") })
 public class Debour implements Serializable, IId {
 
 	@Id
@@ -81,6 +85,11 @@ public class Debour implements Serializable, IId {
 	private List<AccountingRecord> accountingRecords;
 
 	private Boolean isAssociated;
+
+	@ManyToOne
+	@JoinColumn(name = "id_cart_rate")
+	@JsonIgnoreProperties(value = { "debours" }, allowSetters = true)
+	private CartRate cartRate;
 
 	public Integer getId() {
 		return id;
@@ -208,6 +217,14 @@ public class Debour implements Serializable, IId {
 
 	public void setInvoicedAmount(Float invoicedAmount) {
 		this.invoicedAmount = invoicedAmount;
+	}
+
+	public CartRate getCartRate() {
+		return cartRate;
+	}
+
+	public void setCartRate(CartRate cartRate) {
+		this.cartRate = cartRate;
 	}
 
 }

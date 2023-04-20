@@ -3,7 +3,9 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,32 +23,32 @@ public class PersonnePhysique implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_identite", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_identite")
     Identite identite;
 
-    @ManyToOne
-    @JoinColumn(name = "id_adresse_entreprise", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_adresse_entreprise")
     AdresseEntreprise adresseEntreprise;
 
-    @ManyToOne
-    @JoinColumn(name = "id_composition", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_composition")
     Composition composition;
 
-    @ManyToOne
-    @JoinColumn(name = "id_etablissement_principal", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_etablissement_principal")
     EtablissementPrincipal etablissementPrincipal;
 
-    @OneToMany(mappedBy = "personnePhysique")
+    @OneToMany(mappedBy = "personnePhysique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "personnePhysique" }, allowSetters = true)
     List<AutresEtablissement> autresEtablissements;
 
-    @ManyToOne
-    @JoinColumn(name = "id_options_fiscales", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_options_fiscales")
     OptionsFiscales optionsFiscales;
 
-    @ManyToOne
-    @JoinColumn(name = "id_detail_cessation_entreprise", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_detail_cessation_entreprise")
     DetailCessationEntreprise detailCessationEntreprise;
 
     public Integer getId() {

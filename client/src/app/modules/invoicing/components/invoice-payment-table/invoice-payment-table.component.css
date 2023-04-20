@@ -10,3 +10,11 @@
 .middle-width {
   min-width: 500px;
 }
+
+.payment-label {
+  white-space: nowrap;
+  max-width: 700px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

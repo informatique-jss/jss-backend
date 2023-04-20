@@ -15,6 +15,7 @@ import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Debour;
 
 public interface AccountingRecordRepository extends CrudRepository<AccountingRecord, Integer> {
 
@@ -191,6 +192,8 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
         List<AccountingRecord> findByTemporaryOperationId(Integer operationId);
 
         List<AccountingRecord> findByOperationId(Integer operationId);
+
+        List<AccountingRecord> findByDebour(Debour debour);
 }
 
 ;

@@ -3,8 +3,10 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,64 +24,64 @@ public class AdresseDomicile implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String roleAdresse;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String pays;
 
-    @ManyToOne
-    @JoinColumn(name = "id_code_pays", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_code_pays")
     CodePays codePays;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String codePostal;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String commune;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String codeInseeCommune;
 
-    @ManyToOne
-    @JoinColumn(name = "id_type_voie", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_type_voie")
     TypeVoie typeVoie;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String voie;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String voieCodifiee;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String numVoie;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String indiceRepetition;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String distributionSpeciale;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String communeAncienne;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String rgpd;
 
-    @Column(nullable = false)
+    @Column()
     private LocalDate datePriseEffetAdresse;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String complementLocalisation;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String communeDeRattachement;
 
-    @ManyToOne
-    @JoinColumn(name = "id_caracteristiques", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_caracteristiques")
     Caracteristiques caracteristiques;
 
-    @Column(nullable = false)
+    @Column()
     private Boolean indicateurValidationBAN;
 
     public Integer getId() {

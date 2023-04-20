@@ -69,7 +69,7 @@ public class Generate {
                                         writer.println("    @Id");
                                         writer.println("    private String code;");
                                         writer.println("");
-                                        writer.println("    @Column(nullable = false, columnDefinition = \"TEXT\")");
+                                        writer.println("    @Column( columnDefinition = \"TEXT\")");
                                         writer.println("    private String label;");
                                         writer.println("");
                                         writer.println("    public String getCode() {");
@@ -724,19 +724,19 @@ public class Generate {
                                                 String field = values[0].trim();
 
                                                 if (type.equals("string")) {
-                                                        newLines.add("@Column(nullable = false, length = 255)    private String "
+                                                        newLines.add("@Column( length = 255)    private String "
                                                                         + field + ";");
                                                 } else if (type.equals("number")) {
-                                                        newLines.add("@Column(nullable = false)    private Integer "
+                                                        newLines.add("    private Integer "
                                                                         + field + ";");
                                                 } else if (type.equals("boolean")) {
-                                                        newLines.add("@Column(nullable = false)    private Boolean "
+                                                        newLines.add("    private Boolean "
                                                                         + field + ";");
                                                 } else if (type.equals("Date")) {
-                                                        newLines.add("@Column(nullable = false)    private LocalDate "
+                                                        newLines.add("    private LocalDate "
                                                                         + field + ";");
                                                 } else {
-                                                        newLines.add("@ManyToOne    @JoinColumn(name = \"id_"
+                                                        newLines.add("@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)    @JoinColumn(name = \"id_"
                                                                         + String.join("_", type.split("(?=\\p{Upper})"))
                                                                                         .toLowerCase()
                                                                         + "\", nullable=false)    " + type + " " + field

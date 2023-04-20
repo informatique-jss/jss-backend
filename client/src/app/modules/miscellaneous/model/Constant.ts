@@ -102,6 +102,7 @@ export interface Constant {
   billingTypeComplexeFile: BillingType;
   billingTypeBilan: BillingType;
   billingTypeInfogreffeDebour: BillingType;
+  billingTypeEmolumentsDeGreffeDebour: BillingType;
   billingTypeDocumentScanning: BillingType;
   billingTypeEmergency: BillingType;
   billingTypeCentralPayFees: BillingType;
@@ -146,6 +147,7 @@ export interface Constant {
   transfertFundsTypeMoral: TransfertFundsType;
   transfertFundsTypeBail: TransfertFundsType;
   competentAuthorityInfogreffe: CompetentAuthority;
+  competentAuthorityInpi: CompetentAuthority;
   competentAuthorityTypeRcs: CompetentAuthorityType;
   competentAuthorityTypeCfp: CompetentAuthorityType;
   competentAuthorityTypeCci: CompetentAuthorityType;

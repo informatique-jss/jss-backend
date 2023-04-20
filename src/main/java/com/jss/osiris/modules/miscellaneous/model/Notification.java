@@ -38,6 +38,7 @@ public class Notification implements Serializable, IId {
   public static String INVOICE_REMINDER_PAYMENT = "INVOICE_REMINDER_PAYMENT";
 
   public static String PROVISION_ADD_ATTACHMENT = "PROVISION_ADD_ATTACHMENT";
+  public static String PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED = "PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED";
 
   @Id
   @SequenceGenerator(name = "notification_sequence", sequenceName = "notification_sequence", allocationSize = 1)

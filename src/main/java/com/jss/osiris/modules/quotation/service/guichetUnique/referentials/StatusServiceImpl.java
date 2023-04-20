@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.quotation.service.guichetUnique.referentials;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,5 +21,13 @@ public class StatusServiceImpl implements StatusService {
     @Cacheable(value = "statusList", key = "#root.methodName")
     public List<Status> getStatus() {
         return IterableUtils.toList(StatusRepository.findAll());
+    }
+
+    @Override
+    public Status getStatus(String code) {
+        Optional<Status> status = StatusRepository.findById(code);
+        if (status.isPresent())
+            return status.get();
+        return null;
     }
 }

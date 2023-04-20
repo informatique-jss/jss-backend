@@ -6,4 +6,6 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Status;
 
 public interface StatusService {
     public List<Status> getStatus();
+
+    public Status getStatus(String code);
 }

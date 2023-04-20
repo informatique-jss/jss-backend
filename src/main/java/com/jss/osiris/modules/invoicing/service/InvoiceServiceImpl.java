@@ -332,7 +332,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     public List<InvoiceSearchResult> getInvoiceForCustomerOrder(Integer customerOrderId) throws OsirisException {
         return invoiceRepository.findInvoice(Arrays.asList(0), LocalDateTime.now().minusYears(100),
                 LocalDateTime.now().plusYears(100), null, null, false, constantService.getInvoiceStatusPayed().getId(),
-                0, customerOrderId, Arrays.asList(0), 0);
+                0, customerOrderId, Arrays.asList(0), 0, constantService.getDocumentTypeBilling().getId());
     }
 
     @Override
@@ -340,7 +340,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             throws OsirisException {
         return invoiceRepository.findInvoice(Arrays.asList(0), LocalDateTime.now().minusYears(100),
                 LocalDateTime.now().plusYears(100), null, null, false, constantService.getInvoiceStatusPayed().getId(),
-                0, 0, Arrays.asList(0), customerOrderId);
+                0, 0, Arrays.asList(0), customerOrderId, constantService.getDocumentTypeBilling().getId());
     }
 
     @Override
@@ -391,7 +391,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 invoiceSearch.getEndDate().withHour(23).withMinute(59), invoiceSearch.getMinAmount(),
                 invoiceSearch.getMaxAmount(), invoiceSearch.getShowToRecover(),
                 constantService.getInvoiceStatusPayed().getId(), invoiceSearch.getInvoiceId(),
-                invoiceSearch.getCustomerOrderId(), customerOrderId, 0);
+                invoiceSearch.getCustomerOrderId(), customerOrderId, 0,
+                constantService.getDocumentTypeBilling().getId());
     }
 
     @Override
@@ -405,8 +406,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws OsirisException, OsirisClientMessageException {
-        if (!hasAtLeastOneInvoiceItemNotNull(invoice)
-                && (invoice.getCompetentAuthority() == null || invoice.getCustomerOrderForInboundInvoice() == null))
+        if ((invoice.getCompetentAuthority() == null || invoice.getCustomerOrderForInboundInvoice() == null)
+                && !hasAtLeastOneInvoiceItemNotNull(invoice))
             throw new OsirisException(null, "No invoice item found on manual invoice");
 
         boolean isNewInvoice = invoice.getId() == null;
@@ -570,6 +571,20 @@ public class InvoiceServiceImpl implements InvoiceService {
                 }
         }
 
+        // Associate accounting record of debours with invoice
+        if (invoice.getIsInvoiceFromProvider()
+                && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId())) {
+            if (usedDebours.size() > 0)
+                for (Debour debour : usedDebours) {
+                    List<AccountingRecord> accountingRecords = accountingRecordService
+                            .getAccountingRecordForDebour(debour);
+                    for (AccountingRecord accountingRecord : accountingRecords) {
+                        accountingRecord.setInvoice(invoice);
+                        accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
+                    }
+                }
+        }
+
         addOrUpdateInvoice(invoice);
 
         if (isNewInvoice && debourPayments.size() > 0) {
@@ -581,6 +596,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                             new MutableBoolean(false), null);
             }
         }
+
+        accountingRecordService.checkInvoiceForLettrage(invoice);
         return invoice;
     }
 

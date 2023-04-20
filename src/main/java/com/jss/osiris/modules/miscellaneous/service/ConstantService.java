@@ -180,6 +180,8 @@ public interface ConstantService {
 
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException;
 
+    public BillingType getBillingTypeEmolumentsDeGreffeDebour() throws OsirisException;
+
     public BillingType getBillingTypeDocumentScanning() throws OsirisException;
 
     public BillingType getBillingTypeEmergency() throws OsirisException;
@@ -265,6 +267,8 @@ public interface ConstantService {
     public TransfertFundsType getTransfertFundsTypeBail() throws OsirisException;
 
     public CompetentAuthority getCompetentAuthorityInfogreffe() throws OsirisException;
+
+    public CompetentAuthority getCompetentAuthorityInpi() throws OsirisException;
 
     public CompetentAuthorityType getCompetentAuthorityTypeRcs() throws OsirisException;
 

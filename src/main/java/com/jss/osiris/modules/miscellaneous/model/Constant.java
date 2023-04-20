@@ -314,6 +314,10 @@ public class Constant implements Serializable, IId {
 	private BillingType billingTypeInfogreffeDebour;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_emoluments_de_greffe_debour")
+	private BillingType billingTypeEmolumentsDeGreffeDebour;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_document_scanning")
 	private BillingType billingTypeDocumentScanning;
 
@@ -459,6 +463,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_competent_authority_infogreffe")
 	private CompetentAuthority competentAuthorityInfogreffe;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_competent_authority_inpi")
+	private CompetentAuthority competentAuthorityInpi;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_competent_authority_type_rcs")
@@ -1966,6 +1974,22 @@ public class Constant implements Serializable, IId {
 
 	public void setAttachmentTypeDepositReceipt(AttachmentType attachmentTypeDepositReceipt) {
 		this.attachmentTypeDepositReceipt = attachmentTypeDepositReceipt;
+	}
+
+	public BillingType getBillingTypeEmolumentsDeGreffeDebour() {
+		return billingTypeEmolumentsDeGreffeDebour;
+	}
+
+	public void setBillingTypeEmolumentsDeGreffeDebour(BillingType billingTypeEmolumentsDeGreffeDebour) {
+		this.billingTypeEmolumentsDeGreffeDebour = billingTypeEmolumentsDeGreffeDebour;
+	}
+
+	public CompetentAuthority getCompetentAuthorityInpi() {
+		return competentAuthorityInpi;
+	}
+
+	public void setCompetentAuthorityInpi(CompetentAuthority competentAuthorityInpi) {
+		this.competentAuthorityInpi = competentAuthorityInpi;
 	}
 
 }

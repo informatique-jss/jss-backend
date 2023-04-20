@@ -157,6 +157,7 @@ public class QuotationServiceImpl implements QuotationService {
     @Transactional(rollbackFor = Exception.class)
     public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        quotation = getQuotation(quotation.getId());
         QuotationStatus targetQuotationStatus = quotationStatusService.getQuotationStatusByCode(targetStatusCode);
         if (targetQuotationStatus == null)
             throw new OsirisException(null, "Quotation status not found for code " + targetStatusCode);

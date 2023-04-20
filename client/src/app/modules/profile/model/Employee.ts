@@ -8,4 +8,7 @@ export interface Employee {
   mail: string;
   isActive: boolean;
   backups: Employee[];
+  adPath: string;
+  inpiLogin: string;
+  inpiPassword: string;
 }

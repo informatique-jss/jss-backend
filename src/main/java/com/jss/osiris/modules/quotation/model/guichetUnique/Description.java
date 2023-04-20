@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,141 +26,106 @@ public class Description implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String objet;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String sigle;
 
-    @Column(nullable = false)
     private Integer duree;
 
-    @Column(nullable = false)
     private LocalDate dateClotureExerciceSocial;
 
-    @Column(nullable = false)
     private LocalDate datePremiereCloture;
 
-    @Column(nullable = false)
     private Boolean ess;
 
-    @Column(nullable = false)
     private Boolean societeMission;
 
-    @Column(nullable = false)
     private Boolean capitalVariable;
 
-    @Column(nullable = false)
     private Integer montantCapital;
 
-    @Column(nullable = false)
     private Integer capitalMinimum;
 
-    @ManyToOne
-    @JoinColumn(name = "id_devise_capital", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_devise_capital")
     DeviseCapital deviseCapital;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String statutLegalParticulier;
 
-    @Column(nullable = false)
     private LocalDate dateAgrementGAEC;
 
-    @ManyToOne
-    @JoinColumn(name = "id_type_de_statuts", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_type_de_statuts")
     TypeDeStatuts typeDeStatuts;
 
-    @Column(nullable = false)
     private Boolean indicateurOrigineFusionScission;
 
-    @Column(nullable = false)
     private Boolean indicateurEtablissementsEtrangers;
 
-    @Column(nullable = false)
     private Boolean indicateurAssocieUnique;
 
-    @Column(nullable = false)
     private Boolean depotDemandeAcre;
 
-    @Column(nullable = false)
     private Boolean indicateurAssocieUniqueDirigeant;
 
-    @ManyToOne
-    @JoinColumn(name = "id_nature_gerance", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_nature_gerance")
     NatureGerance natureGerance;
 
-    @ManyToOne
-    @JoinColumn(name = "id_nature_des_activite", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_nature_des_activite")
     NatureDesActivite natureDesActivite;
 
-    @Column(nullable = false)
     private Boolean operationEntrainantUneAugmentationDeCapital;
 
-    @Column(nullable = false)
     private Boolean formeCooperative;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String numeroAgrementGAEC;
 
-    @Column(nullable = false)
     private Boolean capitalDisponible;
 
-    @Column(nullable = false)
     private Boolean prorogationDuree;
 
-    @Column(nullable = false)
     private Boolean continuationAvecActifNetInferieurMoitieCapital;
 
-    @Column(nullable = false)
     private Boolean reconstitutionCapitauxPropres;
 
-    @ManyToOne
-    @JoinColumn(name = "id_origine_fusion_scission", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_origine_fusion_scission")
     OrigineFusionScission origineFusionScission;
 
-    @Column(nullable = false)
     private LocalDate dateEffet;
 
-    @Column(nullable = false)
     private Boolean is12MTriggered;
 
-    @Column(nullable = false)
     private Boolean is10MTriggered;
 
-    @Column(nullable = false)
     private Boolean is16MTriggered;
 
-    @Column(nullable = false)
     private Boolean is18MTriggered;
 
-    @Column(nullable = false)
     private Boolean is15MTriggered;
 
-    @Column(nullable = false)
     private Boolean is17MTriggered;
 
-    @Column(nullable = false)
     private Boolean is19MTriggered;
 
-    @Column(nullable = false)
     private LocalDate dateEffet12M;
 
-    @Column(nullable = false)
     private LocalDate dateEffet10M;
 
-    @Column(nullable = false)
     private LocalDate dateEffet16M;
 
-    @Column(nullable = false)
     private LocalDate dateEffet18M;
 
-    @Column(nullable = false)
     private LocalDate dateEffet15M;
 
-    @Column(nullable = false)
     private LocalDate dateEffet17M;
 
-    @Column(nullable = false)
     private LocalDate dateEffet19M;
 
     public Integer getId() {

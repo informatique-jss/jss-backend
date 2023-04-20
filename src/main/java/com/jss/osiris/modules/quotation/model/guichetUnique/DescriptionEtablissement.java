@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,79 +24,69 @@ public class DescriptionEtablissement implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_role_pour_entreprise", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_role_pour_entreprise")
     RolePourEntreprise rolePourEntreprise;
 
-    @Column(nullable = false)
     private Boolean indicateurEtranger;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String pays;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String siret;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String autreIdentifiantEtranger;
 
-    @Column(nullable = false)
     private Boolean indicateurDomiciliataire;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String identifiantTemporaire;
 
-    @Column(nullable = false)
     private Boolean activiteNonSedentaire;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String enseigne;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String nomCommercial;
 
-    @Column(nullable = false)
     private Boolean autonomieJuridique;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String greffeImmatriculation;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String lieuImmatriculation;
 
-    @Column(nullable = false)
     private LocalDate dateFinToutEffectifSalarie;
 
-    @ManyToOne
-    @JoinColumn(name = "id_destination_etablissement", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_destination_etablissement")
     DestinationEtablissement destinationEtablissement;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String autreDestination;
 
-    @Column(nullable = false)
     private Boolean sansActiviteAutreActiviteSiege;
 
-    @Column(nullable = false)
     private Boolean indicateurEtablissementPrincipal;
 
-    @ManyToOne
-    @JoinColumn(name = "id_statut_pour_formalite", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_statut_pour_formalite")
     StatutPourFormalite statutPourFormalite;
 
-    @Column(nullable = false)
     private LocalDate dateEffet;
 
-    @Column(nullable = false)
     private LocalDate dateEffetFermeture;
 
-    @Column(nullable = false)
     private LocalDate dateEffetTransfert;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String nomEtablissement;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String statutOuvertFerme;
 
     public Integer getId() {

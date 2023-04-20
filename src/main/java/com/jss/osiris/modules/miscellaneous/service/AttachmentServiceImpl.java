@@ -41,7 +41,6 @@ import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
-import com.jss.osiris.modules.quotation.service.SimpleProvisionService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
@@ -85,9 +84,6 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     CustomerOrderService customerOrderService;
-
-    @Autowired
-    SimpleProvisionService simpleProvisionService;
 
     @Autowired
     PaymentService paymentService;

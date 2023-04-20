@@ -169,6 +169,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return null;
   }
 
+  @Override
+  public List<AccountingRecord> getAccountingRecordForDebour(Debour debour) {
+    return accountingRecordRepository.findByDebour(debour);
+  }
+
   public AccountingRecord addOrUpdateAccountingRecord(
       AccountingRecord accountingRecord) {
     if (accountingRecord.getId() == null
@@ -761,9 +766,19 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       throw new OsirisException(
           null, "No accounting account for charge for billing type n°" + debour.getBillingType().getId());
 
+    AccountingAccount accountingAccountProvider = debour.getCompetentAuthority().getAccountingAccountProvider();
+    AccountingAccount accountingAccountDepositProvider = debour.getCompetentAuthority()
+        .getAccountingAccountDepositProvider();
+
+    // If debour from INPI, accounting account of INPI is used
+    if (debour.getCartRate() != null) {
+      accountingAccountProvider = constantService.getCompetentAuthorityInpi().getAccountingAccountProvider();
+      accountingAccountDepositProvider = constantService.getCompetentAuthorityInpi()
+          .getAccountingAccountDepositProvider();
+    }
+
     generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
-        "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
-        debour.getCompetentAuthority().getAccountingAccountProvider(),
+        "Debour n°" + debour.getId(), null, debour.getDebourAmount(), accountingAccountProvider,
         null, null, customerOrder, bankJournal, null, null, debour, null);
 
     if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
@@ -773,8 +788,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           null, null, customerOrder, bankJournal, null, null, debour, null);
     else
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
-          "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
-          debour.getCompetentAuthority().getAccountingAccountDepositProvider(),
+          "Debour n°" + debour.getId(), debour.getDebourAmount(), null, accountingAccountDepositProvider,
           null, null, customerOrder, bankJournal, null, null, debour, null);
   }
 

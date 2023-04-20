@@ -33,7 +33,9 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_tiers_document", columnList = "id_tiers"),
-		@Index(name = "idx_responsable_document", columnList = "id_responsable") })
+		@Index(name = "idx_responsable_document", columnList = "id_responsable"),
+		@Index(name = "idx_customer_order_document", columnList = "id_customer_order"),
+})
 public class Document implements Serializable, IId {
 
 	@Id
