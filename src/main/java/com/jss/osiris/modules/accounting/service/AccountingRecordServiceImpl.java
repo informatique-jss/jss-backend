@@ -813,30 +813,28 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         if (accountingRecord.getCreditAmount() != null)
           balance -= accountingRecord.getCreditAmount();
       }
-    }
 
-    if (Math.round(Math.abs(balance) * 100f) / 100f <= 0.01) {
+      if (Math.round(Math.abs(balance) * 100f) / 100f <= 0.01) {
 
-      Integer maxLetteringNumber = accountingRecordRepository
-          .findMaxLetteringNumberForMinLetteringDateTime(LocalDateTime.now().with(ChronoField.DAY_OF_YEAR, 1)
-              .with(ChronoField.HOUR_OF_DAY, 0)
-              .with(ChronoField.MINUTE_OF_DAY, 0).with(ChronoField.SECOND_OF_DAY, 0));
+        Integer maxLetteringNumber = accountingRecordRepository
+            .findMaxLetteringNumberForMinLetteringDateTime(LocalDateTime.now().with(ChronoField.DAY_OF_YEAR, 1)
+                .with(ChronoField.HOUR_OF_DAY, 0)
+                .with(ChronoField.MINUTE_OF_DAY, 0).with(ChronoField.SECOND_OF_DAY, 0));
 
-      if (maxLetteringNumber == null)
-        maxLetteringNumber = 0;
-      maxLetteringNumber++;
+        if (maxLetteringNumber == null)
+          maxLetteringNumber = 0;
+        maxLetteringNumber++;
 
-      if (accountingRecords != null)
         for (AccountingRecord accountingRecord : accountingRecords) {
           accountingRecord.setLetteringDateTime(LocalDateTime.now());
           accountingRecord.setLetteringNumber(maxLetteringNumber);
           this.addOrUpdateAccountingRecord(accountingRecord);
         }
 
-      invoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
-      invoiceService.addOrUpdateInvoice(invoice);
+        invoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
+        invoiceService.addOrUpdateInvoice(invoice);
+      }
     }
-
   }
 
   @Override
