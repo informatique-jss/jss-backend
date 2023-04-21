@@ -285,6 +285,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             formalite.getFormaliteGuichetUnique().getId(), provision.getAssignedTo()));
 
                 if (formalite.getFormaliteStatus().getIsCloseState()
+                        && formalite.getCompetentAuthorityServiceProvider() != null
                         && formalite.getCompetentAuthorityServiceProvider().getId()
                                 .equals(constantService.getCompetentAuthorityInpi().getId())
                         && formalite.getFormaliteGuichetUnique() == null)
