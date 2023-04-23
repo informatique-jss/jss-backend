@@ -1064,6 +1064,18 @@ public class MailHelper {
             ctx.setVariable("externalReference", billingDocument.getExternalReference());
 
         ctx.setVariable("customerOrder", customerOrder);
+
+        Tiers invoiceTiers = null;
+        if (customerOrder.getResponsable() != null)
+            invoiceTiers = customerOrder.getResponsable().getTiers();
+        if (customerOrder.getTiers() != null)
+            invoiceTiers = customerOrder.getTiers();
+
+        ctx.setVariable("tiersReference", null);
+        if (invoiceTiers != null)
+            ctx.setVariable("tiersReference", invoiceTiers.getId()
+                    + (invoiceTiers.getIdAs400() != null ? ("/" + invoiceTiers.getIdAs400()) : ""));
+
         ctx.setVariable("quotation",
                 customerOrder.getQuotations() != null && customerOrder.getQuotations().size() > 0
                         ? customerOrder.getQuotations().get(0)
