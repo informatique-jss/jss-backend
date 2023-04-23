@@ -18,6 +18,7 @@ export interface QuotationSearchResult {
   bodaccNbr: number;
   domiciliationNbr: number;
   simpleProvisionNbr: number;
+  lastStatusUpdate: Date;
 }
 
 
