@@ -12,9 +12,9 @@
             </td>
             <td
               *ngIf="formalite.competentAuthorityServiceProvider && formalite.competentAuthorityServiceProvider.id == competentAuthorityInpi.id">
-              <autocomplete-guichet-unique-formalite [(model)]="formalite.formaliteGuichetUnique" [form]="formaliteForm"
+              <chips-formalite-guichet-unique [(model)]="formalite.formalitesGuichetUnique" [form]="formaliteForm"
                 propertyName="formaliteGuichetUnique" [isMandatory]="false" label="Nom du dossier GU"
-                [isDisabled]="!editMode" [provision]="provision"></autocomplete-guichet-unique-formalite>
+                [isDisabled]="!editMode" [provision]="provision"></chips-formalite-guichet-unique>
             </td>
             <td
               *ngIf="formalite.waitedCompetentAuthority && formalite.formaliteStatus && formalite.formaliteStatus.code ==FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY">

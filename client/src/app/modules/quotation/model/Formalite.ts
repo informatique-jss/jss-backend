@@ -8,6 +8,6 @@ export interface Formalite {
   waitedCompetentAuthority: CompetentAuthority;
   formaliteStatus: FormaliteStatus;
   competentAuthorityServiceProvider: CompetentAuthority;
-  formaliteGuichetUnique: FormaliteGuichetUnique;
+  formalitesGuichetUnique: FormaliteGuichetUnique[];
 }
 

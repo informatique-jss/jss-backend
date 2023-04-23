@@ -71,6 +71,7 @@ import { ChipsCityComponent } from '../forms/chips-city/chips-city.component';
 import { ChipsCompetitorComponent } from '../forms/chips-competitor/chips-competitor.component';
 import { ChipsConfrereComponent } from '../forms/chips-confrere/chips-confrere.component';
 import { ChipsEmployeeComponent } from '../forms/chips-employee/chips-employee.component';
+import { ChipsFormaliteGuichetUniqueComponent } from '../forms/chips-formalite-guichet-unique/chips-formalite-guichet-unique.component';
 import { ChipsMailComponent } from '../forms/chips-mail/chips-mail.component';
 import { ChipsPaymentTypeComponent } from '../forms/chips-payment-type/chips-payment-type.component';
 import { ChipsPhoneComponent } from '../forms/chips-phone/chips-phone.component';
@@ -496,6 +497,7 @@ const routes: Routes = [
     AutocompleteGreffeInvoiceComponent,
     AutocompleteGuichetUniqueFormaliteComponent,
     AutocompleteInfogreffeInvoiceComponent,
+    ChipsFormaliteGuichetUniqueComponent,
   ],
   exports: [
     HistoryComponent,
@@ -710,6 +712,7 @@ const routes: Routes = [
     AutocompleteGreffeInvoiceComponent,
     AutocompleteGuichetUniqueFormaliteComponent,
     AutocompleteInfogreffeInvoiceComponent,
+    ChipsFormaliteGuichetUniqueComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
   ]
