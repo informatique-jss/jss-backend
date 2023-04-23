@@ -53,6 +53,7 @@ import { AutocompleteDepartmentComponent } from '../forms/autocomplete-departmen
 import { AutocompleteEmployeeComponent } from '../forms/autocomplete-employee/autocomplete-employee.component';
 import { AutocompleteGuichetUniqueFormaliteComponent } from '../forms/autocomplete-formalite-guichet-unique/autocomplete-formalite-guichet-unique.component';
 import { AutocompleteGreffeInvoiceComponent } from '../forms/autocomplete-greffe-invoice/autocomplete-greffe-invoice';
+import { AutocompleteInfogreffeInvoiceComponent } from '../forms/autocomplete-infogreffe-invoice/autocomplete-infogreffe-invoice';
 import { AutocompleteLegalFormComponent } from '../forms/autocomplete-legal-form/autocomplete-legal-form.component';
 import { AutocompletePaymentComponent } from '../forms/autocomplete-payment/autocomplete-payment.component';
 import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-code/autocomplete-postal-code.component';
@@ -494,6 +495,7 @@ const routes: Routes = [
     AutocompleteTypeVoieComponent,
     AutocompleteGreffeInvoiceComponent,
     AutocompleteGuichetUniqueFormaliteComponent,
+    AutocompleteInfogreffeInvoiceComponent,
   ],
   exports: [
     HistoryComponent,
@@ -707,6 +709,7 @@ const routes: Routes = [
     GenericDatetimePickerComponent,
     AutocompleteGreffeInvoiceComponent,
     AutocompleteGuichetUniqueFormaliteComponent,
+    AutocompleteInfogreffeInvoiceComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
   ]

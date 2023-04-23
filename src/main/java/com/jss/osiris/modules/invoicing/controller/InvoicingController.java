@@ -33,6 +33,7 @@ import com.jss.osiris.modules.invoicing.model.DebourSearchResult;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearchResult;
+import com.jss.osiris.modules.invoicing.model.InfogreffeInvoice;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
@@ -48,6 +49,7 @@ import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.invoicing.model.RefundSearch;
 import com.jss.osiris.modules.invoicing.model.RefundSearchResult;
 import com.jss.osiris.modules.invoicing.service.DepositService;
+import com.jss.osiris.modules.invoicing.service.InfogreffeInvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceStatusService;
@@ -135,6 +137,47 @@ public class InvoicingController {
 
     @Value("${invoicing.payment.limit.refund.euros}")
     private Integer payementLimitRefundInEuros;
+
+    @Autowired
+    InfogreffeInvoiceService infogreffeInvoiceService;
+
+    @GetMapping(inputEntryPoint + "/infogreffe-invoices")
+    public ResponseEntity<List<InfogreffeInvoice>> getInfogreffeInvoices() {
+        return new ResponseEntity<List<InfogreffeInvoice>>(infogreffeInvoiceService.getInfogreffeInvoices(),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/infogreffe-invoices/search")
+    public ResponseEntity<List<InfogreffeInvoice>> getInfogreffeInvoicesByCustomerReference(
+            @RequestParam String customerReference) {
+        return new ResponseEntity<List<InfogreffeInvoice>>(
+                infogreffeInvoiceService.getInfogreffeInvoicesByCustomerReference(customerReference),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/infogreffe-invoice/import")
+    public ResponseEntity<Boolean> importInfogreffeInvoices(@RequestBody String csv)
+            throws OsirisException, OsirisClientMessageException {
+        return new ResponseEntity<Boolean>(infogreffeInvoiceService.importInfogreffeInvoices(csv),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/infogreffe-invoice/create")
+    public ResponseEntity<Invoice> createInvoiceFromInfogreffeInvoice(
+            @RequestParam Integer provisionId, @RequestParam Integer infogreffeInvoiceId)
+            throws OsirisValidationException, OsirisClientMessageException, OsirisException {
+        Provision provision = provisionService.getProvision(provisionId);
+        if (provision == null)
+            throw new OsirisValidationException("provisionId");
+
+        InfogreffeInvoice greffeInvoice = infogreffeInvoiceService.getInfogreffeInvoice(infogreffeInvoiceId);
+        if (greffeInvoice == null)
+            throw new OsirisValidationException("infogreffeInvoiceId");
+
+        return new ResponseEntity<Invoice>(
+                infogreffeInvoiceService.generateInvoiceFromProvisionAndGreffeInvoice(greffeInvoice, provision),
+                HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/payment-ways")
     public ResponseEntity<List<PaymentWay>> getPaymentWays() {
