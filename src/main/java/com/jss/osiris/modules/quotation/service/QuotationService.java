@@ -34,7 +34,7 @@ public interface QuotationService {
                         String subject)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public Boolean validateCardPaymentLinkForQuotationDeposit(Quotation quotation)
+        public Boolean validateCardPaymentLinkForQuotationDeposit(Quotation quotation, String paymentRequestId)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void sendRemindersForQuotation()

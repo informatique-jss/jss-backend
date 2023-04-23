@@ -150,8 +150,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonIgnore // For client-side performance purpose
 	private List<AccountingRecord> accountingRecords;
 
-	private String centralPayPaymentRequestId;
-
 	private Boolean isCreatedFromWebSite;
 
 	private LocalDateTime firstReminderDateTime;
@@ -316,14 +314,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setAccountingRecords(List<AccountingRecord> accountingRecords) {
 		this.accountingRecords = accountingRecords;
-	}
-
-	public String getCentralPayPaymentRequestId() {
-		return centralPayPaymentRequestId;
-	}
-
-	public void setCentralPayPaymentRequestId(String centralPayPaymentRequestId) {
-		this.centralPayPaymentRequestId = centralPayPaymentRequestId;
 	}
 
 	public Boolean getIsCreatedFromWebSite() {

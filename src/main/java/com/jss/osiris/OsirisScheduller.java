@@ -21,6 +21,7 @@ import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.quotation.service.AssignationTypeService;
 import com.jss.osiris.modules.quotation.service.BodaccStatusService;
+import com.jss.osiris.modules.quotation.service.CentralPayPaymentRequestService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
@@ -103,6 +104,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	GuichetUniqueDelegateService guichetUniqueDelegateService;
+
+	@Autowired
+	CentralPayPaymentRequestService centralPayPaymentRequestService;
 
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
@@ -251,6 +255,15 @@ public class OsirisScheduller {
 	private void refreshFormalitiesFromLastHour() {
 		try {
 			guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
+		}
+	}
+
+	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.central.pay.payment.request.validation.check}")
+	private void checkAllCentralPayPaymentRequests() {
+		try {
+			centralPayPaymentRequestService.checkAllPaymentRequests();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}

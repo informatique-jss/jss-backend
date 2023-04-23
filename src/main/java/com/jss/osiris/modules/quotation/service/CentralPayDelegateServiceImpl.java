@@ -140,7 +140,8 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
         map.add("paymentMethod[]", "TRANSACTION");
         map.add("currency", "EUR");
-        map.add("endUserLanguage", "FRA");
+        map.add("endUserLanguage", "fr");
+        map.add("browserAcceptLanguage", "fr-FR");
         map.add("totalAmount", finalAmount + "");
         map.add("breakdown[]", "{amount:" + finalAmount + ", email:" + mail + "}");
         map.add("merchantPaymentRequestId", entityId);

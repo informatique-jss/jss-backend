@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,8 +87,8 @@ public class QuotationServiceImpl implements QuotationService {
     @Autowired
     PricingHelper pricingHelper;
 
-    @Value("${payment.cb.redirect.quotation.deposit.entry.point}")
-    private String paymentCbRedirectDepositQuotation;
+    @Autowired
+    CentralPayPaymentRequestService centralPayPaymentRequestService;
 
     @Override
     public Quotation getQuotation(Integer id) {
@@ -291,17 +290,18 @@ public class QuotationServiceImpl implements QuotationService {
             else
                 return "ok";
 
-        if (quotation.getCentralPayPaymentRequestId() != null) {
+        com.jss.osiris.modules.quotation.model.CentralPayPaymentRequest request = centralPayPaymentRequestService
+                .getCentralPayPaymentRequestByQuotation(quotation);
+        if (request != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
-                    .getPaymentRequest(quotation.getCentralPayPaymentRequestId());
+                    .getPaymentRequest(request.getPaymentRequestId());
 
             if (centralPayPaymentRequest != null) {
                 if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.ACTIVE))
-                    centralPayDelegateService.cancelPaymentRequest(quotation.getCentralPayPaymentRequestId());
+                    centralPayDelegateService.cancelPaymentRequest(request.getPaymentRequestId());
 
                 if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
                         && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)) {
-                    unlockQuotationFromDeposit(quotation, centralPayPaymentRequest);
                     return "ok";
                 }
             }
@@ -314,23 +314,21 @@ public class QuotationServiceImpl implements QuotationService {
                     remainingToPay, mail,
                     quotation.getId() + "", subject);
 
-            quotation.setCentralPayPaymentRequestId(paymentRequest.getPaymentRequestId());
-            addOrUpdateQuotation(quotation);
-            return paymentRequest.getBreakdowns().get(0).getEndpoint()
-                    + "?urlRedirect=" + paymentCbRedirectDepositQuotation + "?quotationId=" + quotation.getId()
-                    + "&delay=0";
+            centralPayPaymentRequestService.declareNewCentralPayPaymentRequest(paymentRequest.getPaymentRequestId(),
+                    null, quotation, false);
+            return paymentRequest.getBreakdowns().get(0).getEndpoint();
         }
         return "ok";
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean validateCardPaymentLinkForQuotationDeposit(Quotation quotation)
+    public Boolean validateCardPaymentLinkForQuotationDeposit(Quotation quotation, String paymentRequestId)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         quotation = getQuotation(quotation.getId());
-        if (quotation.getCentralPayPaymentRequestId() != null) {
+        if (paymentRequestId != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
-                    .getPaymentRequest(quotation.getCentralPayPaymentRequestId());
+                    .getPaymentRequest(paymentRequestId);
 
             if (centralPayPaymentRequest != null) {
                 if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
@@ -340,11 +338,12 @@ public class QuotationServiceImpl implements QuotationService {
                             .equals(QuotationStatus.SENT_TO_CUSTOMER)) {
                         unlockQuotationFromDeposit(quotation, centralPayPaymentRequest);
                     }
-                    return true;
                 }
+                return centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
+                        || centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CANCELED);
             }
         }
-        return false;
+        return true;
     }
 
     private Quotation unlockQuotationFromDeposit(Quotation quotation, CentralPayPaymentRequest centralPayPaymentRequest)
@@ -354,8 +353,6 @@ public class QuotationServiceImpl implements QuotationService {
             // Generate customer order
             quotation = addOrUpdateQuotationStatus(quotation, QuotationStatus.VALIDATED_BY_CUSTOMER);
             notificationService.notifyQuotationValidatedByCustomer(quotation, false);
-            quotation.setCentralPayPaymentRequestId(null);
-            addOrUpdateQuotation(quotation);
             customerOrderService.generateDepositOnCustomerOrderForCbPayment(quotation.getCustomerOrders().get(0),
                     centralPayPaymentRequest);
         }

@@ -164,14 +164,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     DirectDebitTransfertService debitTransfertService;
 
-    @Value("${payment.cb.redirect.deposit.entry.point}")
-    private String paymentCbRedirectDeposit;
-
-    @Value("${payment.cb.redirect.invoice.entry.point}")
-    private String paymentCbRedirectInvoice;
-
     @Autowired
     QuotationValidationHelper quotationValidationHelper;
+
+    @Autowired
+    CentralPayPaymentRequestService centralPayPaymentRequestService;
 
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
@@ -826,7 +823,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public String getCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder, String mail, String subject)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         customerOrder = getCustomerOrder(customerOrder.getId());
-        return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject, paymentCbRedirectDeposit);
+        return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject);
     }
 
     @Override
@@ -834,27 +831,28 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         customerOrder = getCustomerOrder(customerOrder.getId());
-        return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject, paymentCbRedirectInvoice);
+        return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject);
     }
 
-    private String getCardPaymentLinkForCustomerOrderPayment(CustomerOrder customerOrder, String mail, String subject,
-            String redirectEntrypoint)
+    private String getCardPaymentLinkForCustomerOrderPayment(CustomerOrder customerOrder, String mail, String subject)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED))
             throw new OsirisException(null, "Impossible to pay an cancelled customer order n°" + customerOrder.getId());
 
-        if (customerOrder.getCentralPayPaymentRequestId() != null) {
+        com.jss.osiris.modules.quotation.model.CentralPayPaymentRequest request = centralPayPaymentRequestService
+                .getCentralPayPaymentRequestByCustomerOrder(customerOrder);
+
+        if (request != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
-                    .getPaymentRequest(customerOrder.getCentralPayPaymentRequestId());
+                    .getPaymentRequest(request.getPaymentRequestId());
 
             if (centralPayPaymentRequest != null) {
                 if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.ACTIVE))
-                    centralPayDelegateService.cancelPaymentRequest(customerOrder.getCentralPayPaymentRequestId());
+                    centralPayDelegateService.cancelPaymentRequest(request.getPaymentRequestId());
 
                 if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
                         && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)) {
-                    validateCardPaymentLinkForCustomerOrder(customerOrder);
                     return "ok";
                 }
             }
@@ -879,22 +877,23 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     remainingToPay, mail,
                     customerOrder.getId() + "", subject);
 
-            customerOrder.setCentralPayPaymentRequestId(paymentRequest.getPaymentRequestId());
-            addOrUpdateCustomerOrder(customerOrder, false, true);
-            return paymentRequest.getBreakdowns().get(0).getEndpoint()
-                    + "?urlRedirect=" + redirectEntrypoint + "?customerOrderId=" + customerOrder.getId() + "&delay=0";
+            centralPayPaymentRequestService.declareNewCentralPayPaymentRequest(paymentRequest.getPaymentRequestId(),
+                    customerOrder, null, true);
+            return paymentRequest.getBreakdowns().get(0).getEndpoint();
         }
         return "ok";
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean validateCardPaymentLinkForCustomerOrder(CustomerOrder customerOrder)
+    public Boolean validateCardPaymentLinkForCustomerOrder(CustomerOrder customerOrder,
+            com.jss.osiris.modules.quotation.model.CentralPayPaymentRequest request)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         customerOrder = getCustomerOrder(customerOrder.getId());
-        if (customerOrder.getCentralPayPaymentRequestId() != null) {
+
+        if (request != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
-                    .getPaymentRequest(customerOrder.getCentralPayPaymentRequestId());
+                    .getPaymentRequest(request.getPaymentRequestId());
 
             if (centralPayPaymentRequest != null) {
                 if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
@@ -912,15 +911,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         Payment payment = generateDepositOnCustomerOrderForCbPayment(customerOrder,
                                 centralPayPaymentRequest);
                         accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment);
-                        customerOrder.setCentralPayPaymentRequestId(null);
-                        addOrUpdateCustomerOrder(customerOrder, false, true);
                         unlockCustomerOrderFromDeposit(customerOrder);
                     }
-                    return true;
                 }
+                return centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
+                        || centralPayPaymentRequest.getPaymentRequestStatus()
+                                .equals(CentralPayPaymentRequest.CANCELED);
             }
         }
-        return false;
+        return true;
     }
 
     @Override
