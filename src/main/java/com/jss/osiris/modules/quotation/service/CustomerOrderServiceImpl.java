@@ -542,6 +542,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             for (Deposit deposit : invoice.getDeposits()) {
                 depositService.moveDepositFromInvoiceToCustomerOrder(deposit, invoice, customerOrder);
             }
+
+        if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
+            for (Payment payment : invoice.getPayments()) {
+                depositService.getNewDepositForCustomerOrder(payment.getPaymentAmount(), LocalDateTime.now(),
+                        customerOrder, null,
+                        payment, false);
+            }
     }
 
     @Override
