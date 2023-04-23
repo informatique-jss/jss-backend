@@ -22,6 +22,7 @@ export interface OrderingSearchResult {
   bodaccNbr: number;
   domiciliationNbr: number;
   simpleProvisionNbr: number;
+  lastStatusUpdate: Date;
 }
 
 
