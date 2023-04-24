@@ -308,6 +308,20 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return true;
     }
 
+    private boolean isOnlyJssAnnouncement(CustomerOrder customerOrder) throws OsirisException {
+        if (!isOnlyAnnouncement(customerOrder))
+            return false;
+
+        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getAnnouncement() != null && !provision.getAnnouncement().getConfrere().getId()
+                                .equals(constantService.getConfrereJssSpel().getId()))
+                            return false;
+        return true;
+    }
+
     @Override
     public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode,
             boolean isFromUser)
@@ -392,8 +406,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         // Target : TO BILLED => notify
-        if (targetStatusCode.equals(CustomerOrderStatus.TO_BILLED))
+        if (targetStatusCode.equals(CustomerOrderStatus.TO_BILLED)) {
             notificationService.notifyCustomerOrderToBeingToBilled(customerOrder);
+
+            // Auto billed for JSS Announcement only customer order
+            if (isOnlyJssAnnouncement(customerOrder))
+                targetStatusCode = CustomerOrderStatus.BILLED;
+        }
 
         // Target : BILLED => generate invoice
         if (targetStatusCode.equals(CustomerOrderStatus.BILLED)) {
