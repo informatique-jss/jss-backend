@@ -1100,11 +1100,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public List<AccountingBalanceViewTitle> getBilan(LocalDateTime startDate, LocalDateTime endDate) {
     List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate, endDate,
+        .getAccountingRecordAggregateByAccountingNumber(startDate.toLocalDate(), endDate.toLocalDate(),
             activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     List<AccountingBalanceBilan> accountingRecordsN1 = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1), endDate.minusYears(1),
+        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1).toLocalDate(),
+            endDate.minusYears(1).toLocalDate(),
             activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     ArrayList<AccountingBalanceViewTitle> outBilan = new ArrayList<AccountingBalanceViewTitle>();
@@ -1118,11 +1119,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public List<AccountingBalanceViewTitle> getProfitAndLost(LocalDateTime startDate, LocalDateTime endDate) {
     List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate, endDate,
+        .getAccountingRecordAggregateByAccountingNumber(startDate.toLocalDate(), endDate.toLocalDate(),
             activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     List<AccountingBalanceBilan> accountingRecordsN1 = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1), endDate.minusYears(1),
+        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1).toLocalDate(),
+            endDate.minusYears(1).toLocalDate(),
             activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     return accountingBalanceHelper.getProfitAndLost(accountingRecords, accountingRecordsN1);
@@ -1154,11 +1156,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public File getBilanExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
     List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate, endDate,
+        .getAccountingRecordAggregateByAccountingNumber(startDate.toLocalDate(), endDate.toLocalDate(),
             activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     List<AccountingBalanceBilan> accountingRecordsN1 = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1), endDate.minusYears(1),
+        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1).toLocalDate(),
+            endDate.minusYears(1).toLocalDate(),
             activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     ArrayList<AccountingBalanceViewTitle> outBilanActif = new ArrayList<AccountingBalanceViewTitle>();

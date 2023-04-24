@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.accounting.repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -85,7 +86,8 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         +
                         " and (:tiersId =0 or t.id is not null and t.id = :tiersId) " +
                         " and (:hideLettered = false or r.lettering_date_time is null ) " +
-                        " and r.operation_date_time>=:startDate and r.operation_date_time<=:endDate  " +
+                        " and coalesce(r.manual_accounting_document_date,r.operation_date_time)>=:startDate and coalesce(r.operation_date_time,r.manual_accounting_document_date)<=:endDate  "
+                        +
                         " and (:canViewRestricted=true or a.is_view_restricted=false)  " +
                         " and (:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId) ")
         List<AccountingRecordSearchResult> searchAccountingRecords(
@@ -121,7 +123,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         +
                         "(accounting.id_principal_accounting_account=:principalAccountingAccountId or :principalAccountingAccountId =0 ) and "
                         +
-                        "(record.accounting_date_time is null or (record.accounting_date_time >=:startDate and record.accounting_date_time <=:endDate )) and "
+                        "(record.accounting_date_time is null or (coalesce(record.manual_accounting_document_date,record.accounting_date_time) >=:startDate and coalesce(record.manual_accounting_document_date,record.accounting_date_time) <=:endDate )) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false ) " +
@@ -156,7 +158,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         +
                         "(accounting.id_principal_accounting_account=:principalAccountingAccountId or :principalAccountingAccountId =0 ) and "
                         +
-                        "(record.accounting_date_time is null or (record.accounting_date_time >=:startDate and record.accounting_date_time <=:endDate )) and "
+                        "(record.accounting_date_time is null or (coalesce(record.manual_accounting_document_date,record.accounting_date_time) >=:startDate and coalesce(record.manual_accounting_document_date,record.accounting_date_time) <=:endDate )) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false)  " +
@@ -174,12 +176,12 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         +
                         " from AccountingRecord a  JOIN a.accountingAccount aa  JOIN aa.principalAccountingAccount pa  where "
                         +
-                        "(a.accountingDateTime is null or (a.accountingDateTime >=:startDate and a.accountingDateTime <=:endDate ))   "
+                        "(a.accountingDateTime is null or (coalesce(a.manualAccountingDocumentDate,a.accountingDateTime) >=:startDate and coalesce(a.manualAccountingDocumentDate,a.accountingDateTime) <=:endDate ))   "
                         + " and (:canViewRestricted=true or aa.isViewRestricted=false)  " +
                         " group by pa.code ")
         List<AccountingBalanceBilan> getAccountingRecordAggregateByAccountingNumber(
-                        @Param("startDate") LocalDateTime startDate,
-                        @Param("endDate") LocalDateTime endDate,
+                        @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate,
                         @Param("canViewRestricted") boolean canViewRestricted);
 
         List<AccountingRecord> findByAccountingAccountAndInvoice(AccountingAccount accountingAccountCustomer,
