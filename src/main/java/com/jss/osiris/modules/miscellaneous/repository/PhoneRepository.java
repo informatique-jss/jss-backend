@@ -32,4 +32,5 @@ public interface PhoneRepository extends CrudRepository<Phone, Integer> {
             "LEFT OUTER JOIN confrere c ON acp.id_confrere = c.id " +
             "WHERE phone.phone_number = :phoneNumber")
     List<PhoneSearch> findByPhoneNumber(@Param("phoneNumber") String phoneNumber);
+    // search a phone by tiers, responsable, confrere or provider
 }
