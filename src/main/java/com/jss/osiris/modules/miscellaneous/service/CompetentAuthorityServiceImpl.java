@@ -7,9 +7,6 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,13 +33,11 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     AccountingAccountService accountingAccountService;
 
     @Override
-    @Cacheable(value = "competentAuthorityList", key = "#root.methodName")
     public List<CompetentAuthority> getCompetentAuthorities() {
         return IterableUtils.toList(competentAuthorityRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "competentAuthority", key = "#id")
     public CompetentAuthority getCompetentAuthority(Integer id) {
         Optional<CompetentAuthority> competentAuthority = competentAuthorityRepository.findById(id);
         if (competentAuthority.isPresent())
@@ -77,11 +72,6 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "competentAuthorityList", allEntries = true),
-            @CacheEvict(value = "competentAuthorityByTypeList", allEntries = true),
-            @CacheEvict(value = "competentAuthority", key = "#competentAuthority.id")
-    })
     @Transactional(rollbackFor = Exception.class)
     public CompetentAuthority addOrUpdateCompetentAuthority(
             CompetentAuthority competentAuthority) throws OsirisException {
@@ -147,7 +137,6 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     }
 
     @Override
-    @Cacheable(value = "competentAuthorityByTypeList", key = "#competentAuthorityTypeId")
     public List<CompetentAuthority> getCompetentAuthorityByAuthorityType(Integer competentAuthorityTypeId) {
         return competentAuthorityRepository.findByCompetentAuthorityType_Id(competentAuthorityTypeId);
     }

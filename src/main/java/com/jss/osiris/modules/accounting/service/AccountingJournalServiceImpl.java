@@ -5,9 +5,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,13 +22,11 @@ public class AccountingJournalServiceImpl implements AccountingJournalService {
     ConstantService constantService;
 
     @Override
-    @Cacheable(value = "accountingJournalList", key = "#root.methodName")
     public List<AccountingJournal> getAccountingJournals() {
         return IterableUtils.toList(accountingJournalRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "accountingJournal", key = "#id")
     public AccountingJournal getAccountingJournal(Integer id) {
         Optional<AccountingJournal> accountingJournal = accountingJournalRepository.findById(id);
         if (accountingJournal.isPresent())
@@ -40,10 +35,6 @@ public class AccountingJournalServiceImpl implements AccountingJournalService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "accountingJournalList", allEntries = true),
-            @CacheEvict(value = "accountingJournal", key = "#accountingJournal.id")
-    })
     @Transactional(rollbackFor = Exception.class)
     public AccountingJournal addOrUpdateAccountingJournal(
             AccountingJournal accountingJournal) {

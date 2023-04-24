@@ -5,9 +5,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +18,11 @@ public class VatCollectionTypeServiceImpl implements VatCollectionTypeService {
     VatCollectionTypeRepository vatCollectionTypeRepository;
 
     @Override
-    @Cacheable(value = "vatCollectionTypeList", key = "#root.methodName")
     public List<VatCollectionType> getVatCollectionTypes() {
         return IterableUtils.toList(vatCollectionTypeRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "vatCollectionType", key = "#id")
     public VatCollectionType getVatCollectionType(Integer id) {
         Optional<VatCollectionType> vatCollectionType = vatCollectionTypeRepository.findById(id);
         if (vatCollectionType.isPresent())
@@ -36,10 +31,6 @@ public class VatCollectionTypeServiceImpl implements VatCollectionTypeService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "vatCollectionTypeList", allEntries = true),
-            @CacheEvict(value = "vatCollectionType", key = "#vatCollectionType.id")
-    })
     @Transactional(rollbackFor = Exception.class)
     public VatCollectionType addOrUpdateVatCollectionType(
             VatCollectionType vatCollectionType) {

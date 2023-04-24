@@ -6,9 +6,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +21,11 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
     SimpleProvisonStatusRepository simpleProvisonStatusRepository;
 
     @Override
-    @Cacheable(value = "simpleProvisonStatusList", key = "#root.methodName")
     public List<SimpleProvisionStatus> getSimpleProvisionStatus() {
         return IterableUtils.toList(simpleProvisonStatusRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "simpleProvisonStatus", key = "#id")
     public SimpleProvisionStatus getSimpleProvisonStatus(Integer id) {
         Optional<SimpleProvisionStatus> simpleProvisonStatus = simpleProvisonStatusRepository.findById(id);
         if (simpleProvisonStatus.isPresent())
@@ -39,10 +34,6 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "simpleProvisonStatusList", allEntries = true),
-            @CacheEvict(value = "simpleProvisonStatus", key = "#simpleProvisonStatus.id")
-    })
     @Transactional(rollbackFor = Exception.class)
     public SimpleProvisionStatus addOrUpdateSimpleProvisonStatus(
             SimpleProvisionStatus simpleProvisonStatus) {

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TotalitePartie;
@@ -17,7 +16,6 @@ public class TotalitePartieServiceImpl implements TotalitePartieService {
     TotalitePartieRepository TotalitePartieRepository;
 
     @Override
-    @Cacheable(value = "totalitePartieList", key = "#root.methodName")
     public List<TotalitePartie> getTotalitePartie() {
         return IterableUtils.toList(TotalitePartieRepository.findAll());
     }

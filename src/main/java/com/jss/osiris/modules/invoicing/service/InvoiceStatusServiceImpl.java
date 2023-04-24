@@ -5,9 +5,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +18,11 @@ public class InvoiceStatusServiceImpl implements InvoiceStatusService {
     InvoiceStatusRepository invoiceStatusRepository;
 
     @Override
-    @Cacheable(value = "invoiceStatusList", key = "#root.methodName")
     public List<InvoiceStatus> getInvoiceStatus() {
         return IterableUtils.toList(invoiceStatusRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "invoiceStatus", key = "#id")
     public InvoiceStatus getInvoiceStatus(Integer id) {
         Optional<InvoiceStatus> invoiceStatus = invoiceStatusRepository.findById(id);
         if (invoiceStatus.isPresent())
@@ -36,10 +31,6 @@ public class InvoiceStatusServiceImpl implements InvoiceStatusService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "invoiceStatusList", allEntries = true),
-            @CacheEvict(value = "invoiceStatus", key = "#invoiceStatus.id")
-    })
     @Transactional(rollbackFor = Exception.class)
     public InvoiceStatus addOrUpdateInvoiceStatus(
             InvoiceStatus invoiceStatus) {

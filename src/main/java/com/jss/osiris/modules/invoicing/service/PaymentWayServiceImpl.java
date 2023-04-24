@@ -5,9 +5,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +18,11 @@ public class PaymentWayServiceImpl implements PaymentWayService {
     PaymentWayRepository paymentWayRepository;
 
     @Override
-    @Cacheable(value = "paymentWayList", key = "#root.methodName")
     public List<PaymentWay> getPaymentWays() {
         return IterableUtils.toList(paymentWayRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "paymentWay", key = "#id")
     public PaymentWay getPaymentWay(Integer id) {
         Optional<PaymentWay> paymentWay = paymentWayRepository.findById(id);
         if (paymentWay.isPresent())
@@ -36,10 +31,6 @@ public class PaymentWayServiceImpl implements PaymentWayService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "paymentWayList", allEntries = true),
-            @CacheEvict(value = "paymentWay", key = "#paymentWay.id")
-    })
     @Transactional(rollbackFor = Exception.class)
     public PaymentWay addOrUpdatePaymentWay(
             PaymentWay paymentWay) {

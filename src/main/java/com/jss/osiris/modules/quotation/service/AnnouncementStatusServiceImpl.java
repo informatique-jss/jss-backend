@@ -6,9 +6,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +21,11 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
         AnnouncementStatusRepository announcementStatusRepository;
 
         @Override
-        @Cacheable(value = "announcementStatusList", key = "#root.methodName")
         public List<AnnouncementStatus> getAnnouncementStatus() {
                 return IterableUtils.toList(announcementStatusRepository.findAll());
         }
 
         @Override
-        @Cacheable(value = "announcementStatus", key = "#id")
         public AnnouncementStatus getAnnouncementStatus(Integer id) {
                 Optional<AnnouncementStatus> announcementStatus = announcementStatusRepository.findById(id);
                 if (announcementStatus.isPresent())
@@ -39,10 +34,6 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
         }
 
         @Override
-        @Caching(evict = {
-                        @CacheEvict(value = "announcementStatusList", allEntries = true),
-                        @CacheEvict(value = "announcementStatus", key = "#announcementStatus.id")
-        })
         @Transactional(rollbackFor = Exception.class)
         public AnnouncementStatus addOrUpdateAnnouncementStatus(
                         AnnouncementStatus announcementStatus) {

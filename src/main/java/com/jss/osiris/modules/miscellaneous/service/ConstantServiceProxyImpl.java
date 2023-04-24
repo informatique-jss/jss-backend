@@ -6,9 +6,6 @@ import java.util.List;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,7 +27,6 @@ public class ConstantServiceProxyImpl {
     @Autowired
     ConstantRepository constantRepository;
 
-    @Cacheable(value = "constant", key = "#root.methodName")
     public Constant getConstants() throws OsirisException {
         List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
         if (constants == null || constants.size() != 1)
@@ -39,9 +35,6 @@ public class ConstantServiceProxyImpl {
         return constants.get(0);
     }
 
-    @Caching(evict = {
-            @CacheEvict(value = "constant", allEntries = true),
-    })
     public Constant addOrUpdateConstant(
             Constant constant) throws OsirisException {
         constantRepository.save(constant);

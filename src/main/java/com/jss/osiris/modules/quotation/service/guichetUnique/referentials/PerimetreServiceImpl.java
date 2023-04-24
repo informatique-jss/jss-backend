@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Perimetre;
@@ -17,7 +16,6 @@ public class PerimetreServiceImpl implements PerimetreService {
     PerimetreRepository PerimetreRepository;
 
     @Override
-    @Cacheable(value = "perimetreList", key = "#root.methodName")
     public List<Perimetre> getPerimetre() {
         return IterableUtils.toList(PerimetreRepository.findAll());
     }

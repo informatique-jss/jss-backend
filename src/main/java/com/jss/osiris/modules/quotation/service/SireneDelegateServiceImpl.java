@@ -96,7 +96,6 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 
 	@Override
 	@SuppressWarnings({ "null" })
-	// TODO : @Cacheable(value = "siren", key = "#siren")
 	public List<Siren> getSiren(String siren) throws OsirisClientMessageException {
 		try {
 			SSLHelper.disableCertificateValidation();
@@ -125,7 +124,6 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 
 	@Override
 	@SuppressWarnings({ "null" })
-	// TODO : @Cacheable(value = "siret", key = "#siret")
 	public List<Siret> getSiret(String siret) throws OsirisClientMessageException {
 		try {
 			SSLHelper.disableCertificateValidation();
