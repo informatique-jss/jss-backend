@@ -313,6 +313,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             boolean isFromUser)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Handle automatic workflow for Announcement created from website
+        boolean checkAllProvisionEnded = false;
         boolean onlyAnnonceLegale = isOnlyAnnouncement(customerOrder);
         boolean isFromWebsite = (customerOrder.getIsCreatedFromWebSite() != null
                 && customerOrder.getIsCreatedFromWebSite()) ? true : false;
@@ -384,8 +385,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (isFromWebsite && onlyAnnonceLegale && !isFromUser) {
             // Second round : move forward announcements. Final check checkAllProvisionEnded
             // on save will put it to TO BILLED if necessary
-            if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED))
+            if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)) {
                 moveForwardAnnouncementFromWebsite(customerOrder);
+                checkAllProvisionEnded = true;
+            }
         }
 
         // Target : TO BILLED => notify
@@ -470,7 +473,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         customerOrder.setCustomerOrderStatus(customerOrderStatus);
         customerOrder.setLastStatusUpdate(LocalDateTime.now());
-        return this.addOrUpdateCustomerOrder(customerOrder, false, false);
+        return this.addOrUpdateCustomerOrder(customerOrder, false, checkAllProvisionEnded);
     }
 
     private void resetDeboursManuelAmount(CustomerOrder customerOrder) {

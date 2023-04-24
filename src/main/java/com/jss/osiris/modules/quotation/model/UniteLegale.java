@@ -1,8 +1,9 @@
 package com.jss.osiris.modules.quotation.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class UniteLegale {
+public class UniteLegale implements Serializable {
 	private int score;
 	private String siren;
 	private String statutDiffusionUniteLegale;

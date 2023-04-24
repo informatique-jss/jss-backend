@@ -1,6 +1,8 @@
 package com.jss.osiris.modules.quotation.model;
 
-public class PeriodesUniteLegale {
+import java.io.Serializable;
+
+public class PeriodesUniteLegale implements Serializable {
 	private String dateFin;
 	private String dateDebut;
 	private String etatAdministratifUniteLegale;

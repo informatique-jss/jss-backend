@@ -1,6 +1,8 @@
 package com.jss.osiris.modules.quotation.model;
 
-public class Header {
+import java.io.Serializable;
+
+public class Header implements Serializable {
 	private int statut;
 	private String message;
 	private int total;

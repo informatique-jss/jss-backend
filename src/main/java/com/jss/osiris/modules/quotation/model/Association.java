@@ -1,11 +1,12 @@
 package com.jss.osiris.modules.quotation.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 
-public class Association {
+public class Association implements Serializable {
     public int id;
     public String is_waldec;
     public String id_association;
