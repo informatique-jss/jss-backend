@@ -15,6 +15,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
@@ -485,8 +486,16 @@ public class QuotationValidationHelper {
                 if (provision.getAnnouncement() != null) {
                         Announcement announcement = provision.getAnnouncement();
                         Announcement currentAnnouncement = null;
-                        if (announcement.getId() != null)
+                        if (announcement.getId() != null) {
                                 currentAnnouncement = announcementService.getAnnouncement(announcement.getId());
+                        } else {
+                                // By default, always redacted by JSS if option exists
+                                for (BillingType billingType : provision.getProvisionType().getBillingTypes()) {
+                                        if (billingType.getId()
+                                                        .equals(constantService.getBillingTypeRedactedByJss().getId()))
+                                                provision.setIsRedactedByJss(true);
+                                }
+                        }
 
                         LocalDate publicationDateVerification = LocalDate.now().minusDays(1);
                         // Do not verify date when quotation has started
