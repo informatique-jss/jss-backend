@@ -208,12 +208,20 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     }
 
     private Invoice generateInvoiceFromCart(Cart cart, Provision provision)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         Invoice invoice = new Invoice();
         invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
         invoice.setCustomerOrderForInboundInvoice(provision.getAssoAffaireOrder().getCustomerOrder());
         invoice.setManualAccountingDocumentNumber(cart.getMipOrderNum() + "/" + cart.getId());
         invoice.setIsInvoiceFromProvider(true);
+
+        PaymentType paymentType = paymentTypeService.getPaymentTypeByCodeInpi(cart.getPaymentType());
+
+        if (paymentType == null)
+            throw new OsirisValidationException("Unable to find payment type for INPI code "
+                    + cart.getPaymentType() + ". Please fill referential with correct value");
+        invoice.setManualPaymentType(paymentType);
+
         invoice.setManualAccountingDocumentDate(
                 LocalDate.parse(cart.getPaymentDate(), DateTimeFormatter.ISO_OFFSET_DATE_TIME));
         for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
