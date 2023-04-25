@@ -86,7 +86,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         +
                         " and (:tiersId =0 or t.id is not null and t.id = :tiersId) " +
                         " and (:hideLettered = false or r.lettering_date_time is null ) " +
-                        " and coalesce(r.manual_accounting_document_date,r.operation_date_time)>=:startDate and coalesce(r.operation_date_time,r.manual_accounting_document_date)<=:endDate  "
+                        " and coalesce(r.manual_accounting_document_date,r.operation_date_time)>=:startDate and coalesce(r.manual_accounting_document_date,r.operation_date_time)<=:endDate  "
                         +
                         " and (:canViewRestricted=true or a.is_view_restricted=false)  " +
                         " and (:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId) ")
