@@ -410,14 +410,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             notificationService.notifyCustomerOrderToBeingToBilled(customerOrder);
 
             // Auto billed for JSS Announcement only customer order
-            if (isOnlyJssAnnouncement(customerOrder))
+            if (isOnlyJssAnnouncement(customerOrder)) {
                 targetStatusCode = CustomerOrderStatus.BILLED;
+            }
         }
 
         // Target : BILLED => generate invoice
         if (targetStatusCode.equals(CustomerOrderStatus.BILLED)) {
             // save once customer order to recompute invoice item before set it in stone...
-            this.addOrUpdateCustomerOrder(customerOrder, true, true);
+            this.addOrUpdateCustomerOrder(customerOrder, true, checkAllProvisionEnded);
             Invoice invoice = generateInvoice(customerOrder);
             accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(
                     getInvoice(customerOrder));
