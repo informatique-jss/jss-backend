@@ -6,7 +6,9 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Notification;
+import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
@@ -61,4 +63,7 @@ public interface NotificationService {
 
         public void notifyGuichetUniqueFormaliteStatus(Provision provision,
                         FormaliteGuichetUnique formaliteGuichetUnique) throws OsirisException;
+
+        public Notification generateNewNotification(Employee fromEmployee, Employee toEmployee, String notificationType,
+                        IId entity, String detail1, String title, boolean showPopup);
 }
