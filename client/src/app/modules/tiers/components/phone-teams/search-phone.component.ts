@@ -14,7 +14,7 @@ import { RESPONSABLE_ENTITY_TYPE, TIERS_ENTITY_TYPE, PROVIDER_ENTITY_TYPE } from
 export class SearchPhoneComponent {
   number: string = '';
   phoneSearchs: PhoneSearch[] | undefined;
-  soloOption: boolean = false;
+
 
   constructor(
     private phoneService: PhoneService,
@@ -29,7 +29,7 @@ export class SearchPhoneComponent {
         if (result){
           this.phoneSearchs = result;
           if(this.phoneSearchs.length===1){
-            this.soloOption=true;
+            this.openRoute(null, '/' + this.phoneSearchs[0].entityType.toLowerCase() + '/' + this.phoneSearchs[0].entityId)
           }
         }
       });

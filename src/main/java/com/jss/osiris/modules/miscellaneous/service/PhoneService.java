@@ -12,4 +12,6 @@ public interface PhoneService {
     public List<Phone> populatePhoneIds(List<Phone> phones);
 
     public List<PhoneSearch> getByPhoneNumber(String phone) throws OsirisException;
+
+    public String getLinkByPhoneNumber(List<PhoneSearch> phone) throws OsirisException;
 }

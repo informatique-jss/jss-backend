@@ -175,6 +175,14 @@ public class TiersController {
     return new ResponseEntity<List<PhoneSearch>>(phoneService.getByPhoneNumber(phoneNumber), HttpStatus.OK);
   }
 
+  @PostMapping(inputEntryPoint + "/phone/search")
+  public ResponseEntity<List<PhoneSearch>> searchPhoneNumbers(@RequestBody PhoneSearch request) throws OsirisException {
+
+    List<PhoneSearch> results = phoneService.getTypeByPhoneNumber(request);
+
+    return new ResponseEntity<List<PhoneSearch>>(results, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/tiers-followup-types")
   public ResponseEntity<List<TiersFollowupType>> getTiersFollowupTypes() {
     return new ResponseEntity<List<TiersFollowupType>>(tiersFollowupTypeService.getTiersFollowupTypes(), HttpStatus.OK);
