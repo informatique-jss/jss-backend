@@ -410,7 +410,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             notificationService.notifyCustomerOrderToBeingToBilled(customerOrder);
 
             // Auto billed for JSS Announcement only customer order
-            if (isOnlyJssAnnouncement(customerOrder)) {
+            if (false && isOnlyJssAnnouncement(customerOrder)) {
                 targetStatusCode = CustomerOrderStatus.BILLED;
             }
         }
