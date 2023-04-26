@@ -24,6 +24,7 @@ import com.jss.osiris.modules.miscellaneous.service.PaymentTypeService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Debour;
+import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.guichetUnique.Cart;
 import com.jss.osiris.modules.quotation.model.guichetUnique.CartRate;
@@ -73,7 +74,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public FormaliteGuichetUnique refreshFormaliteGuichetUnique(Integer id, Employee employee)
+    public FormaliteGuichetUnique refreshFormaliteGuichetUnique(Integer id, Employee employee, Formalite formalite)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (employee == null)
             throw new OsirisValidationException("Employee");
@@ -93,9 +94,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             if (!originalFormalite.getStatus().getCode().equals(formaliteGuichetUnique.getStatus().getCode())) {
                 originalFormalite.setStatus(formaliteGuichetUnique.getStatus());
 
-                if (originalFormalite.getFormalites() != null && originalFormalite.getFormalites().size() > 0)
+                if (originalFormalite.getFormalite() != null)
                     notificationService.notifyGuichetUniqueFormaliteStatus(
-                            originalFormalite.getFormalites().get(0).getProvision().get(0));
+                            originalFormalite.getFormalite().getProvision().get(0), originalFormalite);
             }
             if (formaliteGuichetUnique.getCarts() != null && formaliteGuichetUnique.getCarts().size() > 0) {
                 if (originalFormalite.getCarts() == null || originalFormalite.getCarts().size() == 0) {
@@ -135,12 +136,16 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     && originalFormalite.getCarts().size() > 0)
                 for (Cart cart : originalFormalite.getCarts()) {
                     if (cart.getStatus().equals("PAID") && cart.getInvoice() == null
-                            && cart.getFormaliteGuichetUnique().getFormalites() != null
-                            && cart.getFormaliteGuichetUnique().getFormalites().size() > 0) {
+                            && cart.getFormaliteGuichetUnique().getFormalite() != null) {
                         cart.setInvoice(generateInvoiceFromCart(cart,
-                                cart.getFormaliteGuichetUnique().getFormalites().get(0).getProvision().get(0)));
+                                cart.getFormaliteGuichetUnique().getFormalite().getProvision().get(0)));
                     }
                 }
+        }
+
+        if (formalite != null) {
+            originalFormalite.setFormalite(formalite);
+            formaliteGuichetUniqueRepository.save(originalFormalite);
         }
         return originalFormalite;
     }
@@ -149,11 +154,10 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (formalite != null && formalite.getCarts() != null && formalite.getCarts().size() > 0)
             for (Cart cart : formalite.getCarts()) {
-                if (cart.getFormaliteGuichetUnique().getFormalites() != null
-                        && cart.getFormaliteGuichetUnique().getFormalites().size() > 0
-                        && cart.getFormaliteGuichetUnique().getFormalites().get(0).getProvision() != null
-                        && cart.getFormaliteGuichetUnique().getFormalites().get(0).getProvision().size() > 0) {
-                    Provision provision = cart.getFormaliteGuichetUnique().getFormalites().get(0).getProvision().get(0);
+                if (cart.getStatus().equals("PAID") && cart.getFormaliteGuichetUnique().getFormalite() != null
+                        && cart.getFormaliteGuichetUnique().getFormalite().getProvision() != null
+                        && cart.getFormaliteGuichetUnique().getFormalite().getProvision().size() > 0) {
+                    Provision provision = cart.getFormaliteGuichetUnique().getFormalite().getProvision().get(0);
                     if (cart.getCartRates() != null && cart.getCartRates().size() > 0
                             && (cart.getCartRates().get(0).getDebours() == null
                                     || cart.getCartRates().get(0).getDebours().size() == 0)) {
@@ -204,12 +208,20 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     }
 
     private Invoice generateInvoiceFromCart(Cart cart, Provision provision)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         Invoice invoice = new Invoice();
         invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
         invoice.setCustomerOrderForInboundInvoice(provision.getAssoAffaireOrder().getCustomerOrder());
         invoice.setManualAccountingDocumentNumber(cart.getMipOrderNum() + "/" + cart.getId());
         invoice.setIsInvoiceFromProvider(true);
+
+        PaymentType paymentType = paymentTypeService.getPaymentTypeByCodeInpi(cart.getPaymentType());
+
+        if (paymentType == null)
+            throw new OsirisValidationException("Unable to find payment type for INPI code "
+                    + cart.getPaymentType() + ". Please fill referential with correct value");
+        invoice.setManualPaymentType(paymentType);
+
         invoice.setManualAccountingDocumentDate(
                 LocalDate.parse(cart.getPaymentDate(), DateTimeFormatter.ISO_OFFSET_DATE_TIME));
         for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())

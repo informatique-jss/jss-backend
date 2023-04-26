@@ -1,3 +1,4 @@
+import { Formalite } from "../Formalite";
 import { Cart } from "./Cart";
 import { Content } from "./Content";
 import { DiffusionINSEE } from "./referentials/DiffusionINSEE";
@@ -7,6 +8,7 @@ import { TypePersonne } from "./referentials/TypePersonne";
 
 export interface FormaliteGuichetUnique {
   id: number;
+  liasseNumber: string;
   formalityDraftId: number;
   companyName: string;
   content: Content;
@@ -28,4 +30,5 @@ export interface FormaliteGuichetUnique {
   optionJqpaNumber: number; // TODO : à mettre à côté de la liste des activités plutôt qu'en page principale / applicable que dans le cas d'une société ou une personne physique dépendant de la chambre des métiers en plus du greffe
   regularisation: boolean;
   carts: Cart[];
+  formalite: Formalite;
 }

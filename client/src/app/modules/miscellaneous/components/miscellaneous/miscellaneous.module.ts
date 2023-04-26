@@ -53,6 +53,7 @@ import { AutocompleteDepartmentComponent } from '../forms/autocomplete-departmen
 import { AutocompleteEmployeeComponent } from '../forms/autocomplete-employee/autocomplete-employee.component';
 import { AutocompleteGuichetUniqueFormaliteComponent } from '../forms/autocomplete-formalite-guichet-unique/autocomplete-formalite-guichet-unique.component';
 import { AutocompleteGreffeInvoiceComponent } from '../forms/autocomplete-greffe-invoice/autocomplete-greffe-invoice';
+import { AutocompleteInfogreffeInvoiceComponent } from '../forms/autocomplete-infogreffe-invoice/autocomplete-infogreffe-invoice';
 import { AutocompleteLegalFormComponent } from '../forms/autocomplete-legal-form/autocomplete-legal-form.component';
 import { AutocompletePaymentComponent } from '../forms/autocomplete-payment/autocomplete-payment.component';
 import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-code/autocomplete-postal-code.component';
@@ -70,6 +71,7 @@ import { ChipsCityComponent } from '../forms/chips-city/chips-city.component';
 import { ChipsCompetitorComponent } from '../forms/chips-competitor/chips-competitor.component';
 import { ChipsConfrereComponent } from '../forms/chips-confrere/chips-confrere.component';
 import { ChipsEmployeeComponent } from '../forms/chips-employee/chips-employee.component';
+import { ChipsFormaliteGuichetUniqueComponent } from '../forms/chips-formalite-guichet-unique/chips-formalite-guichet-unique.component';
 import { ChipsMailComponent } from '../forms/chips-mail/chips-mail.component';
 import { ChipsPaymentTypeComponent } from '../forms/chips-payment-type/chips-payment-type.component';
 import { ChipsPhoneComponent } from '../forms/chips-phone/chips-phone.component';
@@ -494,6 +496,8 @@ const routes: Routes = [
     AutocompleteTypeVoieComponent,
     AutocompleteGreffeInvoiceComponent,
     AutocompleteGuichetUniqueFormaliteComponent,
+    AutocompleteInfogreffeInvoiceComponent,
+    ChipsFormaliteGuichetUniqueComponent,
   ],
   exports: [
     HistoryComponent,
@@ -707,6 +711,8 @@ const routes: Routes = [
     GenericDatetimePickerComponent,
     AutocompleteGreffeInvoiceComponent,
     AutocompleteGuichetUniqueFormaliteComponent,
+    AutocompleteInfogreffeInvoiceComponent,
+    ChipsFormaliteGuichetUniqueComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
   ]

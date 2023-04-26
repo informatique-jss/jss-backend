@@ -26,6 +26,9 @@ public class Prenom implements Serializable, IId {
         this.prenom = prenom;
     }
 
+    public Prenom() {
+    }
+
     @Column(length = 255)
     private String prenom;
 

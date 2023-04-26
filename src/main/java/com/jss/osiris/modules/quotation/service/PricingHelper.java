@@ -261,6 +261,7 @@ public class PricingHelper {
 
         if (invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()) {
             invoiceItem.setPreTaxPrice(0f);
+            invoiceItem.setDiscountAmount(0f);
             invoiceItem.setLabel(invoiceItem.getLabel() + " (offert)");
         }
 

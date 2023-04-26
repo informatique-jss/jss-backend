@@ -1,6 +1,8 @@
 package com.jss.osiris.modules.quotation.model;
 
-public class Rna {
+import java.io.Serializable;
+
+public class Rna implements Serializable {
     public Association association;
 
     public Association getAssociation() {

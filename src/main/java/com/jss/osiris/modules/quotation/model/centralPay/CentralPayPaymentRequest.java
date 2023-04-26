@@ -11,6 +11,7 @@ import com.jss.osiris.libs.JacksonLocalDateTimeGmtDeserializer;
 public class CentralPayPaymentRequest {
     public static final String ACTIVE = "ACTIVE";
     public static final String CLOSED = "CLOSED";
+    public static final String CANCELED = "CANCELED";
     public static final String PAID = "PAID";
 
     public String paymentRequestId;

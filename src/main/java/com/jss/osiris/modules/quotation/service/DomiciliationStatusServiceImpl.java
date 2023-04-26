@@ -6,9 +6,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +21,11 @@ public class DomiciliationStatusServiceImpl implements DomiciliationStatusServic
     DomiciliationStatusRepository domiciliationStatusRepository;
 
     @Override
-    @Cacheable(value = "domiciliationStatusList", key = "#root.methodName")
     public List<DomiciliationStatus> getDomiciliationStatus() {
         return IterableUtils.toList(domiciliationStatusRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "domiciliationStatus", key = "#id")
     public DomiciliationStatus getDomiciliationStatus(Integer id) {
         Optional<DomiciliationStatus> domiciliationStatus = domiciliationStatusRepository.findById(id);
         if (domiciliationStatus.isPresent())
@@ -39,10 +34,6 @@ public class DomiciliationStatusServiceImpl implements DomiciliationStatusServic
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "domiciliationStatusList", allEntries = true),
-            @CacheEvict(value = "domiciliationStatus", key = "#domiciliationStatus.id")
-    })
     @Transactional(rollbackFor = Exception.class)
     public DomiciliationStatus addOrUpdateDomiciliationStatus(
             DomiciliationStatus domiciliationStatus) {

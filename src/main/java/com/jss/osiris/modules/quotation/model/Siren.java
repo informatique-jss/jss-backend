@@ -1,6 +1,8 @@
 package com.jss.osiris.modules.quotation.model;
 
-public class Siren {
+import java.io.Serializable;
+
+public class Siren implements Serializable {
     private Header header;
     private UniteLegale uniteLegale;
 

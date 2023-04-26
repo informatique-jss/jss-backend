@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.quotation.model.ProvisionScreenType;
@@ -18,7 +17,6 @@ public class ProvisionScreenTypeServiceImpl implements ProvisionScreenTypeServic
     ProvisionScreenTypeRepository provisionScreenTypeRepository;
 
     @Override
-    @Cacheable(value = "provisionScreenTypeList", key = "#root.methodName")
     public List<ProvisionScreenType> getProvisionScreenTypes() {
         return IterableUtils.toList(provisionScreenTypeRepository.findAll());
     }

@@ -21,6 +21,7 @@ public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, I
                         + " coalesce(case when t2.denomination is not null and t2.denomination!='' then t2.denomination else t.firstname || ' '||t.lastname end, case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end) as tiersLabel,"
                         + " cos.label as customerOrderStatus,"
                         + " co.created_date as createdDate,"
+                        + " co.last_status_update as lastStatusUpdate,"
                         + " coalesce(cf.id_commercial,r.id_commercial,t.id_commercial,t2.id_commercial) as salesEmployeeId,"
                         + " co.id_assigned_to as assignedToEmployeeId,"
                         + " co.id as customerOrderId,"

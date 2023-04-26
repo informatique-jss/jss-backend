@@ -208,7 +208,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
                         LocalDateTime.now().minusHours(1), employee);
                 if (formalites != null && formalites.size() > 0) {
                     for (FormaliteGuichetUnique formalite : formalites)
-                        formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formalite.getId(), employee);
+                        formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formalite.getId(), employee, null);
                 }
             }
         }
@@ -223,8 +223,12 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
                 List<Formalite> formalites = formaliteService.getFormaliteForGURefresh(employee);
                 if (formalites != null && formalites.size() > 0) {
                     for (Formalite formalite : formalites)
-                        formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(
-                                formalite.getFormaliteGuichetUnique().getId(), employee);
+                        if (formalite.getFormalitesGuichetUnique() != null
+                                && formalite.getFormalitesGuichetUnique().size() > 0)
+                            for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique())
+                                formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(
+                                        formaliteGuichetUnique.getId(),
+                                        employee, formalite);
                 }
             }
         }

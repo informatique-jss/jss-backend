@@ -7,9 +7,6 @@ import java.util.Optional;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
@@ -38,7 +35,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     MailHelper mailHelper;
 
     @Override
-    @Cacheable(value = "employee", key = "#id")
     public Employee getEmployee(Integer id) {
         Optional<Employee> employee = employeeRepository.findById(id);
         if (employee.isPresent())
@@ -47,16 +43,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    @Cacheable(value = "employeeList", key = "#root.methodName")
     public List<Employee> getEmployees() {
         return IterableUtils.toList(employeeRepository.findAll());
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "employeeList", allEntries = true),
-            @CacheEvict(value = "employee", key = "#employee.id")
-    })
     public Employee addOrUpdateEmployee(Employee employee) {
         return employeeRepository.save(employee);
     }

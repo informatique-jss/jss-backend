@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutVisAVisFormalite;
@@ -17,7 +16,6 @@ public class StatutVisAVisFormaliteServiceImpl implements StatutVisAVisFormalite
     StatutVisAVisFormaliteRepository StatutVisAVisFormaliteRepository;
 
     @Override
-    @Cacheable(value = "statutVisAVisFormaliteList", key = "#root.methodName")
     public List<StatutVisAVisFormalite> getStatutVisAVisFormalite() {
         return IterableUtils.toList(StatutVisAVisFormaliteRepository.findAll());
     }

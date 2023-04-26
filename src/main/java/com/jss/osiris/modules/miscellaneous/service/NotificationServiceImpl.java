@@ -27,6 +27,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Status;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
@@ -415,7 +416,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void notifyGuichetUniqueFormaliteStatus(Provision provision) throws OsirisException {
+    public void notifyGuichetUniqueFormaliteStatus(Provision provision, FormaliteGuichetUnique formaliteGuichetUnique)
+            throws OsirisException {
         provision = provisionService.getProvision(provision.getId());
 
         if (!isProvisionClosed(provision) && provision.getAssoAffaireOrder() != null
@@ -436,10 +438,10 @@ public class NotificationServiceImpl implements NotificationService {
                 details += " - ";
 
                 Status status = statusService
-                        .getStatus(provision.getFormalite().getFormaliteGuichetUnique().getStatus().getCode());
+                        .getStatus(formaliteGuichetUnique.getStatus().getCode());
                 if (status == null)
                     throw new OsirisException(null, "Guichet unique status not found for code "
-                            + provision.getFormalite().getFormaliteGuichetUnique().getStatus().getCode());
+                            + formaliteGuichetUnique.getStatus().getCode());
 
                 details += "nouveau statut : " + status.getLabel();
 

@@ -130,11 +130,12 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
               this.affaire.denomination = !this.affaire.denomination ? periode.denominationUniteLegale : this.affaire.denomination;
               this.affaireForm.markAllAsTouched();
               if (periode.nicSiegeUniteLegale != null && periode.nicSiegeUniteLegale != undefined)
-                this.siretService.getSiret(siren?.uniteLegale.siren + periode.nicSiegeUniteLegale).subscribe(response => {
-                  if (response != null && response.length == 1) {
-                    this.fillSiret(response[0]);
-                  }
-                })
+                if (!this.affaire.siret)
+                  this.siretService.getSiret(siren?.uniteLegale.siren + periode.nicSiegeUniteLegale).subscribe(response => {
+                    if (response != null && response.length == 1) {
+                      this.fillSiret(response[0]);
+                    }
+                  })
             }
           });
         }

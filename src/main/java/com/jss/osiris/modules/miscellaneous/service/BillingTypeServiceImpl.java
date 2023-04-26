@@ -5,9 +5,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,19 +25,16 @@ public class BillingTypeServiceImpl implements BillingTypeService {
 
     @Override
 
-    @Cacheable(value = "billingTypeList", key = "#root.methodName")
     public List<BillingType> getBillingTypes() {
         return IterableUtils.toList(billingTypeRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "billingTypeDebourList", key = "#root.methodName")
     public List<BillingType> getBillingTypesDebour() {
         return billingTypeRepository.findByIsDebourOrIsFee(true, true);
     }
 
     @Override
-    @Cacheable(value = "billingType", key = "#id")
     public BillingType getBillingType(Integer id) {
         Optional<BillingType> billingType = billingTypeRepository.findById(id);
         if (billingType.isPresent())
@@ -50,11 +44,6 @@ public class BillingTypeServiceImpl implements BillingTypeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @Caching(evict = {
-            @CacheEvict(value = "billingTypeList", allEntries = true),
-            @CacheEvict(value = "billingTypeDebourList", allEntries = true),
-            @CacheEvict(value = "billingType", key = "#billingType.id")
-    })
     public BillingType addOrUpdateBillingType(BillingType billingType) throws OsirisException {
         if (billingType.getId() == null
                 || billingType.getAccountingAccountCharge() == null

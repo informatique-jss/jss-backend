@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Status;
@@ -18,7 +17,6 @@ public class StatusServiceImpl implements StatusService {
     StatusRepository StatusRepository;
 
     @Override
-    @Cacheable(value = "statusList", key = "#root.methodName")
     public List<Status> getStatus() {
         return IterableUtils.toList(StatusRepository.findAll());
     }

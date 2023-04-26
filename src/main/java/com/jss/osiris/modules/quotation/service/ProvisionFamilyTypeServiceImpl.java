@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,13 +17,11 @@ public class ProvisionFamilyTypeServiceImpl implements ProvisionFamilyTypeServic
     ProvisionFamilyTypeRepository provisionFamilyTypeRepository;
 
     @Override
-    @Cacheable(value = "provisionFamilyTypeList", key = "#root.methodName")
     public List<ProvisionFamilyType> getProvisionFamilyTypes() {
         return provisionFamilyTypeRepository.findAllByOrderByCode();
     }
 
     @Override
-    @Cacheable(value = "provisionFamilyType", key = "#id")
     public ProvisionFamilyType getProvisionFamilyType(Integer id) {
         Optional<ProvisionFamilyType> provisionFamilyType = provisionFamilyTypeRepository.findById(id);
         if (provisionFamilyType.isPresent())
@@ -36,10 +31,6 @@ public class ProvisionFamilyTypeServiceImpl implements ProvisionFamilyTypeServic
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @Caching(evict = {
-            @CacheEvict(value = "provisionFamilyTypeList", allEntries = true),
-            @CacheEvict(value = "provisionFamilyType", key = "#provisionFamilyType.id")
-    })
     public ProvisionFamilyType addOrUpdateProvisionFamilyType(ProvisionFamilyType provisionFamilyType) {
         return provisionFamilyTypeRepository.save(provisionFamilyType);
     }

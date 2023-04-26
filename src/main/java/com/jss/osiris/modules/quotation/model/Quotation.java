@@ -109,8 +109,6 @@ public class Quotation implements IQuotation {
 
 	private Boolean isCreatedFromWebSite;
 
-	private String centralPayPaymentRequestId;
-
 	private LocalDateTime firstReminderDateTime;
 	private LocalDateTime secondReminderDateTime;
 	private LocalDateTime thirdReminderDateTime;
@@ -244,14 +242,6 @@ public class Quotation implements IQuotation {
 
 	public void setIsCreatedFromWebSite(Boolean isCreatedFromWebSite) {
 		this.isCreatedFromWebSite = isCreatedFromWebSite;
-	}
-
-	public String getCentralPayPaymentRequestId() {
-		return centralPayPaymentRequestId;
-	}
-
-	public void setCentralPayPaymentRequestId(String centralPayPaymentRequestId) {
-		this.centralPayPaymentRequestId = centralPayPaymentRequestId;
 	}
 
 	public LocalDateTime getFirstReminderDateTime() {

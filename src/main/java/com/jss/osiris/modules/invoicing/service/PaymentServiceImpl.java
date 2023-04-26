@@ -30,7 +30,6 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
-import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
@@ -518,7 +517,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     private Float associateInboundPaymentAndInvoices(Payment payment, List<Invoice> correspondingInvoices,
             MutableBoolean generateWaitingAccountAccountingRecords, List<Float> byPassAmount) throws OsirisException {
-        InvoiceStatus payedStatus = constantService.getInvoiceStatusPayed();
         Float remainingToPay = 0f;
         int amountIndex = 0;
         Float remainingMoney = payment.getPaymentAmount();
@@ -571,7 +569,7 @@ public class PaymentServiceImpl implements PaymentService {
                 remainingToPay -= remainingToPayForCurrentInvoice;
                 if (isPayed) {
                     Invoice updateInvoice = invoiceService.getInvoice(correspondingInvoices.get(i).getId());
-                    updateInvoice.setInvoiceStatus(payedStatus);
+                    accountingRecordService.checkInvoiceForLettrage(updateInvoice);
                     invoiceService.addOrUpdateInvoice(updateInvoice);
                 } else {
                     break;
@@ -683,7 +681,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             if (isPayed) {
                 Invoice updateInvoice = invoiceService.getInvoice(correspondingInvoice.getId());
-                updateInvoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
+                accountingRecordService.checkInvoiceForLettrage(updateInvoice);
                 invoiceService.addOrUpdateInvoice(updateInvoice);
             }
 

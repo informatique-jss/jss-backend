@@ -63,7 +63,8 @@ public interface CustomerOrderService {
         public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public Boolean validateCardPaymentLinkForCustomerOrder(CustomerOrder customerOrder)
+        public Boolean validateCardPaymentLinkForCustomerOrder(CustomerOrder customerOrder,
+                        com.jss.osiris.modules.quotation.model.CentralPayPaymentRequest request)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public Float getTotalForCustomerOrder(IQuotation customerOrder);

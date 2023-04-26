@@ -12,7 +12,7 @@ import { QuotationSearch } from '../../model/QuotationSearch';
 import { QuotationSearchResult } from '../../model/QuotationSearchResult';
 import { QuotationSearchResultService } from '../../services/quotation.search.result.service';
 import { QuotationComponent } from '../quotation/quotation.component';
-
+import { formatDateTimeForSortTable } from '../../../../libs/FormatHelper';
 @Component({
   selector: 'quotation-list',
   templateUrl: './quotation-list.component.html',
@@ -89,7 +89,7 @@ export class QuotationListComponent implements OnInit {
       this.availableColumns.push({ id: "bodaccNbr", fieldName: "bodaccNbr", label: "Nombre de BODACC" } as SortTableColumn);
       this.availableColumns.push({ id: "domiciliationNbr", fieldName: "domiciliationNbr", label: "Nombre de domiciliations" } as SortTableColumn);
       this.availableColumns.push({ id: "simpleProvisionNbr", fieldName: "simpleProvisionNbr", label: "Nombre de formalités simples" } as SortTableColumn);
-
+      this.availableColumns.push({ id: "lastStatusUpdate", fieldName: "lastStatusUpdate", label: "Date de mise à jours", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
       this.setColumns();
 
       this.tableAction.push({ actionIcon: "request_quote", actionName: "Voir le devis", actionLinkFunction: this.getActionLink, display: true, } as SortTableAction);

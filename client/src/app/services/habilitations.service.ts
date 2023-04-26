@@ -103,6 +103,9 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
+  canImportInfogreffeInvoice() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
 }
 
 

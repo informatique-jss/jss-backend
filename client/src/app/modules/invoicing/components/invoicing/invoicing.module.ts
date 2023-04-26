@@ -23,6 +23,7 @@ import { AssociatePaymentDialogComponent } from "../associate-payment-dialog/ass
 import { BankTransfertListComponent } from '../bank-transfert-list/bank-transfert-list.component';
 import { DeboursAmountInvoicedDialogComponent } from '../debours-amount-invoiced-dialog/debours-amount-invoiced-dialog.component';
 import { DeboursAmountTaxableDialogComponent } from "../debours-amount-taxable-dialog/debours-amount-taxable-dialog.component";
+import { InfogreffeInvoiceListComponent } from "../infogreffe-invoice-list/infogreffe-invoice-list.component";
 import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.component";
 import { InvoiceListComponent } from "../invoice-list/invoice-list.component";
 import { InvoicePaymentTableComponent } from "../invoice-payment-table/invoice-payment-table.component";
@@ -71,6 +72,7 @@ const routes: Routes = [
     DeboursAmountTaxableDialogComponent,
     DeboursAmountInvoicedDialogComponent,
     AddPaymentComponent,
+    InfogreffeInvoiceListComponent,
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,

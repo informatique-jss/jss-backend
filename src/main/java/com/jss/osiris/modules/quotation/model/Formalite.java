@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,10 +46,9 @@ public class Formalite implements IId {
     @JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
     private CompetentAuthority competentAuthorityServiceProvider;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_formalite_guichet_unique")
-    @JsonIgnoreProperties(value = { "formalite", "content" })
-    private FormaliteGuichetUnique formaliteGuichetUnique;
+    @OneToMany(mappedBy = "formalite")
+    @JsonIgnoreProperties(value = { "content" })
+    private List<FormaliteGuichetUnique> formalitesGuichetUnique;
 
     @OneToMany(mappedBy = "formalite")
     @JsonIgnore
@@ -96,20 +94,20 @@ public class Formalite implements IId {
         this.competentAuthorityServiceProvider = competentAuthorityServiceProvider;
     }
 
-    public FormaliteGuichetUnique getFormaliteGuichetUnique() {
-        return formaliteGuichetUnique;
-    }
-
-    public void setFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique) {
-        this.formaliteGuichetUnique = formaliteGuichetUnique;
-    }
-
     public List<Provision> getProvision() {
         return provision;
     }
 
     public void setProvision(List<Provision> provision) {
         this.provision = provision;
+    }
+
+    public List<FormaliteGuichetUnique> getFormalitesGuichetUnique() {
+        return formalitesGuichetUnique;
+    }
+
+    public void setFormalitesGuichetUnique(List<FormaliteGuichetUnique> formalitesGuichetUnique) {
+        this.formalitesGuichetUnique = formalitesGuichetUnique;
     }
 
 }

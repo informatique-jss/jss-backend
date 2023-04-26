@@ -10,6 +10,7 @@ import com.jss.osiris.modules.miscellaneous.model.Notification;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 
 public interface NotificationService {
         public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture);
@@ -58,5 +59,6 @@ public interface NotificationService {
 
         public void notifyAttachmentAddToProvision(Provision provision, Attachment attachment) throws OsirisException;
 
-        public void notifyGuichetUniqueFormaliteStatus(Provision provision) throws OsirisException;
+        public void notifyGuichetUniqueFormaliteStatus(Provision provision,
+                        FormaliteGuichetUnique formaliteGuichetUnique) throws OsirisException;
 }

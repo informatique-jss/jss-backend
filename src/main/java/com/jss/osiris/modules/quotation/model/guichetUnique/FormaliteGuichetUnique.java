@@ -28,9 +28,7 @@ public class FormaliteGuichetUnique implements IId {
     @Id
     private Integer id;
 
-    @OneToMany(mappedBy = "formaliteGuichetUnique")
-    @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
-    private List<Formalite> formalites;
+    private String liasseNumber;
 
     private Integer formalityDraftId;
 
@@ -93,6 +91,11 @@ public class FormaliteGuichetUnique implements IId {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_status")
     private Status status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_formalite")
+    @JsonIgnoreProperties(value = { "formalitesGuichetUnique" })
+    private Formalite formalite;
 
     public Status getStatus() {
         return status;
@@ -278,11 +281,19 @@ public class FormaliteGuichetUnique implements IId {
         this.carts = carts;
     }
 
-    public List<Formalite> getFormalites() {
-        return formalites;
+    public String getLiasseNumber() {
+        return liasseNumber;
     }
 
-    public void setFormalites(List<Formalite> formalites) {
-        this.formalites = formalites;
+    public void setLiasseNumber(String liasseNumber) {
+        this.liasseNumber = liasseNumber;
+    }
+
+    public Formalite getFormalite() {
+        return formalite;
+    }
+
+    public void setFormalite(Formalite formalite) {
+        this.formalite = formalite;
     }
 }
