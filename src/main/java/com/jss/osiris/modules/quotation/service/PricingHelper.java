@@ -562,6 +562,8 @@ public class PricingHelper {
                 throw new OsirisClientMessageException(
                         "Pays non trouvé dans l'adresse indiquée dans la configuration de facturation de la commande");
             city = billingDocument.getBillingLabelCity();
+            if (city != null && city.getId() != null)
+                city = cityService.getCity(city.getId());
             country = billingDocument.getBillingLabelCountry();
         }
 
