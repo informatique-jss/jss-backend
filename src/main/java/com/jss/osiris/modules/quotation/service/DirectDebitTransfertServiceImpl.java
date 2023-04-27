@@ -27,7 +27,6 @@ import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.transfer.CdtrSchmeIdBean;
 import com.jss.osiris.libs.transfer.CdtrSchmeIdBeanIdBean;
 import com.jss.osiris.libs.transfer.CstmrDrctDbtInitnBean;
-import com.jss.osiris.libs.transfer.CtgyPurpBean;
 import com.jss.osiris.libs.transfer.DbtrAcctBean;
 import com.jss.osiris.libs.transfer.DbtrAgtBean;
 import com.jss.osiris.libs.transfer.DbtrBean;
@@ -239,12 +238,6 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
                 bodyTransfertType.setSvcLvlBean(transfertNorm);
                 transfertNorm.setCd("SEPA");
-
-                CtgyPurpBean transfertPurpose = new CtgyPurpBean();
-                bodyTransfertType.setCtgyPurpBean(transfertPurpose);
-
-                bodyTransfertType.setLclInstrmBean(transfertPurpose);
-                transfertPurpose.setCd("CORE");
 
                 bodyTransfertType.setSeqTp("RCUR");
 
