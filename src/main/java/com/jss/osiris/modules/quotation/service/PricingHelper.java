@@ -572,7 +572,7 @@ public class PricingHelper {
         } else if (invoiceItem.getBillingItem() != null && invoiceItem.getBillingItem().getBillingType() != null
                 && invoiceItem.getBillingItem().getBillingType().getIsOverrideVat()) {
             vat = invoiceItem.getBillingItem().getBillingType().getVat();
-        } else {
+        } else if (city != null) {
             vat = vatService.getGeographicalApplicableVat(country, city.getDepartment());
         }
 
