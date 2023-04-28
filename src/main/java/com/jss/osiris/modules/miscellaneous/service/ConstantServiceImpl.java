@@ -1,7 +1,9 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,14 +50,14 @@ import com.jss.osiris.modules.tiers.model.TiersType;
 public class ConstantServiceImpl implements ConstantService {
 
     @Autowired
-    ConstantServiceProxyImpl constantServiceProxyImpl;
-
-    @Autowired
     ConstantRepository constantRepository;
 
     @Override
     public Constant getConstants() throws OsirisException {
-        return constantServiceProxyImpl.getConstants();
+        List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
+        if (constants == null || constants.size() != 1)
+            throw new OsirisException(null, "Constants not defined or multiple");
+        return constants.get(0);
     }
 
     @Override
@@ -70,7 +72,7 @@ public class ConstantServiceImpl implements ConstantService {
     @Transactional(rollbackFor = Exception.class)
     public Constant addOrUpdateConstant(
             Constant constant) throws OsirisException {
-        return constantServiceProxyImpl.addOrUpdateConstant(constant);
+        return constantRepository.save(constant);
     }
 
     @Override

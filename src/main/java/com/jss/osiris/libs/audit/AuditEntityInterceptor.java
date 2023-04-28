@@ -151,14 +151,12 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
         synchronized (auditToSave) {
             HashSet<Audit> auditsToDelete = new HashSet<Audit>();
             if (auditToSave != null && auditToSave.size() > 0) {
-                if (tx != null) {
-                    if (!tx.getStatus().equals(TransactionStatus.ACTIVE)
-                            && !tx.getStatus().equals(TransactionStatus.MARKED_ROLLBACK))
-                        tx.begin();
+                if (tx != null && tx.getStatus().equals(TransactionStatus.ACTIVE)) {
                     try {
                         for (Audit audit : auditToSave) {
                             auditsToDelete.add(audit);
                             auditRepository.save(audit);
+                            tx.commit();
                         }
                     } catch (Exception e) {
                         tx.rollback();

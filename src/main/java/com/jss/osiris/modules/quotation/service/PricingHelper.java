@@ -261,6 +261,7 @@ public class PricingHelper {
 
         if (invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()) {
             invoiceItem.setPreTaxPrice(0f);
+            invoiceItem.setDiscountAmount(0f);
             invoiceItem.setLabel(invoiceItem.getLabel() + " (offert)");
         }
 
@@ -560,6 +561,8 @@ public class PricingHelper {
                 throw new OsirisClientMessageException(
                         "Pays non trouvé dans l'adresse indiquée dans la configuration de facturation de la commande");
             city = billingDocument.getBillingLabelCity();
+            if (city != null && city.getId() != null)
+                city = cityService.getCity(city.getId());
             country = billingDocument.getBillingLabelCountry();
         }
 
@@ -569,7 +572,7 @@ public class PricingHelper {
         } else if (invoiceItem.getBillingItem() != null && invoiceItem.getBillingItem().getBillingType() != null
                 && invoiceItem.getBillingItem().getBillingType().getIsOverrideVat()) {
             vat = invoiceItem.getBillingItem().getBillingType().getVat();
-        } else {
+        } else if (city != null) {
             vat = vatService.getGeographicalApplicableVat(country, city.getDepartment());
         }
 

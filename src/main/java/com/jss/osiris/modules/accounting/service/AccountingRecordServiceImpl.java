@@ -1307,22 +1307,24 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  @Transactional
+  @Transactional(rollbackFor = Exception.class)
   public void sendBillingClosureReceipt()
       throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-    List<Tiers> tiers = tiersService.findAllTiersTypeClient();
+    List<Tiers> tiers = tiersService.findAllTiersForBillingClosureReceiptSend();
     if (tiers != null && tiers.size() > 0)
-      for (Tiers tier : tiers)
+      for (Tiers tier : tiers) {
         getBillingClosureReceiptFile(tier.getId(), false);
+      }
 
     List<Confrere> confreres = confrereService.getConfreres();
     if (confreres != null && confreres.size() > 0)
-      for (Confrere confrere : confreres)
+      for (Confrere confrere : confreres) {
         getBillingClosureReceiptFile(confrere.getId(), false);
+      }
   }
 
   @Override
-  @Transactional
+  @Transactional(rollbackFor = Exception.class)
   public File getBillingClosureReceiptFile(Integer tiersId, boolean downloadFile)
       throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
