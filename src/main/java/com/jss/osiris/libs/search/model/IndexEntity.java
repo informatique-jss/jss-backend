@@ -9,10 +9,12 @@ import javax.persistence.IdClass;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
+import com.jss.osiris.modules.miscellaneous.model.IId;
+
 @Entity
 @IdClass(CompositeIndexEntityKey.class)
 @Table(indexes = { @Index(name = "pk_index", columnList = "entityType,entityId", unique = true) })
-public class IndexEntity implements Serializable {
+public class IndexEntity implements Serializable, IId {
 	@Id
 	private String entityType;
 	@Id
@@ -43,6 +45,11 @@ public class IndexEntity implements Serializable {
 
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	@Override
+	public Integer getId() {
+		return entityId;
 	}
 
 }

@@ -64,6 +64,6 @@ public interface NotificationService {
         public void notifyGuichetUniqueFormaliteStatus(Provision provision,
                         FormaliteGuichetUnique formaliteGuichetUnique) throws OsirisException;
 
-        public Notification generateNewNotification(Employee fromEmployee, Employee toEmployee, String notificationType,
-                        IId entity, String detail1, String title, boolean showPopup);
+        public Notification notifyCommercialPassageTiersAcompteObligatoire(Employee employeeTo, String detail,
+                        IId entity) throws OsirisException;
 }

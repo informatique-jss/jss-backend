@@ -19,6 +19,7 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Notification;
 import com.jss.osiris.modules.miscellaneous.repository.NotificationRepository;
 import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.profile.repository.EmployeeRepository;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
@@ -60,6 +61,9 @@ public class NotificationServiceImpl implements NotificationService {
     @Autowired
     StatusService statusService;
 
+    @Autowired
+    EmployeeRepository employeeRepository;
+
     @Override
     public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture) {
         Employee currentEmployee = employeeService.getCurrentEmployee();
@@ -91,7 +95,7 @@ public class NotificationServiceImpl implements NotificationService {
         return notificationRepository.save(notification);
     }
 
-    public Notification generateNewNotification(Employee fromEmployee, Employee toEmployee, String notificationType,
+    private Notification generateNewNotification(Employee fromEmployee, Employee toEmployee, String notificationType,
             IId entity, String detail1, String title, boolean showPopup) {
         Notification notification = new Notification();
         notification.setCreatedBy(fromEmployee);
@@ -385,6 +389,14 @@ public class NotificationServiceImpl implements NotificationService {
                         Notification.PROVISION_ADD_ATTACHMENT, provision, details, null, false);
             }
         }
+    }
+
+    @Override
+    public Notification notifyCommercialPassageTiersAcompteObligatoire(Employee employeeTo, String detail,
+            IId entityType) throws OsirisException {
+        Employee accueil = employeeRepository.findByUsername("ACCUEIL");
+        return generateNewNotification(accueil, employeeTo,
+                Notification.PERSONNAL, entityType, detail, "Délai de paiement", true);
     }
 
     private boolean isProvisionClosed(Provision provision) {
