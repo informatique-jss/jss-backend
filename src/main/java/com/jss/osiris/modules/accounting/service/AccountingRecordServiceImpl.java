@@ -1216,6 +1216,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     newAccountingRecord.setManualAccountingDocumentDate(originalAccountingRecord.getManualAccountingDocumentDate());
     newAccountingRecord.setManualAccountingDocumentNumber(originalAccountingRecord.getManualAccountingDocumentNumber());
     newAccountingRecord.setPayment(originalAccountingRecord.getPayment());
+    newAccountingRecord.setLetteringNumber(originalAccountingRecord.getLetteringNumber());
+    newAccountingRecord.setLetteringDateTime(originalAccountingRecord.getLetteringDateTime());
     newAccountingRecord.setTemporaryOperationId(operationId);
     newAccountingRecord.setOperationDateTime(LocalDateTime.now());
     newAccountingRecord.setCustomerOrder(originalAccountingRecord.getCustomerOrder());
