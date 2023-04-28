@@ -18,5 +18,7 @@ public interface TiersService {
 
     public List<Tiers> findAllTiersTypeClient() throws OsirisException;
 
+    public List<Tiers> findAllTiersForBillingClosureReceiptSend() throws OsirisException;
+
     public List<Tiers> getTiers();
 }
