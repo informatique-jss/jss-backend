@@ -73,11 +73,12 @@ public class Debour implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_bank_transfert")
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private BankTransfert bankTransfert;
 
 	@ManyToOne
 	@JoinColumn(name = "id_invoice_item")
-	@JsonIgnoreProperties(value = { "invoice", "provision", "debours" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "provision", "debours" }, allowSetters = true)
 	private InvoiceItem invoiceItem;
 
 	@OneToMany(mappedBy = "debour")

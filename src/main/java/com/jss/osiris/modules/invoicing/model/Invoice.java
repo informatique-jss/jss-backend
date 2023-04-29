@@ -189,6 +189,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@ManyToOne
 	@JoinColumn(name = "id_bank_transfert")
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private BankTransfert bankTransfert;
 
 	public Integer getId() {
