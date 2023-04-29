@@ -1060,8 +1060,16 @@ public class MailHelper {
 
         Document billingDocument = documentService.getDocumentByDocumentType(customerOrder.getDocuments(),
                 constantService.getDocumentTypeBilling());
-        if (billingDocument != null && billingDocument.getExternalReference() != null)
-            ctx.setVariable("externalReference", billingDocument.getExternalReference());
+        if (billingDocument != null) {
+            if (billingDocument.getExternalReference() != null)
+                ctx.setVariable("externalReference", billingDocument.getExternalReference());
+            // Responsable on billing
+            if (billingDocument.getIsResponsableOnBilling() != null && billingDocument.getIsResponsableOnBilling()
+                    && customerOrder.getResponsable() != null)
+                ctx.setVariable("responsableOnBilling", customerOrder.getResponsable().getFirstname() + " "
+                        + customerOrder.getResponsable().getLastname());
+
+        }
 
         ctx.setVariable("customerOrder", customerOrder);
 

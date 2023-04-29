@@ -66,6 +66,9 @@
                 <span th:if="${invoice.isCommandNumberMandatory}">Votre référence annuelle :<span
                         th:text="${invoice.commandNumber}"></span><br />
                 </span>
+                <span th:if="${responsableOnBilling!=null}">Commande Transmise par :<span
+                        th:text="${responsableOnBilling}"></span><br />
+                </span>
                 <p>Paris le <span th:text="${invoiceCreatedDate}"></span></p>
             </td>
             <td style="width: 100px;"></td>
