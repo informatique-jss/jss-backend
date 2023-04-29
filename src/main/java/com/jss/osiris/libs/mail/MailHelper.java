@@ -1474,15 +1474,18 @@ public class MailHelper {
             else
                 explainationText += " Nous vous remercions de bien vouloir procéder à son règlement dans les meilleurs délais.";
         } else {
-            Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
             explainationText = "Nous avons le plaisir de vous confirmer la finalisation de votre commande n°"
-                    + customerOrder.getId() + " concernant la société "
-                    + ((affaire.getDenomination() != null ? affaire.getDenomination()
-                            : (affaire.getFirstname() + " " + affaire.getLastname())) + " ("
-                            + (affaire.getAddress() + ", "
-                                    + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"))
-                    + ". Vous trouverez en pièces-jointes les éléments suivants : ";
+                    + customerOrder.getId();
         }
+
+        Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
+
+        explainationText += " Cette commande concerne la société "
+                + ((affaire.getDenomination() != null ? affaire.getDenomination()
+                        : (affaire.getFirstname() + " " + affaire.getLastname())) + " ("
+                        + (affaire.getAddress() + ", "
+                                + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"))
+                + ". Vous trouverez en pièces-jointes les éléments suivants : ";
 
         ArrayList<String> attachementNames = new ArrayList<String>();
         for (Attachment attachment : attachments)
