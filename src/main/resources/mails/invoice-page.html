@@ -173,6 +173,19 @@
             </th:block>
         </th:block>
         <th:block th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">
+            <tr>
+                <td style="padding-top: 20px;" th:if="${assos[0].affaire.denomination!=null} ">
+                    <strong>Société <span th:text="${assos[0].affaire.denomination}"></span><span
+                            th:text="${assos[0].affaire.firstname}"></span>
+                        <span th:text="${assos[0].affaire.lastname}"></span></strong>
+                </td>
+                <td style="padding-top: 20px;" th:if="${assos[0].affaire.denomination==null} ">
+                    <strong><span th:text="${assos[0].affaire.civility.label}"></span> <span
+                            th:text="${assos[0].affaire.firstname}"></span> <span
+                            th:text="${assos[0].affaire.lastname}"></span></strong>
+                </td>
+                <td></td>
+            </tr>
             <th:block th:each="invoiceItem : ${invoice.invoiceItems}"
                 th:if="${invoiceItem.billingItem.billingType.isDebour==false} and ${invoiceItem.billingItem.billingType.isFee==false}">
                 <tr>

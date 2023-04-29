@@ -1581,6 +1581,17 @@ public class MailHelper {
 
         String explainationText = "Vous trouverez ci-joint l'avoir n°" + creditNote.getId()
                 + " correspondant à la facture n°" + invoice.getId() + ".";
+
+        if (customerOrder != null) {
+            Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
+            explainationText += " Cette commande concerne la société "
+                    + ((affaire.getDenomination() != null ? affaire.getDenomination()
+                            : (affaire.getFirstname() + " " + affaire.getLastname())) + " ("
+                            + (affaire.getAddress() + ", "
+                                    + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"))
+                    + ".";
+        }
+
         mail.setExplaination(explainationText);
 
         mail.setSubject("Votre avoir n°" + creditNote.getId());
