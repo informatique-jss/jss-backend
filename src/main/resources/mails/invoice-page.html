@@ -76,7 +76,9 @@
                             <span th:text="${invoice.billingLabel}"></span><br />
                             <span th:text="${invoice.billingLabelAddress}"></span><br />
                             <span><span th:text="${invoice.billingLabelPostalCode}"></span> <span
-                                    th:text="${invoice.billingLabelCity.label}"></span></span>
+                                    th:text="${invoice.billingLabelCity.label}"></span><span
+                                    th:if="${invoice.cedexComplement}"
+                                    th:text="${invoice.cedexComplement}"></span></span>
                         </td>
                     </tr>
                 </table>
