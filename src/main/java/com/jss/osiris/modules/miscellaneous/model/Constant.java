@@ -664,10 +664,6 @@ public class Constant implements Serializable, IId {
 	private AccountingAccount accountingAccountCaisse;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_billing_type_vacation_deposit_beneficial_owners")
-	private BillingType billingTypeVacationDepositBeneficialOwners;
-
-	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_vacation_update_beneficial_owners")
 	private BillingType billingTypeVacationUpdateBeneficialOwners;
 
@@ -1765,14 +1761,6 @@ public class Constant implements Serializable, IId {
 
 	public void setVatDeductible(Vat vatDeductible) {
 		this.vatDeductible = vatDeductible;
-	}
-
-	public BillingType getBillingTypeVacationDepositBeneficialOwners() {
-		return billingTypeVacationDepositBeneficialOwners;
-	}
-
-	public void setBillingTypeVacationDepositBeneficialOwners(BillingType billingTypeVacationDepositBeneficialOwners) {
-		this.billingTypeVacationDepositBeneficialOwners = billingTypeVacationDepositBeneficialOwners;
 	}
 
 	public BillingType getBillingTypeVacationUpdateBeneficialOwners() {

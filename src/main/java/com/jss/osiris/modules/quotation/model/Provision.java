@@ -167,9 +167,6 @@ public class Provision implements IId, IAttachment {
 	private Boolean isEmergency;
 
 	@Column(nullable = false)
-	private Boolean isVacationDepositBeneficialOwners;
-
-	@Column(nullable = false)
 	private Boolean isVacationUpdateBeneficialOwners;
 
 	@Column(nullable = false)
@@ -452,14 +449,6 @@ public class Provision implements IId, IAttachment {
 
 	public void setIsEmergency(Boolean isEmergency) {
 		this.isEmergency = isEmergency;
-	}
-
-	public Boolean getIsVacationDepositBeneficialOwners() {
-		return isVacationDepositBeneficialOwners;
-	}
-
-	public void setIsVacationDepositBeneficialOwners(Boolean isVacationDepositBeneficialOwners) {
-		this.isVacationDepositBeneficialOwners = isVacationDepositBeneficialOwners;
 	}
 
 	public Boolean getIsVacationUpdateBeneficialOwners() {
