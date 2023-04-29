@@ -40,7 +40,7 @@
             <generic-input [(model)]="newDebour.comments" label="Commentaire" [form]="debourForm"
               propertyName="comments" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="250"></generic-input>
           </td>
-          <td class="button-td">
+          <td class="button-td" *ngIf="editMode">
             <button (click)="addDebour()" mat-mini-fab color="warn" class="mini-fab-add add-button">
               <mat-icon>add</mat-icon>
             </button>
