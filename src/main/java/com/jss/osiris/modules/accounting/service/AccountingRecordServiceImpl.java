@@ -638,7 +638,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             : constantService.getAccountingJournalBank();
 
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
-        "Paiement n°" + payment.getId(), null, payment.getPaymentAmount(),
+        "Paiement n°" + payment.getId() + " - " + payment.getLabel(), null, payment.getPaymentAmount(),
         constantService.getAccountingAccountBankJss(),
         null, null, null, bankJournal, payment, null, null, null);
 
@@ -652,7 +652,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             : constantService.getAccountingJournalBank();
 
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
-        "Paiement n°" + payment.getId(), payment.getPaymentAmount(), null,
+        "Paiement n°" + payment.getId() + " - " + payment.getLabel(), payment.getPaymentAmount(), null,
         constantService.getAccountingAccountBankJss(),
         null, null, null, bankJournal, payment, null, null, null);
   }
@@ -662,7 +662,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     AccountingJournal cashJournal = constantService.getAccountingJournalCash();
 
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
-        "Paiement n°" + payment.getId(), null, payment.getPaymentAmount(),
+        "Paiement n°" + payment.getId() + " - " + payment.getLabel(), null, payment.getPaymentAmount(),
         constantService.getAccountingAccountCaisse(),
         null, null, null, cashJournal, payment, null, null, null);
   }
