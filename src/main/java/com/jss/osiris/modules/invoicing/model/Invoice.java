@@ -105,6 +105,8 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	private String billingLabelPostalCode;
 
+	private String billingLabelIntercommunityVat;
+
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_city")
 	private City billingLabelCity;
@@ -507,6 +509,14 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	public void setBankTransfert(BankTransfert bankTransfert) {
 		this.bankTransfert = bankTransfert;
+	}
+
+	public String getBillingLabelIntercommunityVat() {
+		return billingLabelIntercommunityVat;
+	}
+
+	public void setBillingLabelIntercommunityVat(String billingLabelIntercommunityVat) {
+		this.billingLabelIntercommunityVat = billingLabelIntercommunityVat;
 	}
 
 }

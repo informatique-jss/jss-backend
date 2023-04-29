@@ -174,6 +174,8 @@
                       {{invoiceLabelResult.billingLabelCountry?invoiceLabelResult.billingLabelCountry.label:"Pays
                       inconnu"}}
                     </p>
+                    <p *ngIf="invoiceLabelResult.billingLabelIntercommunityVat">N° de TVA :
+                      {{invoiceLabelResult.billingLabelIntercommunityVat}}</p>
                   </td>
                 </tr>
                 <tr *ngIf=" billingMailComputeResult && billingMailComputeResult.recipientsMailTo.length==0">

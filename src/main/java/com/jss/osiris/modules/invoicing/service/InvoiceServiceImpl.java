@@ -745,6 +745,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         newInvoice.setBillingLabelCountry(invoice.getBillingLabelCountry());
         newInvoice.setBillingLabelIsIndividual(invoice.getBillingLabelIsIndividual());
         newInvoice.setBillingLabelPostalCode(invoice.getBillingLabelPostalCode());
+        newInvoice.setBillingLabelIntercommunityVat(invoice.getBillingLabelIntercommunityVat());
         newInvoice.setBillingLabelType(invoice.getBillingLabelType());
         newInvoice.setCedexComplement(invoice.getCedexComplement());
         newInvoice.setCommandNumber(invoice.getCommandNumber());

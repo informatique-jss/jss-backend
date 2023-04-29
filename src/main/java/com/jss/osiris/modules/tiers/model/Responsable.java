@@ -519,4 +519,10 @@ public class Responsable implements ITiers, IAttachment {
 		this.defaultCustomerOrderEmployee = defaultCustomerOrderEmployee;
 	}
 
+	public String getIntercommunityVat() {
+		if (getTiers() != null)
+			return getTiers().getIntercommunityVat();
+		return null;
+	}
+
 }

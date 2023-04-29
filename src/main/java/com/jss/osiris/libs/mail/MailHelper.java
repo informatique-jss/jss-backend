@@ -1063,6 +1063,7 @@ public class MailHelper {
         if (billingDocument != null) {
             if (billingDocument.getExternalReference() != null)
                 ctx.setVariable("externalReference", billingDocument.getExternalReference());
+
             // Responsable on billing
             if (billingDocument.getIsResponsableOnBilling() != null && billingDocument.getIsResponsableOnBilling()
                     && customerOrder.getResponsable() != null)

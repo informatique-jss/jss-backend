@@ -24,6 +24,7 @@ export interface Invoice extends IAttachment {
   billingLabel: string;
   billingLabelAddress: string;
   billingLabelPostalCode: string;
+  billingLabelIntercommunityVat: string;
   cedexComplement: string;
   billingLabelCity: City;
   billingLabelCountry: Country;

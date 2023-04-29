@@ -125,6 +125,9 @@ public class Confrere implements ITiers {
 	@Column(length = 100)
 	private String address;
 
+	@Column(length = 20)
+	private String intercommunityVat;
+
 	@Column(length = 10)
 	private String postalCode;
 
@@ -569,6 +572,14 @@ public class Confrere implements ITiers {
 
 	public void setDefaultCustomerOrderEmployee(Employee defaultCustomerOrderEmployee) {
 		this.defaultCustomerOrderEmployee = defaultCustomerOrderEmployee;
+	}
+
+	public String getIntercommunityVat() {
+		return intercommunityVat;
+	}
+
+	public void setIntercommunityVat(String intercommunityVat) {
+		this.intercommunityVat = intercommunityVat;
 	}
 
 }

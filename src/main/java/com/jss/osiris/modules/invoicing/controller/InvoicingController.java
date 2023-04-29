@@ -840,6 +840,7 @@ public class InvoicingController {
         validationHelper.validateDate(invoice.getManualAccountingDocumentDate(), false, "AccountingDocumentDate");
         validationHelper.validateString(invoice.getManualAccountingDocumentNumber(), false, 150,
                 "ManualAccountingDocumentNumber");
+        validationHelper.validateString(invoice.getBillingLabelIntercommunityVat(), false, 20, "intercommunityVat");
 
         if (invoice.getInvoiceItems() == null) {
             throw new OsirisValidationException("InvoiceItems");

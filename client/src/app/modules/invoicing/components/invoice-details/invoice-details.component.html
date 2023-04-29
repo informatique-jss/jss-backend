@@ -68,6 +68,7 @@
               <p>{{invoice.billingLabelAddress}}</p>
               <p>{{invoice.billingLabelPostalCode}} {{invoice.billingLabelCity?invoice.billingLabelCity.label:""}}
                 {{invoice.billingLabelCountry?invoice.billingLabelCountry.label:""}}</p>
+              <p *ngIf="invoice.billingLabelIntercommunityVat">N° de TVA : {{invoice.billingLabelIntercommunityVat}}</p>
             </td>
             <td class="mat-cell td-info"
               *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">

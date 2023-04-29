@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
+import { validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -20,8 +21,8 @@ import { InvoiceItem } from 'src/app/modules/quotation/model/InvoiceItem';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
-import { IndexEntityService } from '../../../../routing/search/index.entity.service';
 import { IndexEntity } from '../../../../routing/search/IndexEntity';
+import { IndexEntityService } from '../../../../routing/search/index.entity.service';
 import { BillingItem } from '../../../miscellaneous/model/BillingItem';
 import { CompetentAuthorityService } from '../../../miscellaneous/services/competent.authority.service';
 import { CustomerOrder } from '../../../quotation/model/CustomerOrder';
@@ -427,5 +428,17 @@ export class AddInvoiceComponent implements OnInit {
         invoiceItem.vat = this.contantService.getVatZero();
       else
         invoiceItem.vat = this.contantService.getVatDeductible();
+  }
+
+  checkVAT(fieldName: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const root = control.root as UntypedFormGroup;
+      const fieldValue = root.get(fieldName)?.value;
+      if (!this.invoice.billingLabelIsIndividual && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateVat(fieldValue)))
+        return {
+          notFilled: true
+        };
+      return null;
+    };
   }
 }
