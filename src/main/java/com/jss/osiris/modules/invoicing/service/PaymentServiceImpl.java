@@ -455,8 +455,19 @@ public class PaymentServiceImpl implements PaymentService {
                         payment.setPaymentAmount(payment.getPaymentAmount() - remainingMoney);
                     }
                 } else {
+                    // Try to find a customerOrder ...
+                    CustomerOrder customerOrder = null;
+                    if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0)
+                        customerOrder = correspondingCustomerOrder.get(0);
+                    else if (correspondingInvoices != null && correspondingInvoices.size() > 0)
+                        for (Invoice invoice : correspondingInvoices)
+                            if (invoice.getCustomerOrder() != null)
+                                customerOrder = invoice.getCustomerOrder();
+                            else if (invoice.getCustomerOrderForInboundInvoice() != null)
+                                customerOrder = invoice.getCustomerOrderForInboundInvoice();
+
                     refundService.generateRefund(tiersRefund, affaireRefund, payment, null, remainingMoney,
-                            refundLabelSuffix);
+                            refundLabelSuffix, customerOrder);
                 }
             }
         } else {

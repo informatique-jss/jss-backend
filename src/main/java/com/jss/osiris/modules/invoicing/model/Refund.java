@@ -11,10 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -57,6 +59,11 @@ public class Refund implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_refund_type")
 	private RefundType refundType;
+
+	@ManyToOne
+	@JoinColumn(name = "id_customer_order")
+	@JsonIgnoreProperties(value = { "deposits" }, allowSetters = true)
+	private CustomerOrder customerOrder;
 
 	@Column(length = 40)
 	private String refundIBAN;
@@ -178,6 +185,14 @@ public class Refund implements Serializable, IId {
 
 	public void setRefundBic(String refundBic) {
 		this.refundBic = refundBic;
+	}
+
+	public CustomerOrder getCustomerOrder() {
+		return customerOrder;
+	}
+
+	public void setCustomerOrder(CustomerOrder customerOrder) {
+		this.customerOrder = customerOrder;
 	}
 
 }

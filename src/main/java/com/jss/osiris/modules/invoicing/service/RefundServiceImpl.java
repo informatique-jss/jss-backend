@@ -43,6 +43,7 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -118,9 +119,10 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     public void generateRefund(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Deposit deposit,
-            Float amount, String labelSuffix)
+            Float amount, String labelSuffix, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException {
         Refund refund = new Refund();
+        refund.setCustomerOrder(customerOrder);
         if (tiersRefund instanceof Confrere)
             refund.setConfrere((Confrere) tiersRefund);
         if (tiersRefund instanceof Tiers)

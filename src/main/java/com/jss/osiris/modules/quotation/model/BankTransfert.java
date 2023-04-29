@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -53,6 +55,11 @@ public class BankTransfert implements Serializable, IId {
 
 	private Boolean isCancelled;
 	private Boolean isSelectedForExport;
+
+	@ManyToOne
+	@JoinColumn(name = "id_customer_order")
+	@JsonIgnoreProperties(value = { "deposits" }, allowSetters = true)
+	private CustomerOrder customerOrder;
 
 	public Integer getId() {
 		return id;
@@ -140,6 +147,14 @@ public class BankTransfert implements Serializable, IId {
 
 	public void setIsSelectedForExport(Boolean isSelectedForExport) {
 		this.isSelectedForExport = isSelectedForExport;
+	}
+
+	public CustomerOrder getCustomerOrder() {
+		return customerOrder;
+	}
+
+	public void setCustomerOrder(CustomerOrder customerOrder) {
+		this.customerOrder = customerOrder;
 	}
 
 }

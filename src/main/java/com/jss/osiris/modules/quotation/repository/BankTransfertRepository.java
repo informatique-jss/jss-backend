@@ -19,6 +19,7 @@ public interface BankTransfertRepository extends CrudRepository<BankTransfert, I
                         + " r.transfert_iban as transfertIban,"
                         + " coalesce(provider.label, confrere.label, competent_authority.label) as invoiceBillingLabel,"
                         + " ca.label as competentAuthorityLabel,"
+                        + " (select max(coalesce(a1.denomination,a1.firstname ||' ' || a1.lastname)) from affaire a1 join asso_affaire_order a2 on a1.id = a2.id_affaire where a2.id_customer_order = r.id_customer_order) as affaireLabel ,"
                         + " r.is_already_exported  as isAlreadyExported "
                         + " from bank_transfert r "
                         + " left join invoice  on invoice.id_bank_transfert = r.id "

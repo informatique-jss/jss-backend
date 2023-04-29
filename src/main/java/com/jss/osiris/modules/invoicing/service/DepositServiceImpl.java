@@ -224,8 +224,19 @@ public class DepositServiceImpl implements DepositService {
                 if (tiersRefund == null)
                     throw new OsirisValidationException("TiersRefund or ConfrereRefund");
 
+                // Try to find a customerOrder ...
+                CustomerOrder customerOrder = null;
+                if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0)
+                    customerOrder = correspondingCustomerOrder.get(0);
+                else if (correspondingInvoices != null && correspondingInvoices.size() > 0)
+                    for (Invoice invoice : correspondingInvoices)
+                        if (invoice.getCustomerOrder() != null)
+                            customerOrder = invoice.getCustomerOrder();
+                        else if (invoice.getCustomerOrderForInboundInvoice() != null)
+                            customerOrder = invoice.getCustomerOrderForInboundInvoice();
+
                 refundService.generateRefund(tiersRefund, affaireRefund, null, deposit, remainingMoney,
-                        refundLabelSuffix);
+                        refundLabelSuffix, customerOrder);
             }
         }
     }

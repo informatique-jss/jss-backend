@@ -148,6 +148,10 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                 + (invoice.getCommandNumber() != null ? invoice.getCommandNumber() : "") + " / "
                 + invoice.getManualAccountingDocumentNumber());
         bankTransfert.setIsAlreadyExported(false);
+        if (invoice.getCustomerOrder() != null)
+            bankTransfert.setCustomerOrder(invoice.getCustomerOrder());
+        else if (invoice.getCustomerOrderForInboundInvoice() != null)
+            bankTransfert.setCustomerOrder(invoice.getCustomerOrderForInboundInvoice());
         bankTransfert.setTransfertAmount(invoice.getTotalPrice());
         bankTransfert.setTransfertDateTime(invoice.getDueDate().atTime(12, 0));
         bankTransfert.setTransfertIban(invoiceHelper.getIbanOfOrderingCustomer(invoice));

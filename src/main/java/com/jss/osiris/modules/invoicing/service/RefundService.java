@@ -11,6 +11,7 @@ import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.model.RefundSearch;
 import com.jss.osiris.modules.invoicing.model.RefundSearchResult;
 import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 public interface RefundService {
@@ -25,7 +26,7 @@ public interface RefundService {
     public void reindexRefunds();
 
     public void generateRefund(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Deposit deposit,
-            Float amount, String labelSuffix)
+            Float amount, String labelSuffix, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException;
 
     public File getRefundExport(RefundSearch refundSearch) throws OsirisException;
