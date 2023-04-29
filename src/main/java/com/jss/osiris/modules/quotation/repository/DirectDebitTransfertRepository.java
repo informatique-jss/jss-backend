@@ -13,6 +13,7 @@ import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 public interface DirectDebitTransfertRepository extends CrudRepository<DirectDebitTransfert, Integer> {
 
         @Query(nativeQuery = true, value = " select r.id as id,"
+                        + " r.customer_order_label as customerOrderLabel,"
                         + " r.transfert_date_time as transfertDate,"
                         + " r.transfert_amount  as transfertAmount ,"
                         + " r.label as transfertLabel,"
