@@ -319,12 +319,12 @@
                 €
             </td>
         </tr>
-        <tr th:if="${0>remainingToPay}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
+        <tr th:if="${tooMuchPerceived!=null}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
             <td>
                 Solde en votre faveur
             </td>
             <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
-                    th:text="${#numbers.formatDecimal(-remainingToPay,1,2)}"></span>
+                    th:text="${#numbers.formatDecimal(tooMuchPerceived,1,2)}"></span>
                 €
             </td>
         </tr>
