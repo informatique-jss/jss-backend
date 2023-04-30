@@ -631,7 +631,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateBankAccountingRecordsForInboundPayment(Payment payment) throws OsirisException {
+  public void generateBankAccountingRecordsForInboundPayment(Payment payment,
+      AccountingAccount targetBankAccountingAccount) throws OsirisException {
     AccountingJournal bankJournal = payment.getPaymentType().getId()
         .equals(constantService.getPaymentTypeEspeces().getId())
             ? constantService.getAccountingJournalCash()
@@ -639,7 +640,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
         "Paiement n°" + payment.getId() + " - " + payment.getLabel(), null, payment.getPaymentAmount(),
-        constantService.getAccountingAccountBankJss(),
+        targetBankAccountingAccount != null ? targetBankAccountingAccount
+            : constantService.getAccountingAccountBankJss(),
         null, null, null, bankJournal, payment, null, null, null);
 
   }

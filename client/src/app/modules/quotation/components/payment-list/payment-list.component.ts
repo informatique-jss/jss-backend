@@ -16,6 +16,8 @@ import { ConstantService } from "src/app/modules/miscellaneous/services/constant
 import { OFX_ENTITY_TYPE } from "src/app/routing/search/search.component";
 import { AppService } from "src/app/services/app.service";
 import { HabilitationsService } from "src/app/services/habilitations.service";
+import { AccountingAccount } from '../../../accounting/model/AccountingAccount';
+import { SelectAccountingAccountDialogComponent } from "../select-accounting-account-dialog/select-accounting-account-dialog.component";
 
 
 @Component({
@@ -32,6 +34,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
   columnToDisplayOnDashboard: string[] = ["payemntDate", "payemntAmount", "label"];
   tableAction: SortTableAction[] = [];
   uploadAttachementDialogRef: MatDialogRef<UploadAttachementDialogComponent> | undefined;
+  selectAccountingAccountDialogComponentRef: MatDialogRef<SelectAccountingAccountDialogComponent> | undefined;
 
   @Output() actionBypass: EventEmitter<PaymentSearchResult> = new EventEmitter<PaymentSearchResult>();
   @Input() overrideIconAction: string = "";
@@ -44,6 +47,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     private paymentService: PaymentService,
     private constantService: ConstantService,
     protected uploadAttachementDialog: MatDialog,
+    protected selectAccountingAccountDialogComponent: MatDialog,
     private changeDetectorRef: ChangeDetectorRef,
     private appService: AppService,
     public associatePaymentDialog: MatDialog,
@@ -160,15 +164,27 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
   }
 
   importOfxFile() {
-    this.uploadAttachementDialogRef = this.uploadAttachementDialog.open(UploadAttachementDialogComponent, {
+    this.selectAccountingAccountDialogComponentRef = this.selectAccountingAccountDialogComponent.open(SelectAccountingAccountDialogComponent, {
     });
-    this.uploadAttachementDialogRef.componentInstance.entity = { id: 1 } as IAttachment;
-    this.uploadAttachementDialogRef.componentInstance.entityType = OFX_ENTITY_TYPE.entityType;
-    this.uploadAttachementDialogRef.componentInstance.forcedAttachmentType = this.constantService.getAttachmentTypeBillingClosure();
-    this.uploadAttachementDialogRef.componentInstance.replaceExistingAttachementType = true;
-    this.uploadAttachementDialogRef.afterClosed().subscribe(response => {
-      this.searchPayments();
-    });
+
+    let accountingAccountSelected: AccountingAccount | undefined;
+    this.selectAccountingAccountDialogComponentRef.afterClosed().subscribe(response => {
+      accountingAccountSelected = response;
+
+      if (accountingAccountSelected) {
+        this.uploadAttachementDialogRef = this.uploadAttachementDialog.open(UploadAttachementDialogComponent, {
+        });
+
+        // Disgusting ... Id here represent target accounting account for this import...
+        this.uploadAttachementDialogRef.componentInstance.entity = { id: accountingAccountSelected.id } as IAttachment;
+        this.uploadAttachementDialogRef.componentInstance.entityType = OFX_ENTITY_TYPE.entityType;
+        this.uploadAttachementDialogRef.componentInstance.forcedAttachmentType = this.constantService.getAttachmentTypeBillingClosure();
+        this.uploadAttachementDialogRef.componentInstance.replaceExistingAttachementType = true;
+        this.uploadAttachementDialogRef.afterClosed().subscribe(response => {
+          this.searchPayments();
+        });
+      }
+    })
   }
 
   openAssociationDialog(elementIn: PaymentSearchResult) {

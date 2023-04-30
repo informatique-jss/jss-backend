@@ -24,8 +24,10 @@ import com.jss.osiris.libs.ofx.OFXStatement;
 import com.jss.osiris.libs.ofx.StatementTransaction;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
@@ -100,6 +102,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     ProvisionService provisionService;
 
+    @Autowired
+    AccountingAccountService accountingAccountService;
+
     @Value("${invoicing.payment.limit.refund.euros}")
     private String payementLimitRefundInEuros;
 
@@ -151,9 +156,14 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Attachment> uploadOfxFile(InputStream file)
+    public List<Attachment> uploadOfxFile(InputStream file, Integer targetAccountingAccountId)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         OFXStatement operationList = ofxParser.parseOfx(file);
+
+        AccountingAccount accountingAccount = accountingAccountService.getAccountingAccount(targetAccountingAccountId);
+
+        if (accountingAccount == null)
+            throw new OsirisValidationException("targetAccountingAccountId");
 
         if (operationList != null && operationList.getAccountStatements() != null
                 && operationList.getAccountStatements().size() > 0
@@ -175,6 +185,7 @@ public class PaymentServiceImpl implements PaymentService {
                             : constantService.getPaymentWayOutboud());
                     payment.setPaymentType(constantService.getPaymentTypeVirement());
                     addOrUpdatePayment(payment);
+                    accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment, accountingAccount);
                 }
             }
         automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords();
@@ -209,7 +220,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
             if (generateWaitingAccountAccountingRecords.getValue())
-                accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment);
+                accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment, null);
 
             // Get invoices and customer orders and quotations
             Float totalToPay = 0f;
@@ -557,7 +568,7 @@ public class PaymentServiceImpl implements PaymentService {
                 // If more than 1 invoice to associate, cut payment
                 if (correspondingInvoices.size() > 1) {
                     newPayment = generateNewPaymentFromPayment(payment, effectivePayment);
-                    accountingRecordService.generateBankAccountingRecordsForInboundPayment(newPayment);
+                    accountingRecordService.generateBankAccountingRecordsForInboundPayment(newPayment, null);
 
                     if (payment.getIsCancelled() == false)
                         cancelPayment(payment, constantService.getAccountingJournalBank());

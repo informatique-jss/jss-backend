@@ -97,7 +97,8 @@ public interface AccountingRecordService {
 
         public void generateAccountingRecordsForWaintingOutboundPayment(Payment payment) throws OsirisException;
 
-        public void generateBankAccountingRecordsForInboundPayment(Payment payment) throws OsirisException;
+        public void generateBankAccountingRecordsForInboundPayment(Payment payment,
+                        AccountingAccount targetBankAccountingAccount) throws OsirisException;
 
         public void generateBankAccountingRecordsForInboundCashPayment(Payment payment) throws OsirisException;
 
