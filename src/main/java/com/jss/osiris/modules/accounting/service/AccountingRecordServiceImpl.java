@@ -1350,9 +1350,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
       if (downloadFile) {
         ArrayList<ITiers> tiers = new ArrayList<ITiers>();
-        tiers.add(tier);
         if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
           tiers.addAll(((Tiers) tier).getResponsables());
+        else
+          tiers.add(tier);
         List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers,
             isOrderingByEventDate);
         return mailHelper.getBillingClosureReceiptFile(tier, values);
@@ -1366,9 +1367,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
                   .equals(constantService.getBillingClosureRecipientTypeOther().getId()))) {
 
         ArrayList<ITiers> tiers = new ArrayList<ITiers>();
-        tiers.add(tier);
         if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
           tiers.addAll(((Tiers) tier).getResponsables());
+        else
+          tiers.add(tier);
 
         List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers, isOrderingByEventDate);
         if (values.size() > 0)
@@ -1402,170 +1404,195 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       boolean isOrderingByEventDate) throws OsirisException, OsirisClientMessageException {
 
     // Find all elements
+    ArrayList<BillingClosureReceiptValue> values = new ArrayList<BillingClosureReceiptValue>();
 
     // Find customer orders
     OrderingSearch search = new OrderingSearch();
     ArrayList<Tiers> tiersList = new ArrayList<Tiers>();
     for (ITiers tiersIn : tiers) {
-      if (tiersIn instanceof Tiers)
-        tiersList.add((Tiers) tiersIn);
-      if (tiersIn instanceof Confrere) {
+      tiersList = new ArrayList<Tiers>();
+      boolean hadSomeValues = false;
+      if (tiersIn instanceof Tiers) {
+        Tiers t = (Tiers) tiersIn;
+        tiersList.add(t);
+        values.add(new BillingClosureReceiptValue(
+            t.getDenomination() != null ? t.getDenomination() : (t.getFirstname() + " " + t.getLastname())));
+      } else if (tiersIn instanceof Confrere) {
         Tiers fakeTiers = new Tiers();
         fakeTiers.setId(tiersIn.getId());
         tiersList.add(fakeTiers);
-      }
-      if (tiersIn instanceof Responsable) {
+        values.add(new BillingClosureReceiptValue(((Confrere) tiersIn).getLabel()));
+      } else if (tiersIn instanceof Responsable) {
         Tiers fakeTiers = new Tiers();
         fakeTiers.setId(tiersIn.getId());
         tiersList.add(fakeTiers);
-      }
-    }
-
-    search.setCustomerOrders(tiersList);
-
-    search.setCustomerOrderStatus(customerOrderStatusService.getCustomerOrderStatus().stream()
-        .filter(status -> !status.getCode().equals(CustomerOrderStatus.BILLED) &&
-            !status.getCode().equals(CustomerOrderStatus.ABANDONED))
-        .collect(Collectors.toList()));
-
-    List<OrderingSearchResult> customerOrdersList = customerOrderService.searchOrders(search);
-    ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
-
-    if (customerOrdersList != null && customerOrdersList.size() > 0) {
-      for (OrderingSearchResult customerOrder : customerOrdersList) {
-        if (customerOrder.getDepositTotalAmount() != null && customerOrder.getDepositTotalAmount() > 0) {
-          CustomerOrder completeCustomerOrder = customerOrderService
-              .getCustomerOrder(customerOrder.getCustomerOrderId());
-          customerOrders.add(completeCustomerOrder);
-        }
-      }
-    }
-
-    // Find invoices
-    InvoiceSearch invoiceSearch = new InvoiceSearch();
-    invoiceSearch.setCustomerOrders(tiersList);
-    invoiceSearch.setInvoiceStatus(Arrays.asList(constantService.getInvoiceStatusSend()));
-
-    List<InvoiceSearchResult> invoiceList = invoiceService.searchInvoices(invoiceSearch);
-    ArrayList<Invoice> invoices = new ArrayList<Invoice>();
-    if (invoiceList != null && invoiceList.size() > 0) {
-      for (InvoiceSearchResult invoice : invoiceList) {
-        Invoice completeInvoice = invoiceService.getInvoice(invoice.getInvoiceId());
-        invoices.add(completeInvoice);
-      }
-    }
-
-    ArrayList<BillingClosureReceiptValue> values = new ArrayList<BillingClosureReceiptValue>();
-
-    if (isOrderingByEventDate) {
-      ArrayList<ICreatedDate> allInputs = new ArrayList<ICreatedDate>();
-      if (customerOrders != null && customerOrders.size() > 0) {
-        for (CustomerOrder customerOrder : customerOrders) {
-          allInputs.add(customerOrder);
-          if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
-            for (Deposit deposit : customerOrder.getDeposits())
-              allInputs.add(deposit);
-        }
+        Responsable t = (Responsable) tiersIn;
+        values.add(new BillingClosureReceiptValue((t.getFirstname() + " " + t.getLastname())));
       }
 
-      if (invoices != null && invoices.size() > 0) {
-        for (Invoice invoice : invoices) {
-          allInputs.add(invoice);
-          if (invoice.getDeposits() != null && invoice.getDeposits().size() > 0)
-            for (Deposit deposit : invoice.getDeposits())
-              allInputs.add(deposit);
-          if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
-            for (Payment payment : invoice.getPayments())
-              allInputs.add(payment);
-        }
-      }
+      search.setCustomerOrders(tiersList);
 
-      if (allInputs.size() > 0) {
-        allInputs.sort(new Comparator<ICreatedDate>() {
-          @Override
-          public int compare(ICreatedDate o1, ICreatedDate o2) {
-            return o1.getCreatedDate().compareTo(o2.getCreatedDate());
+      search.setCustomerOrderStatus(customerOrderStatusService.getCustomerOrderStatus().stream()
+          .filter(status -> !status.getCode().equals(CustomerOrderStatus.BILLED) &&
+              !status.getCode().equals(CustomerOrderStatus.ABANDONED))
+          .collect(Collectors.toList()));
+
+      List<OrderingSearchResult> customerOrdersList = customerOrderService.searchOrders(search);
+      ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
+
+      if (customerOrdersList != null && customerOrdersList.size() > 0) {
+        for (OrderingSearchResult customerOrder : customerOrdersList) {
+          if (customerOrder.getDepositTotalAmount() != null && customerOrder.getDepositTotalAmount() > 0) {
+            CustomerOrder completeCustomerOrder = customerOrderService
+                .getCustomerOrder(customerOrder.getCustomerOrderId());
+            customerOrders.add(completeCustomerOrder);
           }
-        });
-
-        for (ICreatedDate input : allInputs) {
-          if (input instanceof CustomerOrder)
-            values.add(getBillingClosureReceiptValueForCustomerOrder((CustomerOrder) input));
-          if (input instanceof Invoice)
-            values.add(getBillingClosureReceiptValueForInvoice((Invoice) input));
-          if (input instanceof Deposit) {
-            CustomerOrder customerOrder = null;
-            Deposit deposit = (Deposit) input;
-            if (deposit.getCustomerOrder() != null)
-              customerOrder = deposit.getCustomerOrder();
-            else if (deposit.getInvoice() != null)
-              customerOrder = deposit.getInvoice().getCustomerOrder();
-            values.add(getBillingClosureReceiptValueForDeposit(deposit, customerOrder));
-          }
-          if (input instanceof Payment)
-            values.add(getBillingClosureReceiptValueForPayment((Payment) input));
         }
       }
-    } else {
-      // Order by affaire
-      ArrayList<Object> allInputs = new ArrayList<Object>();
-      if (customerOrders != null && customerOrders.size() > 0)
-        allInputs.addAll(customerOrders);
-      if (invoices != null && invoices.size() > 0)
-        allInputs.addAll(invoices);
 
-      if (allInputs.size() > 0) {
-        allInputs.sort(new Comparator<Object>() {
+      // Find invoices
+      InvoiceSearch invoiceSearch = new InvoiceSearch();
+      invoiceSearch.setCustomerOrders(tiersList);
+      invoiceSearch.setInvoiceStatus(Arrays.asList(constantService.getInvoiceStatusSend()));
 
-          @Override
-          public int compare(Object o1, Object o2) {
-            Affaire affaire1 = null;
-            Affaire affaire2 = null;
-            if (o1 instanceof CustomerOrder)
-              affaire1 = ((CustomerOrder) o1).getAssoAffaireOrders().get(0).getAffaire();
-            if (o1 instanceof Invoice && ((Invoice) o1).getCustomerOrder() != null)
-              affaire1 = ((Invoice) o1).getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
-            if (o2 instanceof CustomerOrder)
-              affaire2 = ((CustomerOrder) o2).getAssoAffaireOrders().get(0).getAffaire();
-            if (o2 instanceof Invoice && ((Invoice) o2).getCustomerOrder() != null)
-              affaire2 = ((Invoice) o2).getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
+      List<InvoiceSearchResult> invoiceList = invoiceService.searchInvoices(invoiceSearch);
+      ArrayList<Invoice> invoices = new ArrayList<Invoice>();
+      if (invoiceList != null && invoiceList.size() > 0) {
+        for (InvoiceSearchResult invoice : invoiceList) {
+          Invoice completeInvoice = invoiceService.getInvoice(invoice.getInvoiceId());
+          invoices.add(completeInvoice);
+        }
+      }
 
-            if (affaire1 != null && affaire2 == null)
-              return 1;
-            if (affaire1 == null && affaire2 != null)
-              return -1;
-            if (affaire1 == null && affaire2 == null)
+      if (isOrderingByEventDate) {
+        ArrayList<ICreatedDate> allInputs = new ArrayList<ICreatedDate>();
+        if (customerOrders != null && customerOrders.size() > 0) {
+          for (CustomerOrder customerOrder : customerOrders) {
+            allInputs.add(customerOrder);
+            if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
+              for (Deposit deposit : customerOrder.getDeposits())
+                allInputs.add(deposit);
+          }
+        }
+
+        if (invoices != null && invoices.size() > 0) {
+          for (Invoice invoice : invoices) {
+            allInputs.add(invoice);
+            if (invoice.getDeposits() != null && invoice.getDeposits().size() > 0)
+              for (Deposit deposit : invoice.getDeposits())
+                allInputs.add(deposit);
+            if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
+              for (Payment payment : invoice.getPayments())
+                allInputs.add(payment);
+          }
+        }
+
+        if (allInputs.size() > 0) {
+          hadSomeValues = true;
+          allInputs.sort(new Comparator<ICreatedDate>() {
+            @Override
+            public int compare(ICreatedDate o1, ICreatedDate o2) {
+              return o1.getCreatedDate().compareTo(o2.getCreatedDate());
+            }
+          });
+
+          for (ICreatedDate input : allInputs) {
+            if (input instanceof CustomerOrder)
+              values.add(getBillingClosureReceiptValueForCustomerOrder((CustomerOrder) input));
+            if (input instanceof Invoice)
+              values.add(getBillingClosureReceiptValueForInvoice((Invoice) input));
+            if (input instanceof Deposit) {
+              CustomerOrder customerOrder = null;
+              Deposit deposit = (Deposit) input;
+              if (deposit.getCustomerOrder() != null)
+                customerOrder = deposit.getCustomerOrder();
+              else if (deposit.getInvoice() != null)
+                customerOrder = deposit.getInvoice().getCustomerOrder();
+              values.add(getBillingClosureReceiptValueForDeposit(deposit, customerOrder, true));
+            }
+            if (input instanceof Payment)
+              values.add(getBillingClosureReceiptValueForPayment((Payment) input, true));
+          }
+        }
+      } else {
+        // Order by affaire
+        ArrayList<Object> allInputs = new ArrayList<Object>();
+        if (customerOrders != null && customerOrders.size() > 0)
+          allInputs.addAll(customerOrders);
+        if (invoices != null && invoices.size() > 0)
+          allInputs.addAll(invoices);
+
+        if (allInputs.size() > 0) {
+          hadSomeValues = true;
+          allInputs.sort(new Comparator<Object>() {
+
+            @Override
+            public int compare(Object o1, Object o2) {
+              Affaire affaire1 = null;
+              Affaire affaire2 = null;
+              if (o1 instanceof CustomerOrder)
+                affaire1 = ((CustomerOrder) o1).getAssoAffaireOrders().get(0).getAffaire();
+              if (o1 instanceof Invoice && ((Invoice) o1).getCustomerOrder() != null)
+                affaire1 = ((Invoice) o1).getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
+              if (o2 instanceof CustomerOrder)
+                affaire2 = ((CustomerOrder) o2).getAssoAffaireOrders().get(0).getAffaire();
+              if (o2 instanceof Invoice && ((Invoice) o2).getCustomerOrder() != null)
+                affaire2 = ((Invoice) o2).getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
+
+              if (affaire1 != null && affaire2 == null)
+                return 1;
+              if (affaire1 == null && affaire2 != null)
+                return -1;
+              if (affaire1 == null && affaire2 == null)
+                return 0;
+
+              if (affaire1 != null && affaire2 != null)
+                return (affaire1.getDenomination() != null ? affaire1.getDenomination()
+                    : (affaire1.getFirstname() + affaire1.getLastname()))
+                    .compareTo((affaire2.getDenomination() != null ? affaire2.getDenomination()
+                        : (affaire2.getFirstname() + affaire2.getLastname())));
               return 0;
+            }
+          });
+        }
 
-            if (affaire1 != null && affaire2 != null)
-              return (affaire1.getDenomination() != null ? affaire1.getDenomination()
-                  : (affaire1.getFirstname() + affaire1.getLastname()))
-                  .compareTo((affaire2.getDenomination() != null ? affaire2.getDenomination()
-                      : (affaire2.getFirstname() + affaire2.getLastname())));
-            return 0;
+        for (Object input : allInputs) {
+          if (input instanceof CustomerOrder) {
+            CustomerOrder customerOrder = (CustomerOrder) input;
+            BillingClosureReceiptValue valueCustomerOrder = getBillingClosureReceiptValueForCustomerOrder(
+                customerOrder);
+            values.add(valueCustomerOrder);
+            if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0) {
+              valueCustomerOrder.setDisplayBottomBorder(false);
+              for (Deposit deposit : customerOrder.getDeposits())
+                values.add(getBillingClosureReceiptValueForDeposit(deposit, customerOrder,
+                    customerOrder.getDeposits().indexOf(deposit) == customerOrder.getDeposits().size() - 1));
+            }
           }
-        });
+          if (input instanceof Invoice) {
+            Invoice invoice = (Invoice) input;
+            BillingClosureReceiptValue valueInvoice = getBillingClosureReceiptValueForInvoice(invoice);
+            values.add(valueInvoice);
+            if (invoice.getDeposits() != null && invoice.getDeposits().size() > 0) {
+              valueInvoice.setDisplayBottomBorder(false);
+              for (Deposit deposit : invoice.getDeposits())
+                values.add(getBillingClosureReceiptValueForDeposit(deposit, invoice.getCustomerOrder(),
+                    invoice.getCustomerOrder().getDeposits()
+                        .indexOf(deposit) == invoice.getCustomerOrder().getDeposits().size() - 1));
+            }
+            if (invoice.getPayments() != null && invoice.getPayments().size() > 0) {
+              valueInvoice.setDisplayBottomBorder(false);
+              for (Payment payment : invoice.getPayments())
+                values.add(getBillingClosureReceiptValueForPayment(payment,
+                    invoice.getPayments().indexOf(payment) == invoice.getPayments().size() - 1));
+            }
+
+          }
+        }
       }
 
-      for (Object input : allInputs) {
-        if (input instanceof CustomerOrder) {
-          CustomerOrder customerOrder = (CustomerOrder) input;
-          values.add(getBillingClosureReceiptValueForCustomerOrder(customerOrder));
-          if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
-            for (Deposit deposit : customerOrder.getDeposits())
-              values.add(getBillingClosureReceiptValueForDeposit(deposit, customerOrder));
-        }
-        if (input instanceof Invoice) {
-          Invoice invoice = (Invoice) input;
-          values.add(getBillingClosureReceiptValueForInvoice(invoice));
-          if (invoice.getDeposits() != null && invoice.getDeposits().size() > 0)
-            for (Deposit deposit : invoice.getDeposits())
-              values.add(getBillingClosureReceiptValueForDeposit(deposit, invoice.getCustomerOrder()));
-          if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
-            for (Payment payment : invoice.getPayments())
-              values.add(getBillingClosureReceiptValueForPayment(payment));
-        }
-      }
+      if (!hadSomeValues)
+        values.remove(values.size() - 1);
     }
     return values;
   }
@@ -1573,6 +1600,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   private BillingClosureReceiptValue getBillingClosureReceiptValueForCustomerOrder(CustomerOrder customerOrder)
       throws OsirisException, OsirisClientMessageException {
     BillingClosureReceiptValue value = new BillingClosureReceiptValue();
+    value.setDisplayBottomBorder(true);
     value.setDebitAmount(null);
     value.setCreditAmount(null);
     value.setEventDateTime(customerOrder.getCreatedDate());
@@ -1598,6 +1626,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   private BillingClosureReceiptValue getBillingClosureReceiptValueForInvoice(Invoice invoice)
       throws OsirisException, OsirisClientMessageException {
     BillingClosureReceiptValue value = new BillingClosureReceiptValue();
+    value.setDisplayBottomBorder(true);
     value.setDebitAmount(invoice.getTotalPrice());
     value.setCreditAmount(null);
     value.setEventDateTime(invoice.getCreatedDate());
@@ -1625,8 +1654,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   private BillingClosureReceiptValue getBillingClosureReceiptValueForDeposit(Deposit deposit,
-      CustomerOrder customerOrder) {
+      CustomerOrder customerOrder, boolean displayBottomBorder) {
     BillingClosureReceiptValue value = new BillingClosureReceiptValue();
+    value.setDisplayBottomBorder(displayBottomBorder);
     value.setDebitAmount(null);
     value.setCreditAmount(deposit.getDepositAmount());
     value.setEventDateTime(deposit.getDepositDate());
@@ -1643,9 +1673,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return value;
   }
 
-  private BillingClosureReceiptValue getBillingClosureReceiptValueForPayment(Payment payment) {
+  private BillingClosureReceiptValue getBillingClosureReceiptValueForPayment(Payment payment,
+      boolean displayBottomBorder) {
 
     BillingClosureReceiptValue value = new BillingClosureReceiptValue();
+    value.setDisplayBottomBorder(displayBottomBorder);
     value.setDebitAmount(null);
     value.setCreditAmount(payment.getPaymentAmount());
     value.setEventDateTime(payment.getPaymentDate());
