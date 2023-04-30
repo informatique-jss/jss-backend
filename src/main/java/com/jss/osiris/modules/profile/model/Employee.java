@@ -13,7 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 import org.springframework.ldap.core.AttributesMapper;
 
@@ -46,7 +46,7 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 	private String adPath;
 	private Boolean isActive;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@OneToMany(targetEntity = Employee.class, fetch = FetchType.LAZY)
 	@JoinTable(name = "asso_employee_backup", joinColumns = @JoinColumn(name = "id_employee"), inverseJoinColumns = @JoinColumn(name = "id_employee_backup"))
 	@JsonIgnoreProperties(value = { "backups" }, allowSetters = true)
 	private List<Employee> backups;

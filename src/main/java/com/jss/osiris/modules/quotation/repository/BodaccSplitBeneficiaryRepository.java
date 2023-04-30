@@ -2,7 +2,7 @@ package com.jss.osiris.modules.quotation.repository;
 
 import com.jss.osiris.modules.quotation.model.BodaccSplitBeneficiary;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
-public interface BodaccSplitBeneficiaryRepository extends CrudRepository<BodaccSplitBeneficiary, Integer> {
+public interface BodaccSplitBeneficiaryRepository extends QueryCacheCrudRepository<BodaccSplitBeneficiary, Integer> {
 }

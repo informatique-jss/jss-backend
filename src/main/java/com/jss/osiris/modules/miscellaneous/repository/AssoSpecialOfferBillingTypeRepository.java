@@ -1,8 +1,9 @@
 package com.jss.osiris.modules.miscellaneous.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 
-public interface AssoSpecialOfferBillingTypeRepository extends CrudRepository<AssoSpecialOfferBillingType, Integer> {
+public interface AssoSpecialOfferBillingTypeRepository
+                extends QueryCacheCrudRepository<AssoSpecialOfferBillingType, Integer> {
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,27 +31,27 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@IndexedField
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_affaire")
 	@IndexedField
 	private Affaire affaire;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "assoAffaireOrders", "invoices", "deposits", "payments",
 			"accountingRecords" }, allowSetters = true)
 	private CustomerOrder customerOrder;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_quotation")
 	@JsonIgnoreProperties(value = { "assoAffaireOrders" }, allowSetters = true)
 	private Quotation quotation;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_employee")
 	private Employee assignedTo;
 
-	@OneToMany(targetEntity = Provision.class, mappedBy = "assoAffaireOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(targetEntity = Provision.class, mappedBy = "assoAffaireOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "assoAffaireOrder" }, allowSetters = true)
 	@IndexedField
 	private List<Provision> provisions;

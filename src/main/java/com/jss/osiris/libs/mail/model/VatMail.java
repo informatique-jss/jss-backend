@@ -1,6 +1,7 @@
 package com.jss.osiris.libs.mail.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,7 +22,7 @@ public class VatMail {
     Float total;
     Float base;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_customer_mail")
     @JsonIgnoreProperties(value = { "vatMails", "customerMailAssoAffaireOrders" }, allowSetters = true)
     CustomerMail customerMail;

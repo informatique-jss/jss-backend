@@ -3,12 +3,12 @@ package com.jss.osiris.modules.reporting.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.reporting.model.IVatReporting;
 
-public interface VatReportingRepository extends CrudRepository<Quotation, Integer> {
+public interface VatReportingRepository extends QueryCacheCrudRepository<Quotation, Integer> {
 
         @Query(nativeQuery = true, value = "" +
                         " select to_char(i.created_date,'MM YYYY') as month, " +

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -44,7 +45,7 @@ public class Tiers implements ITiers, IAttachment {
 	@IndexedField
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers_type")
 	@IndexedField
 	private TiersType tiersType;
@@ -57,12 +58,12 @@ public class Tiers implements ITiers, IAttachment {
 	@IndexedField
 	private Boolean isIndividual;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers_category")
 	@IndexedField
 	private TiersCategory tiersCategory;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_delivery_service")
 	private DeliveryService deliveryService;
 
@@ -79,7 +80,7 @@ public class Tiers implements ITiers, IAttachment {
 	@Column(columnDefinition = "TEXT")
 	private String instructions;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment_type")
 	private PaymentType paymentType;
 
@@ -107,7 +108,7 @@ public class Tiers implements ITiers, IAttachment {
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate firstBilling;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_civility")
 	@IndexedField
 	private Civility civility;
@@ -120,28 +121,28 @@ public class Tiers implements ITiers, IAttachment {
 	@IndexedField
 	private String lastname;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_commercial")
 	@IndexedField
 	private Employee salesEmployee;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_default_customer_order_employee")
 	@IndexedField
 	private Employee defaultCustomerOrderEmployee;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_formaliste")
 	private Employee formalisteEmployee;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_insertion")
 	private Employee insertionEmployee;
 
 	@Column(columnDefinition = "TEXT")
 	private String mailRecipient;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_language")
 	private Language language;
 
@@ -156,12 +157,12 @@ public class Tiers implements ITiers, IAttachment {
 	@Column(length = 20)
 	private String cedexComplement;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_city")
 	@IndexedField
 	private City city;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
 	private Country country;
 
@@ -179,15 +180,15 @@ public class Tiers implements ITiers, IAttachment {
 	@JoinTable(name = "asso_tiers_phone", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
-	@OneToMany(mappedBy = "tiers", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "tiers", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "tiers" }, allowSetters = true)
 	private List<Document> documents;
 
-	@OneToMany(mappedBy = "tiers")
+	@OneToMany(mappedBy = "tiers", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "tiers" }, allowSetters = true)
 	private List<Attachment> attachments;
 
-	@OneToMany(mappedBy = "tiers")
+	@OneToMany(mappedBy = "tiers", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "tiers" }, allowSetters = true)
 	private List<TiersFollowup> tiersFollowups;
 
@@ -195,15 +196,15 @@ public class Tiers implements ITiers, IAttachment {
 	@JoinTable(name = "asso_tiers_competitor", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_competitor"))
 	private List<Competitor> competitors;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_provider")
 	private AccountingAccount accountingAccountProvider;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_customer")
 	private AccountingAccount accountingAccountCustomer;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_deposit")
 	private AccountingAccount accountingAccountDeposit;
 

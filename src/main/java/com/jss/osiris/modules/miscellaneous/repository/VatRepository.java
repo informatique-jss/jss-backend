@@ -1,10 +1,8 @@
 package com.jss.osiris.modules.miscellaneous.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 
-public interface VatRepository extends CrudRepository<Vat, Integer> {
-
-    Vat findByCode(String code);
+public interface VatRepository extends QueryCacheCrudRepository<Vat, Integer> {
 }

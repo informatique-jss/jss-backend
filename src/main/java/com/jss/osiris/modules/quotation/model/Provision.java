@@ -31,17 +31,17 @@ public class Provision implements IId, IAttachment {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "provision_sequence")
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_asso_affaire_order")
 	@JsonIgnoreProperties(value = { "provisions" }, allowSetters = true)
 	private AssoAffaireOrder assoAffaireOrder;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision_type")
 	@IndexedField
 	private ProvisionType provisionType;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision_family_type")
 	@IndexedField
 	private ProvisionFamilyType provisionFamilyType;
@@ -77,7 +77,7 @@ public class Provision implements IId, IAttachment {
 	@JsonIgnoreProperties(value = { "provision", "accountingRecords" }, allowSetters = true)
 	private List<Debour> debours;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_employee")
 	@IndexedField
 	private Employee assignedTo;

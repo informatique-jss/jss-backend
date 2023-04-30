@@ -1,8 +1,8 @@
 package com.jss.osiris.modules.quotation.repository.guichetUnique;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeExercice;
 
-public interface FormeExerciceRepository extends CrudRepository<FormeExercice, String> {
+public interface FormeExerciceRepository extends QueryCacheCrudRepository<FormeExercice, String> {
 }

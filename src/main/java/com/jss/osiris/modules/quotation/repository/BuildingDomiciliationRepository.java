@@ -1,8 +1,8 @@
 package com.jss.osiris.modules.quotation.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
 import com.jss.osiris.modules.quotation.model.BuildingDomiciliation;
 
-public interface BuildingDomiciliationRepository extends CrudRepository<BuildingDomiciliation, Integer> {
+public interface BuildingDomiciliationRepository extends QueryCacheCrudRepository<BuildingDomiciliation, Integer> {
 }

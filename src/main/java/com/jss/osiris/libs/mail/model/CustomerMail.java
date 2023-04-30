@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -106,17 +107,17 @@ public class CustomerMail {
     @Column(columnDefinition = "TEXT")
     private String customerMailCustomMessage;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_mail_compute_result")
     MailComputeResult mailComputeResult;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_employee_reply_to")
     private Employee replyTo;
 
     private String replyToMail;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_employee_send_to_me")
     private Employee sendToMeEmployee;
 
@@ -126,26 +127,26 @@ public class CustomerMail {
     @Column(nullable = false)
     private LocalDateTime createdDateTime;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_customer_order")
     @JsonIgnore // For client-side performance purpose
     @JsonIgnoreProperties(value = { "assoAffaireOrders", "tiers", "responsable", "confrere", "invoices",
             "providerInvoices" }, allowSetters = true)
     CustomerOrder customerOrder;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_quotation")
     Quotation quotation;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_tiers")
     Tiers tiers;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_responsable")
     Responsable responsable;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_confrere")
     Confrere confrere;
 

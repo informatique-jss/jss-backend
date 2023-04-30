@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
@@ -66,32 +67,32 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
 	private List<InvoiceItem> invoiceItems;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoices" }, allowSetters = true)
 	private CustomerOrder customerOrder;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
 	private Responsable responsable;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
 	@IndexedField
 	private Confrere confrere;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
 	@IndexedField
 	private Tiers tiers;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_competent_authority")
 	@IndexedField
 	@JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
 	private CompetentAuthority competentAuthority;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provider")
 	@IndexedField
 	private Provider provider;
@@ -107,19 +108,19 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	private String billingLabelIntercommunityVat;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_label_city")
 	private City billingLabelCity;
 
 	@Column(length = 20)
 	private String cedexComplement;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_label_country")
 	private Country billingLabelCountry;
 	private Boolean billingLabelIsIndividual;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_label_type")
 	private BillingLabelType billingLabelType;
 
@@ -142,7 +143,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder" }, allowSetters = true)
 	private List<Deposit> deposits;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice_status")
 	@IndexedField
 	private InvoiceStatus invoiceStatus;
@@ -163,7 +164,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@Column(length = 150)
 	private String manualAccountingDocumentNumber;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment_type")
 	private PaymentType manualPaymentType;
 
@@ -171,14 +172,14 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
 	private List<TiersFollowup> tiersFollowups;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoices", "providerInvoices" }, allowSetters = true)
 	@JoinColumn(name = "id_customer_order_for_inbound_invoice")
 	private CustomerOrder customerOrderForInboundInvoice;
 
 	private Boolean isCreditNote;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_credit_note")
 	@JsonIgnoreProperties(value = { "reverseCreditNote" }, allowSetters = true)
 	private Invoice creditNote;
@@ -187,7 +188,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@JsonIgnoreProperties(value = { "creditNote", "customerOrder" }, allowSetters = true)
 	private Invoice reverseCreditNote;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_bank_transfert")
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private BankTransfert bankTransfert;

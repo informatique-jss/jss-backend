@@ -1,10 +1,9 @@
 package com.jss.osiris.modules.tiers.repository;
 
-import org.springframework.data.repository.CrudRepository;
-
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.tiers.model.Responsable;
 
-public interface ResponsableRepository extends CrudRepository<Responsable, Integer> {
+public interface ResponsableRepository extends QueryCacheCrudRepository<Responsable, Integer> {
 
     Responsable findByLoginWeb(String loginWeb);
 }

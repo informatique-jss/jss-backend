@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 
-public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOrder, Integer> {
+public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<AssoAffaireOrder, Integer> {
 
         @Query(nativeQuery = true, value = "select case when a.denomination is not null and a.denomination!='' then a.denomination else a.firstname || ' '||a.lastname end   as affaireLabel,"
                         +

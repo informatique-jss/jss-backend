@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,14 +38,14 @@ public class BodaccSplitBeneficiary implements Serializable, IId {
 
 	private Integer beneficiaryCompanyShareCapital;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_legal_form_beneficiary_company")
 	private LegalForm beneficiaryCompanyLegalForm;
 
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate beneficiaryCompanyRcsDeclarationDate;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_beneficiary_company_rcs_competent_authority")
 	private CompetentAuthority beneficiaryCompanyRcsCompetentAuthority;
 

@@ -2,9 +2,12 @@ package com.jss.osiris.libs.mail.repository;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import javax.persistence.QueryHint;
 
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
+
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -12,18 +15,24 @@ import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
-public interface CustomerMailRepository extends CrudRepository<CustomerMail, Integer> {
+public interface CustomerMailRepository extends QueryCacheCrudRepository<CustomerMail, Integer> {
 
     @Query("select m from CustomerMail m where hasErrors=false and isSent = false order by createdDateTime asc")
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     List<CustomerMail> findAllByOrderByCreatedDateTimeAsc();
 
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     List<CustomerMail> findByQuotation(Quotation quotation);
 
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     List<CustomerMail> findByCustomerOrder(CustomerOrder customerOrder);
 
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     List<CustomerMail> findByConfrere(Confrere confrere);
 
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     List<CustomerMail> findByTiers(Tiers tiers);
 
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     List<CustomerMail> findByResponsable(Responsable responsable);
 }

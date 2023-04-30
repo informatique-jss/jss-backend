@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 
-public interface BankTransfertRepository extends CrudRepository<BankTransfert, Integer> {
+public interface BankTransfertRepository extends QueryCacheCrudRepository<BankTransfert, Integer> {
 
         @Query(nativeQuery = true, value = " select r.id as id,"
                         + " r.transfert_date_time as transfertDate,"

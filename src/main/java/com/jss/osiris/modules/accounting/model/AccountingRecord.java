@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -60,54 +61,54 @@ public class AccountingRecord implements Serializable, IId {
 	private Float creditAmount;
 	private Float debitAmount;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account")
 	private AccountingAccount accountingAccount;
 
 	@Column(nullable = false)
 	private Boolean isTemporary;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice_item")
 	private InvoiceItem invoiceItem;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice")
 	@JsonIgnoreProperties(value = { "accountingRecords", "payments",
 			"deposits" }, allowSetters = true)
 	private Invoice invoice;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "accountingRecords", "deposits", "payments" }, allowSetters = true)
 	private CustomerOrder customerOrder;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment")
 	@JsonIgnoreProperties(value = { "accountingRecords", "invoice", "customerOrder" }, allowSetters = true)
 	private Payment payment;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_deposit")
 	@JsonIgnoreProperties(value = { "accountingRecords", "customerOrder" }, allowSetters = true)
 	private Deposit deposit;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_debour")
 	@JsonIgnoreProperties(value = { "accountingRecords", "customerOrder" }, allowSetters = true)
 	private Debour debour;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_refund")
 	@JsonIgnoreProperties(value = { "accountingRecords", "tiers", "confrere", "affaire", "payment", "customerOrder",
 			"deposit" }, allowSetters = true)
 	private Refund refund;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_journal")
 	private AccountingJournal accountingJournal;
 
-	@OneToOne(cascade = CascadeType.PERSIST)
+	@OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_contre_passe")
 	@JsonIgnoreProperties(value = { "accountingRecords", "deposit", "payment", "invoice",
 			"customerOrder" }, allowSetters = true)

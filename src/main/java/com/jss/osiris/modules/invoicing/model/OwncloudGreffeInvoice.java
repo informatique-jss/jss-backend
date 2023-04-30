@@ -3,6 +3,7 @@ package com.jss.osiris.modules.invoicing.model;
 import java.time.LocalDate;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,7 +20,7 @@ public class OwncloudGreffeInvoice {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_owncloud_greffe_file")
     private OwncloudGreffeFile owncloudGreffeFile;
 
@@ -39,15 +40,15 @@ public class OwncloudGreffeInvoice {
 
     private Float totalPrice;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_customer_order")
     private CustomerOrder customerOrder;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_debour")
     private Debour debour;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_invoice")
     private Invoice invoice;
 

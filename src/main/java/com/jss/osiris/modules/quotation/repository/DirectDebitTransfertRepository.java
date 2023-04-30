@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearchResult;
 import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 
-public interface DirectDebitTransfertRepository extends CrudRepository<DirectDebitTransfert, Integer> {
+public interface DirectDebitTransfertRepository extends QueryCacheCrudRepository<DirectDebitTransfert, Integer> {
 
         @Query(nativeQuery = true, value = " select r.id as id,"
                         + " r.customer_order_label as customerOrderLabel,"

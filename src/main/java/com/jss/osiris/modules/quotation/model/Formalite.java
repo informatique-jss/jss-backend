@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,7 +29,7 @@ public class Formalite implements IId {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "formalite_sequence")
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_formalite_status")
     @IndexedField
     private FormaliteStatus formaliteStatus;
@@ -36,12 +37,12 @@ public class Formalite implements IId {
     @Column(columnDefinition = "TEXT")
     private String observations;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_waited_competent_authority")
     @JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
     private CompetentAuthority waitedCompetentAuthority;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_competent_authority_service_provider")
     @JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
     private CompetentAuthority competentAuthorityServiceProvider;

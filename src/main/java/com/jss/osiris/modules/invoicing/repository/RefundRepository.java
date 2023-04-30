@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.model.RefundSearchResult;
 
-public interface RefundRepository extends CrudRepository<Refund, Integer> {
+public interface RefundRepository extends QueryCacheCrudRepository<Refund, Integer> {
 
         @Query(nativeQuery = true, value = " select r.id as id,"
                         + " r.refund_date_time as refundDate,"
