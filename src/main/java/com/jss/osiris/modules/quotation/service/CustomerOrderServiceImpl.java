@@ -940,7 +940,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     } else {
                         Payment payment = generateDepositOnCustomerOrderForCbPayment(customerOrder,
                                 centralPayPaymentRequest);
-                        accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment);
+                        accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment, null);
                         unlockCustomerOrderFromDeposit(customerOrder);
                     }
                 }
@@ -981,7 +981,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         // Generate payment to materialize CB payment
         Payment payment = getCentralPayPayment(centralPayPaymentRequest, false, invoice);
 
-        accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment);
+        accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment, null);
         accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, payment);
         accountingRecordService.generateAccountingRecordsForCentralPayPayment(centralPayPaymentRequest, payment,
                 null, invoice.getCustomerOrder(), invoice);
