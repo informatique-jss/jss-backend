@@ -237,37 +237,81 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         throw new OsirisException(null,
             "No billing type defined in billing item n°" + invoiceItem.getBillingItem().getId());
 
-      if (invoiceItem.getPreTaxPrice() == null)
-        invoiceItem.setPreTaxPrice(0f);
+      if (!invoiceItem.getBillingItem().getBillingType().getIsDebour()
+          && !invoiceItem.getBillingItem().getBillingType().getIsFee()) {
+        if (invoiceItem.getPreTaxPrice() == null)
+          invoiceItem.setPreTaxPrice(0f);
 
-      AccountingAccount producAccountingAccount = invoiceItem.getBillingItem().getBillingType()
-          .getAccountingAccountProduct();
+        AccountingAccount producAccountingAccount = invoiceItem.getBillingItem().getBillingType()
+            .getAccountingAccountProduct();
 
-      if (producAccountingAccount == null)
-        throw new OsirisException(null, "No product accounting account defined in billing type n°"
-            + invoiceItem.getBillingItem().getBillingType().getId());
+        if (producAccountingAccount == null)
+          throw new OsirisException(null, "No product accounting account defined in billing type n°"
+              + invoiceItem.getBillingItem().getBillingType().getId());
 
-      generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), invoice.getManualAccountingDocumentNumber(),
-          invoice.getManualAccountingDocumentDate(),
-          labelPrefix + " - produit "
-              + invoiceItem.getBillingItem().getBillingType().getLabel(),
-          invoiceItem.getPreTaxPrice()
-              - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f),
-          null, producAccountingAccount,
-          invoiceItem, invoice, null, salesJournal, null, null, null, null);
-
-      balance -= invoiceItem.getPreTaxPrice()
-          - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f);
-
-      if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null && invoiceItem.getVatPrice() > 0) {
         generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), invoice.getManualAccountingDocumentNumber(),
             invoice.getManualAccountingDocumentDate(),
-            labelPrefix + " - TVA pour le produit "
+            labelPrefix + " - produit "
                 + invoiceItem.getBillingItem().getBillingType().getLabel(),
-            invoiceItem.getVatPrice(), null, invoiceItem.getVat().getAccountingAccount(),
+            invoiceItem.getPreTaxPrice()
+                - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f),
+            null, producAccountingAccount,
             invoiceItem, invoice, null, salesJournal, null, null, null, null);
 
-        balance -= invoiceItem.getVatPrice();
+        balance -= invoiceItem.getPreTaxPrice()
+            - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f);
+
+        if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null && invoiceItem.getVatPrice() > 0) {
+          generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), invoice.getManualAccountingDocumentNumber(),
+              invoice.getManualAccountingDocumentDate(),
+              labelPrefix + " - TVA pour le produit "
+                  + invoiceItem.getBillingItem().getBillingType().getLabel(),
+              invoiceItem.getVatPrice(), null, invoiceItem.getVat().getAccountingAccount(),
+              invoiceItem, invoice, null, salesJournal, null, null, null, null);
+
+          balance -= invoiceItem.getVatPrice();
+        }
+      } else {
+        if (invoice.getCustomerOrder() != null && invoice.getCustomerOrder().getAssoAffaireOrders() != null) {
+          for (AssoAffaireOrder asso : invoice.getCustomerOrder().getAssoAffaireOrders()) {
+            if (asso.getProvisions() != null) {
+              for (Provision provision : asso.getProvisions()) {
+                if (provision.getDebours() != null && provision.getDebours().size() > 0) {
+                  for (Debour debour : provision.getDebours()) {
+
+                    // Compute debour prices
+                    Float total = 0f;
+                    Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
+                        : debour.getDebourAmount();
+                    if (debour.getBillingType().getIsNonTaxable())
+                      total += debourAmount;
+                    else
+                      total += debourAmount / ((100 + constantService.getVatDeductible().getRate()) / 100f);
+                    Float vatAmount = debourAmount - total;
+
+                    generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(),
+                        invoice.getManualAccountingDocumentNumber(), invoice.getManualAccountingDocumentDate(),
+                        labelPrefix + " - produit " + debour.getBillingType().getLabel(), total,
+                        null, debour.getBillingType().getAccountingAccountProduct(), invoiceItem,
+                        invoice, null, salesJournal, null, null, null, null);
+
+                    balance -= total;
+
+                    if (vatAmount > 0) {
+                      generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(),
+                          invoice.getManualAccountingDocumentNumber(), invoice.getManualAccountingDocumentDate(),
+                          labelPrefix + " - TVA pour le produit "
+                              + invoiceItem.getBillingItem().getBillingType().getLabel(),
+                          vatAmount, null, constantService.getVatDeductible().getAccountingAccount(),
+                          invoiceItem, invoice, null, salesJournal, null, null, null, null);
+                      balance -= vatAmount;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
 
