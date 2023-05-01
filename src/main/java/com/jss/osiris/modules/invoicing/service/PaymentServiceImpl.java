@@ -587,6 +587,16 @@ public class PaymentServiceImpl implements PaymentService {
                     remainingMoney = 0f;
                 }
 
+                // Handle appoint
+                if (!isPayed) {
+                    if (Math.abs(remainingToPayForCurrentInvoice - newPayment.getPaymentAmount()) <= Float
+                            .parseFloat(payementLimitRefundInEuros)) {
+                        accountingRecordService.generateAppointForPayment(payment, remainingMoney,
+                                invoiceHelper.getCustomerOrder(correspondingInvoices.get(i)));
+                        isPayed = true;
+                    }
+                }
+
                 remainingMoney = Math.round(remainingMoney * 100f) / 100f;
                 remainingToPay -= remainingToPayForCurrentInvoice;
                 if (isPayed) {
