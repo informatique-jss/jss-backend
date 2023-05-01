@@ -26,6 +26,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailComputeHelper;
+import com.jss.osiris.modules.invoicing.model.Appoint;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.DebourSearch;
@@ -48,6 +49,7 @@ import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.invoicing.model.RefundSearch;
 import com.jss.osiris.modules.invoicing.model.RefundSearchResult;
+import com.jss.osiris.modules.invoicing.service.AppointService;
 import com.jss.osiris.modules.invoicing.service.DepositService;
 import com.jss.osiris.modules.invoicing.service.InfogreffeInvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
@@ -140,6 +142,29 @@ public class InvoicingController {
 
     @Autowired
     InfogreffeInvoiceService infogreffeInvoiceService;
+
+    @Autowired
+    AppointService appointService;
+
+    @GetMapping(inputEntryPoint + "/appoints")
+    public ResponseEntity<List<Appoint>> getAppoints(@RequestParam String searchLabel) {
+        return new ResponseEntity<List<Appoint>>(appointService.getAppoints(searchLabel), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/appoint/refund")
+    public ResponseEntity<Boolean> refundAppint(@RequestParam String idAppoint)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        if (idAppoint == null)
+            throw new OsirisValidationException("idAppoint");
+
+        Appoint appoint = appointService.getAppoint(Integer.parseInt(idAppoint));
+
+        if (appoint == null)
+            throw new OsirisValidationException("appoint");
+
+        return new ResponseEntity<Boolean>(refundService.generateRefundForAppoint(appoint.getId()),
+                HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/infogreffe-invoices")
     public ResponseEntity<List<InfogreffeInvoice>> getInfogreffeInvoices() {

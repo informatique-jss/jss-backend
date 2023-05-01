@@ -105,6 +105,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     AccountingAccountService accountingAccountService;
 
+    @Autowired
+    AppointService appointService;
+
     @Value("${invoicing.payment.limit.refund.euros}")
     private String payementLimitRefundInEuros;
 
@@ -451,35 +454,20 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
             if (Math.abs(Math.round(remainingMoney * 100f) / 100f) > 0) {
-                boolean modifyPayment = false;
-                if (Math.abs(remainingMoney) <= Float.parseFloat(payementLimitRefundInEuros)) {
-                    if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
-                        accountingRecordService.generateAppointForPayment(payment, remainingMoney,
-                                invoiceHelper.getCustomerOrder(correspondingInvoices.get(0)));
-                        modifyPayment = true;
-                    } else if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0) {
-                        accountingRecordService.generateAppointForPayment(payment, remainingMoney,
-                                quotationService.getCustomerOrderOfQuotation(correspondingCustomerOrder.get(0)));
-                        modifyPayment = true;
-                    }
-                    if (modifyPayment) {
-                        payment.setPaymentAmount(payment.getPaymentAmount() - remainingMoney);
-                    }
-                } else {
-                    // Try to find a customerOrder ...
-                    CustomerOrder customerOrder = null;
-                    if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0)
-                        customerOrder = correspondingCustomerOrder.get(0);
-                    else if (correspondingInvoices != null && correspondingInvoices.size() > 0)
-                        for (Invoice invoice : correspondingInvoices)
-                            if (invoice.getCustomerOrder() != null)
-                                customerOrder = invoice.getCustomerOrder();
-                            else if (invoice.getCustomerOrderForInboundInvoice() != null)
-                                customerOrder = invoice.getCustomerOrderForInboundInvoice();
+                // Refund
+                // Try to find a customerOrder ...
+                CustomerOrder customerOrder = null;
+                if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0)
+                    customerOrder = correspondingCustomerOrder.get(0);
+                else if (correspondingInvoices != null && correspondingInvoices.size() > 0)
+                    for (Invoice invoice : correspondingInvoices)
+                        if (invoice.getCustomerOrder() != null)
+                            customerOrder = invoice.getCustomerOrder();
+                        else if (invoice.getCustomerOrderForInboundInvoice() != null)
+                            customerOrder = invoice.getCustomerOrderForInboundInvoice();
 
-                    refundService.generateRefund(tiersRefund, affaireRefund, payment, null, remainingMoney,
-                            refundLabelSuffix, customerOrder);
-                }
+                refundService.generateRefund(tiersRefund, affaireRefund, payment, null, remainingMoney,
+                        refundLabelSuffix, customerOrder, null);
             }
         } else {
             // Invoices to payed found
@@ -588,12 +576,18 @@ public class PaymentServiceImpl implements PaymentService {
                 }
 
                 // Handle appoint
-                if (!isPayed) {
+                if (!isPayed
+                        || Math.abs(Math.round((remainingToPayForCurrentInvoice - newPayment.getPaymentAmount()) * 100f)
+                                / 100f) > 0) {
                     if (Math.abs(remainingToPayForCurrentInvoice - newPayment.getPaymentAmount()) <= Float
                             .parseFloat(payementLimitRefundInEuros)) {
-                        accountingRecordService.generateAppointForPayment(payment, remainingMoney,
-                                invoiceHelper.getCustomerOrder(correspondingInvoices.get(i)));
+                        appointService.generateAppointForInvoice(correspondingInvoices.get(i), payment, null,
+                                newPayment.getPaymentAmount() - remainingToPayForCurrentInvoice);
+
+                        payment.setPaymentAmount(remainingToPayForCurrentInvoice);
+                        addOrUpdatePayment(payment);
                         isPayed = true;
+                        remainingMoney = 0f;
                     }
                 }
 

@@ -43,6 +43,7 @@ import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
+import com.jss.osiris.modules.invoicing.service.AppointService;
 import com.jss.osiris.modules.invoicing.service.DepositService;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
@@ -166,6 +167,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     QuotationValidationHelper quotationValidationHelper;
+
+    @Autowired
+    AppointService appointService;
 
     @Autowired
     CentralPayPaymentRequestService centralPayPaymentRequestService;
@@ -451,10 +455,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (remainingToPayForCurrentInvoice != 0 && customerOrder.getDeposits() != null
                     && customerOrder.getDeposits().size() > 0) {
                 if (Math.abs(remainingToPayForCurrentInvoice) <= Float.parseFloat(payementLimitRefundInEuros)) {
-                    accountingRecordService.generateAppointForDeposit(customerOrder.getDeposits().get(0),
-                            remainingToPayForCurrentInvoice, invoiceHelper.getCustomerOrder(invoice));
                     Deposit deposit = customerOrder.getDeposits().get(0);
-                    deposit.setDepositAmount(deposit.getDepositAmount() + remainingToPayForCurrentInvoice);
+                    appointService.generateAppointForInvoice(invoice, deposit.getOriginPayment(), deposit,
+                            remainingToPayForCurrentInvoice);
+                    deposit.setDepositAmount(remainingToPayForCurrentInvoice);
                     depositService.addOrUpdateDeposit(deposit);
                 }
             }

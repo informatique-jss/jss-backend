@@ -140,6 +140,10 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	private List<Payment> payments;
 
 	@OneToMany(mappedBy = "invoice")
+	@JsonIgnoreProperties(value = { "invoice", "accountingRecords" }, allowSetters = true)
+	private List<Appoint> appoints;
+
+	@OneToMany(mappedBy = "invoice")
 	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder" }, allowSetters = true)
 	private List<Deposit> deposits;
 
@@ -519,6 +523,14 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	public void setBillingLabelIntercommunityVat(String billingLabelIntercommunityVat) {
 		this.billingLabelIntercommunityVat = billingLabelIntercommunityVat;
+	}
+
+	public List<Appoint> getAppoints() {
+		return appoints;
+	}
+
+	public void setAppoints(List<Appoint> appoints) {
+		this.appoints = appoints;
 	}
 
 }

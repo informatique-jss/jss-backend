@@ -62,6 +62,10 @@ public class Refund implements Serializable, IId {
 	private RefundType refundType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_appoint")
+	private Appoint appoint;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "deposits" }, allowSetters = true)
 	private CustomerOrder customerOrder;
@@ -194,6 +198,14 @@ public class Refund implements Serializable, IId {
 
 	public void setCustomerOrder(CustomerOrder customerOrder) {
 		this.customerOrder = customerOrder;
+	}
+
+	public Appoint getAppoint() {
+		return appoint;
+	}
+
+	public void setAppoint(Appoint appoint) {
+		this.appoint = appoint;
 	}
 
 }

@@ -19,6 +19,7 @@ import javax.persistence.SequenceGenerator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.modules.invoicing.model.Appoint;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
@@ -97,6 +98,11 @@ public class AccountingRecord implements Serializable, IId {
 	@JoinColumn(name = "id_debour")
 	@JsonIgnoreProperties(value = { "accountingRecords", "customerOrder" }, allowSetters = true)
 	private Debour debour;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_appoint")
+	@JsonIgnoreProperties(value = { "accountingRecords", "originPayment" }, allowSetters = true)
+	private Appoint appoint;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_refund")
@@ -337,6 +343,14 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setRefund(Refund refund) {
 		this.refund = refund;
+	}
+
+	public Appoint getAppoint() {
+		return appoint;
+	}
+
+	public void setAppoint(Appoint appoint) {
+		this.appoint = appoint;
 	}
 
 }

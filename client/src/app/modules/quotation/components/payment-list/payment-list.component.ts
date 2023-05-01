@@ -147,7 +147,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
 
   getActionLink(action: SortTableColumn, element: any) {
     if (element && action.id == "invoice" && element.invoices && element.invoices[0] && element.invoices.length == 1)
-      return ['/invoicing', element.invoices[0].id];
+      return ['/invoicing/view', element.invoices[0].id];
     return undefined;
   }
 

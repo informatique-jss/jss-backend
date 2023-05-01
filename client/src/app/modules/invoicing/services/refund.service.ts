@@ -15,9 +15,8 @@ export class RefundService extends AppRestService<Refund>{
   getRefunds() {
     return this.getList(new HttpParams(), "refunds");
   }
-  
-   addOrUpdateRefund(refund: Refund) {
+
+  addOrUpdateRefund(refund: Refund) {
     return this.addOrUpdate(new HttpParams(), "refund", refund, "Enregistré", "Erreur lors de l'enregistrement");
   }
-
 }
