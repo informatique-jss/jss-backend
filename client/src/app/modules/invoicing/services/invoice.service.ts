@@ -12,16 +12,16 @@ export class InvoiceService extends AppRestService<Invoice>{
     return this.postItem(new HttpParams(), "invoice", invoice, "Facture enregistrée", "Erreur lors de l'enregistrement de la facture");
   }
 
+  saveCreditNote(invoice: Invoice, idInvoiceForCreditNote: string) {
+    return this.postItem(new HttpParams().set("idOriginInvoiceForCreditNote", idInvoiceForCreditNote), "invoice/credit-note", invoice, "Facture enregistrée", "Erreur lors de l'enregistrement de la facture");
+  }
+
   constructor(http: HttpClient) {
     super(http, "invoicing");
   }
 
   getInvoiceById(invoiceId: number) {
     return this.getById("invoice", invoiceId);
-  }
-
-  cancelInvoice(invoice: Invoice) {
-    return this.postItem(new HttpParams(), "invoice/cancel", invoice);
   }
 
 }

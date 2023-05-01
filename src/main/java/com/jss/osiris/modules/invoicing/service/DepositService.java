@@ -27,8 +27,7 @@ public interface DepositService {
                         boolean isFromOriginPayment)
                         throws OsirisException;
 
-        public void moveDepositFromCustomerOrderToInvoice(Deposit deposit, CustomerOrder fromCustomerOrder,
-                        Invoice toInvoice) throws OsirisException;
+        public void moveDepositToInvoice(Deposit deposit, Invoice toInvoice) throws OsirisException;
 
         public void moveDepositFromInvoiceToCustomerOrder(Deposit deposit, Invoice fromInvoice,
                         CustomerOrder toCustomerOrder) throws OsirisException;

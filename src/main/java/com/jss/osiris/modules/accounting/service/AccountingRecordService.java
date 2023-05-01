@@ -145,6 +145,8 @@ public interface AccountingRecordService {
 
         public void letterWaitingRecords(AccountingRecord record, AccountingRecord counterPart) throws OsirisException;
 
+        public void letterCreditNoteAndInvoice(Invoice invoice, Invoice creditNote) throws OsirisException;
+
         public void sendBillingClosureReceipt()
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 

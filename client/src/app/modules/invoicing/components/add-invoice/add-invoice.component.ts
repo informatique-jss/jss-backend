@@ -77,6 +77,7 @@ export class AddInvoiceComponent implements OnInit {
   indexedCustomerOrder: IndexEntity | undefined;
   debours: Debour[] | undefined;
   selectedDebours: Debour[] | undefined;
+  idInvoiceForCreditNote: string | undefined;
 
   refreshTable: Subject<void> = new Subject<void>();
 
@@ -84,6 +85,7 @@ export class AddInvoiceComponent implements OnInit {
 
   ngOnInit() {
     let idInvoice = this.activatedRoute.snapshot.params.id;
+    this.idInvoiceForCreditNote = this.activatedRoute.snapshot.params.idInvoice;
 
     let idCustomerOrder = this.activatedRoute.snapshot.params.idCustomerOrder;
     let idCompetentAuhority = this.activatedRoute.snapshot.params.idCompetentAuhority;
@@ -93,6 +95,13 @@ export class AddInvoiceComponent implements OnInit {
         this.invoice = response;
         this.invoiceItems = this.invoice.invoiceItems;
         this.appService.changeHeaderTitle("Facture n°" + this.invoice.id);
+      });
+    } else if (this.idInvoiceForCreditNote != null && this.idInvoiceForCreditNote != "null") {
+      this.invoiceService.getInvoiceById(parseInt(this.idInvoiceForCreditNote)).subscribe(response => {
+        this.invoice = response;
+        this.invoiceItems = this.invoice.invoiceItems;
+        (this.invoice as any).id = null;
+        this.appService.changeHeaderTitle("Annuler la facture n°" + this.idInvoiceForCreditNote);
       });
     } else {
       this.addInvoiceItem();
@@ -222,10 +231,17 @@ export class AddInvoiceComponent implements OnInit {
 
   saveInvoice() {
     if (this.invoiceForm.valid && (this.invoiceItems && this.invoiceItems.length > 0 || this.invoice.competentAuthority != null && this.invoice.customerOrderForInboundInvoice != null) || this.invoice.id) {
-      this.invoiceService.saveInvoice(this.invoice).subscribe(response => {
-        if (response)
-          this.appService.openRoute(null, '/invoicing/view/' + response.id, null);
-      });
+      if (this.idInvoiceForCreditNote) {
+        this.invoiceService.saveCreditNote(this.invoice, this.idInvoiceForCreditNote).subscribe(response => {
+          if (response)
+            this.appService.openRoute(null, '/invoicing/view/' + response.id, null);
+        });
+      } else {
+        this.invoiceService.saveInvoice(this.invoice).subscribe(response => {
+          if (response)
+            this.appService.openRoute(null, '/invoicing/view/' + response.id, null);
+        });
+      }
     } else {
       this.appService.displaySnackBar("Veuillez saisir au moins une ligne de facturation valide", true, 15);
     }

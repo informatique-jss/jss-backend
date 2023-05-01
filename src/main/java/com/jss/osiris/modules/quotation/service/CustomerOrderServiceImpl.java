@@ -481,7 +481,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         invoiceToCancel = invoice;
                         break;
                     }
-            moveInvoiceDepositToCustomerOrderDeposit(customerOrder, invoiceToCancel);
+            moveInvoiceDepositAndPaymentToCustomerOrderDeposit(customerOrder, invoiceToCancel);
             invoiceService.cancelInvoiceEmitted(invoiceToCancel, customerOrder);
         }
 
@@ -555,11 +555,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException {
         if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
             for (Deposit deposit : customerOrder.getDeposits()) {
-                depositService.moveDepositFromCustomerOrderToInvoice(deposit, customerOrder, invoice);
+                depositService.moveDepositToInvoice(deposit, invoice);
             }
     }
 
-    private void moveInvoiceDepositToCustomerOrderDeposit(CustomerOrder customerOrder, Invoice invoice)
+    private void moveInvoiceDepositAndPaymentToCustomerOrderDeposit(CustomerOrder customerOrder, Invoice invoice)
             throws OsirisException {
         if (invoice.getDeposits() != null && invoice.getDeposits().size() > 0)
             for (Deposit deposit : invoice.getDeposits()) {
@@ -571,6 +571,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 depositService.getNewDepositForCustomerOrder(payment.getPaymentAmount(), LocalDateTime.now(),
                         customerOrder, null,
                         payment, false);
+                paymentService.cancelPayment(payment, constantService.getAccountingJournalBank());
             }
     }
 

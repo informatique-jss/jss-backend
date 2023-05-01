@@ -119,8 +119,7 @@ public class DepositServiceImpl implements DepositService {
     }
 
     @Override
-    public void moveDepositFromCustomerOrderToInvoice(Deposit deposit, CustomerOrder fromCustomerOrder,
-            Invoice toInvoice) throws OsirisException {
+    public void moveDepositToInvoice(Deposit deposit, Invoice toInvoice) throws OsirisException {
         cancelDeposit(deposit);
         getNewDepositForInvoice(deposit.getDepositAmount(), LocalDateTime.now(), toInvoice, null,
                 deposit.getOriginPayment(), false);

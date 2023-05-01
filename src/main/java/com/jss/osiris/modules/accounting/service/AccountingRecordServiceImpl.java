@@ -859,6 +859,34 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
+  public void letterCreditNoteAndInvoice(Invoice invoice, Invoice creditNote) throws OsirisException {
+    Integer maxLetteringNumber = accountingRecordRepository
+        .findMaxLetteringNumberForMinLetteringDateTime(LocalDateTime.now().with(ChronoField.DAY_OF_YEAR, 1)
+            .with(ChronoField.HOUR_OF_DAY, 0)
+            .with(ChronoField.MINUTE_OF_DAY, 0).with(ChronoField.SECOND_OF_DAY, 0));
+
+    if (maxLetteringNumber == null)
+      maxLetteringNumber = 0;
+    maxLetteringNumber++;
+
+    for (AccountingRecord record : invoice.getAccountingRecords()) {
+      if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
+          .equals(constantService.getPrincipalAccountingAccountCustomer().getId()) && record.getDebitAmount() != null
+          || record.getAccountingAccount().getPrincipalAccountingAccount().getId()
+              .equals(constantService.getPrincipalAccountingAccountProvider().getId())
+              && record.getCreditAmount() != null)
+        if (record.getIsCounterPart() == false) {
+          record.setLetteringDateTime(LocalDateTime.now());
+          record.setLetteringNumber(maxLetteringNumber);
+          record.getContrePasse().setLetteringDateTime(LocalDateTime.now());
+          record.getContrePasse().setLetteringNumber(maxLetteringNumber);
+          this.addOrUpdateAccountingRecord(record);
+          this.addOrUpdateAccountingRecord(record.getContrePasse());
+        }
+    }
+  }
+
+  @Override
   public List<AccountingRecord> findByAccountingAccountAndInvoice(AccountingAccount accountingAccount,
       Invoice invoice) {
     return accountingRecordRepository.findByAccountingAccountAndInvoice(accountingAccount, invoice);
