@@ -79,6 +79,20 @@ public class PrintDelegate {
             dOut.flush();
             dOut.writeUTF("\r\n");
             dOut.flush();
+            dOut.writeUTF(
+                    "               " + StringUtils
+                            .stripAccents((label.getIntercom() != null
+                                    ? label.getIntercom()
+                                    : ""))
+                            .toUpperCase() + " "
+                            + ((customerOrder.getResponsable().getBuilding() != null
+                                    ? (" | " + customerOrder.getResponsable().getBuilding())
+                                    : ""))
+                            +
+                            ((customerOrder.getResponsable().getFloor() != null
+                                    ? (" | " + customerOrder.getResponsable().getFloor())
+                                    : "")));
+            dOut.flush();
             dOut.writeUTF("\r\n");
             dOut.flush();
             dOut.writeUTF("\r\n");

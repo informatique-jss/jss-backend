@@ -19,6 +19,7 @@ public class InvoiceLabelResult {
     private Boolean isCommandNumberMandatory;
     private String commandNumber;
     private String labelOrigin;
+    private String intercom;
 
     public String getBillingLabel() {
         return billingLabel;
@@ -130,6 +131,14 @@ public class InvoiceLabelResult {
 
     public void setBillingLabelIntercommunityVat(String billingLabelIntercommunityVat) {
         this.billingLabelIntercommunityVat = billingLabelIntercommunityVat;
+    }
+
+    public String getIntercom() {
+        return intercom;
+    }
+
+    public void setIntercom(String intercom) {
+        this.intercom = intercom;
     }
 
 }
