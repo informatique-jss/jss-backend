@@ -85,7 +85,7 @@ export class ProvisionOptionsComponent implements OnInit {
       } else {
         this.setLogoUrl();
       }
-      if (!this.provision.isRedactedByJss) this.provision.isRedactedByJss = this.displayOption(this.billingTypeRedactedByJss);
+      if (!this.provision.isRedactedByJss) this.provision.isRedactedByJss = !this.provision.id && this.displayOption(this.billingTypeRedactedByJss);
       if (!this.provision.isBaloPackage) this.provision.isBaloPackage = false;
       if (!this.provision.isBaloPublicationFlag) this.provision.isBaloPublicationFlag = false;
       if (!this.provision.isPublicationReceipt) this.provision.isPublicationReceipt = false;
