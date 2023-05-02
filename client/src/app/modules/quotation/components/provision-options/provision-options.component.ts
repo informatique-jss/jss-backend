@@ -88,7 +88,9 @@ export class ProvisionOptionsComponent implements OnInit {
       if (!this.provision.isBaloPackage) this.provision.isBaloPackage = false;
       if (!this.provision.isBaloPublicationFlag) this.provision.isBaloPublicationFlag = false;
       if (!this.provision.isPublicationReceipt) this.provision.isPublicationReceipt = false;
-      if (this.provision.isPublicationFlag == undefined || this.provision.isPublicationFlag == null) this.provision.isPublicationFlag = this.displayOption(this.billingTypePublicationFlag) && this.provision.announcement != undefined && this.provision.announcement.confrere != undefined && this.provision.announcement.confrere.journalType.id == this.journalTypeSpel.id;
+      if (!this.provision.isPublicationFlag) {
+        this.provision.isPublicationFlag = !this.provision.id && this.displayOption(this.billingTypePublicationFlag) && this.provision.announcement != undefined && this.provision.announcement.confrere != undefined && this.provision.announcement.confrere.journalType.id == this.journalTypeSpel.id
+      };
       if (!this.provision.isPublicationPaper) this.provision.isPublicationPaper = false;
       if (!this.provision.isBodaccFollowup) this.provision.isBodaccFollowup = false;
       if (!this.provision.isBodaccFollowupAndRedaction) this.provision.isBodaccFollowupAndRedaction = false;
