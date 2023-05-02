@@ -16,6 +16,7 @@ import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
+import com.jss.osiris.modules.invoicing.model.Appoint;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
@@ -97,7 +98,8 @@ public interface AccountingRecordService {
 
         public void generateAccountingRecordsForWaintingOutboundPayment(Payment payment) throws OsirisException;
 
-        public void generateBankAccountingRecordsForInboundPayment(Payment payment) throws OsirisException;
+        public void generateBankAccountingRecordsForInboundPayment(Payment payment,
+                        AccountingAccount targetBankAccountingAccount) throws OsirisException;
 
         public void generateBankAccountingRecordsForInboundCashPayment(Payment payment) throws OsirisException;
 
@@ -112,10 +114,12 @@ public interface AccountingRecordService {
 
         public List<AccountingRecord> getAccountingRecordsByOperationId(Integer operationId);
 
-        public void generateAppointForPayment(Payment payment, float remainingMoney, ITiers customerOrder)
+        public void generateAppointForPayment(Payment payment, float remainingMoney, ITiers customerOrder,
+                        Appoint appoint, Invoice invoice)
                         throws OsirisException;
 
-        public void generateAppointForDeposit(Deposit deposit, float remainingMoney, ITiers customerOrder)
+        public void generateAppointForDeposit(Deposit deposit, float remainingMoney, ITiers customerOrder,
+                        Appoint appoint, Invoice invoice)
                         throws OsirisException;
 
         public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords);
@@ -143,6 +147,8 @@ public interface AccountingRecordService {
         public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException;
 
         public void letterWaitingRecords(AccountingRecord record, AccountingRecord counterPart) throws OsirisException;
+
+        public void letterCreditNoteAndInvoice(Invoice invoice, Invoice creditNote) throws OsirisException;
 
         public void sendBillingClosureReceipt()
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;

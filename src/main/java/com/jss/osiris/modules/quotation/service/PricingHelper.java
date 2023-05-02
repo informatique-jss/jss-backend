@@ -476,10 +476,6 @@ public class PricingHelper {
         if (billingType.getId().equals(constantService.getBillingTypeEmergency().getId())
                 && provision.getIsEmergency() != null && provision.getIsEmergency())
             return true;
-        if (billingType.getId().equals(constantService.getBillingtypeVacationDepositBeneficialOwners().getId())
-                && provision.getIsVacationDepositBeneficialOwners() != null
-                && provision.getIsVacationDepositBeneficialOwners())
-            return true;
         if (billingType.getId().equals(constantService.getBillingtypeVacationUpdateBeneficialOwners().getId())
                 && provision.getIsVacationUpdateBeneficialOwners() != null
                 && provision.getIsVacationUpdateBeneficialOwners())

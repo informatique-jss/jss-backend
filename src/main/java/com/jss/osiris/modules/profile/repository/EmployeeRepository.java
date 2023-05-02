@@ -2,16 +2,21 @@ package com.jss.osiris.modules.profile.repository;
 
 import java.util.List;
 
+import javax.persistence.QueryHint;
+
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.profile.model.Employee;
 
-public interface EmployeeRepository extends CrudRepository<Employee, Integer> {
+public interface EmployeeRepository extends QueryCacheCrudRepository<Employee, Integer> {
 
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     Employee findByUsername(String username);
 
     @Query(nativeQuery = true, value = "select e.* from asso_employee_backup a join employee e on a.id_employee = e.id where id_employee_backup = :employeeId")
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     List<Employee> getMyHolidaymaker(@Param("employeeId") Integer employeeId);
 }

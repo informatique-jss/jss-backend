@@ -78,15 +78,29 @@
             </tr>
         </thead>
         <tr th:each="values : ${billingClosureValues}">
-            <td class="td-date border-table"><span th:text="${values.eventDateString}"></span></td>
-            <td class="border-table"><span th:utext="${values.eventDescription}"></span> <span
-                    th:if="${values.eventCbLink!=null}"> (payer <a th:href="${values.eventCbLink}">ici</a>)</span></td>
-            <td class="td-with-price border-table" th:if="${values.debitAmount!=null}"><span
+            <td class="td-date " th:if="${values.eventDateString!=null}"
+                th:classappend="${values.displayBottomBorder} ? border-table : none-class"><span
+                    th:text="${values.eventDateString}"></span></td>
+            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class"
+                th:if="${values.eventDescription!=null} and ${values.eventDateString!=null}">
+                <span th:utext="${values.eventDescription}"></span> <span th:if="${values.eventCbLink!=null}"> (payer <a
+                        th:href="${values.eventCbLink}">ici</a>)</span>
+            </td>
+            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class"
+                th:if="${values.eventDescription!=null} and ${values.eventDateString==null}"
+                style="padding-top: 20px;padding-bottom: 20px;padding-left: 10px;" colspan="2">
+                <strong><span th:utext="${values.eventDescription}"></span></strong>
+            </td>
+            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class" class="td-with-price  "
+                th:if="${values.debitAmount!=null}"><span
                     th:text="${#numbers.formatDecimal(values.debitAmount,1,2)}"></span> €</td>
-            <td class="td-with-price border-table" th:if="${values.debitAmount==null}"></td>
-            <td class="td-with-price border-table" th:if="${values.creditAmount!=null}"><span
+            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class" class="td-with-price  "
+                th:if="${values.debitAmount==null}"></td>
+            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class" class="td-with-price  "
+                th:if="${values.creditAmount!=null}"><span
                     th:text="${#numbers.formatDecimal(values.creditAmount,1,2)}"></span> €</td>
-            <td class="td-with-price border-table" th:if="${values.creditAmount==null}"></td>
+            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class" class="td-with-price  "
+                th:if="${values.creditAmount==null}"></td>
         </tr>
     </table>
     <p style="margin-top: 10px;">&#160;</p>

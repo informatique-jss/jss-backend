@@ -118,6 +118,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Autowired
     PaymentService paymentService;
 
+    @Autowired
+    DepositService depositService;
+
     @Override
     public List<Invoice> getAllInvoices() {
         return IterableUtils.toList(invoiceRepository.findAll());
@@ -132,20 +135,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Invoice cancelInvoiceFromUser(Invoice invoice)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        if (invoice.getIsInvoiceFromProvider())
-            return cancelInvoiceReceived(invoice);
-        else
-            return cancelInvoiceEmitted(invoice, null);
-    }
-
-    @Override
     public Invoice cancelInvoiceEmitted(Invoice invoice, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        // TODO : penser à basculer les paiements / déposit
-        // Bien nettoyer les débours frais, notamment les ordres de virement
         // Unletter
         unletterInvoiceEmitted(invoice);
 
@@ -194,6 +185,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice = addOrUpdateInvoice(invoice);
         creditNote = addOrUpdateInvoice(creditNote);
 
+        accountingRecordService.letterCreditNoteAndInvoice(invoice, creditNote);
+
         if (customerOrder != null) {
             // Generate PDF and attached it to customer order
             File creditNotePdf = mailHelper.generateInvoicePdf(customerOrder, creditNote, invoice);
@@ -222,8 +215,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoice;
     }
 
-    private Invoice cancelInvoiceReceived(Invoice invoice)
+    @Override
+    public Invoice generateInvoiceCreditNote(Invoice newInvoice, Integer idOriginInvoiceForCreditNote)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+
+        Invoice invoice = getInvoice(idOriginInvoiceForCreditNote);
         // Unletter
         unletterInvoiceReceived(invoice);
 
@@ -235,11 +231,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                     // Do not touch deposit records, they are already handled before
                     if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                            .equals(constantService.getPrincipalAccountingAccountDepositProvider().getId())) {
+                            .equals(constantService.getPrincipalAccountingAccountDeposit().getId()))
                         accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart,
-                                constantService.getAccountingJournalPurchases());
-                        accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
-                    }
+                                constantService.getAccountingJournalSales());
             }
 
         // Refresh invoice
@@ -255,16 +249,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                 newInvoiceItem.setInvoice(creditNote);
                 invoiceItemService.addOrUpdateInvoiceItem(newInvoiceItem);
                 invoiceItems.add(newInvoiceItem);
-
-                // Remove debours / fees link
-                if (invoiceItem.getDebours() != null)
-                    for (Debour debour : invoiceItem.getDebours()) {
-                        debour.setInvoiceItem(null);
-                        debourService.addOrUpdateDebour(debour);
-                    }
             }
             creditNote.setInvoiceItems(invoiceItems);
-            creditNote.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
+            creditNote.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteEmited());
             creditNote.setIsCreditNote(true);
         }
 
@@ -272,11 +259,32 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice = addOrUpdateInvoice(invoice);
         creditNote = addOrUpdateInvoice(creditNote);
 
+        accountingRecordService.letterCreditNoteAndInvoice(invoice, creditNote);
+
+        if (invoice.getBankTransfert() != null && invoice.getBankTransfert().getIsAlreadyExported() == false)
+            bankTransfertService.cancelBankTransfert(invoice.getBankTransfert());
+
         // Cancel invoice
         invoice.setInvoiceStatus(constantService.getInvoiceStatusCancelled());
         addOrUpdateInvoice(invoice);
 
-        return invoice;
+        // Create new invoice
+        if (newInvoice.getInvoiceItems() != null)
+            for (InvoiceItem invoiceItem : newInvoice.getInvoiceItems())
+                invoiceItem.setId(null);
+
+        addOrUpdateInvoiceFromUser(newInvoice);
+
+        // Move payment from old to new invoice
+        if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
+            for (Payment payment : invoice.getPayments()) {
+                payment.setInvoice(newInvoice);
+                paymentService.addOrUpdatePayment(payment);
+                accountingRecordService.generateAccountingRecordsForPurshaseOnInvoicePayment(newInvoice,
+                        Arrays.asList(payment), payment.getPaymentAmount());
+            }
+
+        return newInvoice;
     }
 
     @Override
@@ -754,6 +762,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         newInvoice.setBillingLabelCountry(invoice.getBillingLabelCountry());
         newInvoice.setBillingLabelIsIndividual(invoice.getBillingLabelIsIndividual());
         newInvoice.setBillingLabelPostalCode(invoice.getBillingLabelPostalCode());
+        newInvoice.setBillingLabelIntercommunityVat(invoice.getBillingLabelIntercommunityVat());
         newInvoice.setBillingLabelType(invoice.getBillingLabelType());
         newInvoice.setCedexComplement(invoice.getCedexComplement());
         newInvoice.setCommandNumber(invoice.getCommandNumber());

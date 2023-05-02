@@ -21,4 +21,6 @@ public interface RefundSearchResult {
     public Integer getPaymentId();
 
     public String getRefundTiersLabel();
+
+    public String getAffaireLabel();
 }

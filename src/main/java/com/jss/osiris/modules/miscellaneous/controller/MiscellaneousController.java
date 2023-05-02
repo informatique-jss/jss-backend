@@ -430,8 +430,6 @@ public class MiscellaneousController {
                 "PrincipalAccountingAccountProvider");
         validationHelper.validateReferential(constant.getPrincipalAccountingAccountWaiting(), true,
                 "PrincipalAccountingAccountWaiting");
-        validationHelper.validateReferential(constant.getBillingTypeVacationDepositBeneficialOwners(), true,
-                "BillingTypeVacationDepositBeneficialOwners");
         validationHelper.validateReferential(constant.getBillingTypeVacationUpdateBeneficialOwners(), true,
                 "BillingTypeVacationUpdateBeneficialOwners");
         validationHelper.validateReferential(constant.getBillingTypeFormalityAdditionalDeclaration(), true,

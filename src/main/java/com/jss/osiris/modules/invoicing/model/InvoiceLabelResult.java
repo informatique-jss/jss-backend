@@ -15,6 +15,7 @@ public class InvoiceLabelResult {
     private Boolean billingLabelIsIndividual;
     private BillingLabelType billingLabelType;
     private Boolean isResponsableOnBilling;
+    private String billingLabelIntercommunityVat;
     private Boolean isCommandNumberMandatory;
     private String commandNumber;
     private String labelOrigin;
@@ -121,6 +122,14 @@ public class InvoiceLabelResult {
 
     public void setBillingLabelComplementCedex(String billingLabelComplementCedex) {
         this.billingLabelComplementCedex = billingLabelComplementCedex;
+    }
+
+    public String getBillingLabelIntercommunityVat() {
+        return billingLabelIntercommunityVat;
+    }
+
+    public void setBillingLabelIntercommunityVat(String billingLabelIntercommunityVat) {
+        this.billingLabelIntercommunityVat = billingLabelIntercommunityVat;
     }
 
 }

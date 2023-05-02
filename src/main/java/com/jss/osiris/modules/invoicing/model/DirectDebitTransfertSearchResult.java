@@ -6,6 +6,8 @@ public interface DirectDebitTransfertSearchResult {
 
     public Integer getId();
 
+    public String getCustomerOrderLabel();
+
     public LocalDateTime getTransfertDate();
 
     public Float getTransfertAmount();

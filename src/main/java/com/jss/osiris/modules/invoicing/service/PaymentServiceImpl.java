@@ -24,8 +24,10 @@ import com.jss.osiris.libs.ofx.OFXStatement;
 import com.jss.osiris.libs.ofx.StatementTransaction;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
@@ -100,6 +102,12 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     ProvisionService provisionService;
 
+    @Autowired
+    AccountingAccountService accountingAccountService;
+
+    @Autowired
+    AppointService appointService;
+
     @Value("${invoicing.payment.limit.refund.euros}")
     private String payementLimitRefundInEuros;
 
@@ -151,9 +159,14 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Attachment> uploadOfxFile(InputStream file)
+    public List<Attachment> uploadOfxFile(InputStream file, Integer targetAccountingAccountId)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         OFXStatement operationList = ofxParser.parseOfx(file);
+
+        AccountingAccount accountingAccount = accountingAccountService.getAccountingAccount(targetAccountingAccountId);
+
+        if (accountingAccount == null)
+            throw new OsirisValidationException("targetAccountingAccountId");
 
         if (operationList != null && operationList.getAccountStatements() != null
                 && operationList.getAccountStatements().size() > 0
@@ -175,6 +188,7 @@ public class PaymentServiceImpl implements PaymentService {
                             : constantService.getPaymentWayOutboud());
                     payment.setPaymentType(constantService.getPaymentTypeVirement());
                     addOrUpdatePayment(payment);
+                    accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment, accountingAccount);
                 }
             }
         automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords();
@@ -209,7 +223,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
             if (generateWaitingAccountAccountingRecords.getValue())
-                accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment);
+                accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment, null);
 
             // Get invoices and customer orders and quotations
             Float totalToPay = 0f;
@@ -440,24 +454,20 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
             if (Math.abs(Math.round(remainingMoney * 100f) / 100f) > 0) {
-                boolean modifyPayment = false;
-                if (Math.abs(remainingMoney) <= Float.parseFloat(payementLimitRefundInEuros)) {
-                    if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
-                        accountingRecordService.generateAppointForPayment(payment, remainingMoney,
-                                invoiceHelper.getCustomerOrder(correspondingInvoices.get(0)));
-                        modifyPayment = true;
-                    } else if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0) {
-                        accountingRecordService.generateAppointForPayment(payment, remainingMoney,
-                                quotationService.getCustomerOrderOfQuotation(correspondingCustomerOrder.get(0)));
-                        modifyPayment = true;
-                    }
-                    if (modifyPayment) {
-                        payment.setPaymentAmount(payment.getPaymentAmount() - remainingMoney);
-                    }
-                } else {
-                    refundService.generateRefund(tiersRefund, affaireRefund, payment, null, remainingMoney,
-                            refundLabelSuffix);
-                }
+                // Refund
+                // Try to find a customerOrder ...
+                CustomerOrder customerOrder = null;
+                if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0)
+                    customerOrder = correspondingCustomerOrder.get(0);
+                else if (correspondingInvoices != null && correspondingInvoices.size() > 0)
+                    for (Invoice invoice : correspondingInvoices)
+                        if (invoice.getCustomerOrder() != null)
+                            customerOrder = invoice.getCustomerOrder();
+                        else if (invoice.getCustomerOrderForInboundInvoice() != null)
+                            customerOrder = invoice.getCustomerOrderForInboundInvoice();
+
+                refundService.generateRefund(tiersRefund, affaireRefund, payment, null, remainingMoney,
+                        refundLabelSuffix, customerOrder, null);
             }
         } else {
             // Invoices to payed found
@@ -546,7 +556,7 @@ public class PaymentServiceImpl implements PaymentService {
                 // If more than 1 invoice to associate, cut payment
                 if (correspondingInvoices.size() > 1) {
                     newPayment = generateNewPaymentFromPayment(payment, effectivePayment);
-                    accountingRecordService.generateBankAccountingRecordsForInboundPayment(newPayment);
+                    accountingRecordService.generateBankAccountingRecordsForInboundPayment(newPayment, null);
 
                     if (payment.getIsCancelled() == false)
                         cancelPayment(payment, constantService.getAccountingJournalBank());
@@ -563,6 +573,22 @@ public class PaymentServiceImpl implements PaymentService {
                     remainingMoney -= remainingToPayForCurrentInvoice;
                 } else {
                     remainingMoney = 0f;
+                }
+
+                // Handle appoint
+                if (!isPayed
+                        || Math.abs(Math.round((remainingToPayForCurrentInvoice - newPayment.getPaymentAmount()) * 100f)
+                                / 100f) > 0) {
+                    if (Math.abs(remainingToPayForCurrentInvoice - newPayment.getPaymentAmount()) <= Float
+                            .parseFloat(payementLimitRefundInEuros)) {
+                        appointService.generateAppointForInvoice(correspondingInvoices.get(i), payment, null,
+                                newPayment.getPaymentAmount() - remainingToPayForCurrentInvoice);
+
+                        payment.setPaymentAmount(remainingToPayForCurrentInvoice);
+                        addOrUpdatePayment(payment);
+                        isPayed = true;
+                        remainingMoney = 0f;
+                    }
                 }
 
                 remainingMoney = Math.round(remainingMoney * 100f) / 100f;

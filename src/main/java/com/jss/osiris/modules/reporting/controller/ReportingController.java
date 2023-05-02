@@ -17,9 +17,11 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.reporting.model.IQuotationReporting;
+import com.jss.osiris.modules.reporting.model.IVatReporting;
 import com.jss.osiris.modules.reporting.model.UserReporting;
 import com.jss.osiris.modules.reporting.service.QuotationReportingService;
 import com.jss.osiris.modules.reporting.service.UserReportingService;
+import com.jss.osiris.modules.reporting.service.VatReportingService;
 
 @RestController
 public class ReportingController {
@@ -33,6 +35,9 @@ public class ReportingController {
 	QuotationReportingService quotationReportingService;
 
 	@Autowired
+	VatReportingService vatReportingService;
+
+	@Autowired
 	EmployeeService employeeService;
 
 	@GetMapping(inputEntryPoint + "/quotation")
@@ -40,6 +45,14 @@ public class ReportingController {
 			throws OsirisValidationException, OsirisException {
 
 		return new ResponseEntity<List<IQuotationReporting>>(quotationReportingService.getQuotationReporting(0),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/vat")
+	public ResponseEntity<List<IVatReporting>> getVatReporting()
+			throws OsirisValidationException, OsirisException {
+
+		return new ResponseEntity<List<IVatReporting>>(vatReportingService.getVatReporting(),
 				HttpStatus.OK);
 	}
 

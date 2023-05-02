@@ -1,8 +1,8 @@
 package com.jss.osiris.modules.miscellaneous.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
 import com.jss.osiris.modules.miscellaneous.model.Region;
 
-public interface RegionRepository extends CrudRepository<Region, Integer> {
+public interface RegionRepository extends QueryCacheCrudRepository<Region, Integer> {
 }

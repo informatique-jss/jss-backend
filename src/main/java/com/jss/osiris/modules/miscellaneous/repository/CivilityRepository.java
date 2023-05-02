@@ -1,8 +1,8 @@
 package com.jss.osiris.modules.miscellaneous.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
 import com.jss.osiris.modules.miscellaneous.model.Civility;
 
-public interface CivilityRepository extends CrudRepository<Civility, Integer> {
+public interface CivilityRepository extends QueryCacheCrudRepository<Civility, Integer> {
 }

@@ -1,0 +1,19 @@
+<div class="mat-elevation-z2 form-div min-height">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <generic-input [(model)]="searchLabel" label="Libellé" [form]="appointForm" propertyName="searchLabel"
+            [isMandatory]="false"></generic-input>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchAppoints()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="appoints" tableName="Appoints">
+    </sort-table>
+  </div>
+</div>

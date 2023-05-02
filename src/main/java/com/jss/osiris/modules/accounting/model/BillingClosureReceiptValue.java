@@ -9,6 +9,14 @@ public class BillingClosureReceiptValue {
     private String eventCbLink;
     private Float creditAmount;
     private Float debitAmount;
+    private boolean displayBottomBorder;
+
+    public BillingClosureReceiptValue() {
+    }
+
+    public BillingClosureReceiptValue(String eventDescription) {
+        this.eventDescription = eventDescription;
+    }
 
     public LocalDateTime getEventDateTime() {
         return eventDateTime;
@@ -56,6 +64,14 @@ public class BillingClosureReceiptValue {
 
     public void setEventDateString(String eventDateString) {
         this.eventDateString = eventDateString;
+    }
+
+    public boolean isDisplayBottomBorder() {
+        return displayBottomBorder;
+    }
+
+    public void setDisplayBottomBorder(boolean displayBottomBorder) {
+        this.displayBottomBorder = displayBottomBorder;
     }
 
 }

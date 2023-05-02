@@ -1060,8 +1060,17 @@ public class MailHelper {
 
         Document billingDocument = documentService.getDocumentByDocumentType(customerOrder.getDocuments(),
                 constantService.getDocumentTypeBilling());
-        if (billingDocument != null && billingDocument.getExternalReference() != null)
-            ctx.setVariable("externalReference", billingDocument.getExternalReference());
+        if (billingDocument != null) {
+            if (billingDocument.getExternalReference() != null)
+                ctx.setVariable("externalReference", billingDocument.getExternalReference());
+
+            // Responsable on billing
+            if (billingDocument.getIsResponsableOnBilling() != null && billingDocument.getIsResponsableOnBilling()
+                    && customerOrder.getResponsable() != null)
+                ctx.setVariable("responsableOnBilling", customerOrder.getResponsable().getFirstname() + " "
+                        + customerOrder.getResponsable().getLastname());
+
+        }
 
         ctx.setVariable("customerOrder", customerOrder);
 
@@ -1094,6 +1103,11 @@ public class MailHelper {
         ctx.setVariable("deposits", deposits);
         ctx.setVariable("remainingToPay",
                 Math.round((invoiceHelper.getPriceTotal(invoice) - depositTotal) * 100f) / 100f);
+
+        ctx.setVariable("tooMuchPerceived", null);
+        Float amountPerceived = depositTotal - Math.round((invoiceHelper.getPriceTotal(invoice)) * 100f) / 100f;
+        if (Math.round(amountPerceived * 100f) / 100f > 0)
+            ctx.setVariable("tooMuchPerceived", amountPerceived);
 
         LocalDateTime localDate = invoice.getCreatedDate();
         DateTimeFormatter formatter = DateTimeFormatter
@@ -1474,15 +1488,18 @@ public class MailHelper {
             else
                 explainationText += " Nous vous remercions de bien vouloir procéder à son règlement dans les meilleurs délais.";
         } else {
-            Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
             explainationText = "Nous avons le plaisir de vous confirmer la finalisation de votre commande n°"
-                    + customerOrder.getId() + " concernant la société "
-                    + ((affaire.getDenomination() != null ? affaire.getDenomination()
-                            : (affaire.getFirstname() + " " + affaire.getLastname())) + " ("
-                            + (affaire.getAddress() + ", "
-                                    + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"))
-                    + ". Vous trouverez en pièces-jointes les éléments suivants : ";
+                    + customerOrder.getId();
         }
+
+        Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
+
+        explainationText += " Cette commande concerne la société "
+                + ((affaire.getDenomination() != null ? affaire.getDenomination()
+                        : (affaire.getFirstname() + " " + affaire.getLastname())) + " ("
+                        + (affaire.getAddress() + ", "
+                                + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"))
+                + ". Vous trouverez en pièces-jointes les éléments suivants : ";
 
         ArrayList<String> attachementNames = new ArrayList<String>();
         for (Attachment attachment : attachments)
@@ -1570,6 +1587,17 @@ public class MailHelper {
 
         String explainationText = "Vous trouverez ci-joint l'avoir n°" + creditNote.getId()
                 + " correspondant à la facture n°" + invoice.getId() + ".";
+
+        if (customerOrder != null) {
+            Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
+            explainationText += " Cette commande concerne la société "
+                    + ((affaire.getDenomination() != null ? affaire.getDenomination()
+                            : (affaire.getFirstname() + " " + affaire.getLastname())) + " ("
+                            + (affaire.getAddress() + ", "
+                                    + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"))
+                    + ".";
+        }
+
         mail.setExplaination(explainationText);
 
         mail.setSubject("Votre avoir n°" + creditNote.getId());

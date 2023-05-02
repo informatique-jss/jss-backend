@@ -9,4 +9,5 @@ export interface RefundSearchResult {
   isMatched: boolean;
   isAlreadyExported: boolean;
   paymentId: number;
+  affaireLabel: string;
 }

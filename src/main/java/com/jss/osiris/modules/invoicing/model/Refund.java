@@ -5,16 +5,19 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -34,29 +37,38 @@ public class Refund implements Serializable, IId {
 
 	private LocalDateTime refundDateTime;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
 	private Tiers tiers;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
 	private Confrere confrere;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_affaire")
 	private Affaire affaire;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment")
 	private Payment payment;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_deposit")
 	private Deposit deposit;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_refund_type")
 	private RefundType refundType;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_appoint")
+	private Appoint appoint;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_customer_order")
+	@JsonIgnoreProperties(value = { "deposits" }, allowSetters = true)
+	private CustomerOrder customerOrder;
 
 	@Column(length = 40)
 	private String refundIBAN;
@@ -178,6 +190,22 @@ public class Refund implements Serializable, IId {
 
 	public void setRefundBic(String refundBic) {
 		this.refundBic = refundBic;
+	}
+
+	public CustomerOrder getCustomerOrder() {
+		return customerOrder;
+	}
+
+	public void setCustomerOrder(CustomerOrder customerOrder) {
+		this.customerOrder = customerOrder;
+	}
+
+	public Appoint getAppoint() {
+		return appoint;
+	}
+
+	public void setAppoint(Appoint appoint) {
+		this.appoint = appoint;
 	}
 
 }

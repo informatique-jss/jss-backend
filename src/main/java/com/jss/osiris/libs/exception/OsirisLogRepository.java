@@ -3,10 +3,11 @@ package com.jss.osiris.libs.exception;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-public interface OsirisLogRepository extends CrudRepository<OsirisLog, Integer> {
+import com.jss.osiris.libs.QueryCacheCrudRepository;
+
+public interface OsirisLogRepository extends QueryCacheCrudRepository<OsirisLog, Integer> {
 
     @Query(value = "select * from OsirisLog n where n.created_date_time<(now() - make_interval(months => :monthNbr))  ", nativeQuery = true)
     List<OsirisLog> findLogsOlderThanMonths(@Param("monthNbr") Integer monthNbr);

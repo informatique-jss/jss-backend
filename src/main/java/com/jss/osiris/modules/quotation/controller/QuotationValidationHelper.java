@@ -274,12 +274,6 @@ public class QuotationValidationHelper {
                                         if (!validationHelper.validateMailList(document.getMailsClient()))
                                                 throw new OsirisValidationException("MailsClient");
 
-                                if (document.getBillingLabelType() != null
-                                                && document.getBillingLabelType().getId()
-                                                                .equals(constantService.getBillingLabelTypeCodeAffaire()
-                                                                                .getId()))
-                                        document.setIsResponsableOnBilling(false);
-
                                 validationHelper.validateString(document.getAffaireAddress(), false, 200,
                                                 "AffaireAddress");
                                 validationHelper.validateString(document.getClientAddress(), false, 100,

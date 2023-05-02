@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.invoicing.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,7 +18,7 @@ public class OwncloudGreffeFile {
     private Integer id;
     private String filename;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_competent_authority")
     private CompetentAuthority competentAuthority;
 

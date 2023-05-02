@@ -1,10 +1,14 @@
 package com.jss.osiris.modules.quotation.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import javax.persistence.QueryHint;
 
+import org.springframework.data.jpa.repository.QueryHints;
+
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 
-public interface QuotationStatusRepository extends CrudRepository<QuotationStatus, Integer> {
+public interface QuotationStatusRepository extends QueryCacheCrudRepository<QuotationStatus, Integer> {
 
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     QuotationStatus findByCode(String code);
 }
