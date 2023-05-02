@@ -1683,9 +1683,7 @@ public class MailHelper {
         for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(provision.getAttachments()))
             if (attachment.getAttachmentType().getId()
                     .equals(constantService.getAttachmentTypeAnnouncement()
-                            .getId())
-                    && (announcement.getIsAnnouncementAlreadySentToConfrere() == null
-                            || !announcement.getIsAnnouncementAlreadySentToConfrere())) {
+                            .getId())) {
                 attachments.add(attachment);
                 break;
             }
