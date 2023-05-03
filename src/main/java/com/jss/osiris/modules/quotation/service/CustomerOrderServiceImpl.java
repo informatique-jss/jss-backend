@@ -415,7 +415,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
             // Auto billed for JSS Announcement only customer order
 
-            if (isOnlyJssAnnouncement(customerOrder) && getRemainingAmountToPayForCustomerOrder(customerOrder) >= 0) {
+            if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
+                    && isOnlyJssAnnouncement(customerOrder)
+                    && getRemainingAmountToPayForCustomerOrder(customerOrder) >= 0) {
                 targetStatusCode = CustomerOrderStatus.BILLED;
             }
         }
