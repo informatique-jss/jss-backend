@@ -993,6 +993,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, payment);
         accountingRecordService.generateAccountingRecordsForCentralPayPayment(centralPayPaymentRequest, payment,
                 null, invoice.getCustomerOrder(), invoice);
+
+        accountingRecordService.checkInvoiceForLettrage(invoice);
     }
 
     private Payment getCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest, boolean isForDepostit,
