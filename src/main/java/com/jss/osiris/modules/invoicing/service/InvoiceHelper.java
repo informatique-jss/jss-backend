@@ -178,6 +178,7 @@ public class InvoiceHelper {
                 invoiceLabelResult.setBillingLabelIntercommunityVat(usedOrderingCustomer.getIntercommunityVat());
                 invoiceLabelResult.setBillingLabelCity(usedOrderingCustomer.getCity());
                 invoiceLabelResult.setBillingLabelCountry(usedOrderingCustomer.getCountry());
+                invoiceLabelResult.setCedexComplement(usedOrderingCustomer.getCedexComplement());
                 invoiceLabelResult.setBillingLabelIsIndividual(usedOrderingCustomer.getIsIndividual());
                 invoiceLabelResult.setBillingLabelType(billingDocument.getBillingLabelType());
                 invoiceLabelResult.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
