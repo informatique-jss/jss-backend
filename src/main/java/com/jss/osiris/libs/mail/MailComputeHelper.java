@@ -315,7 +315,6 @@ public class MailComputeHelper {
                 invoiceLabelResult.setBillingLabelCountry(tiers.getCountry());
                 invoiceLabelResult.setBillingLabelPostalCode(tiers.getPostalCode());
                 invoiceLabelResult.setBillingLabelIntercommunityVat(tiers.getIntercommunityVat());
-                invoiceLabelResult.setIntercom(tiers.getIntercom());
                 invoiceLabelResult.setLabelOrigin("l'adresse du tiers");
             } else if (customer instanceof Confrere && ((Confrere) customer).getRegie() != null
                     && ((Confrere) customer).getRegie().getAddress() != null
@@ -358,7 +357,6 @@ public class MailComputeHelper {
                 invoiceLabelResult.setBillingLabelCountry(tiers.getCountry());
                 invoiceLabelResult.setBillingLabelPostalCode(tiers.getPostalCode());
                 invoiceLabelResult.setBillingLabelIntercommunityVat(tiers.getIntercommunityVat());
-                invoiceLabelResult.setIntercom(tiers.getIntercom());
                 invoiceLabelResult.setLabelOrigin("l'adresse du tiers");
             } else
                 throw new OsirisClientMessageException("Aucune adresse postale trouvée pour le client");

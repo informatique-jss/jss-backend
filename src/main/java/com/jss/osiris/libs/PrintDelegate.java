@@ -16,7 +16,6 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.tiers.model.Responsable;
 
 @Service
 public class PrintDelegate {
@@ -71,6 +70,7 @@ public class PrintDelegate {
                     }
                 }
             }
+
             dOut.writeUTF(
                     "               " + StringUtils
                             .stripAccents((label.getBillingLabelAddress() != null ? label.getBillingLabelAddress()
@@ -81,12 +81,13 @@ public class PrintDelegate {
             dOut.writeUTF("\r\n");
             dOut.flush();
             dOut.writeUTF(
-                    "               " + StringUtils
-                            .stripAccents((label.getIntercom() != null
-                                    ? label.getIntercom()
-                                    : ""))
-                            .toUpperCase() + " ");
-
+                    "               ");
+            if (customerOrder.getTiers() != null) {
+                dOut.writeUTF(StringUtils.stripAccents((customerOrder.getTiers().getIntercom() != null
+                        ? customerOrder.getTiers().getIntercom()
+                        : ""))
+                        .toUpperCase() + " ");
+            }
             if (customerOrder.getResponsable() != null) {
                 dOut.writeUTF((customerOrder.getResponsable().getBuilding() != null
                         ? (" | " + customerOrder.getResponsable().getBuilding())
