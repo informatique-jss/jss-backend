@@ -47,7 +47,7 @@ public class PrintDelegate {
                         label.setBillingLabelPostalCode(label.getBillingLabelPostalCode() + " " + lines.get(i));
                 }
             }
-
+            dOut.writeUTF("\r\n");
             dOut.writeUTF(" " + customerOrder.getId());
             dOut.writeUTF("\r\n");
             dOut.flush();
