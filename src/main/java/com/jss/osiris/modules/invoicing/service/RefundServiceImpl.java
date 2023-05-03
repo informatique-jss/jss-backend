@@ -197,6 +197,13 @@ public class RefundServiceImpl implements RefundService {
         }
         if (labelSuffix != null)
             refund.setLabel(refund.getLabel() + " / " + labelSuffix);
+
+        if (refund.getCustomerOrder() != null && refund.getCustomerOrder().getAssoAffaireOrders() != null) {
+            Affaire affaire = refund.getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
+            refund.setLabel(refund.getLabel() + " / " + (affaire.getDenomination() != null ? affaire.getDenomination()
+                    : (affaire.getFirstname() + " " + affaire.getLastname())));
+        }
+
         refund.setRefundAmount(amount);
         refund.setIsMatched(false);
         refund.setIsAlreadyExported(false);
