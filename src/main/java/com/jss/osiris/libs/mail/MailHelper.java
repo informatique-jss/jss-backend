@@ -1093,11 +1093,14 @@ public class MailHelper {
         // Exclude deposits generated after invoice
         ArrayList<Deposit> deposits = new ArrayList<Deposit>();
         Float depositTotal = 0f;
+        Float payementTotal = 0f;
         if (customerOrder.getDeposits() != null)
             for (Deposit deposit : customerOrder.getDeposits())
                 if (deposit.getDepositDate().isBefore(invoice.getCreatedDate())) {
                     deposits.add(deposit);
                     depositTotal += deposit.getDepositAmount();
+                    if (deposit.getOriginPayment() != null)
+                        payementTotal += deposit.getOriginPayment().getPaymentAmount();
                 }
 
         ctx.setVariable("deposits", deposits);
