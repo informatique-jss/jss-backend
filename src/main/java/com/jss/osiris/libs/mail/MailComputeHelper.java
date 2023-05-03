@@ -267,7 +267,6 @@ public class MailComputeHelper {
                     || paperDocument.getAffaireAddress() != null && !paperDocument.getAffaireAddress().equals("")) {
                 invoiceLabelResult.setBillingLabel(paperDocument.getAffaireRecipient());
                 invoiceLabelResult.setBillingLabelAddress(paperDocument.getAffaireAddress());
-                invoiceLabelResult.setIntercom(paperDocument.getIntercom());
                 invoiceLabelResult.setBillingLabelCity(null);
                 invoiceLabelResult.setLabelOrigin("adresse indiquée dans la commande");
             } else if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0

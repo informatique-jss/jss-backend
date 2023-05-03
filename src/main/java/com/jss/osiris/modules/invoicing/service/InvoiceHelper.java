@@ -95,7 +95,6 @@ public class InvoiceHelper {
                 invoiceLabelResult.setBillingLabelCountry(billingDocument.getRegie().getCountry());
                 invoiceLabelResult.setBillingLabelIsIndividual(false);
                 invoiceLabelResult.setBillingLabelType(billingDocument.getBillingLabelType());
-                invoiceLabelResult.setIntercom(billingDocument.getIntercom());
                 invoiceLabelResult.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
                 invoiceLabelResult.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
                 invoiceLabelResult.setCommandNumber(billingDocument.getCommandNumber());
@@ -103,7 +102,6 @@ public class InvoiceHelper {
             } else {
                 invoiceLabelResult.setBillingLabel(billingDocument.getBillingLabel());
                 invoiceLabelResult.setBillingLabelAddress(billingDocument.getBillingAddress());
-                invoiceLabelResult.setIntercom(billingDocument.getIntercom());
                 invoiceLabelResult.setBillingLabelPostalCode(billingDocument.getBillingPostalCode());
                 invoiceLabelResult.setCedexComplement(billingDocument.getCedexComplement());
                 invoiceLabelResult.setBillingLabelCity(billingDocument.getBillingLabelCity());
@@ -126,7 +124,6 @@ public class InvoiceHelper {
                     .setBillingLabel(affaire.getIsIndividual() ? affaire.getFirstname() + " " + affaire.getLastname()
                             : affaire.getDenomination());
             invoiceLabelResult.setBillingLabelAddress(affaire.getAddress());
-            invoiceLabelResult.setIntercom(billingDocument.getIntercom());
             invoiceLabelResult.setBillingLabelPostalCode(affaire.getPostalCode());
             invoiceLabelResult.setCedexComplement(affaire.getCedexComplement());
             invoiceLabelResult.setBillingLabelCity(affaire.getCity());
@@ -177,7 +174,6 @@ public class InvoiceHelper {
             }
             if (usedOrderingCustomer != null) {
                 invoiceLabelResult.setBillingLabelAddress(usedOrderingCustomer.getAddress());
-                invoiceLabelResult.setIntercom(billingDocument.getIntercom());
                 invoiceLabelResult.setBillingLabelPostalCode(usedOrderingCustomer.getPostalCode());
                 invoiceLabelResult.setBillingLabelIntercommunityVat(usedOrderingCustomer.getIntercommunityVat());
                 invoiceLabelResult.setBillingLabelCity(usedOrderingCustomer.getCity());

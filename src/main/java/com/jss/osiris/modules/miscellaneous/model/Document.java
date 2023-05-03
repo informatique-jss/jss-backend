@@ -140,8 +140,7 @@ public class Document implements Serializable, IId {
 
 	@Column(length = 100)
 	private String billingLabel;
-	@Column(length = 100)
-	private String intercom;
+
 	@Column(length = 100)
 	private String billingAddress;
 
@@ -360,14 +359,6 @@ public class Document implements Serializable, IId {
 
 	public void setRefundIBAN(String refundIBAN) {
 		this.refundIBAN = refundIBAN;
-	}
-
-	public String getIntercom() {
-		return intercom;
-	}
-
-	public void setIntercom(String intercom) {
-		this.intercom = intercom;
 	}
 
 	public BillingClosureType getBillingClosureType() {
