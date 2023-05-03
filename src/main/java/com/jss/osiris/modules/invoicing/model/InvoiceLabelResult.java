@@ -131,5 +131,4 @@ public class InvoiceLabelResult {
     public void setBillingLabelIntercommunityVat(String billingLabelIntercommunityVat) {
         this.billingLabelIntercommunityVat = billingLabelIntercommunityVat;
     }
-
 }
