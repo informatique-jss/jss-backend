@@ -91,7 +91,7 @@ public class NotificationServiceImpl implements NotificationService {
         return notificationRepository.save(notification);
     }
 
-    public Notification generateNewNotification(Employee fromEmployee, Employee toEmployee, String notificationType,
+    private Notification generateNewNotification(Employee fromEmployee, Employee toEmployee, String notificationType,
             IId entity, String detail1, String title, boolean showPopup) {
         Notification notification = new Notification();
         notification.setCreatedBy(fromEmployee);

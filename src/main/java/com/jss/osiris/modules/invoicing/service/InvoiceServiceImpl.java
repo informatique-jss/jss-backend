@@ -42,7 +42,6 @@ import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
-import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -699,19 +698,11 @@ public class InvoiceServiceImpl implements InvoiceService {
                         if (customerOrderToSetProvision instanceof Responsable)
                             customerOrderToSetProvision = ((Responsable) customerOrderToSetProvision).getTiers();
                         if (customerOrderToSetProvision instanceof Tiers) {
-                            Employee employee = customerOrderToSetProvision.getSalesEmployee();
-                            String notificationType = "alert";
-                            String detail1 = "";
-                            String title = "delay de payement";
-                            notificationService.generateNewNotification(null, employee, notificationType,
-                                    customerOrderToSetProvision, detail1, title, toSend);
+                            ((Tiers) customerOrderToSetProvision).setIsProvisionalPaymentMandatory(true);
+                            tiersService.addOrUpdateTiers((Tiers) customerOrderToSetProvision);
                         } else if (customerOrderToSetProvision instanceof Confrere) {
-                            Employee employee = customerOrderToSetProvision.getSalesEmployee();
-                            String notificationType = "alert";
-                            String detail1 = "";
-                            String title = "delay de payement";
-                            notificationService.generateNewNotification(null, employee, notificationType,
-                                    customerOrderToSetProvision, detail1, title, toSend);
+                            ((Confrere) customerOrderToSetProvision).setIsProvisionalPaymentMandatory(true);
+                            confrereService.addOrUpdateConfrere((Confrere) customerOrderToSetProvision);
                         }
                     } else if (invoice.getSecondReminderDateTime() == null
                             && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))) {
