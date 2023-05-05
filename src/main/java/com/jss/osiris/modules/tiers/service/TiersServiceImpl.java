@@ -152,11 +152,8 @@ public class TiersServiceImpl implements TiersService {
             }
         }
 
-        // Set default customer order assignation to sales employee if not set
-        if (tiers.getDefaultCustomerOrderEmployee() == null)
-            tiers.setDefaultCustomerOrderEmployee(tiers.getSalesEmployee());
-
         tiers = tiersRepository.save(tiers);
+
         indexEntityService.indexEntity(tiers, tiers.getId());
         if (tiers.getResponsables() != null)
             for (Responsable responsable : tiers.getResponsables()) {
@@ -164,6 +161,21 @@ public class TiersServiceImpl implements TiersService {
                     responsable.setLoginWeb(responsable.getId() + "");
                 indexEntityService.indexEntity(responsable, responsable.getId());
             }
+
+        // Set default customer order assignation to sales employee if not set
+        if (tiers.getDefaultCustomerOrderEmployee() == null)
+            tiers.setDefaultCustomerOrderEmployee(tiers.getSalesEmployee());
+
+        if (tiers.getAccountingAccountCustomer() != null || tiers.getAccountingAccountDeposit() != null
+                || tiers.getAccountingAccountProvider() != null) {
+            tiers.getAccountingAccountCustomer()
+                    .setLabel("Client - " + (tiers.getDenomination() != null ? tiers.getDenomination() : ""));
+            tiers.getAccountingAccountDeposit()
+                    .setLabel("Acompte - " + (tiers.getDenomination() != null ? tiers.getDenomination() : ""));
+            tiers.getAccountingAccountProvider()
+                    .setLabel("Fournisseur - " + (tiers.getDenomination() != null ? tiers.getDenomination() : ""));
+        }
+        tiers = tiersRepository.save(tiers);
 
         return tiers;
     }
