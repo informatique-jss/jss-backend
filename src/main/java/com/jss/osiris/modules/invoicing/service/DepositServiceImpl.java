@@ -19,6 +19,7 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
+import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.repository.DepositRepository;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Affaire;
@@ -229,8 +230,9 @@ public class DepositServiceImpl implements DepositService {
                     else if (invoice.getCustomerOrderForInboundInvoice() != null)
                         customerOrder = invoice.getCustomerOrderForInboundInvoice();
 
-            refundService.generateRefund(tiersRefund, affaireRefund, null, deposit, remainingMoney,
+            Refund refund = refundService.generateRefund(tiersRefund, affaireRefund, null, deposit, remainingMoney,
                     refundLabelSuffix, customerOrder, null);
+            accountingRecordService.generateAccountingRecordsForRefundOnGeneration(refund);
         }
     }
 

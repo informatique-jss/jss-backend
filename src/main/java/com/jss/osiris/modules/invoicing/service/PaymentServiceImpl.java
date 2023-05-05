@@ -466,8 +466,9 @@ public class PaymentServiceImpl implements PaymentService {
                         else if (invoice.getCustomerOrderForInboundInvoice() != null)
                             customerOrder = invoice.getCustomerOrderForInboundInvoice();
 
-                refundService.generateRefund(tiersRefund, affaireRefund, payment, null, remainingMoney,
+                Refund refund = refundService.generateRefund(tiersRefund, affaireRefund, payment, null, remainingMoney,
                         refundLabelSuffix, customerOrder, null);
+                accountingRecordService.generateAccountingRecordsForRefundOnGeneration(refund);
             }
         } else {
             // Invoices to payed found

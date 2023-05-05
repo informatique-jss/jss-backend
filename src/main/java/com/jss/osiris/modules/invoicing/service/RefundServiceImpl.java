@@ -147,7 +147,7 @@ public class RefundServiceImpl implements RefundService {
     }
 
     @Override
-    public void generateRefund(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Deposit deposit,
+    public Refund generateRefund(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Deposit deposit,
             Float amount, String labelSuffix, CustomerOrder customerOrder, Appoint appoint)
             throws OsirisException, OsirisClientMessageException {
         Refund refund = new Refund();
@@ -208,9 +208,7 @@ public class RefundServiceImpl implements RefundService {
         refund.setIsMatched(false);
         refund.setIsAlreadyExported(false);
         refund.setRefundDateTime(LocalDateTime.now());
-        this.addOrUpdateRefund(refund);
-        if (customerOrder != null)
-            accountingRecordService.generateAccountingRecordsForRefundOnGeneration(refund);
+        return this.addOrUpdateRefund(refund);
     }
 
     @Override

@@ -26,7 +26,7 @@ public interface RefundService {
 
     public void reindexRefunds();
 
-    public void generateRefund(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Deposit deposit,
+    public Refund generateRefund(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Deposit deposit,
             Float amount, String labelSuffix, CustomerOrder customerOrder, Appoint appoint)
             throws OsirisException, OsirisClientMessageException;
 
