@@ -147,6 +147,9 @@ export function getAmountPayed(invoice: Invoice) {
   if (invoice.deposits && invoice.deposits.length)
     for (let deposit of invoice.deposits)
       payed += deposit.depositAmount;
+  if (invoice.appoints && invoice.appoints.length)
+    for (let appoint of invoice.appoints)
+      payed += appoint.appointAmount;
 
   return Math.round(payed * 100) / 100;
 }

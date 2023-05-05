@@ -66,4 +66,9 @@ public class AppointServiceImpl implements AppointService {
 
         return appoint;
     }
+
+    @Override
+    public void deleteAppoint(Appoint appoint) {
+        appointRepository.delete(appoint);
+    }
 }

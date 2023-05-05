@@ -27,6 +27,7 @@ import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.invoicing.model.Appoint;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
@@ -739,6 +740,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                 for (Deposit deposit : invoice.getDeposits())
                     if (deposit.getIsCancelled() == null || !deposit.getIsCancelled())
                         total -= deposit.getDepositAmount();
+
+            if (invoice.getAppoints() != null && invoice.getAppoints().size() > 0)
+                for (Appoint appoint : invoice.getAppoints())
+                    total -= appoint.getAppointAmount();
 
             return Math.round(total * 100f) / 100f;
         }

@@ -39,6 +39,7 @@ import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.invoicing.model.Appoint;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
@@ -459,10 +460,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     && customerOrder.getDeposits().size() > 0) {
                 if (Math.abs(remainingToPayForCurrentInvoice) <= Float.parseFloat(payementLimitRefundInEuros)) {
                     Deposit deposit = customerOrder.getDeposits().get(0);
-                    appointService.generateAppointForInvoice(invoice, deposit.getOriginPayment(), deposit,
+                    Appoint appoint = appointService.generateAppointForInvoice(invoice, deposit.getOriginPayment(),
+                            deposit,
                             remainingToPayForCurrentInvoice);
+                    invoice.setAppoints(Arrays.asList(appoint));
                     deposit.setDepositAmount(remainingToPayForCurrentInvoice);
                     depositService.addOrUpdateDeposit(deposit);
+                    accountingRecordService.checkInvoiceForLettrage(invoice);
                 }
             }
 
@@ -480,7 +484,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 && targetStatusCode.equals(CustomerOrderStatus.TO_BILLED)) {
             Invoice invoiceToCancel = null;
             if (customerOrder.getInvoices() != null)
-                for (Invoice invoice : customerOrder.getInvoices())
+                for (Invoice invoice : customerOrder.getInvoices()) {
                     if (!invoice.getInvoiceStatus().getId()
                             .equals(constantService.getInvoiceStatusCancelled().getId())
                             && !invoice.getInvoiceStatus().getId()
@@ -488,6 +492,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         invoiceToCancel = invoice;
                         break;
                     }
+                    if (invoice.getAppoints() != null)
+                        for (Appoint appoint : invoice.getAppoints())
+                            appointService.deleteAppoint(appoint);
+                }
             moveInvoiceDepositAndPaymentToCustomerOrderDeposit(customerOrder, invoiceToCancel);
             invoiceService.cancelInvoiceEmitted(invoiceToCancel, customerOrder);
         }

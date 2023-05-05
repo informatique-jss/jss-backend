@@ -17,4 +17,6 @@ public interface AppointService {
             Float appointAmount)
             throws OsirisException;
 
+    public void deleteAppoint(Appoint appoint);
+
 }
