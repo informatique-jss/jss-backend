@@ -1108,7 +1108,7 @@ public class MailHelper {
                 Math.round((invoiceHelper.getPriceTotal(invoice) - depositTotal) * 100f) / 100f);
 
         ctx.setVariable("tooMuchPerceived", null);
-        Float amountPerceived = depositTotal - Math.round((invoiceHelper.getPriceTotal(invoice)) * 100f) / 100f;
+        Float amountPerceived = payementTotal - Math.round((invoiceHelper.getPriceTotal(invoice)) * 100f) / 100f;
         if (Math.round(amountPerceived * 100f) / 100f > 0)
             ctx.setVariable("tooMuchPerceived", amountPerceived);
 
@@ -1367,6 +1367,17 @@ public class MailHelper {
         ctx.setVariable("billingClosureValues", billingClosureValues);
         ctx.setVariable("ibanJss", ibanJss);
         ctx.setVariable("bicJss", bicJss);
+
+        Tiers billingTiers = null;
+        if (tier instanceof Tiers)
+            billingTiers = (Tiers) tier;
+        if (tier instanceof Responsable)
+            billingTiers = ((Responsable) tier).getTiers();
+
+        ctx.setVariable("tiersReference", null);
+        if (billingTiers != null)
+            ctx.setVariable("tiersReference", billingTiers.getId()
+                    + (billingTiers.getIdAs400() != null ? ("/" + billingTiers.getIdAs400()) : ""));
 
         Float balance = 0f;
         Float creditBalance = 0f;

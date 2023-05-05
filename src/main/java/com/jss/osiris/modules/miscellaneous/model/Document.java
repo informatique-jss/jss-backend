@@ -19,6 +19,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -150,6 +151,7 @@ public class Document implements Serializable, IId {
 	@Column(length = 20)
 	private String cedexComplement;
 
+	@IndexedField
 	private String externalReference;
 
 	@ManyToOne(fetch = FetchType.LAZY)
