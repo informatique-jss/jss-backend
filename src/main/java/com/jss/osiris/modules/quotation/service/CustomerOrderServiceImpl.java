@@ -414,7 +414,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             notificationService.notifyCustomerOrderToBeingToBilled(customerOrder);
 
             // Auto billed for JSS Announcement only customer order
-            if (isOnlyJssAnnouncement(customerOrder)) {
+
+            if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
+                    && isOnlyJssAnnouncement(customerOrder)
+                    && getRemainingAmountToPayForCustomerOrder(customerOrder) >= 0) {
                 targetStatusCode = CustomerOrderStatus.BILLED;
             }
         }
@@ -990,6 +993,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, payment);
         accountingRecordService.generateAccountingRecordsForCentralPayPayment(centralPayPaymentRequest, payment,
                 null, invoice.getCustomerOrder(), invoice);
+
+        accountingRecordService.checkInvoiceForLettrage(invoice);
     }
 
     private Payment getCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest, boolean isForDepostit,

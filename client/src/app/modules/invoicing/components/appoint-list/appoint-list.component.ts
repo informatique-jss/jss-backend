@@ -3,7 +3,6 @@ import { FormBuilder } from '@angular/forms';
 import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { AppService } from 'src/app/services/app.service';
 import { Appoint } from '../../model/Appoint';
 import { AppointService } from '../../services/appoint.service';
 
@@ -20,7 +19,6 @@ export class AppointListComponent implements OnInit {
   searchLabel: string = "";
 
   constructor(
-    private appService: AppService,
     private changeDetectorRef: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private appointService: AppointService,
@@ -31,7 +29,6 @@ export class AppointListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.appService.changeHeaderTitle("Appoints");
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° de l'appoint" } as SortTableColumn);
     this.displayedColumns.push({ id: "appointDate", fieldName: "appointDate", label: "Date d'émission", valueFonction: formatDateForSortTable } as SortTableColumn);
