@@ -54,8 +54,10 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " pa.code as principalAccountingAccountCode, " +
                         " a.accounting_account_sub_number as accountingAccountSubNumber, " +
                         " a.label as accountingAccountLabel, " +
-                        " r.manual_accounting_document_number as manualAccountingDocumentNumber, " +
-                        " r.manual_accounting_document_date as manualAccountingDocumentDate, " +
+                        " coalesce(r.manual_accounting_document_number,r.id_invoice||'') as manualAccountingDocumentNumber, "
+                        +
+                        " coalesce(r.manual_accounting_document_date, i.created_date) as manualAccountingDocumentDate, "
+                        +
                         " r.debit_amount as debitAmount, " +
                         " r.credit_amount as creditAmount, " +
                         " r.label as label, " +
