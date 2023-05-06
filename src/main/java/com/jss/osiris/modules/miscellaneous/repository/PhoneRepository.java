@@ -11,8 +11,6 @@ import com.jss.osiris.modules.miscellaneous.model.PhoneSearch;
 
 public interface PhoneRepository extends CrudRepository<Phone, Integer> {
 
-    List<Phone> findByPhoneNumberContainingIgnoreCase(String phone);
-
     @Query(nativeQuery = true, value = "SELECT DISTINCT " +
             "CASE " +
             "WHEN t.id IS NOT NULL THEN 'Tiers' " +
@@ -37,6 +35,8 @@ public interface PhoneRepository extends CrudRepository<Phone, Integer> {
             "LEFT OUTER JOIN asso_confrere_phone acp ON phone.id = acp.id_phone " +
             "LEFT OUTER JOIN confrere c ON acp.id_confrere = c.id " +
             "WHERE phone.phone_number = :phoneNumber")
-    List<PhoneSearch> findByPhoneNumber(@Param("phoneNumber") String phoneNumber);
+    List<PhoneSearch> findByPhoneNumberForFront(@Param("phoneNumber") String phoneNumber);
     // search a phone by tiers, responsable, confrere or provider
+
+    List<Phone> findByPhoneNumber(String phoneNumber);
 }

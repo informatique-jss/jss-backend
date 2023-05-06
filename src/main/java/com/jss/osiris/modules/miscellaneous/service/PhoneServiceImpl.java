@@ -26,7 +26,7 @@ public class PhoneServiceImpl implements PhoneService {
         if (validationHelper.validateFrenchPhone(phoneNumber) && phoneNumber.startsWith("+33"))
             phoneNumber = phoneNumber.replace("+33", "0");
         phoneNumber.replaceAll(" ", "");
-        return phoneRepository.findByPhoneNumber(phoneNumber);
+        return phoneRepository.findByPhoneNumberForFront(phoneNumber);
     }
 
     @Override
@@ -42,8 +42,7 @@ public class PhoneServiceImpl implements PhoneService {
         if (phones != null)
             for (Phone phone : phones) {
                 if (phone.getId() == null) {
-                    List<Phone> existingPhones = phoneRepository
-                            .findByPhoneNumberContainingIgnoreCase(phone.getPhoneNumber());
+                    List<Phone> existingPhones = phoneRepository.findByPhoneNumber(phone.getPhoneNumber());
                     if (existingPhones != null && existingPhones.size() == 1)
                         phone.setId(existingPhones.get(0).getId());
                     phoneRepository.save(phone);
