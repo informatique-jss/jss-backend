@@ -29,22 +29,6 @@ public class PhoneServiceImpl implements PhoneService {
         return phoneRepository.findByPhoneNumber(phoneNumber);
     }
 
-    public String getLinkByPhoneNumber(List<PhoneSearch> phone) throws OsirisException {
-
-        String phoneType = phone.get(0).getEntityType();
-        String link = "";
-        if (phoneType.equals("Responsable")) {
-            link = "";
-        } else if (phoneType.equals("Confrere")) {
-            link = "";
-        } else if (phoneType.equals("Provider")) {
-            link = "";
-        } else {
-            link = "";
-        }
-        return link;
-    }
-
     @Override
     public Phone getPhone(Integer id) {
         Optional<Phone> phone = phoneRepository.findById(id);
