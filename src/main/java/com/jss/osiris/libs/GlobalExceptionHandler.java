@@ -84,7 +84,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> validationOtherException(Exception exception,
             WebRequest request) {
-        if (!exception.getMessage().contains("Relais brisé (pipe)")
+        if (exception.getMessage() == null || !exception.getMessage().contains("Relais brisé (pipe)")
                 && !exception.getMessage().contains("Connexion ré-initialisée par le correspondant")
                 && !exception.getMessage()
                         .contains("Une connexion établie a été abandonnée par un logiciel de votre ordinateur hôte"))

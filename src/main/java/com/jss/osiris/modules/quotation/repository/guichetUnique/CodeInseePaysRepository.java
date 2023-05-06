@@ -1,8 +1,8 @@
 package com.jss.osiris.modules.quotation.repository.guichetUnique;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.CodeInseePays;
 
-public interface CodeInseePaysRepository extends CrudRepository<CodeInseePays, String> {
+public interface CodeInseePaysRepository extends QueryCacheCrudRepository<CodeInseePays, String> {
 }

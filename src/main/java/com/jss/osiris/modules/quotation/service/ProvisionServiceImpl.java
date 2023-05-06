@@ -36,6 +36,11 @@ public class ProvisionServiceImpl implements ProvisionService {
     }
 
     @Override
+    public Provision addOrUpdateProvision(Provision provision) {
+        return provisionRepository.save(provision);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateAssignedToForProvision(Provision provision, Employee employee) {
         provision.setAssignedTo(employee);

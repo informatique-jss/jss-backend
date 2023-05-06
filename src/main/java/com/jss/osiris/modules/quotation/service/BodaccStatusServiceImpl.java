@@ -6,9 +6,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +21,11 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
     BodaccStatusRepository bodaccStatusRepository;
 
     @Override
-    @Cacheable(value = "bodaccStatusList", key = "#root.methodName")
     public List<BodaccStatus> getBodaccStatus() {
         return IterableUtils.toList(bodaccStatusRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "bodaccStatus", key = "#id")
     public BodaccStatus getBodaccStatus(Integer id) {
         Optional<BodaccStatus> bodaccStatus = bodaccStatusRepository.findById(id);
         if (bodaccStatus.isPresent())
@@ -39,10 +34,6 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "bodaccStatusList", allEntries = true),
-            @CacheEvict(value = "bodaccStatus", key = "#bodaccStatus.id")
-    })
     @Transactional(rollbackFor = Exception.class)
     public BodaccStatus addOrUpdateBodaccStatus(
             BodaccStatus bodaccStatus) {

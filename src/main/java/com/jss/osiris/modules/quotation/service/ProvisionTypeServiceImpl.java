@@ -5,9 +5,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +18,11 @@ public class ProvisionTypeServiceImpl implements ProvisionTypeService {
     ProvisionTypeRepository provisionTypeRepository;
 
     @Override
-    @Cacheable(value = "provisionTypeList", key = "#root.methodName")
     public List<ProvisionType> getProvisionTypes() {
         return IterableUtils.toList(provisionTypeRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "provisionType", key = "#id")
     public ProvisionType getProvisionType(Integer id) {
         Optional<ProvisionType> provisionType = provisionTypeRepository.findById(id);
         if (provisionType.isPresent())
@@ -36,10 +31,6 @@ public class ProvisionTypeServiceImpl implements ProvisionTypeService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "provisionTypeList", allEntries = true),
-            @CacheEvict(value = "provisionType", key = "#provisionType.id")
-    })
     @Transactional(rollbackFor = Exception.class)
     public ProvisionType addOrUpdateProvisionType(
             ProvisionType provisionType) {

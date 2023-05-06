@@ -4,15 +4,18 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.QueryHint;
+
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 
-public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, Integer> {
+public interface CustomerOrderRepository extends QueryCacheCrudRepository<CustomerOrder, Integer> {
 
         @Query(nativeQuery = true, value = "select "
                         + " case when cf.id is not null then cf.label"
@@ -21,6 +24,7 @@ public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, I
                         + " coalesce(case when t2.denomination is not null and t2.denomination!='' then t2.denomination else t.firstname || ' '||t.lastname end, case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end) as tiersLabel,"
                         + " cos.label as customerOrderStatus,"
                         + " co.created_date as createdDate,"
+                        + " co.last_status_update as lastStatusUpdate,"
                         + " coalesce(cf.id_commercial,r.id_commercial,t.id_commercial,t2.id_commercial) as salesEmployeeId,"
                         + " co.id_assigned_to as assignedToEmployeeId,"
                         + " co.id as customerOrderId,"
@@ -76,6 +80,7 @@ public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, I
         @Query(value = "select c.* from customer_order c where exists (select 1 from asso_affaire_order a join provision p on p.id_asso_affaire_order = a.id where a.id_customer_order = c.id and  p.id_announcement = :announcementId)", nativeQuery = true)
         Optional<CustomerOrder> findCustomerOrderForAnnouncement(@Param("announcementId") Integer announcementId);
 
+        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<CustomerOrder> findByQuotations_Id(Integer idQuotation);
 
 }

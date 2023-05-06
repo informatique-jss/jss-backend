@@ -2,7 +2,6 @@ package com.jss.osiris.modules.quotation.model.guichetUnique.referentials;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -20,7 +19,6 @@ public class TypeDePersonne implements Serializable, ICode {
     @Id
     private String code;
 
-    @Column(nullable = false)
     private String label;
 
     public String getCode() {

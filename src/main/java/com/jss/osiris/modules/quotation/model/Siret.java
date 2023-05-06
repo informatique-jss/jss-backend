@@ -1,6 +1,8 @@
 package com.jss.osiris.modules.quotation.model;
 
-public class Siret {
+import java.io.Serializable;
+
+public class Siret implements Serializable {
 	private Header header;
 	private Etablissement etablissement;
 

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,20 +22,19 @@ public class AncienneEIRL implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String identificationSiren;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String ancienneDenominationEIRL;
 
-    @ManyToOne
-    @JoinColumn(name = "id_registre_eirl_de_lancienne_eirl", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_registre_eirl_de_lancienne_eirl")
     RegistreEirlDeLancienneEirl registreEirlDeLancienneEirl;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String lieuImmatriculationAncienneEIRL;
 
-    @Column(nullable = false)
     private LocalDate dateEffet;
 
     public Integer getId() {

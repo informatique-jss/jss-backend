@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +30,7 @@ public class Affaire implements Serializable, IId {
 	@IndexedField
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_civility")
 	private Civility civility;
 
@@ -67,12 +68,12 @@ public class Affaire implements Serializable, IId {
 	@Column(length = 20)
 	private String cedexComplement;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_city")
 	@IndexedField
 	private City city;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
 	@IndexedField
 	private Country country;
@@ -104,6 +105,9 @@ public class Affaire implements Serializable, IId {
 	private String paymentBic;
 
 	private Boolean isUnregistered;
+
+	@Column(length = 20)
+	private String intercommunityVat;
 
 	public String getPaymentIban() {
 		return paymentIban;
@@ -279,6 +283,14 @@ public class Affaire implements Serializable, IId {
 
 	public void setPaymentBic(String paymentBic) {
 		this.paymentBic = paymentBic;
+	}
+
+	public String getIntercommunityVat() {
+		return intercommunityVat;
+	}
+
+	public void setIntercommunityVat(String intercommunityVat) {
+		this.intercommunityVat = intercommunityVat;
 	}
 
 }

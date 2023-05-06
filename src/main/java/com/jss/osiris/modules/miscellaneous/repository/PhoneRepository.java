@@ -1,15 +1,15 @@
 package com.jss.osiris.modules.miscellaneous.repository;
 
 import java.util.List;
-
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
+ 
+import org.springframework.data.jpa.repository.Query; 
+import org.springframework.data.repository.query.Param; 
+import com.jss.osiris.libs.QueryCacheCrudRepository; 
 
 import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.miscellaneous.model.PhoneSearch;
 
-public interface PhoneRepository extends CrudRepository<Phone, Integer> {
+public interface PhoneRepository extends QueryCacheCrudRepository<Phone, Integer> {
 
     @Query(nativeQuery = true, value = "SELECT DISTINCT " +
             "CASE " +

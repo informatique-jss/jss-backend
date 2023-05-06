@@ -31,6 +31,11 @@ public class PaymentTypeServiceImpl implements PaymentTypeService {
     }
 
     @Override
+    public PaymentType getPaymentTypeByCodeInpi(String codeInpi) {
+        return paymentTypeRepository.findByCodeInpi(codeInpi);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public PaymentType addOrUpdatePaymentType(
             PaymentType paymentType) {

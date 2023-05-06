@@ -3,8 +3,10 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,35 +25,31 @@ public class NomsDeDomaine implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_etablissement_principal")
     @JsonIgnoreProperties(value = { "nomsDeDomaine" }, allowSetters = true)
     EtablissementPrincipal etablissementPrincipal;
 
-    @ManyToOne
-    @JoinColumn(name = "id_nature_domaine", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_nature_domaine")
     NatureDomaine natureDomaine;
 
-    @ManyToOne
-    @JoinColumn(name = "id_statut_domaine", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_statut_domaine")
     StatutDomaine statutDomaine;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String nomDomaine;
 
-    @Column(nullable = false)
     private LocalDate dateEffet;
 
-    @Column(nullable = false)
     private Boolean is55PMTriggered;
 
-    @Column(nullable = false)
     private Boolean is14MTriggered;
 
-    @Column(nullable = false)
     private LocalDate dateEffet14M;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_autres_etablissement")
     @JsonIgnoreProperties(value = { "nomsDeDomaine" }, allowSetters = true)
     AutresEtablissement autresEtablissement;

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,59 +30,51 @@ public class LienEntreprise implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_role_entreprise", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_role_entreprise")
     RoleEntreprise roleEntreprise;
 
-    @ManyToOne
-    @JoinColumn(name = "id_statut_pour_la_formalite", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_statut_pour_la_formalite")
     StatutPourLaFormalite statutPourLaFormalite;
 
-    @Column(nullable = false)
     private LocalDate dateEffet;
 
     @OneToMany(mappedBy = "lienEntreprise")
     @JsonIgnoreProperties(value = { "lienEntreprise" }, allowSetters = true)
     List<EtablissementConcerne> etablissementConcerne;
 
-    @ManyToOne
-    @JoinColumn(name = "id_type_de_personne", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_type_de_personne")
     TypeDePersonne typeDePersonne;
 
-    @ManyToOne
-    @JoinColumn(name = "id_capacite_engagement", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_capacite_engagement")
     CapaciteEngagement capaciteEngagement;
 
-    @Column(nullable = false)
     private Boolean exonerationDesDettesAnterieures;
 
-    @Column(nullable = false)
     private Integer montantsDesParticipation;
 
-    @ManyToOne
-    @JoinColumn(name = "id_perimetre", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_perimetre")
     Perimetre perimetre;
 
-    @Column(nullable = false)
     private Boolean beneficiaireEffectif;
 
-    @Column(nullable = false)
     private Boolean indicateurSecondRoleEntreprise;
 
-    @ManyToOne
-    @JoinColumn(name = "id_second_role_entreprise", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_second_role_entreprise")
     SecondRoleEntreprise secondRoleEntreprise;
 
-    @Column(nullable = false)
     private Boolean isSAOrSASMajorityManager;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String autreRoleEntreprise;
 
-    @Column(nullable = false)
     private Boolean is31PTriggered;
 
-    @Column(nullable = false)
     private LocalDate dateEffet31P;
 
     public Integer getId() {

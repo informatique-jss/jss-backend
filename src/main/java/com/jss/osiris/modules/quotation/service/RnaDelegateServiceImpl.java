@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -27,7 +26,6 @@ public class RnaDelegateServiceImpl implements RnaDelegateService {
 	private String idUrl = "/id";
 
 	@Override
-	@Cacheable(value = "rna", key = "#rna")
 	public List<Rna> getRna(String rna) {
 		try {
 			SSLHelper.disableCertificateValidation();

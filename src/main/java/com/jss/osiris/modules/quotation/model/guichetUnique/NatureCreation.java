@@ -3,8 +3,8 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,42 +21,32 @@ public class NatureCreation implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false)
     private Boolean societeEtrangere;
 
-    @ManyToOne
-    @JoinColumn(name = "id_forme_juridique", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_forme_juridique")
     FormeJuridique formeJuridique;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_type_exploitation")
     TypeExploitation typeExploitation;
 
-    @Column(nullable = false)
     private Boolean microEntreprise;
 
-    @Column(nullable = false)
     private Boolean etablieEnFrance;
 
-    @Column(nullable = false)
     private Boolean salarieEnFrance;
 
-    @Column(nullable = false)
     private Boolean relieeEntrepriseAgricole;
 
-    @Column(nullable = false)
     private Boolean entrepriseAgricole;
 
-    @Column(nullable = false)
     private Boolean eirl;
 
-    @Column(nullable = false)
     private Boolean indicateurEtablissementFictif;
 
-    @Column(nullable = false)
     private Boolean seulsBeneficiairesModifies;
 
-    @Column(nullable = false)
     private LocalDate dateDepotCreation;
 
     public Integer getId() {

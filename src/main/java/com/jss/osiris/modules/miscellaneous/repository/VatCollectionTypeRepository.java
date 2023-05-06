@@ -2,7 +2,7 @@ package com.jss.osiris.modules.miscellaneous.repository;
 
 import com.jss.osiris.modules.miscellaneous.model.VatCollectionType;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
-public interface VatCollectionTypeRepository extends CrudRepository<VatCollectionType, Integer> {
+public interface VatCollectionTypeRepository extends QueryCacheCrudRepository<VatCollectionType, Integer> {
 }

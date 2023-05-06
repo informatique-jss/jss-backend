@@ -1,23 +1,30 @@
 package com.jss.osiris.modules.accounting.repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.QueryHint;
+
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceBilan;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
+import com.jss.osiris.modules.invoicing.model.Appoint;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Debour;
 
-public interface AccountingRecordRepository extends CrudRepository<AccountingRecord, Integer> {
+public interface AccountingRecordRepository extends QueryCacheCrudRepository<AccountingRecord, Integer> {
 
+        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<AccountingRecord> findByAccountingJournalAndIsTemporary(AccountingJournal accountingJournal,
                         boolean isTemporary);
 
@@ -36,6 +43,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
 
         @Query(nativeQuery = true, value = "" +
                         " select  " +
+                        " r.id as recordId, " +
                         " r.operation_id as operationId, " +
                         " r.accounting_id  as id, " +
                         " r.temporary_operation_id as temporaryOperationId, " +
@@ -46,8 +54,10 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         " pa.code as principalAccountingAccountCode, " +
                         " a.accounting_account_sub_number as accountingAccountSubNumber, " +
                         " a.label as accountingAccountLabel, " +
-                        " r.manual_accounting_document_number as manualAccountingDocumentNumber, " +
-                        " r.manual_accounting_document_date as manualAccountingDocumentDate, " +
+                        " coalesce(r.manual_accounting_document_number,r.id_invoice||'') as manualAccountingDocumentNumber, "
+                        +
+                        " coalesce(r.manual_accounting_document_date, i.created_date) as manualAccountingDocumentDate, "
+                        +
                         " r.debit_amount as debitAmount, " +
                         " r.credit_amount as creditAmount, " +
                         " r.label as label, " +
@@ -69,8 +79,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         " join principal_accounting_account pa on pa.id = a.id_principal_accounting_account " +
                         " left join tiers t on (t.id_accounting_account_customer = r.id_accounting_account  or t.id_accounting_account_deposit=r.id_accounting_account) "
                         + " left join confrere cf on (cf.id_accounting_account_customer = r.id_accounting_account  or cf.id_accounting_account_deposit=r.id_accounting_account) "
-                        + // TODO AC et Provider
-                        " left join accounting_record r2 on r2.id = r.id_contre_passe " +
+                        + " left join accounting_record r2 on r2.id = r.id_contre_passe " +
                         " left join invoice i on i.id = r.id_invoice " +
                         " left join customer_order co on co.id = r.id_customer_order " +
                         " left join responsable re1 on re1.id = i.id_responsable " +
@@ -84,7 +93,8 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         +
                         " and (:tiersId =0 or t.id is not null and t.id = :tiersId) " +
                         " and (:hideLettered = false or r.lettering_date_time is null ) " +
-                        " and r.operation_date_time>=:startDate and r.operation_date_time<=:endDate  " +
+                        " and coalesce(r.manual_accounting_document_date,r.operation_date_time)>=:startDate and coalesce(r.manual_accounting_document_date,r.operation_date_time)<=:endDate  "
+                        +
                         " and (:canViewRestricted=true or a.is_view_restricted=false)  " +
                         " and (:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId) ")
         List<AccountingRecordSearchResult> searchAccountingRecords(
@@ -120,7 +130,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         +
                         "(accounting.id_principal_accounting_account=:principalAccountingAccountId or :principalAccountingAccountId =0 ) and "
                         +
-                        "(record.accounting_date_time is null or (record.accounting_date_time >=:startDate and record.accounting_date_time <=:endDate )) and "
+                        "(record.accounting_date_time is null or (coalesce(record.manual_accounting_document_date,record.accounting_date_time) >=:startDate and coalesce(record.manual_accounting_document_date,record.accounting_date_time) <=:endDate )) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false ) " +
@@ -155,7 +165,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         +
                         "(accounting.id_principal_accounting_account=:principalAccountingAccountId or :principalAccountingAccountId =0 ) and "
                         +
-                        "(record.accounting_date_time is null or (record.accounting_date_time >=:startDate and record.accounting_date_time <=:endDate )) and "
+                        "(record.accounting_date_time is null or (coalesce(record.manual_accounting_document_date,record.accounting_date_time) >=:startDate and coalesce(record.manual_accounting_document_date,record.accounting_date_time) <=:endDate )) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false)  " +
@@ -173,12 +183,12 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         +
                         " from AccountingRecord a  JOIN a.accountingAccount aa  JOIN aa.principalAccountingAccount pa  where "
                         +
-                        "(a.accountingDateTime is null or (a.accountingDateTime >=:startDate and a.accountingDateTime <=:endDate ))   "
+                        "(a.accountingDateTime is null or (coalesce(a.manualAccountingDocumentDate,a.accountingDateTime) >=:startDate and coalesce(a.manualAccountingDocumentDate,a.accountingDateTime) <=:endDate ))   "
                         + " and (:canViewRestricted=true or aa.isViewRestricted=false)  " +
                         " group by pa.code ")
         List<AccountingBalanceBilan> getAccountingRecordAggregateByAccountingNumber(
-                        @Param("startDate") LocalDateTime startDate,
-                        @Param("endDate") LocalDateTime endDate,
+                        @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate,
                         @Param("canViewRestricted") boolean canViewRestricted);
 
         List<AccountingRecord> findByAccountingAccountAndInvoice(AccountingAccount accountingAccountCustomer,
@@ -191,6 +201,10 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
         List<AccountingRecord> findByTemporaryOperationId(Integer operationId);
 
         List<AccountingRecord> findByOperationId(Integer operationId);
+
+        List<AccountingRecord> findByDebour(Debour debour);
+
+        List<AccountingRecord> findByAppoint(Appoint appoint);
 }
 
 ;

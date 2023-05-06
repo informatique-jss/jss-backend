@@ -2,7 +2,7 @@ package com.jss.osiris.modules.quotation.repository;
 
 import com.jss.osiris.modules.quotation.model.SimpleProvision;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
-public interface SimpleProvisionRepository extends CrudRepository<SimpleProvision, Integer> {
+public interface SimpleProvisionRepository extends QueryCacheCrudRepository<SimpleProvision, Integer> {
 }

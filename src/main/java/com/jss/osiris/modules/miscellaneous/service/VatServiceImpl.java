@@ -5,9 +5,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,13 +25,11 @@ public class VatServiceImpl implements VatService {
     ConstantService constantService;
 
     @Override
-    @Cacheable(value = "vatList", key = "#root.methodName")
     public List<Vat> getVats() {
         return IterableUtils.toList(vatRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "vat", key = "#id")
     public Vat getVat(Integer id) {
         Optional<Vat> vat = vatRepository.findById(id);
         if (vat.isPresent())
@@ -43,10 +38,6 @@ public class VatServiceImpl implements VatService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "vatList", allEntries = true),
-            @CacheEvict(value = "vat", key = "#vat.id")
-    })
     @Transactional(rollbackFor = Exception.class)
     public Vat addOrUpdateVat(
             Vat vat) {

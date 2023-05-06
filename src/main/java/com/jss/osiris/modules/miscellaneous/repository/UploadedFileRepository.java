@@ -1,8 +1,8 @@
 package com.jss.osiris.modules.miscellaneous.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
 import com.jss.osiris.modules.miscellaneous.model.UploadedFile;
 
-public interface UploadedFileRepository extends CrudRepository<UploadedFile, Integer> {
+public interface UploadedFileRepository extends QueryCacheCrudRepository<UploadedFile, Integer> {
 }

@@ -200,6 +200,12 @@
               </table>
             </fieldset>
           </div>
+          <button
+            [matTooltip]="'Renouveler le mot de passe JSS.fr pour '+selectedResponsable.firstname+' '+ selectedResponsable.lastname"
+            mat-fab color="accent" class="third-fab-button" *ngIf="!editMode && selectedResponsable"
+            (click)="renewPassword()">
+            <mat-icon>password</mat-icon>
+          </button>
         </mat-tab>
         <mat-tab label="Pièces et facturation" *ngIf="isResponsableTypeProspect()==false">
           <settlement-billing [tiers]="selectedResponsable!" [editMode]="editMode"></settlement-billing>
@@ -247,10 +253,3 @@
       </mat-tab-group>
     </form>
   </div>
-
-
-  <button
-    [matTooltip]="'Renouveler le mot de passe JSS.fr pour '+selectedResponsable.firstname+' '+ selectedResponsable.lastname"
-    mat-fab color="accent" class="third-fab-button" *ngIf="!editMode && selectedResponsable" (click)="renewPassword()">
-    <mat-icon>password</mat-icon>
-  </button>

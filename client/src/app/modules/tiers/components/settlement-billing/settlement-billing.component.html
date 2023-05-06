@@ -111,8 +111,7 @@
               </td>
             </tr>
           </table>
-          <table class="full-width"
-            *ngIf="billingDocument && billingLabelTypeAffaire &&  billingDocument.billingLabelType && billingDocument.billingLabelType.id!=billingLabelTypeAffaire.id">
+          <table class="full-width" *ngIf="billingDocument">
             <tr>
               <td>
                 <generic-toggle [(model)]="billingDocument.isResponsableOnBilling" label="Responsable sur facture ?"
@@ -182,13 +181,6 @@
                   [form]="settlementBillingForm" propertyName="sepaMandateSignatureDate" [isMandatory]="true"
                   [isDisabled]="!editMode"
                   [conditionnalRequired]="tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id"></generic-datepicker>
-              </td>
-              <td>
-                <generic-input [(model)]="tiers.sepaMandateReference" label="Référence du mandat SEPA"
-                  [form]="settlementBillingForm" propertyName="sepaMandateReference" [isMandatory]="true"
-                  [isDisabled]="!editMode"
-                  [conditionnalRequired]="tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id"
-                  [maxLength]="250"></generic-input>
               </td>
             </tr>
           </table>

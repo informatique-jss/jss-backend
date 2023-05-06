@@ -12,7 +12,7 @@
     <payment-list [overrideIconAction]="'merge_type'" [overrideTooltipAction]="'Associer le paiement'"
       (actionBypass)="openAssociationDialog($event)"></payment-list>
   </div>
-  <div class=" advise" *ngIf="displayAddCashPayment">
+  <div class=" advise" *ngIf="displayAddCashPayment && !invoice.isInvoiceFromProvider">
     <h3>Déclarer un paiement en espèces</h3>
     <div>
       <form [formGroup]="invoicePaymentForm">
@@ -21,7 +21,8 @@
             <tr>
               <td>
                 <generic-input [(model)]="newPayment.paymentAmount" label="Montant" [form]="invoicePaymentForm"
-                  propertyName="paymentAmount" [isMandatory]="true" [isDisabled]="true" type="number"></generic-input>
+                  propertyName="paymentAmount" [isMandatory]="true" [isDisabled]="false"
+                  (onFormChange)="onModifyAmount()" type="number"></generic-input>
               </td>
               <td>
                 <generic-datetime-picker [(model)]="newPayment.paymentDate" label="Date de paiement"

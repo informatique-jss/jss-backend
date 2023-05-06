@@ -5,7 +5,7 @@ import { AssoAffaireOrder } from "./AssoAffaireOrder";
 import { Bodacc } from "./Bodacc";
 import { Debour } from './Debour';
 import { Domiciliation } from "./Domiciliation";
-import { Formalite } from './guichet-unique/Formalite';
+import { Formalite } from './Formalite';
 import { InvoiceItem } from "./InvoiceItem";
 import { ProvisionFamilyType } from "./ProvisionFamilyType";
 import { ProvisionType } from "./ProvisionType";
@@ -54,7 +54,6 @@ export interface Provision extends IAttachment {
   isBilan: boolean;
   isDocumentScanning: boolean;
   isEmergency: boolean;
-  isVacationDepositBeneficialOwners: boolean;
   isVacationUpdateBeneficialOwners: boolean;
   isFormalityAdditionalDeclaration: boolean;
   isCorrespondenceFees: boolean;

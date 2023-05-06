@@ -1,8 +1,8 @@
 package com.jss.osiris.modules.miscellaneous.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
 import com.jss.osiris.modules.miscellaneous.model.Department;
 
-public interface DepartmentRepository extends CrudRepository<Department, Integer> {
+public interface DepartmentRepository extends QueryCacheCrudRepository<Department, Integer> {
 }

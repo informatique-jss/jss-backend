@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
-import { Formalite } from '../../../model/guichet-unique/Formalite';
+import { Formalite } from '../../../model/Formalite';
+import { Provision } from '../../../model/Provision';
 import { Identite } from '../../../model/guichet-unique/Identite';
 import { PersonnePhysique } from '../../../model/guichet-unique/PersonnePhysique';
-import { Provision } from '../../../model/Provision';
 
 @Component({
   selector: 'entreprise',

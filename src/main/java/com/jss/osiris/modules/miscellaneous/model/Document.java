@@ -19,6 +19,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -33,7 +34,9 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_tiers_document", columnList = "id_tiers"),
-		@Index(name = "idx_responsable_document", columnList = "id_responsable") })
+		@Index(name = "idx_responsable_document", columnList = "id_responsable"),
+		@Index(name = "idx_customer_order_document", columnList = "id_customer_order"),
+})
 public class Document implements Serializable, IId {
 
 	@Id
@@ -77,7 +80,7 @@ public class Document implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
 	private Announcement announcement;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_document_type")
 	private DocumentType documentType;
 
@@ -96,7 +99,7 @@ public class Document implements Serializable, IId {
 	private Integer numberMailingAffaire;
 	private Integer numberMailingClient;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_label_type")
 	private BillingLabelType billingLabelType;
 
@@ -114,11 +117,11 @@ public class Document implements Serializable, IId {
 	@Column(length = 40)
 	private String commandNumber;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment_deadline_type")
 	private PaymentDeadlineType paymentDeadlineType;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_refund_type")
 	private RefundType refundType;
 
@@ -128,11 +131,11 @@ public class Document implements Serializable, IId {
 	@Column(length = 40)
 	private String refundBic;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_closure_type")
 	private BillingClosureType billingClosureType;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_closure_recipient_type")
 	private BillingClosureRecipientType billingClosureRecipientType;
 
@@ -148,13 +151,14 @@ public class Document implements Serializable, IId {
 	@Column(length = 20)
 	private String cedexComplement;
 
+	@IndexedField
 	private String externalReference;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_label_city")
 	private City billingLabelCity;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_label_country")
 	private Country billingLabelCountry;
 
@@ -163,7 +167,7 @@ public class Document implements Serializable, IId {
 	private Boolean addToClientMailList;
 	private Boolean addToAffaireMailList;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_regie")
 	private Regie regie;
 

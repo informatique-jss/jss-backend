@@ -28,4 +28,5 @@ export interface Affaire extends IReferential {
   paymentIban: string;
   paymentBic: string;
   isUnregistered: boolean;
+  intercommunityVat: string | null;
 }

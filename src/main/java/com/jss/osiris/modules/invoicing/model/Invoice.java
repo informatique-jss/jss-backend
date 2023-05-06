@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
@@ -42,7 +43,7 @@ import com.jss.osiris.modules.tiers.model.TiersFollowup;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_invoice_status", columnList = "id_invoice_status") })
-public class Invoice implements IId, IAttachment {
+public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@Id
 	// @SequenceGenerator(name = "invoice_sequence", sequenceName =
@@ -66,32 +67,32 @@ public class Invoice implements IId, IAttachment {
 	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
 	private List<InvoiceItem> invoiceItems;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoices" }, allowSetters = true)
 	private CustomerOrder customerOrder;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
 	private Responsable responsable;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
 	@IndexedField
 	private Confrere confrere;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
 	@IndexedField
 	private Tiers tiers;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_competent_authority")
 	@IndexedField
 	@JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
 	private CompetentAuthority competentAuthority;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provider")
 	@IndexedField
 	private Provider provider;
@@ -105,19 +106,21 @@ public class Invoice implements IId, IAttachment {
 
 	private String billingLabelPostalCode;
 
-	@ManyToOne
+	private String billingLabelIntercommunityVat;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_label_city")
 	private City billingLabelCity;
 
 	@Column(length = 20)
 	private String cedexComplement;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_label_country")
 	private Country billingLabelCountry;
 	private Boolean billingLabelIsIndividual;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_label_type")
 	private BillingLabelType billingLabelType;
 
@@ -132,24 +135,28 @@ public class Invoice implements IId, IAttachment {
 	@Column(name = "total_price")
 	private Float totalPrice;
 
-	@OneToMany(mappedBy = "invoice")
+	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder" }, allowSetters = true)
 	private List<Payment> payments;
 
-	@OneToMany(mappedBy = "invoice")
+	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = { "invoice", "accountingRecords" }, allowSetters = true)
+	private List<Appoint> appoints;
+
+	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder" }, allowSetters = true)
 	private List<Deposit> deposits;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice_status")
 	@IndexedField
 	private InvoiceStatus invoiceStatus;
 
-	@OneToMany(mappedBy = "invoice")
+	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoice", "customerOrder" }, allowSetters = true)
 	private List<AccountingRecord> accountingRecords;
 
-	@OneToMany(mappedBy = "invoice")
+	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
 	private List<Attachment> attachments;
 
@@ -161,7 +168,7 @@ public class Invoice implements IId, IAttachment {
 	@Column(length = 150)
 	private String manualAccountingDocumentNumber;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment_type")
 	private PaymentType manualPaymentType;
 
@@ -169,24 +176,25 @@ public class Invoice implements IId, IAttachment {
 	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
 	private List<TiersFollowup> tiersFollowups;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoices", "providerInvoices" }, allowSetters = true)
 	@JoinColumn(name = "id_customer_order_for_inbound_invoice")
 	private CustomerOrder customerOrderForInboundInvoice;
 
 	private Boolean isCreditNote;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_credit_note")
 	@JsonIgnoreProperties(value = { "reverseCreditNote" }, allowSetters = true)
 	private Invoice creditNote;
 
-	@OneToOne(mappedBy = "creditNote")
+	@OneToOne(mappedBy = "creditNote", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "creditNote", "customerOrder" }, allowSetters = true)
 	private Invoice reverseCreditNote;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_bank_transfert")
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private BankTransfert bankTransfert;
 
 	public Integer getId() {
@@ -507,6 +515,22 @@ public class Invoice implements IId, IAttachment {
 
 	public void setBankTransfert(BankTransfert bankTransfert) {
 		this.bankTransfert = bankTransfert;
+	}
+
+	public String getBillingLabelIntercommunityVat() {
+		return billingLabelIntercommunityVat;
+	}
+
+	public void setBillingLabelIntercommunityVat(String billingLabelIntercommunityVat) {
+		this.billingLabelIntercommunityVat = billingLabelIntercommunityVat;
+	}
+
+	public List<Appoint> getAppoints() {
+		return appoints;
+	}
+
+	public void setAppoints(List<Appoint> appoints) {
+		this.appoints = appoints;
 	}
 
 }

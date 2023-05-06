@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.model.RefundSearchResult;
 
-public interface RefundRepository extends CrudRepository<Refund, Integer> {
+public interface RefundRepository extends QueryCacheCrudRepository<Refund, Integer> {
 
         @Query(nativeQuery = true, value = " select r.id as id,"
                         + " r.refund_date_time as refundDate,"
@@ -19,6 +19,7 @@ public interface RefundRepository extends CrudRepository<Refund, Integer> {
                         + " r.refundiban as refundIban,"
                         + " r.is_already_exported  as isAlreadyExported ,"
                         + " r.is_matched  as isMatched ,"
+                        + " (select max(coalesce(a1.denomination,a1.firstname ||' ' || a1.lastname)) from affaire a1 join asso_affaire_order a2 on a1.id = a2.id_affaire where a2.id_customer_order = r.id_customer_order) as affaireLabel ,"
                         + " coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname, confrere.label, tiers.denomination, tiers.firstname || ' ' || tiers.lastname) as refundTiersLabel ,"
                         + " r.id_payment as paymentId"
                         + " from refund r "

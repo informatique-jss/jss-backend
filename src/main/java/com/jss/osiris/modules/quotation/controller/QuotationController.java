@@ -13,14 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -104,7 +101,7 @@ import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.Siren;
 import com.jss.osiris.modules.quotation.model.Siret;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
-import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentShortRequest;
+import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementNoticeTemplateService;
@@ -125,6 +122,7 @@ import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.quotation.service.FundTypeService;
+import com.jss.osiris.modules.quotation.service.GuichetUniqueDelegateService;
 import com.jss.osiris.modules.quotation.service.JournalTypeService;
 import com.jss.osiris.modules.quotation.service.MailRedirectionTypeService;
 import com.jss.osiris.modules.quotation.service.NoticeTypeFamilyService;
@@ -316,6 +314,9 @@ public class QuotationController {
 
   @Autowired
   QuotationValidationHelper quotationValidationHelper;
+
+  @Autowired
+  GuichetUniqueDelegateService guichetUniqueDelegateService;
 
   @GetMapping(inputEntryPoint + "/bank-transferts")
   public ResponseEntity<List<BankTransfert>> getBankTransfers() {
@@ -975,10 +976,10 @@ public class QuotationController {
     validationHelper.validateReferential(confrere.getPaymentType(), true, "PaymentType");
     validationHelper.validateString(confrere.getPaymentIban(), false, 40, "PaymentIBAN");
     validationHelper.validateString(confrere.getPaymentBic(), false, 40, "PaymentBic");
+    validationHelper.validateString(confrere.getIntercommunityVat(), false, 20, "intercommunityVat");
 
     if (confrere.getPaymentType() != null
         && confrere.getPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())) {
-      validationHelper.validateString(confrere.getSepaMandateReference(), true, 250, "SepaMandateReference");
       validationHelper.validateDate(confrere.getSepaMandateSignatureDate(), true, "SepaMandateSignatureDate");
     }
 
@@ -1103,6 +1104,8 @@ public class QuotationController {
     validationHelper.validateString(provisionType.getLabel(), true, 100, "Label");
     validationHelper.validateReferential(provisionType.getProvisionScreenType(), true, "ProvisionScreenType");
     validationHelper.validateReferential(provisionType.getAssignationType(), true, "AssignationType");
+    validationHelper.validateReferential(provisionType.getDefaultCompetentAuthorityServiceProvider(), false,
+        "DefaultCompetentAuthorityServiceProvider");
     if (provisionType.getAssignationType().getCode().equals(AssignationType.EMPLOYEE))
       ;
     validationHelper.validateReferential(provisionType.getDefaultEmployee(), true, "DefaultEmployee");
@@ -1351,6 +1354,7 @@ public class QuotationController {
     validationHelper.validateReferential(affaire.getCity(), true, "City");
     validationHelper.validateReferential(affaire.getCountry(), true, "Country");
     validationHelper.validateString(affaire.getExternalReference(), false, 60, "ExternalReference");
+    validationHelper.validateString(affaire.getIntercommunityVat(), false, 20, "IntercommunityVat");
     if (affaire.getCountry() != null && affaire.getCountry().getId().equals(constantService.getCountryFrance().getId()))
       validationHelper.validateString(affaire.getPostalCode(), true, 10, "PostalCode");
     validationHelper.validateString(affaire.getCedexComplement(), false, 20, "CedexComplement");
@@ -1434,38 +1438,6 @@ public class QuotationController {
     }
   }
 
-  @RequestMapping(path = inputEntryPoint
-      + "/payment/cb/quotation/deposit/validate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-  public ResponseEntity<String> validateCardPaymentLinkForQuotationDeposit(CentralPayPaymentShortRequest paramMap,
-      @RequestParam Integer quotationId) {
-
-    try {
-      Quotation quotation = quotationService.getQuotation(quotationId);
-      if (quotation == null)
-        throw new OsirisValidationException("quotation");
-
-      Boolean status = quotationService.validateCardPaymentLinkForQuotationDeposit(quotation);
-
-      if (status) {
-        return new ResponseEntity<String>(
-            mailHelper.generateGenericHtmlConfirmation("Paiement validé", null, "Devis n°" + quotationId,
-                "Votre acompte pour le devis n°" + quotationId
-                    + " a bien été pris en compte. Nous débutons immédiatement le traitement de ce dernier.",
-                null, "Bonne journée !"),
-            HttpStatus.OK);
-      } else {
-        throw new Exception();
-      }
-    } catch (Exception e) {
-      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
-      return new ResponseEntity<String>(
-          mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Devis n°" + quotationId,
-              "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",
-              "Veuillez réessayer en utilisant le lien présent dans le mail de notification.", "Bonne journée !"),
-          HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
   @GetMapping(inputEntryPoint + "/payment/cb/order/deposit")
   public ResponseEntity<String> getCardPaymentLinkForCustomerOrderDeposit(@RequestParam Integer customerOrderId,
       @RequestParam String mail) {
@@ -1487,38 +1459,6 @@ public class QuotationController {
                     + " a bien été pris en compte. Nous débutons immédiatement le traitement de cette dernière.",
                 null, "Bonne journée !"),
             HttpStatus.OK);
-      }
-    } catch (Exception e) {
-      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
-      return new ResponseEntity<String>(
-          mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande n°" + customerOrderId,
-              "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",
-              "Veuillez réessayer en utilisant le lien présent dans le mail de notification.", "Bonne journée !"),
-          HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  @RequestMapping(path = inputEntryPoint
-      + "/payment/cb/order/deposit/validate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-  public ResponseEntity<String> validateCardPaymentLinkForCustomerOrderDeposit(CentralPayPaymentShortRequest paramMap,
-      @RequestParam Integer customerOrderId) {
-
-    try {
-      CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
-      if (customerOrder == null)
-        throw new OsirisValidationException("customerOrder");
-
-      Boolean status = customerOrderService.validateCardPaymentLinkForCustomerOrder(customerOrder);
-
-      if (status) {
-        return new ResponseEntity<String>(
-            mailHelper.generateGenericHtmlConfirmation("Paiement validé", null, "Commande n°" + customerOrderId,
-                "Votre acompte pour la commande n°" + customerOrderId
-                    + " a bien été pris en compte. Nous débutons immédiatement le traitement de cette dernière.",
-                null, "Bonne journée !"),
-            HttpStatus.OK);
-      } else {
-        throw new Exception();
       }
     } catch (Exception e) {
       globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
@@ -1553,38 +1493,6 @@ public class QuotationController {
                     + " a bien été pris en compte. Nous vous remercions pour votre confiance.",
                 null, "Bonne journée !"),
             HttpStatus.OK);
-      }
-    } catch (Exception e) {
-      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
-      return new ResponseEntity<String>(
-          mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande n°" + customerOrderId,
-              "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",
-              "Veuillez réessayer en utilisant le lien présent dans le mail de notification.", "Bonne journée !"),
-          HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  @RequestMapping(path = inputEntryPoint
-      + "/payment/cb/order/invoice/validate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-  public ResponseEntity<String> validateCardPaymentLinkForInvoice(CentralPayPaymentShortRequest paramMap,
-      @RequestParam Integer customerOrderId) {
-
-    try {
-      CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
-      if (customerOrder == null)
-        throw new OsirisValidationException("customerOrder");
-
-      Boolean status = customerOrderService.validateCardPaymentLinkForCustomerOrder(customerOrder);
-
-      if (status) {
-        return new ResponseEntity<String>(
-            mailHelper.generateGenericHtmlConfirmation("Paiement validé", null, "Commande n°" + customerOrderId,
-                "Votre réglement pour la commande n°" + customerOrderId
-                    + " a bien été pris en compte. Nous vous remercions pour votre confiance.",
-                null, "Bonne journée !"),
-            HttpStatus.OK);
-      } else {
-        throw new Exception();
       }
     } catch (Exception e) {
       globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
@@ -1922,6 +1830,26 @@ public class QuotationController {
 
     announcementService.publishAnnouncementsToActuLegale();
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/formalite-guichet-unique/search")
+  public ResponseEntity<List<FormaliteGuichetUnique>> findFormaliteGuichetUniqueServiceByReference(
+      @RequestParam String value, @RequestParam Integer provisionId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+
+    Provision provision = provisionService.getProvision(provisionId);
+    if (provision == null)
+      throw new OsirisValidationException("ProvisionId");
+
+    if (provision.getAssignedTo() == null)
+      throw new OsirisClientMessageException(
+          "La prestation doit être associée avant de pouvoir rechercher une formalité sur le GU");
+
+    List<FormaliteGuichetUnique> formalites = null;
+    if (value != null && value.length() > 2)
+      formalites = guichetUniqueDelegateService.getFormalitiesByRefenceMandataire(value, provision.getAssignedTo());
+
+    return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
   }
 
 }

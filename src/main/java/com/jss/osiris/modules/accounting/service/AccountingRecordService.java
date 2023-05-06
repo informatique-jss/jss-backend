@@ -16,6 +16,7 @@ import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
+import com.jss.osiris.modules.invoicing.model.Appoint;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
@@ -26,11 +27,19 @@ import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentReques
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 public interface AccountingRecordService {
+
+        public AccountingRecord getAccountingRecord(Integer id);
+
+        public List<AccountingRecord> getAccountingRecordForDebour(Debour debour);
+
         public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord);
 
         public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws OsirisException;
 
         public void generateAccountingRecordsForPurshaseOnInvoiceGeneration(Invoice invoice) throws OsirisException;
+
+        public void generateAccountingRecordsForProviderInvoiceRefund(Invoice invoice, Payment payment)
+                        throws OsirisException;
 
         public void dailyAccountClosing();
 
@@ -92,7 +101,8 @@ public interface AccountingRecordService {
 
         public void generateAccountingRecordsForWaintingOutboundPayment(Payment payment) throws OsirisException;
 
-        public void generateBankAccountingRecordsForInboundPayment(Payment payment) throws OsirisException;
+        public void generateBankAccountingRecordsForInboundPayment(Payment payment,
+                        AccountingAccount targetBankAccountingAccount) throws OsirisException;
 
         public void generateBankAccountingRecordsForInboundCashPayment(Payment payment) throws OsirisException;
 
@@ -107,10 +117,12 @@ public interface AccountingRecordService {
 
         public List<AccountingRecord> getAccountingRecordsByOperationId(Integer operationId);
 
-        public void generateAppointForPayment(Payment payment, float remainingMoney, ITiers customerOrder)
+        public void generateAppointForPayment(Payment payment, float remainingMoney, ITiers customerOrder,
+                        Appoint appoint, Invoice invoice)
                         throws OsirisException;
 
-        public void generateAppointForDeposit(Deposit deposit, float remainingMoney, ITiers customerOrder)
+        public void generateAppointForDeposit(Deposit deposit, float remainingMoney, ITiers customerOrder,
+                        Appoint appoint, Invoice invoice)
                         throws OsirisException;
 
         public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords);
@@ -130,9 +142,6 @@ public interface AccountingRecordService {
 
         public AccountingRecord unassociateCustomerOrderPayementAndDeposit(AccountingRecord accountingRecord);
 
-        public void sendBillingClosureReceipt()
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
-
         public void generateAccountingRecordsForCentralPayPayment(
                         CentralPayPaymentRequest centralPayPaymentRequest,
                         Payment payment, Deposit deposit, CustomerOrder customerOrder, Invoice invoice)
@@ -141,5 +150,13 @@ public interface AccountingRecordService {
         public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException;
 
         public void letterWaitingRecords(AccountingRecord record, AccountingRecord counterPart) throws OsirisException;
+
+        public void letterCreditNoteAndInvoice(Invoice invoice, Invoice creditNote) throws OsirisException;
+
+        public void sendBillingClosureReceipt()
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
+        public File getBillingClosureReceiptFile(Integer tiersId, boolean downloadFile)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
 }

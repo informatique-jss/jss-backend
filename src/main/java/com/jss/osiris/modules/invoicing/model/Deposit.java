@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,7 +20,7 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
 @Entity
-public class Deposit implements Serializable, IId {
+public class Deposit implements Serializable, IId, ICreatedDate {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,17 +39,17 @@ public class Deposit implements Serializable, IId {
   @JsonIgnoreProperties(value = { "deposit" }, allowSetters = true)
   private List<AccountingRecord> accountingRecords;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_invoice")
   @JsonIgnoreProperties(value = { "deposits", "accountingRecords" }, allowSetters = true)
   private Invoice invoice;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_customer_order")
   @JsonIgnoreProperties(value = { "deposits" }, allowSetters = true)
   private CustomerOrder customerOrder;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_origin_payment")
   @JsonIgnoreProperties(value = { "deposits", "accountingRecords", "invoice" }, allowSetters = true)
   private Payment originPayment;
@@ -125,6 +126,10 @@ public class Deposit implements Serializable, IId {
 
   public void setIsCancelled(Boolean isCancelled) {
     this.isCancelled = isCancelled;
+  }
+
+  public LocalDateTime getCreatedDate() {
+    return getDepositDate();
   }
 
 }

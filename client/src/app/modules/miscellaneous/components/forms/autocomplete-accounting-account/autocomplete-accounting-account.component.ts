@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AccountingAccount } from 'src/app/modules/accounting/model/AccountingAccount';
+import { PrincipalAccountingAccount } from 'src/app/modules/accounting/model/PrincipalAccountingAccount';
 import { AccountingAccountService } from 'src/app/modules/accounting/services/accounting.account.service';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
@@ -18,6 +19,11 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
    */
   @Input() filteredAccountSubNumber: number | undefined;
 
+  /**
+ * If defined, only account with specified principal are searchable
+ */
+  @Input() filteredAccountPrincipal: PrincipalAccountingAccount | undefined;
+
   constructor(private formBuild: UntypedFormBuilder, private accountingAccountService: AccountingAccountService, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
   }
@@ -28,7 +34,7 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
 
 
   displayLabel(object: any): string {
-    return object ? object.label + " - " + object.principalAccountingAccount.code + "-" + object.accountingAccountSubNumber : '';
+    return object ? object.label + " - " + object.principalAccountingAccount.code + object.accountingAccountSubNumber : '';
   }
 
   mapResponse(response: AccountingAccount[]): AccountingAccount[] {
@@ -36,6 +42,12 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
       let outAccountingAccount = [];
       for (let account of response)
         if (account.accountingAccountSubNumber == this.filteredAccountSubNumber)
+          outAccountingAccount.push(account);
+      return outAccountingAccount;
+    } else if (response && this.filteredAccountPrincipal) {
+      let outAccountingAccount = [];
+      for (let account of response)
+        if (account.principalAccountingAccount.id == this.filteredAccountPrincipal.id)
           outAccountingAccount.push(account);
       return outAccountingAccount;
     } else

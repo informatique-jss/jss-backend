@@ -2,8 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChil
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
-import { Formalite } from '../../../model/guichet-unique/Formalite';
-import { PersonnePhysique } from '../../../model/guichet-unique/PersonnePhysique';
+import { Formalite } from '../../../model/Formalite';
 import { Provision } from '../../../model/Provision';
 import { PersonnePhysiqueComponent } from '../personne-physique/personne-physique.component';
 
@@ -41,14 +40,14 @@ export class ContentComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.formalite && this.formalite.content) {
-      if (!this.formalite.content.personnePhysique)
-        this.formalite.content.personnePhysique = {} as PersonnePhysique;
-      if (!this.formalite.content.indicateurPoursuiteCessation)
-        this.formalite.content.indicateurPoursuiteCessation = false;
-      if (!this.formalite.content.indicateurActive)
-        this.formalite.content.indicateurActive = false;
-    }
+    /* if (this.formalite && this.formalite.content) {
+       if (!this.formalite.content.personnePhysique)
+         this.formalite.content.personnePhysique = {} as PersonnePhysique;
+       if (!this.formalite.content.indicateurPoursuiteCessation)
+         this.formalite.content.indicateurPoursuiteCessation = false;
+       if (!this.formalite.content.indicateurActive)
+         this.formalite.content.indicateurActive = false;
+     }*/
   }
 
   getFormStatus() {

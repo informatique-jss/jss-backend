@@ -7,6 +7,7 @@ export const SAVE_KEY_CODE: string = "F2";
 export const NOTIFICATION_REFRESH_INTERVAL: number = 30 * 1000;
 export const MAX_SIZE_UPLOAD_FILES = 5242880;
 export const INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = 2;
+export const GUICHET_UNIQUE_BASE_URL = "https://guichet-unique.inpi.fr/";
 
 // Screen types
 export const PROVISION_SCREEN_TYPE_BODACC = "BODACC";
@@ -42,6 +43,10 @@ export const ANNOUNCEMENT_PUBLISHED = "ANNOUNCEMENT_PUBLISHED";
 export const SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT = "SIMPLE_PROVISION_WAITING_DOCUMENT";
 export const SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY = "SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY";
 
+// Formalite provision status
+export const FORMALITE_STATUS_WAITING_DOCUMENT = "FORMALITE_STATUS_WAITING_DOCUMENT";
+export const FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY = "FORMALITE_WAITING_DOCUMENT_AUTHORITY";
+
 // Aggregate status
 export const AGGREGATE_STATUS_NEW = "AGGREGATE_STATUS_NEW";
 export const AGGREGATE_STATUS_IN_PROGRESS = "AGGREGATE_STATUS_IN_PROGRESS";
@@ -67,8 +72,10 @@ export const CUSTOMER_ORDER_TO_BE_BILLED = "CUSTOMER_ORDER_TO_BE_BILLED";
 export const INVOICE_REMINDER_PAYMENT = "INVOICE_REMINDER_PAYMENT";
 
 export const PROVISION_ADD_ATTACHMENT = "PROVISION_ADD_ATTACHMENT";
+export const PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED = "PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED";
 
 
 // Reporting datasets
 export const REPORTING_DATASET_QUOTATION = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante";
+export const REPORTING_DATASET_VAT = "TVA";
 export const REPORTING_DATASET_QUOTATION_FOR_TIERS = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante pour un tiers";

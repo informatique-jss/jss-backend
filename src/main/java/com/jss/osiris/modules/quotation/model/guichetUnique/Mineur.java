@@ -2,7 +2,9 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,7 +21,7 @@ public class Mineur implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_volet_social")
     @JsonIgnoreProperties(value = { "mineur" }, allowSetters = true)
     VoletSocial voletSocial;

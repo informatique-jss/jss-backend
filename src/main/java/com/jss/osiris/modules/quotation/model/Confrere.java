@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -78,7 +79,7 @@ public class Confrere implements ITiers {
 	@JoinTable(name = "asso_confrere_publication_day", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_weekday"))
 	private List<WeekDay> weekDays;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_journal_type")
 	private JournalType journalType;
 
@@ -107,15 +108,15 @@ public class Confrere implements ITiers {
 
 	private Integer discountRate;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_provider")
 	private AccountingAccount accountingAccountProvider;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_customer")
 	private AccountingAccount accountingAccountCustomer;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_deposit")
 	private AccountingAccount accountingAccountDeposit;
 
@@ -125,24 +126,27 @@ public class Confrere implements ITiers {
 	@Column(length = 100)
 	private String address;
 
+	@Column(length = 20)
+	private String intercommunityVat;
+
 	@Column(length = 10)
 	private String postalCode;
 
 	@Column(length = 20)
 	private String cedexComplement;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_city")
 	private City city;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
 	private Country country;
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_vat_collection_type")
 	private VatCollectionType vatCollectionType;
 
@@ -156,7 +160,7 @@ public class Confrere implements ITiers {
 	@Column(nullable = false)
 	private Boolean isSepaMandateReceived;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment_type")
 	private PaymentType paymentType;
 
@@ -167,31 +171,30 @@ public class Confrere implements ITiers {
 	@Column(length = 40)
 	private String paymentBic;
 
-	private String sepaMandateReference;
 	private LocalDate sepaMandateSignatureDate;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_commercial")
 	private Employee salesEmployee;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_default_customer_order_employee")
 	@IndexedField
 	private Employee defaultCustomerOrderEmployee;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_formaliste")
 	private Employee formalisteEmployee;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_insertion")
 	private Employee insertionEmployee;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_language")
 	private Language language;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_regie")
 	private Regie regie;
 
@@ -556,14 +559,6 @@ public class Confrere implements ITiers {
 		this.paymentBic = paymentBic;
 	}
 
-	public String getSepaMandateReference() {
-		return sepaMandateReference;
-	}
-
-	public void setSepaMandateReference(String sepaMandateReference) {
-		this.sepaMandateReference = sepaMandateReference;
-	}
-
 	public LocalDate getSepaMandateSignatureDate() {
 		return sepaMandateSignatureDate;
 	}
@@ -578,6 +573,14 @@ public class Confrere implements ITiers {
 
 	public void setDefaultCustomerOrderEmployee(Employee defaultCustomerOrderEmployee) {
 		this.defaultCustomerOrderEmployee = defaultCustomerOrderEmployee;
+	}
+
+	public String getIntercommunityVat() {
+		return intercommunityVat;
+	}
+
+	public void setIntercommunityVat(String intercommunityVat) {
+		this.intercommunityVat = intercommunityVat;
 	}
 
 }

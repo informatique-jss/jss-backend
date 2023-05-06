@@ -43,7 +43,7 @@ public interface PaymentService {
         public void unsetExternallyAssociated(Payment payment)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public List<Attachment> uploadOfxFile(InputStream file)
+        public List<Attachment> uploadOfxFile(InputStream file, Integer targetAccountingAccountId)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public Float associateOutboundPaymentAndDebourFromUser(Payment payment, List<Debour> debours)

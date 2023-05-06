@@ -65,8 +65,10 @@ export class InvoicePaymentComponent implements OnInit {
         this.advisedPayment = response;
       })
     }
+  }
 
-    this.newPayment.paymentAmount = getRemainingToPay(this.invoice);
+  onModifyAmount() {
+    this.newPayment.paymentAmount = Math.min(getRemainingToPay(this.invoice), this.newPayment.paymentAmount ? this.newPayment.paymentAmount : 100000000000000);
   }
 
   openAssociationDialog(elementIn: PaymentSearchResult) {
@@ -84,6 +86,7 @@ export class InvoicePaymentComponent implements OnInit {
 
   addCashPayment() {
     if (this.newPayment && this.invoicePaymentForm.valid) {
+      this.onModifyAmount();
       this.newPayment.paymentWay = this.constantService.getPaymentWayInbound();
       this.newPayment.paymentType = this.constantService.getPaymentTypeEspeces();
       this.newPayment.isCancelled = false;

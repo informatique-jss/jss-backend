@@ -20,7 +20,7 @@ export class SelectPaymentTypesComponent extends GenericSelectComponent<PaymentT
  */
   @Input() filteredPaymentType: PaymentType[] | undefined;
 
-  paymentTypePrelevement: PaymentType = this.constantService.getPaymentTypePrelevement();
+  @Input() defaultPaymentType: PaymentType | undefined;
 
   constructor(private formBuild: UntypedFormBuilder, private paymentTypeService: PaymentTypeService, private userNoteService2: UserNoteService,
     private constantService: ConstantService) {
@@ -41,9 +41,9 @@ export class SelectPaymentTypesComponent extends GenericSelectComponent<PaymentT
           }
         }
       }
-      if ((this.model == null || this.model == undefined) && this.types.length > 0) {
+      if ((this.model == null || this.model == undefined) && this.types.length > 0 && this.defaultPaymentType) {
         for (const paymentType of this.types) {
-          if (this.paymentTypePrelevement && paymentType.id == this.paymentTypePrelevement.id)
+          if (this.defaultPaymentType && paymentType.id == this.defaultPaymentType.id)
             this.model = paymentType;
           this.modelChange.emit(this.model);
         }

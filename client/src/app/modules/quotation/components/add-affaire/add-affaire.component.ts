@@ -1,6 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { validateRna, validateSiren, validateSiret } from 'src/app/libs/CustomFormsValidatorsHelper';
+import { validateRna, validateSiren, validateSiret, validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Mail } from 'src/app/modules/miscellaneous/model/Mail';
 import { Phone } from 'src/app/modules/miscellaneous/model/Phone';
@@ -130,11 +130,12 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
               this.affaire.denomination = !this.affaire.denomination ? periode.denominationUniteLegale : this.affaire.denomination;
               this.affaireForm.markAllAsTouched();
               if (periode.nicSiegeUniteLegale != null && periode.nicSiegeUniteLegale != undefined)
-                this.siretService.getSiret(siren?.uniteLegale.siren + periode.nicSiegeUniteLegale).subscribe(response => {
-                  if (response != null && response.length == 1) {
-                    this.fillSiret(response[0]);
-                  }
-                })
+                if (!this.affaire.siret)
+                  this.siretService.getSiret(siren?.uniteLegale.siren + periode.nicSiegeUniteLegale).subscribe(response => {
+                    if (response != null && response.length == 1) {
+                      this.fillSiret(response[0]);
+                    }
+                  })
             }
           });
         }
@@ -223,5 +224,17 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
   getFormStatus(): boolean {
     this.affaireForm.markAllAsTouched();
     return this.affaireForm.valid;
+  }
+
+  checkVAT(fieldName: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const root = control.root as UntypedFormGroup;
+      const fieldValue = root.get(fieldName)?.value;
+      if (!this.affaire.isIndividual && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateVat(fieldValue)))
+        return {
+          notFilled: true
+        };
+      return null;
+    };
   }
 }

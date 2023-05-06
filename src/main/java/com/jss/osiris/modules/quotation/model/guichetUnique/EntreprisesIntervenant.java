@@ -2,7 +2,9 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,12 +20,12 @@ public class EntreprisesIntervenant implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_entreprise", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_entreprise")
     Entreprise entreprise;
 
-    @ManyToOne
-    @JoinColumn(name = "id_adresse", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_adresse")
     AdresseDomicile adresse;
 
     public Integer getId() {

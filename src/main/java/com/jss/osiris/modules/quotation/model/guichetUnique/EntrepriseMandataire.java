@@ -3,8 +3,10 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,91 +27,89 @@ public class EntrepriseMandataire implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_role_entreprise", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_role_entreprise")
     RoleEntreprise roleEntreprise;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String pays;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String siren;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String registre;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String denomination;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String objet;
 
-    @ManyToOne
-    @JoinColumn(name = "id_forme_juridique", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_forme_juridique")
     FormeJuridique formeJuridique;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String formeJuridiqueEtrangere;
 
-    @Column(nullable = false)
     private LocalDate dateEffet;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String numDetenteur;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String numExploitant;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String numRna;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String lieuRegistre;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String numGreffe;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String entreeSortieDesChampsDeRegistre;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String autreIdentifiantEtranger;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String nicSiege;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String nomCommercial;
 
-    @ManyToOne
-    @JoinColumn(name = "id_type_representant", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_type_representant")
     TypeRepresentant typeRepresentant;
 
-    @ManyToOne
-    @JoinColumn(name = "id_individu_representant", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_individu_representant")
     Entrepreneur individuRepresentant;
 
     String entrepriseRepresentant;
 
-    @ManyToOne
-    @JoinColumn(name = "id_adresse_entreprise_representant", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_adresse_entreprise_representant")
     AdresseDomicile adresseEntrepriseRepresentant;
 
-    @ManyToOne
-    @JoinColumn(name = "id_role", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_role")
     Role role;
 
-    @ManyToOne
-    @JoinColumn(name = "id_statut_pour_la_formalite", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_statut_pour_la_formalite")
     StatutPourLaFormalite statutPourLaFormalite;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String codeApe;
 
-    @Column(nullable = false)
     private Boolean indicateurAssocieUnique;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String nomExploitation;
 
     public Integer getId() {

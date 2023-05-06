@@ -15,6 +15,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
@@ -37,6 +38,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
+import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.quotation.model.NoticeType;
@@ -44,9 +46,6 @@ import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.SimpleProvision;
-import com.jss.osiris.modules.quotation.model.guichetUnique.Content;
-import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
-import com.jss.osiris.modules.quotation.model.guichetUnique.NatureCreation;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
@@ -275,12 +274,6 @@ public class QuotationValidationHelper {
                                         if (!validationHelper.validateMailList(document.getMailsClient()))
                                                 throw new OsirisValidationException("MailsClient");
 
-                                if (document.getBillingLabelType() != null
-                                                && document.getBillingLabelType().getId()
-                                                                .equals(constantService.getBillingLabelTypeCodeAffaire()
-                                                                                .getId()))
-                                        document.setIsResponsableOnBilling(false);
-
                                 validationHelper.validateString(document.getAffaireAddress(), false, 200,
                                                 "AffaireAddress");
                                 validationHelper.validateString(document.getClientAddress(), false, 100,
@@ -487,8 +480,16 @@ public class QuotationValidationHelper {
                 if (provision.getAnnouncement() != null) {
                         Announcement announcement = provision.getAnnouncement();
                         Announcement currentAnnouncement = null;
-                        if (announcement.getId() != null)
+                        if (announcement.getId() != null) {
                                 currentAnnouncement = announcementService.getAnnouncement(announcement.getId());
+                        } else {
+                                // By default, always redacted by JSS if option exists
+                                for (BillingType billingType : provision.getProvisionType().getBillingTypes()) {
+                                        if (billingType.getId()
+                                                        .equals(constantService.getBillingTypeRedactedByJss().getId()))
+                                                provision.setIsRedactedByJss(true);
+                                }
+                        }
 
                         LocalDate publicationDateVerification = LocalDate.now().minusDays(1);
                         // Do not verify date when quotation has started
@@ -816,61 +817,10 @@ public class QuotationValidationHelper {
                 // Formalite
                 if (provision.getFormalite() != null) {
                         Formalite formalite = provision.getFormalite();
-                        validationHelper.validateReferential(formalite.getTypePersonne(), true, "TypePersonne");
-                        validationHelper.validateString(formalite.getCompanyName(),
-                                        !constantService.getTypePersonnePersonnePhysique().getCode()
-                                                        .equals(formalite.getTypePersonne().getCode()),
-                                        255, "CompanyName");
-                        validationHelper.validateReferential(formalite.getTypeFormalite(), true, "TypeFormalite");
-                        validationHelper.validateReferential(formalite.getDiffusionINSEE(),
-                                        constantService.getTypePersonnePersonnePhysique().getCode()
-                                                        .equals(formalite.getTypePersonne().getCode()),
-                                        "DiffusionINSEE");
-                        validationHelper.validateReferential(formalite.getFormeJuridique(),
-                                        constantService.getTypePersonnePersonneMorale().getCode()
-                                                        .equals(formalite.getTypePersonne().getCode()),
-                                        "FormeJuridique");
-
-                        if (formalite.getContent() == null)
-                                throw new OsirisValidationException("Content");
-
-                        Content content = formalite.getContent();
-
-                        validationHelper.validateReferential(content.getSuccursaleOuFiliale(),
-                                        constantService.getTypePersonnePersonneMorale().getCode()
-                                                        .equals(formalite.getTypePersonne().getCode())
-                                                        && constantService.getTypeFormaliteCreation().getCode()
-                                                                        .equals(formalite.getTypeFormalite().getCode()),
-                                        "SuccursaleOuFiliale");
-                        validationHelper.validateReferential(content.getFormeExerciceActivitePrincipale(), true,
-                                        "FormeExerciceActivitePrincipale");
-                        validationHelper.validateReferential(content.getNatureCessation(),
-                                        formalite.getTypeFormalite().getCode()
-                                                        .equals(constantService.getTypeFormaliteCessation().getCode()),
-                                        "NatureCessation");
-                        validationHelper.validateString(content.getEvenementCessation(),
-                                        formalite.getTypeFormalite().getCode()
-                                                        .equals(constantService.getTypeFormaliteCessation().getCode()),
-                                        255,
-                                        "EvenementCessation");
-                        validationHelper.validateString(content.getTvaIntraCommunautaire(),
-                                        content.getNatureCreation() != null
-                                                        && content.getNatureCreation().getSocieteEtrangere(),
-                                        20,
-                                        "TvaIntraCommunautaire");
-
-                        if (content.getNatureCreation() == null)
-                                throw new OsirisValidationException("NatureCreation");
-
-                        NatureCreation natureCreation = content.getNatureCreation();
-
-                        validationHelper.validateReferential(natureCreation.getFormeJuridique(), true,
-                                        "FormeJuridique");
-                        validationHelper.validateReferential(natureCreation.getTypeExploitation(),
-                                        formalite.getTypePersonne().getCode()
-                                                        .equals(constantService.getTypePersonneExploitation()
-                                                                        .getCode()),
-                                        "TypeExploitation");
+                        validationHelper.validateReferential(formalite.getWaitedCompetentAuthority(), false,
+                                        "WaitedCompetentAuthority");
+                        validationHelper.validateReferential(formalite.getCompetentAuthorityServiceProvider(), false,
+                                        "competentAuthorityServiceProvider");
                 }
 
                 // Simple provision

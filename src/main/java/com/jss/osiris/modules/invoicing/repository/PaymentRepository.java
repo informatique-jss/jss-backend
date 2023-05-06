@@ -4,15 +4,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
 
-public interface PaymentRepository extends CrudRepository<Payment, Integer> {
+public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Integer> {
 
-        @Query(nativeQuery = true, value = "select p.* from payment p  where p.id_invoice is null and p.is_externally_associated=false and p.is_cancelled=false and not exists (select 1 from debour d where d.id_payment = p.id)  and not exists (select 1 from refund d where d.id_payment = p.id) ")
+        @Query(nativeQuery = true, value = "select p.* from payment p  where p.id_invoice is null and p.is_externally_associated=false and p.is_cancelled=false and not exists (select 1 from debour d where d.id_payment = p.id)  and not exists (select 1 from refund d where d.id_payment = p.id)  ")
         List<Payment> findNotAssociatedPayments();
 
         @Query(nativeQuery = true, value = " select p.id as id,"

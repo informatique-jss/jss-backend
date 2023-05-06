@@ -52,22 +52,29 @@
     <table style="table-layout: fixed;width: 690px;margin-top: 20px;">
         <tr>
             <td style="text-align: left;">
-                <p th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">Avoir n°<span
-                        th:text="${invoice.id}"></span></p>
-                <p th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">Facture n°<span
-                        th:text="${reverseCreditNote.id}"></span></p>
-                <p th:if="${invoice.isCreditNote==false}">Facture n°<span th:text="${invoice.id}"></span></p>
-                <p>Commande n°<span th:text="${customerOrder.id}"></span></p>
-                <p th:if="${quotation!=null}">Devis n°<span th:text="${quotation.id}"></span></p>
-                <p th:if="${externalReference!=null}">Votre référence : <span th:text="${externalReference}"></span>
-                </p>
-
-                <p th:if="${invoice.isCommandNumberMandatory}">Votre référence annuelle :<span
-                        th:text="${invoice.commandNumber}"></span>
-                </p>
+                <span th:if="${tiersReference!=null}">N° client : <span th:text="${tiersReference}"></span><br /></span>
+                <span>Commande : <span th:text="${customerOrder.id}"></span><br /></span>
+                <span th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">Avoir : <span
+                        th:text="${invoice.id}"></span><br /></span>
+                <span th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">Facture : <span
+                        th:text="${reverseCreditNote.id}"></span><br /></span>
+                <span th:if="${invoice.isCreditNote==false}">Facture : <span
+                        th:text="${invoice.id}"></span><br /></span>
+                <span th:if="${quotation!=null}">Devis : <span th:text="${quotation.id}"></span><br /></span>
+                <span th:if="${externalReference!=null}">Votre référence : <span
+                        th:text="${externalReference}"></span><br /></span>
+                <span th:if="${invoice.isCommandNumberMandatory}">Votre référence annuelle :<span
+                        th:text="${invoice.commandNumber}"></span><br />
+                </span>
+                <span th:if="${responsableOnBilling!=null}">Commande Transmise par :<span
+                        th:text="${responsableOnBilling}"></span><br />
+                </span>
+                <span th:if="${invoice.billingLabelIntercommunityVat!=null}">Numéro de TVA :<span
+                        th:text="${invoice.billingLabelIntercommunityVat}"></span><br />
+                </span>
                 <p>Paris le <span th:text="${invoiceCreatedDate}"></span></p>
             </td>
-            <td></td>
+            <td style="width: 100px;"></td>
             <td colspan="2">
                 <table style="border : solid; border-color: rgb(0,83,159);width: 100%;">
                     <tr>
@@ -75,7 +82,9 @@
                             <span th:text="${invoice.billingLabel}"></span><br />
                             <span th:text="${invoice.billingLabelAddress}"></span><br />
                             <span><span th:text="${invoice.billingLabelPostalCode}"></span> <span
-                                    th:text="${invoice.billingLabelCity.label}"></span></span>
+                                    th:text="${invoice.billingLabelCity.label}"></span><span
+                                    th:if="${invoice.cedexComplement}"
+                                    th:text="${invoice.cedexComplement}"></span></span>
                         </td>
                     </tr>
                 </table>
@@ -87,7 +96,7 @@
                 th:text="${reverseCreditNote.id}">th:text="${invoice.id}"</span></p>
     </div>
     <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
-        <th:block th:each="asso : ${assos}">
+        <th:block th:each="asso : ${assos}" th:if="${invoice.isCreditNote==null} or ${invoice.isCreditNote==false}">
             <tr>
                 <td style="padding-top: 20px;" th:if="${asso.affaire.denomination!=null} ">
                     <strong>Société <span th:text="${asso.affaire.denomination}"></span><span
@@ -166,6 +175,81 @@
                 </th:block>
             </th:block>
         </th:block>
+        <th:block th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">
+            <tr>
+                <td style="padding-top: 20px;" th:if="${assos[0].affaire.denomination!=null} ">
+                    <strong>Société <span th:text="${assos[0].affaire.denomination}"></span><span
+                            th:text="${assos[0].affaire.firstname}"></span>
+                        <span th:text="${assos[0].affaire.lastname}"></span></strong>
+                </td>
+                <td style="padding-top: 20px;" th:if="${assos[0].affaire.denomination==null} ">
+                    <strong><span th:text="${assos[0].affaire.civility.label}"></span> <span
+                            th:text="${assos[0].affaire.firstname}"></span> <span
+                            th:text="${assos[0].affaire.lastname}"></span></strong>
+                </td>
+                <td></td>
+            </tr>
+            <th:block th:each="invoiceItem : ${invoice.invoiceItems}"
+                th:if="${invoiceItem.billingItem.billingType.isDebour==false} and ${invoiceItem.billingItem.billingType.isFee==false}">
+                <tr>
+                    <td>
+                        <span th:text="${invoiceItem.label}"></span>
+                    </td>
+                    <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                        <span th:text="${#numbers.formatDecimal(invoiceItem.preTaxPrice,1,2)}"></span>
+                        €
+                    </td>
+                </tr>
+                <tr th:if="${invoiceItem.discountAmount!=null} and ${invoiceItem.discountAmount>0}">
+                    <td>
+                        <span>Remise</span>
+                    </td>
+                    <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                        - <span th:text="${#numbers.formatDecimal(invoiceItem.discountAmount,1,2)}"></span>
+                        €</td>
+                </tr>
+            </th:block>
+            <th:block th:each="asso : ${assos}">
+                <th:block th:each="provision : ${asso.provisions}">
+                    <th:block th:each="debour : ${provision.debours}" th:if="${provision.debours!=null}">
+                        <tr th:if="${debour.billingType.isFee==false}">
+                            <td>
+                                <span th:text="${debour.competentAuthority.label}"></span> : <span
+                                    th:text="${debour.billingType.label}"></span>
+                            </td>
+                            <td class="td-with-price" style="text-align: right;white-space: nowrap;"
+                                th:if="${debour.billingType.isNonTaxable==false}">
+                                <span
+                                    th:text="${#numbers.formatDecimal(debour.debourAmount-(debour.debourAmount/(1f+(vatDebour.rate/100f)))*vatDebour.rate/100f,1,2)}"></span>
+                                €
+                            </td>
+                            <td class="td-with-price" style="text-align: right;white-space: nowrap;"
+                                th:if="${debour.billingType.isNonTaxable==true}">
+                                <span th:text="${#numbers.formatDecimal(debour.debourAmount,1,2)}"></span>
+                                €
+                            </td>
+                        </tr>
+                        <tr th:if="${debour.billingType.isFee==true}">
+                            <td>
+                                <span th:text="${debour.competentAuthority.label}"></span> : <span
+                                    th:text="${debour.billingType.label}"></span>
+                            </td>
+                            <td class="td-with-price" style="text-align: right;white-space: nowrap;"
+                                th:if="${debour.billingType.isNonTaxable==false}">
+                                <span
+                                    th:text="${#numbers.formatDecimal(debour.invoicedAmount-(debour.invoicedAmount/(1f+(vatDebour.rate/100f)))*vatDebour.rate/100f,1,2)}"></span>
+                                €
+                            </td>
+                            <td class="td-with-price" style="text-align: right;white-space: nowrap;"
+                                th:if="${debour.billingType.isNonTaxable==true}">
+                                <span th:text="${#numbers.formatDecimal(debour.invoicedAmount,1,2)}"></span>
+                                €
+                            </td>
+                        </tr>
+                    </th:block>
+                </th:block>
+            </th:block>
+        </th:block>
     </table>
     <p style="margin-top: 10px;">&#160;</p>
     <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
@@ -223,14 +307,12 @@
             <td>
                 Acompte n°<span th:text="${deposit.id}"></span>
             </td>
-            <td class="td-with-price" style="text-align: right;white-space: nowrap;"
-                th:if="${deposit.originPayment!=null}"> - <span
-                    th:text="${#numbers.formatDecimal(deposit.originPayment.paymentAmount,1,2)}"></span>
+            <td th:if="${amountDifference==null}" class="td-with-price" style="text-align: right;white-space: nowrap;">
+                - <span th:text="${#numbers.formatDecimal(deposit.depositAmount,1,2)}"></span>
                 €
             </td>
-            <td class="td-with-price" style="text-align: right;white-space: nowrap;"
-                th:if="${deposit.originPayment==null}"> - <span
-                    th:text="${#numbers.formatDecimal(deposit.depositAmount,1,2)}"></span>
+            <td th:if="${amountDifference!=null}" class="td-with-price" style="text-align: right;white-space: nowrap;">
+                - <span th:text="${#numbers.formatDecimal(deposit.depositAmount-amountDifference,1,2)}"></span>
                 €
             </td>
         </tr>
@@ -244,12 +326,12 @@
                 €
             </td>
         </tr>
-        <tr th:if="${0>remainingToPay}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
+        <tr th:if="${tooMuchPerceived!=null}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
             <td>
                 Solde en votre faveur
             </td>
             <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
-                    th:text="${#numbers.formatDecimal(-remainingToPay,1,2)}"></span>
+                    th:text="${#numbers.formatDecimal(tooMuchPerceived,1,2)}"></span>
                 €
             </td>
         </tr>

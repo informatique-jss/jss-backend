@@ -28,5 +28,10 @@ export const Dictionnary = {
   "confrereAnnouncementLabel": "Confrère de l'annonce",
   "noticeTypeFamilyLabel": "Rubrique de l'annonce",
   "noticeTypeLabel": "Sous-rubrique de l'annonce",
+  "month": "Mois",
+  "vatAmount": "Montant de la TVA",
+  "turnoverAmount": "Montant du CA",
+  "vatLabel": "Libellé de TVA",
+  "vatCode": "Type de TVA",
 };
 

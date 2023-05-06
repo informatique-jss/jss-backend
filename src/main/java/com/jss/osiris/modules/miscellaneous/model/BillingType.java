@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,15 +48,15 @@ public class BillingType implements Serializable, IId {
 	@Column(nullable = false)
 	private Boolean isOptionnal;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_vat")
 	private Vat vat;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_product")
 	private AccountingAccount accountingAccountProduct;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_charge")
 	private AccountingAccount accountingAccountCharge;
 

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        * {
+            font-family: 'Times New Roman', Times, serif
+        }
+
+        @page {
+            size: A4 portrait;
+
+            @bottom-right {
+                content: counter(page);
+            }
+
+            counter-increment: page;
+            counter-reset: page 1;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .td-with-price {
+            width: 70px;
+        }
+
+        .td-date {
+            width: 100px;
+        }
+
+        .border-table {
+            border-bottom: 1px solid rgb(0, 83, 159);
+        }
+    </style>
+</head>
+
+<body style="background-color: #FFFFFF; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+    <table>
+        <tr>
+            <td><img width="690px" th:src="@{classpath:/images/invoice-page1-header.png}" src="picture.png" />
+            </td>
+        </tr>
+    </table>
+    <table style="table-layout: fixed;width: 690px;margin-top: 20px;">
+        <tr>
+            <td style="text-align: left;">
+                <span th:if="${tiersReference!=null}">N° client : <span th:text="${tiersReference}"></span><br /></span>
+                <p th:if="${commandNumber!=null}">Votre référence annuelle :<span th:text="${commandNumber}"></span>
+                </p>
+                <p>Paris le <span th:text="${currentDate}"></span></p>
+            </td>
+            <td></td>
+            <td colspan="2">
+                <table style="border : solid; border-color: rgb(0,83,159);width: 100%;">
+                    <tr>
+                        <td>
+                            <span th:text="${denomination}"></span><br />
+                            <span th:text="${address}"></span><br />
+                            <span th:text="${postalCode}"></span> <span th:text="${city}"></span><br />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <table
+        style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <td style="text-align: center;" class="border-table">Date</td>
+                <td style="text-align: center;" class="border-table">Description</td>
+                <td class="border-table">Débit</td>
+                <td class="border-table">Crédit</td>
+            </tr>
+        </thead>
+        <tr th:each="values : ${billingClosureValues}">
+            <td class="td-date " th:if="${values.eventDateString!=null}"
+                th:classappend="${values.displayBottomBorder} ? border-table : none-class"><span
+                    th:text="${values.eventDateString}"></span></td>
+            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class"
+                th:if="${values.eventDescription!=null} and ${values.eventDateString!=null}">
+                <span th:utext="${values.eventDescription}"></span> <span th:if="${values.eventCbLink!=null}"> (payer <a
+                        th:href="${values.eventCbLink}">ici</a>)</span>
+            </td>
+            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class"
+                th:if="${values.eventDescription!=null} and ${values.eventDateString==null}"
+                style="padding-top: 20px;padding-bottom: 20px;padding-left: 10px;" colspan="2">
+                <strong><span th:utext="${values.eventDescription}"></span></strong>
+            </td>
+            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class" class="td-with-price  "
+                th:if="${values.debitAmount!=null}"><span
+                    th:text="${#numbers.formatDecimal(values.debitAmount,1,2)}"></span> €</td>
+            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class" class="td-with-price  "
+                th:if="${values.debitAmount==null}"></td>
+            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class" class="td-with-price  "
+                th:if="${values.creditAmount!=null}"><span
+                    th:text="${#numbers.formatDecimal(values.creditAmount,1,2)}"></span> €</td>
+            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class" class="td-with-price  "
+                th:if="${values.creditAmount==null}"></td>
+        </tr>
+    </table>
+    <p style="margin-top: 10px;">&#160;</p>
+    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;border-collapse: collapse;">
+        <tr>
+            <td class="td-date "></td>
+            <td style="text-align: right;padding-right: 10px;">
+                Débit
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;" colspan="2"><span
+                    th:text="${#numbers.formatDecimal(debitBalance,1,2)}"></span> €
+            </td>
+            <td class="td-with-price"></td>
+        </tr>
+        <tr>
+            <td class="td-date"></td>
+            <td style="text-align: right;;padding-right: 10px;">
+                Crédit
+            </td>
+            <td class="td-with-price"></td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;" colspan="2"><span
+                    th:text="${#numbers.formatDecimal(creditBalance,1,2)}"></span> €
+            </td>
+        </tr>
+        <tr>
+            <td class="td-date "></td>
+            <td style="text-align: right;;padding-right: 10px;">
+                Solde
+            </td>
+            <td class="td-with-price"></td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;" colspan="2"><span
+                    th:text="${#numbers.formatDecimal(balance,1,2)}"></span> €
+            </td>
+        </tr>
+    </table>
+    <p style="font-size: 16px;">Vous pouvez effectuer les paiements par virement en utilisant les informations
+        ci-dessous. <br /><strong>Veuillez indiquer absolument la référence de la commande et / ou de la facture dans le
+            libellé de votre virement</strong></p>
+    <p style="font-size: 16px;">IBAN / BIC : <span th:text="${ibanJss}"></span> <span th:text="${bicJss}"></span></p>
+    <p style="font-size: 16px; text-align: left;">Dans l’attente,<br />
+        Cordialement.<br />
+        La comptabilité
+    </p>
+</body>
+
+</html>

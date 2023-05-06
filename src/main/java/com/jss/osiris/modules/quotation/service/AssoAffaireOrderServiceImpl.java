@@ -39,14 +39,16 @@ import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
+import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
-import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.repository.AssoAffaireOrderRepository;
+import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 @Service
@@ -114,6 +116,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     ProvisionService provisionService;
+
+    @Autowired
+    FormaliteGuichetUniqueService formaliteGuichetUniqueService;
 
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
@@ -276,18 +281,20 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     formalite.setFormaliteStatus(
                             formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
 
-                if (formalite.getReferenceMandataire() == null)
-                    // Play with fire ...
-                    formalite.setReferenceMandataire(formalite.getId() + "");
-                if (formalite.getNomDossier() == null)
-                    formalite
-                            .setNomDossier(assoAffaireOrder.getAffaire().getDenomination() != null
-                                    ? assoAffaireOrder.getAffaire().getDenomination()
-                                    : (assoAffaireOrder.getAffaire().getFirstname() + " "
-                                            + assoAffaireOrder.getAffaire().getLastname()));
-                if (formalite.getSignedPlace() == null)
-                    formalite.setSignedPlace("8 Rue Saint-Augustin, 75002 Paris");
+                if (formalite.getFormalitesGuichetUnique() != null && provision.getAssignedTo() != null)
+                    for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique()) {
+                        formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(
+                                formaliteGuichetUnique.getId(), provision.getAssignedTo(), formalite);
+                    }
 
+                if (formalite.getFormaliteStatus().getIsCloseState()
+                        && formalite.getCompetentAuthorityServiceProvider() != null
+                        && formalite.getCompetentAuthorityServiceProvider().getId()
+                                .equals(constantService.getCompetentAuthorityInpi().getId())
+                        && (formalite.getFormalitesGuichetUnique() == null
+                                || formalite.getFormalitesGuichetUnique().size() == 0))
+                    throw new OsirisClientMessageException(
+                            "Merci de compléter le nom du dossier GU avant de clôturer la formalité");
             }
 
             if (provision.getBodacc() != null) {

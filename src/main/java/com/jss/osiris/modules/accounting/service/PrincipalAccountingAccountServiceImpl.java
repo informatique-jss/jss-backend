@@ -5,9 +5,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +18,11 @@ public class PrincipalAccountingAccountServiceImpl implements PrincipalAccountin
     PrincipalAccountingAccountRepository principalAccountingAccountRepository;
 
     @Override
-    @Cacheable(value = "principalAccountingAccountList", key = "#root.methodName")
     public List<PrincipalAccountingAccount> getPrincipalAccountingAccounts() {
         return IterableUtils.toList(principalAccountingAccountRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "principalAccountingAccount", key = "#id")
     public PrincipalAccountingAccount getPrincipalAccountingAccount(Integer id) {
         Optional<PrincipalAccountingAccount> principalAccountingAccount = principalAccountingAccountRepository
                 .findById(id);
@@ -42,10 +37,6 @@ public class PrincipalAccountingAccountServiceImpl implements PrincipalAccountin
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "principalAccountingAccountList", allEntries = true),
-            @CacheEvict(value = "principalAccountingAccount", key = "#principalAccountingAccount.id")
-    })
     @Transactional(rollbackFor = Exception.class)
     public PrincipalAccountingAccount addOrUpdatePrincipalAccountingAccount(
             PrincipalAccountingAccount principalAccountingAccount) {

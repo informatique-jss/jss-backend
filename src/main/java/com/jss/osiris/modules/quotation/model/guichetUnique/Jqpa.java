@@ -2,8 +2,10 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,28 +23,27 @@ public class Jqpa implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_option_jqpa", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_option_jqpa")
     OptionJQPA optionJQPA;
 
-    @Column(nullable = false)
     private Boolean indicateurActivitesMultiples;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String descriptionActivite;
 
-    @ManyToOne
-    @JoinColumn(name = "id_code_role_personne_qualifiee", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_code_role_personne_qualifiee")
     CodeRolePersonneQualifiee codeRolePersonneQualifiee;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String libelleRolePersonneQualifiee;
 
-    @ManyToOne
-    @JoinColumn(name = "id_personne_qualifiee", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_personne_qualifiee")
     PersonneQualifiee personneQualifiee;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String autreQualitePersonneQualifiee;
 
     public Integer getId() {

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -40,22 +41,22 @@ public class Quotation implements IQuotation {
 	@IndexedField
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_assigned_to")
 	@IndexedField
 	private Employee assignedTo;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
 	@IndexedField
 	private Tiers tiers;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
 	private Responsable responsable;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
 	@IndexedField
 	private Confrere confrere;
@@ -68,7 +69,7 @@ public class Quotation implements IQuotation {
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	private LocalDateTime createdDate;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_quotation_status")
 	private QuotationStatus quotationStatus;
 
@@ -108,8 +109,6 @@ public class Quotation implements IQuotation {
 	private List<CustomerOrder> customerOrders;
 
 	private Boolean isCreatedFromWebSite;
-
-	private String centralPayPaymentRequestId;
 
 	private LocalDateTime firstReminderDateTime;
 	private LocalDateTime secondReminderDateTime;
@@ -244,14 +243,6 @@ public class Quotation implements IQuotation {
 
 	public void setIsCreatedFromWebSite(Boolean isCreatedFromWebSite) {
 		this.isCreatedFromWebSite = isCreatedFromWebSite;
-	}
-
-	public String getCentralPayPaymentRequestId() {
-		return centralPayPaymentRequestId;
-	}
-
-	public void setCentralPayPaymentRequestId(String centralPayPaymentRequestId) {
-		this.centralPayPaymentRequestId = centralPayPaymentRequestId;
 	}
 
 	public LocalDateTime getFirstReminderDateTime() {

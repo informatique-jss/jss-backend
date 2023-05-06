@@ -2,8 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { UserNoteService } from 'src/app/services/user.notes.service';
-import { IndexEntityService } from '../../../../../routing/search/index.entity.service';
 import { IndexEntity } from '../../../../../routing/search/IndexEntity';
+import { IndexEntityService } from '../../../../../routing/search/index.entity.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
@@ -29,9 +29,9 @@ export class AutocompleteResponsableComponent extends GenericAutocompleteCompone
     let text = JSON.parse(responsable.text);
     let label = text.firstname + " " + text.lastname;
     if (text.tiers && text.tiers.denomination)
-      label += " (" + text.tiers.denomination + ")";
+      label += " (" + text.tiers.denomination + " / " + text.tiers.id + ")";
     else if (text.tiers && text.tiers.firstname)
-      label += " (" + text.tiers.firstname + " " + text.tiers.lastname + ")";
+      label += " (" + text.tiers.firstname + " " + text.tiers.lastname + " / " + text.tiers.id + ")";
     return label;
   }
 }

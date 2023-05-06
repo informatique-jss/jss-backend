@@ -72,7 +72,7 @@ export abstract class GenericFormComponent implements OnInit {
         this.form?.get(this.propertyName)?.enable();
       }
     }
-    if (this.form) {
+    if (this.form && (!changes.customValidators || Object.keys(changes).length > 1)) {
       this.form.get(this.propertyName)?.updateValueAndValidity();
       this.form.get(this.propertyName)?.markAllAsTouched();
     }

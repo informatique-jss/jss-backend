@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,125 +32,106 @@ public class OptionFiscale implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false)
     private Boolean indicateurMembreExploitation;
 
-    @ManyToOne
-    @JoinColumn(name = "id_regime_imposition_benefices", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_regime_imposition_benefices")
     RegimeImpositionBenefices regimeImpositionBenefices;
 
-    @ManyToOne
-    @JoinColumn(name = "id_option_particuliere_regime_benefi", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_option_particuliere_regime_benefi")
     OptionParticuliereRegimeBenefi optionParticuliereRegimeBenefice;
 
-    @ManyToOne
-    @JoinColumn(name = "id_regime_imposition_tva", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_regime_imposition_tva")
     RegimeImpositionTVA regimeImpositionTVA;
 
-    @ManyToOne
-    @JoinColumn(name = "id_periodicite_et_options_particulie", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_periodicite_et_options_particulie")
     PeriodiciteEtOptionsParticulie periodiciteEtOptionsParticulieresTVA;
 
-    @ManyToOne
-    @JoinColumn(name = "id_condition_versement_tva", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_condition_versement_tva")
     ConditionVersementTVA conditionVersementTVA;
 
-    @Column(nullable = false)
     private LocalDate dateClotureExerciceComptable;
 
-    @Column(nullable = false)
     private Boolean optionVersementLiberatoire;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String lieuImposition;
 
-    @Column(nullable = false)
     private LocalDate dateEnregistrementStatuts;
 
-    @Column(nullable = false)
     private LocalDate dateEffetFiscalite;
 
-    @ManyToOne
-    @JoinColumn(name = "id_regime_imposition_benefices2", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_regime_imposition_benefices2")
     RegimeImpositionBenefices2 regimeImpositionBenefices2;
 
     @OneToMany(mappedBy = "optionFiscale")
     @JsonIgnoreProperties(value = { "optionFiscale" }, allowSetters = true)
     List<Immeuble> immeubles;
 
-    @ManyToOne
-    @JoinColumn(name = "id_option_particuliere_regime_benefice2", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_option_particuliere_regime_benefice2")
     OptionParticuliereRegimeBenefi optionParticuliereRegimeBenefice2;
 
-    @ManyToOne
-    @JoinColumn(name = "id_regime_imposition_tva2", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_regime_imposition_tva2")
     RegimeImpositionTVA regimeImpositionTVA2;
 
-    @Column(nullable = false)
     private LocalDate dateEffet;
 
-    @ManyToOne
-    @JoinColumn(name = "id_periodicite_et_options_particulieres2", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_periodicite_et_options_particulieres2")
     PeriodiciteEtOptionsParticulie periodiciteEtOptionsParticulieresTVA2;
 
-    @Column(nullable = false)
     private Boolean taxeTroisPourcent;
 
-    @Column(nullable = false)
     private Boolean detentionParticipationSocieteFrancaise;
 
-    @ManyToOne
-    @JoinColumn(name = "id_periodicite_versement", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_periodicite_versement")
     PeriodiciteVersement periodiciteVersement;
 
-    @Column(nullable = false)
     private Integer chiffreAffairePrevisionnelVente;
 
-    @Column(nullable = false)
     private Integer chiffreAffairePrevisionnelService;
 
-    @ManyToOne
-    @JoinColumn(name = "id_devise_capital", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_devise_capital")
     DeviseCapital deviseChiffreAffaire;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String numeroTVAIntra;
 
-    @Column(nullable = false)
     private Boolean redevableTVA;
 
-    @Column(nullable = false)
     private Boolean redevablePAS;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String numeroTVAFrance;
 
-    @Column(nullable = false)
     private Boolean clienteleIdentifieesTVA;
 
-    @Column(nullable = false)
     private Boolean clienteleParticuliers;
 
-    @Column(nullable = false)
     private Boolean clienteleAutre;
 
-    @Column(nullable = false)
     private Boolean ali;
 
-    @Column(nullable = false)
     private Boolean aic;
 
-    @Column(nullable = false)
     private Boolean lic;
 
-    @Column(nullable = false)
     private Boolean indicateurAutreOptionFiscale;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String autreOptionFiscale;
 
-    @ManyToOne
-    @JoinColumn(name = "id_condition_versement_tva2", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_condition_versement_tva2")
     ConditionVersementTVA conditionVersementTVA2;
 
     public Integer getId() {

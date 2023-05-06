@@ -41,7 +41,6 @@ import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
-import com.jss.osiris.modules.quotation.service.SimpleProvisionService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
@@ -85,9 +84,6 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     CustomerOrderService customerOrderService;
-
-    @Autowired
-    SimpleProvisionService simpleProvisionService;
 
     @Autowired
     PaymentService paymentService;
@@ -152,7 +148,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         if (entityType.equals("Ofx"))
             if (activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_GROUP)
                     || activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP))
-                return this.paymentService.uploadOfxFile(file);
+                return this.paymentService.uploadOfxFile(file, idEntity);
             else
                 return null;
 
@@ -213,11 +209,8 @@ public class AttachmentServiceImpl implements AttachmentService {
                 return new ArrayList<Attachment>();
             attachment.setProvision(provision);
 
-            // Send Kbis immediatly to customer order
-            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeKbisUpdated().getId())
-                    || attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeRbe().getId())
-                    || attachment.getAttachmentType().getId()
-                            .equals(constantService.getAttachmentTypeDepositReceipt().getId())) {
+            // Send immediatly to customer order
+            if (attachment.getAttachmentType().getIsToSentOnUpload()) {
                 addOrUpdateAttachment(attachment);
                 mailHelper.sendCustomerOrderAttachmentsToCustomer(provision.getAssoAffaireOrder().getCustomerOrder(),
                         provision.getAssoAffaireOrder(), false, Arrays.asList(attachment));

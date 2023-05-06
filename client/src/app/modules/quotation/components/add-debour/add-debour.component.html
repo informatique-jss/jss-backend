@@ -40,7 +40,7 @@
             <generic-input [(model)]="newDebour.comments" label="Commentaire" [form]="debourForm"
               propertyName="comments" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="250"></generic-input>
           </td>
-          <td class="button-td">
+          <td class="button-td" *ngIf="editMode">
             <button (click)="addDebour()" mat-mini-fab color="warn" class="mini-fab-add add-button">
               <mat-icon>add</mat-icon>
             </button>
@@ -59,9 +59,63 @@
           (auxclick)="createInvoice($event, competentAuthority)">(créer une facture libre)</span></li>
     </ul>
   </div>
-  <div class="row-field-container" *ngIf="editMode">
-    <button mat-raised-button (click)="filledForInfogreffeKbis()" color="primary" class="mini-fab-add">
-      Pré-remplir pour un KBis
-    </button>
+  <div *ngIf="greffeInvoices &&  greffeInvoices.length>0 && isNotInpi()" class="margin-top">
+    <p>Factures de greffe trouvées pour cette commande : </p>
+    <ul *ngFor="let greffeInvoice of greffeInvoices">
+      <li>Facture n°{{greffeInvoice.numero}} - {{greffeInvoice.owncloudGreffeFile.competentAuthority.label }} - Total
+        TTC : {{greffeInvoice.totalPrice}} € <span class="pointer" *ngIf="canAddNewInvoice()"
+          (click)="createInvoiceFromGreffeInvoice( greffeInvoice)">(créer le débours et la facture libre)</span></li>
+    </ul>
   </div>
-</div>
+  <div *ngIf="infogreffeInvoices &&  infogreffeInvoices.length>0  && isNotInpi()" class="margin-top">
+    <p>Factures Infogreffe trouvées pour cette commande : </p>
+    <ul *ngFor="let greffeInvoice of infogreffeInvoices">
+      <li>Facture n°{{greffeInvoice.customerReference}} - {{greffeInvoice.competentAuthority.label }} - Total
+        TTC : {{ (greffeInvoice.preTaxPrice + greffeInvoice.vatPrice) | number}} € <span class="pointer"
+          *ngIf="canAddNewInvoice()" (click)="createInvoiceFromInfogreffeInvoice( greffeInvoice)">(créer le débours et
+          la facture libre)</span></li>
+    </ul>
+  </div>
+  <div>
+    <table class="full-width  " *ngIf=" isNotInpi()">
+      <tr>
+        <td>
+          Rechercher une facture de greffe :
+        </td>
+        <td style="width: 80%;">
+          <autocomplete-greffe-invoice [(model)]="selectedGreffeInvoice" [form]="debourForm"
+            propertyName="selectedGreffeInvoice" [isMandatory]="false"></autocomplete-greffe-invoice>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Créer le débours et la facture libre"
+            (click)="createInvoiceFromGreffeInvoice(selectedGreffeInvoice)" class="add-button">
+            <mat-icon>add</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <table class="full-width  " *ngIf=" isNotInpi()">
+      <tr>
+        <td>
+          Rechercher une facture Infogreffe :
+        </td>
+        <td style="width: 80%;">
+          <autocomplete-infogreffe-invoice [(model)]="selectedInfogreffeInvoice" [form]="debourForm"
+            propertyName="selectedInfogreffeInvoice" [isMandatory]="false"></autocomplete-infogreffe-invoice>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Créer le débours et la facture libre"
+            (click)="createInvoiceFromInfogreffeInvoice(selectedInfogreffeInvoice)" class="add-button">
+            <mat-icon>add</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <div>
+      <div class="row-field-container" *ngIf="editMode">
+        <button mat-raised-button (click)="filledForInfogreffeKbis()" color="primary" class="mini-fab-add">
+          Pré-remplir pour un KBis
+        </button>
+      </div>
+    </div>
+  </div>

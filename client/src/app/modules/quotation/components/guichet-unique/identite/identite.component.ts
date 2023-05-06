@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
-import { Formalite } from '../../../model/guichet-unique/Formalite';
-import { Identite } from '../../../model/guichet-unique/Identite';
+import { Formalite } from '../../../model/Formalite';
 import { Provision } from '../../../model/Provision';
+import { Identite } from '../../../model/guichet-unique/Identite';
 import { EntrepriseComponent } from '../entreprise/entreprise.component';
 
 @Component({
@@ -33,10 +33,10 @@ export class IdentiteComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.formalite && this.formalite.content && this.formalite.content.personnePhysique && this.formalite.content.personnePhysique.identite) {
+    /*if (this.formalite && this.formalite.content && this.formalite.content.personnePhysique && this.formalite.content.personnePhysique.identite) {
       if (!this.identite.contratDAppuiDeclare)
         this.identite.contratDAppuiDeclare = false;
-    }
+    }*/
   }
 
   getFormStatus() {

@@ -37,6 +37,10 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.competant.authorities.update");
         isOk = isOk && checkProperty("schedulling.log.osiris.announcement.confrere.query.reminder");
         isOk = isOk && checkProperty("schedulling.log.osiris.customer.proof.reading.reminder");
+        isOk = isOk && checkProperty("schedulling.owncloud.greffe.invoice.update");
+        isOk = isOk && checkProperty("schedulling.guichet.unique.refresh.update.last.hour");
+        isOk = isOk && checkProperty("schedulling.guichet.unique.refresh.opened");
+        isOk = isOk && checkProperty("schedulling.central.pay.payment.request.validation.check");
         isOk = isOk && checkProperty("ldap.dc.level.0");
         isOk = isOk && checkProperty("ldap.dc.level.1");
         isOk = isOk && checkProperty("ldap.ou.osiris");
@@ -53,9 +57,6 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("server.servlet.session.timeout");
         isOk = isOk && checkProperty("invoicing.payment.limit.refund.euros");
         isOk = isOk && checkProperty("payment.cb.entry.point");
-        isOk = isOk && checkProperty("payment.cb.redirect.quotation.deposit.entry.point");
-        isOk = isOk && checkProperty("payment.cb.redirect.deposit.entry.point");
-        isOk = isOk && checkProperty("payment.cb.redirect.invoice.entry.point");
         isOk = isOk && checkProperty("central.pay.entrypoint");
         isOk = isOk && checkProperty("central.pay.api.key");
         isOk = isOk && checkProperty("central.pay.api.password");
@@ -73,6 +74,10 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("jss.sepa.identification");
         isOk = isOk && checkProperty("jss.bic");
         isOk = isOk && checkProperty("jss.iban");
+        isOk = isOk && checkProperty("owncloud.greffe.login");
+        isOk = isOk && checkProperty("owncloud.greffe.password");
+        isOk = isOk && checkProperty("owncloud.greffe.webdav.url");
+        isOk = isOk && checkProperty("owncloud.greffe.webdav.folder.root");
 
         isOk = isOk && checkAccountingParams();
 

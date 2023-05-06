@@ -37,7 +37,8 @@
             <td>
               <autocomplete-principal-accounting-account [(model)]="selectedEntity.principalAccountingAccount"
                 [form]="entityForm" propertyName="principalAccountingAccount" [isMandatory]="true"
-                [isDisabled]="!editMode" label="label"></autocomplete-principal-accounting-account>
+                [isDisabled]="!editMode"
+                label="Compte compatable principal"></autocomplete-principal-accounting-account>
             </td>
             <td>
               <generic-input [(model)]="selectedEntity.accountingAccountSubNumber" label="N° de sous-compte comptable"

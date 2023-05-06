@@ -306,16 +306,16 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.billingTypeInfogreffeDebour;
   }
 
+  getBillingTypeEmolumentsDeGreffeDebour() {
+    return this.constant.billingTypeEmolumentsDeGreffeDebour;
+  }
+
   getBillingTypeDocumentScanning() {
     return this.constant.billingTypeDocumentScanning;
   }
 
   getBillingTypeEmergency() {
     return this.constant.billingTypeEmergency;
-  }
-
-  getBillingTypeVacationDepositBeneficialOwners() {
-    return this.constant.billingTypeVacationDepositBeneficialOwners;
   }
 
   getBillingTypeVacationUpdateBeneficialOwners() {
@@ -474,6 +474,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getCompetentAuthorityInfogreffe() {
     return this.constant.competentAuthorityInfogreffe;
+  }
+
+  getCompetentAuthorityInpi() {
+    return this.constant.competentAuthorityInpi;
   }
 
   getCompetentAuthorityTypeRcs() {

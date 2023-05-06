@@ -19,6 +19,15 @@
                 <generic-input [(model)]="newPayment.label" label="Libellé du paiement" [form]="addPaymentForm"
                   propertyName="label" [isMandatory]="true" [isDisabled]="false" [maxLength]="250"></generic-input>
               </td>
+              <td>
+                <generic-input [(model)]="payer" label="Payeur" [form]="addPaymentForm" propertyName="payer"
+                  [isMandatory]="false" [isDisabled]="false" [maxLength]="250"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="checkNumber" label="Numéro de chèque" [form]="addPaymentForm"
+                  propertyName="checkNumber" [isMandatory]="false" [isDisabled]="false"
+                  [maxLength]="250"></generic-input>
+              </td>
               <td class="button-td">
                 <button (click)="addPayment()" mat-mini-fab color="warn" class="mini-fab-add add-button">
                   <mat-icon>add</mat-icon>

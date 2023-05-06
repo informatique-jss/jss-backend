@@ -18,11 +18,13 @@ import { MiscellaneousModule } from "../../../miscellaneous/components/miscellan
 import { AddInvoiceComponent } from "../add-invoice/add-invoice.component";
 import { AddPaymentComponent } from "../add-payment/add-payment.component";
 import { AmountDialogComponent } from "../amount-dialog/amount-dialog.component";
+import { AppointListComponent } from "../appoint-list/appoint-list.component";
 import { AssociateDepositDialogComponent } from '../associate-deposit-dialog/associate-deposit-dialog.component';
 import { AssociatePaymentDialogComponent } from "../associate-payment-dialog/associate-payment-dialog.component";
 import { BankTransfertListComponent } from '../bank-transfert-list/bank-transfert-list.component';
 import { DeboursAmountInvoicedDialogComponent } from '../debours-amount-invoiced-dialog/debours-amount-invoiced-dialog.component';
 import { DeboursAmountTaxableDialogComponent } from "../debours-amount-taxable-dialog/debours-amount-taxable-dialog.component";
+import { InfogreffeInvoiceListComponent } from "../infogreffe-invoice-list/infogreffe-invoice-list.component";
 import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.component";
 import { InvoiceListComponent } from "../invoice-list/invoice-list.component";
 import { InvoicePaymentTableComponent } from "../invoice-payment-table/invoice-payment-table.component";
@@ -34,6 +36,7 @@ const routes: Routes = [
   { path: 'invoicing', component: InvoiceComponent },
   { path: 'invoicing/view/:id', component: InvoiceDetailsComponent },
   { path: 'invoicing/add/:id', component: AddInvoiceComponent },
+  { path: 'invoicing/credit-note/:idInvoice', component: AddInvoiceComponent },
   { path: 'invoicing/payment/add', component: AddPaymentComponent },
   { path: 'invoicing/add/debour/:idCompetentAuhority/:idCustomerOrder', component: AddInvoiceComponent },
 ];
@@ -71,6 +74,8 @@ const routes: Routes = [
     DeboursAmountTaxableDialogComponent,
     DeboursAmountInvoicedDialogComponent,
     AddPaymentComponent,
+    InfogreffeInvoiceListComponent,
+    AppointListComponent,
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,

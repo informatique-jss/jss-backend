@@ -1,6 +1,8 @@
 package com.jss.osiris.modules.quotation.model;
 
-public class Adresse2Etablissement {
+import java.io.Serializable;
+
+public class Adresse2Etablissement implements Serializable {
 	private String complementAdresse2Etablissement;
 	private String numeroVoie2Etablissement;
 	private String indiceRepetition2Etablissement;

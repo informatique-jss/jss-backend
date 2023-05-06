@@ -2,7 +2,10 @@ import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
+import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { AmountDialogComponent } from 'src/app/modules/invoicing/components/amount-dialog/amount-dialog.component';
+import { InfogreffeInvoice } from 'src/app/modules/invoicing/model/InfogreffeInvoice';
+import { OwncloudGreffeInvoiceService } from 'src/app/modules/invoicing/services/owncloud.greffe.invoice.service';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -11,9 +14,11 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { formatDateForSortTable, formatEurosForSortTable } from '../../../../libs/FormatHelper';
 import { AppService } from '../../../../services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
+import { InfogreffeInvoiceService } from '../../../invoicing/services/infogreffe.invoice.service';
 import { CompetentAuthority } from '../../../miscellaneous/model/CompetentAuthority';
 import { Debour } from '../../model/Debour';
 import { IQuotation } from '../../model/IQuotation';
+import { OwncloudGreffeInvoice } from '../../model/OwncloudGreffeInvoice';
 import { Provision } from '../../model/Provision';
 
 
@@ -39,6 +44,11 @@ export class AddDebourComponent implements OnInit {
   paymentTypeAccount: PaymentType = this.constantService.getPaymentTypeAccount();
   refreshTable: Subject<void> = new Subject<void>();
 
+  greffeInvoices: OwncloudGreffeInvoice[] | undefined;
+  infogreffeInvoices: InfogreffeInvoice[] | undefined;
+  selectedGreffeInvoice: OwncloudGreffeInvoice | undefined;
+  selectedInfogreffeInvoice: InfogreffeInvoice | undefined;
+
   constructor(private formBuilder: FormBuilder,
     public confirmationDialog: MatDialog,
     public selectDeboursDialog: MatDialog,
@@ -46,6 +56,8 @@ export class AddDebourComponent implements OnInit {
     private constantService: ConstantService,
     private habilitationService: HabilitationsService,
     private appService: AppService,
+    private owncloudGreffeInvoiceService: OwncloudGreffeInvoiceService,
+    private infogreffeInvoiceService: InfogreffeInvoiceService,
   ) { }
 
   ngOnInit() {
@@ -59,12 +71,23 @@ export class AddDebourComponent implements OnInit {
     this.displayedColumns.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "checkNumber", fieldName: "checkNumber", label: "N° de chèque" } as SortTableColumn);
     this.displayedColumns.push({ id: "payment", fieldName: "payment.id", label: "Paiement associé" } as SortTableColumn);
-    this.displayedColumns.push({ id: "invoice", fieldName: "invoiceItem.invoice.id", label: "Facture associée" } as SortTableColumn);
+    this.displayedColumns.push({ id: "invoiceAssociated", fieldName: "invoiceItem", label: "Facture associée ?", valueFonction: (element: any) => { return element.invoiceItem ? ("Oui" + (element.invoiceItem.invoice.manualAccountingDocumentNumber ? " (" + element.invoiceItem.invoice.manualAccountingDocumentNumber + ")" : "")) : "Non" } } as SortTableColumn);
     this.displayedColumns.push({ id: "comments", fieldName: "comments", label: "Commentaires", isShrinkColumn: true } as SortTableColumn);
 
     this.addInvoicedAmountColumn();
     this.addDeleteDeboursColumn();
     this.refreshTable.next();
+
+    if (this.customerOrder && instanceOfCustomerOrder(this.customerOrder)) {
+      this.owncloudGreffeInvoiceService.getOwncloudGreffeInvoiceByCustomerOrder(this.customerOrder).subscribe(response => {
+        if (response)
+          this.greffeInvoices = response;
+      })
+      this.infogreffeInvoiceService.getInfogreffeInvoicesByCustomerReference(this.customerOrder.id + "").subscribe(response => {
+        if (response)
+          this.infogreffeInvoices = response;
+      })
+    }
   }
 
   addInvoicedAmountColumn() {
@@ -213,7 +236,33 @@ export class AddDebourComponent implements OnInit {
       this.newDebour.debourAmount = 3.37;
       this.fillInvoicedAmount();
       this.newDebour.comments = 'Kbis';
-      this.newDebour.paymentType = this.constantService.getPaymentTypeVirement();
+      this.newDebour.paymentType = this.constantService.getPaymentTypePrelevement();
     }
+  }
+
+  createInvoiceFromGreffeInvoice(greffeInvoice: OwncloudGreffeInvoice | undefined) {
+    if (this.provision && this.customerOrder && greffeInvoice)
+      this.owncloudGreffeInvoiceService.createInvoiceFromGreffeInvoice(greffeInvoice, this.provision).subscribe(reponse => {
+        this.appService.openRoute(null, '/order/' + this.customerOrder!.id, null);
+      });
+  }
+
+  createInvoiceFromInfogreffeInvoice(greffeInvoice: InfogreffeInvoice | undefined) {
+    if (this.provision && this.customerOrder && greffeInvoice)
+      this.infogreffeInvoiceService.createInvoiceFromGreffeInvoice(greffeInvoice, this.provision).subscribe(reponse => {
+        this.appService.openRoute(null, '/order/' + this.customerOrder!.id, null);
+      });
+  }
+
+  isNotInpi() {
+    if (this.provision) {
+      if (!this.provision.formalite)
+        return true;
+      if (!this.provision.formalite.competentAuthorityServiceProvider)
+        return true;
+      if (this.provision.formalite.competentAuthorityServiceProvider.id != this.constantService.getCompetentAuthorityInpi().id)
+        return true;
+    }
+    return false;
   }
 }

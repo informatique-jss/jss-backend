@@ -5,16 +5,12 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -44,14 +40,12 @@ public class DomiciliationStatus implements Serializable, IId {
 	private Boolean isOpenState;
 	private Boolean isCloseState;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@Fetch(FetchMode.SUBSELECT)
+	@OneToMany(targetEntity = DomiciliationStatus.class)
 	@JoinTable(name = "asso_domiciliation_status_successor", joinColumns = @JoinColumn(name = "id_domiciliation_status"), inverseJoinColumns = @JoinColumn(name = "id_domiciliation_status_successor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
 	private List<DomiciliationStatus> successors;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@Fetch(FetchMode.SUBSELECT)
+	@OneToMany(targetEntity = DomiciliationStatus.class)
 	@JoinTable(name = "asso_domiciliation_status_predecessor", joinColumns = @JoinColumn(name = "id_domiciliation_status"), inverseJoinColumns = @JoinColumn(name = "id_domiciliation_status_predecessor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
 	private List<DomiciliationStatus> predecessors;

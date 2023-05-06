@@ -2,7 +2,7 @@ package com.jss.osiris.modules.quotation.repository;
 
 import com.jss.osiris.modules.quotation.model.FundType;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
-public interface FundTypeRepository extends CrudRepository<FundType, Integer> {
+public interface FundTypeRepository extends QueryCacheCrudRepository<FundType, Integer> {
 }

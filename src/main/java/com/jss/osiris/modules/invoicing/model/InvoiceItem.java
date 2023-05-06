@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,11 +32,11 @@ public class InvoiceItem implements Serializable, IId {
 	@Column(nullable = false, length = 1000)
 	private String label;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_item")
 	BillingItem billingItem;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_vat")
 	Vat vat;
 
@@ -49,19 +50,20 @@ public class InvoiceItem implements Serializable, IId {
 
 	private Float discountAmount;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision")
 	@JsonIgnoreProperties(value = { "invoiceItems", "assoAffaireOrder" }, allowSetters = true)
 	Provision provision;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice")
 	@JsonIgnoreProperties(value = { "invoiceItems", "accountingRecords", "customerOrder",
 			"customerOrderForInboundInvoice" }, allowSetters = true)
 	Invoice invoice;
 
 	@OneToMany(mappedBy = "invoiceItem")
-	@JsonIgnoreProperties(value = { "invoiceItem", "payment", "accountingRecords", "provision" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "invoiceItem", "payment", "accountingRecords", "provision",
+			"cartRate" }, allowSetters = true)
 	List<Debour> debours;
 
 	public Integer getId() {

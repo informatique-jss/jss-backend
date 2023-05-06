@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.exception.OsirisException;
@@ -27,7 +26,6 @@ public class QuotationReportingServiceImpl implements QuotationReportingService 
     ConstantService constantService;
 
     @Override
-    @Cacheable(value = "quotationReportingList", key = "#tiersId")
     public List<IQuotationReporting> getQuotationReporting(Integer tiersId) throws OsirisException {
         ArrayList<Integer> invoiceStatusIds = new ArrayList<Integer>();
         invoiceStatusIds.add(constantService.getInvoiceStatusSend().getId());

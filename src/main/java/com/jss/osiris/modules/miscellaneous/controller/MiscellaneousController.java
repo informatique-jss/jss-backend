@@ -430,8 +430,6 @@ public class MiscellaneousController {
                 "PrincipalAccountingAccountProvider");
         validationHelper.validateReferential(constant.getPrincipalAccountingAccountWaiting(), true,
                 "PrincipalAccountingAccountWaiting");
-        validationHelper.validateReferential(constant.getBillingTypeVacationDepositBeneficialOwners(), true,
-                "BillingTypeVacationDepositBeneficialOwners");
         validationHelper.validateReferential(constant.getBillingTypeVacationUpdateBeneficialOwners(), true,
                 "BillingTypeVacationUpdateBeneficialOwners");
         validationHelper.validateReferential(constant.getBillingTypeFormalityAdditionalDeclaration(), true,
@@ -832,6 +830,8 @@ public class MiscellaneousController {
         validationHelper.validateString(competentAuthority.getCode(), true, 20, "code");
         validationHelper.validateString(competentAuthority.getLabel(), true, 200, "label");
         validationHelper.validateString(competentAuthority.getSchedulle(), false, 2000, "Schedulle");
+        validationHelper.validateReferential(competentAuthority.getDefaultPaymentType(), false, "defaultPaymentType");
+        validationHelper.validateString(competentAuthority.getInpiReference(), false, 250, "InpiReference");
         validationHelper.validateReferential(competentAuthority.getCompetentAuthorityType(), true,
                 "CompetentAuthorityType");
         if (competentAuthority.getCities() == null && competentAuthority.getDepartments() == null

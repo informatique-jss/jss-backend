@@ -191,6 +191,12 @@ public class TiersServiceImpl implements TiersService {
     }
 
     @Override
+    public List<Tiers> findAllTiersForBillingClosureReceiptSend() throws OsirisException {
+        return tiersRepository.findAllTiersForBillingClosureReceiptSend(constantService.getInvoiceStatusSend().getId(),
+                constantService.getTiersTypeClient().getId());
+    }
+
+    @Override
     public List<Tiers> getTiers() {
         return IterableUtils.toList(tiersRepository.findAll());
     }

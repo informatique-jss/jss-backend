@@ -2,7 +2,7 @@ package com.jss.osiris.modules.tiers.repository;
 
 import com.jss.osiris.modules.tiers.model.Competitor;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
-public interface CompetitorRepository extends CrudRepository<Competitor, Integer> {
+public interface CompetitorRepository extends QueryCacheCrudRepository<Competitor, Integer> {
 }

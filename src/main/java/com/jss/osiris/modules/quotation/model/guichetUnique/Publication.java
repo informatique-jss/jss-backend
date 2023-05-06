@@ -18,22 +18,22 @@ public class Publication implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String rolePublication;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String typePublication;
 
-    @Column(nullable = false)
+    
     private LocalDate datePublication;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String journalPublication;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String lieuPublication;
 
-    @Column(nullable = false)
+    
     private LocalDate dateEffetPublication;
 
     public Integer getId() {

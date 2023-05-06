@@ -6,9 +6,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +21,11 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
     FormaliteStatusRepository formaliteStatusRepository;
 
     @Override
-    @Cacheable(value = "formaliteStatusList", key = "#root.methodName")
     public List<FormaliteStatus> getFormaliteStatus() {
         return IterableUtils.toList(formaliteStatusRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "formaliteStatus", key = "#id")
     public FormaliteStatus getFormaliteStatus(Integer id) {
         Optional<FormaliteStatus> formaliteStatus = formaliteStatusRepository.findById(id);
         if (formaliteStatus.isPresent())
@@ -39,10 +34,6 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "formaliteStatusList", allEntries = true),
-            @CacheEvict(value = "formaliteStatus", key = "#formaliteStatus.id")
-    })
     @Transactional(rollbackFor = Exception.class)
     public FormaliteStatus addOrUpdateFormaliteStatus(
             FormaliteStatus formaliteStatus) {
@@ -60,36 +51,36 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
                 AggregateStatus.AGGREGATE_STATUS_NEW);
         updateStatus(FormaliteStatus.FORMALITE_IN_PROGRESS, "En cours", "autorenew", false, false,
                 AggregateStatus.AGGREGATE_STATUS_IN_PROGRESS);
-        updateStatus(FormaliteStatus.FORMALITE_WAITING_DOCUMENT, "En attente de documents", "hourglass_top", false,
+        updateStatus(FormaliteStatus.FORMALITE_WAITING_DOCUMENT, "En attente de documents",
+                "hourglass_top", false,
                 false,
                 AggregateStatus.AGGREGATE_STATUS_WAITING);
-        updateStatus(FormaliteStatus.FORMALITE_SENT, "Envoyé au greffe", "outgoing_mail", false, false,
-                AggregateStatus.AGGREGATE_STATUS_WAITING);
-        updateStatus(FormaliteStatus.FORMALITE_VALIDATE, "Validé par le greffe", "approval", false, false,
-                AggregateStatus.AGGREGATE_STATUS_WAITING);
-        updateStatus(FormaliteStatus.FORMALITE_REFUSED, "Refusé par le greffe", "block", false, false,
-                AggregateStatus.AGGREGATE_STATUS_WAITING);
-        updateStatus(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_GREFFE, "En attente de documents du greffe", "pending",
+        updateStatus(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY,
+                "En attente de l'autorité compétente", "pending",
                 false, false,
                 AggregateStatus.AGGREGATE_STATUS_WAITING);
         updateStatus(FormaliteStatus.FORMALITE_DONE, "Terminé", "check_small", false, true,
                 AggregateStatus.AGGREGATE_STATUS_DONE);
 
         setSuccessor(FormaliteStatus.FORMALITE_NEW, FormaliteStatus.FORMALITE_IN_PROGRESS);
-        setSuccessor(FormaliteStatus.FORMALITE_IN_PROGRESS, FormaliteStatus.FORMALITE_SENT);
-        setSuccessor(FormaliteStatus.FORMALITE_SENT, FormaliteStatus.FORMALITE_VALIDATE);
-        setSuccessor(FormaliteStatus.FORMALITE_VALIDATE, FormaliteStatus.FORMALITE_DONE);
+        setSuccessor(FormaliteStatus.FORMALITE_IN_PROGRESS,
+                FormaliteStatus.FORMALITE_WAITING_DOCUMENT);
+        setSuccessor(FormaliteStatus.FORMALITE_IN_PROGRESS,
+                FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY);
+        setSuccessor(FormaliteStatus.FORMALITE_IN_PROGRESS, FormaliteStatus.FORMALITE_DONE);
+        setSuccessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
+                FormaliteStatus.FORMALITE_DONE);
+        setSuccessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
+                FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY);
+        setSuccessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY,
+                FormaliteStatus.FORMALITE_DONE);
 
-        setSuccessor(FormaliteStatus.FORMALITE_IN_PROGRESS, FormaliteStatus.FORMALITE_WAITING_DOCUMENT);
-        setSuccessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT, FormaliteStatus.FORMALITE_SENT);
-        setSuccessor(FormaliteStatus.FORMALITE_VALIDATE, FormaliteStatus.FORMALITE_WAITING_DOCUMENT_GREFFE);
-        setSuccessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_GREFFE, FormaliteStatus.FORMALITE_DONE);
-
-        setPredecessor(FormaliteStatus.FORMALITE_DONE, FormaliteStatus.FORMALITE_VALIDATE);
-        setPredecessor(FormaliteStatus.FORMALITE_REFUSED, FormaliteStatus.FORMALITE_IN_PROGRESS);
-        setPredecessor(FormaliteStatus.FORMALITE_IN_PROGRESS, FormaliteStatus.FORMALITE_NEW);
-        setPredecessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT, FormaliteStatus.FORMALITE_IN_PROGRESS);
-        setPredecessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_GREFFE, FormaliteStatus.FORMALITE_VALIDATE);
+        setPredecessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY,
+                FormaliteStatus.FORMALITE_IN_PROGRESS);
+        setPredecessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
+                FormaliteStatus.FORMALITE_IN_PROGRESS);
+        setPredecessor(FormaliteStatus.FORMALITE_DONE,
+                FormaliteStatus.FORMALITE_IN_PROGRESS);
 
     }
 
@@ -113,7 +104,7 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
         FormaliteStatus sourceStatus = getFormaliteStatusByCode(code);
         FormaliteStatus targetStatus = getFormaliteStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new OsirisException(null, "Status code " + code + " or " + code2 + " do not exist");
+            throw new OsirisException(null, "Simple provision " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getSuccessors() == null)
             sourceStatus.setSuccessors(new ArrayList<FormaliteStatus>());
@@ -130,7 +121,7 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
         FormaliteStatus sourceStatus = getFormaliteStatusByCode(code);
         FormaliteStatus targetStatus = getFormaliteStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new OsirisException(null, "Formalite status code " + code + " or " + code2 + " do not exist");
+            throw new OsirisException(null, "Simple provision status code " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getPredecessors() == null)
             sourceStatus.setPredecessors(new ArrayList<FormaliteStatus>());

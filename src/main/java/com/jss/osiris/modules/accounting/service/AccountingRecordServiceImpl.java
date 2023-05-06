@@ -8,11 +8,16 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +27,9 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
@@ -33,10 +40,15 @@ import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
+import com.jss.osiris.modules.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.accounting.repository.AccountingRecordRepository;
+import com.jss.osiris.modules.invoicing.model.Appoint;
 import com.jss.osiris.modules.invoicing.model.Deposit;
+import com.jss.osiris.modules.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
@@ -50,19 +62,33 @@ import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
+import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Debour;
+import com.jss.osiris.modules.quotation.model.OrderingSearch;
+import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayTransaction;
 import com.jss.osiris.modules.quotation.service.CentralPayDelegateService;
+import com.jss.osiris.modules.quotation.service.ConfrereService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
 @Service
 public class AccountingRecordServiceImpl implements AccountingRecordService {
+
+  @Value("${payment.cb.entry.point}")
+  private String paymentCbEntryPoint;
 
   @Autowired
   AccountingRecordRepository accountingRecordRepository;
@@ -101,6 +127,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   TiersService tiersService;
 
   @Autowired
+  ResponsableService responsableService;
+
+  @Autowired
+  ConfrereService confrereService;
+
+  @Autowired
   DocumentService documentService;
 
   @Autowired
@@ -113,6 +145,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   MailHelper mailHelper;
 
   @Autowired
+  MailComputeHelper mailComputeHelper;
+
+  @Autowired
   ActiveDirectoryHelper activeDirectoryHelper;
 
   @Autowired
@@ -120,6 +155,25 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   CentralPayDelegateService centralPayDelegateService;
+
+  @Autowired
+  CustomerOrderStatusService customerOrderStatusService;
+
+  @Autowired
+  CustomerOrderService customerOrderService;
+
+  @Override
+  public AccountingRecord getAccountingRecord(Integer id) {
+    Optional<AccountingRecord> accountingRecord = accountingRecordRepository.findById(id);
+    if (accountingRecord.isPresent())
+      return accountingRecord.get();
+    return null;
+  }
+
+  @Override
+  public List<AccountingRecord> getAccountingRecordForDebour(Debour debour) {
+    return accountingRecordRepository.findByDebour(debour);
+  }
 
   public AccountingRecord addOrUpdateAccountingRecord(
       AccountingRecord accountingRecord) {
@@ -164,15 +218,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForInvoice(invoice);
 
-    Float balance = 0f;
-    balance += invoiceHelper.getPriceTotal(invoice);
-
     // One write on customer account for all invoice
     generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), invoice.getManualAccountingDocumentNumber(),
         invoice.getManualAccountingDocumentDate(),
         labelPrefix, null,
-        balance,
-        accountingAccountCustomer, null, invoice, null, salesJournal, null, null, null, null);
+        invoiceHelper.getPriceTotal(invoice),
+        accountingAccountCustomer, null, invoice, null, salesJournal, null, null, null, null, null);
 
     // For each invoice item, one write on product and VAT account for each invoice
     // item
@@ -184,44 +235,77 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         throw new OsirisException(null,
             "No billing type defined in billing item n°" + invoiceItem.getBillingItem().getId());
 
-      if (invoiceItem.getPreTaxPrice() == null)
-        invoiceItem.setPreTaxPrice(0f);
+      if (!invoiceItem.getBillingItem().getBillingType().getIsDebour()
+          && !invoiceItem.getBillingItem().getBillingType().getIsFee()) {
+        if (invoiceItem.getPreTaxPrice() == null)
+          invoiceItem.setPreTaxPrice(0f);
 
-      AccountingAccount producAccountingAccount = invoiceItem.getBillingItem().getBillingType()
-          .getAccountingAccountProduct();
+        AccountingAccount producAccountingAccount = invoiceItem.getBillingItem().getBillingType()
+            .getAccountingAccountProduct();
 
-      if (producAccountingAccount == null)
-        throw new OsirisException(null, "No product accounting account defined in billing type n°"
-            + invoiceItem.getBillingItem().getBillingType().getId());
+        if (producAccountingAccount == null)
+          throw new OsirisException(null, "No product accounting account defined in billing type n°"
+              + invoiceItem.getBillingItem().getBillingType().getId());
 
-      generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), invoice.getManualAccountingDocumentNumber(),
-          invoice.getManualAccountingDocumentDate(),
-          labelPrefix + " - produit "
-              + invoiceItem.getBillingItem().getBillingType().getLabel(),
-          invoiceItem.getPreTaxPrice()
-              - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f),
-          null, producAccountingAccount,
-          invoiceItem, invoice, null, salesJournal, null, null, null, null);
-
-      balance -= invoiceItem.getPreTaxPrice()
-          - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f);
-
-      if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null && invoiceItem.getVatPrice() > 0) {
         generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), invoice.getManualAccountingDocumentNumber(),
             invoice.getManualAccountingDocumentDate(),
-            labelPrefix + " - TVA pour le produit "
+            labelPrefix + " - produit "
                 + invoiceItem.getBillingItem().getBillingType().getLabel(),
-            invoiceItem.getVatPrice(), null, invoiceItem.getVat().getAccountingAccount(),
-            invoiceItem, invoice, null, salesJournal, null, null, null, null);
+            invoiceItem.getPreTaxPrice()
+                - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f),
+            null, producAccountingAccount,
+            invoiceItem, invoice, null, salesJournal, null, null, null, null, null);
 
-        balance -= invoiceItem.getVatPrice();
+        if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null && invoiceItem.getVatPrice() > 0) {
+          generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), invoice.getManualAccountingDocumentNumber(),
+              invoice.getManualAccountingDocumentDate(),
+              labelPrefix + " - TVA pour le produit "
+                  + invoiceItem.getBillingItem().getBillingType().getLabel(),
+              invoiceItem.getVatPrice(), null, invoiceItem.getVat().getAccountingAccount(),
+              invoiceItem, invoice, null, salesJournal, null, null, null, null, null);
+
+        }
+      } else {
+        if (invoice.getCustomerOrder() != null && invoice.getCustomerOrder().getAssoAffaireOrders() != null) {
+          for (AssoAffaireOrder asso : invoice.getCustomerOrder().getAssoAffaireOrders()) {
+            if (asso.getProvisions() != null) {
+              for (Provision provision : asso.getProvisions()) {
+                if (provision.getDebours() != null && provision.getDebours().size() > 0) {
+                  for (Debour debour : provision.getDebours()) {
+
+                    // Compute debour prices
+                    Float total = 0f;
+                    Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
+                        : debour.getDebourAmount();
+                    if (debour.getBillingType().getIsNonTaxable())
+                      total += debourAmount;
+                    else
+                      total += debourAmount / ((100 + constantService.getVatDeductible().getRate()) / 100f);
+                    Float vatAmount = debourAmount - total;
+
+                    generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(),
+                        invoice.getManualAccountingDocumentNumber(), invoice.getManualAccountingDocumentDate(),
+                        labelPrefix + " - produit " + debour.getBillingType().getLabel(), total,
+                        null, debour.getBillingType().getAccountingAccountProduct(), invoiceItem,
+                        invoice, null, salesJournal, null, null, null, null, null);
+
+                    if (vatAmount > 0) {
+                      generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(),
+                          invoice.getManualAccountingDocumentNumber(), invoice.getManualAccountingDocumentDate(),
+                          labelPrefix + " - TVA pour le produit "
+                              + invoiceItem.getBillingItem().getBillingType().getLabel(),
+                          vatAmount, null, constantService.getVatDeductible().getAccountingAccount(),
+                          invoiceItem, invoice, null, salesJournal, null, null, null, null, null);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
 
-    // Check balance ok
-    if (Math.round(balance * 100f) / 100f != 0) {
-      throw new OsirisException(null, "Accounting records  are not balanced for invoice " + invoice.getId());
-    }
   }
 
   @Override
@@ -243,7 +327,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), invoice.getManualAccountingDocumentNumber(),
         invoice.getManualAccountingDocumentDate(),
         labelPrefix, balance, null, accountingAccountProvider, null, invoice, null, pushasingJournal, null, null, null,
-        null);
+        null, null);
 
     // For each invoice item, one write on product and VAT account for each invoice
     // item
@@ -270,7 +354,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           invoiceItem.getPreTaxPrice()
               - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f),
           chargeAccountingAccount,
-          invoiceItem, invoice, null, pushasingJournal, null, null, null, null);
+          invoiceItem, invoice, null, pushasingJournal, null, null, null, null, null);
 
       balance -= invoiceItem.getPreTaxPrice()
           - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f);
@@ -286,7 +370,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
               labelPrefix + " - TVA pour la charge "
                   + invoiceItem.getBillingItem().getBillingType().getLabel(),
               null, invoiceItem.getVatPrice(), invoiceItem.getVat().getAccountingAccount(),
-              invoiceItem, invoice, null, pushasingJournal, null, null, null, null);
+              invoiceItem, invoice, null, pushasingJournal, null, null, null, null, null);
 
         balance -= invoiceItem.getVatPrice();
       }
@@ -333,10 +417,46 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     // One write on customer account to equilibrate invoice
     generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
         "Réglement de la facture n°" + invoice.getId(), payment.getPaymentAmount(), null,
-        accountingAccountCustomer, null, invoice, null, journal, null, null, null, null);
+        accountingAccountCustomer, null, invoice, null, journal, null, null, null, null, null);
 
     // Trigger lettrage
     checkInvoiceForLettrage(invoice);
+  }
+
+  @Override
+  public void generateAccountingRecordsForProviderInvoiceRefund(Invoice invoice, Payment payment)
+      throws OsirisException {
+
+    if (invoice == null)
+      throw new OsirisException(null, "No invoice provided");
+
+    if (payment == null)
+      throw new OsirisException(null, "No payments nor deposits provided with invoice " + invoice.getId());
+
+    AccountingJournal journal = constantService.getAccountingJournalBank();
+
+    AccountingAccount accountingAccountProvider = getProviderAccountingAccountForInvoice(invoice);
+
+    Integer operationId = 0;
+
+    if (payment != null) {
+      Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
+      if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0) {
+        for (AccountingRecord accountingRecord : payment.getAccountingRecords())
+          // Counter part waiting account record
+          if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
+            if (accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                .equals(constantService.getPrincipalAccountingAccountWaiting().getId()))
+              letterWaitingRecords(accountingRecord,
+                  generateCounterPart(accountingRecord, operationIdCounterPart, journal));
+      }
+      operationId = invoice.getId() + payment.getId();
+    }
+
+    // One write on customer account to equilibrate invoice
+    generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        "Remboursement de la facture n°" + invoice.getId(), payment.getPaymentAmount(), null,
+        accountingAccountProvider, null, invoice, null, journal, null, null, null, null, null);
   }
 
   @Override
@@ -374,7 +494,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     // One write on customer account to equilibrate invoice
     generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
         "Réglement de la facture n°" + invoice.getId(), null, amountToUse,
-        accountingAccountProvider, null, invoice, null, bankJournal, null, null, null, null);
+        accountingAccountProvider, null, invoice, null, bankJournal, null, null, null, null, null);
 
     // Trigger lettrage
     checkInvoiceForLettrage(invoice);
@@ -397,7 +517,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       operationId = overrideAccountingOperationId;
     generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
         "Acompte pour la facture n°" + invoice.getId(), deposit.getDepositAmount(), null, customerAccountingAccount,
-        null, invoice, null, journal, null, deposit, null, null);
+        null, invoice, null, journal, null, deposit, null, null, null);
     checkInvoiceForLettrage(invoice);
   }
 
@@ -424,42 +544,60 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
         "Acompte pour la commande n°" + customerOrder.getId(), deposit.getDepositAmount(), null,
         depositAccountingAccount,
-        null, null, customerOrder, journal, null, deposit, null, null);
+        null, null, customerOrder, journal, null, deposit, null, null, null);
   }
 
   @Override
-  public void generateAppointForPayment(Payment payment, float remainingMoney, ITiers customerOrder)
+  public void generateAppointForPayment(Payment payment, float remainingMoney, ITiers customerOrder, Appoint appoint,
+      Invoice invoice)
       throws OsirisException {
     AccountingJournal bankJournal = constantService.getAccountingJournalBank();
 
     if (remainingMoney > 0) {
       generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
           "Appoint pour le paiement n°" + payment.getId(),
-          remainingMoney, null, accountingAccountService.getProfitAccountingAccount(), null, null, null,
-          bankJournal, payment, null, null, null);
+          remainingMoney, null, accountingAccountService.getProfitAccountingAccount(), null, invoice, null,
+          bankJournal, payment, null, null, null, appoint);
+      generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
+          "Appoint pour le paiement n°" + payment.getId(),
+          null, remainingMoney, customerOrder.getAccountingAccountCustomer(), null, invoice, null,
+          bankJournal, payment, null, null, null, appoint);
     } else if (remainingMoney < 0) {
       generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
           "Appoint pour le paiement n°" + payment.getId(),
-          null, remainingMoney, accountingAccountService.getLostAccountingAccount(), null, null, null,
-          bankJournal, payment, null, null, null);
+          null, Math.abs(remainingMoney), accountingAccountService.getLostAccountingAccount(), null, invoice, null,
+          bankJournal, payment, null, null, null, appoint);
+      generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
+          "Appoint pour le paiement n°" + payment.getId(),
+          Math.abs(remainingMoney), null, customerOrder.getAccountingAccountCustomer(), null, invoice, null,
+          bankJournal, payment, null, null, null, appoint);
     }
   }
 
   @Override
-  public void generateAppointForDeposit(Deposit deposit, float remainingMoney, ITiers customerOrder)
+  public void generateAppointForDeposit(Deposit deposit, float remainingMoney, ITiers customerOrder, Appoint appoint,
+      Invoice invoice)
       throws OsirisException {
     AccountingJournal miscellaneousJournal = constantService.getAccountingJournalMiscellaneousOperations();
 
     if (remainingMoney > 0) {
       generateNewAccountingRecord(LocalDateTime.now(), deposit.getId(), null, null,
           "Appoint pour l'acompte n°" + deposit.getId(),
-          remainingMoney, null, accountingAccountService.getProfitAccountingAccount(), null, null, null,
-          miscellaneousJournal, null, deposit, null, null);
+          remainingMoney, null, accountingAccountService.getProfitAccountingAccount(), null, invoice, null,
+          miscellaneousJournal, null, deposit, null, null, appoint);
+      generateNewAccountingRecord(LocalDateTime.now(), deposit.getId(), null, null,
+          "Appoint pour l'acompte n°" + deposit.getId(),
+          null, remainingMoney, customerOrder.getAccountingAccountCustomer(), null, invoice, null,
+          miscellaneousJournal, null, deposit, null, null, appoint);
     } else if (remainingMoney < 0) {
       generateNewAccountingRecord(LocalDateTime.now(), deposit.getId(), null, null,
           "Appoint pour l'acompte n°" + deposit.getId(),
-          null, remainingMoney, accountingAccountService.getLostAccountingAccount(), null, null, null,
-          miscellaneousJournal, null, deposit, null, null);
+          null, Math.abs(remainingMoney), accountingAccountService.getLostAccountingAccount(), null, invoice, null,
+          miscellaneousJournal, null, deposit, null, null, appoint);
+      generateNewAccountingRecord(LocalDateTime.now(), deposit.getId(), null, null,
+          "Appoint pour l'acompte n°" + deposit.getId(),
+          Math.abs(remainingMoney), null, customerOrder.getAccountingAccountCustomer(), null, invoice, null,
+          miscellaneousJournal, null, deposit, null, null, appoint);
     }
   }
 
@@ -501,7 +639,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     generateNewAccountingRecord(payment.getPaymentDate(), payment.getId(), null, null,
         label, null, payment.getPaymentAmount(),
         accountingAccountBankCentralPay, null,
-        invoice, customerOrder, accountingJournalBank, payment, deposit, null, null);
+        invoice, customerOrder, accountingJournalBank, payment, deposit, null, null, null);
 
     CentralPayTransaction transaction = centralPayDelegateService.getTransaction(centralPayPaymentRequest);
 
@@ -512,17 +650,17 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     generateNewAccountingRecord(payment.getPaymentDate(), payment.getId(), null, null,
         label, commission, null,
         accountingAccountBankCentralPay, null, invoice, customerOrder, accountingJournalPurshases, payment, deposit,
-        null, null);
+        null, null, null);
 
     generateNewAccountingRecord(payment.getPaymentDate(), payment.getId(), null, null,
         label, null, preTaxPrice,
         billingTypeCentralPayCommission.getAccountingAccountCharge(), null, invoice, customerOrder,
-        accountingJournalPurshases, payment, deposit, null, null);
+        accountingJournalPurshases, payment, deposit, null, null, null);
 
     generateNewAccountingRecord(payment.getPaymentDate(), payment.getId(), null, null,
         label, null, taxPrice,
         billingTypeCentralPayCommission.getVat().getAccountingAccount(), null, invoice, customerOrder,
-        accountingJournalPurshases, payment, deposit, null, null);
+        accountingJournalPurshases, payment, deposit, null, null, null);
 
   }
 
@@ -532,7 +670,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     AccountingJournal bankJournal = constantService.getAccountingJournalBank();
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
         "Mise en attente du règlement n°" + payment.getId(), payment.getPaymentAmount(), null, waitingAccountingAccount,
-        null, null, null, bankJournal, payment, null, null, null);
+        null, null, null, bankJournal, payment, null, null, null, null);
   }
 
   @Override
@@ -541,7 +679,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     AccountingJournal bankJournal = constantService.getAccountingJournalBank();
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
         "Mise en attente du règlement n°" + payment.getId(), null, payment.getPaymentAmount(), waitingAccountingAccount,
-        null, null, null, bankJournal, payment, null, null, null);
+        null, null, null, bankJournal, payment, null, null, null, null);
   }
 
   @Override
@@ -555,10 +693,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     }
     generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null, "Remboursement n°" + refund.getId(),
         refund.getRefundAmount(), null, constantService.getAccountingAccountBankJss(), null, null, null,
-        bankJournal, null, null, null, refund);
+        bankJournal, null, null, null, refund, null);
     generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null, "Remboursement n°" + refund.getId(),
         null, refund.getRefundAmount(), customerAccountingAccount, null, null, null,
-        bankJournal, null, null, null, refund);
+        bankJournal, null, null, null, refund, null);
   }
 
   @Override
@@ -574,20 +712,22 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     }
     generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null, "Remboursement n°" + refund.getId(),
         refund.getRefundAmount(), null, customerAccountingAccount, null, null, null,
-        bankJournal, null, null, null, refund);
+        bankJournal, null, null, null, refund, null);
   }
 
   @Override
-  public void generateBankAccountingRecordsForInboundPayment(Payment payment) throws OsirisException {
+  public void generateBankAccountingRecordsForInboundPayment(Payment payment,
+      AccountingAccount targetBankAccountingAccount) throws OsirisException {
     AccountingJournal bankJournal = payment.getPaymentType().getId()
         .equals(constantService.getPaymentTypeEspeces().getId())
             ? constantService.getAccountingJournalCash()
             : constantService.getAccountingJournalBank();
 
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
-        "Paiement n°" + payment.getId(), null, payment.getPaymentAmount(),
-        constantService.getAccountingAccountBankJss(),
-        null, null, null, bankJournal, payment, null, null, null);
+        "Paiement n°" + payment.getId() + " - " + payment.getLabel(), null, payment.getPaymentAmount(),
+        targetBankAccountingAccount != null ? targetBankAccountingAccount
+            : constantService.getAccountingAccountBankJss(),
+        null, null, null, bankJournal, payment, null, null, null, null);
 
   }
 
@@ -599,9 +739,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             : constantService.getAccountingJournalBank();
 
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
-        "Paiement n°" + payment.getId(), payment.getPaymentAmount(), null,
+        "Paiement n°" + payment.getId() + " - " + payment.getLabel(), payment.getPaymentAmount(), null,
         constantService.getAccountingAccountBankJss(),
-        null, null, null, bankJournal, payment, null, null, null);
+        null, null, null, bankJournal, payment, null, null, null, null);
   }
 
   @Override
@@ -609,9 +749,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     AccountingJournal cashJournal = constantService.getAccountingJournalCash();
 
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
-        "Paiement n°" + payment.getId(), null, payment.getPaymentAmount(),
+        "Paiement n°" + payment.getId() + " - " + payment.getLabel(), null, payment.getPaymentAmount(),
         constantService.getAccountingAccountCaisse(),
-        null, null, null, cashJournal, payment, null, null, null);
+        null, null, null, cashJournal, payment, null, null, null, null);
   }
 
   @Override
@@ -641,18 +781,18 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
         "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
         constantService.getAccountingAccountBankJss(),
-        null, null, customerOrder, bankJournal, null, null, debour, null);
+        null, null, customerOrder, bankJournal, null, null, debour, null, null);
 
     if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
           "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
           debour.getBillingType().getAccountingAccountCharge(),
-          null, null, customerOrder, bankJournal, null, null, debour, null);
+          null, null, customerOrder, bankJournal, null, null, debour, null, null);
     else
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
           "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
           debour.getCompetentAuthority().getAccountingAccountProvider(),
-          null, null, customerOrder, bankJournal, null, null, debour, null);
+          null, null, customerOrder, bankJournal, null, null, debour, null, null);
   }
 
   private void generateBankAccountingRecordsForOutboundDebourCheckOrBankTransfertPayment(Debour debour,
@@ -666,18 +806,18 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
         "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
         constantService.getAccountingAccountBankJss(),
-        null, null, customerOrder, bankJournal, null, null, debour, null);
+        null, null, customerOrder, bankJournal, null, null, debour, null, null);
 
     if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
           "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
           debour.getBillingType().getAccountingAccountCharge(),
-          null, null, customerOrder, bankJournal, null, null, debour, null);
+          null, null, customerOrder, bankJournal, null, null, debour, null, null);
     else
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
           "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
           debour.getCompetentAuthority().getAccountingAccountProvider(),
-          null, null, customerOrder, bankJournal, null, null, debour, null);
+          null, null, customerOrder, bankJournal, null, null, debour, null, null);
   }
 
   private void generateBankAccountingRecordsForOutboundDebourCashPayment(Debour debour,
@@ -691,18 +831,18 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
         "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
         constantService.getAccountingAccountCaisse(),
-        null, null, customerOrder, cashJournal, null, null, debour, null);
+        null, null, customerOrder, cashJournal, null, null, debour, null, null);
 
     if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
           "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
           debour.getBillingType().getAccountingAccountCharge(),
-          null, null, customerOrder, cashJournal, null, null, debour, null);
+          null, null, customerOrder, cashJournal, null, null, debour, null, null);
     else
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
           "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
           debour.getCompetentAuthority().getAccountingAccountProvider(),
-          null, null, customerOrder, cashJournal, null, null, debour, null);
+          null, null, customerOrder, cashJournal, null, null, debour, null, null);
   }
 
   private void generateBankAccountingRecordsForOutboundDebourAccountPayment(Debour debour,
@@ -713,21 +853,30 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       throw new OsirisException(
           null, "No accounting account for charge for billing type n°" + debour.getBillingType().getId());
 
+    AccountingAccount accountingAccountProvider = debour.getCompetentAuthority().getAccountingAccountProvider();
+    AccountingAccount accountingAccountDepositProvider = debour.getCompetentAuthority()
+        .getAccountingAccountDepositProvider();
+
+    // If debour from INPI, accounting account of INPI is used
+    if (debour.getCartRate() != null) {
+      accountingAccountProvider = constantService.getCompetentAuthorityInpi().getAccountingAccountProvider();
+      accountingAccountDepositProvider = constantService.getCompetentAuthorityInpi()
+          .getAccountingAccountDepositProvider();
+    }
+
     generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
-        "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
-        debour.getCompetentAuthority().getAccountingAccountProvider(),
-        null, null, customerOrder, bankJournal, null, null, debour, null);
+        "Debour n°" + debour.getId(), null, debour.getDebourAmount(), accountingAccountProvider,
+        null, null, customerOrder, bankJournal, null, null, debour, null, null);
 
     if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
           "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
           debour.getBillingType().getAccountingAccountCharge(),
-          null, null, customerOrder, bankJournal, null, null, debour, null);
+          null, null, customerOrder, bankJournal, null, null, debour, null, null);
     else
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
-          "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
-          debour.getCompetentAuthority().getAccountingAccountDepositProvider(),
-          null, null, customerOrder, bankJournal, null, null, debour, null);
+          "Debour n°" + debour.getId(), debour.getDebourAmount(), null, accountingAccountDepositProvider,
+          null, null, customerOrder, bankJournal, null, null, debour, null, null);
   }
 
   @Override
@@ -751,30 +900,28 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         if (accountingRecord.getCreditAmount() != null)
           balance -= accountingRecord.getCreditAmount();
       }
-    }
 
-    if (Math.round(balance * 100f) / 100f == 0) {
+      if (Math.round(Math.abs(balance) * 100f) / 100f <= 0.01) {
 
-      Integer maxLetteringNumber = accountingRecordRepository
-          .findMaxLetteringNumberForMinLetteringDateTime(LocalDateTime.now().with(ChronoField.DAY_OF_YEAR, 1)
-              .with(ChronoField.HOUR_OF_DAY, 0)
-              .with(ChronoField.MINUTE_OF_DAY, 0).with(ChronoField.SECOND_OF_DAY, 0));
+        Integer maxLetteringNumber = accountingRecordRepository
+            .findMaxLetteringNumberForMinLetteringDateTime(LocalDateTime.now().with(ChronoField.DAY_OF_YEAR, 1)
+                .with(ChronoField.HOUR_OF_DAY, 0)
+                .with(ChronoField.MINUTE_OF_DAY, 0).with(ChronoField.SECOND_OF_DAY, 0));
 
-      if (maxLetteringNumber == null)
-        maxLetteringNumber = 0;
-      maxLetteringNumber++;
+        if (maxLetteringNumber == null)
+          maxLetteringNumber = 0;
+        maxLetteringNumber++;
 
-      if (accountingRecords != null)
         for (AccountingRecord accountingRecord : accountingRecords) {
           accountingRecord.setLetteringDateTime(LocalDateTime.now());
           accountingRecord.setLetteringNumber(maxLetteringNumber);
           this.addOrUpdateAccountingRecord(accountingRecord);
         }
 
-      invoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
-      invoiceService.addOrUpdateInvoice(invoice);
+        invoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
+        invoiceService.addOrUpdateInvoice(invoice);
+      }
     }
-
   }
 
   @Override
@@ -794,6 +941,34 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     counterPart.setLetteringNumber(maxLetteringNumber);
     this.addOrUpdateAccountingRecord(record);
     this.addOrUpdateAccountingRecord(counterPart);
+  }
+
+  @Override
+  public void letterCreditNoteAndInvoice(Invoice invoice, Invoice creditNote) throws OsirisException {
+    Integer maxLetteringNumber = accountingRecordRepository
+        .findMaxLetteringNumberForMinLetteringDateTime(LocalDateTime.now().with(ChronoField.DAY_OF_YEAR, 1)
+            .with(ChronoField.HOUR_OF_DAY, 0)
+            .with(ChronoField.MINUTE_OF_DAY, 0).with(ChronoField.SECOND_OF_DAY, 0));
+
+    if (maxLetteringNumber == null)
+      maxLetteringNumber = 0;
+    maxLetteringNumber++;
+
+    for (AccountingRecord record : invoice.getAccountingRecords()) {
+      if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
+          .equals(constantService.getPrincipalAccountingAccountCustomer().getId()) && record.getDebitAmount() != null
+          || record.getAccountingAccount().getPrincipalAccountingAccount().getId()
+              .equals(constantService.getPrincipalAccountingAccountProvider().getId())
+              && record.getCreditAmount() != null)
+        if (record.getIsCounterPart() == false) {
+          record.setLetteringDateTime(LocalDateTime.now());
+          record.setLetteringNumber(maxLetteringNumber);
+          record.getContrePasse().setLetteringDateTime(LocalDateTime.now());
+          record.getContrePasse().setLetteringNumber(maxLetteringNumber);
+          this.addOrUpdateAccountingRecord(record);
+          this.addOrUpdateAccountingRecord(record.getContrePasse());
+        }
+    }
   }
 
   @Override
@@ -877,7 +1052,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       String label, Float creditAmount, Float debitAmount,
       AccountingAccount accountingAccount, InvoiceItem invoiceItem, Invoice invoice, CustomerOrder customerOrder,
       AccountingJournal journal,
-      Payment payment, Deposit deposit, Debour debour, Refund refund) {
+      Payment payment, Deposit deposit, Debour debour, Refund refund, Appoint appoint) {
     AccountingRecord accountingRecord = new AccountingRecord();
     accountingRecord.setOperationDateTime(operationDatetime);
     accountingRecord.setTemporaryOperationId(operationId);
@@ -898,6 +1073,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     accountingRecord.setDebour(debour);
     accountingRecord.setPayment(payment);
     accountingRecord.setRefund(refund);
+    accountingRecord.setAppoint(appoint);
     addOrUpdateAccountingRecord(accountingRecord);
     return accountingRecord;
   }
@@ -1040,11 +1216,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public List<AccountingBalanceViewTitle> getBilan(LocalDateTime startDate, LocalDateTime endDate) {
     List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate, endDate,
+        .getAccountingRecordAggregateByAccountingNumber(startDate.toLocalDate(), endDate.toLocalDate(),
             activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     List<AccountingBalanceBilan> accountingRecordsN1 = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1), endDate.minusYears(1),
+        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1).toLocalDate(),
+            endDate.minusYears(1).toLocalDate(),
             activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     ArrayList<AccountingBalanceViewTitle> outBilan = new ArrayList<AccountingBalanceViewTitle>();
@@ -1058,11 +1235,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public List<AccountingBalanceViewTitle> getProfitAndLost(LocalDateTime startDate, LocalDateTime endDate) {
     List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate, endDate,
+        .getAccountingRecordAggregateByAccountingNumber(startDate.toLocalDate(), endDate.toLocalDate(),
             activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     List<AccountingBalanceBilan> accountingRecordsN1 = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1), endDate.minusYears(1),
+        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1).toLocalDate(),
+            endDate.minusYears(1).toLocalDate(),
             activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     return accountingBalanceHelper.getProfitAndLost(accountingRecords, accountingRecordsN1);
@@ -1094,11 +1272,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public File getBilanExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
     List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate, endDate,
+        .getAccountingRecordAggregateByAccountingNumber(startDate.toLocalDate(), endDate.toLocalDate(),
             activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     List<AccountingBalanceBilan> accountingRecordsN1 = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1), endDate.minusYears(1),
+        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1).toLocalDate(),
+            endDate.minusYears(1).toLocalDate(),
             activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     ArrayList<AccountingBalanceViewTitle> outBilanActif = new ArrayList<AccountingBalanceViewTitle>();
@@ -1243,110 +1422,448 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return addOrUpdateAccountingRecord(accountingRecord);
   }
 
-  @Transactional
+  @Override
+  @Transactional(rollbackFor = Exception.class)
   public void sendBillingClosureReceipt()
       throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-    List<Tiers> tiers = tiersService.findAllTiersTypeClient();
-    if (tiers != null)
+    List<Tiers> tiers = tiersService.findAllTiersForBillingClosureReceiptSend();
+    if (tiers != null && tiers.size() > 0)
       for (Tiers tier : tiers) {
-        Document billingClosureDocument = documentService.getBillingClosureDocument(tier.getDocuments());
-        if (billingClosureDocument != null)
-          if (billingClosureDocument.getBillingClosureRecipientType() != null
-              && (billingClosureDocument.getBillingClosureRecipientType().getId()
-                  .equals(constantService.getBillingClosureRecipientTypeClient().getId())
-                  || billingClosureDocument.getBillingClosureRecipientType().getId()
-                      .equals(constantService.getBillingClosureRecipientTypeOther().getId()))) {
-            AccountingRecordSearch search = new AccountingRecordSearch();
-            search.setTiersId(tier.getId());
-            search.setHideLettered(true);
-            search.setStartDate(LocalDateTime.now().minusYears(90));
-            search.setEndDate(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
-            List<AccountingRecordSearchResult> accountingRecords = searchAccountingRecords(search);
-
-            if (accountingRecords != null && accountingRecords.size() > 0) {
-              File billingClosureReceipt = accountingExportHelper.generateBillingClosure(accountingRecords,
-                  tier.getDenomination() != null ? tier.getDenomination()
-                      : (tier.getFirstname() + " " + tier.getLastname()),
-                  billingClosureDocument.getBillingClosureType().getId()
-                      .equals(constantService.getBillingClosureTypeAffaire().getId()));
-
-              List<Attachment> attachments = new ArrayList<Attachment>();
-              try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-                List<Attachment> attachmentsList = attachmentService.addAttachment(
-                    new FileInputStream(billingClosureReceipt), tier.getId(),
-                    Tiers.class.getSimpleName(), constantService.getAttachmentTypeBillingClosure(),
-                    "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".xlsx", false,
-                    "Relevé de compte du " + LocalDateTime.now().format(formatter));
-
-                for (Attachment attachment : attachmentsList)
-                  if (attachment.getUploadedFile().getFilename()
-                      .equals("Relevé de compte du " + LocalDateTime.now().format(formatter) + ".xlsx")) {
-                    attachments.add(attachment);
-                    break;
-                  }
-              } catch (FileNotFoundException e) {
-                throw new OsirisException(e, "Impossible to read excel of billing closure for tiers " + tier.getId());
-              }
-              try {
-                mailHelper.sendBillingClosureToCustomer(attachments, tier, false);
-              } catch (Exception e) {
-                globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
-              }
-            }
-
-          } else if (billingClosureDocument.getBillingClosureRecipientType() != null
-              && billingClosureDocument.getBillingClosureRecipientType().getId()
-                  .equals(constantService.getBillingClosureRecipientTypeResponsable().getId())) {
-            if (tier.getResponsables() != null && tier.getResponsables().size() > 0) {
-              for (Responsable responsable : tier.getResponsables()) {
-                AccountingRecordSearch search = new AccountingRecordSearch();
-                search.setResponsableId(responsable.getId());
-                search.setHideLettered(true);
-                search.setStartDate(LocalDateTime.now().minusYears(90));
-                search.setEndDate(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
-                List<AccountingRecordSearchResult> accountingRecords = searchAccountingRecords(search);
-
-                if (accountingRecords != null && accountingRecords.size() > 0) {
-                  File billingClosureReceipt = accountingExportHelper.generateBillingClosure(accountingRecords,
-                      responsable.getFirstname() + " " + responsable.getLastname(),
-                      billingClosureDocument.getBillingClosureType().getId()
-                          .equals(constantService.getBillingClosureTypeAffaire().getId()));
-
-                  List<Attachment> attachments = new ArrayList<Attachment>();
-                  try {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-                    List<Attachment> attachmentsList = attachmentService.addAttachment(
-                        new FileInputStream(billingClosureReceipt), responsable.getId(),
-                        Responsable.class.getSimpleName(), constantService.getAttachmentTypeBillingClosure(),
-                        "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".xlsx", false,
-                        "Relevé de compte du " + LocalDateTime.now().format(formatter));
-
-                    for (Attachment attachment : attachmentsList)
-                      if (attachment.getUploadedFile().getFilename()
-                          .equals("Relevé de compte du " + LocalDateTime.now().format(formatter) + ".xlsx")) {
-                        attachments.add(attachment);
-                        break;
-                      }
-                  } catch (FileNotFoundException e) {
-                    throw new OsirisException(e,
-                        "Impossible to read excel of billing closure for responsable " + responsable.getId());
-                  }
-
-                  try {
-                    mailHelper.sendBillingClosureToCustomer(attachments, responsable, false);
-                  } catch (Exception e) {
-                    globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
-                  }
-                }
-              }
-            }
-          }
+        getBillingClosureReceiptFile(tier.getId(), false);
       }
 
-    // TODO confrères
+    List<Confrere> confreres = confrereService.getConfreres();
+    if (confreres != null && confreres.size() > 0)
+      for (Confrere confrere : confreres) {
+        getBillingClosureReceiptFile(confrere.getId(), false);
+      }
   }
 
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public File getBillingClosureReceiptFile(Integer tiersId, boolean downloadFile)
+      throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+
+    ITiers tier = null;
+    tier = tiersService.getTiers(tiersId);
+
+    if (tier == null)
+      tier = responsableService.getResponsable(tiersId);
+
+    if (tier == null)
+      tier = confrereService.getConfrere(tiersId);
+
+    Document billingClosureDocument = null;
+    if (tier instanceof Responsable)
+      billingClosureDocument = documentService
+          .getBillingClosureDocument(((Responsable) tier).getTiers().getDocuments());
+    else
+      billingClosureDocument = documentService.getBillingClosureDocument(tier.getDocuments());
+
+    if (billingClosureDocument != null) {
+      boolean isOrderingByEventDate = billingClosureDocument.getBillingClosureType() != null && !billingClosureDocument
+          .getBillingClosureType().getId().equals(constantService.getBillingClosureTypeAffaire().getId());
+
+      if (downloadFile) {
+        ArrayList<ITiers> tiers = new ArrayList<ITiers>();
+        if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
+          tiers.addAll(((Tiers) tier).getResponsables());
+        else
+          tiers.add(tier);
+        List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers,
+            isOrderingByEventDate);
+        return mailHelper.getBillingClosureReceiptFile(tier, values);
+      }
+
+      // Send all to tiers
+      if (billingClosureDocument.getBillingClosureRecipientType() != null
+          && (billingClosureDocument.getBillingClosureRecipientType().getId()
+              .equals(constantService.getBillingClosureRecipientTypeClient().getId())
+              || billingClosureDocument.getBillingClosureRecipientType().getId()
+                  .equals(constantService.getBillingClosureRecipientTypeOther().getId()))) {
+
+        ArrayList<ITiers> tiers = new ArrayList<ITiers>();
+        if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
+          tiers.addAll(((Tiers) tier).getResponsables());
+        else
+          tiers.add(tier);
+
+        List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers, isOrderingByEventDate);
+        if (values.size() > 0)
+          sendBillingClosureReceiptFile(
+              mailHelper.getBillingClosureReceiptFile(tier, values),
+              tier);
+
+      } else if (billingClosureDocument.getBillingClosureRecipientType() != null
+          && billingClosureDocument.getBillingClosureRecipientType().getId()
+              .equals(constantService.getBillingClosureRecipientTypeResponsable().getId())) {
+        // Send to each responsable
+        if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
+          for (Responsable responsable : ((Tiers) tier).getResponsables()) {
+
+            ArrayList<ITiers> tiers = new ArrayList<ITiers>();
+            tiers.add(responsable);
+            List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers,
+                isOrderingByEventDate);
+            if (values.size() > 0)
+              sendBillingClosureReceiptFile(
+                  mailHelper.getBillingClosureReceiptFile(responsable, values),
+                  responsable);
+
+          }
+      }
+    }
+    return null;
+  }
+
+  private List<BillingClosureReceiptValue> generateBillingClosureValuesForITiers(ArrayList<ITiers> tiers,
+      boolean isOrderingByEventDate) throws OsirisException, OsirisClientMessageException {
+
+    // Find all elements
+    ArrayList<BillingClosureReceiptValue> values = new ArrayList<BillingClosureReceiptValue>();
+
+    // Find customer orders
+    OrderingSearch search = new OrderingSearch();
+    ArrayList<Tiers> tiersList = new ArrayList<Tiers>();
+    for (ITiers tiersIn : tiers) {
+      tiersList = new ArrayList<Tiers>();
+      boolean hadSomeValues = false;
+      if (tiersIn instanceof Tiers) {
+        Tiers t = (Tiers) tiersIn;
+        tiersList.add(t);
+        values.add(new BillingClosureReceiptValue(
+            t.getDenomination() != null ? t.getDenomination() : (t.getFirstname() + " " + t.getLastname())));
+      } else if (tiersIn instanceof Confrere) {
+        Tiers fakeTiers = new Tiers();
+        fakeTiers.setId(tiersIn.getId());
+        tiersList.add(fakeTiers);
+        values.add(new BillingClosureReceiptValue(((Confrere) tiersIn).getLabel()));
+      } else if (tiersIn instanceof Responsable) {
+        Tiers fakeTiers = new Tiers();
+        fakeTiers.setId(tiersIn.getId());
+        tiersList.add(fakeTiers);
+        Responsable t = (Responsable) tiersIn;
+        values.add(new BillingClosureReceiptValue((t.getFirstname() + " " + t.getLastname())));
+      }
+
+      search.setCustomerOrders(tiersList);
+
+      search.setCustomerOrderStatus(customerOrderStatusService.getCustomerOrderStatus().stream()
+          .filter(status -> !status.getCode().equals(CustomerOrderStatus.BILLED) &&
+              !status.getCode().equals(CustomerOrderStatus.ABANDONED))
+          .collect(Collectors.toList()));
+
+      List<OrderingSearchResult> customerOrdersList = customerOrderService.searchOrders(search);
+      ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
+
+      if (customerOrdersList != null && customerOrdersList.size() > 0) {
+        for (OrderingSearchResult customerOrder : customerOrdersList) {
+          if (customerOrder.getDepositTotalAmount() != null && customerOrder.getDepositTotalAmount() > 0) {
+            CustomerOrder completeCustomerOrder = customerOrderService
+                .getCustomerOrder(customerOrder.getCustomerOrderId());
+            customerOrders.add(completeCustomerOrder);
+          }
+        }
+      }
+
+      // Find invoices
+      InvoiceSearch invoiceSearch = new InvoiceSearch();
+      invoiceSearch.setCustomerOrders(tiersList);
+      invoiceSearch.setInvoiceStatus(Arrays.asList(constantService.getInvoiceStatusSend()));
+
+      List<InvoiceSearchResult> invoiceList = invoiceService.searchInvoices(invoiceSearch);
+      ArrayList<Invoice> invoices = new ArrayList<Invoice>();
+      if (invoiceList != null && invoiceList.size() > 0) {
+        for (InvoiceSearchResult invoice : invoiceList) {
+          Invoice completeInvoice = invoiceService.getInvoice(invoice.getInvoiceId());
+          invoices.add(completeInvoice);
+        }
+      }
+
+      if (isOrderingByEventDate) {
+        ArrayList<ICreatedDate> allInputs = new ArrayList<ICreatedDate>();
+        if (customerOrders != null && customerOrders.size() > 0) {
+          for (CustomerOrder customerOrder : customerOrders) {
+            allInputs.add(customerOrder);
+            if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
+              for (Deposit deposit : customerOrder.getDeposits())
+                allInputs.add(deposit);
+          }
+        }
+
+        if (invoices != null && invoices.size() > 0) {
+          for (Invoice invoice : invoices) {
+            allInputs.add(invoice);
+            if (invoice.getDeposits() != null && invoice.getDeposits().size() > 0)
+              for (Deposit deposit : invoice.getDeposits())
+                allInputs.add(deposit);
+            if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
+              for (Payment payment : invoice.getPayments())
+                allInputs.add(payment);
+          }
+        }
+
+        if (allInputs.size() > 0) {
+          hadSomeValues = true;
+          allInputs.sort(new Comparator<ICreatedDate>() {
+            @Override
+            public int compare(ICreatedDate o1, ICreatedDate o2) {
+              return o1.getCreatedDate().compareTo(o2.getCreatedDate());
+            }
+          });
+
+          for (ICreatedDate input : allInputs) {
+            if (input instanceof CustomerOrder)
+              values.add(getBillingClosureReceiptValueForCustomerOrder((CustomerOrder) input));
+            if (input instanceof Invoice)
+              values.add(getBillingClosureReceiptValueForInvoice((Invoice) input));
+            if (input instanceof Deposit) {
+              CustomerOrder customerOrder = null;
+              Deposit deposit = (Deposit) input;
+              if (deposit.getCustomerOrder() != null)
+                customerOrder = deposit.getCustomerOrder();
+              else if (deposit.getInvoice() != null)
+                customerOrder = deposit.getInvoice().getCustomerOrder();
+              values.add(getBillingClosureReceiptValueForDeposit(deposit, customerOrder, true));
+            }
+            if (input instanceof Payment)
+              values.add(getBillingClosureReceiptValueForPayment((Payment) input, true));
+          }
+        }
+      } else {
+        // Order by affaire
+        ArrayList<Object> allInputs = new ArrayList<Object>();
+        if (customerOrders != null && customerOrders.size() > 0)
+          allInputs.addAll(customerOrders);
+        if (invoices != null && invoices.size() > 0)
+          allInputs.addAll(invoices);
+
+        if (allInputs.size() > 0) {
+          hadSomeValues = true;
+          allInputs.sort(new Comparator<Object>() {
+
+            @Override
+            public int compare(Object o1, Object o2) {
+              Affaire affaire1 = null;
+              Affaire affaire2 = null;
+              if (o1 instanceof CustomerOrder)
+                affaire1 = ((CustomerOrder) o1).getAssoAffaireOrders().get(0).getAffaire();
+              if (o1 instanceof Invoice && ((Invoice) o1).getCustomerOrder() != null)
+                affaire1 = ((Invoice) o1).getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
+              if (o2 instanceof CustomerOrder)
+                affaire2 = ((CustomerOrder) o2).getAssoAffaireOrders().get(0).getAffaire();
+              if (o2 instanceof Invoice && ((Invoice) o2).getCustomerOrder() != null)
+                affaire2 = ((Invoice) o2).getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
+
+              if (affaire1 != null && affaire2 == null)
+                return 1;
+              if (affaire1 == null && affaire2 != null)
+                return -1;
+              if (affaire1 == null && affaire2 == null)
+                return 0;
+
+              if (affaire1 != null && affaire2 != null)
+                return (affaire1.getDenomination() != null ? affaire1.getDenomination()
+                    : (affaire1.getFirstname() + affaire1.getLastname()))
+                    .compareTo((affaire2.getDenomination() != null ? affaire2.getDenomination()
+                        : (affaire2.getFirstname() + affaire2.getLastname())));
+              return 0;
+            }
+          });
+        }
+
+        for (Object input : allInputs) {
+          if (input instanceof CustomerOrder) {
+            CustomerOrder customerOrder = (CustomerOrder) input;
+            BillingClosureReceiptValue valueCustomerOrder = getBillingClosureReceiptValueForCustomerOrder(
+                customerOrder);
+            values.add(valueCustomerOrder);
+            if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0) {
+              valueCustomerOrder.setDisplayBottomBorder(false);
+              for (Deposit deposit : customerOrder.getDeposits())
+                values.add(getBillingClosureReceiptValueForDeposit(deposit, customerOrder,
+                    customerOrder.getDeposits().indexOf(deposit) == customerOrder.getDeposits().size() - 1));
+            }
+          }
+          if (input instanceof Invoice) {
+            Invoice invoice = (Invoice) input;
+            BillingClosureReceiptValue valueInvoice = getBillingClosureReceiptValueForInvoice(invoice);
+            values.add(valueInvoice);
+            if (invoice.getDeposits() != null && invoice.getDeposits().size() > 0) {
+              valueInvoice.setDisplayBottomBorder(false);
+              for (Deposit deposit : invoice.getDeposits())
+                values.add(getBillingClosureReceiptValueForDeposit(deposit, invoice.getCustomerOrder(),
+                    invoice.getCustomerOrder().getDeposits()
+                        .indexOf(deposit) == invoice.getCustomerOrder().getDeposits().size() - 1));
+            }
+            if (invoice.getPayments() != null && invoice.getPayments().size() > 0) {
+              valueInvoice.setDisplayBottomBorder(false);
+              for (Payment payment : invoice.getPayments())
+                values.add(getBillingClosureReceiptValueForPayment(payment,
+                    invoice.getPayments().indexOf(payment) == invoice.getPayments().size() - 1));
+            }
+
+          }
+        }
+      }
+
+      if (!hadSomeValues)
+        values.remove(values.size() - 1);
+    }
+    return values;
+  }
+
+  private BillingClosureReceiptValue getBillingClosureReceiptValueForCustomerOrder(CustomerOrder customerOrder)
+      throws OsirisException, OsirisClientMessageException {
+    BillingClosureReceiptValue value = new BillingClosureReceiptValue();
+    value.setDisplayBottomBorder(true);
+    value.setDebitAmount(null);
+    value.setCreditAmount(null);
+    value.setEventDateTime(customerOrder.getCreatedDate());
+    value.setEventDateString(customerOrder.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+    value.setEventDescription(
+        "Commande n°" + customerOrder.getId() + " - " + customerOrder.getCustomerOrderStatus().getLabel()
+            + "<br/>"
+            + String.join("<br/>", getAllAffairesLabelForCustomerOrder(customerOrder)).replaceAll("&", "<![CDATA[&]]>")
+            + "<br/>"
+            + String.join("<br/>", getAllProvisionLabelForCustomerOrder(customerOrder)).replaceAll("&",
+                "<![CDATA[&]]>"));
+
+    if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
+      MailComputeResult mailComputeResult = mailComputeHelper
+          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
+      value.setEventCbLink(paymentCbEntryPoint + "/order/deposit?mail="
+          + mailComputeResult.getRecipientsMailTo().get(0).getMail() + "&customerOrderId=" + customerOrder.getId());
+    }
+
+    return value;
+  }
+
+  private BillingClosureReceiptValue getBillingClosureReceiptValueForInvoice(Invoice invoice)
+      throws OsirisException, OsirisClientMessageException {
+    BillingClosureReceiptValue value = new BillingClosureReceiptValue();
+    value.setDisplayBottomBorder(true);
+    value.setDebitAmount(invoice.getTotalPrice());
+    value.setCreditAmount(null);
+    value.setEventDateTime(invoice.getCreatedDate());
+    value.setEventDateString(invoice.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+    value.setEventDescription("Facture n°" + invoice.getId());
+
+    if (invoice.getCustomerOrder() != null) {
+      value.setEventDescription(
+          "Facture n°" + invoice.getId()
+              + "<br/>"
+              + String.join("<br/>", getAllAffairesLabelForCustomerOrder(invoice.getCustomerOrder())).replaceAll("&",
+                  "<![CDATA[&]]>")
+              + "<br/>"
+              + String.join("<br/>", getAllProvisionLabelForCustomerOrder(invoice.getCustomerOrder())).replaceAll("&",
+                  "<![CDATA[&]]>"));
+
+      MailComputeResult mailComputeResult = mailComputeHelper
+          .computeMailForCustomerOrderFinalizationAndInvoice(invoice.getCustomerOrder());
+      value.setEventCbLink(paymentCbEntryPoint + "/order/invoice?mail="
+          + mailComputeResult.getRecipientsMailTo().get(0).getMail() + "&customerOrderId="
+          + invoice.getCustomerOrder().getId());
+    }
+
+    return value;
+  }
+
+  private BillingClosureReceiptValue getBillingClosureReceiptValueForDeposit(Deposit deposit,
+      CustomerOrder customerOrder, boolean displayBottomBorder) {
+    BillingClosureReceiptValue value = new BillingClosureReceiptValue();
+    value.setDisplayBottomBorder(displayBottomBorder);
+    value.setDebitAmount(null);
+    value.setCreditAmount(deposit.getDepositAmount());
+    value.setEventDateTime(deposit.getDepositDate());
+    value.setEventDateString(deposit.getDepositDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+    String description = deposit.getLabel().replaceAll("&", "<![CDATA[&]]>");
+    if (customerOrder != null) {
+      description += "<br/>"
+          + String.join("<br/>", getAllAffairesLabelForCustomerOrder(customerOrder)).replaceAll("&",
+              "<![CDATA[&]]>");
+    }
+    value.setEventDescription(description);
+
+    return value;
+  }
+
+  private BillingClosureReceiptValue getBillingClosureReceiptValueForPayment(Payment payment,
+      boolean displayBottomBorder) {
+
+    BillingClosureReceiptValue value = new BillingClosureReceiptValue();
+    value.setDisplayBottomBorder(displayBottomBorder);
+    value.setDebitAmount(null);
+    value.setCreditAmount(payment.getPaymentAmount());
+    value.setEventDateTime(payment.getPaymentDate());
+    value.setEventDateString(payment.getPaymentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+    value.setEventDescription(payment.getLabel().replaceAll("&", "<![CDATA[&]]>"));
+
+    return value;
+  }
+
+  private List<String> getAllAffairesLabelForCustomerOrder(CustomerOrder customerOrder) {
+    ArrayList<String> affaires = new ArrayList<String>();
+    if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null
+        && customerOrder.getAssoAffaireOrders().size() > 0)
+      for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+        Affaire affaire = asso.getAffaire();
+        affaires.add((affaire.getDenomination() != null ? affaire.getDenomination()
+            : (affaire.getFirstname() + " " + affaire.getLastname())) + ", " + affaire.getAddress() + ", "
+            + (affaire.getCity() != null ? affaire.getCity().getLabel() : ""));
+      }
+    return affaires;
+  }
+
+  private List<String> getAllProvisionLabelForCustomerOrder(CustomerOrder customerOrder) {
+    ArrayList<String> provisions = new ArrayList<String>();
+    if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null
+        && customerOrder.getAssoAffaireOrders().size() > 0)
+      for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+        if (asso.getProvisions() != null && asso.getProvisions().size() > 0)
+          for (Provision provision : asso.getProvisions())
+            provisions
+                .add(provision.getProvisionFamilyType().getLabel() + " - " + provision.getProvisionType().getLabel());
+      }
+    return provisions;
+  }
+
+  private void sendBillingClosureReceiptFile(File billingClosureReceipt, ITiers tiers)
+      throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+    List<Attachment> attachments = new ArrayList<Attachment>();
+    try {
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+      String tiersType = "";
+      if (tiers instanceof Tiers)
+        tiersType = Tiers.class.getSimpleName();
+      if (tiers instanceof Responsable)
+        tiersType = Responsable.class.getSimpleName();
+      if (tiers instanceof Confrere)
+        tiersType = Confrere.class.getSimpleName();
+
+      List<Attachment> attachmentsList = attachmentService.addAttachment(
+          new FileInputStream(billingClosureReceipt), tiers.getId(),
+          tiersType, constantService.getAttachmentTypeBillingClosure(),
+          "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".pdf", false,
+          "Relevé de compte du " + LocalDateTime.now().format(formatter));
+
+      for (Attachment attachment : attachmentsList)
+        if (attachment.getUploadedFile().getFilename()
+            .equals("Relevé de compte du " + LocalDateTime.now().format(formatter) + ".pdf")) {
+          attachments.add(attachment);
+          break;
+        }
+    } catch (FileNotFoundException e) {
+      throw new OsirisException(e,
+          "Impossible to read excel of billing closure for ITiers " + tiers.getId());
+    }
+
+    try {
+      mailHelper.sendBillingClosureToCustomer(attachments, tiers, false);
+    } catch (Exception e) {
+      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+    }
+  }
 }

@@ -536,6 +536,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeEmolumentsDeGreffeDebour"
+                label="Type de poste de facturation - Débours Emoluments de greffe" [form]="constantForm"
+                propertyName="billingTypeEmolumentsDeGreffeDebour" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeDocumentScanning"
                 label="Type de poste de facturation - Numérisation de document" [form]="constantForm"
                 propertyName="billingTypeDocumentScanning" [isMandatory]="true" [isDisabled]="!editMode">
@@ -547,15 +555,6 @@
               <autocomplete-billing-type [(model)]="constant.billingTypeEmergency"
                 label="Type de poste de facturation - Urgence" [form]="constantForm" propertyName="billingTypeEmergency"
                 [isMandatory]="true" [isDisabled]="!editMode">
-              </autocomplete-billing-type>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <autocomplete-billing-type [(model)]="constant.billingTypeVacationDepositBeneficialOwners"
-                label="Type de poste de facturation - Vacation - Dépôt des Bénéficiaires Effectifs"
-                [form]="constantForm" propertyName="billingTypeVacationDepositBeneficialOwners" [isMandatory]="true"
-                [isDisabled]="!editMode">
               </autocomplete-billing-type>
             </td>
           </tr>
@@ -862,6 +861,13 @@
               <autocomplete-competent-authority [(model)]="constant.competentAuthorityInfogreffe" [form]="constantForm"
                 propertyName="competentAuthorityInfogreffe" [isMandatory]="true"
                 label="Autorité compétante - Infogreffe"></autocomplete-competent-authority>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-competent-authority [(model)]="constant.competentAuthorityInpi" [form]="constantForm"
+                propertyName="competentAuthorityInpi" [isMandatory]="true"
+                label="Autorité compétante - INPI"></autocomplete-competent-authority>
             </td>
           </tr>
           <tr>

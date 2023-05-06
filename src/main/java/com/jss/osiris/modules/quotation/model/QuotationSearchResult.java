@@ -38,4 +38,6 @@ public interface QuotationSearchResult {
     public Integer getDomiciliationNbr();
 
     public Integer getSimpleProvisionNbr();
+
+    public LocalDateTime getLastStatusUpdate();
 }

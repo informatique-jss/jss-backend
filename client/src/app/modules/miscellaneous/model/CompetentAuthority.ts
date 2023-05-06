@@ -34,4 +34,7 @@ export interface CompetentAuthority extends IReferential, IAttachment {
   schedulle: string;
   observations: string;
   paymentTypes: PaymentType[];
+  owncloudFolderName: string;
+  defaultPaymentType: PaymentType;
+  inpiReference: string;
 }

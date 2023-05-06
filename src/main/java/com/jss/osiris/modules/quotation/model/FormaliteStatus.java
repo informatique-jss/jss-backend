@@ -5,16 +5,12 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -28,10 +24,7 @@ public class FormaliteStatus implements Serializable, IId {
 	public static String FORMALITE_NEW = "FORMALITE_NEW";
 	public static String FORMALITE_IN_PROGRESS = "FORMALITE_IN_PROGRESS";
 	public static String FORMALITE_WAITING_DOCUMENT = "FORMALITE_WAITING_DOCUMENT";
-	public static String FORMALITE_SENT = "FORMALITE_SENT";
-	public static String FORMALITE_REFUSED = "FORMALITE_REFUSED";
-	public static String FORMALITE_WAITING_DOCUMENT_GREFFE = "FORMALITE_WAITING_DOCUMENT_GREFFE";
-	public static String FORMALITE_VALIDATE = "FORMALITE_VALIDATE";
+	public static String FORMALITE_WAITING_DOCUMENT_AUTHORITY = "FORMALITE_WAITING_DOCUMENT_AUTHORITY";
 	public static String FORMALITE_DONE = "FORMALITE_DONE";
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -48,14 +41,12 @@ public class FormaliteStatus implements Serializable, IId {
 	private Boolean isOpenState;
 	private Boolean isCloseState;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@Fetch(FetchMode.SUBSELECT)
+	@OneToMany(targetEntity = FormaliteStatus.class)
 	@JoinTable(name = "asso_formalite_status_successor", joinColumns = @JoinColumn(name = "id_formalite_status"), inverseJoinColumns = @JoinColumn(name = "id_formalite_status_successor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
 	private List<FormaliteStatus> successors;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@Fetch(FetchMode.SUBSELECT)
+	@OneToMany(targetEntity = FormaliteStatus.class)
 	@JoinTable(name = "asso_formalite_status_predecessor", joinColumns = @JoinColumn(name = "id_formalite_status"), inverseJoinColumns = @JoinColumn(name = "id_formalite_status_predecessor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
 	private List<FormaliteStatus> predecessors;

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,6 +25,7 @@ import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.invoicing.model.Deposit;
+import com.jss.osiris.modules.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -36,7 +38,7 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 @Table(indexes = { @Index(name = "idx_customer_order_status", columnList = "id_customer_order_status"),
 		@Index(name = "idx_customer_order_responsable", columnList = "id_responsable"),
 		@Index(name = "idx_customer_order_tiers", columnList = "id_tiers") })
-public class CustomerOrder implements IQuotation {
+public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public CustomerOrder() {
 	}
@@ -72,22 +74,22 @@ public class CustomerOrder implements IQuotation {
 	@IndexedField
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_assigned_to")
 	@IndexedField
 	private Employee assignedTo;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
 	@IndexedField
 	private Tiers tiers;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
 	private Responsable responsable;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
 	@IndexedField
 	private Confrere confrere;
@@ -100,7 +102,7 @@ public class CustomerOrder implements IQuotation {
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	private LocalDateTime createdDate;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_status")
 	private CustomerOrderStatus customerOrderStatus;
 
@@ -118,6 +120,7 @@ public class CustomerOrder implements IQuotation {
 
 	@OneToMany(targetEntity = Document.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	@IndexedField
 	private List<Document> documents;
 
 	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -148,8 +151,6 @@ public class CustomerOrder implements IQuotation {
 	@JsonIgnoreProperties(value = { "customerOrder", "invoice", "deposit", "payment" }, allowSetters = true)
 	@JsonIgnore // For client-side performance purpose
 	private List<AccountingRecord> accountingRecords;
-
-	private String centralPayPaymentRequestId;
 
 	private Boolean isCreatedFromWebSite;
 
@@ -315,14 +316,6 @@ public class CustomerOrder implements IQuotation {
 
 	public void setAccountingRecords(List<AccountingRecord> accountingRecords) {
 		this.accountingRecords = accountingRecords;
-	}
-
-	public String getCentralPayPaymentRequestId() {
-		return centralPayPaymentRequestId;
-	}
-
-	public void setCentralPayPaymentRequestId(String centralPayPaymentRequestId) {
-		this.centralPayPaymentRequestId = centralPayPaymentRequestId;
 	}
 
 	public Boolean getIsCreatedFromWebSite() {

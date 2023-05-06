@@ -505,7 +505,6 @@ public class TiersController {
 
     if (tiers.getPaymentType() != null
         && tiers.getPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())) {
-      validationHelper.validateString(tiers.getSepaMandateReference(), true, 250, "SepaMandateReference");
       validationHelper.validateDate(tiers.getSepaMandateSignatureDate(), true, "SepaMandateSignatureDate");
     }
 

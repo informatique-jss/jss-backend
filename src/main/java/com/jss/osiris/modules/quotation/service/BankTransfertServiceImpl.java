@@ -55,6 +55,7 @@ import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -148,6 +149,18 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                 + (invoice.getCommandNumber() != null ? invoice.getCommandNumber() : "") + " / "
                 + invoice.getManualAccountingDocumentNumber());
         bankTransfert.setIsAlreadyExported(false);
+        if (invoice.getCustomerOrder() != null)
+            bankTransfert.setCustomerOrder(invoice.getCustomerOrder());
+        else if (invoice.getCustomerOrderForInboundInvoice() != null)
+            bankTransfert.setCustomerOrder(invoice.getCustomerOrderForInboundInvoice());
+
+        if (bankTransfert.getCustomerOrder() != null
+                && bankTransfert.getCustomerOrder().getAssoAffaireOrders() != null) {
+            Affaire affaire = bankTransfert.getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
+            bankTransfert.setLabel(
+                    bankTransfert.getLabel() + " / " + (affaire.getDenomination() != null ? affaire.getDenomination()
+                            : (affaire.getFirstname() + " " + affaire.getLastname())));
+        }
         bankTransfert.setTransfertAmount(invoice.getTotalPrice());
         bankTransfert.setTransfertDateTime(invoice.getDueDate().atTime(12, 0));
         bankTransfert.setTransfertIban(invoiceHelper.getIbanOfOrderingCustomer(invoice));
@@ -279,7 +292,6 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
         PmtTpInfBean bodyTransfertType = new PmtTpInfBean();
         body.setPmtTpInfBean(bodyTransfertType);
-        bodyTransfertType.setInstrPrty("NORM");
 
         SvcLvlBean transfertNorm = new SvcLvlBean();
         bodyTransfertType.setSvcLvlBean(transfertNorm);
@@ -288,6 +300,9 @@ public class BankTransfertServiceImpl implements BankTransfertService {
         CtgyPurpBean transfertPurpose = new CtgyPurpBean();
         bodyTransfertType.setCtgyPurpBean(transfertPurpose);
         transfertPurpose.setCd("CASH");
+
+        if (executionDate.isBefore(LocalDate.now()))
+            executionDate = LocalDate.now();
 
         body.setReqdExctnDt(executionDate.format(formatterDate));
 

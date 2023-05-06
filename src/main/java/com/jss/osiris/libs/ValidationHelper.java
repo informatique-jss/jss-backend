@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.validator.routines.EmailValidator;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -102,6 +103,9 @@ public class ValidationHelper {
         if (value == null && isMandatory)
             throw new OsirisValidationException(className);
         if (value != null) {
+            if (value.getClass().getSimpleName().contains("HibernateProxy"))
+                value = (IId) Hibernate.unproxy(value);
+
             if (value.getId() == null)
                 throw new OsirisValidationException(className);
 

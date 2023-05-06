@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,15 +34,15 @@ public class Announcement implements IId, IDocument {
 	@IndexedField
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_department")
 	private Department department;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
 	private Confrere confrere;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_announcement_status")
 	private AnnouncementStatus announcementStatus;
 
@@ -49,7 +50,7 @@ public class Announcement implements IId, IDocument {
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate publicationDate;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_notice_type_family")
 	private NoticeTypeFamily noticeTypeFamily;
 

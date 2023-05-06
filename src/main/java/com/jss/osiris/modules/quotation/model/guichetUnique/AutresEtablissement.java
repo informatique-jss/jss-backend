@@ -5,8 +5,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,39 +24,39 @@ public class AutresEtablissement implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_description_etablissement", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_description_etablissement")
     DescriptionEtablissement descriptionEtablissement;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_personne_physique")
     @JsonIgnoreProperties(value = { "autresEtablissements" }, allowSetters = true)
     PersonnePhysique personnePhysique;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_personne_morale")
     @JsonIgnoreProperties(value = { "autresEtablissements" }, allowSetters = true)
     PersonneMorale personneMorale;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_exploitation")
     @JsonIgnoreProperties(value = { "autresEtablissements" }, allowSetters = true)
     Exploitation exploitation;
 
-    @ManyToOne
-    @JoinColumn(name = "id_domiciliataire", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_domiciliataire")
     Entreprise domiciliataire;
 
-    @ManyToOne
-    @JoinColumn(name = "id_adresse_domiciliataire", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_adresse_domiciliataire")
     AdresseDomicile adresseDomiciliataire;
 
-    @ManyToOne
-    @JoinColumn(name = "id_effectif_salarie", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_effectif_salarie")
     EffectifSalarie effectifSalarie;
 
-    @ManyToOne
-    @JoinColumn(name = "id_adresse", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_adresse")
     AdresseDomicile adresse;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "autresEtablissement")
@@ -67,11 +67,10 @@ public class AutresEtablissement implements Serializable, IId {
     @JsonIgnoreProperties(value = { "autresEtablissement" }, allowSetters = true)
     List<NomsDeDomaine> nomsDeDomaine;
 
-    @ManyToOne
-    @JoinColumn(name = "id_detail_cessation_etablissement", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_detail_cessation_etablissement")
     DetailCessationEtablissement detailCessationEtablissement;
 
-    @Column(nullable = false)
     private LocalDate dateEffetOuvertureEtablissement;
 
     public Integer getId() {

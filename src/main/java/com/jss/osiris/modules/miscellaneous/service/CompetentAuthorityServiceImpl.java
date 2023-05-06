@@ -54,6 +54,24 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     }
 
     @Override
+    public CompetentAuthority getCompetentAuthorityByOwncloudFolderName(String folderName) {
+        Optional<CompetentAuthority> competentAuthority = competentAuthorityRepository
+                .findByOwncloudFolderName(folderName);
+        if (competentAuthority.isPresent())
+            return competentAuthority.get();
+        return null;
+    }
+
+    @Override
+    public CompetentAuthority getCompetentAuthorityByInpiReference(String inpiReference) {
+        Optional<CompetentAuthority> competentAuthority = competentAuthorityRepository
+                .findByInpiReference(inpiReference);
+        if (competentAuthority.isPresent())
+            return competentAuthority.get();
+        return null;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public CompetentAuthority addOrUpdateCompetentAuthority(
             CompetentAuthority competentAuthority) throws OsirisException {

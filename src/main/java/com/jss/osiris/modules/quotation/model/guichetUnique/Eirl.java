@@ -3,8 +3,10 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,48 +26,45 @@ public class Eirl implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_identite")
     @JsonIgnoreProperties(value = { "eirl" }, allowSetters = true)
     Identite identite;
 
-    @ManyToOne
-    @JoinColumn(name = "id_option_eirl", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_option_eirl")
     OptionEirl optionEirl;
 
-    @ManyToOne
-    @JoinColumn(name = "id_registre_eirl", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_registre_eirl")
     RegistreEirl registreEirl;
 
-    @Column(nullable = false)
     private LocalDate dateEffet;
 
-    @Column(nullable = false)
     private Boolean indicateurDeclarationComplementaireAffectationPatrimoine;
 
-    @ManyToOne
-    @JoinColumn(name = "id_motif_fin_eirl", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_motif_fin_eirl")
     MotifFinEirl motifFinEirl;
 
-    @Column(nullable = false)
     private Boolean intentionDePoursuite;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String denomination;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String objet;
 
-    @ManyToOne
-    @JoinColumn(name = "id_ancienne_eirl", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_ancienne_eirl")
     AncienneEIRL ancienneEIRL;
 
-    @ManyToOne
-    @JoinColumn(name = "id_option_fiscale", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_option_fiscale")
     OptionFiscale optionFiscale;
 
-    @ManyToOne
-    @JoinColumn(name = "id_repreneur", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_repreneur")
     Repreneur repreneur;
 
     public Integer getId() {

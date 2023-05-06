@@ -87,18 +87,21 @@ public class ActiveDirectoryHelper {
                 };
                 return Arrays.asList(authority);
             }
-        return SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        if (SecurityContextHolder.getContext().getAuthentication() != null)
+            return SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        return null;
     }
 
     public boolean isUserHasGroup(String groupNeeded) {
         if (devMode) {
             return true;
         }
-        for (GrantedAuthority s : getUserRoles()) {
-            if (s.getAuthority().equals(groupNeeded) || s.getAuthority().equals("ROLE_OSIRIS_ADMINISTRATEURS")) {
-                return true;
+        if (getUserRoles() != null)
+            for (GrantedAuthority s : getUserRoles()) {
+                if (s.getAuthority().equals(groupNeeded) || s.getAuthority().equals("ROLE_OSIRIS_ADMINISTRATEURS")) {
+                    return true;
+                }
             }
-        }
         return false;
     }
 

@@ -2,8 +2,9 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,20 +21,19 @@ public class BeneficiairesEffectif implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_personne_morale")
     @JsonIgnoreProperties(value = { "beneficiairesEffectifs" }, allowSetters = true)
     PersonneMorale personneMorale;
 
-    @Column(nullable = false)
     private Boolean indexPouvoir;
 
-    @ManyToOne
-    @JoinColumn(name = "id_beneficiaire", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_beneficiaire")
     Repreneur beneficiaire;
 
-    @ManyToOne
-    @JoinColumn(name = "id_modalite", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_modalite")
     Modalite modalite;
 
     public Integer getId() {

@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,7 +23,7 @@ public class SimpleProvision implements IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "simple_provision_sequence")
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_simple_provision_status")
 	@IndexedField
 	private SimpleProvisionStatus simpleProvisionStatus;
@@ -30,7 +31,7 @@ public class SimpleProvision implements IId {
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_waited_competent_authority")
 	@JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
 	private CompetentAuthority waitedCompetentAuthority;

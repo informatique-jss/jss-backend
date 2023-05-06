@@ -6,12 +6,15 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -22,8 +25,10 @@ import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
+import com.jss.osiris.modules.quotation.model.guichetUnique.CartRate;
 
 @Entity
+@Table(indexes = { @Index(name = "idx_debour_associated", columnList = "isAssociated") })
 public class Debour implements Serializable, IId {
 
 	@Id
@@ -31,16 +36,16 @@ public class Debour implements Serializable, IId {
 	@IndexedField
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision")
 	@JsonIgnoreProperties(value = { "debours", "assoAffaireOrder" }, allowSetters = true)
 	Provision provision;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_type")
 	private BillingType billingType;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_competent_authority")
 	@JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
 	private CompetentAuthority competentAuthority;
@@ -50,7 +55,7 @@ public class Debour implements Serializable, IId {
 
 	private Float nonTaxableAmount;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment_type")
 	private PaymentType paymentType;
 
@@ -62,18 +67,19 @@ public class Debour implements Serializable, IId {
 	@IndexedField
 	private String checkNumber;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment")
 	@JsonIgnoreProperties(value = { "payment", "debours", "invoice" }, allowSetters = true)
 	private Payment payment;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_bank_transfert")
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private BankTransfert bankTransfert;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice_item")
-	@JsonIgnoreProperties(value = { "invoice", "provision", "debours" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "provision", "debours" }, allowSetters = true)
 	private InvoiceItem invoiceItem;
 
 	@OneToMany(mappedBy = "debour")
@@ -81,6 +87,11 @@ public class Debour implements Serializable, IId {
 	private List<AccountingRecord> accountingRecords;
 
 	private Boolean isAssociated;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_cart_rate")
+	@JsonIgnoreProperties(value = { "debours" }, allowSetters = true)
+	private CartRate cartRate;
 
 	public Integer getId() {
 		return id;
@@ -208,6 +219,14 @@ public class Debour implements Serializable, IId {
 
 	public void setInvoicedAmount(Float invoicedAmount) {
 		this.invoicedAmount = invoicedAmount;
+	}
+
+	public CartRate getCartRate() {
+		return cartRate;
+	}
+
+	public void setCartRate(CartRate cartRate) {
+		this.cartRate = cartRate;
 	}
 
 }

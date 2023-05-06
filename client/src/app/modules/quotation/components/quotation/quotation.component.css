@@ -6,6 +6,18 @@
   padding-top: 15px;
 }
 
+.scrollable-table {
+  overflow-y: auto;
+  height: calc(85vh - 265px);
+}
+
+.sidenav-facture {
+  width: 20%;
+  height: 100vh;
+  margin-right: 20px;
+  margin-top: 165px;
+}
+
 td {
   padding-right: 8px;
 }

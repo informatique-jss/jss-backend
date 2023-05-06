@@ -26,6 +26,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailComputeHelper;
+import com.jss.osiris.modules.invoicing.model.Appoint;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.DebourSearch;
@@ -33,12 +34,14 @@ import com.jss.osiris.modules.invoicing.model.DebourSearchResult;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearchResult;
+import com.jss.osiris.modules.invoicing.model.InfogreffeInvoice;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.invoicing.model.OwncloudGreffeInvoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentAssociate;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
@@ -46,10 +49,14 @@ import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.invoicing.model.RefundSearch;
 import com.jss.osiris.modules.invoicing.model.RefundSearchResult;
+import com.jss.osiris.modules.invoicing.service.AppointService;
 import com.jss.osiris.modules.invoicing.service.DepositService;
+import com.jss.osiris.modules.invoicing.service.InfogreffeInvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceStatusService;
+import com.jss.osiris.modules.invoicing.service.OwncloudGreffeDelegateImpl;
+import com.jss.osiris.modules.invoicing.service.OwncloudGreffeInvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.invoicing.service.PaymentWayService;
 import com.jss.osiris.modules.invoicing.service.RefundService;
@@ -58,10 +65,12 @@ import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DebourService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
+import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -117,10 +126,83 @@ public class InvoicingController {
     DirectDebitTransfertService directDebitTransfertService;
 
     @Autowired
+    OwncloudGreffeInvoiceService owncloudGreffeInvoiceService;
+
+    @Autowired
     DebourService debourService;
+
+    @Autowired
+    OwncloudGreffeDelegateImpl owncloudGreffeDelegateImpl;
+
+    @Autowired
+    ProvisionService provisionService;
 
     @Value("${invoicing.payment.limit.refund.euros}")
     private Integer payementLimitRefundInEuros;
+
+    @Autowired
+    InfogreffeInvoiceService infogreffeInvoiceService;
+
+    @Autowired
+    AppointService appointService;
+
+    @GetMapping(inputEntryPoint + "/appoints")
+    public ResponseEntity<List<Appoint>> getAppoints(@RequestParam String searchLabel) {
+        return new ResponseEntity<List<Appoint>>(appointService.getAppoints(searchLabel), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/appoint/refund")
+    public ResponseEntity<Boolean> refundAppint(@RequestParam String idAppoint)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        if (idAppoint == null)
+            throw new OsirisValidationException("idAppoint");
+
+        Appoint appoint = appointService.getAppoint(Integer.parseInt(idAppoint));
+
+        if (appoint == null)
+            throw new OsirisValidationException("appoint");
+
+        return new ResponseEntity<Boolean>(refundService.generateRefundForAppoint(appoint.getId()),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/infogreffe-invoices")
+    public ResponseEntity<List<InfogreffeInvoice>> getInfogreffeInvoices() {
+        return new ResponseEntity<List<InfogreffeInvoice>>(infogreffeInvoiceService.getInfogreffeInvoices(),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/infogreffe-invoices/search")
+    public ResponseEntity<List<InfogreffeInvoice>> getInfogreffeInvoicesByCustomerReference(
+            @RequestParam String customerReference) {
+        return new ResponseEntity<List<InfogreffeInvoice>>(
+                infogreffeInvoiceService.getInfogreffeInvoicesByCustomerReference(customerReference),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/infogreffe-invoice/import")
+    public ResponseEntity<Boolean> importInfogreffeInvoices(@RequestBody String csv)
+            throws OsirisException, OsirisClientMessageException {
+        return new ResponseEntity<Boolean>(infogreffeInvoiceService.importInfogreffeInvoices(csv),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/infogreffe-invoice/create")
+    public ResponseEntity<Invoice> createInvoiceFromInfogreffeInvoice(
+            @RequestParam Integer provisionId, @RequestParam Integer infogreffeInvoiceId)
+            throws OsirisValidationException, OsirisClientMessageException, OsirisException {
+        Provision provision = provisionService.getProvision(provisionId);
+        if (provision == null)
+            throw new OsirisValidationException("provisionId");
+
+        InfogreffeInvoice greffeInvoice = infogreffeInvoiceService.getInfogreffeInvoice(infogreffeInvoiceId);
+        if (greffeInvoice == null)
+            throw new OsirisValidationException("infogreffeInvoiceId");
+
+        return new ResponseEntity<Invoice>(
+                infogreffeInvoiceService.generateInvoiceFromProvisionAndGreffeInvoice(greffeInvoice, provision),
+                HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/payment-ways")
     public ResponseEntity<List<PaymentWay>> getPaymentWays() {
@@ -366,7 +448,9 @@ public class InvoicingController {
 
                 if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
                         && !invoice.getInvoiceStatus().getId()
-                                .equals(constantService.getInvoiceStatusReceived().getId()))
+                                .equals(constantService.getInvoiceStatusReceived().getId())
+                        && !invoice.getInvoiceStatus().getId()
+                                .equals(constantService.getInvoiceStatusCancelled().getId()))
                     throw new OsirisValidationException("invoice not send or received");
             }
         }
@@ -545,7 +629,7 @@ public class InvoicingController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
-    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     @PostMapping(inputEntryPoint + "/payment/check/add")
     public ResponseEntity<Boolean> addCheckPayment(@RequestBody Payment checkPayment)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
@@ -624,7 +708,8 @@ public class InvoicingController {
             throw new OsirisValidationException("not all payment used");
 
         if (paymentAssociate.getDeposit().getDepositAmount() > totalAmount
-                && paymentAssociate.getTiersRefund() == null && paymentAssociate.getAffaire() == null)
+                && paymentAssociate.getTiersRefund() == null && paymentAssociate.getAffaire() == null
+                && Math.abs(paymentAssociate.getDeposit().getDepositAmount()) > payementLimitRefundInEuros)
             throw new OsirisValidationException("no refund tiers set");
 
         ITiers commonCustomerOrder = paymentAssociate.getTiersRefund() != null ? paymentAssociate.getTiersRefund()
@@ -719,7 +804,36 @@ public class InvoicingController {
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (invoice.getId() != null && invoice.getCustomerOrder() != null)
             throw new OsirisValidationException("Id");
+        validateInvoice(invoice);
+        return new ResponseEntity<Invoice>(invoiceService.addOrUpdateInvoiceFromUser(invoice), HttpStatus.OK);
+    }
 
+    @PostMapping(inputEntryPoint + "/invoice/credit-note")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<Invoice> generateInvoiceCreditNote(@RequestBody Invoice newInvoice,
+            @RequestParam Integer idOriginInvoiceForCreditNote)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        if (newInvoice.getId() != null && newInvoice.getCustomerOrder() != null)
+            throw new OsirisValidationException("Id");
+
+        if (idOriginInvoiceForCreditNote == null)
+            throw new OsirisValidationException("idOriginInvoiceForCreditNote");
+
+        Invoice originInvoice = invoiceService.getInvoice(idOriginInvoiceForCreditNote);
+
+        if (originInvoice == null)
+            throw new OsirisValidationException("originInvoice");
+
+        if (newInvoice.getIsInvoiceFromProvider() == null || newInvoice.getIsInvoiceFromProvider() == false)
+            throw new OsirisValidationException("IsInvoiceFromProvider");
+        validateInvoice(newInvoice);
+        return new ResponseEntity<Invoice>(
+                invoiceService.generateInvoiceCreditNote(newInvoice, idOriginInvoiceForCreditNote),
+                HttpStatus.OK);
+    }
+
+    private void validateInvoice(Invoice invoice)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (invoice.getIsInvoiceFromProvider() == null)
             invoice.setIsInvoiceFromProvider(false);
 
@@ -782,6 +896,7 @@ public class InvoicingController {
         validationHelper.validateDate(invoice.getManualAccountingDocumentDate(), false, "AccountingDocumentDate");
         validationHelper.validateString(invoice.getManualAccountingDocumentNumber(), false, 150,
                 "ManualAccountingDocumentNumber");
+        validationHelper.validateString(invoice.getBillingLabelIntercommunityVat(), false, 20, "intercommunityVat");
 
         if (invoice.getInvoiceItems() == null) {
             throw new OsirisValidationException("InvoiceItems");
@@ -817,21 +932,6 @@ public class InvoicingController {
             if (invoiceHelper.getBicOfOrderingCustomer(invoice) == null)
                 throw new OsirisClientMessageException("Aucun BIC trouvé sur le donneur d'ordre");
         }
-
-        return new ResponseEntity<Invoice>(invoiceService.addOrUpdateInvoiceFromUser(invoice), HttpStatus.OK);
-    }
-
-    @PostMapping(inputEntryPoint + "/invoice/cancel")
-    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
-    public ResponseEntity<Invoice> cancelInvoice(@RequestBody Invoice invoice)
-            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-        validationHelper.validateReferential(invoice, true, "Invoice");
-
-        if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
-                && !invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusPayed().getId()))
-            throw new OsirisValidationException("Invoice must be at sent or payed status to be cancelled");
-
-        return new ResponseEntity<Invoice>(invoiceService.cancelInvoiceEmitted(invoice, null), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/invoice-status-list")
@@ -892,4 +992,43 @@ public class InvoicingController {
                 HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/greffe/invoice/search/order")
+    public ResponseEntity<List<OwncloudGreffeInvoice>> getCorrespondingGreffeInvoiceForCustomerOrder(
+            @RequestParam Integer customerOrderId)
+            throws OsirisValidationException {
+        CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+        if (customerOrder == null)
+            throw new OsirisValidationException("customerOrderId");
+
+        return new ResponseEntity<List<OwncloudGreffeInvoice>>(
+                owncloudGreffeInvoiceService.getCorrespondingGreffeInvoiceForCustomerOrder(customerOrder),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/greffe/invoice/search/numero")
+    public ResponseEntity<List<OwncloudGreffeInvoice>> getOwncloudGreffeInvoiceByNumero(
+            @RequestParam String numero)
+            throws OsirisValidationException {
+        return new ResponseEntity<List<OwncloudGreffeInvoice>>(
+                owncloudGreffeInvoiceService.getOwncloudGreffeInvoiceByNumero(numero),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/greffe/invoice/create")
+    public ResponseEntity<Invoice> createInvoiceFromGreffeInvoice(
+            @RequestParam Integer provisionId, @RequestParam Integer owncloudGreffeInvoiceId)
+            throws OsirisValidationException, OsirisClientMessageException, OsirisException {
+        Provision provision = provisionService.getProvision(provisionId);
+        if (provision == null)
+            throw new OsirisValidationException("provisionId");
+
+        OwncloudGreffeInvoice greffeInvoice = owncloudGreffeInvoiceService
+                .getOwncloudGreffeInvoice(owncloudGreffeInvoiceId);
+        if (greffeInvoice == null)
+            throw new OsirisValidationException("owncloudGreffeInvoiceId");
+
+        return new ResponseEntity<Invoice>(
+                owncloudGreffeDelegateImpl.generateInvoiceFromProvisionAndGreffeInvoice(greffeInvoice, provision),
+                HttpStatus.OK);
+    }
 }

@@ -52,4 +52,6 @@ public interface InvoiceSearchResult {
     public String getPaymentId();
 
     public Float getRemainingToPay();
+
+    public String getInvoiceRecipient();
 }

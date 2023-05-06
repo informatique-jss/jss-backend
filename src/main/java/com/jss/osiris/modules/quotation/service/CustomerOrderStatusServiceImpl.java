@@ -6,9 +6,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,13 +20,11 @@ public class CustomerOrderStatusServiceImpl implements CustomerOrderStatusServic
     CustomerOrderStatusRepository customerOrderStatusRepository;
 
     @Override
-    @Cacheable(value = "customerOrderStatusList", key = "#root.methodName")
     public List<CustomerOrderStatus> getCustomerOrderStatus() {
         return IterableUtils.toList(customerOrderStatusRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "customerOrderStatus", key = "#id")
     public CustomerOrderStatus getCustomerOrderStatus(Integer id) {
         Optional<CustomerOrderStatus> quotationStatus = customerOrderStatusRepository.findById(id);
         if (quotationStatus.isPresent())
@@ -38,10 +33,6 @@ public class CustomerOrderStatusServiceImpl implements CustomerOrderStatusServic
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "customerOrderStatusList", allEntries = true),
-            @CacheEvict(value = "customerOrderStatus", key = "#bodaccStatus.id")
-    })
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrderStatus addOrUpdateCustomerOrderStatus(CustomerOrderStatus quotationStatus) {
         return customerOrderStatusRepository.save(quotationStatus);

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,216 +33,188 @@ public class Activite implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_etablissement_principal")
     @JsonIgnoreProperties(value = { "activites" }, allowSetters = true)
     EtablissementPrincipal etablissementPrincipal;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String rolePourEtablissement;
 
-    @Column(nullable = false)
     private LocalDate dateEffet;
 
-    @ManyToOne
-    @JoinColumn(name = "id_statut_formalite", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_statut_formalite")
     StatutFormalite statutFormalite;
 
-    @Column(nullable = false)
     private Boolean indicateurPrincipal;
 
-    @Column(nullable = false)
     private Boolean indicateurProlongement;
 
-    @Column(nullable = false)
     private LocalDate dateDebut;
 
-    @Column(nullable = false)
     private LocalDate dateFin;
 
-    @ManyToOne
-    @JoinColumn(name = "id_exercice_activite", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_exercice_activite")
     ExerciceActivite exerciceActivite;
 
-    @Column(nullable = false)
     private LocalDate dateDebutPeriode;
 
-    @Column(nullable = false)
     private LocalDate dateFinPeriode;
 
-    @Column(nullable = false)
     private Boolean indicateurNonSedentaire;
 
-    @ManyToOne
-    @JoinColumn(name = "id_forme_exercice", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_forme_exercice")
     FormeExercice formeExercice;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String categorisationActivite1;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String precisionAutreCategorie1;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String categorisationActivite2;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String precisionAutreCategorie2;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String categorisationActivite3;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String precisionAutreCategorie3;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String categorisationActivite4;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String precisionAutreCategorie4;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String codeAprm;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String descriptionDetaillee;
 
-    @ManyToOne
-    @JoinColumn(name = "id_precision_activite", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_precision_activite")
     PrecisionActivite precisionActivite;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String precisionAutre;
 
-    @Column(nullable = false)
     private Integer surface;
 
-    @ManyToOne
-    @JoinColumn(name = "id_qualite_non_sedentaire", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_qualite_non_sedentaire")
     QualiteNonSedentaire qualiteNonSedentaire;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String autreMotifModification;
 
-    @ManyToOne
-    @JoinColumn(name = "id_totalite_partie", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_totalite_partie")
     TotalitePartie totalitePartie;
 
-    @Column(nullable = false)
     private Boolean locationDpb;
 
-    @Column(nullable = false)
     private Boolean indicateurArtisteAuteur;
 
-    @Column(nullable = false)
     private Boolean soumissionAuPrecompte;
 
-    @Column(nullable = false)
     private Boolean indicateurMarinProfessionnel;
 
-    @Column(nullable = false)
     private Boolean rolePrincipalPourEntreprise;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String codeApe;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String numPraticien;
 
-    @ManyToOne
-    @JoinColumn(name = "id_statut_praticien", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_statut_praticien")
     StatutPraticien statutPraticien;
 
-    @Column(nullable = false)
     private Boolean activiteRattacheeEirl;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String denominationEirlRattachee;
 
-    @ManyToOne
-    @JoinColumn(name = "id_activite_reguliere", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_activite_reguliere")
     ActiviteReguliere activiteReguliere;
 
-    @Column(nullable = false)
     private Boolean indicateurPremiereActivite;
 
-    @Column(nullable = false)
     private LocalDate dateEffetTransfert;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String identifiantTemporaireEtablissementDestination;
 
-    @ManyToOne
-    @JoinColumn(name = "id_ancienne_adresse", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_ancienne_adresse")
     AdresseDomicile ancienneAdresse;
 
-    @ManyToOne
-    @JoinColumn(name = "id_origine", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_origine")
     Origine origine;
 
-    @ManyToOne
-    @JoinColumn(name = "id_jqpa", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_jqpa")
     Jqpa jqpa;
 
-    @ManyToOne
-    @JoinColumn(name = "id_location_gerance_mandat", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_location_gerance_mandat")
     LocationGeranceMandat locationGeranceMandat;
 
-    @ManyToOne
-    @JoinColumn(name = "id_locataire_gerant_mandataire", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_locataire_gerant_mandataire")
     LocataireGerantMandataire locataireGerantMandataire;
 
-    @ManyToOne
-    @JoinColumn(name = "id_adresse_gerant_mandataire", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_adresse_gerant_mandataire")
     AdresseDomicile adresseGerantMandataire;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "activites" }, allowSetters = true)
-    @JoinColumn(name = "id_autres_etablissement", nullable = false)
+    @JoinColumn(name = "id_autres_etablissement")
     AutresEtablissement autresEtablissement;
 
-    @Column(nullable = false)
     private Boolean is20PTriggered;
 
-    @Column(nullable = false)
     private Boolean is61PMFTriggered;
 
-    @Column(nullable = false)
     private Boolean is62PMTriggered;
 
-    @Column(nullable = false)
     private Boolean is67PMTriggered;
 
-    @Column(nullable = false)
     private LocalDate dateEffet20P;
 
-    @Column(nullable = false)
     private LocalDate dateEffetAjoutActivite;
 
-    @Column(nullable = false)
     private LocalDate dateEffet67PM;
 
-    @Column(nullable = false)
     private Boolean is24Or27PMTriggered;
 
-    @Column(nullable = false)
     private LocalDate dateEffet24Or27PM;
 
-    @ManyToOne
-    @JoinColumn(name = "id_effectif_salarie", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_effectif_salarie")
     EffectifSalarie effectifSalarie;
 
-    @OneToMany(mappedBy = "activite", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "activite", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "activite" }, allowSetters = true)
     List<Building> buildings;
 
-    @Column(nullable = false)
     private Boolean is20MTriggered;
 
-    @Column(nullable = false)
     private LocalDate dateEffet20M;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String destinationActivite;
 
     public Integer getId() {

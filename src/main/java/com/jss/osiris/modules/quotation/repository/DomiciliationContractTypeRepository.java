@@ -1,8 +1,9 @@
 package com.jss.osiris.modules.quotation.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 
-public interface DomiciliationContractTypeRepository extends CrudRepository<DomiciliationContractType, Integer> {
+public interface DomiciliationContractTypeRepository
+                extends QueryCacheCrudRepository<DomiciliationContractType, Integer> {
 }

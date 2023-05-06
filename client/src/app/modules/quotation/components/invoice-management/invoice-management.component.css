@@ -77,3 +77,11 @@ table {
 .min-height {
   min-height: 1000px;
 }
+
+.payment-label {
+  white-space: nowrap;
+  max-width: 700px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

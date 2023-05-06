@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -43,7 +44,7 @@ public class Responsable implements ITiers, IAttachment {
 	@IndexedField
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
 	@IndexedField
 	@JsonIgnoreProperties(value = { "responsables" }, allowSetters = true)
@@ -61,17 +62,17 @@ public class Responsable implements ITiers, IAttachment {
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate firstBilling;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable_type")
 	@IndexedField
 	private TiersType tiersType;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable_category")
 	@IndexedField
 	private TiersCategory tiersCategory;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_civility")
 	@IndexedField
 	private Civility civility;
@@ -84,28 +85,28 @@ public class Responsable implements ITiers, IAttachment {
 	@IndexedField
 	private String lastname;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_commercial")
 	@IndexedField
 	private Employee salesEmployee;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_default_customer_order_employee")
 	@IndexedField
 	private Employee defaultCustomerOrderEmployee;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_formaliste")
 	private Employee formalisteEmployee;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_insertion")
 	private Employee insertionEmployee;
 
 	@Column(columnDefinition = "TEXT")
 	private String mailRecipient;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_language")
 	private Language language;
 
@@ -120,12 +121,12 @@ public class Responsable implements ITiers, IAttachment {
 	@Column(length = 20)
 	private String cedexComplement;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_city")
 	@IndexedField
 	private City city;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
 	private Country country;
 
@@ -164,7 +165,7 @@ public class Responsable implements ITiers, IAttachment {
 	@Column(length = 8)
 	private String floor;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_subscription_period_type")
 	private SubscriptionPeriodType subscriptionPeriodType;
 
@@ -517,6 +518,12 @@ public class Responsable implements ITiers, IAttachment {
 
 	public void setDefaultCustomerOrderEmployee(Employee defaultCustomerOrderEmployee) {
 		this.defaultCustomerOrderEmployee = defaultCustomerOrderEmployee;
+	}
+
+	public String getIntercommunityVat() {
+		if (getTiers() != null)
+			return getTiers().getIntercommunityVat();
+		return null;
 	}
 
 }

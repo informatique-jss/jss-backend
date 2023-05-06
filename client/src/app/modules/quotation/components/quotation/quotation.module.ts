@@ -60,6 +60,7 @@ import { ProvisionOptionsComponent } from '../provision-options/provision-option
 import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
+import { SelectAccountingAccountDialogComponent } from '../select-accounting-account-dialog/select-accounting-account-dialog.component';
 import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
@@ -141,6 +142,7 @@ const routes: Routes = [
     DirectDebitTransfertListComponent,
     ChooseCompetentAuthorityDialogComponent,
     DebourListComponent,
+    SelectAccountingAccountDialogComponent,
     // Guichet unique
     ContentComponent,
     NatureCreationComponent,

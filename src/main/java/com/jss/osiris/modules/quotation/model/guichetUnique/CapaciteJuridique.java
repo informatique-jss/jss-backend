@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,20 +21,18 @@ public class CapaciteJuridique implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false)
     private Boolean statutDecede;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String dateDeces;
 
-    @ManyToOne
-    @JoinColumn(name = "id_tutelle_curatelle", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_tutelle_curatelle")
     TutelleCuratelle tutelleCuratelle;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String DatePriseEffetCapaciteJuridique;
 
-    @Column(nullable = false)
     private Boolean mineurEmancipe;
 
     public Integer getId() {
