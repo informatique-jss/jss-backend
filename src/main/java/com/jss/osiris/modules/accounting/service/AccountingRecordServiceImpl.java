@@ -438,6 +438,42 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
+  public void generateAccountingRecordsForProviderInvoiceRefund(Invoice invoice, Payment payment)
+      throws OsirisException {
+
+    if (invoice == null)
+      throw new OsirisException(null, "No invoice provided");
+
+    if (payment == null)
+      throw new OsirisException(null, "No payments nor deposits provided with invoice " + invoice.getId());
+
+    AccountingJournal journal = constantService.getAccountingJournalBank();
+
+    AccountingAccount accountingAccountProvider = getProviderAccountingAccountForInvoice(invoice);
+
+    Integer operationId = 0;
+
+    if (payment != null) {
+      Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
+      if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0) {
+        for (AccountingRecord accountingRecord : payment.getAccountingRecords())
+          // Counter part waiting account record
+          if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
+            if (accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                .equals(constantService.getPrincipalAccountingAccountWaiting().getId()))
+              letterWaitingRecords(accountingRecord,
+                  generateCounterPart(accountingRecord, operationIdCounterPart, journal));
+      }
+      operationId = invoice.getId() + payment.getId();
+    }
+
+    // One write on customer account to equilibrate invoice
+    generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        "Remboursement de la facture n°" + invoice.getId(), null, payment.getPaymentAmount(),
+        accountingAccountProvider, null, invoice, null, journal, null, null, null, null, null);
+  }
+
+  @Override
   public void generateAccountingRecordsForPurshaseOnInvoicePayment(Invoice invoice, List<Payment> payments,
       Float amountToUse) throws OsirisException {
 

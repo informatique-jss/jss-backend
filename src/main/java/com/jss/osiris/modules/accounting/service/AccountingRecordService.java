@@ -38,6 +38,9 @@ public interface AccountingRecordService {
 
         public void generateAccountingRecordsForPurshaseOnInvoiceGeneration(Invoice invoice) throws OsirisException;
 
+        public void generateAccountingRecordsForProviderInvoiceRefund(Invoice invoice, Payment payment)
+                        throws OsirisException;
+
         public void dailyAccountClosing();
 
         public List<AccountingRecordSearchResult> searchAccountingRecords(

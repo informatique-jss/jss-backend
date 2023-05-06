@@ -541,65 +541,77 @@ public class PaymentServiceImpl implements PaymentService {
             generateWaitingAccountAccountingRecords.setValue(false);
 
             for (int i = 0; i < correspondingInvoices.size(); i++) {
-                Float remainingToPayForCurrentInvoice = invoiceService
-                        .getRemainingAmountToPayForInvoice(correspondingInvoices.get(i));
-                boolean isPayed = false;
+                if (correspondingInvoices.get(i).getInvoiceStatus().getId()
+                        .equals(constantService.getInvoiceStatusSend().getId())) {
+                    Float remainingToPayForCurrentInvoice = invoiceService
+                            .getRemainingAmountToPayForInvoice(correspondingInvoices.get(i));
+                    boolean isPayed = false;
 
-                Float effectivePayment;
-                if (byPassAmount != null) {
-                    effectivePayment = byPassAmount.get(amountIndex);
-                    amountIndex++;
-                } else {
-                    effectivePayment = Math.min(remainingToPayForCurrentInvoice, remainingMoney);
-                }
+                    Float effectivePayment;
+                    if (byPassAmount != null) {
+                        effectivePayment = byPassAmount.get(amountIndex);
+                        amountIndex++;
+                    } else {
+                        effectivePayment = Math.min(remainingToPayForCurrentInvoice, remainingMoney);
+                    }
 
-                Payment newPayment = payment;
-                // If more than 1 invoice to associate, cut payment
-                if (correspondingInvoices.size() > 1) {
-                    newPayment = generateNewPaymentFromPayment(payment, effectivePayment);
-                    accountingRecordService.generateBankAccountingRecordsForInboundPayment(newPayment, null);
+                    Payment newPayment = payment;
+                    // If more than 1 invoice to associate, cut payment
+                    if (correspondingInvoices.size() > 1) {
+                        newPayment = generateNewPaymentFromPayment(payment, effectivePayment);
+                        accountingRecordService.generateBankAccountingRecordsForInboundPayment(newPayment, null);
 
-                    if (payment.getIsCancelled() == false)
-                        cancelPayment(payment, constantService.getAccountingJournalBank());
-                }
+                        if (payment.getIsCancelled() == false)
+                            cancelPayment(payment, constantService.getAccountingJournalBank());
+                    }
 
-                // associate and remove waiting accounting record
-                accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(
-                        correspondingInvoices.get(i), newPayment);
+                    // associate and remove waiting accounting record
+                    accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(
+                            correspondingInvoices.get(i), newPayment);
 
-                newPayment.setInvoice(correspondingInvoices.get(i));
-                addOrUpdatePayment(newPayment);
-                if ((remainingToPayForCurrentInvoice - newPayment.getPaymentAmount()) <= 0) {
-                    isPayed = true;
-                    remainingMoney -= remainingToPayForCurrentInvoice;
-                } else {
-                    remainingMoney = 0f;
-                }
-
-                // Handle appoint
-                if (!isPayed
-                        || Math.abs(Math.round((remainingToPayForCurrentInvoice - newPayment.getPaymentAmount()) * 100f)
-                                / 100f) > 0) {
-                    if (Math.abs(remainingToPayForCurrentInvoice - newPayment.getPaymentAmount()) <= Float
-                            .parseFloat(payementLimitRefundInEuros)) {
-                        appointService.generateAppointForInvoice(correspondingInvoices.get(i), payment, null,
-                                newPayment.getPaymentAmount() - remainingToPayForCurrentInvoice);
-
-                        payment.setPaymentAmount(remainingToPayForCurrentInvoice);
-                        addOrUpdatePayment(payment);
+                    newPayment.setInvoice(correspondingInvoices.get(i));
+                    addOrUpdatePayment(newPayment);
+                    if ((remainingToPayForCurrentInvoice - newPayment.getPaymentAmount()) <= 0) {
                         isPayed = true;
+                        remainingMoney -= remainingToPayForCurrentInvoice;
+                    } else {
                         remainingMoney = 0f;
                     }
-                }
 
-                remainingMoney = Math.round(remainingMoney * 100f) / 100f;
-                remainingToPay -= remainingToPayForCurrentInvoice;
-                if (isPayed) {
-                    Invoice updateInvoice = invoiceService.getInvoice(correspondingInvoices.get(i).getId());
-                    accountingRecordService.checkInvoiceForLettrage(updateInvoice);
-                    invoiceService.addOrUpdateInvoice(updateInvoice);
-                } else {
-                    break;
+                    // Handle appoint
+                    if (!isPayed
+                            || Math.abs(
+                                    Math.round((remainingToPayForCurrentInvoice - newPayment.getPaymentAmount()) * 100f)
+                                            / 100f) > 0) {
+                        if (Math.abs(remainingToPayForCurrentInvoice - newPayment.getPaymentAmount()) <= Float
+                                .parseFloat(payementLimitRefundInEuros)) {
+                            appointService.generateAppointForInvoice(correspondingInvoices.get(i), payment, null,
+                                    newPayment.getPaymentAmount() - remainingToPayForCurrentInvoice);
+
+                            payment.setPaymentAmount(remainingToPayForCurrentInvoice);
+                            addOrUpdatePayment(payment);
+                            isPayed = true;
+                            remainingMoney = 0f;
+                        }
+                    }
+
+                    remainingMoney = Math.round(remainingMoney * 100f) / 100f;
+                    remainingToPay -= remainingToPayForCurrentInvoice;
+                    if (isPayed) {
+                        Invoice updateInvoice = invoiceService.getInvoice(correspondingInvoices.get(i).getId());
+                        accountingRecordService.checkInvoiceForLettrage(updateInvoice);
+                        invoiceService.addOrUpdateInvoice(updateInvoice);
+                    } else {
+                        break;
+                    }
+                } else if (correspondingInvoices.get(i).getInvoiceStatus().getId()
+                        .equals(constantService.getInvoiceStatusCancelled().getId())
+                        && correspondingInvoices.get(i).getIsInvoiceFromProvider()) {
+                    accountingRecordService
+                            .generateAccountingRecordsForProviderInvoiceRefund(correspondingInvoices.get(i), payment);
+                    payment.setInvoice(correspondingInvoices.get(i));
+                    payment.setInvoice(correspondingInvoices.get(i));
+                    addOrUpdatePayment(payment);
                 }
             }
         }
