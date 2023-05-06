@@ -40,6 +40,8 @@ public class Notification implements Serializable, IId {
   public static String PROVISION_ADD_ATTACHMENT = "PROVISION_ADD_ATTACHMENT";
   public static String PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED = "PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED";
 
+  public static String TIERS_DEPOSIT_MANDATORY = "TIERS_DEPOSIT_MANDATORY";
+
   @Id
   @SequenceGenerator(name = "notification_sequence", sequenceName = "notification_sequence", allocationSize = 1)
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_sequence")

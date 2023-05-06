@@ -23,7 +23,6 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
@@ -44,7 +43,6 @@ import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
-import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.repository.EmployeeRepository;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Confrere;
@@ -681,29 +679,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     public void sendRemindersForInvoices()
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
-        /*
-         * //Tester manualment, decommenter cel-ci et commenter tout le rest
-         * Invoice invoiceTest = invoiceRepository.findByCustomerOrderId(143713).get(0);
-         * ITiers customerOrderToSetProvision =
-         * invoiceHelper.getCustomerOrder(invoiceTest);
-         * Employee employeeTo = employeeRepository.findByUsername("GAPIN");
-         * // Employee employeeTo = customerOrderToSetProvision.getSalesEmployee();
-         * Integer nbrTier = customerOrderToSetProvision.getId();
-         * String invoiceNbr = invoiceTest.getAccountingRecords().get(0).getLabel();
-         * IndexEntity indexEntity =
-         * indexEntityRepository.searchForEntitiesById(143711).get(0);
-         * 
-         * String detail1 = "Le TIERS n° " + nbrTier +
-         * " / LABEL a été relancé pour payer la " + invoiceNbr
-         * +
-         * ". Merci de le rappeler pour éclaircir la situation et de considérer le passage"
-         * +
-         * " de sa fiche de TIERS à l’acompte obligatoire. (Le paramètre se situe dans l’onglet 'Pièces, réglements, facturations & relances' > ‘Réglement’)."
-         * ;
-         * notificationService.notifyCommercialPassageTiersAcompteObligatoire(
-         * employeeTo, detail1, indexEntity);
-         */
-
         List<Invoice> invoices = invoiceRepository.findInvoiceForReminder(constantService.getInvoiceStatusSend());
 
         if (invoices != null && invoices.size() > 0)
@@ -711,7 +686,6 @@ public class InvoiceServiceImpl implements InvoiceService {
                 boolean toSend = false;
 
                 // Do not remind on direct debit transfert
-
                 if (invoice.getManualPaymentType() == null
                         || !invoice.getManualPaymentType().getId()
                                 .equals(constantService.getPaymentTypePrelevement().getId())) {
@@ -720,34 +694,15 @@ public class InvoiceServiceImpl implements InvoiceService {
                         toSend = true;
                         invoice.setFirstReminderDateTime(LocalDateTime.now());
 
-                        // Reminder once, next time provision will be mandatory :)
                         ITiers customerOrderToSetProvision = invoiceHelper.getCustomerOrder(invoice);
-                        Employee employeeTo = customerOrderToSetProvision.getSalesEmployee();
-                        Integer nbrTier = customerOrderToSetProvision.getId();
-                        String invoiceNbr = invoice.getAccountingRecords().get(0).getLabel();
-                        IndexEntity indexEntity = indexEntityRepository.searchForEntitiesById(invoice.getId())
-                                .get(0);
-                        String detail1 = "Le TIERS n° " + nbrTier + " / LABEL a été relancé pour payer la "
-                                + invoiceNbr
-                                + ". Merci de le rappeler pour éclaircir la situation et de considérer le passage"
-                                +
-                                " de sa fiche de TIERS à l’acompte obligatoire. (Le paramètre se situe dans l’onglet 'Pièces, réglements, facturations & relances' > ‘Réglement’).";
-                        if (customerOrderToSetProvision instanceof Responsable)
-                            customerOrderToSetProvision = ((Responsable) customerOrderToSetProvision).getTiers();
-                        if (customerOrderToSetProvision instanceof Tiers) {
-                            notificationService.notifyCommercialPassageTiersAcompteObligatoire(employeeTo, detail1,
-                                    indexEntity);
-                        } else if (customerOrderToSetProvision instanceof Confrere) {
-                            notificationService.notifyCommercialPassageTiersAcompteObligatoire(employeeTo, detail1,
-                                    indexEntity);
-
-                        }
+                        if (customerOrderToSetProvision instanceof Tiers)
+                            notificationService.notifyTiersDepositMandatory((Tiers) customerOrderToSetProvision,
+                                    invoice);
                     } else if (invoice.getSecondReminderDateTime() == null
                             && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))) {
                         toSend = true;
                         invoice.setSecondReminderDateTime(LocalDateTime.now());
-                    } else if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15 +
-                            15))) {
+                    } else if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15 + 15))) {
                         toSend = true;
                         invoice.setThirdReminderDateTime(LocalDateTime.now());
                         notificationService.notifyInvoiceToReminder(invoice);
@@ -755,14 +710,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                     if (toSend) {
                         mailHelper.sendCustomerOrderFinalisationToCustomer(
-                                customerOrderService.getCustomerOrder(invoice.getCustomerOrder().getId()),
-                                false, true,
+                                customerOrderService.getCustomerOrder(invoice.getCustomerOrder().getId()), false, true,
                                 invoice.getThirdReminderDateTime() != null);
                         addOrUpdateInvoice(invoice);
                     }
                 }
             }
-
     }
 
     @Override

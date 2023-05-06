@@ -392,11 +392,33 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Notification notifyCommercialPassageTiersAcompteObligatoire(Employee employeeTo, String detail,
-            IId entityType) throws OsirisException {
-        Employee accueil = employeeRepository.findByUsername("ACCUEIL");
-        return generateNewNotification(accueil, employeeTo,
-                Notification.PERSONNAL, entityType, detail, "Délai de paiement", true);
+    public Notification notifyTiersDepositMandatory(Tiers tiers, Invoice invoice) throws OsirisException {
+        boolean createdByMe = false;
+        List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
+        Employee salesEmployee = null;
+
+        String customerOrderName = "";
+        if (tiers.getDenomination() != null)
+            customerOrderName = ((Tiers) tiers).getDenomination();
+        else
+            customerOrderName = ((Tiers) tiers).getCivility().getLabel() + " "
+                    + ((Tiers) tiers).getFirstname() + " "
+                    + ((Tiers) tiers).getLastname();
+        salesEmployee = ((Tiers) tiers).getSalesEmployee();
+
+        if (salesEmployee != null) {
+            if (compareEmployee != null)
+                for (Employee employee : compareEmployee)
+                    if (employee.getId().equals(salesEmployee))
+                        createdByMe = true;
+
+            if (!createdByMe)
+                return generateNewNotification(employeeService.getCurrentEmployee(), salesEmployee,
+                        Notification.TIERS_DEPOSIT_MANDATORY, tiers, "Le tiers " + customerOrderName + " ("
+                                + tiers.getId() + ") a été relancé pour payer la facture " + invoice.getId() + ".",
+                        null, false);
+        }
+        return null;
     }
 
     private boolean isProvisionClosed(Provision provision) {
