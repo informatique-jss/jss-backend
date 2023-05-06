@@ -1,19 +1,18 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
-import { Phone } from '../model/Phone';
+import { PhoneSearch } from '../../tiers/model/PhoneSearch';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PhoneService extends AppRestService<Phone>{
+export class PhoneSearchService extends AppRestService<PhoneSearch> {
 
   constructor(http: HttpClient) {
     super(http, "tiers");
   }
 
-  getPhones(phone: string) {
-    return this.getList(new HttpParams().set("phone", phone), "phones/search");
+  getPhones(phoneNumber: string) {
+    return this.getList(new HttpParams().set("phoneNumber", phoneNumber), "phone/search");
   }
-
 }

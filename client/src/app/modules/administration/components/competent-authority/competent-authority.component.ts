@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -23,6 +24,7 @@ export class CompetentAuthorityComponent implements OnInit {
     private cityService: CityService,
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
+    protected activatedRoute: ActivatedRoute,
     private appService: AppService,
     protected paymentTypeService: PaymentTypeService,) {
   }
@@ -35,6 +37,7 @@ export class CompetentAuthorityComponent implements OnInit {
   selectedcompetentAuthorityId: number | undefined;
   displayedColumns: SortTableColumn[] = [];
   editMode: boolean = false;
+  selectedCompetentAuthorityId: number | undefined;
 
   saveObservableSubscription: Subscription = new Subscription;
   COMPETENT_AUTHORITY_ENTITY_TYPE = COMPETENT_AUTHORITY_ENTITY_TYPE;
@@ -42,6 +45,12 @@ export class CompetentAuthorityComponent implements OnInit {
 
   ngOnInit(): void {
     this.appService.changeHeaderTitle("Autorités compétentes");
+
+    this.selectedCompetentAuthorityId = this.activatedRoute.snapshot.params.id;
+
+    if (this.selectedCompetentAuthorityId) {
+      this.competentAuthorityService.getCompetentAuthorityById(this.selectedCompetentAuthorityId).subscribe(response => this.selectedcompetentAuthority = response);
+    }
 
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);

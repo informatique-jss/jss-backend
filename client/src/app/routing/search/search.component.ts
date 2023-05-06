@@ -11,7 +11,7 @@ import { IndexEntityService } from './index.entity.service';
 export const OFX_ENTITY_TYPE: EntityType = { entityType: 'Ofx', tabName: 'Ofx', entryPoint: 'ofx' };
 export const TIERS_ENTITY_TYPE: EntityType = { entityType: 'Tiers', tabName: 'Tiers', entryPoint: 'tiers' };
 export const RESPONSABLE_ENTITY_TYPE: EntityType = { entityType: 'Responsable', tabName: 'Responsable', entryPoint: 'tiers/responsable' };
-export const CONFRERE_ENTITY_TYPE: EntityType = { entityType: 'Confrere', tabName: 'Confrère', entryPoint: 'confrere/confrere' };
+export const CONFRERE_ENTITY_TYPE: EntityType = { entityType: 'Confrere', tabName: 'Confrère', entryPoint: 'confrere' };
 export const PROVIDER_ENTITY_TYPE: EntityType = { entityType: 'Provider', tabName: 'Fournisseur', entryPoint: 'administration/provider' };
 export const COMPETENT_AUTHORITY_ENTITY_TYPE: EntityType = { entityType: 'CompetentAuthority', tabName: 'Autorité compétente', entryPoint: 'administration/competent/authority' };
 export const QUOTATION_ENTITY_TYPE: EntityType = { entityType: 'Quotation', tabName: 'Devis', entryPoint: 'quotation' };
@@ -47,8 +47,10 @@ export class SearchComponent implements OnInit {
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
   INVOICE_ENTITY_TYPE = INVOICE_ENTITY_TYPE;
   ASSO_AFFAIRE_ENTITY_TYPE = ASSO_AFFAIRE_ENTITY_TYPE;
+  CONFRERE_ENTITY_TYPE = CONFRERE_ENTITY_TYPE;
+  PROVIDER_ENTITY_TYPE = PROVIDER_ENTITY_TYPE;
   AFFAIRE_ENTITY_TYPE = AFFAIRE_ENTITY_TYPE;
-  entityTypes: EntityType[] = [TIERS_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE, QUOTATION_ENTITY_TYPE, CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE, ASSO_AFFAIRE_ENTITY_TYPE, AFFAIRE_ENTITY_TYPE];
+  entityTypes: EntityType[] = [TIERS_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE, QUOTATION_ENTITY_TYPE, CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE, ASSO_AFFAIRE_ENTITY_TYPE, AFFAIRE_ENTITY_TYPE, PROVIDER_ENTITY_TYPE, CONFRERE_ENTITY_TYPE];
   userSelectedModule: EntityType | null = null;
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup | undefined;
 
