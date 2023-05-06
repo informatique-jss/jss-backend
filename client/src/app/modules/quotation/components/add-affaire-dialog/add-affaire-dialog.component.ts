@@ -11,7 +11,6 @@ import { AffaireService } from '../../services/affaire.service';
 import { RnaService } from '../../services/rna.service';
 import { SirenService } from '../../services/siren.service';
 import { SiretService } from '../../services/siret.service';
-import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 
 @Component({
   selector: 'app-add-affaire-dialog',
@@ -36,7 +35,7 @@ export class AddAffaireDialogComponent implements OnInit {
     private constantService: ConstantService,
     private affaireService: AffaireService,
     private appService: AppService,
-    private affaireDialogRef: MatDialogRef<SelectAttachmentsDialogComponent>
+    private affaireDialogRef: MatDialogRef<AddAffaireDialogComponent>
   ) { }
 
   ngOnInit() {
