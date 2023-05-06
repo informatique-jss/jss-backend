@@ -171,15 +171,7 @@ public class TiersController {
 
   @GetMapping(inputEntryPoint + "/phone/search")
   public ResponseEntity<List<PhoneSearch>> getByPhoneNumber(@RequestParam String phoneNumber) throws OsirisException {
-    validationHelper.validateFrenchPhone(phoneNumber);
     return new ResponseEntity<List<PhoneSearch>>(phoneService.getByPhoneNumber(phoneNumber), HttpStatus.OK);
-  }
-
-  @PostMapping(inputEntryPoint + "/phone/search")
-  public ResponseEntity<List<PhoneSearch>> searchPhoneNumbers(@RequestBody String phoneNumber) throws OsirisException {
-
-    List<PhoneSearch> results = phoneService.getByPhoneNumber(phoneNumber);
-    return new ResponseEntity<List<PhoneSearch>>(results, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/tiers-followup-types")

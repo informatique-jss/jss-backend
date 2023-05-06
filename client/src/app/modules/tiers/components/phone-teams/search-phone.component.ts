@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { PhoneService } from 'src/app/modules/miscellaneous/services/tiers.phone.service';
+import { PhoneSearchService } from 'src/app/modules/miscellaneous/services/phone.search.service';
 import { EntityType } from 'src/app/routing/search/EntityType';
 import { AFFAIRE_ENTITY_TYPE, ASSO_AFFAIRE_ENTITY_TYPE, COMPETENT_AUTHORITY_ENTITY_TYPE, CONFRERE_ENTITY_TYPE, CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE, PROVIDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE, TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
@@ -23,7 +23,7 @@ export class SearchPhoneComponent {
   entityTypes: EntityType[] = [TIERS_ENTITY_TYPE, COMPETENT_AUTHORITY_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE, QUOTATION_ENTITY_TYPE, CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE, ASSO_AFFAIRE_ENTITY_TYPE, AFFAIRE_ENTITY_TYPE, PROVIDER_ENTITY_TYPE, CONFRERE_ENTITY_TYPE];
 
   constructor(
-    private phoneService: PhoneService,
+    private phoneSearchService: PhoneSearchService,
     private appService: AppService,
     private route: ActivatedRoute) { }
 
@@ -31,7 +31,7 @@ export class SearchPhoneComponent {
     this.appService.changeHeaderTitle("Recherche par téléphone");
     const phoneNumber = this.route.snapshot.paramMap.get('phoneNumber');
     if (phoneNumber) {
-      this.phoneService.getPhones(phoneNumber).subscribe(result => {
+      this.phoneSearchService.getPhones(phoneNumber).subscribe(result => {
         if (result) {
           this.phoneSearchs = result;
           if (this.phoneSearchs.length === 1)

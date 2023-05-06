@@ -6,7 +6,7 @@ import { PhoneSearch } from '../../tiers/model/PhoneSearch';
 @Injectable({
   providedIn: 'root'
 })
-export class PhoneService extends AppRestService<PhoneSearch> {
+export class PhoneSearchService extends AppRestService<PhoneSearch> {
 
   constructor(http: HttpClient) {
     super(http, "tiers");
