@@ -23,7 +23,6 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.libs.search.repository.IndexEntityRepository;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
@@ -43,7 +42,6 @@ import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
-import com.jss.osiris.modules.profile.repository.EmployeeRepository;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -118,12 +116,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     PaymentService paymentService;
-
-    @Autowired
-    EmployeeRepository employeeRepository;
-
-    @Autowired
-    IndexEntityRepository indexEntityRepository;
 
     @Override
     public List<Invoice> getAllInvoices() {

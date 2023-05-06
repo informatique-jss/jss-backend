@@ -19,7 +19,6 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Notification;
 import com.jss.osiris.modules.miscellaneous.repository.NotificationRepository;
 import com.jss.osiris.modules.profile.model.Employee;
-import com.jss.osiris.modules.profile.repository.EmployeeRepository;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
@@ -60,9 +59,6 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     StatusService statusService;
-
-    @Autowired
-    EmployeeRepository employeeRepository;
 
     @Override
     public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture) {
