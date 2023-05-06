@@ -41,4 +41,7 @@ public interface AccountingAccountService {
         public AccountingAccount getProfitAccountingAccount() throws OsirisException;
 
         public AccountingAccount getLostAccountingAccount() throws OsirisException;
+
+        public AccountingAccount updateAccountingAccountLabel(AccountingAccount accountingAccount, String label)
+                        throws OsirisException;
 }

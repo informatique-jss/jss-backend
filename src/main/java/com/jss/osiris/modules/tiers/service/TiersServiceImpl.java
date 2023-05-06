@@ -100,21 +100,26 @@ public class TiersServiceImpl implements TiersService {
             }
         }
 
+        String tiersLabel = "";
+        if (tiers.getIsIndividual()) {
+            tiersLabel = tiers.getFirstname() + " " + tiers.getLastname();
+        } else {
+            tiersLabel = tiers.getDenomination();
+        }
+
         // Generate accounting accounts
         if (tiers.getId() == null
                 || tiers.getAccountingAccountCustomer() == null && tiers.getAccountingAccountProvider() == null
                         && tiers.getAccountingAccountDeposit() == null) {
-            String label = "";
-            if (tiers.getIsIndividual()) {
-                label = tiers.getFirstname() + " " + tiers.getLastname();
-            } else {
-                label = tiers.getDenomination();
-            }
             AccountingAccountTrouple accountingAccountCouple = accountingAccountService
-                    .generateAccountingAccountsForEntity(label, false);
+                    .generateAccountingAccountsForEntity(tiersLabel, false);
             tiers.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
             tiers.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
             tiers.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
+        } else {
+            accountingAccountService.updateAccountingAccountLabel(tiers.getAccountingAccountCustomer(), tiersLabel);
+            accountingAccountService.updateAccountingAccountLabel(tiers.getAccountingAccountDeposit(), tiersLabel);
+            accountingAccountService.updateAccountingAccountLabel(tiers.getAccountingAccountProvider(), tiersLabel);
         }
 
         if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0)
@@ -166,15 +171,6 @@ public class TiersServiceImpl implements TiersService {
         if (tiers.getDefaultCustomerOrderEmployee() == null)
             tiers.setDefaultCustomerOrderEmployee(tiers.getSalesEmployee());
 
-        if (tiers.getAccountingAccountCustomer() != null || tiers.getAccountingAccountDeposit() != null
-                || tiers.getAccountingAccountProvider() != null) {
-            tiers.getAccountingAccountCustomer()
-                    .setLabel("Client - " + (tiers.getDenomination() != null ? tiers.getDenomination() : ""));
-            tiers.getAccountingAccountDeposit()
-                    .setLabel("Acompte - " + (tiers.getDenomination() != null ? tiers.getDenomination() : ""));
-            tiers.getAccountingAccountProvider()
-                    .setLabel("Fournisseur - " + (tiers.getDenomination() != null ? tiers.getDenomination() : ""));
-        }
         tiers = tiersRepository.save(tiers);
 
         return tiers;

@@ -256,4 +256,14 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
 
                 return waitingAccountingAccounts.get(0);
         }
+
+        @Override
+        public AccountingAccount updateAccountingAccountLabel(AccountingAccount accountingAccount, String label)
+                        throws OsirisException {
+                if (accountingAccount != null) {
+                        accountingAccount.setLabel(label);
+                        addOrUpdateAccountingAccount(accountingAccount);
+                }
+                return accountingAccount;
+        }
 }
