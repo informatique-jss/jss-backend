@@ -87,9 +87,11 @@ public class InfogreffeInvoiceServiceImpl implements InfogreffeInvoiceService {
                 InfogreffeInvoice invoice = new InfogreffeInvoice();
                 invoice.setCompetentAuthority(
                         competentAuthorityService.getCompetentAuthorityByInpiReference("G" + fields[2]));
-                invoice.setCustomerReference(fields[10]);
-                invoice.setInvoiceDateTime(
-                        LocalDateTime.parse(fields[5], DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+                if (fields.length > 10)
+                    invoice.setCustomerReference(fields[10]);
+                if (!fields[5].equals(""))
+                    invoice.setInvoiceDateTime(
+                            LocalDateTime.parse(fields[5], DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
                 invoice.setInvoiceNumber(fields[1]);
                 invoice.setPreTaxPrice(Float.parseFloat(fields[9].replace("€", "").replace(",", ".")));
                 Float totalPrice = Float.parseFloat(fields[8].replace("€", "").replace(",", "."));
@@ -105,7 +107,7 @@ public class InfogreffeInvoiceServiceImpl implements InfogreffeInvoiceService {
                 }
                 foundInvoice.setDebour(findCorrespondingDebour(invoice));
                 addOrUpdateInfogreffeInvoice(foundInvoice);
-
+                System.out.println(line);
                 if (foundInvoice.getDebour() != null && foundInvoice.getDebour().getInvoiceItem() == null)
                     generateInvoiceFromDebourAndInfogreffeInvoice(foundInvoice);
             }
