@@ -508,6 +508,8 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       maxWidth: "1000px",
     });
 
+    dialogRef.componentInstance.dialogRef.disableClose = true;
+
     dialogRef.afterClosed().subscribe(dialogResult => {
       if (dialogResult && this.currentProvisionWorkflow) {
         this.attachmentTypeMailQueryService.generateAttachmentTypeMail(dialogResult, this.asso.customerOrder, this.currentProvisionWorkflow).subscribe(response => { });
