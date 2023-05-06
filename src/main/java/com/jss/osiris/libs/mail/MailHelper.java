@@ -1230,7 +1230,7 @@ public class MailHelper {
                     .collect(Collectors.joining(" - ")));
         ctx.setVariable("qrCodePicture",
                 Base64.getEncoder().encodeToString(qrCodeHelper
-                        .getQrCode("https://www.jss.fr/Annonce-publiee.awp?P1=" + announcement.getId() + ".awp", 60)));
+                        .getQrCode("https://www.jss.fr/Annonce-publiee.awp?P1=" + announcement.getId(), 60)));
         LocalDate localDate = announcement.getPublicationDate();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy");
         ctx.setVariable("date", StringUtils.capitalize(localDate.format(formatter)));
