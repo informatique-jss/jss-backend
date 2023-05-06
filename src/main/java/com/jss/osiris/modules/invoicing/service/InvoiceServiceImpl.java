@@ -679,6 +679,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Transactional
     public void sendRemindersForInvoices()
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+
         List<Invoice> invoices = invoiceRepository.findInvoiceForReminder(constantService.getInvoiceStatusSend());
 
         if (invoices != null && invoices.size() > 0)
@@ -694,17 +695,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                         toSend = true;
                         invoice.setFirstReminderDateTime(LocalDateTime.now());
 
-                        // Reminder once, next time provision will be mandatory :)
                         ITiers customerOrderToSetProvision = invoiceHelper.getCustomerOrder(invoice);
-                        if (customerOrderToSetProvision instanceof Responsable)
-                            customerOrderToSetProvision = ((Responsable) customerOrderToSetProvision).getTiers();
-                        if (customerOrderToSetProvision instanceof Tiers) {
-                            ((Tiers) customerOrderToSetProvision).setIsProvisionalPaymentMandatory(true);
-                            tiersService.addOrUpdateTiers((Tiers) customerOrderToSetProvision);
-                        } else if (customerOrderToSetProvision instanceof Confrere) {
-                            ((Confrere) customerOrderToSetProvision).setIsProvisionalPaymentMandatory(true);
-                            confrereService.addOrUpdateConfrere((Confrere) customerOrderToSetProvision);
-                        }
+                        if (customerOrderToSetProvision instanceof Tiers)
+                            notificationService.notifyTiersDepositMandatory((Tiers) customerOrderToSetProvision,
+                                    invoice);
                     } else if (invoice.getSecondReminderDateTime() == null
                             && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))) {
                         toSend = true;
