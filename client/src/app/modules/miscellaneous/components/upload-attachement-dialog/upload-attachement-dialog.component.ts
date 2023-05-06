@@ -23,6 +23,7 @@ export class UploadAttachementDialogComponent implements OnInit {
   isSending = false;
   replaceExistingAttachementType = false;
   forcedAttachmentType: AttachmentType | undefined;
+  forcedFileExtension: string | undefined;
 
   attachmentTypes: AttachmentType[] = [] as Array<AttachmentType>;
 
@@ -58,6 +59,7 @@ export class UploadAttachementDialogComponent implements OnInit {
     this.file = $event;
     this.filename = this.file.name;
     this.attachmentForm.markAllAsTouched();
+    console.log(this.file);
     this.checkFile();
   }
 
@@ -78,6 +80,13 @@ export class UploadAttachementDialogComponent implements OnInit {
     if (this.file != null && this.file.size > MAX_SIZE_UPLOAD_FILES) {
       this.deleteFile();
       this.appService.displaySnackBar("Taille maximale d'import limitée à 5 Mo", true, 15);
+    }
+    if (this.forcedFileExtension) {
+      var extensionRegexp = /(?:\.([^.]+))?$/;
+      if (!extensionRegexp.exec(this.file.name)![1] || extensionRegexp.exec(this.file.name)![1].toLowerCase() != this.forcedFileExtension.toLowerCase()) {
+        this.deleteFile();
+        this.appService.displaySnackBar("Le fichier doit être au format " + this.forcedFileExtension.toUpperCase(), true, 15);
+      }
     }
   }
 

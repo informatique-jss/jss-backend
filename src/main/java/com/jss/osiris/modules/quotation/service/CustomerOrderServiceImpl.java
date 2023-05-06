@@ -35,6 +35,7 @@ import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
@@ -108,6 +109,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     InvoiceHelper invoiceHelper;
+
+    @Autowired
+    GeneratePdfDelegate generatePdfDelegate;
 
     @Autowired
     AccountingRecordService accountingRecordService;
@@ -626,7 +630,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         invoiceService.addOrUpdateInvoice(invoice);
 
         // Create invoice PDF and attach it to customerOrder
-        File invoicePdf = mailHelper.generateInvoicePdf(customerOrder, invoice, null);
+        File invoicePdf = generatePdfDelegate.generateInvoicePdf(customerOrder, invoice, null);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
         try {
             attachmentService.addAttachment(new FileInputStream(invoicePdf), customerOrder.getId(),
@@ -1116,7 +1120,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
             byte[] data = null;
             HttpHeaders headers = null;
-            File file = mailHelper.generateLetterPdf(customerOrders);
+            File file = generatePdfDelegate.generateLetterPdf(customerOrders);
 
             if (file != null) {
                 try {

@@ -18,6 +18,7 @@ export class SingleAttachmentComponent implements OnInit {
   @Input() entityType: string = "";
   @Input() editMode: boolean = false;
   @Input() attachmentTypeToDisplay: AttachmentType | undefined;
+  @Input() forcedFileExtension: string | undefined;
   /**
    * Fired when an upload is realized.
    * Give the current attachements of the entity in parameter
@@ -70,6 +71,7 @@ export class SingleAttachmentComponent implements OnInit {
     this.uploadAttachementDialogRef.componentInstance.entityType = this.entityType;
     this.uploadAttachementDialogRef.componentInstance.forcedAttachmentType = this.attachmentTypeToDisplay;
     this.uploadAttachementDialogRef.componentInstance.replaceExistingAttachementType = true;
+    this.uploadAttachementDialogRef.componentInstance.forcedFileExtension = this.forcedFileExtension;
     this.uploadAttachementDialogRef.afterClosed().subscribe(response => {
       if (response && response != null) {
         this.entity.attachments = response;

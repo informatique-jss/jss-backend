@@ -114,6 +114,8 @@ public interface ConstantService {
 
     public AttachmentType getAttachmentTypeAnnouncement() throws OsirisException;
 
+    public AttachmentType getAttachmentTypeComplexAnnouncement() throws OsirisException;
+
     public Country getCountryFrance() throws OsirisException;
 
     public Country getCountryMonaco() throws OsirisException;

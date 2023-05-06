@@ -27,6 +27,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
@@ -161,6 +162,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   CustomerOrderService customerOrderService;
+
+  @Autowired
+  GeneratePdfDelegate generatePdfDelegate;
 
   @Override
   public AccountingRecord getAccountingRecord(Integer id) {
@@ -1458,7 +1462,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           tiers.add(tier);
         List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers,
             isOrderingByEventDate);
-        return mailHelper.getBillingClosureReceiptFile(tier, values);
+        return generatePdfDelegate.getBillingClosureReceiptFile(tier, values);
       }
 
       // Send all to tiers
@@ -1477,7 +1481,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers, isOrderingByEventDate);
         if (values.size() > 0)
           sendBillingClosureReceiptFile(
-              mailHelper.getBillingClosureReceiptFile(tier, values),
+              generatePdfDelegate.getBillingClosureReceiptFile(tier, values),
               tier);
 
       } else if (billingClosureDocument.getBillingClosureRecipientType() != null
@@ -1493,7 +1497,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
                 isOrderingByEventDate);
             if (values.size() > 0)
               sendBillingClosureReceiptFile(
-                  mailHelper.getBillingClosureReceiptFile(responsable, values),
+                  generatePdfDelegate.getBillingClosureReceiptFile(responsable, values),
                   responsable);
 
           }

@@ -93,6 +93,8 @@ public class Announcement implements IId, IDocument {
 
 	private Integer actuLegaleId;
 
+	private Boolean isComplexAnnouncement;
+
 	public Integer getId() {
 		return id;
 	}
@@ -291,6 +293,14 @@ public class Announcement implements IId, IDocument {
 
 	public void setThirdClientReviewReminderDateTime(LocalDateTime thirdClientReviewReminderDateTime) {
 		this.thirdClientReviewReminderDateTime = thirdClientReviewReminderDateTime;
+	}
+
+	public Boolean getIsComplexAnnouncement() {
+		return isComplexAnnouncement;
+	}
+
+	public void setIsComplexAnnouncement(Boolean isComplexAnnouncement) {
+		this.isComplexAnnouncement = isComplexAnnouncement;
 	}
 
 }

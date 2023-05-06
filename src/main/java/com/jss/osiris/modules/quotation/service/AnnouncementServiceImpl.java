@@ -3,6 +3,7 @@ package com.jss.osiris.modules.quotation.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,11 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
+import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
+import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 import com.jss.osiris.libs.PictureHelper;
 import com.jss.osiris.libs.WordGenerationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
@@ -73,6 +79,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Autowired
     CustomerOrderStatusService customerOrderStatusService;
 
+    @Autowired
+    GeneratePdfDelegate generatePdfDelegate;
+
     @Override
     public List<Announcement> getAnnouncements() {
         return IterableUtils.toList(announcementRepository.findAll());
@@ -89,6 +98,48 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public Announcement addOrUpdateAnnouncement(Announcement announcement) {
         return announcementRepository.save(announcement);
+    }
+
+    @Override
+    public Announcement updateComplexAnnouncementNotice(Announcement announcement, Provision provision)
+            throws OsirisException {
+        // Get announcement PDF
+        File complexePdf = null;
+        if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+            for (Attachment attachment : provision.getAttachments())
+                if (attachment.getAttachmentType().getId()
+                        .equals(constantService.getAttachmentTypeComplexAnnouncement().getId())) {
+                    complexePdf = new File(attachment.getUploadedFile().getPath());
+                    break;
+                }
+
+        if (complexePdf == null)
+            throw new OsirisException(null, "No announncement PDF found");
+
+        PdfReader reader;
+        FileInputStream in;
+        try {
+            in = new FileInputStream(complexePdf.getAbsolutePath());
+            reader = new PdfReader(in);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Impossible to open PDF file");
+        }
+        PdfReaderContentParser parser = new PdfReaderContentParser(reader);
+        String announcementNotice = "";
+        TextExtractionStrategy strategy;
+        try {
+            for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+                strategy = parser.processContent(i, new SimpleTextExtractionStrategy());
+                announcementNotice += strategy.getResultantText();
+            }
+        } catch (IOException e) {
+            throw new OsirisException(e, "Impossible to parse PDF file");
+        }
+        reader.close();
+
+        announcement.setNoticeHeader("");
+        announcement.setNotice(announcementNotice);
+        return addOrUpdateAnnouncement(announcement);
     }
 
     @Override
@@ -209,7 +260,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         if (announcement.getConfrere() != null
                 && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
-            File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, true,
+            File publicationReceiptPdf = generatePdfDelegate.generatePublicationReceiptPdf(announcement, true,
                     currentProvision);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
@@ -264,7 +315,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (announcement.getConfrere() != null
                 && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
-            File publicationReceiptPdf = mailHelper.generatePublicationFlagPdf(announcement, currentProvision);
+            File publicationReceiptPdf = generatePdfDelegate.generatePublicationFlagPdf(announcement, currentProvision);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
                 currentProvision.setAttachments(
@@ -329,7 +380,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             return;
 
         if (announcement.getNotice() != null) {
-            File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, false,
+            File publicationReceiptPdf = generatePdfDelegate.generatePublicationReceiptPdf(announcement, false,
                     currentProvision);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {

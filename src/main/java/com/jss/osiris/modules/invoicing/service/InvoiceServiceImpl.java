@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
@@ -90,6 +91,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    GeneratePdfDelegate generatePdfDelegate;
 
     @Autowired
     TiersService tiersService;
@@ -189,7 +193,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         if (customerOrder != null) {
             // Generate PDF and attached it to customer order
-            File creditNotePdf = mailHelper.generateInvoicePdf(customerOrder, creditNote, invoice);
+            File creditNotePdf = generatePdfDelegate.generateInvoicePdf(customerOrder, creditNote, invoice);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
                 attachmentService.addAttachment(new FileInputStream(creditNotePdf), customerOrder.getId(),

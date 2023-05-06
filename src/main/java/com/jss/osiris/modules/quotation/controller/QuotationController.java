@@ -28,6 +28,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
@@ -179,6 +180,9 @@ public class QuotationController {
 
   @Autowired
   CityService cityService;
+
+  @Autowired
+  GeneratePdfDelegate generatePdfDelegate;
 
   @Autowired
   CountryService countryService;
@@ -1517,7 +1521,7 @@ public class QuotationController {
     if (announcement == null)
       throw new OsirisValidationException("Annonce non trouvée");
 
-    File file = mailHelper.generatePublicationReceiptPdf(announcement, true, provision);
+    File file = generatePdfDelegate.generatePublicationReceiptPdf(announcement, true, provision);
 
     if (file != null) {
       try {
@@ -1573,7 +1577,7 @@ public class QuotationController {
     if (announcement == null)
       throw new OsirisValidationException("Annonce non trouvée");
 
-    File file = mailHelper.generatePublicationReceiptPdf(announcement, false, provision);
+    File file = generatePdfDelegate.generatePublicationReceiptPdf(announcement, false, provision);
 
     if (file != null) {
       try {
@@ -1632,7 +1636,7 @@ public class QuotationController {
     if (provision == null)
       throw new OsirisValidationException("Provision non trouvée");
 
-    File file = mailHelper.generatePublicationFlagPdf(announcement, provision);
+    File file = generatePdfDelegate.generatePublicationFlagPdf(announcement, provision);
 
     if (file != null) {
       try {
