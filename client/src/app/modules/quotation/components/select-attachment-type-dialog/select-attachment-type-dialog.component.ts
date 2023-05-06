@@ -1,6 +1,6 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AppService } from 'src/app/services/app.service';
 import { AttachmentTypeMailQuery } from '../../model/AttachmentTypeMailQuery';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
@@ -36,13 +36,6 @@ export class SelectAttachmentTypeDialogComponent implements OnInit {
   generateMail() {
     this.dialogRef.close(this.query);
   }
-
-  openDialog() {
-
-    const dialogConfig = new MatDialogConfig();
-
-    this.dialog.open(SelectAttachmentTypeDialogComponent, dialogConfig);
-}
 
   closeDialog() {
     this.dialogRef.close(null);
