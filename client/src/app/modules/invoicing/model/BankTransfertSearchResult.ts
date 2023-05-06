@@ -8,4 +8,5 @@ export interface BankTransfertSearchResult {
   isAlreadyExported: boolean;
   competentAuthorityLabel: string;
   invoiceBillingLabel: string;
+  affaireLabel: string;
 }

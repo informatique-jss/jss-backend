@@ -1,8 +1,8 @@
 package com.jss.osiris.modules.quotation.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 
-public interface CharacterPriceRepository extends CrudRepository<CharacterPrice, Integer> {
+public interface CharacterPriceRepository extends QueryCacheCrudRepository<CharacterPrice, Integer> {
 }

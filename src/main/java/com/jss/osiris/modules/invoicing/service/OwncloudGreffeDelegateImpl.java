@@ -275,6 +275,7 @@ public class OwncloudGreffeDelegateImpl implements OwncloudGreffeDelegate {
         provisionService.addOrUpdateProvision(provision);
 
         greffeInvoice.setDebour(newDebour);
+        greffeInvoice.setCustomerOrder(provision.getAssoAffaireOrder().getCustomerOrder());
         owncloudGreffeInvoiceService.addOrUpdateOwncloudGreffeInvoice(greffeInvoice);
 
         // Refresh customer order to get new debour in provision

@@ -23,16 +23,19 @@ import { InvoicingModule } from '../../../invoicing/components/invoicing/invoici
 import { QuotationModule } from '../../../quotation/components/quotation/quotation.module';
 import { ReportingModule } from '../../../reporting/components/reporting/reporting.module';
 import { ConfrereComponent } from '../confrere/confrere.component';
+import { SearchPhoneComponent } from '../phone-teams/search-phone.component';
 import { ResponsableMainComponent } from '../responsable-main/responsable-main.component';
 import { SettlementBillingComponent } from '../settlement-billing/settlement-billing.component';
 import { PrincipalComponent } from '../tiers-main/tiers-main.component';
 import { TiersComponent } from './tiers.component';
 
+
 const routes: Routes = [
   { path: 'tiers', component: TiersComponent },
   { path: 'tiers/:id', component: TiersComponent },
   { path: 'tiers/responsable/:id', component: TiersComponent },
-  { path: 'confrere/:id', component: ConfrereComponent }
+  { path: 'confrere/:id', component: ConfrereComponent },
+  { path: 'tiers/phone/:phoneNumber', component: SearchPhoneComponent }
 ];
 
 @NgModule({
@@ -66,6 +69,7 @@ const routes: Routes = [
     SettlementBillingComponent,
     ResponsableMainComponent,
     ConfrereComponent,
+    SearchPhoneComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

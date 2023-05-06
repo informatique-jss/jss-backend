@@ -40,7 +40,7 @@
             <generic-input [(model)]="newDebour.comments" label="Commentaire" [form]="debourForm"
               propertyName="comments" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="250"></generic-input>
           </td>
-          <td class="button-td">
+          <td class="button-td" *ngIf="editMode">
             <button (click)="addDebour()" mat-mini-fab color="warn" class="mini-fab-add add-button">
               <mat-icon>add</mat-icon>
             </button>
@@ -76,8 +76,8 @@
           la facture libre)</span></li>
     </ul>
   </div>
-  <div *ngIf=" isNotInpi()">
-    <table class="full-width  ">
+  <div>
+    <table class="full-width  " *ngIf=" isNotInpi()">
       <tr>
         <td>
           Rechercher une facture de greffe :
@@ -94,7 +94,7 @@
         </td>
       </tr>
     </table>
-    <table class="full-width  ">
+    <table class="full-width  " *ngIf=" isNotInpi()">
       <tr>
         <td>
           Rechercher une facture Infogreffe :

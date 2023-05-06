@@ -68,6 +68,7 @@
               <p>{{invoice.billingLabelAddress}}</p>
               <p>{{invoice.billingLabelPostalCode}} {{invoice.billingLabelCity?invoice.billingLabelCity.label:""}}
                 {{invoice.billingLabelCountry?invoice.billingLabelCountry.label:""}}</p>
+              <p *ngIf="invoice.billingLabelIntercommunityVat">N° de TVA : {{invoice.billingLabelIntercommunityVat}}</p>
             </td>
             <td class="mat-cell td-info"
               *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">
@@ -309,8 +310,7 @@
   (auxclick)="editInvoice($event)">
   <mat-icon>edit</mat-icon>
 </button>
-<button
-  *ngIf="false && invoice && (invoice.invoiceStatus.code==invoiceStatusSend.code || invoice.invoiceStatus.code==invoiceStatusPayed.code  || invoice.invoiceStatus.code==invoiceStatusReceived.code) "
-  matTooltip="Annuler la facture" mat-fab color="accent" class="second-fab-button" (click)="cancelInvoice($event)">
+<button *ngIf="invoice && invoice.invoiceStatus.code==invoiceStatusReceived.code " matTooltip="Annuler la facture"
+  mat-fab color="accent" class="second-fab-button" (click)="cancelInvoice($event)">
   <mat-icon>close</mat-icon>
 </button>

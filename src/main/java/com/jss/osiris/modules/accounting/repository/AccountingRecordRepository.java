@@ -4,22 +4,27 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.QueryHint;
+
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceBilan;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
+import com.jss.osiris.modules.invoicing.model.Appoint;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Debour;
 
-public interface AccountingRecordRepository extends CrudRepository<AccountingRecord, Integer> {
+public interface AccountingRecordRepository extends QueryCacheCrudRepository<AccountingRecord, Integer> {
 
+        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<AccountingRecord> findByAccountingJournalAndIsTemporary(AccountingJournal accountingJournal,
                         boolean isTemporary);
 
@@ -49,8 +54,10 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         " pa.code as principalAccountingAccountCode, " +
                         " a.accounting_account_sub_number as accountingAccountSubNumber, " +
                         " a.label as accountingAccountLabel, " +
-                        " r.manual_accounting_document_number as manualAccountingDocumentNumber, " +
-                        " r.manual_accounting_document_date as manualAccountingDocumentDate, " +
+                        " coalesce(r.manual_accounting_document_number,r.id_invoice||'') as manualAccountingDocumentNumber, "
+                        +
+                        " coalesce(r.manual_accounting_document_date, i.created_date) as manualAccountingDocumentDate, "
+                        +
                         " r.debit_amount as debitAmount, " +
                         " r.credit_amount as creditAmount, " +
                         " r.label as label, " +
@@ -196,6 +203,8 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
         List<AccountingRecord> findByOperationId(Integer operationId);
 
         List<AccountingRecord> findByDebour(Debour debour);
+
+        List<AccountingRecord> findByAppoint(Appoint appoint);
 }
 
 ;

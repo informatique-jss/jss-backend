@@ -4,17 +4,20 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.QueryHint;
+
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
-public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
+public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Integer> {
 
         List<Invoice> findByCustomerOrderId(Integer customerOrderId);
 
@@ -94,6 +97,7 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
         @Query(value = "select n from Invoice n where invoiceStatus=:invoiceStatus and thirdReminderDateTime is null ")
         List<Invoice> findInvoiceForReminder(@Param("invoiceStatus") InvoiceStatus invoiceStatus);
 
+        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<Invoice> findByCustomerOrderForInboundInvoiceId(Integer customerOrderId);
 
 }

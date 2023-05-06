@@ -91,11 +91,11 @@ public class Attachment implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Invoice invoice;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_attachment_type")
 	private AttachmentType attachmentType;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_uploaded_file")
 	private UploadedFile uploadedFile;
 

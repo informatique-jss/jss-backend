@@ -182,11 +182,9 @@ export class InvoiceDetailsComponent implements OnInit {
   }
 
   cancelInvoice(event: any) {
-    if (this.invoice)
-      this.invoiceService.cancelInvoice(this.invoice).subscribe(response => {
-        if (response && response.creditNote)
-          this.appService.openRoute(null, 'invoicing/view/' + response.creditNote.id, undefined);
-      })
+    if (this.invoice) {
+      this.appService.openRoute(null, 'invoicing/credit-note/' + this.invoice.id, undefined);
+    }
   }
 
 }

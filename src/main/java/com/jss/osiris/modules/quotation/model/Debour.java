@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,16 +36,16 @@ public class Debour implements Serializable, IId {
 	@IndexedField
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision")
 	@JsonIgnoreProperties(value = { "debours", "assoAffaireOrder" }, allowSetters = true)
 	Provision provision;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_type")
 	private BillingType billingType;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_competent_authority")
 	@JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
 	private CompetentAuthority competentAuthority;
@@ -54,7 +55,7 @@ public class Debour implements Serializable, IId {
 
 	private Float nonTaxableAmount;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment_type")
 	private PaymentType paymentType;
 
@@ -66,18 +67,19 @@ public class Debour implements Serializable, IId {
 	@IndexedField
 	private String checkNumber;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment")
 	@JsonIgnoreProperties(value = { "payment", "debours", "invoice" }, allowSetters = true)
 	private Payment payment;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_bank_transfert")
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private BankTransfert bankTransfert;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice_item")
-	@JsonIgnoreProperties(value = { "invoice", "provision", "debours" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "provision", "debours" }, allowSetters = true)
 	private InvoiceItem invoiceItem;
 
 	@OneToMany(mappedBy = "debour")
@@ -86,7 +88,7 @@ public class Debour implements Serializable, IId {
 
 	private Boolean isAssociated;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_cart_rate")
 	@JsonIgnoreProperties(value = { "debours" }, allowSetters = true)
 	private CartRate cartRate;

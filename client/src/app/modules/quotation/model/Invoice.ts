@@ -1,4 +1,5 @@
 import { AccountingRecord } from "../../accounting/model/AccountingRecord";
+import { Appoint } from "../../invoicing/model/Appoint";
 import { Deposit } from "../../invoicing/model/Deposit";
 import { InvoiceStatus } from "../../invoicing/model/InvoiceStatus";
 import { Payment } from "../../invoicing/model/Payment";
@@ -24,6 +25,7 @@ export interface Invoice extends IAttachment {
   billingLabel: string;
   billingLabelAddress: string;
   billingLabelPostalCode: string;
+  billingLabelIntercommunityVat: string;
   cedexComplement: string;
   billingLabelCity: City;
   billingLabelCountry: Country;
@@ -55,4 +57,5 @@ export interface Invoice extends IAttachment {
   isCreditNote: boolean;
   creditNote: Invoice;
   reverseCreditNote: Invoice;
+  appoints: Appoint[];
 }

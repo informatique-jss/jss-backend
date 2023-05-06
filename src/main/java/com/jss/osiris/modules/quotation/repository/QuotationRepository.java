@@ -3,15 +3,18 @@ package com.jss.osiris.modules.quotation.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.QueryHint;
+
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 
-public interface QuotationRepository extends CrudRepository<Quotation, Integer> {
+public interface QuotationRepository extends QueryCacheCrudRepository<Quotation, Integer> {
 
         @Query(nativeQuery = true, value = "select "
                         + " case when cf.id is not null then cf.label"
@@ -66,5 +69,6 @@ public interface QuotationRepository extends CrudRepository<Quotation, Integer> 
         @Query(value = "select n from Quotation n where quotationStatus=:quotationStatus and thirdReminderDateTime is null ")
         List<Quotation> findQuotationForReminder(@Param("quotationStatus") QuotationStatus quotationStatus);
 
+        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<Quotation> findByCustomerOrders_Id(Integer idCustomerOrder);
 }

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,7 +48,7 @@ public class Notification implements Serializable, IId {
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_sequence")
   private Integer id;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_employee")
   private Employee employee;
 
@@ -57,7 +58,7 @@ public class Notification implements Serializable, IId {
 
   private Integer entityId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_employee_created_by")
   private Employee createdBy;
 

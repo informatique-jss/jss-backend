@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
+import { validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -20,8 +21,8 @@ import { InvoiceItem } from 'src/app/modules/quotation/model/InvoiceItem';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
-import { IndexEntityService } from '../../../../routing/search/index.entity.service';
 import { IndexEntity } from '../../../../routing/search/IndexEntity';
+import { IndexEntityService } from '../../../../routing/search/index.entity.service';
 import { BillingItem } from '../../../miscellaneous/model/BillingItem';
 import { CompetentAuthorityService } from '../../../miscellaneous/services/competent.authority.service';
 import { CustomerOrder } from '../../../quotation/model/CustomerOrder';
@@ -76,6 +77,7 @@ export class AddInvoiceComponent implements OnInit {
   indexedCustomerOrder: IndexEntity | undefined;
   debours: Debour[] | undefined;
   selectedDebours: Debour[] | undefined;
+  idInvoiceForCreditNote: string | undefined;
 
   refreshTable: Subject<void> = new Subject<void>();
 
@@ -83,6 +85,7 @@ export class AddInvoiceComponent implements OnInit {
 
   ngOnInit() {
     let idInvoice = this.activatedRoute.snapshot.params.id;
+    this.idInvoiceForCreditNote = this.activatedRoute.snapshot.params.idInvoice;
 
     let idCustomerOrder = this.activatedRoute.snapshot.params.idCustomerOrder;
     let idCompetentAuhority = this.activatedRoute.snapshot.params.idCompetentAuhority;
@@ -92,6 +95,13 @@ export class AddInvoiceComponent implements OnInit {
         this.invoice = response;
         this.invoiceItems = this.invoice.invoiceItems;
         this.appService.changeHeaderTitle("Facture n°" + this.invoice.id);
+      });
+    } else if (this.idInvoiceForCreditNote != null && this.idInvoiceForCreditNote != "null") {
+      this.invoiceService.getInvoiceById(parseInt(this.idInvoiceForCreditNote)).subscribe(response => {
+        this.invoice = response;
+        this.invoiceItems = this.invoice.invoiceItems;
+        (this.invoice as any).id = null;
+        this.appService.changeHeaderTitle("Annuler la facture n°" + this.idInvoiceForCreditNote);
       });
     } else {
       this.addInvoiceItem();
@@ -221,10 +231,17 @@ export class AddInvoiceComponent implements OnInit {
 
   saveInvoice() {
     if (this.invoiceForm.valid && (this.invoiceItems && this.invoiceItems.length > 0 || this.invoice.competentAuthority != null && this.invoice.customerOrderForInboundInvoice != null) || this.invoice.id) {
-      this.invoiceService.saveInvoice(this.invoice).subscribe(response => {
-        if (response)
-          this.appService.openRoute(null, '/invoicing/view/' + response.id, null);
-      });
+      if (this.idInvoiceForCreditNote) {
+        this.invoiceService.saveCreditNote(this.invoice, this.idInvoiceForCreditNote).subscribe(response => {
+          if (response)
+            this.appService.openRoute(null, '/invoicing/view/' + response.id, null);
+        });
+      } else {
+        this.invoiceService.saveInvoice(this.invoice).subscribe(response => {
+          if (response)
+            this.appService.openRoute(null, '/invoicing/view/' + response.id, null);
+        });
+      }
     } else {
       this.appService.displaySnackBar("Veuillez saisir au moins une ligne de facturation valide", true, 15);
     }
@@ -427,5 +444,17 @@ export class AddInvoiceComponent implements OnInit {
         invoiceItem.vat = this.contantService.getVatZero();
       else
         invoiceItem.vat = this.contantService.getVatDeductible();
+  }
+
+  checkVAT(fieldName: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const root = control.root as UntypedFormGroup;
+      const fieldValue = root.get(fieldName)?.value;
+      if (!this.invoice.billingLabelIsIndividual && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateVat(fieldValue)))
+        return {
+          notFilled: true
+        };
+      return null;
+    };
   }
 }

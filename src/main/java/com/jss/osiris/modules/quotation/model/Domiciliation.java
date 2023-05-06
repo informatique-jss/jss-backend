@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,23 +35,23 @@ public class Domiciliation implements IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "domiciliation_sequence")
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_domiciliation_contract_type")
 	private DomiciliationContractType domiciliationContractType;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_language")
 	private Language language;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_domicilisation_status")
 	private DomiciliationStatus domiciliationStatus;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_building_domiciliation")
 	private BuildingDomiciliation buildingDomiciliation;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_mail_redirectionType")
 	private MailRedirectionType mailRedirectionType;
 
@@ -63,11 +64,11 @@ public class Domiciliation implements IId {
 	@Column(length = 20)
 	private String cedexComplement;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_city")
 	private City city;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
 	private Country country;
 
@@ -99,11 +100,11 @@ public class Domiciliation implements IId {
 	@Column(length = 20)
 	private String acitivityCedexComplement;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_activity_city")
 	private City activityCity;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_activity_country")
 	private Country activityCountry;
 
@@ -118,7 +119,7 @@ public class Domiciliation implements IId {
 	@Column(nullable = false)
 	private Boolean isLegalPerson;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_civility")
 	private Civility legalGardianCivility;
 
@@ -143,7 +144,7 @@ public class Domiciliation implements IId {
 	@Column(length = 60)
 	private String legalGardianDenomination;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_legal_guardian_form")
 	private LegalForm legalGardianLegalForm;
 
@@ -159,11 +160,11 @@ public class Domiciliation implements IId {
 	@Column(length = 20)
 	private String legalGardianCedexComplement;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_legal_guardian_city")
 	private City legalGardianCity;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_legal_gardian_country")
 	private Country legalGardianCountry;
 

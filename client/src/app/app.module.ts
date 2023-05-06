@@ -1,6 +1,6 @@
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { registerLocaleData } from '@angular/common';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import localeFr from '@angular/common/locales/fr';
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -41,7 +41,7 @@ registerLocaleData(localeFr, 'fr');
     AppComponent,
     SidenavListComponent,
     HeaderComponent,
-    MyProfilComponent
+    MyProfilComponent,
   ],
   imports: [
     // Core modules

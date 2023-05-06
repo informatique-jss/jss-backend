@@ -193,6 +193,13 @@
                         type="number"></generic-input>
                     </td>
                     <td>
+                      <generic-input [(model)]="selectedConfrere.intercommunityVat" [isDisabled]="!editMode"
+                        label="TVA intercommunaitaire" [form]="entityForm2" propertyName="intercommunityVat"
+                        [isMandatory]="false" [conditionnalRequired]=""
+                        [customValidators]="[checkVAT('intercommunityVat')]">
+                      </generic-input>
+                    </td>
+                    <td>
                       <chips-special-offers [(model)]="selectedConfrere.specialOffers" [form]="entityForm2"
                         propertyName="specialOffers" [isDisabled]="!editMode"></chips-special-offers>
                     </td>

@@ -430,14 +430,15 @@ public class Generate {
 
                                 writer.println("package com.jss.osiris.modules.quotation.repository.guichetUnique;");
                                 writer.println("");
-                                writer.println("import org.springframework.data.repository.CrudRepository;");
+                                writer.println("import com.jss.osiris.libs.QueryCacheCrudRepository;");
                                 writer.println("");
                                 writer.println(
                                                 "import com.jss.osiris.modules.quotation.model.guichetUnique.referentials."
                                                                 + className + ";");
                                 writer.println("");
                                 writer.println(
-                                                "public interface " + className + "Repository extends CrudRepository<"
+                                                "public interface " + className
+                                                                + "Repository extends QueryCacheCrudRepository<"
                                                                 + className
                                                                 + ", String> {");
                                 writer.println("}");

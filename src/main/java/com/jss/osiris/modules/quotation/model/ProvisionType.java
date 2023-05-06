@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,7 +37,7 @@ public class ProvisionType implements Serializable, IId {
 	@Column(nullable = false, length = 20)
 	private String code;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision_family_type")
 	private ProvisionFamilyType provisionFamilyType;
 
@@ -45,21 +46,21 @@ public class ProvisionType implements Serializable, IId {
 	@JsonProperty(value = "billingTypes")
 	private List<BillingType> billingTypes;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision_screen_type")
 	private ProvisionScreenType provisionScreenType;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_assignation_type")
 	private AssignationType assignationType;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_default_assigned")
 	private Employee defaultEmployee;
 
 	private Integer assignationWeight;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_default_competent_authority_service_provider")
 	private CompetentAuthority defaultCompetentAuthorityServiceProvider;
 

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -40,7 +41,7 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@Column(nullable = false)
 	private Float paymentAmount;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment_way")
 	private PaymentWay paymentWay;
 
@@ -48,7 +49,7 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@JsonIgnoreProperties(value = { "payment" }, allowSetters = true)
 	private List<AccountingRecord> accountingRecords;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice")
 	@JsonIgnoreProperties(value = { "payments", "accountingRecords" }, allowSetters = true)
 	private Invoice invoice;
@@ -56,11 +57,11 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@Column(nullable = false)
 	private Boolean isExternallyAssociated;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment_type")
 	private PaymentType paymentType;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_origin_payment")
 	@JsonIgnoreProperties(value = { "payments", "accountingRecords", "invoice" }, allowSetters = true)
 	private Payment originPayment;

@@ -52,4 +52,6 @@ public interface ITiers extends IId, IDocument {
 
 	public List<TiersFollowup> getTiersFollowups();
 
+	public String getIntercommunityVat();
+
 }

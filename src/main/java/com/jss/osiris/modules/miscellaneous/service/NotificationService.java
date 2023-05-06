@@ -64,4 +64,5 @@ public interface NotificationService {
                         FormaliteGuichetUnique formaliteGuichetUnique) throws OsirisException;
 
         public Notification notifyTiersDepositMandatory(Tiers tiers, Invoice invoice) throws OsirisException;
+        
 }

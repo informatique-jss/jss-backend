@@ -136,7 +136,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     && originalFormalite.getCarts().size() > 0)
                 for (Cart cart : originalFormalite.getCarts()) {
                     if (cart.getStatus().equals("PAID") && cart.getInvoice() == null
-                            && cart.getFormaliteGuichetUnique().getFormalite() != null) {
+                            && cart.getFormaliteGuichetUnique().getFormalite() != null
+                            && cart.getFormaliteGuichetUnique().getFormalite().getProvision() != null) {
                         cart.setInvoice(generateInvoiceFromCart(cart,
                                 cart.getFormaliteGuichetUnique().getFormalite().getProvision().get(0)));
                     }

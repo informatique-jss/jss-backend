@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -73,22 +74,22 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@IndexedField
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_assigned_to")
 	@IndexedField
 	private Employee assignedTo;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
 	@IndexedField
 	private Tiers tiers;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
 	private Responsable responsable;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
 	@IndexedField
 	private Confrere confrere;
@@ -101,7 +102,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	private LocalDateTime createdDate;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_status")
 	private CustomerOrderStatus customerOrderStatus;
 
@@ -119,6 +120,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@OneToMany(targetEntity = Document.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	@IndexedField
 	private List<Document> documents;
 
 	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -2,15 +2,18 @@ package com.jss.osiris.modules.miscellaneous.repository;
 
 import java.util.List;
 
+import javax.persistence.QueryHint;
+
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 
-public interface CityRepository extends CrudRepository<City, Integer> {
-
+public interface CityRepository extends QueryCacheCrudRepository<City, Integer> {
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     List<City> findByPostalCodeContaining(String postalCode);
 
     @Query("Select c from City c where c.country=:country and lower(c.label) like lower(concat('%', :city,'%')) ")
