@@ -23,9 +23,10 @@ public class PhoneServiceImpl implements PhoneService {
 
     @Override
     public List<PhoneSearch> getByPhoneNumber(String phoneNumber) throws OsirisException {
-        String normalizedNumber = validationHelper.validateFrenchPhone(phoneNumber) ? "+33" + phoneNumber.substring(1)
-                : phoneNumber;
-        return phoneRepository.findByPhoneNumber(normalizedNumber);
+        if (validationHelper.validateFrenchPhone(phoneNumber) && phoneNumber.startsWith("+33"))
+            phoneNumber = phoneNumber.replace("+33", "0");
+        phoneNumber.replaceAll(" ", "");
+        return phoneRepository.findByPhoneNumber(phoneNumber);
     }
 
     public String getLinkByPhoneNumber(List<PhoneSearch> phone) throws OsirisException {

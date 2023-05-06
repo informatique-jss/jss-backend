@@ -20,6 +20,12 @@ public interface PhoneRepository extends CrudRepository<Phone, Integer> {
             "WHEN c.id IS NOT NULL THEN 'Confrere' " +
             "WHEN p.id IS NOT NULL THEN 'Provider' " +
             "END as entityType, " +
+            "CASE " +
+            "WHEN t.id IS NOT NULL THEN coalesce(t.denomination, t.firstname||' ' || t.lastname) " +
+            "WHEN r.id IS NOT NULL THEN r.firstname||' ' || r.lastname " +
+            "WHEN c.id IS NOT NULL THEN c.label " +
+            "WHEN p.id IS NOT NULL THEN  p.label " +
+            "END as entityLabel, " +
             " COALESCE(t.id, r.id, c.id, p.id) as entityId " +
             "FROM phone " +
             "LEFT OUTER JOIN asso_tiers_phone atp ON phone.id = atp.id_phone " +

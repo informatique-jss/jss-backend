@@ -1,8 +1,7 @@
-<form method="post" action="/phone/search">
-<div *ngFor="let phone of phoneSearchs">
-    <p>Entity Type: {{ phone.entityType }}</p>
-    <p>Entity ID: {{ phone.entityId }}</p>
-    <button (click)="openRoute($event, '/' + phone.entityType.toLowerCase() + '/' + phone.entityId)">Info Window</button>
-    --------------------------------------------------------------------
+<div class=" form-div">
+  <div class=" full-width">
+    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="phoneSearchs"
+      tableName="Recherche téléphone">
+    </sort-table>
+  </div>
 </div>
-</form>

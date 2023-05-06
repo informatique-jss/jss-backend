@@ -176,10 +176,9 @@ public class TiersController {
   }
 
   @PostMapping(inputEntryPoint + "/phone/search")
-  public ResponseEntity<List<PhoneSearch>> searchPhoneNumbers(@RequestBody PhoneSearch request) throws OsirisException {
+  public ResponseEntity<List<PhoneSearch>> searchPhoneNumbers(@RequestBody String phoneNumber) throws OsirisException {
 
-    List<PhoneSearch> results = phoneService.getTypeByPhoneNumber(request);
-
+    List<PhoneSearch> results = phoneService.getByPhoneNumber(phoneNumber);
     return new ResponseEntity<List<PhoneSearch>>(results, HttpStatus.OK);
   }
 

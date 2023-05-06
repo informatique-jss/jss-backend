@@ -4,7 +4,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Provider } from 'src/app/modules/miscellaneous/model/Provider';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
 import { ProviderService } from 'src/app/modules/miscellaneous/services/provider.service';
@@ -18,7 +17,6 @@ import { AppService } from 'src/app/services/app.service';
 })
 export class ProviderComponent implements OnInit {
   constructor(private providerService: ProviderService,
-    private cityService: CityService,
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
     private appService: AppService,
