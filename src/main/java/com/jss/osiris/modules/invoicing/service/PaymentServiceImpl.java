@@ -588,8 +588,6 @@ public class PaymentServiceImpl implements PaymentService {
                             appointService.generateAppointForInvoice(correspondingInvoices.get(i), payment, null,
                                     newPayment.getPaymentAmount() - remainingToPayForCurrentInvoice);
 
-                            payment.setPaymentAmount(remainingToPayForCurrentInvoice);
-                            addOrUpdatePayment(payment);
                             isPayed = true;
                             remainingMoney = 0f;
                         }
@@ -612,6 +610,7 @@ public class PaymentServiceImpl implements PaymentService {
                     payment.setInvoice(correspondingInvoices.get(i));
                     payment.setInvoice(correspondingInvoices.get(i));
                     addOrUpdatePayment(payment);
+                    remainingMoney = 0f;
                 }
             }
         }

@@ -135,15 +135,15 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@Column(name = "total_price")
 	private Float totalPrice;
 
-	@OneToMany(mappedBy = "invoice")
+	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder" }, allowSetters = true)
 	private List<Payment> payments;
 
-	@OneToMany(mappedBy = "invoice")
+	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoice", "accountingRecords" }, allowSetters = true)
 	private List<Appoint> appoints;
 
-	@OneToMany(mappedBy = "invoice")
+	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder" }, allowSetters = true)
 	private List<Deposit> deposits;
 
@@ -152,11 +152,11 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@IndexedField
 	private InvoiceStatus invoiceStatus;
 
-	@OneToMany(mappedBy = "invoice")
+	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoice", "customerOrder" }, allowSetters = true)
 	private List<AccountingRecord> accountingRecords;
 
-	@OneToMany(mappedBy = "invoice")
+	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
 	private List<Attachment> attachments;
 

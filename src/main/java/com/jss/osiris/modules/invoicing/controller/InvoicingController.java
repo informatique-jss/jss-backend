@@ -448,7 +448,9 @@ public class InvoicingController {
 
                 if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
                         && !invoice.getInvoiceStatus().getId()
-                                .equals(constantService.getInvoiceStatusReceived().getId()))
+                                .equals(constantService.getInvoiceStatusReceived().getId())
+                        && !invoice.getInvoiceStatus().getId()
+                                .equals(constantService.getInvoiceStatusCancelled().getId()))
                     throw new OsirisValidationException("invoice not send or received");
             }
         }

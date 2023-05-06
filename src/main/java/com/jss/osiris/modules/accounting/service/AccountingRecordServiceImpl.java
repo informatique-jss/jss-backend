@@ -218,14 +218,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForInvoice(invoice);
 
-    Float balance = 0f;
-    balance += invoiceHelper.getPriceTotal(invoice);
-
     // One write on customer account for all invoice
     generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), invoice.getManualAccountingDocumentNumber(),
         invoice.getManualAccountingDocumentDate(),
         labelPrefix, null,
-        balance,
+        invoiceHelper.getPriceTotal(invoice),
         accountingAccountCustomer, null, invoice, null, salesJournal, null, null, null, null, null);
 
     // For each invoice item, one write on product and VAT account for each invoice
@@ -259,9 +256,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             null, producAccountingAccount,
             invoiceItem, invoice, null, salesJournal, null, null, null, null, null);
 
-        balance -= invoiceItem.getPreTaxPrice()
-            - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f);
-
         if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null && invoiceItem.getVatPrice() > 0) {
           generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), invoice.getManualAccountingDocumentNumber(),
               invoice.getManualAccountingDocumentDate(),
@@ -270,7 +264,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
               invoiceItem.getVatPrice(), null, invoiceItem.getVat().getAccountingAccount(),
               invoiceItem, invoice, null, salesJournal, null, null, null, null, null);
 
-          balance -= invoiceItem.getVatPrice();
         }
       } else {
         if (invoice.getCustomerOrder() != null && invoice.getCustomerOrder().getAssoAffaireOrders() != null) {
@@ -296,8 +289,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
                         null, debour.getBillingType().getAccountingAccountProduct(), invoiceItem,
                         invoice, null, salesJournal, null, null, null, null, null);
 
-                    balance -= total;
-
                     if (vatAmount > 0) {
                       generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(),
                           invoice.getManualAccountingDocumentNumber(), invoice.getManualAccountingDocumentDate(),
@@ -305,7 +296,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
                               + invoiceItem.getBillingItem().getBillingType().getLabel(),
                           vatAmount, null, constantService.getVatDeductible().getAccountingAccount(),
                           invoiceItem, invoice, null, salesJournal, null, null, null, null, null);
-                      balance -= vatAmount;
                     }
                   }
                 }
@@ -316,10 +306,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       }
     }
 
-    // Check balance ok
-    if (Math.round(balance * 100f) / 100f != 0) {
-      throw new OsirisException(null, "Accounting records  are not balanced for invoice " + invoice.getId());
-    }
   }
 
   @Override
@@ -469,7 +455,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     // One write on customer account to equilibrate invoice
     generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
-        "Remboursement de la facture n°" + invoice.getId(), null, payment.getPaymentAmount(),
+        "Remboursement de la facture n°" + invoice.getId(), payment.getPaymentAmount(), null,
         accountingAccountProvider, null, invoice, null, journal, null, null, null, null, null);
   }
 
@@ -904,14 +890,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     List<AccountingRecord> accountingRecords = accountingRecordRepository
         .findByAccountingAccountAndInvoice(accountingAccount, invoice);
-
-    if (invoice.getAppoints() != null && invoice.getAppoints().size() > 0)
-      for (Appoint appoint : invoice.getAppoints()) {
-        List<AccountingRecord> accountingRecordsForAppoint = accountingRecordRepository.findByAppoint(appoint);
-        for (AccountingRecord appointRecord : accountingRecordsForAppoint)
-          if (appointRecord.getAccountingAccount().getId().equals(accountingAccount.getId()))
-            accountingRecords.add(appointRecord);
-      }
 
     Float balance = 0f;
 

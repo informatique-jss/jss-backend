@@ -27,7 +27,7 @@
   <ng-container *ngIf="invoice.appoints && invoice.appoints.length>0 ">
     <tr class="mat-row" *ngFor="let appoint of invoice.appoints">
       <td class="mat-cell payment-label" [matTooltip]="appoint.originPayment.label">
-        Appoint n°{{appoint.id}} du {{formatDate(appoint.appointDate)}} - {{appoint.label}}
+        Dont appoint n°{{appoint.id}} du {{formatDate(appoint.appointDate)}} - {{appoint.label}}
       </td>
       <td class="td-price mat-cell">
         {{appoint.appointAmount | number}} €

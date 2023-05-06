@@ -192,9 +192,10 @@ public class DepositServiceImpl implements DepositService {
                 if (Math.abs(remainingMoney) <= Float.parseFloat(payementLimitRefundInEuros)) {
                     appointService.generateAppointForInvoice(correspondingInvoices.get(i), deposit.getOriginPayment(),
                             deposit, remainingMoney);
-                    deposit.setDepositAmount(deposit.getDepositAmount() - remainingMoney);
+                    deposit.setDepositAmount(remainingMoney - deposit.getDepositAmount());
                     addOrUpdateDeposit(deposit);
                     accountingRecordService.checkInvoiceForLettrage(correspondingInvoices.get(i));
+                    remainingMoney = 0f;
                 }
             }
             correspondingInvoiceSize += correspondingInvoices.size();
@@ -205,13 +206,19 @@ public class DepositServiceImpl implements DepositService {
                 CustomerOrder customerOrder = correspondingCustomerOrder.get(i);
                 Float remainingToPayForCustomerOrder = byPassAmount.get(i + correspondingInvoiceSize);
 
+                if (Math.abs(remainingToPayForCustomerOrder - remainingMoney) <= Float
+                        .parseFloat(payementLimitRefundInEuros)) {
+                    // Appoint handled when invoice created
+                    remainingToPayForCustomerOrder = remainingMoney;
+                }
+
                 getNewDepositForCustomerOrder(remainingToPayForCustomerOrder, LocalDateTime.now(), customerOrder,
                         deposit.getId(), deposit.getOriginPayment(), false);
 
                 // Try unlocked customer order
                 customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
 
-                remainingMoney -= byPassAmount.get(i + correspondingInvoiceSize);
+                remainingMoney -= remainingToPayForCustomerOrder;
                 refundLabelSuffix = "commande n°" + customerOrder.getId();
             }
 

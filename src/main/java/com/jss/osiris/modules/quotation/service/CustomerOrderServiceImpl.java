@@ -13,6 +13,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -171,6 +174,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     AppointService appointService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     CentralPayPaymentRequestService centralPayPaymentRequestService;
@@ -430,6 +436,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             Invoice invoice = generateInvoice(customerOrder);
             accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(
                     getInvoice(customerOrder));
+
+            // Check invoice payed
+            Float remainingToPayForCurrentCustomerOrder = Math
+                    .round(getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
+
             // If deposit already set, associate them to invoice
             moveCustomerOrderDepositToInvoiceDeposit(customerOrder, invoice);
 
@@ -451,28 +462,27 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             invoice.setManualPaymentType(paymentType);
             invoiceService.addOrUpdateInvoice(invoice);
 
-            // Check invoice payed
-            Float remainingToPayForCurrentInvoice = Math
-                    .round(invoiceService.getRemainingAmountToPayForInvoice(invoice) * 100f) / 100f;
-
             // Handle appoint
-            if (remainingToPayForCurrentInvoice != 0 && customerOrder.getDeposits() != null
+            if (remainingToPayForCurrentCustomerOrder != 0 && customerOrder.getDeposits() != null
                     && customerOrder.getDeposits().size() > 0) {
-                if (Math.abs(remainingToPayForCurrentInvoice) <= Float.parseFloat(payementLimitRefundInEuros)) {
+                if (Math.abs(remainingToPayForCurrentCustomerOrder) <= Float.parseFloat(payementLimitRefundInEuros)) {
                     Deposit deposit = customerOrder.getDeposits().get(0);
                     Appoint appoint = appointService.generateAppointForInvoice(invoice, deposit.getOriginPayment(),
                             deposit,
-                            remainingToPayForCurrentInvoice);
+                            -remainingToPayForCurrentCustomerOrder);
                     invoice.setAppoints(Arrays.asList(appoint));
-                    deposit.setDepositAmount(remainingToPayForCurrentInvoice);
+                    deposit.setDepositAmount(remainingToPayForCurrentCustomerOrder);
                     depositService.addOrUpdateDeposit(deposit);
-                    accountingRecordService.checkInvoiceForLettrage(invoice);
+                    remainingToPayForCurrentCustomerOrder = 0f;
                 }
             }
 
-            if (remainingToPayForCurrentInvoice < 0) {
+            if (remainingToPayForCurrentCustomerOrder < 0) {
                 throw new OsirisException(null, "Impossible to billed, too much money on customerOrder !");
             }
+
+            entityManager.flush();
+            entityManager.clear();
             accountingRecordService.checkInvoiceForLettrage(invoice);
 
             mailHelper.sendCustomerOrderFinalisationToCustomer(getCustomerOrder(customerOrder.getId()), false, false,
