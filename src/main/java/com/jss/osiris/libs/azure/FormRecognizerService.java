@@ -6,4 +6,6 @@ import com.jss.osiris.modules.miscellaneous.model.Attachment;
 
 public interface FormRecognizerService {
     public AzureInvoice recongnizeInvoice(Attachment attachment) throws OsirisException;
+
+    public AzureInvoice checkInvoiceAmountConfidence(AzureInvoice azureInvoice);
 }

@@ -52,8 +52,6 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
 
     @Override
     public AzureInvoice recongnizeInvoice(Attachment attachment) throws OsirisException {
-        Float confidenceLimit = confidenceThreshold / 100f;
-
         if (attachment == null)
             throw new OsirisException(null, "No attachment provided");
 
@@ -96,15 +94,6 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
         azureInvoice.setAttachments(Arrays.asList(attachment));
         attachment.setAzureInvoice(azureInvoice);
         attachmentService.addOrUpdateAttachment(attachment);
-
-        if (azureInvoice.getInvoiceTotalConfidence() >= confidenceLimit
-                && azureInvoice.getInvoiceTaxTotalConfidence() >= confidenceLimit
-                && azureInvoice.getInvoiceNonTaxableTotalConfidence() >= confidenceLimit
-                && azureInvoice.getInvoicePreTaxTotalConfidence() >= confidenceLimit
-                && azureInvoice.getInvoiceDateConfidence() >= confidenceLimit
-                && azureInvoice.getInvoiceIdConfidence() >= confidenceLimit
-                && azureInvoice.getVendorTaxIdConfidence() >= confidenceLimit)
-            azureInvoice.setToCheck(false);
 
         return azureInvoiceService.addOrUpdateAzureInvoice(azureInvoice);
     }
@@ -202,7 +191,8 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
     // If sum of all field is correct => confidence full for everyfield
     // Else if one field is not confident and other are, correct last field with
     // difference
-    private AzureInvoice checkInvoiceAmountConfidence(AzureInvoice azureInvoice) {
+    @Override
+    public AzureInvoice checkInvoiceAmountConfidence(AzureInvoice azureInvoice) {
         Float confidenceLimit = confidenceThreshold / 100f;
         boolean resetConfidence = false;
 
@@ -247,6 +237,15 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
             azureInvoice.setInvoiceNonTaxableTotalConfidence(
                     Math.max(azureInvoice.getInvoiceNonTaxableTotal(), confidenceLimit));
         }
+
+        if (azureInvoice.getInvoiceTotalConfidence() >= confidenceLimit
+                && azureInvoice.getInvoiceTaxTotalConfidence() >= confidenceLimit
+                && azureInvoice.getInvoiceNonTaxableTotalConfidence() >= confidenceLimit
+                && azureInvoice.getInvoicePreTaxTotalConfidence() >= confidenceLimit
+                && azureInvoice.getInvoiceDateConfidence() >= confidenceLimit
+                && azureInvoice.getInvoiceIdConfidence() >= confidenceLimit
+                && azureInvoice.getVendorTaxIdConfidence() >= confidenceLimit)
+            azureInvoice.setToCheck(false);
 
         return azureInvoice;
     }
