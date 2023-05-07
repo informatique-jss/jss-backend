@@ -146,12 +146,12 @@
                         <td class="td-with-price" style="text-align: right;white-space: nowrap;"
                             th:if="${debour.billingType.isNonTaxable==false}">
                             <span
-                                th:text="${#numbers.formatDecimal(debour.debourAmount-(debour.debourAmount/(1f+(vatDebour.rate/100f)))*vatDebour.rate/100f,1,2)}"></span>
+                                th:text="${#numbers.formatDecimal(debour.invoicedAmount-(debour.invoicedAmount/(1f+(vatDebour.rate/100f)))*vatDebour.rate/100f,1,2)}"></span>
                             €
                         </td>
                         <td class="td-with-price" style="text-align: right;white-space: nowrap;"
                             th:if="${debour.billingType.isNonTaxable==true}">
-                            <span th:text="${#numbers.formatDecimal(debour.debourAmount,1,2)}"></span>
+                            <span th:text="${#numbers.formatDecimal(debour.invoicedAmount,1,2)}"></span>
                             €
                         </td>
                     </tr>
@@ -220,12 +220,12 @@
                             <td class="td-with-price" style="text-align: right;white-space: nowrap;"
                                 th:if="${debour.billingType.isNonTaxable==false}">
                                 <span
-                                    th:text="${#numbers.formatDecimal(debour.debourAmount-(debour.debourAmount/(1f+(vatDebour.rate/100f)))*vatDebour.rate/100f,1,2)}"></span>
+                                    th:text="${#numbers.formatDecimal(debour.invoicedAmount-(debour.invoicedAmount/(1f+(vatDebour.rate/100f)))*vatDebour.rate/100f,1,2)}"></span>
                                 €
                             </td>
                             <td class="td-with-price" style="text-align: right;white-space: nowrap;"
                                 th:if="${debour.billingType.isNonTaxable==true}">
-                                <span th:text="${#numbers.formatDecimal(debour.debourAmount,1,2)}"></span>
+                                <span th:text="${#numbers.formatDecimal(debour.invoicedAmount,1,2)}"></span>
                                 €
                             </td>
                         </tr>
