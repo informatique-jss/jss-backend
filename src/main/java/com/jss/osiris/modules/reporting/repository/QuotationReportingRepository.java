@@ -38,7 +38,7 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         "  STRING_AGG(DISTINCT nt.label ,', '  ) as noticeTypeLabel,   " +
                         " e1.firstname || ' ' || e1.lastname as provisionAssignedToLabel,   " +
                         " e2.firstname || ' ' || e2.lastname as salesEmployeeLabel,   " +
-                        "  max(quotation_creator.firstname || ' ' || quotation_creator.lastname) as quotationCreator,    "
+                        "  quotation_creator.firstname || ' ' || quotation_creator.lastname as quotationCreator,    "
                         +
                         " max((substring(invoice_item.label,'(\\d)(?=\\s*caract)'))) as characterNumber " +
                         " from asso_affaire_order asso   " +
@@ -73,7 +73,7 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " left join bodacc_status bs on bs.id = b.id_bodacc_status   " +
                         " left join formalite f on f.id = provision.id_formalite   " +
                         " left join formalite_status fs on fs.id = f.id_formalite_status  " +
-                        " left join audit audit_quotation on audit_quotation.entity_id = customer_order.id and audit_quotation.field_name = 'id' "
+                        " left join audit audit_quotation on audit_quotation.entity_id = customer_order.id and audit_quotation.field_name = 'id' and entity = 'Quotation' "
                         +
                         " left join employee quotation_creator on quotation_creator.username = audit_quotation.username "
                         +
@@ -89,7 +89,8 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " customer_order_status.label ,   " +
                         " e1.firstname, e1.lastname ,   " +
                         " e2.firstname, e2.lastname ,   " +
-                        " coalesce(ast.label, sps.label, ds.label, bs.label, fs.label)  ,   " +
+                        " coalesce(ast.label, sps.label, ds.label, bs.label, fs.label)  , quotation_creator.firstname,quotation_creator.lastname,  "
+                        +
                         " coalesce(affaire.denomination, affaire.firstname || ' '||affaire.lastname) ,   " +
                         " customer_order.id  ,   " +
                         " provision.id  ,   " +

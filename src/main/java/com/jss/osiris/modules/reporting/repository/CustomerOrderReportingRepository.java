@@ -29,7 +29,7 @@ public interface CustomerOrderReportingRepository extends QueryCacheCrudReposito
                         " coalesce(initcap(to_char(a.publication_date,'tmw')),'N/A') as publicationDateWeek, " +
                         " coalesce(initcap(to_char(invoice.created_date,'tmmonth')),'N/A') as invoiceDateMonth, " +
                         " coalesce(initcap(to_char(invoice.created_date,'YYYY-MM-DD')),'N/A') as invoiceDateDay, " +
-                        " max(employee_invoice.firstname || ' ' || employee_invoice.lastname) as invoiceCreator, " +
+                        " employee_invoice.firstname || ' ' || employee_invoice.lastname as invoiceCreator, " +
                         " coalesce(initcap(to_char(customer_order.created_date,'tmmonth')),'N/A') as customerOrderCreatedDateMonth, "
                         +
                         " coalesce(confrere.label, respo.firstname || ' '||respo.lastname, coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname)) as customerOrderLabel, "
@@ -38,7 +38,8 @@ public interface CustomerOrderReportingRepository extends QueryCacheCrudReposito
                         " coalesce(ast.label, sps.label, ds.label, bs.label, fs.label) as provisionStatus, " +
                         " confrere_a.label as confrereAnnouncementLabel, " +
                         " ntf.label as noticeTypeFamilyLabel, " +
-                        "  STRING_AGG(DISTINCT nt.label ,', '  ) as noticeTypeLabel, " +
+                        " (select STRING_AGG(DISTINCT nt.label ,', '  ) from    asso_announcement_notice_type nta   left join notice_type nt on nt.id = nta.id_notice_type  where nta.id_announcement = a.id )  as noticeTypeLabel,   "
+                        +
                         " e1.firstname || ' ' || e1.lastname as provisionAssignedToLabel, " +
                         " e2.firstname || ' ' || e2.lastname as salesEmployeeLabel, " +
                         " max((substring(invoice_item.label,'(\\d+)(?=\\s*caract)'))) as characterNumber, " +
@@ -67,8 +68,6 @@ public interface CustomerOrderReportingRepository extends QueryCacheCrudReposito
                         " left join announcement a on a.id = provision.id_announcement  " +
                         " left join confrere confrere_a on confrere_a.id = a.id_confrere  " +
                         " left join notice_type_family ntf on ntf.id = a.id_notice_type_family  " +
-                        " left join asso_announcement_notice_type nta on nta.id_announcement = a.id  " +
-                        " left join notice_type nt on nt.id = nta.id_notice_type  " +
                         " left join announcement_status ast on ast.id = a.id_announcement_status " +
                         " left join simple_provision sp on sp.id = provision.id_simple_provision " +
                         " left join simple_provision_status sps on sps.id = sp.id_simple_provision_status " +
@@ -81,14 +80,14 @@ public interface CustomerOrderReportingRepository extends QueryCacheCrudReposito
                         " left join formalite_status fs on fs.id = f.id_formalite_status " +
                         " left join invoice on invoice.customer_order_id = customer_order.id and invoice.id_invoice_status in (:invoiceStatusIds) "
                         +
-                        " left join audit  invoice_audit on invoice_audit.entity_id = invoice.id and invoice_audit.field_name = 'id' "
+                        " left join audit  invoice_audit on invoice_audit.entity_id = invoice.id and invoice_audit.field_name = 'id' and entity = 'Invoice' "
                         +
                         " left join employee employee_invoice  on employee_invoice.username = invoice_audit.username " +
                         " where customer_order.created_date BETWEEN  date_trunc('year', now()) AND CURRENT_TIMESTAMP " +
                         " and customer_order.id_customer_order_status<>:customerOrderStatusAbandonnedId " +
                         " and (:tiersId=0 or tiers.id = :tiersId) " +
                         " group by " +
-                        " affaire.id , " +
+                        " affaire.id , a.id," +
                         " affaire.siren , " +
                         " affaire.siret , " +
                         " ca.label , " +
@@ -98,7 +97,8 @@ public interface CustomerOrderReportingRepository extends QueryCacheCrudReposito
                         " e1.firstname, e1.lastname , " +
                         " e2.firstname, e2.lastname , " +
                         " coalesce(ast.label, sps.label, ds.label, bs.label, fs.label)  , " +
-                        " coalesce(affaire.denomination, affaire.firstname || ' '||affaire.lastname) , " +
+                        " coalesce(affaire.denomination, affaire.firstname || ' '||affaire.lastname) ,employee_invoice.firstname , employee_invoice.lastname, "
+                        +
                         " customer_order.id  , " +
                         " provision.id  , " +
                         " confrere_a.label , " +
