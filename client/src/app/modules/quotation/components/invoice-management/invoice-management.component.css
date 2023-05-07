@@ -75,7 +75,7 @@ table {
 }
 
 .min-height {
-  min-height: 1000px;
+  padding-bottom: 65px;
 }
 
 .payment-label {
