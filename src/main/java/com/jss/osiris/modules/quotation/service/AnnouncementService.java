@@ -21,6 +21,9 @@ public interface AnnouncementService {
 
         public Announcement addOrUpdateAnnouncement(Announcement announcement) throws OsirisException;
 
+        public Announcement updateComplexAnnouncementNotice(Announcement announcement, Provision provision)
+                        throws OsirisException;
+
         public List<AnnouncementSearchResult> searchAnnouncementsForWebSite(AnnouncementSearch announcementSearch)
                         throws OsirisException;
 

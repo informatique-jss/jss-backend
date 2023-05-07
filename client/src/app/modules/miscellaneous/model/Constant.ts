@@ -70,6 +70,7 @@ export interface Constant {
   attachmentTypeProofReading: AttachmentType;
   attachmentTypeAutomaticMail: AttachmentType;
   attachmentTypeAnnouncement: AttachmentType;
+  attachmentTypeComplexAnnouncement: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
   billingTypeDeboursNonTaxable: BillingType;

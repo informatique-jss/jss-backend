@@ -170,6 +170,10 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeAnnouncement;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_complex_announcement")
+	private AttachmentType attachmentTypeComplexAnnouncement;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_attachment_type_billing_closure")
 	private AttachmentType attachmentTypeBillingClosure;
 
@@ -1978,6 +1982,14 @@ public class Constant implements Serializable, IId {
 
 	public void setCompetentAuthorityInpi(CompetentAuthority competentAuthorityInpi) {
 		this.competentAuthorityInpi = competentAuthorityInpi;
+	}
+
+	public AttachmentType getAttachmentTypeComplexAnnouncement() {
+		return attachmentTypeComplexAnnouncement;
+	}
+
+	public void setAttachmentTypeComplexAnnouncement(AttachmentType attachmentTypeComplexAnnouncement) {
+		this.attachmentTypeComplexAnnouncement = attachmentTypeComplexAnnouncement;
 	}
 
 }

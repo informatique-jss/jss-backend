@@ -10,10 +10,6 @@
             font-family: 'Times New Roman', Times, serif
         }
 
-        .blue-color {
-            color: rgb(0, 32, 96)
-        }
-
         .center {
             text-align: center;
         }
@@ -22,102 +18,14 @@
             width: 100%
         }
 
-        .footer {
-            display: block;
-            font-size: 10px;
-            text-align: center;
-            position: running(footer);
-        }
-
-        .footer p {
-            margin: 0px
-        }
-
-        hr.solid {
-            border-top: 1px solid #bbb;
-        }
-
-        .title {
-            font-size: 48px;
-        }
-
-        .subtitle {
-            font-size: 10px;
-        }
-
-        .type {
-            font-size: 16px;
-            margin-top: 14px;
-        }
-
-        .table-notice {
-            font-size: 14px;
-            margin-top: 14px;
-        }
-
-        .notice-type {
-            margin-top: 10px;
-            font-size: 14px;
-        }
-
-        .qr-code {
-            position: absolute;
-            right: 30px;
-        }
-
-        table,
-        table>thead,
-        table>tbody,
-        table>thead>th,
-        table>tbody>tr>td,
-        table>tbody>tr {
-            border: 1px solid;
-            border-collapse: collapse;
-        }
-
-        table>tbody>tr>td {
-            padding: 5px;
-        }
-
-
         @page {
             size: A4 portrait;
-
-            @bottom-right {
-                content: counter(page);
-            }
-
-            @bottom-left {
-                content: element(footer);
-
-            }
-
-            counter-increment: page;
-            counter-reset: page 1;
         }
     </style>
 </head>
 
-<body>
-    <img th:src="@{'data:image/png;base64,'+${qrCodePicture}}" width="60px" height="60px" class="qr-code" />
-    <div class="center blue-color">
-        <div class="title">www.JSS.fr</div>
-        <div class="subtitle">Service de Presse En Ligne d'informations Générales, Juridiques, Judiciaires et
-            Techniques, habilité à
-            publier
-            les annonces légales les départements de 75, 78, 91, 92, 93, 94 et 95</div>
-        <div class="type">Témoin de Publication</div>
-        <table class="full-width blue-color table-notice">
-            <tr>
-                <td style="padding-left : 30px;text-align: left; " th:text="${date}"></td>
-                <td style="text-align: right; padding-right:30px;" th:text="${department}"></td>
-            </tr>
-        </table>
-        <div class="notice-type">Rubrique : <span th:text="${noticeType}"></span> / <span
-                th:text="${noticeSubtype}"></span></div>
-    </div>
-    <hr class="solid" />
-    <div th:if="${logo!=null}" class="alignment" align="center" style="line-height:10px"><img style="max-width:500px"
+<body style="padding-top: 140px;">
+    <div th:if="${logo!=null}" class="center" align="center" style="line-height:10px"><img style="max-width:500px"
             th:src="@{'data:image/jpeg;base64,'+${logo}}" /></div>
     <div th:if="${noticeHeader!=null}">
         <p class="text" th:utext="${noticeHeader}">header</p>
@@ -126,12 +34,5 @@
         <p class="text" th:utext="${notice}">notice</p>
     </div>
 </body>
-<div class="footer blue-color">
-    <hr class="solid" />
-    <p>https://www.jss.fr - Service de Presse En Ligne habilité pour les départements de 75, 78, 91, 92, 93, 94 et
-        95</p>
-    <p>8 rue Saint Augustin - 75002 PARIS - Téléphone : 01 47 03 10 10 - E-mail : <a
-            href="mailto:annonces@jss.fr">annonces@jss.fr</a></p>
-</div>
 
 </html>
