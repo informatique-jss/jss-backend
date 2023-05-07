@@ -6,6 +6,7 @@ export const NOTIFICATION_KEY_CODE: string = "F9";
 export const SAVE_KEY_CODE: string = "F2";
 export const NOTIFICATION_REFRESH_INTERVAL: number = 30 * 1000;
 export const MAX_SIZE_UPLOAD_FILES = 5242880;
+export const AZURE_CONFIDENT_THRESHOLD: number = 0.99;
 export const INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = 2;
 export const GUICHET_UNIQUE_BASE_URL = "https://guichet-unique.inpi.fr/";
 

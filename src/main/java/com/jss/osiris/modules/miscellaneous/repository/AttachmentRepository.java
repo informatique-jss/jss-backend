@@ -3,10 +3,11 @@ package com.jss.osiris.modules.miscellaneous.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 
 public interface AttachmentRepository extends QueryCacheCrudRepository<Attachment, Integer> {
     @Query(value = "select a from Attachment a where id_tiers =:idTiers")
@@ -35,4 +36,15 @@ public interface AttachmentRepository extends QueryCacheCrudRepository<Attachmen
 
     @Query(value = "select a from Attachment a where id_competent_authority =:idCompetentAuthority")
     List<Attachment> findByCompetentAuthorityId(@Param("idCompetentAuthority") Integer idCompetentAuthority);
+
+    @Query(nativeQuery = true, value = " " +
+            " select distinct a.* " +
+            " from attachment a " +
+            " join provision p on p.id = a.id_provision " +
+            " join asso_affaire_order asso on asso.id = p.id_asso_affaire_order " +
+            " join customer_order c on c.id = asso.id_customer_order " +
+            " where  a.id_attachment_type =:attachmentTypeInvoiceId and a.id_azure_invoice is  null  and c.id_customer_order_status not in (:customerOrderStatusExcluded) ")
+    List<Attachment> findInvoiceAttachmentOnProvisionToAnalyse(
+            @Param("attachmentTypeInvoiceId") Integer attachmentTypeInvoiceId,
+            @Param("customerOrderStatusExcluded") List<CustomerOrderStatus> customerOrderStatusExcluded);
 }

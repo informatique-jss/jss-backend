@@ -128,6 +128,11 @@ public class CompetentAuthority implements IId, IAttachment {
 
 	private String inpiReference;
 
+	private String azureCustomReference;
+
+	@Column(length = 20)
+	private String intercommunityVat;
+
 	public Integer getId() {
 		return id;
 	}
@@ -374,6 +379,22 @@ public class CompetentAuthority implements IId, IAttachment {
 
 	public void setInpiReference(String inpiReference) {
 		this.inpiReference = inpiReference;
+	}
+
+	public String getAzureCustomReference() {
+		return azureCustomReference;
+	}
+
+	public void setAzureCustomReference(String azureCustomReference) {
+		this.azureCustomReference = azureCustomReference;
+	}
+
+	public String getIntercommunityVat() {
+		return intercommunityVat;
+	}
+
+	public void setIntercommunityVat(String intercommunityVat) {
+		this.intercommunityVat = intercommunityVat;
 	}
 
 }

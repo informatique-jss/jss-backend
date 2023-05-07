@@ -53,6 +53,17 @@
                       [maxLength]="200" [form]="entityForm2" propertyName="label" [isMandatory]="true"
                       [isDisabled]="!editMode"></generic-input>
                   </td>
+                  <td>
+                    <generic-input [(model)]="selectedcompetentAuthority.owncloudFolderName"
+                      label="Nom du dossier Owncloud" [form]="entityForm2" propertyName="owncloudFolderName"
+                      [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="250"></generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedcompetentAuthority.azureCustomReference"
+                      label="Référence de recherche Azure" [maxLength]="250" [form]="entityForm2"
+                      propertyName="azureCustomReference" [isMandatory]="false"
+                      [isDisabled]="!editMode"></generic-input>
+                  </td>
                 </tr>
               </table>
               <table class="full-width">
@@ -107,9 +118,11 @@
                       [isMandatory]="false" [isDisabled]="!editMode"></select-payment-types>
                   </td>
                   <td>
-                    <generic-input [(model)]="selectedcompetentAuthority.owncloudFolderName"
-                      label="Nom du dossier Owncloud" [form]="entityForm2" propertyName="owncloudFolderName"
-                      [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="250"></generic-input>
+                    <generic-input [(model)]="selectedcompetentAuthority.intercommunityVat" [isDisabled]="!editMode"
+                      label="TVA intercommunaitaire" [form]="entityForm2" propertyName="intercommunityVat"
+                      [isMandatory]="false" [conditionnalRequired]=""
+                      [customValidators]="[checkVAT('intercommunityVat')]">
+                    </generic-input>
                   </td>
                 </tr>
               </table>

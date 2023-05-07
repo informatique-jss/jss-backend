@@ -20,6 +20,11 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
   */
   @Input() matFormFieldClass: string = "full-width";
 
+  /**
+* Hint to display
+*/
+  @Input() hint: string = "";
+
   @Input() byPassAutocompletValidator: boolean = false;
 
   @ViewChild('inputField') input: ElementRef | undefined;

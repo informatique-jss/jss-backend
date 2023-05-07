@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.mail.model.CustomerMail;
+import com.jss.osiris.modules.invoicing.model.AzureInvoice;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -106,6 +107,11 @@ public class Attachment implements Serializable, IId {
 	private String description;
 
 	private LocalDateTime creatDateTime;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_azure_invoice")
+	@JsonIgnoreProperties(value = { "attachments", "invoices" }, allowSetters = true)
+	private AzureInvoice azureInvoice;
 
 	public Integer getId() {
 		return id;
@@ -225,6 +231,14 @@ public class Attachment implements Serializable, IId {
 
 	public void setCompetentAuthority(CompetentAuthority competentAuthority) {
 		this.competentAuthority = competentAuthority;
+	}
+
+	public AzureInvoice getAzureInvoice() {
+		return azureInvoice;
+	}
+
+	public void setAzureInvoice(AzureInvoice azureInvoice) {
+		this.azureInvoice = azureInvoice;
 	}
 
 }

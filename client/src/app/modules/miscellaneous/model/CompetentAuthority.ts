@@ -37,4 +37,6 @@ export interface CompetentAuthority extends IReferential, IAttachment {
   owncloudFolderName: string;
   defaultPaymentType: PaymentType;
   inpiReference: string;
+  azureCustomReference: string;
+  intercommunityVat: string;
 }

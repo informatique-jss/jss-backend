@@ -46,6 +46,7 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateStatusReferential() throws OsirisException {
         updateStatus(BodaccStatus.BODACC_NEW, "Nouveau", "auto_awesome", true, false,
                 AggregateStatus.AGGREGATE_STATUS_NEW);

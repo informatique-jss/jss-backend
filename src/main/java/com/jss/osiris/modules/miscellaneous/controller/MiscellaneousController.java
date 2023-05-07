@@ -854,6 +854,9 @@ public class MiscellaneousController {
 
         validationHelper.validateIban(competentAuthority.getIban(), false, "Iban");
         validationHelper.validateBic(competentAuthority.getBic(), false, "Bic");
+        validationHelper.validateString(competentAuthority.getIntercommunityVat(), false, 20, "IntercommunityVat");
+        validationHelper.validateString(competentAuthority.getAzureCustomReference(), false, 250,
+                "azureCustomReference");
         validationHelper.validateString(competentAuthority.getContact(), false, 40, "Contact");
         validationHelper.validateString(competentAuthority.getMailRecipient(), false, 60, "MailRecipient");
         validationHelper.validateString(competentAuthority.getAddress(), false, 200, "Address");

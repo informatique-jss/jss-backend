@@ -35,4 +35,6 @@ public interface AttachmentService {
 
         public Attachment cloneAttachment(Attachment attachment) throws OsirisException;
 
+        public List<Attachment> getInvoiceAttachmentOnProvisionToAnalyse() throws OsirisException;
+
 }

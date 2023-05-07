@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.invoicing.service.AzureInvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.OwncloudGreffeDelegate;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
@@ -107,6 +108,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	CentralPayPaymentRequestService centralPayPaymentRequestService;
+
+	@Autowired
+	AzureInvoiceService azureInvoiceService;
 
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
@@ -264,6 +268,15 @@ public class OsirisScheduller {
 	private void checkAllCentralPayPaymentRequests() {
 		try {
 			centralPayPaymentRequestService.checkAllPaymentRequests();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
+		}
+	}
+
+	@Scheduled(initialDelay = 500, fixedDelayString = "${azure.form.recognizer.invoice.check}")
+	private void checkInvoiceToAnalyse() {
+		try {
+			azureInvoiceService.checkInvoiceToAnalyse();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}

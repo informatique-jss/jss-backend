@@ -27,6 +27,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.modules.invoicing.model.Appoint;
+import com.jss.osiris.modules.invoicing.model.AzureInvoice;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.DebourSearch;
@@ -50,6 +51,7 @@ import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.invoicing.model.RefundSearch;
 import com.jss.osiris.modules.invoicing.model.RefundSearchResult;
 import com.jss.osiris.modules.invoicing.service.AppointService;
+import com.jss.osiris.modules.invoicing.service.AzureInvoiceService;
 import com.jss.osiris.modules.invoicing.service.DepositService;
 import com.jss.osiris.modules.invoicing.service.InfogreffeInvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
@@ -145,6 +147,32 @@ public class InvoicingController {
 
     @Autowired
     AppointService appointService;
+
+    @Autowired
+    AzureInvoiceService azureInvoiceService;
+
+    @GetMapping(inputEntryPoint + "/azure-invoices")
+    public ResponseEntity<List<AzureInvoice>> getAzureInvoices(@RequestParam Boolean displayOnlyToCheck) {
+        return new ResponseEntity<List<AzureInvoice>>(azureInvoiceService.getAzureInvoices(displayOnlyToCheck),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/azure-invoice")
+    public ResponseEntity<AzureInvoice> getAzureInvoice(@RequestParam Integer idInvoice) {
+        return new ResponseEntity<AzureInvoice>(azureInvoiceService.getAzureInvoice(idInvoice),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/azure-invoice")
+    public ResponseEntity<AzureInvoice> updateAzureInvoice(@RequestBody AzureInvoice azureInvoice)
+            throws OsirisException, OsirisValidationException {
+        validationHelper.validateReferential(azureInvoice.getCompetentAuthority(), true, "competentAuthority");
+        validationHelper.validateDate(azureInvoice.getInvoiceDate(), true, "InvoiceDate");
+        validationHelper.validateString(azureInvoice.getInvoiceId(), true, "InvoiceId");
+        azureInvoice.setToCheck(false);
+        return new ResponseEntity<AzureInvoice>(azureInvoiceService.addOrUpdateAzureInvoice(azureInvoice),
+                HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/appoints")
     public ResponseEntity<List<Appoint>> getAppoints(@RequestParam String searchLabel) {

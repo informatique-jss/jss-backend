@@ -26,6 +26,7 @@ export const AFFAIRE_ENTITY_TYPE: EntityType = { entityType: 'Affaire', tabName:
 export const INVOICE_ENTITY_TYPE: EntityType = { entityType: 'Invoice', tabName: 'Factures', entryPoint: 'invoicing/view' };
 export const JOURNAL_ENTITY_TYPE: EntityType = { entityType: 'Journal', tabName: 'Journaux', entryPoint: 'journal' };
 export const SIMPLE_PROVISION_ENTITY_TYPE: EntityType = { entityType: 'SimpleProvision', tabName: 'Formalité simple', entryPoint: 'simpleProvision' };
+export const AZURE_INVOICE_ENTITY_TYPE: EntityType = { entityType: 'AzureInvoice', tabName: 'Facture automatique', entryPoint: 'invoicing/azure/edit' };
 
 @Component({
   selector: 'app-search',

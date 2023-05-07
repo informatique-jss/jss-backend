@@ -44,6 +44,7 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateStatusReferential() throws OsirisException {
         updateStatus(QuotationStatus.OPEN, "Ouvert", "auto_awesome");
         updateStatus(QuotationStatus.TO_VERIFY, "A vérifier", "search");

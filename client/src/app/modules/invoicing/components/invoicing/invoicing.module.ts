@@ -21,6 +21,8 @@ import { AmountDialogComponent } from "../amount-dialog/amount-dialog.component"
 import { AppointListComponent } from "../appoint-list/appoint-list.component";
 import { AssociateDepositDialogComponent } from '../associate-deposit-dialog/associate-deposit-dialog.component';
 import { AssociatePaymentDialogComponent } from "../associate-payment-dialog/associate-payment-dialog.component";
+import { AzureInvoiceEditComponent } from "../azure-invoice-edit/azure-invoice-edit.component";
+import { AzureInvoiceListComponent } from "../azure-invoice-list/azure-invoice-list.component";
 import { BankTransfertListComponent } from '../bank-transfert-list/bank-transfert-list.component';
 import { DeboursAmountInvoicedDialogComponent } from '../debours-amount-invoiced-dialog/debours-amount-invoiced-dialog.component';
 import { DeboursAmountTaxableDialogComponent } from "../debours-amount-taxable-dialog/debours-amount-taxable-dialog.component";
@@ -39,6 +41,7 @@ const routes: Routes = [
   { path: 'invoicing/credit-note/:idInvoice', component: AddInvoiceComponent },
   { path: 'invoicing/payment/add', component: AddPaymentComponent },
   { path: 'invoicing/add/debour/:idCompetentAuhority/:idCustomerOrder', component: AddInvoiceComponent },
+  { path: 'invoicing/azure/edit/:idAzureInvoice', component: AzureInvoiceEditComponent },
 ];
 
 @NgModule({
@@ -76,6 +79,8 @@ const routes: Routes = [
     AddPaymentComponent,
     InfogreffeInvoiceListComponent,
     AppointListComponent,
+    AzureInvoiceListComponent,
+    AzureInvoiceEditComponent,
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,

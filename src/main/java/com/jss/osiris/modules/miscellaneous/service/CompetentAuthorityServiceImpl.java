@@ -140,4 +140,14 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     public List<CompetentAuthority> getCompetentAuthorityByAuthorityType(Integer competentAuthorityTypeId) {
         return competentAuthorityRepository.findByCompetentAuthorityType_Id(competentAuthorityTypeId);
     }
+
+    @Override
+    public CompetentAuthority getCompetentAuthorityByIntercommunityVat(String intercommunityVat) {
+        return competentAuthorityRepository.findByIntercommunityVat(intercommunityVat);
+    }
+
+    @Override
+    public CompetentAuthority getCompetentAuthorityByAzureCustomReference(String azureCustomReference) {
+        return competentAuthorityRepository.findByAzureCustomReference(azureCustomReference);
+    }
 }

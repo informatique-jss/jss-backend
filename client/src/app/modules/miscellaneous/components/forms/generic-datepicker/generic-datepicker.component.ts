@@ -24,6 +24,11 @@ export class GenericDatepickerComponent extends GenericFormComponent implements 
    */
   @Output() onDateChange: EventEmitter<Date> = new EventEmitter();
 
+  /**
+* Hint to display
+*/
+  @Input() hint: string = "";
+
   constructor(
     private formBuilder3: UntypedFormBuilder, userNoteService3: UserNoteService) {
     super(formBuilder3, userNoteService3);

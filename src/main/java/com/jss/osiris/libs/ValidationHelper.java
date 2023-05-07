@@ -255,7 +255,11 @@ public class ValidationHelper {
             throws OsirisValidationException, OsirisClientMessageException {
         if ((value == null) && isMandatory)
             throw new OsirisValidationException(fieldName);
-        if (!Iban.isValid(value))
+
+        if (!isMandatory && (value == null || value.equals("")))
+            return;
+
+        if (value != null && !Iban.isValid(value.replaceAll(" ", "")))
             throw new OsirisClientMessageException("IBAN saisi non valide");
     }
 
@@ -263,7 +267,7 @@ public class ValidationHelper {
             throws OsirisValidationException, OsirisClientMessageException {
         if ((value == null) && isMandatory)
             throw new OsirisValidationException(fieldName);
-        if (!Bic.isValid(value))
+        if (value != null && !Bic.isValid(value.replaceAll(" ", "")))
             throw new OsirisClientMessageException("BIC saisi non valide");
     }
 

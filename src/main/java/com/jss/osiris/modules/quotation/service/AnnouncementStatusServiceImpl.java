@@ -46,6 +46,7 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
         }
 
         @Override
+        @Transactional(rollbackFor = Exception.class)
         public void updateStatusReferential() throws OsirisException {
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_NEW, "Nouveau", "auto_awesome", true, false,
                                 AggregateStatus.AGGREGATE_STATUS_NEW);

@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.quotation.repository.ProvisionScreenTypeRepository;
@@ -22,6 +23,7 @@ public class ProvisionScreenTypeServiceImpl implements ProvisionScreenTypeServic
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateScreenTypes() {
         updateScreenType(ProvisionScreenType.ANNOUNCEMENT, "Ecran annonces légales");
         updateScreenType(ProvisionScreenType.BODACC, "Ecran BODACC");

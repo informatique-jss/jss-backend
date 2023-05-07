@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.repository.AssignationTypeRepository;
@@ -36,6 +37,7 @@ public class AssignationTypeServiceImpl implements AssignationTypeService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateAssignationTypes() {
         updateAssignationType(AssignationType.FORMALISTE, "Assigner au formaliste");
         updateAssignationType(AssignationType.EMPLOYEE, "Assigné à l'employé par défaut");

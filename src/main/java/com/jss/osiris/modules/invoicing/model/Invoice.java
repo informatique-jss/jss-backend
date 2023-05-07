@@ -197,6 +197,11 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private BankTransfert bankTransfert;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_azure_invoice")
+	@JsonIgnoreProperties(value = { "invoices" }, allowSetters = true)
+	private AzureInvoice azureInvoice;
+
 	public Integer getId() {
 		return id;
 	}
@@ -531,6 +536,14 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	public void setAppoints(List<Appoint> appoints) {
 		this.appoints = appoints;
+	}
+
+	public AzureInvoice getAzureInvoice() {
+		return azureInvoice;
+	}
+
+	public void setAzureInvoice(AzureInvoice azureInvoice) {
+		this.azureInvoice = azureInvoice;
 	}
 
 }

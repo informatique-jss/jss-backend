@@ -41,6 +41,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.guichet.unique.refresh.update.last.hour");
         isOk = isOk && checkProperty("schedulling.guichet.unique.refresh.opened");
         isOk = isOk && checkProperty("schedulling.central.pay.payment.request.validation.check");
+        isOk = isOk && checkProperty("azure.form.recognizer.invoice.check");
         isOk = isOk && checkProperty("ldap.dc.level.0");
         isOk = isOk && checkProperty("ldap.dc.level.1");
         isOk = isOk && checkProperty("ldap.ou.osiris");
@@ -78,6 +79,10 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("owncloud.greffe.password");
         isOk = isOk && checkProperty("owncloud.greffe.webdav.url");
         isOk = isOk && checkProperty("owncloud.greffe.webdav.folder.root");
+        isOk = isOk && checkProperty("azure.form.recognizer.endpoint");
+        isOk = isOk && checkProperty("azure.form.recognizer.api.key");
+        isOk = isOk && checkProperty("azure.form.recognizer.model.name");
+        isOk = isOk && checkProperty("azure.form.recognizer.confidence.threshold");
 
         isOk = isOk && checkAccountingParams();
 
