@@ -7,6 +7,6 @@ import com.jss.osiris.modules.reporting.model.IQuotationReporting;
 
 public interface QuotationReportingService {
 
-    List<IQuotationReporting> getQuotationReporting(Integer tiersId) throws OsirisException;
+    List<IQuotationReporting> getQuotationReporting() throws OsirisException;
 
 }

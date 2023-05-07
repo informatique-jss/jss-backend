@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.reporting.model;
 
-public interface IQuotationReporting {
+public interface ICustomerOrderReporting {
     public Integer getAffaireId();
 
     public String getAffaireSiren();
@@ -23,6 +23,12 @@ public interface IQuotationReporting {
 
     public String getTiersLabel();
 
+    public Float getPreTaxPrice();
+
+    public Float getPreTaxPriceWithoutDebour();
+
+    public Float getTaxedPrice();
+
     public String getProvisionStatus();
 
     public String getProvisionAssignedToLabel();
@@ -31,11 +37,15 @@ public interface IQuotationReporting {
 
     public String getSalesEmployeeLabel();
 
-    public String getQuotationStatusLabel();
+    public String getCustomerOrderStatusLabel();
 
-    public String getQuotationCreatedDateMonth();
+    public String getCustomerOrderCreatedDateMonth();
 
-    public String getQuotationCreatedDateDay();
+    public String getInvoiceDateMonth();
+
+    public String getInvoiceDateDay();
+
+    public String getInvoiceCreator();
 
     public Integer getCharacterNumber();
 
@@ -46,6 +56,4 @@ public interface IQuotationReporting {
     public String getNoticeTypeFamilyLabel();
 
     public String getNoticeTypeLabel();
-
-    public String getQuotationCreator();
 }

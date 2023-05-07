@@ -1,4 +1,4 @@
-export interface QuotationReporting {
+export interface CustomerOrderReporting {
   affaireId: number;
   affaireSiren: string;
   affaireSiret: number;
@@ -10,17 +10,21 @@ export interface QuotationReporting {
   provisionFamilyTypeLabel: string;
   customerOrderLabel: string;
   tiersLabel: string;
+  preTaxPrice: number;
+  preTaxPriceWithoutDebour: number;
+  taxedPrice: number;
   provisionStatus: string;
   provisionAssignedToLabel: string;
   publicationDateMonth: string;
   salesEmployeeLabel: string;
-  quotationStatusLabel: string;
-  quotationCreatedDateMonth: string;
-  quotationCreatedDateDay: string;
+  customerOrderStatusLabel: string;
+  customerOrderCreatedDateMonth: string;
   characterNumber: number;
+  invoiceDateMonth: string;
+  invoiceDateDay: string;
   publicationDateWeek: string;
   confrereAnnouncementLabel: string;
   noticeTypeFamilyLabel: string;
   noticeTypeLabel: string;
-  quotationCreator: string;
+  invoiceCreator: string;
 }
