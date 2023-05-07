@@ -295,7 +295,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer) throws OsirisException {
+    public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer)
+            throws OsirisException, OsirisClientMessageException {
         Invoice invoice = new Invoice();
         invoice.setCreatedDate(LocalDateTime.now());
 
@@ -316,7 +317,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                 constantService.getDocumentTypeDunning());
 
         if (dunningDocument == null)
-            throw new OsirisException(null, "Dunning document not found for ordering customer provided");
+            throw new OsirisClientMessageException("Merci de remplir la partie réglement pour le donneur d'ordre");
+
+        if (dunningDocument.getPaymentDeadlineType() == null)
+            throw new OsirisClientMessageException("Merci de remplir la partie réglement pour le donneur d'ordre");
 
         Integer nbrOfDayFromDueDate = 30;
         if (dunningDocument.getPaymentDeadlineType() != null)

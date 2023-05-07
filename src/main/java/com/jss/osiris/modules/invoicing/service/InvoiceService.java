@@ -32,8 +32,10 @@ public interface InvoiceService {
          *                         only one affaire in the invoice (it's to define
          *                         payer)
          * @throws OsirisException
+         * @throws OsirisClientMessageException
          */
-        public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer) throws OsirisException;
+        public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer)
+                        throws OsirisException, OsirisClientMessageException;
 
         public List<InvoiceSearchResult> getInvoiceForCustomerOrder(Integer customerOrderId) throws OsirisException;
 

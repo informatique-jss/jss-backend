@@ -405,7 +405,7 @@ public class NotificationServiceImpl implements NotificationService {
         if (salesEmployee != null) {
             if (compareEmployee != null)
                 for (Employee employee : compareEmployee)
-                    if (employee.getId().equals(salesEmployee))
+                    if (employee.getId().equals(salesEmployee.getId()))
                         createdByMe = true;
 
             if (!createdByMe)
