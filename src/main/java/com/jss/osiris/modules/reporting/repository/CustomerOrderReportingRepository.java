@@ -42,6 +42,7 @@ public interface CustomerOrderReportingRepository extends QueryCacheCrudReposito
                         +
                         " e1.firstname || ' ' || e1.lastname as provisionAssignedToLabel, " +
                         " e2.firstname || ' ' || e2.lastname as salesEmployeeLabel, " +
+                        " invoice_status.label as invoiceStatusLabel, " +
                         " max((substring(invoice_item.label,'(\\d+)(?=\\s*caract)'))) as characterNumber, " +
                         " sum(coalesce(invoice_item.pre_tax_price,0)) as preTaxPrice, " +
                         " sum(coalesce(case when billing_type.is_fee=false and billing_type.is_debour = false then invoice_item.pre_tax_price end,0)) as preTaxPriceWithoutDebour, "
@@ -80,6 +81,8 @@ public interface CustomerOrderReportingRepository extends QueryCacheCrudReposito
                         " left join formalite_status fs on fs.id = f.id_formalite_status " +
                         " left join invoice on invoice.customer_order_id = customer_order.id and invoice.id_invoice_status in (:invoiceStatusIds) "
                         +
+                        " left join invoice_status on invoice_status.id = invoice.id_invoice_status "
+                        +
                         " left join audit  invoice_audit on invoice_audit.entity_id = invoice.id and invoice_audit.field_name = 'id' and entity = 'Invoice' "
                         +
                         " left join employee employee_invoice  on employee_invoice.username = invoice_audit.username " +
@@ -105,7 +108,7 @@ public interface CustomerOrderReportingRepository extends QueryCacheCrudReposito
                         " ntf.label , " +
                         " invoice.created_date  , " +
                         " provision_t.label  , " +
-                        " provision_ft.label ,  " +
+                        " provision_ft.label , invoice_status.label, " +
                         " coalesce(confrere.label, respo.firstname || ' '||respo.lastname, coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname))  , "
                         +
                         " coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname)   " +

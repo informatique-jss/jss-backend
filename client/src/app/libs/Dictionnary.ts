@@ -39,5 +39,6 @@ export const Dictionnary = {
   "turnoverAmount": "Montant du CA",
   "vatLabel": "Libellé de TVA",
   "vatCode": "Type de TVA",
+  "invoiceStatusLabel": "Statut de la facture",
 };
 

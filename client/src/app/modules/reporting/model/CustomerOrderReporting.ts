@@ -27,4 +27,5 @@ export interface CustomerOrderReporting {
   noticeTypeFamilyLabel: string;
   noticeTypeLabel: string;
   invoiceCreator: string;
+  invoiceStatusLabel: string;
 }
