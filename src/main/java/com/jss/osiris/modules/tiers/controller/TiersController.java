@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.search.service.SearchService;
@@ -404,7 +405,7 @@ public class TiersController {
 
   @PostMapping(inputEntryPoint + "/tiers")
   public ResponseEntity<Tiers> addOrUpdateTiers(@RequestBody Tiers tiers)
-      throws OsirisValidationException, OsirisException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
     validationHelper.validateReferential(tiers.getTiersType(), true, "TiersType");
 
     if (tiers.getIsIndividual()) {
@@ -478,8 +479,8 @@ public class TiersController {
         validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
         validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
         validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
-        validationHelper.validateString(document.getRefundIBAN(), false, 40, "RefundIBAN");
-        validationHelper.validateString(document.getRefundBic(), false, 40, "RefundBic");
+        validationHelper.validateIban(document.getRefundIBAN(), false, "RefundIBAN");
+        validationHelper.validateBic(document.getRefundBic(), false, "RefundBic");
         validationHelper.validateReferential(document.getBillingClosureType(), false, "BillingClosureType");
         validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
             "BillingClosureRecipientType");
@@ -500,8 +501,8 @@ public class TiersController {
 
     validationHelper.validateReferential(tiers.getPaymentType(),
         !tiers.getTiersType().getId().equals(constantService.getTiersTypeProspect().getId()), "PaymentType");
-    validationHelper.validateString(tiers.getPaymentIban(), false, 40, "PaymentIBAN");
-    validationHelper.validateString(tiers.getPaymentBic(), false, 40, "PaymentBic");
+    validationHelper.validateIban(tiers.getPaymentIban(), false, "PaymentIBAN");
+    validationHelper.validateBic(tiers.getPaymentBic(), false, "PaymentBic");
 
     if (tiers.getPaymentType() != null
         && tiers.getPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())) {
@@ -552,7 +553,8 @@ public class TiersController {
             validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
             validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
             validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
-            validationHelper.validateString(document.getRefundIBAN(), false, 40, "RefundIBAN");
+            validationHelper.validateIban(document.getRefundIBAN(), false, "RefundIBAN");
+            validationHelper.validateBic(document.getRefundBic(), false, "RefundBic");
             validationHelper.validateReferential(document.getBillingClosureType(), false, "BillingClosureType");
             validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
                 "BillingClosureRecipientType");

@@ -927,10 +927,8 @@ public class InvoicingController {
         if (invoice.getIsInvoiceFromProvider()
                 && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())
                 && (invoice.getCompetentAuthority() == null || invoice.getCustomerOrderForInboundInvoice() == null)) {
-            if (invoiceHelper.getIbanOfOrderingCustomer(invoice) == null)
-                throw new OsirisClientMessageException("Aucun IBAN trouvé sur le donneur d'ordre");
-            if (invoiceHelper.getBicOfOrderingCustomer(invoice) == null)
-                throw new OsirisClientMessageException("Aucun BIC trouvé sur le donneur d'ordre");
+            validationHelper.validateIban(invoiceHelper.getIbanOfOrderingCustomer(invoice), true, "IBAN");
+            validationHelper.validateBic(invoiceHelper.getBicOfOrderingCustomer(invoice), true, "BIC");
         }
     }
 
