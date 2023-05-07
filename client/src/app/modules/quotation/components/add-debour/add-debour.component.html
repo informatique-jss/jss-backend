@@ -77,7 +77,24 @@
     </ul>
   </div>
   <div>
-    <table class="full-width  " *ngIf=" isNotInpi()">
+    <table class="full-width  " *ngIf=" isNotInpi() && canAddNewInvoice()">
+      <tr>
+        <td>
+          Rechercher une facture automatique :
+        </td>
+        <td style="width: 80%;">
+          <autocomplete-azure-invoice [(model)]="selectedAzureInvoice" [form]="debourForm"
+            propertyName="selectedAzureInvoice" [isMandatory]="false"></autocomplete-azure-invoice>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Créer le débours et la facture libre"
+            (click)="createInvoiceFromAzureInvoice(selectedAzureInvoice)" class="add-button">
+            <mat-icon>add</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <table class="full-width  " *ngIf=" isNotInpi() && canAddNewInvoice()">
       <tr>
         <td>
           Rechercher une facture de greffe :
@@ -94,7 +111,7 @@
         </td>
       </tr>
     </table>
-    <table class="full-width  " *ngIf=" isNotInpi()">
+    <table class="full-width  " *ngIf=" isNotInpi() && canAddNewInvoice()">
       <tr>
         <td>
           Rechercher une facture Infogreffe :

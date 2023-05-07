@@ -4,7 +4,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { AmountDialogComponent } from 'src/app/modules/invoicing/components/amount-dialog/amount-dialog.component';
+import { AzureInvoice } from 'src/app/modules/invoicing/model/AzureInvoice';
 import { InfogreffeInvoice } from 'src/app/modules/invoicing/model/InfogreffeInvoice';
+import { AzureInvoiceService } from 'src/app/modules/invoicing/services/azure.invoice.service';
 import { OwncloudGreffeInvoiceService } from 'src/app/modules/invoicing/services/owncloud.greffe.invoice.service';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
@@ -48,6 +50,7 @@ export class AddDebourComponent implements OnInit {
   infogreffeInvoices: InfogreffeInvoice[] | undefined;
   selectedGreffeInvoice: OwncloudGreffeInvoice | undefined;
   selectedInfogreffeInvoice: InfogreffeInvoice | undefined;
+  selectedAzureInvoice: AzureInvoice | undefined;
 
   constructor(private formBuilder: FormBuilder,
     public confirmationDialog: MatDialog,
@@ -58,6 +61,7 @@ export class AddDebourComponent implements OnInit {
     private appService: AppService,
     private owncloudGreffeInvoiceService: OwncloudGreffeInvoiceService,
     private infogreffeInvoiceService: InfogreffeInvoiceService,
+    private azureInvoiceService: AzureInvoiceService,
   ) { }
 
   ngOnInit() {
@@ -250,6 +254,13 @@ export class AddDebourComponent implements OnInit {
   createInvoiceFromInfogreffeInvoice(greffeInvoice: InfogreffeInvoice | undefined) {
     if (this.provision && this.customerOrder && greffeInvoice)
       this.infogreffeInvoiceService.createInvoiceFromGreffeInvoice(greffeInvoice, this.provision).subscribe(reponse => {
+        this.appService.openRoute(null, '/order/' + this.customerOrder!.id, null);
+      });
+  }
+
+  createInvoiceFromAzureInvoice(azureInvoice: AzureInvoice | undefined) {
+    if (this.provision && this.customerOrder && azureInvoice)
+      this.azureInvoiceService.createInvoiceFromAzureInvoice(azureInvoice, this.provision).subscribe(reponse => {
         this.appService.openRoute(null, '/order/' + this.customerOrder!.id, null);
       });
   }

@@ -157,6 +157,30 @@ public class InvoicingController {
                 HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/azure-invoices/search")
+    public ResponseEntity<List<AzureInvoice>> searchAzureInvoices(@RequestParam String invoiceId) {
+        return new ResponseEntity<List<AzureInvoice>>(azureInvoiceService.searchAzureInvoicesByInvoiceId(invoiceId),
+                HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    @GetMapping(inputEntryPoint + "/azure-invoice/create")
+    public ResponseEntity<Invoice> createInvoiceFromAzureInvoice(@RequestParam Integer provisionId,
+            @RequestParam Integer azureInvoiceId)
+            throws OsirisValidationException, OsirisClientMessageException, OsirisException {
+        Provision provision = provisionService.getProvision(provisionId);
+        if (provision == null)
+            throw new OsirisValidationException("provisionId");
+
+        AzureInvoice azureInvoice = azureInvoiceService.getAzureInvoice(azureInvoiceId);
+        if (azureInvoice == null)
+            throw new OsirisValidationException("azureInvoice");
+
+        return new ResponseEntity<Invoice>(
+                azureInvoiceService.generateDeboursAndInvoiceFromInvoiceFromUser(azureInvoice, provision),
+                HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/azure-invoice")
     public ResponseEntity<AzureInvoice> getAzureInvoice(@RequestParam Integer idInvoice) {
         return new ResponseEntity<AzureInvoice>(azureInvoiceService.getAzureInvoice(idInvoice),
@@ -215,6 +239,7 @@ public class InvoicingController {
                 HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     @GetMapping(inputEntryPoint + "/infogreffe-invoice/create")
     public ResponseEntity<Invoice> createInvoiceFromInfogreffeInvoice(
             @RequestParam Integer provisionId, @RequestParam Integer infogreffeInvoiceId)

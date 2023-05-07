@@ -78,6 +78,11 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
     }
 
     @Override
+    public List<AzureInvoice> searchAzureInvoicesByInvoiceId(String invoiceId) {
+        return azureInvoiceRepository.findByInvoiceIdContainingAndToChekAndInvoice(invoiceId.trim());
+    }
+
+    @Override
     public AzureInvoice addOrUpdateAzureInvoice(AzureInvoice azureInvoice) {
         return azureInvoiceRepository.save(azureInvoice);
     }
@@ -160,6 +165,15 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
             bankTransfertService.cancelBankTransfert(debour.getBankTransfert());
         }
         debourService.deleteDebour(debour);
+    }
+
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public Invoice generateDeboursAndInvoiceFromInvoiceFromUser(AzureInvoice azureInvoice, Provision currentProvision)
+            throws OsirisClientMessageException, OsirisException {
+        azureInvoice = getAzureInvoice(azureInvoice.getId());
+        currentProvision = provisionService.getProvision(currentProvision.getId());
+        return generateDeboursAndInvoiceFromInvoice(azureInvoice, currentProvision);
     }
 
     private Invoice generateDeboursAndInvoiceFromInvoice(AzureInvoice azureInvoice, Provision currentProvision)
