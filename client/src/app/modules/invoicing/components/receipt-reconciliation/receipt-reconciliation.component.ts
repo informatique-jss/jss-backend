@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';
@@ -19,6 +20,7 @@ import { AzureReceiptInvoiceService } from '../../services/azure.receipt.invoice
 import { AzureReceiptInvoiceStatusService } from '../../services/azure.receipt.invoice.status.service';
 import { AzureReceiptService } from '../../services/azure.receipt.service';
 import { getAffaireListForProviderInvoice } from '../invoice-tools';
+import { ReceiptReconciliationEditDialogComponent } from '../receipt-reconciliation-edit-dialog/receipt-reconciliation-edit-dialog.component';
 
 @Component({
   selector: 'receipt-reconciliation',
@@ -29,6 +31,7 @@ export class ReceiptReconciliationComponent implements OnInit {
 
   displayedColumns: SortTableColumn[] = [];
   selectedAttachmentId: number | undefined;
+  selectedAttachment: Attachment | undefined;
   selectedAzureReceipt: AzureReceipt | undefined;
   attachments: Attachment[] | undefined;
   tableActions: SortTableAction[] = [] as Array<SortTableAction>;
@@ -47,6 +50,7 @@ export class ReceiptReconciliationComponent implements OnInit {
     private appService: AppService,
     private bankTransfertService: BankTransfertService,
     private azureReceiptService: AzureReceiptService,
+    public receiptReconciliationEditDialogComponent: MatDialog,
   ) { }
 
   ngOnInit() {
@@ -76,6 +80,7 @@ export class ReceiptReconciliationComponent implements OnInit {
 
   selectReceipt(attachement: Attachment) {
     this.selectedAttachmentId = attachement.id;
+    this.selectedAttachment = attachement;
     this.azureReceiptService.getAzureReceipt(attachement.azureReceipt.id).subscribe(response => {
       this.selectedAzureReceipt = response;
       this.sortReceipt();
@@ -163,5 +168,16 @@ export class ReceiptReconciliationComponent implements OnInit {
             invoice.azureReceiptInvoiceStatus = response;
       })
     });
+  }
+
+  modifyAzureReceiptInvoice(azureReceiptInvoice: AzureReceiptInvoice) {
+    let dialogRef = this.receiptReconciliationEditDialogComponent.open(ReceiptReconciliationEditDialogComponent, {
+      width: '40%',
+    });
+    dialogRef.componentInstance.azureReceiptInvoice = azureReceiptInvoice;
+    dialogRef.afterClosed().subscribe(response => {
+      if (response && this.selectedAttachment)
+        this.selectReceipt(this.selectedAttachment);
+    })
   }
 }

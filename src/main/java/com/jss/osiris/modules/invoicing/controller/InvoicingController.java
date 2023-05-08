@@ -162,6 +162,18 @@ public class InvoicingController {
     @Autowired
     AzureReceiptService azureReceiptService;
 
+    @PostMapping(inputEntryPoint + "/azure-receipt/invoice")
+    public ResponseEntity<AzureReceiptInvoice> updateAzureReceiptInvoice(
+            @RequestBody AzureReceiptInvoice azureReceiptInvoice)
+            throws OsirisValidationException, OsirisException {
+        AzureReceiptInvoice currentInvoice = (AzureReceiptInvoice) validationHelper
+                .validateReferential(azureReceiptInvoice, true, "azureReceipt");
+
+        azureReceiptInvoice.setAzureReceipt(currentInvoice.getAzureReceipt());
+        return new ResponseEntity<AzureReceiptInvoice>(
+                azureReceiptInvoiceService.addOrUpdateAzureReceiptInvoice(azureReceiptInvoice), HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/azure-receipt")
     public ResponseEntity<AzureReceipt> getAzureReceipt(@RequestParam Integer idAzureReceipt)
             throws OsirisValidationException, OsirisException {

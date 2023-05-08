@@ -61,6 +61,8 @@
         </div>
       </div>
       <mat-card-actions align="end">
+        <button mat-raised-button color="accent" (click)="modifyAzureReceiptInvoice(invoice)">Modifier la
+          reconnaissance</button>
         <button mat-raised-button color="warn" *ngIf="!invoice.isReconciliated"
           (click)="markAsReconciliated(invoice)">Pointer</button>
         <button mat-raised-button color="accent" *ngIf="invoice.isReconciliated"

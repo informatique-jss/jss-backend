@@ -33,6 +33,7 @@ import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.comp
 import { InvoiceListComponent } from "../invoice-list/invoice-list.component";
 import { InvoicePaymentTableComponent } from "../invoice-payment-table/invoice-payment-table.component";
 import { InvoicePaymentComponent } from "../invoice-payment/invoice-payment.component";
+import { ReceiptReconciliationEditDialogComponent } from "../receipt-reconciliation-edit-dialog/receipt-reconciliation-edit-dialog.component";
 import { ReceiptReconciliationComponent } from "../receipt-reconciliation/receipt-reconciliation.component";
 import { RefundListComponent } from '../refund-list/refund-list.component';
 import { InvoiceComponent } from "./invoicing.component";
@@ -87,6 +88,7 @@ const routes: Routes = [
     AzureInvoiceListComponent,
     AzureInvoiceEditComponent,
     ReceiptReconciliationComponent,
+    ReceiptReconciliationEditDialogComponent,
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,

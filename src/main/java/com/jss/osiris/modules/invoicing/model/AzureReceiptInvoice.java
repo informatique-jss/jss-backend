@@ -9,9 +9,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-public class AzureReceiptInvoice {
+public class AzureReceiptInvoice implements IId {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

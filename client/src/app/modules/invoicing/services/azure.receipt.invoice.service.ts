@@ -16,4 +16,8 @@ export class AzureReceiptInvoiceService extends AppRestService<AzureReceiptInvoi
     return this.get(new HttpParams().set("idAzureReceiptInvoice", azureReceiptInvoice.id).set("isReconciliated", isReconciliated), "azure-receipt/invoice/reconciliated");
   }
 
+  addOrUpdateAzureReceiptInvoice(azureReceiptInvoice: AzureReceiptInvoice) {
+    return this.postItem(new HttpParams(), "azure-receipt/invoice", azureReceiptInvoice);
+  }
+
 }
