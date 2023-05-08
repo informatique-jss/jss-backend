@@ -81,7 +81,8 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("owncloud.greffe.webdav.folder.root");
         isOk = isOk && checkProperty("azure.form.recognizer.endpoint");
         isOk = isOk && checkProperty("azure.form.recognizer.api.key");
-        isOk = isOk && checkProperty("azure.form.recognizer.model.name");
+        isOk = isOk && checkProperty("azure.form.recognizer.model.invoices.name");
+        isOk = isOk && checkProperty("azure.form.recognizer.model.receipts.name");
         isOk = isOk && checkProperty("azure.form.recognizer.confidence.threshold");
 
         isOk = isOk && checkAccountingParams();

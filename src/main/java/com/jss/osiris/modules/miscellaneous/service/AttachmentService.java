@@ -37,4 +37,6 @@ public interface AttachmentService {
 
         public List<Attachment> getInvoiceAttachmentOnProvisionToAnalyse() throws OsirisException;
 
+        public List<Attachment> getReceiptAttachmentOnCompetentAuthorityToAnalyse() throws OsirisException;
+
 }

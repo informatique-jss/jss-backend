@@ -14,6 +14,7 @@ import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -99,5 +100,11 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
 
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<Invoice> findByCustomerOrderForInboundInvoiceId(Integer customerOrderId);
+
+        List<Invoice> findByCompetentAuthorityAndManualAccountingDocumentNumber(CompetentAuthority competentAuthority,
+                        String manualDocumentNumber);
+
+        List<Invoice> findByCompetentAuthorityAndManualAccountingDocumentNumberContainingIgnoreCase(
+                        CompetentAuthority competentAuthority, String manualDocumentNumber);
 
 }

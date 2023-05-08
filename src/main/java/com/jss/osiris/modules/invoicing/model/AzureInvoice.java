@@ -8,15 +8,19 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_azure_invoice_manual_document_number", columnList = "id_competent_authority,invoiceId") })
 public class AzureInvoice {
 
     @Id
@@ -47,7 +51,7 @@ public class AzureInvoice {
     private Float vendorTaxIdConfidence;
 
     @OneToMany(mappedBy = "azureInvoice")
-    @JsonIgnoreProperties(value = { "azureInvoice" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "azureInvoice", "invoiceItems" }, allowSetters = true)
     private List<Invoice> invoices;
 
     @OneToMany(mappedBy = "azureInvoice")

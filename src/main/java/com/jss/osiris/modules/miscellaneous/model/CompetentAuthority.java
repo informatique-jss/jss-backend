@@ -16,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
@@ -67,6 +69,8 @@ public class CompetentAuthority implements IId, IAttachment {
 
 	@ManyToMany
 	@JoinTable(name = "asso_competent_authority_city", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_city"))
+	@JsonIgnoreProperties(value = { "department", "country" }, allowSetters = true)
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private List<City> cities;
 
 	@ManyToMany

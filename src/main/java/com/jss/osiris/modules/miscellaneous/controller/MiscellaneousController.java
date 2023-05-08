@@ -598,6 +598,16 @@ public class MiscellaneousController {
                 HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/cities/search/competent-authority")
+    public ResponseEntity<List<City>> getCitiesForCompetentAuthority(@RequestParam Integer competentAuthorityId)
+            throws OsirisValidationException {
+        CompetentAuthority competentAuthority = competentAuthorityService.getCompetentAuthority(competentAuthorityId);
+        if (competentAuthority == null)
+            throw new OsirisValidationException("competentAuthorityId");
+
+        return new ResponseEntity<List<City>>(competentAuthority.getCities(), HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/billing-types")
     public ResponseEntity<List<BillingType>> getBillingTypes() {
         return new ResponseEntity<List<BillingType>>(billingTypeService.getBillingTypes(), HttpStatus.OK);

@@ -336,4 +336,11 @@ public class AttachmentServiceImpl implements AttachmentService {
                                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED),
                                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BILLED)));
     }
+
+    @Override
+    public List<Attachment> getReceiptAttachmentOnCompetentAuthorityToAnalyse() throws OsirisException {
+        return attachmentRepository
+                .findReceiptAttachmentOnCompetentAuthorityToAnalyse(
+                        constantService.getAttachmentTypeBillingClosure().getId());
+    }
 }

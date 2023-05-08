@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { City } from '../../miscellaneous/model/City';
+import { CompetentAuthority } from '../model/CompetentAuthority';
 import { Country } from '../model/Country';
 
 @Injectable({
@@ -24,6 +25,10 @@ export class CityService extends AppRestService<City>{
 
   getCitiesFilteredByPostalCode(postalCode: string) {
     return this.getList(new HttpParams().set("postalCode", postalCode), "cities/search/postal-code");
+  }
+
+  getCitiesForCompetentAuthority(competentAuthority: CompetentAuthority) {
+    return this.getList(new HttpParams().set("competentAuthorityId", competentAuthority.id + ""), "cities/search/competent-authority");
   }
 
   getCitiesFilteredByCountryAndNameAndPostalCode(value: string, country: Country | undefined, postalCode: string | undefined) {

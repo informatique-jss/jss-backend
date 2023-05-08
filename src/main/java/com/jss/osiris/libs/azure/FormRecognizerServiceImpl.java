@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +23,10 @@ import com.azure.core.credential.AzureKeyCredential;
 import com.azure.core.util.BinaryData;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.AzureInvoice;
+import com.jss.osiris.modules.invoicing.model.AzureReceipt;
+import com.jss.osiris.modules.invoicing.model.AzureReceiptInvoice;
 import com.jss.osiris.modules.invoicing.service.AzureInvoiceService;
+import com.jss.osiris.modules.invoicing.service.AzureReceiptService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
@@ -35,14 +41,20 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
     @Value("${azure.form.recognizer.api.key}")
     private String azureApiKey;
 
-    @Value("${azure.form.recognizer.model.name}")
-    private String modelId;
+    @Value("${azure.form.recognizer.model.invoices.name}")
+    private String invoicesModelId;
+
+    @Value("${azure.form.recognizer.model.receipts.name}")
+    private String receiptsModelId;
 
     @Value("${azure.form.recognizer.confidence.threshold}")
     private Integer confidenceThreshold;
 
     @Autowired
     AzureInvoiceService azureInvoiceService;
+
+    @Autowired
+    AzureReceiptService azureReceiptService;
 
     @Autowired
     AttachmentService attachmentService;
@@ -68,12 +80,13 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
 
         AnalyzeResult analyzeResult = new DocumentAnalysisClientBuilder().endpoint(azureApiEndPoint)
                 .credential(new AzureKeyCredential(azureApiKey)).buildClient()
-                .beginAnalyzeDocument(modelId, BinaryData.fromBytes(fileData)).getFinalResult();
+                .beginAnalyzeDocument(invoicesModelId, BinaryData.fromBytes(fileData)).getFinalResult();
 
         final AnalyzedDocument analyzedDocument = analyzeResult.getDocuments().get(0);
 
         AzureInvoice azureInvoice = new AzureInvoice();
-        azureInvoice.setGlobalDocumentConfidence(analyzedDocument.getConfidence());
+        azureInvoice.setGlobalDocumentConfidence(analyzeResult.getDocuments().get(0).getConfidence());
+        azureInvoice.setModelUsed(analyzeResult.getDocuments().get(0).getDocType());
         azureInvoice.setToCheck(true);
         mapInvoice(azureInvoice, analyzedDocument);
 
@@ -248,5 +261,82 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
             azureInvoice.setToCheck(false);
 
         return azureInvoice;
+    }
+
+    @Override
+    public AzureReceipt recongnizeRecipts(Attachment attachment) throws OsirisException {
+        if (attachment == null)
+            throw new OsirisException(null, "No attachment provided");
+
+        if (attachment.getUploadedFile() == null)
+            throw new OsirisException(null, "No uploaded file in attachment provided");
+
+        if (attachment.getCompetentAuthority() == null)
+            throw new OsirisException(null, "Not a comptetent authority attachment");
+
+        byte[] fileData;
+        try {
+            File file = new File(attachment.getUploadedFile().getPath());
+            fileData = FileUtils.readFileToByteArray(file);
+        } catch (IOException e) {
+            throw new OsirisException(e, "File not found " + attachment.getUploadedFile().getPath());
+        }
+
+        AnalyzeResult analyzeResult = new DocumentAnalysisClientBuilder().endpoint(azureApiEndPoint)
+                .credential(new AzureKeyCredential(azureApiKey)).buildClient()
+                .beginAnalyzeDocument(receiptsModelId, BinaryData.fromBytes(fileData)).getFinalResult();
+
+        final AnalyzedDocument analyzedDocument = analyzeResult.getDocuments().get(0);
+
+        AzureReceipt azureReceipt = new AzureReceipt();
+        azureReceipt.setModelUsed(analyzeResult.getDocuments().get(0).getDocType());
+        azureReceipt.setGlobalDocumentConfidence(analyzeResult.getDocuments().get(0).getConfidence());
+        azureReceipt.setAzureReceiptInvoices(new ArrayList<AzureReceiptInvoice>());
+        analyzedDocument.getFields().forEach((key, documentField) -> {
+            if (key.equals("Invoices")) {
+                List<com.azure.ai.formrecognizer.documentanalysis.models.DocumentField> fields = documentField
+                        .getValueAsList();
+
+                Float currentInvoiceTotal = null;
+                String currentInvoiceId = null;
+                AzureReceiptInvoice receiptInvoice = new AzureReceiptInvoice();
+                for (com.azure.ai.formrecognizer.documentanalysis.models.DocumentField field : fields) {
+                    Map<String, com.azure.ai.formrecognizer.documentanalysis.models.DocumentField> fieldMap = field
+                            .getValueAsMap();
+
+                    for (String keyMap : fieldMap.keySet()) {
+                        // If some field are null, complete with next one
+                        // Occurs when invoice is on two pages
+                        if (currentInvoiceId != null && currentInvoiceTotal != null) {
+                            receiptInvoice = new AzureReceiptInvoice();
+                            currentInvoiceTotal = null;
+                            currentInvoiceId = null;
+                        }
+                        receiptInvoice.setAzureReceipt(azureReceipt);
+
+                        if (keyMap.equals("InvoiceTotal") && documentField.getValue() != null) {
+                            currentInvoiceTotal = ((Double) fieldMap.get(keyMap).getValue()).floatValue() / 100f;
+                            receiptInvoice.setInvoiceTotal(currentInvoiceTotal);
+                        } else if (keyMap.equals("InvoiceId")) {
+                            currentInvoiceId = ((String) fieldMap.get(keyMap).getValue()).toUpperCase().trim()
+                                    .replaceAll(" ",
+                                            "");
+                            receiptInvoice.setInvoiceId(currentInvoiceId);
+                        }
+
+                        if (currentInvoiceId != null && currentInvoiceTotal != null) {
+                            azureReceipt.getAzureReceiptInvoices().add(receiptInvoice);
+                        }
+                    }
+
+                }
+            }
+        });
+
+        azureReceipt.setAttachments(Arrays.asList(attachment));
+        attachment.setAzureReceipt(azureReceipt);
+        attachmentService.addOrUpdateAttachment(attachment);
+
+        return azureReceiptService.addOrUpdateAzureReceipt(azureReceipt);
     }
 }

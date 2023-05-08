@@ -86,6 +86,7 @@ import { AdministrationComponent } from './administration.component';
 const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
   { path: 'administration/competent/authority', component: CompetentAuthorityComponent },
+  { path: 'administration/competent/authority/:id', component: CompetentAuthorityComponent },
   { path: 'administration/provider', component: ProviderComponent },
   { path: 'administration/provider/:id', component: ProviderComponent },
   { path: 'administration/log/:id', component: ViewLogComponent },

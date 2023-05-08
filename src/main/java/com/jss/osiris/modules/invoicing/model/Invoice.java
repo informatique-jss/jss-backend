@@ -42,7 +42,8 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.model.TiersFollowup;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_invoice_status", columnList = "id_invoice_status") })
+@Table(indexes = { @Index(name = "idx_invoice_status", columnList = "id_invoice_status"),
+		@Index(name = "idx_invoice_manual_document_number", columnList = "id_competent_authority,manualAccountingDocumentNumber"), })
 public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@Id

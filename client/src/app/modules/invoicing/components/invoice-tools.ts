@@ -113,6 +113,12 @@ export function getAffaireList(invoice: Invoice): string {
   return "";
 }
 
+export function getAffaireListForProviderInvoice(invoice: Invoice): string {
+  if (invoice && invoice.customerOrderForInboundInvoice)
+    return invoice.customerOrderForInboundInvoice.assoAffaireOrders.map(asso => (asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + ' ' + asso.affaire.lastname)) + (asso.affaire.city ? " (" + asso.affaire.city.label + ", " + + asso.affaire.siret + ")" : "")).join(", ");
+  return "";
+}
+
 export function getAffaireListFromIQuotation(customerOrder: IQuotation): string {
   if (customerOrder)
     return customerOrder.assoAffaireOrders.map(asso => (asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + ' ' + asso.affaire.lastname)) + (asso.affaire.city ? " (" + asso.affaire.city.label + ")" : "")).join(", ");

@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.invoicing.model.AzureInvoice;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 
 public interface AzureInvoiceRepository extends QueryCacheCrudRepository<AzureInvoice, Integer> {
 
@@ -32,4 +33,11 @@ public interface AzureInvoiceRepository extends QueryCacheCrudRepository<AzureIn
                         " left join invoice invoice on invoice.id_azure_invoice = i.id " +
                         " where  invoice.id is null and to_check = false and i.invoice_id like '%' || trim(upper(CAST(:invoiceId as text)))  || '%' ")
         List<AzureInvoice> findByInvoiceIdContainingAndToChekAndInvoice(@Param("invoiceId") String invoiceId);
+
+        List<AzureInvoice> findByCompetentAuthorityAndInvoiceId(CompetentAuthority competentAuthority,
+                        String invoiceId);
+
+        List<AzureInvoice> findByCompetentAuthorityAndInvoiceIdContainingIgnoreCase(
+                        CompetentAuthority competentAuthority,
+                        String invoiceId);
 }

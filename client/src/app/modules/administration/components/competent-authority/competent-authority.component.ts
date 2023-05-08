@@ -50,7 +50,9 @@ export class CompetentAuthorityComponent implements OnInit {
     this.selectedCompetentAuthorityId = this.activatedRoute.snapshot.params.id;
 
     if (this.selectedCompetentAuthorityId) {
-      this.competentAuthorityService.getCompetentAuthorityById(this.selectedCompetentAuthorityId).subscribe(response => this.selectedcompetentAuthority = response);
+      this.competentAuthorityService.getCompetentAuthorityById(this.selectedCompetentAuthorityId).subscribe(response => {
+        this.selectCompetentAuthority(response);
+      });
     }
 
     this.displayedColumns = [];
@@ -68,6 +70,11 @@ export class CompetentAuthorityComponent implements OnInit {
     });
   }
 
+  getCitiesForCurrentCompetentAuthority() {
+    if (this.selectedcompetentAuthority)
+      this.cityService.getCitiesForCompetentAuthority(this.selectedcompetentAuthority).subscribe(response => this.selectedcompetentAuthority!.cities = response);
+  }
+
   ngOnDestroy() {
     this.saveObservableSubscription.unsubscribe();
   }
@@ -78,6 +85,7 @@ export class CompetentAuthorityComponent implements OnInit {
   selectCompetentAuthority(element: CompetentAuthority) {
     this.selectedcompetentAuthority = element;
     this.selectedcompetentAuthorityId = element.id;
+    this.getCitiesForCurrentCompetentAuthority();
     this.appService.changeHeaderTitle(element.label);
   }
 

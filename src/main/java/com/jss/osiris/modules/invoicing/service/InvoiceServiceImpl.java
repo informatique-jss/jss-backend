@@ -38,6 +38,7 @@ import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
@@ -136,6 +137,20 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.isPresent())
             return invoice.get();
         return null;
+    }
+
+    @Override
+    public List<Invoice> findByCompetentAuthorityAndManualDocumentNumber(CompetentAuthority competentAuthority,
+            String manualDocumentNumber) {
+        return invoiceRepository.findByCompetentAuthorityAndManualAccountingDocumentNumber(competentAuthority,
+                manualDocumentNumber);
+    }
+
+    @Override
+    public List<Invoice> findByCompetentAuthorityAndManualDocumentNumberContains(CompetentAuthority competentAuthority,
+            String manualDocumentNumber) {
+        return invoiceRepository.findByCompetentAuthorityAndManualAccountingDocumentNumberContainingIgnoreCase(
+                competentAuthority, manualDocumentNumber);
     }
 
     @Override

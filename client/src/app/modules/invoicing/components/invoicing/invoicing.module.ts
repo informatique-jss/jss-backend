@@ -3,7 +3,9 @@ import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from "@angular/material/dialog";
+import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
@@ -31,6 +33,7 @@ import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.comp
 import { InvoiceListComponent } from "../invoice-list/invoice-list.component";
 import { InvoicePaymentTableComponent } from "../invoice-payment-table/invoice-payment-table.component";
 import { InvoicePaymentComponent } from "../invoice-payment/invoice-payment.component";
+import { ReceiptReconciliationComponent } from "../receipt-reconciliation/receipt-reconciliation.component";
 import { RefundListComponent } from '../refund-list/refund-list.component';
 import { InvoiceComponent } from "./invoicing.component";
 
@@ -57,8 +60,10 @@ const routes: Routes = [
     MatDialogModule,
     MatIconModule,
     MatExpansionModule,
+    MatCardModule,
     MatTooltipModule,
     MatStepperModule,
+    MatDividerModule,
     MiscellaneousModule,
     QuotationModule,
     MatRadioModule,
@@ -81,10 +86,12 @@ const routes: Routes = [
     AppointListComponent,
     AzureInvoiceListComponent,
     AzureInvoiceEditComponent,
+    ReceiptReconciliationComponent,
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,
     RefundListComponent,
+    ReceiptReconciliationComponent,
   ]
 })
 export class InvoicingModule { }

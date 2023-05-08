@@ -28,6 +28,9 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.modules.invoicing.model.Appoint;
 import com.jss.osiris.modules.invoicing.model.AzureInvoice;
+import com.jss.osiris.modules.invoicing.model.AzureReceipt;
+import com.jss.osiris.modules.invoicing.model.AzureReceiptInvoice;
+import com.jss.osiris.modules.invoicing.model.AzureReceiptInvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.DebourSearch;
@@ -52,6 +55,8 @@ import com.jss.osiris.modules.invoicing.model.RefundSearch;
 import com.jss.osiris.modules.invoicing.model.RefundSearchResult;
 import com.jss.osiris.modules.invoicing.service.AppointService;
 import com.jss.osiris.modules.invoicing.service.AzureInvoiceService;
+import com.jss.osiris.modules.invoicing.service.AzureReceiptInvoiceService;
+import com.jss.osiris.modules.invoicing.service.AzureReceiptService;
 import com.jss.osiris.modules.invoicing.service.DepositService;
 import com.jss.osiris.modules.invoicing.service.InfogreffeInvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
@@ -150,6 +155,44 @@ public class InvoicingController {
 
     @Autowired
     AzureInvoiceService azureInvoiceService;
+
+    @Autowired
+    AzureReceiptInvoiceService azureReceiptInvoiceService;
+
+    @Autowired
+    AzureReceiptService azureReceiptService;
+
+    @GetMapping(inputEntryPoint + "/azure-receipt")
+    public ResponseEntity<AzureReceipt> getAzureReceipt(@RequestParam Integer idAzureReceipt)
+            throws OsirisValidationException, OsirisException {
+        return new ResponseEntity<AzureReceipt>(
+                azureReceiptService.getAzureReceiptFromUser(idAzureReceipt), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/azure-receipt/invoice/status")
+    public ResponseEntity<AzureReceiptInvoiceStatus> getAzureReceiptInvoiceStatus(
+            @RequestParam Integer idAzureReceiptInvoice)
+            throws OsirisValidationException, OsirisException {
+        AzureReceiptInvoice invoice = azureReceiptInvoiceService.getAzureReceiptInvoice(idAzureReceiptInvoice);
+
+        if (invoice == null)
+            throw new OsirisValidationException("idAzureReceiptInvoice");
+
+        return new ResponseEntity<AzureReceiptInvoiceStatus>(
+                azureReceiptInvoiceService.getAzureReceiptInvoiceStatus(invoice), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/azure-receipt/invoice/reconciliated")
+    public ResponseEntity<AzureReceiptInvoice> markAsReconciliated(@RequestParam Integer idAzureReceiptInvoice,
+            @RequestParam boolean isReconciliated) throws OsirisValidationException {
+        AzureReceiptInvoice invoice = azureReceiptInvoiceService.getAzureReceiptInvoice(idAzureReceiptInvoice);
+
+        if (invoice == null)
+            throw new OsirisValidationException("idAzureReceiptInvoice");
+        return new ResponseEntity<AzureReceiptInvoice>(
+                azureReceiptInvoiceService.markAsReconciliated(invoice, isReconciliated),
+                HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/azure-invoices")
     public ResponseEntity<List<AzureInvoice>> getAzureInvoices(@RequestParam Boolean displayOnlyToCheck) {

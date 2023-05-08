@@ -47,4 +47,11 @@ public interface AttachmentRepository extends QueryCacheCrudRepository<Attachmen
         List<Attachment> findInvoiceAttachmentOnProvisionToAnalyse(
                         @Param("attachmentTypeInvoiceId") Integer attachmentTypeInvoiceId,
                         @Param("customerOrderStatusExcluded") List<CustomerOrderStatus> customerOrderStatusExcluded);
+
+        @Query(nativeQuery = true, value = " " +
+                        " select distinct a.* " +
+                        " from attachment a " +
+                        " where  a.id_attachment_type =:attachmentTypeBillingClosureId and a.id_azure_receipt is  null  and id_competent_authority is not null limit 10 ")
+        List<Attachment> findReceiptAttachmentOnCompetentAuthorityToAnalyse(
+                        @Param("attachmentTypeBillingClosureId") Integer attachmentTypeBillingClosureId);
 }

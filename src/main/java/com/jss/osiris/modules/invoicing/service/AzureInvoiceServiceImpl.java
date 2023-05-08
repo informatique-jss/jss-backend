@@ -20,6 +20,7 @@ import com.jss.osiris.modules.invoicing.model.AzureInvoice;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.repository.AzureInvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
@@ -220,5 +221,19 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         attachmentService.addOrUpdateAttachment(azureInvoice.getAttachments().get(0));
 
         return invoice;
+    }
+
+    @Override
+    public List<AzureInvoice> findByCompetentAuthorityAndInvoiceId(CompetentAuthority competentAuthority,
+            String invoiceId) {
+        return azureInvoiceRepository.findByCompetentAuthorityAndInvoiceId(competentAuthority,
+                invoiceId);
+    }
+
+    @Override
+    public List<AzureInvoice> findByCompetentAuthorityAndInvoiceIdContains(CompetentAuthority competentAuthority,
+            String invoiceId) {
+        return azureInvoiceRepository.findByCompetentAuthorityAndInvoiceIdContainingIgnoreCase(
+                competentAuthority, invoiceId);
     }
 }
