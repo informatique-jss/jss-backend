@@ -106,6 +106,23 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
             competentAuthority
                     .setAccountingAccountDepositProvider(accountingAccountCouple.getAccountingAccountDeposit());
         }
+
+        competentAuthority = competentAuthorityRepository.save(competentAuthority);
+
+        if (competentAuthority.getAccountingAccountCustomer() != null
+                || competentAuthority.getAccountingAccountDepositProvider() != null
+                || competentAuthority.getAccountingAccountProvider() != null) {
+            competentAuthority.getAccountingAccountCustomer()
+                    .setLabel(
+                            "Client - " + (competentAuthority.getLabel() != null ? competentAuthority.getLabel() : ""));
+            competentAuthority.getAccountingAccountDepositProvider()
+                    .setLabel("Acompte - "
+                            + (competentAuthority.getLabel() != null ? competentAuthority.getLabel() : ""));
+            competentAuthority.getAccountingAccountProvider()
+                    .setLabel("Fournisseur - "
+                            + (competentAuthority.getLabel() != null ? competentAuthority.getLabel() : ""));
+        }
+        competentAuthority = competentAuthorityRepository.save(competentAuthority);
         return competentAuthorityRepository.save(competentAuthority);
     }
 

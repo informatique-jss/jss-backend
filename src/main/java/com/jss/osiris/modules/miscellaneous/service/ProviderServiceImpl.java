@@ -71,6 +71,18 @@ public class ProviderServiceImpl implements ProviderService {
             phoneService.populatePhoneIds(provider.getPhones());
         }
 
-        return providerRepository.save(provider);
+        provider = providerRepository.save(provider);
+
+        if (provider.getAccountingAccountCustomer() != null || provider.getAccountingAccountDeposit() != null
+                || provider.getAccountingAccountProvider() != null) {
+            provider.getAccountingAccountCustomer()
+                    .setLabel("Client - " + (provider.getLabel() != null ? provider.getLabel() : ""));
+            provider.getAccountingAccountDeposit()
+                    .setLabel("Acompte - " + (provider.getLabel() != null ? provider.getLabel() : ""));
+            provider.getAccountingAccountProvider()
+                    .setLabel("Fournisseur - " + (provider.getLabel() != null ? provider.getLabel() : ""));
+        }
+        provider = providerRepository.save(provider);
+        return provider;
     }
 }

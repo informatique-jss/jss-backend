@@ -58,7 +58,16 @@ public class BillingTypeServiceImpl implements BillingTypeService {
                     billingType.setAccountingAccountProduct(accountingAccounts.getAccountingAccountProduct());
             }
         }
-        return billingTypeRepository.save(billingType);
+        billingType = billingTypeRepository.save(billingType);
+
+        if (billingType.getAccountingAccountCharge() != null || billingType.getAccountingAccountProduct() != null) {
+            billingType.getAccountingAccountCharge()
+                    .setLabel("Charge - " + (billingType.getLabel() != null ? billingType.getLabel() : ""));
+            billingType.getAccountingAccountProduct()
+                    .setLabel("Produit - " + (billingType.getLabel() != null ? billingType.getLabel() : ""));
+        }
+        billingType = billingTypeRepository.save(billingType);
+        return billingType;
     }
 
 }
