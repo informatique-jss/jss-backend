@@ -54,6 +54,7 @@ import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.libs.mail.model.VatMail;
 import com.jss.osiris.modules.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.invoicing.model.Appoint;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
@@ -1097,7 +1098,6 @@ public class MailHelper {
                         ? customerOrder.getQuotations().get(0)
                         : null);
 
-        ctx.setVariable("amountDifference", null);
         // Exclude deposits generated after invoice
         ArrayList<Deposit> deposits = new ArrayList<Deposit>();
         Float depositTotal = 0f;
@@ -1110,11 +1110,10 @@ public class MailHelper {
                     if (deposit.getOriginPayment() != null)
                         payementTotal += deposit.getOriginPayment().getPaymentAmount();
                     // Put appoint in first deposit
-                    if (customerOrder.getDeposits().indexOf(deposit) == 0) {
-                        Float amountDifference = Math.abs(Math.round(payementTotal * 100f) / 100f
-                                - Math.round((invoiceHelper.getPriceTotal(invoice)) * 100f) / 100f);
-                        if (amountDifference <= Float.parseFloat(payementLimitRefundInEuros))
-                            ctx.setVariable("amountDifference", amountDifference);
+                    if (customerOrder.getDeposits().indexOf(deposit) == 0 && invoice.getAppoints() != null) {
+                        for (Appoint appoint : invoice.getAppoints()) {
+                            deposit.setDepositAmount(deposit.getDepositAmount() + appoint.getAppointAmount());
+                        }
                     }
                 }
 
@@ -1124,9 +1123,9 @@ public class MailHelper {
 
         ctx.setVariable("tooMuchPerceived", null);
         Float amountPerceived = payementTotal - Math.round((invoiceHelper.getPriceTotal(invoice)) * 100f) / 100f;
-        if (Math.round(amountPerceived * 100f) / 100f > 0)
-            if (Math.abs(amountPerceived) > Float.parseFloat(payementLimitRefundInEuros))
-                ctx.setVariable("tooMuchPerceived", amountPerceived);
+        if (Math.round(amountPerceived * 100f) / 100f > 0
+                && (invoice.getAppoints() == null || invoice.getAppoints().size() == 0))
+            ctx.setVariable("tooMuchPerceived", amountPerceived);
 
         LocalDateTime localDate = invoice.getCreatedDate();
         DateTimeFormatter formatter = DateTimeFormatter
