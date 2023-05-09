@@ -26,7 +26,7 @@ export class ChipsAttachmentTypeComponent extends GenericChipsComponent<Attachme
 
   callOnNgInit(): void {
     this.attachmentTypeService.getAttachmentTypes().subscribe(response => {
-      this.attachmentTypes = response;
+      this.attachmentTypes = response.filter(attachmentType => !attachmentType.isHiddenFromUser);
     })
     if (this.form)
       this.filteredAttachmentTypes = this.form.get(this.propertyName)?.valueChanges.pipe(

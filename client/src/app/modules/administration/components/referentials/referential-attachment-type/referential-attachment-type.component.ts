@@ -24,6 +24,8 @@ export class ReferentialAttachmentTypeComponent extends GenericReferentialCompon
         this.selectedEntity.isToSentOnFinalizationMail = false;
       if (!this.selectedEntity.isToSentOnUpload)
         this.selectedEntity.isToSentOnUpload = false;
+      if (!this.selectedEntity.isHiddenFromUser)
+        this.selectedEntity.isHiddenFromUser = false;
     }
   }
 

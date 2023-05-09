@@ -30,6 +30,8 @@ public class AttachmentType implements Serializable, IId {
 
 	private Boolean isToSentOnFinalizationMail;
 
+	private Boolean isHiddenFromUser;
+
 	public Integer getId() {
 		return id;
 	}
@@ -76,6 +78,14 @@ public class AttachmentType implements Serializable, IId {
 
 	public void setIsToSentOnFinalizationMail(Boolean isToSentOnFinalizationMail) {
 		this.isToSentOnFinalizationMail = isToSentOnFinalizationMail;
+	}
+
+	public Boolean getIsHiddenFromUser() {
+		return isHiddenFromUser;
+	}
+
+	public void setIsHiddenFromUser(Boolean isHiddenFromUser) {
+		this.isHiddenFromUser = isHiddenFromUser;
 	}
 
 }
