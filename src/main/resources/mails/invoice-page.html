@@ -307,12 +307,8 @@
             <td>
                 Acompte n°<span th:text="${deposit.id}"></span>
             </td>
-            <td th:if="${amountDifference==null}" class="td-with-price" style="text-align: right;white-space: nowrap;">
-                - <span th:text="${#numbers.formatDecimal(deposit.depositAmount,1,2)}"></span>
-                €
-            </td>
-            <td th:if="${amountDifference!=null}" class="td-with-price" style="text-align: right;white-space: nowrap;">
-                - <span th:text="${#numbers.formatDecimal(deposit.depositAmount-amountDifference,1,2)}"></span>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                - <span th:text="${#numbers.formatDecimal(deposit.originPayment.paymentAmount,1,2)}"></span>
                 €
             </td>
         </tr>
