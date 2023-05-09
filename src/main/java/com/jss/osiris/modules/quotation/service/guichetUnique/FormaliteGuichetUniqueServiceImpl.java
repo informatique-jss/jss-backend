@@ -181,16 +181,16 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             throws OsirisValidationException, OsirisException {
         Debour newDebour = new Debour();
         newDebour.setBillingType(constantService.getBillingTypeEmolumentsDeGreffeDebour());
+        newDebour.setComments(cartRate.getRate().getLabel());
 
         CompetentAuthority competentAuthority = competentAuthorityService
                 .getCompetentAuthorityByInpiReference(cartRate.getRecipientCode());
+
         if (competentAuthority == null)
             throw new OsirisValidationException("Unable to find competent autority for INPI code "
                     + cartRate.getRecipientCode() + ". Please fill referential with correct value");
 
-        newDebour.setComments(cartRate.getRate().getLabel() + " / " + competentAuthority.getLabel());
-
-        newDebour.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
+        newDebour.setCompetentAuthority(competentAuthority);
         newDebour.setDebourAmount(Float.parseFloat(cartRate.getAmount() + "") / 100f);
         newDebour.setInvoicedAmount(newDebour.getDebourAmount());
         newDebour
