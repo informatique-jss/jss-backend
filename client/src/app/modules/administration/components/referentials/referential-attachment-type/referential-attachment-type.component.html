@@ -55,6 +55,12 @@
                 hint="La PJ la plus récente de chaque type sera envoyée"></generic-toggle>
             </td>
           </tr>
+          <tr>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isHiddenFromUser" label="Cacher ce type à l'utilisateur ?"
+                [form]="entityForm" propertyName="isHiddenFromUser"></generic-toggle>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>

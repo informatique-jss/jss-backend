@@ -4,4 +4,5 @@ export interface AttachmentType extends IReferential {
   description: string;
   isToSentOnUpload: boolean;
   isToSentOnFinalizationMail: boolean;
+  isHiddenFromUser: boolean;
 }
