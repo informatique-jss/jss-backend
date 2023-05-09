@@ -490,7 +490,7 @@ public class GeneratePdfDelegate {
                     // Put appoint in first deposit
                     if (customerOrder.getDeposits().indexOf(deposit) == 0 && invoice.getAppoints() != null) {
                         for (Appoint appoint : invoice.getAppoints()) {
-                            deposit.setDepositAmount(deposit.getDepositAmount() - appoint.getAppointAmount());
+                            deposit.setDepositAmount(deposit.getDepositAmount() + appoint.getAppointAmount());
                         }
                     }
                 }
@@ -501,7 +501,8 @@ public class GeneratePdfDelegate {
 
         ctx.setVariable("tooMuchPerceived", null);
         Float amountPerceived = payementTotal - Math.round((invoiceHelper.getPriceTotal(invoice)) * 100f) / 100f;
-        if (Math.round(amountPerceived * 100f) / 100f > 0)
+        if (Math.round(amountPerceived * 100f) / 100f > 0
+                && (invoice.getAppoints() == null || invoice.getAppoints().size() == 0))
             ctx.setVariable("tooMuchPerceived", amountPerceived);
 
         LocalDateTime localDate = invoice.getCreatedDate();
