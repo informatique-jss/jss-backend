@@ -70,7 +70,6 @@ public class PrintDelegate {
                     }
                 }
             }
-
             dOut.writeUTF(
                     "               " + StringUtils
                             .stripAccents((label.getBillingLabelAddress() != null ? label.getBillingLabelAddress()
@@ -80,8 +79,7 @@ public class PrintDelegate {
             dOut.flush();
             dOut.writeUTF("\r\n");
             dOut.flush();
-            dOut.writeUTF(
-                    "               ");
+            dOut.writeUTF("               ");
             if (customerOrder.getTiers() != null) {
                 dOut.writeUTF(StringUtils.stripAccents((customerOrder.getTiers().getIntercom() != null
                         ? customerOrder.getTiers().getIntercom()
