@@ -60,7 +60,7 @@ export class AppointListComponent implements OnInit {
   searchAppoints() {
     if (this.appointForm.valid) {
       this.appointService.getAppoints(this.searchLabel).subscribe(response => {
-        this.appoints = response;
+        this.appoints = response.filter(appoint => appoint.appointAmount > 0);
       })
     }
   }
