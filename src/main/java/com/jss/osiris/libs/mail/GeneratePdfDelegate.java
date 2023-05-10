@@ -43,7 +43,6 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.model.LetterModel;
 import com.jss.osiris.libs.mail.model.VatMail;
 import com.jss.osiris.modules.accounting.model.BillingClosureReceiptValue;
-import com.jss.osiris.modules.invoicing.model.Appoint;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
@@ -90,6 +89,9 @@ public class GeneratePdfDelegate {
 
     @Value("${jss.bic}")
     private String bicJss;
+
+    @Value("${invoicing.payment.limit.refund.euros}")
+    private String payementLimitRefundInEuros;
 
     @Autowired
     InvoiceHelper invoiceHelper;
@@ -487,19 +489,14 @@ public class GeneratePdfDelegate {
                     depositTotal += deposit.getDepositAmount();
                     if (deposit.getOriginPayment() != null)
                         payementTotal += deposit.getOriginPayment().getPaymentAmount();
-                    // Put appoint in first deposit
-                    if (customerOrder.getDeposits().indexOf(deposit) == 0 && invoice.getAppoints() != null) {
-                        for (Appoint appoint : invoice.getAppoints()) {
-                            deposit.setDepositAmount(deposit.getDepositAmount() + appoint.getAppointAmount());
-                        }
-                    }
                 }
 
         ctx.setVariable("deposits", deposits);
         ctx.setVariable("remainingToPay",
                 Math.round((invoiceHelper.getPriceTotal(invoice) - depositTotal) * 100f) / 100f);
-
-        ctx.setVariable("hasAppoint", invoice.getAppoints() != null && invoice.getAppoints().size() > 0);
+        ctx.setVariable("hasAppoint",
+                Math.abs(Math.round((invoiceHelper.getPriceTotal(invoice) - depositTotal) * 100f) / 100f) <= Float
+                        .parseFloat(payementLimitRefundInEuros));
         ctx.setVariable("tooMuchPerceived", null);
         Float amountPerceived = payementTotal - Math.round((invoiceHelper.getPriceTotal(invoice)) * 100f) / 100f;
         if (Math.round(amountPerceived * 100f) / 100f > 0
