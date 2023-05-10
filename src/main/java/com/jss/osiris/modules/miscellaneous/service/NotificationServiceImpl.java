@@ -388,19 +388,29 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Notification notifyTiersDepositMandatory(Tiers tiers, Invoice invoice) throws OsirisException {
+    public Notification notifyTiersDepositMandatory(Tiers tiers, Responsable responsable, Invoice invoice)
+            throws OsirisException {
         boolean createdByMe = false;
         List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
         Employee salesEmployee = null;
 
         String customerOrderName = "";
-        if (tiers.getDenomination() != null)
-            customerOrderName = ((Tiers) tiers).getDenomination();
-        else
-            customerOrderName = ((Tiers) tiers).getCivility().getLabel() + " "
-                    + ((Tiers) tiers).getFirstname() + " "
-                    + ((Tiers) tiers).getLastname();
-        salesEmployee = ((Tiers) tiers).getSalesEmployee();
+        if (tiers != null) {
+            if (tiers.getDenomination() != null)
+                customerOrderName = tiers.getDenomination();
+            else
+                customerOrderName = tiers.getCivility().getLabel() + " "
+                        + tiers.getFirstname() + " "
+                        + tiers.getLastname();
+            customerOrderName += " (" + tiers.getId() + ")";
+            salesEmployee = tiers.getSalesEmployee();
+        } else if (responsable != null) {
+            customerOrderName = responsable.getCivility().getLabel() + " "
+                    + responsable.getFirstname() + " "
+                    + responsable.getLastname();
+            customerOrderName += " (" + responsable.getId() + ")";
+            salesEmployee = responsable.getSalesEmployee();
+        }
 
         if (salesEmployee != null) {
             if (compareEmployee != null)
@@ -410,8 +420,9 @@ public class NotificationServiceImpl implements NotificationService {
 
             if (!createdByMe)
                 return generateNewNotification(employeeService.getCurrentEmployee(), salesEmployee,
-                        Notification.TIERS_DEPOSIT_MANDATORY, tiers, "Le tiers " + customerOrderName + " ("
-                                + tiers.getId() + ") a été relancé pour payer la facture " + invoice.getId() + ".",
+                        Notification.TIERS_DEPOSIT_MANDATORY, tiers,
+                        "Le tiers " + customerOrderName + " a été relancé pour payer la facture " + invoice.getId()
+                                + ".",
                         null, false);
         }
         return null;
