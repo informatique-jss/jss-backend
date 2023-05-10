@@ -395,6 +395,7 @@ public class NotificationServiceImpl implements NotificationService {
         Employee salesEmployee = null;
 
         String customerOrderName = "";
+        IId entity = tiers;
         if (tiers != null) {
             if (tiers.getDenomination() != null)
                 customerOrderName = tiers.getDenomination();
@@ -405,6 +406,7 @@ public class NotificationServiceImpl implements NotificationService {
             customerOrderName += " (" + tiers.getId() + ")";
             salesEmployee = tiers.getSalesEmployee();
         } else if (responsable != null) {
+            entity = responsable;
             customerOrderName = responsable.getCivility().getLabel() + " "
                     + responsable.getFirstname() + " "
                     + responsable.getLastname();
@@ -420,7 +422,7 @@ public class NotificationServiceImpl implements NotificationService {
 
             if (!createdByMe)
                 return generateNewNotification(employeeService.getCurrentEmployee(), salesEmployee,
-                        Notification.TIERS_DEPOSIT_MANDATORY, tiers,
+                        Notification.TIERS_DEPOSIT_MANDATORY, entity,
                         "Le tiers " + customerOrderName + " a été relancé pour payer la facture " + invoice.getId()
                                 + ".",
                         null, false);
