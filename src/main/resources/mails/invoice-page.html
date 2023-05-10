@@ -307,13 +307,20 @@
             <td>
                 Acompte n°<span th:text="${deposit.id}"></span>
             </td>
-            <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+            <td th:if="  and ${hasAppoint==false}  " class="td-with-price"
+                style="text-align: right;white-space: nowrap;">
                 - <span th:text="${#numbers.formatDecimal(deposit.originPayment.paymentAmount,1,2)}"></span>
+                €
+            </td>
+            <td th:if="  and ${hasAppoint==true}  " class="td-with-price"
+                style="text-align: right;white-space: nowrap;">
+                - <span th:text="${#numbers.formatDecimal(deposit.depositAmount,1,2)}"></span>
                 €
             </td>
         </tr>
 
-        <tr th:if="${remainingToPay>0}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
+        <tr
+            th:if="${remainingToPay>0} and ${hasAppoint==false}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
             <td>
                 Restant dû
             </td>
@@ -322,7 +329,8 @@
                 €
             </td>
         </tr>
-        <tr th:if="${tooMuchPerceived!=null}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
+        <tr
+            th:if="${tooMuchPerceived!=null} and ${hasAppoint==false}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
             <td>
                 Solde en votre faveur
             </td>
