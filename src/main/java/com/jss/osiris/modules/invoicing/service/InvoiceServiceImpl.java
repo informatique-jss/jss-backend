@@ -701,7 +701,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                         ITiers customerOrderToSetProvision = invoiceHelper.getCustomerOrder(invoice);
                         if (customerOrderToSetProvision instanceof Tiers)
-                            notificationService.notifyTiersDepositMandatory((Tiers) customerOrderToSetProvision,
+                            notificationService.notifyTiersDepositMandatory((Tiers) customerOrderToSetProvision, null,
+                                    invoice);
+                        else if (customerOrderToSetProvision instanceof Responsable)
+                            notificationService.notifyTiersDepositMandatory(null,
+                                    (Responsable) customerOrderToSetProvision,
                                     invoice);
                     } else if (invoice.getSecondReminderDateTime() == null
                             && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))) {
