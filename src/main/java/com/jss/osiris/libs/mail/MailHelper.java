@@ -837,7 +837,7 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
-    public void generateCustomerOrderDepositConfirmationToCustomer(CustomerOrder customerOrder, Deposit deposit)
+    public void generateCustomerOrderDepositConfirmationToCustomer(CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException {
         sendCustomerOrderDepositConfirmationToCustomer(customerOrder, true);
     }
