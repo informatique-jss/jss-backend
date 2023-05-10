@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,7 @@ import com.jss.osiris.libs.mail.model.CustomerMailAssoAffaireOrder;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.libs.mail.model.VatMail;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.AppointService;
@@ -835,7 +837,7 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
-    public void generateCustomerOrderDepositConfirmationToCustomer(CustomerOrder customerOrder)
+    public void generateCustomerOrderDepositConfirmationToCustomer(CustomerOrder customerOrder, Deposit deposit)
             throws OsirisException, OsirisClientMessageException {
         sendCustomerOrderDepositConfirmationToCustomer(customerOrder, true);
     }
@@ -846,15 +848,24 @@ public class MailHelper {
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
         computeQuotationPrice(mail, customerOrder);
-        Float remainingToPay = Math
-                .round(customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
 
         mail.setHeaderPicture("images/waiting-deposit-header.png");
         mail.setTitle("Votre acompte a bien été reçu !");
 
         mail.setLabel("Commande n°" + customerOrder.getId());
 
-        String explainationText = "Nous vous confirmons la prise en compte d'un réglement de " + remainingToPay
+        Float depositAmount = 0f;
+        LocalDateTime depositDate = LocalDateTime.now().minusYears(100);
+
+        if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
+            for (Deposit deposit : customerOrder.getDeposits()) {
+                if (deposit.getDepositDate().isAfter(depositDate)) {
+                    depositAmount = deposit.getDepositAmount();
+                    depositDate = deposit.getDepositDate();
+                }
+            }
+        String explainationText = "Nous vous confirmons la prise en compte d'un réglement de "
+                + depositAmount
                 + " € concernant vote commande n°" + customerOrder.getId();
 
         if (customerOrder.getAssoAffaireOrders().size() == 1) {
