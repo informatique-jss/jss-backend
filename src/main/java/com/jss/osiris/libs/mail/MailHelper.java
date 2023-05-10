@@ -54,10 +54,7 @@ import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.libs.mail.model.VatMail;
 import com.jss.osiris.modules.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
-<<<<<<< HEAD
 import com.jss.osiris.modules.invoicing.model.Appoint;
-=======
->>>>>>> 418fbe0f (feature/OSI-1840)
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
