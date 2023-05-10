@@ -1121,6 +1121,7 @@ public class MailHelper {
         ctx.setVariable("remainingToPay",
                 Math.round((invoiceHelper.getPriceTotal(invoice) - depositTotal) * 100f) / 100f);
 
+        ctx.setVariable("hasAppoint", invoice.getAppoints() != null && invoice.getAppoints().size() > 0);
         ctx.setVariable("tooMuchPerceived", null);
         Float amountPerceived = payementTotal - Math.round((invoiceHelper.getPriceTotal(invoice)) * 100f) / 100f;
         if (Math.round(amountPerceived * 100f) / 100f > 0
