@@ -22,7 +22,7 @@ public interface BankTransfertService {
         public BankTransfert getBankTransfert(Integer id);
 
         public BankTransfert addOrUpdateBankTransfert(BankTransfert bankTransfert);
-
+ 
         public BankTransfert generateBankTransfertForManualInvoice(Invoice invoice)
                         throws OsirisException, OsirisClientMessageException;
 
@@ -36,4 +36,5 @@ public interface BankTransfertService {
                         LocalDate executionDate,
                         String recipientLabel,
                         String iban, String bic, String transfertLabel);
+ 
 }

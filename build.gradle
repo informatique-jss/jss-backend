@@ -67,7 +67,7 @@ dependencies {
     implementation 'com.google.zxing:javase:3.5.1'
 
 }
- 
+  
 group = 'com.jss.osiris'
 version = '10.0-beta1'
 description = 'Outil Sympa, Interactif, Révolutionnairement Intuitif et Simple'
