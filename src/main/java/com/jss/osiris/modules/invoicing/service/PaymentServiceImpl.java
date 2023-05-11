@@ -603,11 +603,11 @@ public class PaymentServiceImpl implements PaymentService {
                         break;
                     }
                 } else if (correspondingInvoices.get(i).getInvoiceStatus().getId()
-                        .equals(constantService.getInvoiceStatusCancelled().getId())
+                        .equals(constantService.getInvoiceStatusReceived().getId())
                         && correspondingInvoices.get(i).getIsInvoiceFromProvider()) {
+                    // It's a refund
                     accountingRecordService
                             .generateAccountingRecordsForProviderInvoiceRefund(correspondingInvoices.get(i), payment);
-                    payment.setInvoice(correspondingInvoices.get(i));
                     payment.setInvoice(correspondingInvoices.get(i));
                     addOrUpdatePayment(payment);
                     remainingMoney = 0f;

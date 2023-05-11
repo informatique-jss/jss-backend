@@ -178,7 +178,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
             this.appService.displaySnackBar("Cette facture est déjà associée à ce paiement", true, 15);
             return;
           }
-      if (this.isPaymentWayInbound(this.payment) && invoice.invoiceStatus.id != this.invoiceStatusSend.id && invoice.invoiceStatus.id != this.constantService.getInvoiceStatusCancelled().id) {
+      if (this.isPaymentWayInbound(this.payment) && invoice.invoiceStatus.id != this.invoiceStatusSend.id && invoice.invoiceStatus.id != this.constantService.getInvoiceStatusReceived().id) {
         this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusSend.label, true, 15);
         return;
       }
