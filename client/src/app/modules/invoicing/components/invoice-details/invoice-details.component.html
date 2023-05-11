@@ -41,8 +41,13 @@
             (auxclick)="openRoute($event,'/order/'+invoice.customerOrderForInboundInvoice.id)">visibility
           </mat-icon>
         </p>
-        <p *ngIf="invoice.attachments && !invoice.isCreditNote"> <single-attachment [entity]="invoice"
-            [entityType]="INVOICE_ENTITY_TYPE.entityType" [editMode]="false"
+        <p *ngIf="invoice.attachments && !invoice.isCreditNote && !invoice.customerOrder"> <single-attachment
+            [entity]="invoice" [entityType]="INVOICE_ENTITY_TYPE.entityType" [editMode]="false"
+            [attachmentTypeToDisplay]="attachmentTypeInvoice">
+          </single-attachment>
+        </p>
+        <p *ngIf="invoice.attachments && !invoice.isCreditNote && invoice.customerOrder"> <single-attachment
+            [entity]="invoice.customerOrder" [entityType]="CUSTOMER_ORDER_ENTITY_TYPE.entityType" [editMode]="false"
             [attachmentTypeToDisplay]="attachmentTypeInvoice">
           </single-attachment>
         </p>
