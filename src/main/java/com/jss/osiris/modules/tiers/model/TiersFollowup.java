@@ -59,17 +59,17 @@ public class TiersFollowup implements Serializable, IId {
 	@JsonIgnore
 	private Invoice invoice;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers_followup_type")
 	private TiersFollowupType tiersFollowupType;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_gift")
 	private Gift gift;
 
 	private Integer giftNumber;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_commercial")
 	private Employee salesEmployee;
 

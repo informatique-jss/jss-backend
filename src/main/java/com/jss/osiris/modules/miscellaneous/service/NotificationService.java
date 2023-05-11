@@ -11,6 +11,8 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.model.Tiers;
 
 public interface NotificationService {
         public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture);
@@ -61,4 +63,8 @@ public interface NotificationService {
 
         public void notifyGuichetUniqueFormaliteStatus(Provision provision,
                         FormaliteGuichetUnique formaliteGuichetUnique) throws OsirisException;
+
+        public Notification notifyTiersDepositMandatory(Tiers tiers, Responsable responsable, Invoice invoice)
+                        throws OsirisException;
+
 }

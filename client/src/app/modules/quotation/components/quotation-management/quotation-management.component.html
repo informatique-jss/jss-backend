@@ -90,8 +90,7 @@
                   </td>
                 </tr>
               </table>
-              <table class="full-width"
-                *ngIf="billingDocument && billingLabelTypeAffaire &&  billingDocument.billingLabelType && billingDocument.billingLabelType.id!=billingLabelTypeAffaire.id">
+              <table class="full-width" *ngIf="billingDocument">
                 <tr>
                   <td>
                     <generic-toggle [(model)]="billingDocument.isResponsableOnBilling" label="Responsable sur facture ?"
@@ -171,9 +170,12 @@
                       {{invoiceLabelResult.billingLabelPostalCode?invoiceLabelResult.billingLabelPostalCode:"Code
                       postal inconnu"}}
                       {{invoiceLabelResult.billingLabelCity?invoiceLabelResult.billingLabelCity.label:"Ville inconnue"}}
+                      {{invoiceLabelResult.cedexComplement?invoiceLabelResult.cedexComplement:""}}
                       {{invoiceLabelResult.billingLabelCountry?invoiceLabelResult.billingLabelCountry.label:"Pays
                       inconnu"}}
                     </p>
+                    <p *ngIf="invoiceLabelResult.billingLabelIntercommunityVat">N° de TVA :
+                      {{invoiceLabelResult.billingLabelIntercommunityVat}}</p>
                   </td>
                 </tr>
                 <tr *ngIf=" billingMailComputeResult && billingMailComputeResult.recipientsMailTo.length==0">

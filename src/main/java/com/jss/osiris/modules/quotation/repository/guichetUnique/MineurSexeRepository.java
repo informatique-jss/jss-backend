@@ -1,8 +1,8 @@
 package com.jss.osiris.modules.quotation.repository.guichetUnique;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.MineurSexe;
 
-public interface MineurSexeRepository extends CrudRepository<MineurSexe, String> {
+public interface MineurSexeRepository extends QueryCacheCrudRepository<MineurSexe, String> {
 }

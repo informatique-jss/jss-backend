@@ -100,21 +100,26 @@ public class TiersServiceImpl implements TiersService {
             }
         }
 
+        String tiersLabel = "";
+        if (tiers.getIsIndividual()) {
+            tiersLabel = tiers.getFirstname() + " " + tiers.getLastname();
+        } else {
+            tiersLabel = tiers.getDenomination();
+        }
+
         // Generate accounting accounts
         if (tiers.getId() == null
                 || tiers.getAccountingAccountCustomer() == null && tiers.getAccountingAccountProvider() == null
                         && tiers.getAccountingAccountDeposit() == null) {
-            String label = "";
-            if (tiers.getIsIndividual()) {
-                label = tiers.getFirstname() + " " + tiers.getLastname();
-            } else {
-                label = tiers.getDenomination();
-            }
             AccountingAccountTrouple accountingAccountCouple = accountingAccountService
-                    .generateAccountingAccountsForEntity(label, false);
+                    .generateAccountingAccountsForEntity(tiersLabel, false);
             tiers.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
             tiers.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
             tiers.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
+        } else {
+            accountingAccountService.updateAccountingAccountLabel(tiers.getAccountingAccountCustomer(), tiersLabel);
+            accountingAccountService.updateAccountingAccountLabel(tiers.getAccountingAccountDeposit(), tiersLabel);
+            accountingAccountService.updateAccountingAccountLabel(tiers.getAccountingAccountProvider(), tiersLabel);
         }
 
         if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0)
@@ -152,11 +157,8 @@ public class TiersServiceImpl implements TiersService {
             }
         }
 
-        // Set default customer order assignation to sales employee if not set
-        if (tiers.getDefaultCustomerOrderEmployee() == null)
-            tiers.setDefaultCustomerOrderEmployee(tiers.getSalesEmployee());
-
         tiers = tiersRepository.save(tiers);
+
         indexEntityService.indexEntity(tiers, tiers.getId());
         if (tiers.getResponsables() != null)
             for (Responsable responsable : tiers.getResponsables()) {
@@ -164,6 +166,12 @@ public class TiersServiceImpl implements TiersService {
                     responsable.setLoginWeb(responsable.getId() + "");
                 indexEntityService.indexEntity(responsable, responsable.getId());
             }
+
+        // Set default customer order assignation to sales employee if not set
+        if (tiers.getDefaultCustomerOrderEmployee() == null)
+            tiers.setDefaultCustomerOrderEmployee(tiers.getSalesEmployee());
+
+        tiers = tiersRepository.save(tiers);
 
         return tiers;
     }

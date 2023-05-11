@@ -71,7 +71,7 @@ export class AddDebourComponent implements OnInit {
     this.displayedColumns.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "checkNumber", fieldName: "checkNumber", label: "N° de chèque" } as SortTableColumn);
     this.displayedColumns.push({ id: "payment", fieldName: "payment.id", label: "Paiement associé" } as SortTableColumn);
-    this.displayedColumns.push({ id: "invoiceAssociated", fieldName: "invoiceItem", label: "Facture associée ?", valueFonction: (element: any) => { return element.invoiceItem ? "Oui" : "Non" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "invoiceAssociated", fieldName: "invoiceItem", label: "Facture associée ?", valueFonction: (element: any) => { return element.invoiceItem ? ("Oui" + (element.invoiceItem.invoice.manualAccountingDocumentNumber ? " (" + element.invoiceItem.invoice.manualAccountingDocumentNumber + ")" : "")) : "Non" } } as SortTableColumn);
     this.displayedColumns.push({ id: "comments", fieldName: "comments", label: "Commentaires", isShrinkColumn: true } as SortTableColumn);
 
     this.addInvoicedAmountColumn();

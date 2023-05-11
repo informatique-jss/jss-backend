@@ -6,7 +6,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
+import com.jss.osiris.modules.miscellaneous.model.PhoneSearch;
 import com.jss.osiris.modules.miscellaneous.repository.PhoneRepository;
 
 @Service
@@ -15,11 +18,15 @@ public class PhoneServiceImpl implements PhoneService {
     @Autowired
     PhoneRepository phoneRepository;
 
+    @Autowired
+    ValidationHelper validationHelper;
+
     @Override
-    public List<Phone> findPhones(String phone) {
-        if (phone != null)
-            return phoneRepository.findByPhoneNumberContainingIgnoreCase(phone);
-        return null;
+    public List<PhoneSearch> getByPhoneNumber(String phoneNumber) throws OsirisException {
+        if (validationHelper.validateFrenchPhone(phoneNumber) && phoneNumber.startsWith("+33"))
+            phoneNumber = phoneNumber.replace("+33", "0");
+        phoneNumber.replaceAll(" ", "");
+        return phoneRepository.findByPhoneNumberForFront(phoneNumber);
     }
 
     @Override
@@ -35,7 +42,7 @@ public class PhoneServiceImpl implements PhoneService {
         if (phones != null)
             for (Phone phone : phones) {
                 if (phone.getId() == null) {
-                    List<Phone> existingPhones = findPhones(phone.getPhoneNumber());
+                    List<Phone> existingPhones = phoneRepository.findByPhoneNumber(phone.getPhoneNumber());
                     if (existingPhones != null && existingPhones.size() == 1)
                         phone.setId(existingPhones.get(0).getId());
                     phoneRepository.save(phone);

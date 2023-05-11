@@ -31,7 +31,7 @@ import { PaymentAssociate } from '../../model/PaymentAssociate';
 import { InvoiceService } from '../../services/invoice.service';
 import { PaymentService } from '../../services/payment.service';
 import { AmountDialogComponent } from '../amount-dialog/amount-dialog.component';
-import { getAmountPayed, getCustomerOrderForInvoice, getCustomerOrderForIQuotation, getCustomerOrderNameForITiers, getRemainingToPay } from '../invoice-tools';
+import { getAmountPayed, getCustomerOrderForIQuotation, getCustomerOrderForInvoice, getCustomerOrderNameForITiers, getRemainingToPay } from '../invoice-tools';
 
 @Component({
   selector: 'associate-payment-dialog',
@@ -178,7 +178,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
             this.appService.displaySnackBar("Cette facture est déjà associée à ce paiement", true, 15);
             return;
           }
-      if (this.isPaymentWayInbound(this.payment) && invoice.invoiceStatus.id != this.invoiceStatusSend.id) {
+      if (this.isPaymentWayInbound(this.payment) && invoice.invoiceStatus.id != this.invoiceStatusSend.id && invoice.invoiceStatus.id != this.constantService.getInvoiceStatusReceived().id) {
         this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusSend.label, true, 15);
         return;
       }

@@ -87,9 +87,11 @@ public class InfogreffeInvoiceServiceImpl implements InfogreffeInvoiceService {
                 InfogreffeInvoice invoice = new InfogreffeInvoice();
                 invoice.setCompetentAuthority(
                         competentAuthorityService.getCompetentAuthorityByInpiReference("G" + fields[2]));
-                invoice.setCustomerReference(fields[10]);
-                invoice.setInvoiceDateTime(
-                        LocalDateTime.parse(fields[5], DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+                if (fields.length > 10)
+                    invoice.setCustomerReference(fields[10]);
+                if (!fields[5].equals(""))
+                    invoice.setInvoiceDateTime(
+                            LocalDateTime.parse(fields[5], DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
                 invoice.setInvoiceNumber(fields[1]);
                 invoice.setPreTaxPrice(Float.parseFloat(fields[9].replace("€", "").replace(",", ".")));
                 Float totalPrice = Float.parseFloat(fields[8].replace("€", "").replace(",", "."));
@@ -105,7 +107,7 @@ public class InfogreffeInvoiceServiceImpl implements InfogreffeInvoiceService {
                 }
                 foundInvoice.setDebour(findCorrespondingDebour(invoice));
                 addOrUpdateInfogreffeInvoice(foundInvoice);
-
+                System.out.println(line);
                 if (foundInvoice.getDebour() != null && foundInvoice.getDebour().getInvoiceItem() == null)
                     generateInvoiceFromDebourAndInfogreffeInvoice(foundInvoice);
             }
@@ -173,7 +175,8 @@ public class InfogreffeInvoiceServiceImpl implements InfogreffeInvoiceService {
             throws OsirisException {
         Debour newDebour = new Debour();
         newDebour.setBillingType(constantService.getBillingTypeInfogreffeDebour());
-        newDebour.setComments("Créé depuis la facture Infogreffe " + invoice.getInvoiceNumber());
+        newDebour.setComments("Créé depuis la facture Infogreffe " + invoice.getInvoiceNumber() + " / "
+                + invoice.getCompetentAuthority().getLabel());
         newDebour.setCompetentAuthority(constantService.getCompetentAuthorityInfogreffe());
         newDebour.setDebourAmount(invoice.getPreTaxPrice() + invoice.getVatPrice());
         newDebour.setInvoicedAmount(newDebour.getDebourAmount());
@@ -187,7 +190,7 @@ public class InfogreffeInvoiceServiceImpl implements InfogreffeInvoiceService {
     private Invoice generateInvoiceFromDebourAndInfogreffeInvoice(InfogreffeInvoice greffeInvoice)
             throws OsirisException, OsirisClientMessageException {
         Invoice invoice = new Invoice();
-        invoice.setCompetentAuthority(greffeInvoice.getCompetentAuthority());
+        invoice.setCompetentAuthority(constantService.getCompetentAuthorityInfogreffe());
         invoice.setCustomerOrderForInboundInvoice(customerOrderService.getCustomerOrder(
                 greffeInvoice.getDebour().getProvision().getAssoAffaireOrder().getCustomerOrder().getId()));
         invoice.setManualAccountingDocumentNumber(greffeInvoice.getInvoiceNumber());

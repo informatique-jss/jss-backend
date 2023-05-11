@@ -106,7 +106,6 @@ export interface Constant {
   billingTypeDocumentScanning: BillingType;
   billingTypeEmergency: BillingType;
   billingTypeCentralPayFees: BillingType;
-  billingTypeVacationDepositBeneficialOwners: BillingType;
   billingTypeVacationUpdateBeneficialOwners: BillingType;
   billingTypeFormalityAdditionalDeclaration: BillingType;
   billingTypeCorrespondenceFees: BillingType;

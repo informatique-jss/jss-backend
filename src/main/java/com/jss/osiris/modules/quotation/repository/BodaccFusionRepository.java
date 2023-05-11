@@ -2,7 +2,7 @@ package com.jss.osiris.modules.quotation.repository;
 
 import com.jss.osiris.modules.quotation.model.BodaccFusion;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
-public interface BodaccFusionRepository extends CrudRepository<BodaccFusion, Integer> {
+public interface BodaccFusionRepository extends QueryCacheCrudRepository<BodaccFusion, Integer> {
 }

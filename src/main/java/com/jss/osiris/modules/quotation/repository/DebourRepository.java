@@ -4,13 +4,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.invoicing.model.DebourSearchResult;
 import com.jss.osiris.modules.quotation.model.Debour;
 
-public interface DebourRepository extends CrudRepository<Debour, Integer> {
+public interface DebourRepository extends QueryCacheCrudRepository<Debour, Integer> {
 
         @Query(nativeQuery = true, value = "" +
                         " select  " +

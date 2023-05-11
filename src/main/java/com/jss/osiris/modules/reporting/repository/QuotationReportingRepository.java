@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.reporting.model.IQuotationReporting;
 
-public interface QuotationReportingRepository extends CrudRepository<Quotation, Integer> {
+public interface QuotationReportingRepository extends QueryCacheCrudRepository<Quotation, Integer> {
 
         @Query(nativeQuery = true, value = "" +
                         " select  " +

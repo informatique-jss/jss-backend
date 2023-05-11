@@ -51,6 +51,8 @@
               {{invoiceLabelResult.billingLabelCountry?invoiceLabelResult.billingLabelCountry.label:"Pays
               inconnu"}}
             </p>
+            <p *ngIf="invoiceLabelResult.billingLabelIntercommunityVat">N° de TVA :
+              {{invoiceLabelResult.billingLabelIntercommunityVat}}</p>
           </ng-container>
         </td>
         <td class="mat-cell td-info">

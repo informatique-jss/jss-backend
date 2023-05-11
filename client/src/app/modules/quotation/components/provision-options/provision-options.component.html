@@ -210,14 +210,6 @@
             </generic-toggle>
           </td>
         </tr>
-        <tr *ngIf="displayOption(billingTypeVacationDepositBeneficialOwners)">
-          <td>
-            <generic-toggle [(model)]="provision.isVacationDepositBeneficialOwners"
-              label="Vacation - Dépôt des Bénéficiaires Effectifs ?" (onToggleChange)="provisionChangeFunction()"
-              [form]="optionForm" propertyName="isVacationDepositBeneficialOwners">
-            </generic-toggle>
-          </td>
-        </tr>
         <tr *ngIf="displayOption(billingTypeVacationUpdateBeneficialOwners)">
           <td>
             <generic-toggle [(model)]="provision.isVacationUpdateBeneficialOwners"

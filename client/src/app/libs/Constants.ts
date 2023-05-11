@@ -71,10 +71,13 @@ export const CUSTOMER_ORDER_TO_BE_BILLED = "CUSTOMER_ORDER_TO_BE_BILLED";
 
 export const INVOICE_REMINDER_PAYMENT = "INVOICE_REMINDER_PAYMENT";
 
+export const TIERS_DEPOSIT_MANDATORY = "TIERS_DEPOSIT_MANDATORY";
+
 export const PROVISION_ADD_ATTACHMENT = "PROVISION_ADD_ATTACHMENT";
 export const PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED = "PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED";
 
 
 // Reporting datasets
 export const REPORTING_DATASET_QUOTATION = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante";
+export const REPORTING_DATASET_VAT = "TVA";
 export const REPORTING_DATASET_QUOTATION_FOR_TIERS = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante pour un tiers";

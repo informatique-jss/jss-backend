@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -189,6 +190,18 @@ export class ConfrereComponent implements OnInit {
 
   editConfrere() {
     this.editMode = true;
+  }
+
+  checkVAT(fieldName: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const root = control.root as UntypedFormGroup;
+      const fieldValue = root.get(fieldName)?.value;
+      if ((fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateVat(fieldValue)))
+        return {
+          notFilled: true
+        };
+      return null;
+    };
   }
 
 }

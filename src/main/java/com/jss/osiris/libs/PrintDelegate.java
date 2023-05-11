@@ -47,7 +47,7 @@ public class PrintDelegate {
                         label.setBillingLabelPostalCode(label.getBillingLabelPostalCode() + " " + lines.get(i));
                 }
             }
-
+            dOut.writeUTF("\r\n");
             dOut.writeUTF(" " + customerOrder.getId());
             dOut.writeUTF("\r\n");
             dOut.flush();
@@ -70,6 +70,7 @@ public class PrintDelegate {
                     }
                 }
             }
+
             dOut.writeUTF(
                     "               " + StringUtils
                             .stripAccents((label.getBillingLabelAddress() != null ? label.getBillingLabelAddress()
@@ -78,6 +79,23 @@ public class PrintDelegate {
             dOut.writeUTF("\r\n");
             dOut.flush();
             dOut.writeUTF("\r\n");
+            dOut.flush();
+            dOut.writeUTF(
+                    "               ");
+            if (customerOrder.getTiers() != null) {
+                dOut.writeUTF(StringUtils.stripAccents((customerOrder.getTiers().getIntercom() != null
+                        ? customerOrder.getTiers().getIntercom()
+                        : ""))
+                        .toUpperCase() + " ");
+            }
+            if (customerOrder.getResponsable() != null) {
+                dOut.writeUTF((customerOrder.getResponsable().getBuilding() != null
+                        ? (" | " + customerOrder.getResponsable().getBuilding())
+                        : "") + " "
+                        + (customerOrder.getResponsable().getFloor() != null
+                                ? (" | " + customerOrder.getResponsable().getFloor())
+                                : ""));
+            }
             dOut.flush();
             dOut.writeUTF("\r\n");
             dOut.flush();

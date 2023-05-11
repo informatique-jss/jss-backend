@@ -3,13 +3,13 @@ package com.jss.osiris.modules.quotation.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
 
-public interface ProvisionRepository extends CrudRepository<Provision, Integer> {
+public interface ProvisionRepository extends QueryCacheCrudRepository<Provision, Integer> {
 
         @Query(nativeQuery = true, value = " " +
                         " select  " +

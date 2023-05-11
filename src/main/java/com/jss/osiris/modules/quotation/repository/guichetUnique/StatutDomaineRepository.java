@@ -1,8 +1,7 @@
 package com.jss.osiris.modules.quotation.repository.guichetUnique;
 
-import org.springframework.data.repository.CrudRepository;
-
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutDomaine;
 
-public interface StatutDomaineRepository extends CrudRepository<StatutDomaine, String> {
+public interface StatutDomaineRepository extends QueryCacheCrudRepository<StatutDomaine, String> {
 }

@@ -6,6 +6,8 @@ export interface InvoiceLabelResult {
   billingLabel: string;
   billingLabelAddress: string;
   billingLabelPostalCode: string;
+  billingLabelIntercommunityVat: string;
+  cedexComplement: string;
   billingLabelCity: City;
   billingLabelCountry: Country;
   billingLabelIsIndividual: boolean;

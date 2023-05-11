@@ -18,6 +18,7 @@ import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IDocument;
+import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
@@ -274,12 +275,6 @@ public class QuotationValidationHelper {
                                         if (!validationHelper.validateMailList(document.getMailsClient()))
                                                 throw new OsirisValidationException("MailsClient");
 
-                                if (document.getBillingLabelType() != null
-                                                && document.getBillingLabelType().getId()
-                                                                .equals(constantService.getBillingLabelTypeCodeAffaire()
-                                                                                .getId()))
-                                        document.setIsResponsableOnBilling(false);
-
                                 validationHelper.validateString(document.getAffaireAddress(), false, 200,
                                                 "AffaireAddress");
                                 validationHelper.validateString(document.getClientAddress(), false, 100,
@@ -363,6 +358,18 @@ public class QuotationValidationHelper {
                                         debour.setInvoicedAmount(Math.min(debour.getDebourAmount(),
                                                         debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
                                                                         : debour.getDebourAmount()));
+
+                                // check debour payment type
+                                if (debour.getId() == null && debour.getCompetentAuthority().getPaymentTypes() != null
+                                                && debour.getCompetentAuthority().getPaymentTypes().size() > 0) {
+                                        boolean found = false;
+                                        for (PaymentType paymentType : debour.getCompetentAuthority().getPaymentTypes())
+                                                if (paymentType.getId().equals(debour.getPaymentType().getId()))
+                                                        found = true;
+                                        if (!found)
+                                                throw new OsirisClientMessageException(
+                                                                "Type de paiement non autorisé pour l'autorité compétente");
+                                }
 
                                 if (debour.getPaymentDateTime() == null)
                                         debour.setPaymentDateTime(LocalDateTime.now());

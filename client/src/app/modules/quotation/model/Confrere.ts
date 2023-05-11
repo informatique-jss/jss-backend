@@ -34,4 +34,5 @@ export interface Confrere extends IDocument, ITiers {
   numberOfPrint: number;
   paperPrice: number;
   vatCollectionType: VatCollectionType;
+  intercommunityVat: string;
 }

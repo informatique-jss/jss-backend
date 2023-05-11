@@ -1,9 +1,9 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AppService } from 'src/app/services/app.service';
 import { AttachmentTypeMailQuery } from '../../model/AttachmentTypeMailQuery';
-import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
+import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 
 @Component({
   selector: 'app-select-attachment-type-dialog',
@@ -16,7 +16,8 @@ export class SelectAttachmentTypeDialogComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
     private appService: AppService,
-    private dialogRef: MatDialogRef<AddAffaireDialogComponent>
+    private dialog: MatDialog,
+    public dialogRef: MatDialogRef<SelectAttachmentsDialogComponent>
   ) { }
 
   ngOnInit() {

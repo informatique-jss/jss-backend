@@ -387,6 +387,49 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
+    @Override
+    public Notification notifyTiersDepositMandatory(Tiers tiers, Responsable responsable, Invoice invoice)
+            throws OsirisException {
+        boolean createdByMe = false;
+        List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
+        Employee salesEmployee = null;
+
+        String customerOrderName = "";
+        IId entity = tiers;
+        if (tiers != null) {
+            if (tiers.getDenomination() != null)
+                customerOrderName = tiers.getDenomination();
+            else
+                customerOrderName = tiers.getCivility().getLabel() + " "
+                        + tiers.getFirstname() + " "
+                        + tiers.getLastname();
+            customerOrderName += " (" + tiers.getId() + ")";
+            salesEmployee = tiers.getSalesEmployee();
+        } else if (responsable != null) {
+            entity = responsable;
+            customerOrderName = responsable.getCivility().getLabel() + " "
+                    + responsable.getFirstname() + " "
+                    + responsable.getLastname();
+            customerOrderName += " (" + responsable.getId() + ")";
+            salesEmployee = responsable.getSalesEmployee();
+        }
+
+        if (salesEmployee != null) {
+            if (compareEmployee != null)
+                for (Employee employee : compareEmployee)
+                    if (employee.getId().equals(salesEmployee.getId()))
+                        createdByMe = true;
+
+            if (!createdByMe)
+                return generateNewNotification(employeeService.getCurrentEmployee(), salesEmployee,
+                        Notification.TIERS_DEPOSIT_MANDATORY, entity,
+                        "Le tiers " + customerOrderName + " a été relancé pour payer la facture " + invoice.getId()
+                                + ".",
+                        null, false);
+        }
+        return null;
+    }
+
     private boolean isProvisionClosed(Provision provision) {
         if (provision.getAnnouncement() != null)
             return provision.getAnnouncement().getAnnouncementStatus().getIsCloseState();

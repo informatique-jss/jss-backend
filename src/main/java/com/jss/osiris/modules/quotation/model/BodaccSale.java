@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +31,7 @@ public class BodaccSale implements Serializable, IId {
 	@Column(length = 100)
 	private String divestedBusinessAddress;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_fund_type")
 	private FundType fundType;
 
@@ -63,7 +64,7 @@ public class BodaccSale implements Serializable, IId {
 
 	private Integer ownerShareCapital;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_legal_form_owner")
 	private LegalForm ownerLegalForm;
 
@@ -82,7 +83,7 @@ public class BodaccSale implements Serializable, IId {
 	@Column(length = 60)
 	private String purchaserDenomination;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_legal_form_purchaser")
 	private LegalForm purchaserLegalForm;
 
@@ -103,14 +104,14 @@ public class BodaccSale implements Serializable, IId {
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate registrationDate;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_registration_authority")
 	private CompetentAuthority registrationAuthority;
 
 	@Column(length = 50)
 	private String registrationReferences;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_act_type")
 	private ActType actType;
 
@@ -163,7 +164,7 @@ public class BodaccSale implements Serializable, IId {
 	private Integer tenantShareCapital;
 	private Integer tenantMinimumCapital;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_legal_form_tenant")
 	private LegalForm tenantLegalForm;
 

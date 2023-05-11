@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<div mat-dialog-content>
+  <p>{{text}}</p>
+  <form [formGroup]="accountingAccountForm">
+    <div>
+      <autocomplete-accounting-account [(model)]="choosedAccountingAccount" [form]="accountingAccountForm"
+        propertyName="choosedAccountingAccount" [isMandatory]="true"
+        [filteredAccountPrincipal]="filteredAccountPrincipal"
+        label="Compte comptable"></autocomplete-accounting-account>
+    </div>
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">Valider</button>
+</div>

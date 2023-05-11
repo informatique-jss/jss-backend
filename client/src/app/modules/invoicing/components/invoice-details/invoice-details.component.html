@@ -41,8 +41,13 @@
             (auxclick)="openRoute($event,'/order/'+invoice.customerOrderForInboundInvoice.id)">visibility
           </mat-icon>
         </p>
-        <p *ngIf="invoice.attachments && !invoice.isCreditNote"> <single-attachment [entity]="invoice"
-            [entityType]="INVOICE_ENTITY_TYPE.entityType" [editMode]="false"
+        <p *ngIf="invoice.attachments && !invoice.isCreditNote && !invoice.customerOrder"> <single-attachment
+            [entity]="invoice" [entityType]="INVOICE_ENTITY_TYPE.entityType" [editMode]="false"
+            [attachmentTypeToDisplay]="attachmentTypeInvoice">
+          </single-attachment>
+        </p>
+        <p *ngIf="invoice.attachments && !invoice.isCreditNote && invoice.customerOrder"> <single-attachment
+            [entity]="invoice.customerOrder" [entityType]="CUSTOMER_ORDER_ENTITY_TYPE.entityType" [editMode]="false"
             [attachmentTypeToDisplay]="attachmentTypeInvoice">
           </single-attachment>
         </p>
@@ -68,6 +73,7 @@
               <p>{{invoice.billingLabelAddress}}</p>
               <p>{{invoice.billingLabelPostalCode}} {{invoice.billingLabelCity?invoice.billingLabelCity.label:""}}
                 {{invoice.billingLabelCountry?invoice.billingLabelCountry.label:""}}</p>
+              <p *ngIf="invoice.billingLabelIntercommunityVat">N° de TVA : {{invoice.billingLabelIntercommunityVat}}</p>
             </td>
             <td class="mat-cell td-info"
               *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">
@@ -309,8 +315,7 @@
   (auxclick)="editInvoice($event)">
   <mat-icon>edit</mat-icon>
 </button>
-<button
-  *ngIf="false && invoice && (invoice.invoiceStatus.code==invoiceStatusSend.code || invoice.invoiceStatus.code==invoiceStatusPayed.code  || invoice.invoiceStatus.code==invoiceStatusReceived.code) "
+<button *ngIf="false && invoice && invoice.invoiceStatus.code==invoiceStatusReceived.code "
   matTooltip="Annuler la facture" mat-fab color="accent" class="second-fab-button" (click)="cancelInvoice($event)">
   <mat-icon>close</mat-icon>
 </button>

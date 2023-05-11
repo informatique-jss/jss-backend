@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.quotation.model.Announcement;
@@ -12,7 +12,7 @@ import com.jss.osiris.modules.quotation.model.AnnouncementSearchResult;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.Confrere;
 
-public interface AnnouncementRepository extends CrudRepository<Announcement, Integer> {
+public interface AnnouncementRepository extends QueryCacheCrudRepository<Announcement, Integer> {
 
         @Query(nativeQuery = true, value = "" +
                         " select a.id, coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname) as affaireName, "

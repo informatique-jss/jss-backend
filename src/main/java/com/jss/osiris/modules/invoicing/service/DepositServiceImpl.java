@@ -19,6 +19,7 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
+import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.repository.DepositRepository;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Affaire;
@@ -53,6 +54,9 @@ public class DepositServiceImpl implements DepositService {
 
     @Autowired
     RefundService refundService;
+
+    @Autowired
+    AppointService appointService;
 
     @Value("${invoicing.payment.limit.refund.euros}")
     private String payementLimitRefundInEuros;
@@ -119,8 +123,7 @@ public class DepositServiceImpl implements DepositService {
     }
 
     @Override
-    public void moveDepositFromCustomerOrderToInvoice(Deposit deposit, CustomerOrder fromCustomerOrder,
-            Invoice toInvoice) throws OsirisException {
+    public void moveDepositToInvoice(Deposit deposit, Invoice toInvoice) throws OsirisException {
         cancelDeposit(deposit);
         getNewDepositForInvoice(deposit.getDepositAmount(), LocalDateTime.now(), toInvoice, null,
                 deposit.getOriginPayment(), false);
@@ -185,6 +188,15 @@ public class DepositServiceImpl implements DepositService {
 
                 remainingMoney -= remainingToPayForInvoice;
                 refundLabelSuffix = "facture n°" + invoice.getId();
+
+                if (Math.abs(remainingMoney) <= Float.parseFloat(payementLimitRefundInEuros)) {
+                    appointService.generateAppointForInvoice(correspondingInvoices.get(i), deposit.getOriginPayment(),
+                            deposit, remainingMoney);
+                    deposit.setDepositAmount(remainingMoney - deposit.getDepositAmount());
+                    addOrUpdateDeposit(deposit);
+                    accountingRecordService.checkInvoiceForLettrage(correspondingInvoices.get(i));
+                    remainingMoney = 0f;
+                }
             }
             correspondingInvoiceSize += correspondingInvoices.size();
         }
@@ -194,39 +206,40 @@ public class DepositServiceImpl implements DepositService {
                 CustomerOrder customerOrder = correspondingCustomerOrder.get(i);
                 Float remainingToPayForCustomerOrder = byPassAmount.get(i + correspondingInvoiceSize);
 
+                if (Math.abs(remainingToPayForCustomerOrder - remainingMoney) <= Float
+                        .parseFloat(payementLimitRefundInEuros)) {
+                    // Appoint handled when invoice created
+                    remainingToPayForCustomerOrder = remainingMoney;
+                }
+
                 getNewDepositForCustomerOrder(remainingToPayForCustomerOrder, LocalDateTime.now(), customerOrder,
                         deposit.getId(), deposit.getOriginPayment(), false);
 
                 // Try unlocked customer order
                 customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
 
-                remainingMoney -= byPassAmount.get(i + correspondingInvoiceSize);
+                remainingMoney -= remainingToPayForCustomerOrder;
                 refundLabelSuffix = "commande n°" + customerOrder.getId();
             }
 
         if (Math.abs(Math.round(remainingMoney * 100f) / 100f) > 0) {
-            if (Math.abs(remainingMoney) <= Float.parseFloat(payementLimitRefundInEuros)) {
-                boolean modifyDeposit = false;
-                if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
-                    accountingRecordService.generateAppointForDeposit(deposit, remainingMoney,
-                            invoiceHelper.getCustomerOrder(correspondingInvoices.get(0)));
-                    modifyDeposit = true;
-                } else if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0) {
-                    accountingRecordService.generateAppointForDeposit(deposit, remainingMoney,
-                            quotationService.getCustomerOrderOfQuotation(correspondingCustomerOrder.get(0)));
-                    modifyDeposit = true;
-                }
-                if (modifyDeposit) {
-                    deposit.setDepositAmount(deposit.getDepositAmount() - remainingMoney);
-                    addOrUpdateDeposit(deposit);
-                }
-            } else {
-                if (tiersRefund == null)
-                    throw new OsirisValidationException("TiersRefund or ConfrereRefund");
+            if (tiersRefund == null)
+                throw new OsirisValidationException("TiersRefund or ConfrereRefund");
 
-                refundService.generateRefund(tiersRefund, affaireRefund, null, deposit, remainingMoney,
-                        refundLabelSuffix);
-            }
+            // Try to find a customerOrder ...
+            CustomerOrder customerOrder = null;
+            if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0)
+                customerOrder = correspondingCustomerOrder.get(0);
+            else if (correspondingInvoices != null && correspondingInvoices.size() > 0)
+                for (Invoice invoice : correspondingInvoices)
+                    if (invoice.getCustomerOrder() != null)
+                        customerOrder = invoice.getCustomerOrder();
+                    else if (invoice.getCustomerOrderForInboundInvoice() != null)
+                        customerOrder = invoice.getCustomerOrderForInboundInvoice();
+
+            Refund refund = refundService.generateRefund(tiersRefund, affaireRefund, null, deposit, remainingMoney,
+                    refundLabelSuffix, customerOrder, null);
+            accountingRecordService.generateAccountingRecordsForRefundOnGeneration(refund);
         }
     }
 

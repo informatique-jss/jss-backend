@@ -976,6 +976,7 @@ public class QuotationController {
     validationHelper.validateReferential(confrere.getPaymentType(), true, "PaymentType");
     validationHelper.validateString(confrere.getPaymentIban(), false, 40, "PaymentIBAN");
     validationHelper.validateString(confrere.getPaymentBic(), false, 40, "PaymentBic");
+    validationHelper.validateString(confrere.getIntercommunityVat(), false, 20, "intercommunityVat");
 
     if (confrere.getPaymentType() != null
         && confrere.getPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())) {

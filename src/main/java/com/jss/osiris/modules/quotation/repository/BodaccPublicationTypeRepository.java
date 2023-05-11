@@ -1,8 +1,8 @@
 package com.jss.osiris.modules.quotation.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 
 import com.jss.osiris.modules.quotation.model.BodaccPublicationType;
 
-public interface BodaccPublicationTypeRepository extends CrudRepository<BodaccPublicationType, Integer> {
+public interface BodaccPublicationTypeRepository extends QueryCacheCrudRepository<BodaccPublicationType, Integer> {
 }

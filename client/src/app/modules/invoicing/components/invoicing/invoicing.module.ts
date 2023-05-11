@@ -18,6 +18,7 @@ import { MiscellaneousModule } from "../../../miscellaneous/components/miscellan
 import { AddInvoiceComponent } from "../add-invoice/add-invoice.component";
 import { AddPaymentComponent } from "../add-payment/add-payment.component";
 import { AmountDialogComponent } from "../amount-dialog/amount-dialog.component";
+import { AppointListComponent } from "../appoint-list/appoint-list.component";
 import { AssociateDepositDialogComponent } from '../associate-deposit-dialog/associate-deposit-dialog.component';
 import { AssociatePaymentDialogComponent } from "../associate-payment-dialog/associate-payment-dialog.component";
 import { BankTransfertListComponent } from '../bank-transfert-list/bank-transfert-list.component';
@@ -35,6 +36,7 @@ const routes: Routes = [
   { path: 'invoicing', component: InvoiceComponent },
   { path: 'invoicing/view/:id', component: InvoiceDetailsComponent },
   { path: 'invoicing/add/:id', component: AddInvoiceComponent },
+  { path: 'invoicing/credit-note/:idInvoice', component: AddInvoiceComponent },
   { path: 'invoicing/payment/add', component: AddPaymentComponent },
   { path: 'invoicing/add/debour/:idCompetentAuhority/:idCustomerOrder', component: AddInvoiceComponent },
 ];
@@ -73,6 +75,7 @@ const routes: Routes = [
     DeboursAmountInvoicedDialogComponent,
     AddPaymentComponent,
     InfogreffeInvoiceListComponent,
+    AppointListComponent,
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,

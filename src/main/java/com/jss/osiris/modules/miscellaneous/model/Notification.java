@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -40,12 +41,14 @@ public class Notification implements Serializable, IId {
   public static String PROVISION_ADD_ATTACHMENT = "PROVISION_ADD_ATTACHMENT";
   public static String PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED = "PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED";
 
+  public static String TIERS_DEPOSIT_MANDATORY = "TIERS_DEPOSIT_MANDATORY";
+
   @Id
   @SequenceGenerator(name = "notification_sequence", sequenceName = "notification_sequence", allocationSize = 1)
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_sequence")
   private Integer id;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_employee")
   private Employee employee;
 
@@ -55,7 +58,7 @@ public class Notification implements Serializable, IId {
 
   private Integer entityId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_employee_created_by")
   private Employee createdBy;
 

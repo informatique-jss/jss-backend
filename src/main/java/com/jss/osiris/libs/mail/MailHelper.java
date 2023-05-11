@@ -57,6 +57,7 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.service.AppointService;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -111,6 +112,12 @@ public class MailHelper {
 
     @Value("${jss.bic}")
     private String bicJss;
+
+    @Value("${invoicing.payment.limit.refund.euros}")
+    private String payementLimitRefundInEuros;
+
+    @Autowired
+    AppointService appointService;
 
     private JavaMailSender javaMailSender;
 
@@ -852,15 +859,24 @@ public class MailHelper {
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
         computeQuotationPrice(mail, customerOrder);
-        Float remainingToPay = Math
-                .round(customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
 
         mail.setHeaderPicture("images/waiting-deposit-header.png");
         mail.setTitle("Votre acompte a bien été reçu !");
 
         mail.setLabel("Commande n°" + customerOrder.getId());
 
-        String explainationText = "Nous vous confirmons la prise en compte d'un réglement de " + remainingToPay
+        Float depositAmount = 0f;
+        LocalDateTime depositDate = LocalDateTime.now().minusYears(100);
+
+        if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
+            for (Deposit deposit : customerOrder.getDeposits()) {
+                if (deposit.getDepositDate().isAfter(depositDate)) {
+                    depositAmount = deposit.getDepositAmount();
+                    depositDate = deposit.getDepositDate();
+                }
+            }
+        String explainationText = "Nous vous confirmons la prise en compte d'un réglement de "
+                + depositAmount
                 + " € concernant vote commande n°" + customerOrder.getId();
 
         if (customerOrder.getAssoAffaireOrders().size() == 1) {
@@ -1059,8 +1075,17 @@ public class MailHelper {
 
         Document billingDocument = documentService.getDocumentByDocumentType(customerOrder.getDocuments(),
                 constantService.getDocumentTypeBilling());
-        if (billingDocument != null && billingDocument.getExternalReference() != null)
-            ctx.setVariable("externalReference", billingDocument.getExternalReference());
+        if (billingDocument != null) {
+            if (billingDocument.getExternalReference() != null)
+                ctx.setVariable("externalReference", billingDocument.getExternalReference());
+
+            // Responsable on billing
+            if (billingDocument.getIsResponsableOnBilling() != null && billingDocument.getIsResponsableOnBilling()
+                    && customerOrder.getResponsable() != null)
+                ctx.setVariable("responsableOnBilling", customerOrder.getResponsable().getFirstname() + " "
+                        + customerOrder.getResponsable().getLastname());
+
+        }
 
         ctx.setVariable("customerOrder", customerOrder);
 
@@ -1083,16 +1108,28 @@ public class MailHelper {
         // Exclude deposits generated after invoice
         ArrayList<Deposit> deposits = new ArrayList<Deposit>();
         Float depositTotal = 0f;
+        Float payementTotal = 0f;
         if (customerOrder.getDeposits() != null)
             for (Deposit deposit : customerOrder.getDeposits())
                 if (deposit.getDepositDate().isBefore(invoice.getCreatedDate())) {
                     deposits.add(deposit);
                     depositTotal += deposit.getDepositAmount();
+                    if (deposit.getOriginPayment() != null)
+                        payementTotal += deposit.getOriginPayment().getPaymentAmount();
                 }
 
         ctx.setVariable("deposits", deposits);
         ctx.setVariable("remainingToPay",
                 Math.round((invoiceHelper.getPriceTotal(invoice) - depositTotal) * 100f) / 100f);
+
+        ctx.setVariable("hasAppoint",
+                Math.abs(Math.round((invoiceHelper.getPriceTotal(invoice) - depositTotal) * 100f) / 100f) <= Float
+                        .parseFloat(payementLimitRefundInEuros));
+        ctx.setVariable("tooMuchPerceived", null);
+        Float amountPerceived = payementTotal - Math.round((invoiceHelper.getPriceTotal(invoice)) * 100f) / 100f;
+        if (Math.round(amountPerceived * 100f) / 100f > 0
+                && (invoice.getAppoints() == null || invoice.getAppoints().size() == 0))
+            ctx.setVariable("tooMuchPerceived", amountPerceived);
 
         LocalDateTime localDate = invoice.getCreatedDate();
         DateTimeFormatter formatter = DateTimeFormatter
@@ -1205,7 +1242,7 @@ public class MailHelper {
                     .collect(Collectors.joining(" - ")));
         ctx.setVariable("qrCodePicture",
                 Base64.getEncoder().encodeToString(qrCodeHelper
-                        .getQrCode("https://www.jss.fr/Annonce-publiee.awp?P1=" + announcement.getId() + ".awp", 60)));
+                        .getQrCode("https://www.jss.fr/Annonce-publiee.awp?P1=" + announcement.getId(), 60)));
         LocalDate localDate = announcement.getPublicationDate();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy");
         ctx.setVariable("date", StringUtils.capitalize(localDate.format(formatter)));
@@ -1367,10 +1404,10 @@ public class MailHelper {
 
         if (billingClosureValues != null && billingClosureValues.size() > 0)
             for (BillingClosureReceiptValue billingClosureValue : billingClosureValues) {
-                balance += billingClosureValue.getCreditAmount() != null ? billingClosureValue.getCreditAmount() : 0;
+                balance -= billingClosureValue.getCreditAmount() != null ? billingClosureValue.getCreditAmount() : 0;
                 creditBalance += billingClosureValue.getCreditAmount() != null ? billingClosureValue.getCreditAmount()
                         : 0;
-                balance -= billingClosureValue.getDebitAmount() != null ? billingClosureValue.getDebitAmount() : 0;
+                balance += billingClosureValue.getDebitAmount() != null ? billingClosureValue.getDebitAmount() : 0;
                 debitBalance += billingClosureValue.getDebitAmount() != null ? billingClosureValue.getDebitAmount() : 0;
             }
         ctx.setVariable("balance", balance);
@@ -1484,15 +1521,18 @@ public class MailHelper {
             else
                 explainationText += " Nous vous remercions de bien vouloir procéder à son règlement dans les meilleurs délais.";
         } else {
-            Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
             explainationText = "Nous avons le plaisir de vous confirmer la finalisation de votre commande n°"
-                    + customerOrder.getId() + " concernant la société "
-                    + ((affaire.getDenomination() != null ? affaire.getDenomination()
-                            : (affaire.getFirstname() + " " + affaire.getLastname())) + " ("
-                            + (affaire.getAddress() + ", "
-                                    + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"))
-                    + ". Vous trouverez en pièces-jointes les éléments suivants : ";
+                    + customerOrder.getId();
         }
+
+        Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
+
+        explainationText += " Cette commande concerne la société "
+                + ((affaire.getDenomination() != null ? affaire.getDenomination()
+                        : (affaire.getFirstname() + " " + affaire.getLastname())) + " ("
+                        + (affaire.getAddress() + ", "
+                                + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"))
+                + ". Vous trouverez en pièces-jointes les éléments suivants : ";
 
         ArrayList<String> attachementNames = new ArrayList<String>();
         for (Attachment attachment : attachments)
@@ -1576,6 +1616,17 @@ public class MailHelper {
 
         String explainationText = "Vous trouverez ci-joint l'avoir n°" + creditNote.getId()
                 + " correspondant à la facture n°" + invoice.getId() + ".";
+
+        if (customerOrder != null) {
+            Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
+            explainationText += " Cette commande concerne la société "
+                    + ((affaire.getDenomination() != null ? affaire.getDenomination()
+                            : (affaire.getFirstname() + " " + affaire.getLastname())) + " ("
+                            + (affaire.getAddress() + ", "
+                                    + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"))
+                    + ".";
+        }
+
         mail.setExplaination(explainationText);
 
         mail.setSubject("Votre avoir n°" + creditNote.getId());
@@ -1661,9 +1712,7 @@ public class MailHelper {
         for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(provision.getAttachments()))
             if (attachment.getAttachmentType().getId()
                     .equals(constantService.getAttachmentTypeAnnouncement()
-                            .getId())
-                    && (announcement.getIsAnnouncementAlreadySentToConfrere() == null
-                            || !announcement.getIsAnnouncementAlreadySentToConfrere())) {
+                            .getId())) {
                 attachments.add(attachment);
                 break;
             }
