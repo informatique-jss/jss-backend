@@ -260,7 +260,21 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         @Override
         public AccountingAccount updateAccountingAccountLabel(AccountingAccount accountingAccount, String label)
                         throws OsirisException {
-                if (accountingAccount != null) {
+
+                if (accountingAccount != null && accountingAccount.getPrincipalAccountingAccount() != null) {
+                        if (accountingAccount.getPrincipalAccountingAccount().getId()
+                                        .equals(constantService.getPrincipalAccountingAccountProvider().getId()))
+                                label = "Fournisseur - " + label;
+                        if (accountingAccount.getPrincipalAccountingAccount().getId()
+                                        .equals(constantService.getPrincipalAccountingAccountCustomer().getId()))
+                                label = "Client - " + label;
+                        if (accountingAccount.getPrincipalAccountingAccount().getId()
+                                        .equals(constantService.getPrincipalAccountingAccountDeposit().getId())
+                                        || accountingAccount.getPrincipalAccountingAccount().getId()
+                                                        .equals(constantService
+                                                                        .getPrincipalAccountingAccountDepositProvider()
+                                                                        .getId()))
+                                label = "Acompte - " + label;
                         accountingAccount.setLabel(label);
                         addOrUpdateAccountingAccount(accountingAccount);
                 }
