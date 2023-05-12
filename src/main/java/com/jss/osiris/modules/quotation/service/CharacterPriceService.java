@@ -19,4 +19,6 @@ public interface CharacterPriceService {
     public CharacterPrice getCharacterPrice(Provision provision);
 
     public CharacterPrice getCharacterPrice(Integer id);
+
+    public CharacterPrice getCharacterPriceFromUser(Department department, LocalDate date);
 }

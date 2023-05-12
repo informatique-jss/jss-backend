@@ -483,7 +483,8 @@ public class InvoicingController {
                 .equals(constantService.getPaymentWayInbound().getId())) {
             if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null
                     && paymentAssociate.getPayment().getPaymentAmount() > totalAmount
-                    && paymentAssociate.getPayment().getPaymentAmount() > payementLimitRefundInEuros)
+                    && Math.abs(paymentAssociate.getPayment().getPaymentAmount()
+                            - totalAmount) > payementLimitRefundInEuros)
                 throw new OsirisValidationException("TiersRefund or ConfrereRefund");
             validationHelper.validateReferential(paymentAssociate.getTiersRefund(), false, "TiersRefund");
             validationHelper.validateReferential(paymentAssociate.getConfrereRefund(), false, "ConfrereRefund");

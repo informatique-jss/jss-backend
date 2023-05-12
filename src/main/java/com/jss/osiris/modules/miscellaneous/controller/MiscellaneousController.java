@@ -997,6 +997,7 @@ public class MiscellaneousController {
     }
 
     @GetMapping(inputEntryPoint + "/attachment/download")
+    @Transactional
     public ResponseEntity<byte[]> downloadAttachment(@RequestParam("idAttachment") Integer idAttachment)
             throws OsirisValidationException, OsirisException {
         byte[] data = null;
