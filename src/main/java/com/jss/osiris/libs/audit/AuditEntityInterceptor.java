@@ -162,7 +162,7 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
                     } catch (Exception e) {
                         tx.rollback();
                         return;
-                    }
+                    } 
                 } catch (Exception e) {
                     tx.rollback();
                     return;
