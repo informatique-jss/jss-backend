@@ -34,7 +34,6 @@ public class DomiciliationStatusServiceImpl implements DomiciliationStatusServic
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public DomiciliationStatus addOrUpdateDomiciliationStatus(
             DomiciliationStatus domiciliationStatus) {
         return domiciliationStatusRepository.save(domiciliationStatus);

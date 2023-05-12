@@ -34,7 +34,6 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public SimpleProvisionStatus addOrUpdateSimpleProvisonStatus(
             SimpleProvisionStatus simpleProvisonStatus) {
         return simpleProvisonStatusRepository.save(simpleProvisonStatus);

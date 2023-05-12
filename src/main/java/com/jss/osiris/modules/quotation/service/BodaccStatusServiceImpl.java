@@ -34,7 +34,6 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public BodaccStatus addOrUpdateBodaccStatus(
             BodaccStatus bodaccStatus) {
         return bodaccStatusRepository.save(bodaccStatus);
@@ -47,7 +46,11 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+<<<<<<< HEAD
     public void updateStatusReferential() throws OsirisException {
+=======
+    public void updateBodaccStatusReferential() throws OsirisException {
+>>>>>>> cc441974 (fix)
         updateStatus(BodaccStatus.BODACC_NEW, "Nouveau", "auto_awesome", true, false,
                 AggregateStatus.AGGREGATE_STATUS_NEW);
         updateStatus(BodaccStatus.BODACC_IN_PROGRESS, "En cours", "autorenew", false, false,

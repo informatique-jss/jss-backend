@@ -296,7 +296,7 @@ public class OsirisScheduller {
 			formaliteStatusService.updateStatusReferential();
 			domiciliationStatusService.updateStatusReferential();
 			simpleProvisionStatusService.updateStatusReferential();
-			bodaccStatusService.updateStatusReferential();
+			bodaccStatusService.updateBodaccStatusReferential();
 			assignationTypeService.updateAssignationTypes();
 			provisionScreenTypeService.updateScreenTypes();
 		} catch (Exception e) {

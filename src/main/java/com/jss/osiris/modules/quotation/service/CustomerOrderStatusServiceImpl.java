@@ -33,7 +33,6 @@ public class CustomerOrderStatusServiceImpl implements CustomerOrderStatusServic
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public CustomerOrderStatus addOrUpdateCustomerOrderStatus(CustomerOrderStatus quotationStatus) {
         return customerOrderStatusRepository.save(quotationStatus);
     }

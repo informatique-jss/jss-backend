@@ -34,7 +34,6 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
         }
 
         @Override
-        @Transactional(rollbackFor = Exception.class)
         public AnnouncementStatus addOrUpdateAnnouncementStatus(
                         AnnouncementStatus announcementStatus) {
                 return announcementStatusRepository.save(announcementStatus);
