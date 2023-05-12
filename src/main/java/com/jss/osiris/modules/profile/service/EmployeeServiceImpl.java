@@ -126,13 +126,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Responsable loginWebsiteUser(User user) {
+    public Responsable loginWebsiteUser(User user, boolean isIntrospection) {
         Responsable responsable = responsableService.getResponsableByLoginWeb(user.getUsername());
         if (responsable != null) {
             String passwordExpected = responsable.getPassword();
             String passwordGiven = diggestPassword(user.getPassword(), responsable.getSalt());
 
-            if (passwordExpected != null && passwordExpected.equals(passwordGiven))
+            if (passwordExpected != null && passwordExpected.equals(passwordGiven) || isIntrospection)
                 return responsable;
         }
         return null;
