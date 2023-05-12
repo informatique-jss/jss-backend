@@ -38,6 +38,8 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         "  STRING_AGG(DISTINCT nt.label ,', '  ) as noticeTypeLabel,   " +
                         " e1.firstname || ' ' || e1.lastname as provisionAssignedToLabel,   " +
                         " e2.firstname || ' ' || e2.lastname as salesEmployeeLabel,   " +
+                        " sum(coalesce(case when billing_type.is_fee=false and billing_type.is_debour = false then invoice_item.pre_tax_price end,0)) as preTaxPriceWithoutDebour, "
+                        +
                         "  quotation_creator.firstname || ' ' || quotation_creator.lastname as quotationCreator,    "
                         +
                         " max((substring(invoice_item.label,'(\\d)(?=\\s*caract)'))) as characterNumber " +
