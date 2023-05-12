@@ -94,7 +94,7 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         List<Attachment> attachments = attachmentService.getInvoiceAttachmentOnProvisionToAnalyse();
         if (attachments != null && attachments.size() > 0) {
             for (Attachment attachment : attachments)
-                if (attachment.getId().equals(5826951)) // TODO remove
+                if (attachment.getId() >= 6378501) // TODO remove
                     formRecognizerService.recongnizeInvoice(attachment);
         }
         matchAzureInvoiceAndDebours();
