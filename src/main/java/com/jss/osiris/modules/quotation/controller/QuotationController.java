@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -560,6 +561,7 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/mail/generate/attachments")
+  @Transactional
   public ResponseEntity<CustomerOrder> generateAttachmentMail(@RequestBody AttachmentMailRequest attachmentMailRequest)
       throws OsirisValidationException, OsirisClientMessageException, OsirisException {
     attachmentMailRequest.setCustomerOrder((CustomerOrder) validationHelper
@@ -877,7 +879,8 @@ public class QuotationController {
     if (department == null)
       throw new OsirisValidationException("department");
 
-    return new ResponseEntity<CharacterPrice>(characterPriceService.getCharacterPrice(department, date), HttpStatus.OK);
+    return new ResponseEntity<CharacterPrice>(characterPriceService.getCharacterPriceFromUser(department, date),
+        HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/character/number")
