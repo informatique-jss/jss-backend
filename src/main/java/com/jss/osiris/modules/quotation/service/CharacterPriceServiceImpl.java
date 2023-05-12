@@ -37,6 +37,7 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
     }
 
     @Override
+    @Transactional
     public CharacterPrice getCharacterPriceFromUser(Department department, LocalDate date) {
         return getCharacterPrice(department, date);
     }

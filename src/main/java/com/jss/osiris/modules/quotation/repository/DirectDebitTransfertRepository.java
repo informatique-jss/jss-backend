@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearchResult;
 import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 
@@ -18,6 +18,7 @@ public interface DirectDebitTransfertRepository extends QueryCacheCrudRepository
                         + " r.transfert_amount  as transfertAmount ,"
                         + " r.label as transfertLabel,"
                         + " r.transfert_iban as transfertIban,"
+                        + " r.transfert_bic as transfertBic,"
                         + " r.is_already_exported  as isAlreadyExported "
                         + " from direct_debit_transfert r "
                         + " where is_cancelled=false and (:isHideExportedDirectDebitTransfert=false OR r.is_already_exported=false) "
