@@ -267,6 +267,10 @@ public class ValidationHelper {
             throws OsirisValidationException, OsirisClientMessageException {
         if ((value == null) && isMandatory)
             throw new OsirisValidationException(fieldName);
+
+        if (!isMandatory && (value == null || value.equals("")))
+            return;
+
         if (value != null && !Bic.isValid(value.replaceAll(" ", "")))
             throw new OsirisClientMessageException("BIC saisi non valide");
     }
