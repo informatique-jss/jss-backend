@@ -1527,7 +1527,7 @@ public class QuotationController {
     if (announcement == null)
       throw new OsirisValidationException("Annonce non trouvée");
 
-    File file = generatePdfDelegate.generatePublicationReceiptPdf(announcement, true, provision);
+    File file = generatePdfDelegate.generatePublicationForAnnouncement(announcement, provision, false, true, false);
 
     if (file != null) {
       try {
@@ -1583,7 +1583,7 @@ public class QuotationController {
     if (announcement == null)
       throw new OsirisValidationException("Annonce non trouvée");
 
-    File file = generatePdfDelegate.generatePublicationReceiptPdf(announcement, false, provision);
+    File file = generatePdfDelegate.generatePublicationForAnnouncement(announcement, provision, false, false, true);
 
     if (file != null) {
       try {
@@ -1642,7 +1642,7 @@ public class QuotationController {
     if (provision == null)
       throw new OsirisValidationException("Provision non trouvée");
 
-    File file = generatePdfDelegate.generatePublicationFlagPdf(announcement, provision);
+    File file = generatePdfDelegate.generatePublicationForAnnouncement(announcement, provision, true, false, false);
 
     if (file != null) {
       try {

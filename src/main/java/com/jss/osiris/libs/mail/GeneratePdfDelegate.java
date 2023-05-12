@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,7 +95,9 @@ public class GeneratePdfDelegate {
     @Autowired
     InvoiceHelper invoiceHelper;
 
-    public File generatePublicationFlagPdf(Announcement announcement, Provision provision) throws OsirisException {
+    public File generatePublicationForAnnouncement(Announcement announcement, Provision provision,
+            boolean isPublicationFlag,
+            boolean isPublicationReceipt, boolean isProofReading) throws OsirisException {
         File tempFile;
         if (!announcement.getIsComplexAnnouncement()) {
             // Generate announcement PDF
@@ -118,20 +119,6 @@ public class GeneratePdfDelegate {
                     StringEscapeUtils.unescapeHtml4(announcement.getNotice()
                             .replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
                             .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")));
-            if (announcement.getDepartment() != null)
-                ctx.setVariable("department",
-                        announcement.getDepartment().getCode() + " - " + announcement.getDepartment().getLabel());
-            if (announcement.getNoticeTypeFamily() != null)
-                ctx.setVariable("noticeType", announcement.getNoticeTypeFamily().getLabel());
-            if (announcement.getNoticeTypes() != null && announcement.getNoticeTypes().size() > 0)
-                ctx.setVariable("noticeSubtype", announcement.getNoticeTypes().stream().map(NoticeType::getLabel)
-                        .collect(Collectors.joining(" - ")));
-            ctx.setVariable("qrCodePicture",
-                    Base64.getEncoder().encodeToString(qrCodeHelper
-                            .getQrCode("https://www.jss.fr/Annonce-publiee.awp?P1=" + announcement.getId(), 60)));
-            LocalDate localDate = announcement.getPublicationDate();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy");
-            ctx.setVariable("date", StringUtils.capitalize(localDate.format(formatter)));
 
             // Create the HTML body using Thymeleaf
             final String htmlContent = StringEscapeUtils
@@ -159,7 +146,11 @@ public class GeneratePdfDelegate {
                         "Unable to create publication flag PDF file for announcement " + announcement.getId());
             }
 
-            tempFile = addHeaderAndFooterOnPublicationFlag(tempFile2, announcement);
+            if (isPublicationFlag)
+                tempFile = addHeaderAndFooterOnPublicationFlag(tempFile2, announcement);
+            else
+                tempFile = addHeaderOnPublicationReceipt(tempFile2, announcement, isPublicationReceipt);
+
             tempFile2.delete();
 
         } else {
@@ -176,7 +167,10 @@ public class GeneratePdfDelegate {
             if (complexePdf == null)
                 throw new OsirisException(null, "No announncement PDF found");
 
-            tempFile = addHeaderAndFooterOnPublicationFlag(complexePdf, announcement);
+            if (isPublicationFlag)
+                tempFile = addHeaderAndFooterOnPublicationFlag(complexePdf, announcement);
+            else
+                tempFile = addHeaderOnPublicationReceipt(complexePdf, announcement, isPublicationReceipt);
         }
         return tempFile;
     }
@@ -533,59 +527,6 @@ public class GeneratePdfDelegate {
         return tempFile;
     }
 
-    public File generatePublicationReceiptPdf(Announcement announcement, boolean withStamp, Provision provision)
-            throws OsirisException {
-        final Context ctx = new Context();
-
-        if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
-            for (Attachment attachment : provision.getAttachments())
-                if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeLogo().getId()))
-                    ctx.setVariable("logo", pictureHelper
-                            .getPictureFileAsBase64String(new File(attachment.getUploadedFile().getPath())));
-
-        ctx.setVariable("noticeHeader",
-                (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
-                        ? announcement.getNoticeHeader()
-                                .replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
-                                .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
-                        : null);
-        ctx.setVariable("notice",
-                StringEscapeUtils.unescapeHtml4(announcement.getNotice()
-                        .replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
-                        .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")));
-        LocalDate localDate = announcement.getPublicationDate();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        ctx.setVariable("date", localDate.format(formatter));
-        ctx.setVariable("withStamp", withStamp);
-
-        // Create the HTML body using Thymeleaf
-        final String htmlContent = StringEscapeUtils
-                .unescapeHtml4(mailHelper.emailTemplateEngine().process("publication-receipt", ctx));
-
-        File tempFile;
-        OutputStream outputStream;
-        try {
-            tempFile = File.createTempFile("Attestation de parution", "pdf");
-            outputStream = new FileOutputStream(tempFile);
-        } catch (IOException e) {
-            throw new OsirisException(e, "Unable to create temp file");
-        }
-        ITextRenderer renderer = new ITextRenderer();
-        renderer.setDocumentFromString(
-                htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
-                        .replaceAll("line-height: normal",
-                                "line-height: normal;padding:0;margin:0"));
-        renderer.layout();
-        try {
-            renderer.createPDF(outputStream);
-            outputStream.close();
-        } catch (DocumentException | IOException e) {
-            throw new OsirisException(e,
-                    "Unable to create publication receipt PDF file for announcement " + announcement.getId());
-        }
-        return tempFile;
-    }
-
     private File addHeaderAndFooterOnPublicationFlag(File pdfFile, Announcement announcement) throws OsirisException {
         String pdfPath = pdfFile.getAbsolutePath();
         File tempPdfFile;
@@ -824,6 +765,130 @@ public class GeneratePdfDelegate {
             tableFooter.addCell(pageCell2);
 
             tableFooter.writeSelectedRows(0, -1, footerPositionX, footerPositionY * 4, stamper.getOverContent(i));
+        }
+
+        // Close the stamper
+        try {
+            stamper.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e, "Impossible to close PDF File stamper");
+        }
+        reader.close();
+
+        return tempPdfFile;
+    }
+
+    private File addHeaderOnPublicationReceipt(File pdfFile, Announcement announcement, boolean displayStamp)
+            throws OsirisException {
+        String pdfPath = pdfFile.getAbsolutePath();
+        File tempPdfFile;
+        try {
+            tempPdfFile = File.createTempFile("pdfFooterHeader", "Add");
+        } catch (IOException e) {
+            throw new OsirisException(e, "Impossible to create temp file");
+        }
+        String pdfPathOut = tempPdfFile.getAbsolutePath();
+        float headerPositionX = 60;
+        float headerPositionY = PageSize.A4.getHeight() - 25;
+
+        String announcementDate = "";
+
+        if (announcement.getPublicationDate() != null) {
+            LocalDate localDate = announcement.getPublicationDate();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            announcementDate = StringUtils.capitalize(localDate.format(formatter));
+        }
+
+        FileInputStream in;
+        PdfReader reader;
+        try {
+            in = new FileInputStream(pdfPath);
+            reader = new PdfReader(in);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Impossible to read input PDF file");
+        }
+
+        // Create output PDF
+        FileOutputStream out;
+        PdfStamper stamper;
+        try {
+            out = new FileOutputStream(pdfPathOut);
+            stamper = new PdfStamper(reader, out);
+        } catch (DocumentException | IOException e2) {
+            throw new OsirisException(e2, "Impossible to create output PDF file");
+        }
+
+        if (displayStamp) {
+            // Loop over the pages and add a header to each page
+            int n = reader.getNumberOfPages();
+
+            Font blueFont = new Font(FontFamily.TIMES_ROMAN);
+            blueFont.setColor(0, 32, 96);
+            blueFont.setSize(10);
+
+            for (int i = 1; i <= n; i++) {
+
+                if (i == 1) {
+                    PdfPTable table = new PdfPTable(1);
+                    table.setTotalWidth(PageSize.A4.getWidth() / 2 - 30);
+                    table.setLockedWidth(true);
+                    table.getDefaultCell().setBorder(Rectangle.BOX);
+                    table.getDefaultCell().setBorderWidth(1);
+                    table.getDefaultCell().setBorderColor(new BaseColor(0, 0, 0));
+
+                    // Title
+                    Font blackFontTitle = new Font(FontFamily.TIMES_ROMAN, 18, Font.BOLD);
+                    blackFontTitle.setColor(0, 0, 0);
+
+                    final PdfPCell titleCell = new PdfPCell(new Phrase("ATTESTATION DE PARUTION", blackFontTitle));
+                    titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    titleCell.setBorderWidth(1);
+                    titleCell.setPaddingBottom(8);
+                    table.addCell(titleCell);
+
+                    // Subtitle
+                    Font blackFontSubTitle = new Font(FontFamily.TIMES_ROMAN);
+                    blackFontSubTitle.setColor(0, 0, 0);
+                    blackFontSubTitle.setSize(11);
+
+                    final PdfPCell subtitleCell = new PdfPCell(
+                            new Phrase("Pour le " + announcementDate, blackFontSubTitle));
+                    subtitleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    subtitleCell.setPaddingTop(6);
+                    subtitleCell.setPaddingBottom(5);
+                    subtitleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    subtitleCell.setBorderWidth(1);
+                    table.addCell(subtitleCell);
+
+                    // Website
+                    Font blueFontType = new Font(FontFamily.TIMES_ROMAN, 20, Font.BOLD);
+                    blueFontType.setColor(38, 61, 83);
+
+                    final PdfPCell typeCell = new PdfPCell(new Phrase("www.jss.fr", blueFontType));
+                    typeCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    typeCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    typeCell.setBorderWidth(1);
+                    typeCell.setPaddingBottom(6);
+                    typeCell.setPaddingTop(0);
+                    table.addCell(typeCell);
+
+                    // Departments
+                    Font departmentFontType = new Font(FontFamily.TIMES_ROMAN);
+                    departmentFontType.setColor(0, 0, 0);
+                    departmentFontType.setSize(7);
+
+                    final PdfPCell typeCellDepartments = new PdfPCell(
+                            new Phrase("Habitilité sur le 75, 78, 91, 92, 93, 94, 95", departmentFontType));
+                    typeCellDepartments.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    typeCellDepartments.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    typeCellDepartments.setBorderWidth(1);
+                    typeCellDepartments.setPaddingBottom(2);
+                    table.addCell(typeCellDepartments);
+
+                    table.writeSelectedRows(0, -1, headerPositionX, headerPositionY, stamper.getOverContent(i));
+                }
+            }
         }
 
         // Close the stamper

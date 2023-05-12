@@ -260,8 +260,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         if (announcement.getConfrere() != null
                 && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
-            File publicationReceiptPdf = generatePdfDelegate.generatePublicationReceiptPdf(announcement, true,
-                    currentProvision);
+            File publicationReceiptPdf = generatePdfDelegate.generatePublicationForAnnouncement(announcement,
+                    currentProvision, false, true, false);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
                 currentProvision.setAttachments(
@@ -315,7 +315,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (announcement.getConfrere() != null
                 && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
-            File publicationReceiptPdf = generatePdfDelegate.generatePublicationFlagPdf(announcement, currentProvision);
+            File publicationReceiptPdf = generatePdfDelegate.generatePublicationForAnnouncement(announcement,
+                    currentProvision, true, false, false);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
                 currentProvision.setAttachments(
@@ -380,8 +381,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             return;
 
         if (announcement.getNotice() != null) {
-            File publicationReceiptPdf = generatePdfDelegate.generatePublicationReceiptPdf(announcement, false,
-                    currentProvision);
+            File publicationReceiptPdf = generatePdfDelegate.generatePublicationForAnnouncement(announcement,
+                    currentProvision, false, false, true);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
                 currentProvision.setAttachments(
