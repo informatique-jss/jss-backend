@@ -204,7 +204,7 @@
             </tr>
           </table>
           <table class="full-width" *ngIf="announcement.isComplexAnnouncement">
-            <tr>
+            <tr *ngIf="announcement.id">
               <td>
                 <single-attachment [entity]="provision!" [entityType]="PROVISION_ENTITY_TYPE.entityType"
                   [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypeComplexAnnouncement"
@@ -212,11 +212,16 @@
                 </single-attachment>
               </td>
             </tr>
-            <tr *ngIf="editMode">
+            <tr *ngIf="editMode && announcement.id">
               <td>
                 <p>Ajoutez ici le PDF de l'annonce à publier.</p>
                 <p class="color-warn">Attention à bien laisser un en-tête de 5 cm sur la première page.</p>
                 <p>Le nombre de caractères et le prix seront calculés à l'enregistrement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p>Enregistrez une première fois l'annonce avant de pouvoir ajouter le PDF</p>
               </td>
             </tr>
           </table>
