@@ -23,5 +23,5 @@ public interface CompetentAuthorityService {
 
     public List<CompetentAuthority> getCompetentAuthorityByAuthorityType(Integer competentAuthorityTypeId);
 
-    public CompetentAuthority getCompetentAuthorityByInpiReference(String inpiReference);
+    public List<CompetentAuthority> getCompetentAuthorityByInpiReference(String inpiReference);
 }

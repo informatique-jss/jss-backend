@@ -63,12 +63,8 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     }
 
     @Override
-    public CompetentAuthority getCompetentAuthorityByInpiReference(String inpiReference) {
-        Optional<CompetentAuthority> competentAuthority = competentAuthorityRepository
-                .findByInpiReference(inpiReference);
-        if (competentAuthority.isPresent())
-            return competentAuthority.get();
-        return null;
+    public List<CompetentAuthority> getCompetentAuthorityByInpiReference(String inpiReference) {
+        return competentAuthorityRepository.findByInpiReference(inpiReference);
     }
 
     @Override

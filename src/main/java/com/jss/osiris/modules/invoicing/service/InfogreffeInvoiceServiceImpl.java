@@ -17,6 +17,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.InfogreffeInvoice;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.repository.InfogreffeInvoiceRepository;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
@@ -85,8 +86,9 @@ public class InfogreffeInvoiceServiceImpl implements InfogreffeInvoiceService {
             for (String line : lines) {
                 String[] fields = line.split(";");
                 InfogreffeInvoice invoice = new InfogreffeInvoice();
-                invoice.setCompetentAuthority(
-                        competentAuthorityService.getCompetentAuthorityByInpiReference("G" + fields[2]));
+                List<CompetentAuthority> competentAuthorities = competentAuthorityService
+                        .getCompetentAuthorityByInpiReference("G" + fields[2]);
+                invoice.setCompetentAuthority(competentAuthorities.get(0));
                 if (fields.length > 10)
                     invoice.setCustomerReference(fields[10]);
                 if (!fields[5].equals(""))
