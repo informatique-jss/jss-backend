@@ -150,7 +150,7 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
     public void afterTransactionCompletion(Transaction tx) {
         synchronized (auditToSave) {
             HashSet<Audit> auditsToDelete = new HashSet<Audit>();
-            if (auditToSave != null && auditToSave.size() > 0 && tx != null) {
+            if (auditToSave != null && auditToSave.size() > 0 && tx != null) { 
                 if (tx.getStatus().equals(TransactionStatus.NOT_ACTIVE))
                     tx.begin();
                 if (tx.getStatus().equals(TransactionStatus.ACTIVE)) {

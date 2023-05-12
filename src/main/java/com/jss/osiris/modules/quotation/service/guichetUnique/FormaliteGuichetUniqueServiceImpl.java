@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,12 +184,14 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         newDebour.setBillingType(constantService.getBillingTypeEmolumentsDeGreffeDebour());
         newDebour.setComments(cartRate.getRate().getLabel());
 
-        CompetentAuthority competentAuthority = competentAuthorityService
+        List<CompetentAuthority> competentAuthorities = competentAuthorityService
                 .getCompetentAuthorityByInpiReference(cartRate.getRecipientCode());
 
-        if (competentAuthority == null)
-            throw new OsirisValidationException("Unable to find competent autority for INPI code "
-                    + cartRate.getRecipientCode() + ". Please fill referential with correct value");
+        CompetentAuthority competentAuthority;
+        if (competentAuthorities == null || competentAuthorities.size() > 1)
+            competentAuthority = constantService.getCompetentAuthorityInpi();
+        else
+            competentAuthority = competentAuthorities.get(0);
 
         newDebour.setCompetentAuthority(competentAuthority);
         newDebour.setDebourAmount(Float.parseFloat(cartRate.getAmount() + "") / 100f);

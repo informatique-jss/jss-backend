@@ -671,13 +671,15 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/asso/affaire/order/update")
+  @Transactional
   public ResponseEntity<AssoAffaireOrder> addOrUpdateAssoAffaireOrder(@RequestBody AssoAffaireOrder assoAffaireOrder)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
     validationHelper.validateReferential(assoAffaireOrder, true, "assoAffaireOrder");
     validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true, "Affaire");
     validationHelper.validateReferential(assoAffaireOrder.getAssignedTo(), true, "AssignedTo");
-    assoAffaireOrder.setCustomerOrder((CustomerOrder) validationHelper
-        .validateReferential(assoAffaireOrder.getCustomerOrder(), true, "CustomerOrder"));
+    validationHelper.validateReferential(assoAffaireOrder.getCustomerOrder(), true, "CustomerOrder");
+    assoAffaireOrder.setCustomerOrder(
+        (CustomerOrder) customerOrderService.getCustomerOrder(assoAffaireOrder.getCustomerOrder().getId()));
 
     if (assoAffaireOrder.getProvisions() == null)
       throw new OsirisValidationException("Provisions");

@@ -23,9 +23,9 @@ public interface CompetentAuthorityService {
 
     public List<CompetentAuthority> getCompetentAuthorityByAuthorityType(Integer competentAuthorityTypeId);
 
-    public CompetentAuthority getCompetentAuthorityByInpiReference(String inpiReference);
-
     public CompetentAuthority getCompetentAuthorityByIntercommunityVat(String intercommunityVat);
 
     public CompetentAuthority getCompetentAuthorityByAzureCustomReference(String azureCustomReference);
+
+    public List<CompetentAuthority> getCompetentAuthorityByInpiReference(String inpiReference);
 }
