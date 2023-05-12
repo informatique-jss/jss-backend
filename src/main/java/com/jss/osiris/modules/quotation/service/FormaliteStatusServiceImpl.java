@@ -34,7 +34,6 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public FormaliteStatus addOrUpdateFormaliteStatus(
             FormaliteStatus formaliteStatus) {
         return formaliteStatusRepository.save(formaliteStatus);
@@ -46,6 +45,7 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateStatusReferential() throws OsirisException {
         updateStatus(FormaliteStatus.FORMALITE_NEW, "Nouveau", "auto_awesome", true, false,
                 AggregateStatus.AGGREGATE_STATUS_NEW);

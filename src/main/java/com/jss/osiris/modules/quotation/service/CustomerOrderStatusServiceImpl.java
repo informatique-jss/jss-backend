@@ -33,7 +33,6 @@ public class CustomerOrderStatusServiceImpl implements CustomerOrderStatusServic
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public CustomerOrderStatus addOrUpdateCustomerOrderStatus(CustomerOrderStatus quotationStatus) {
         return customerOrderStatusRepository.save(quotationStatus);
     }
@@ -44,6 +43,7 @@ public class CustomerOrderStatusServiceImpl implements CustomerOrderStatusServic
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateStatusReferential() throws OsirisException {
         updateStatus(CustomerOrderStatus.OPEN, "Ouvert", "auto_awesome");
         updateStatus(CustomerOrderStatus.BEING_PROCESSED, "En cours de traitement", "groups_2");

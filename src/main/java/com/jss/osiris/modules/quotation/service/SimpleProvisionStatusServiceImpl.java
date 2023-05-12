@@ -34,7 +34,6 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public SimpleProvisionStatus addOrUpdateSimpleProvisonStatus(
             SimpleProvisionStatus simpleProvisonStatus) {
         return simpleProvisonStatusRepository.save(simpleProvisonStatus);
@@ -46,6 +45,7 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateStatusReferential() throws OsirisException {
         updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_NEW, "Nouveau", "auto_awesome", true, false,
                 AggregateStatus.AGGREGATE_STATUS_NEW);

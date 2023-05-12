@@ -34,7 +34,6 @@ public class DomiciliationStatusServiceImpl implements DomiciliationStatusServic
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public DomiciliationStatus addOrUpdateDomiciliationStatus(
             DomiciliationStatus domiciliationStatus) {
         return domiciliationStatusRepository.save(domiciliationStatus);
@@ -46,6 +45,7 @@ public class DomiciliationStatusServiceImpl implements DomiciliationStatusServic
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateStatusReferential() throws OsirisException {
         updateStatus(DomiciliationStatus.DOMICILIATION_NEW, "Nouveau", "auto_awesome", true, false,
                 AggregateStatus.AGGREGATE_STATUS_NEW);

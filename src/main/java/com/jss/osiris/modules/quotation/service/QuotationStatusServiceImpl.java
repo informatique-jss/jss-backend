@@ -33,7 +33,6 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public QuotationStatus addOrUpdateQuotationStatus(QuotationStatus quotationStatus) {
         return quotationStatusRepository.save(quotationStatus);
     }
@@ -44,6 +43,7 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateStatusReferential() throws OsirisException {
         updateStatus(QuotationStatus.OPEN, "Ouvert", "auto_awesome");
         updateStatus(QuotationStatus.TO_VERIFY, "A vérifier", "search");
