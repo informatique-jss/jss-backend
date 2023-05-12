@@ -260,7 +260,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                 DbtrAgtBean bic = new DbtrAgtBean();
                 body.setCdtrAgtBean(bic);
                 FinInstnIdBean financialInstitution = new FinInstnIdBean();
-                financialInstitution.setBic(bicJss);
+                financialInstitution.setBic(bankTransfert.getTransfertBic());
                 bic.setFinInstnIdBean(financialInstitution);
 
                 CdtrSchmeIdBean cdtrSchmeIdBean = new CdtrSchmeIdBean();
