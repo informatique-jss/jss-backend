@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN, CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY, CUSTOMER_ORDER_BEING_PROCESSED, CUSTOMER_ORDER_BEING_PROCESSED_FROM_DEPOSIT, CUSTOMER_ORDER_CREATE, CUSTOMER_ORDER_TO_BE_BILLED, INVOICE_REMINDER_PAYMENT, PROVISION_ADD_ATTACHMENT, PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED, QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY, QUOTATION_CREATE, QUOTATION_REFUSED_BY_CUSOMER, QUOTATION_SENT, QUOTATION_VALIDATED_BY_CUSOMER, TIERS_DEPOSIT_MANDATORY } from 'src/app/libs/Constants';
 import { displayInTeams } from 'src/app/libs/MailHelper';
 import { EntityType } from 'src/app/routing/search/EntityType';

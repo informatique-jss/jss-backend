@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { Confrere } from '../../../quotation/model/Confrere';
 import { JournalType } from '../../../quotation/model/JournalType';
 import { ConfrereService } from '../../../quotation/services/confrere.service';

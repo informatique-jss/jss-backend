@@ -1,9 +1,10 @@
-@import "~@angular/material/theming";
+@use "@angular/material" as mat;
 
-@include mat-core();
+@include mat.all-component-typographies();
+@include mat.core();
 
 // generated custom palette
-$primary-palette: (
+$primary-palette-template: (
   50: #ffffff,
   100: #ffffff,
   200: #f1ebe3,
@@ -35,7 +36,7 @@ $primary-palette: (
   )
 );
 
-$secondary-palette: (
+$secondary-palette-template: (
   50: #9dc2e0,
   100: #639ecd,
   200: #3c83bd,
@@ -68,7 +69,7 @@ $secondary-palette: (
 );
 
 
-$warn-palette: (
+$warn-palette-template: (
   50 : #fdf8f7,
   100 : #efbeb8,
   200 : #e5938b,
@@ -100,17 +101,33 @@ $warn-palette: (
   )
 );
 
-$primary: mat-palette($primary-palette);
-$secondary: mat-palette($secondary-palette);
-$warn: mat-palette($warn-palette);
 
-$theme: mat-light-theme($primary, $secondary, $warn);
+$primary-palette: mat.define-palette($primary-palette-template);
+$accent-palette: mat.define-palette($secondary-palette-template);
+$warn-palette: mat.define-palette($warn-palette-template);
 
-@include angular-material-theme($theme);
+$light-theme: mat.define-light-theme((color: (primary: $primary-palette,
+        accent: $accent-palette,
+        warn: $warn-palette,
+      ),
+    ));
 
-$custom-typography: mat-typography-config($font-family: Avenir Black);
-@include mat-core($custom-typography);
+$dark-theme: mat.define-dark-theme((color: (primary: $primary-palette,
+        accent: $accent-palette,
+        warn: $warn-palette,
+      ),
+    ));
 
+//$custom-typography: mat-typography-config($font-family: Avenir Black);
+//@include mat-core($custom-typography);
+
+$my-typography: mat.define-typography-config($font-family: "'Avenir Black'",
+  );
+@include mat.typography-hierarchy($my-typography);
+
+body {
+  @include mat.all-component-colors($light-theme);
+}
 
 .blue-snackbar {
   background: #1C3D58;

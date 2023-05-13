@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { displayInTeams } from 'src/app/libs/MailHelper';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeDialogComponent } from '../employee-dialog/employee-dialog.component';

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { Subject } from 'rxjs';
 import { formatEurosForSortTable, formatPercentForSortTable } from 'src/app/libs/FormatHelper';
 import { SpecialOfferFlatten } from 'src/app/modules/miscellaneous/model/SpecialOfferFlatten';

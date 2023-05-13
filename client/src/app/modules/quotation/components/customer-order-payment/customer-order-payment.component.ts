@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormBuilder } from "@angular/forms";
-import { MatDialog } from "@angular/material/dialog";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
 import { CUSTOMER_ORDER_STATUS_BILLED } from "src/app/libs/Constants";
 import { formatDateTimeForSortTable, formatEurosForSortTable } from "src/app/libs/FormatHelper";
 import { AssociatePaymentDialogComponent } from "src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component";

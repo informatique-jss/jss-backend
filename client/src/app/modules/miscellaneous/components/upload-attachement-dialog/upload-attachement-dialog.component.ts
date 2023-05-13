@@ -1,7 +1,7 @@
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { MAX_SIZE_UPLOAD_FILES } from 'src/app/libs/Constants';
 import { AppService } from 'src/app/services/app.service';
 import { AttachmentType } from '../../model/AttachmentType';

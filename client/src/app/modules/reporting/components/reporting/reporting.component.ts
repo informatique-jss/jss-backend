@@ -1,6 +1,6 @@
 import { Component, ElementRef, Inject, Input, OnInit, SimpleChanges } from '@angular/core';
 
-import 'pivottable/dist/pivot.css';
+//import 'pivottable/dist/pivot.css';
 import 'pivottable/dist/pivot.min.js';
 import { Dictionnary } from '../../../../libs/Dictionnary';
 declare var jQuery: any;

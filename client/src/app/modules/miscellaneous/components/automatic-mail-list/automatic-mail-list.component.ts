@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { Quotation } from 'src/app/modules/quotation/model/Quotation';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';

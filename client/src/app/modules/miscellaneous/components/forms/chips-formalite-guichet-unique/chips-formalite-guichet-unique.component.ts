@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from '@angular/material/legacy-autocomplete';
 import { debounceTime, filter, switchMap, tap } from 'rxjs';
 import { GUICHET_UNIQUE_BASE_URL } from 'src/app/libs/Constants';
 import { Provision } from 'src/app/modules/quotation/model/Provision';
