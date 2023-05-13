@@ -252,7 +252,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                     if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
                             .equals(constantService.getPrincipalAccountingAccountDeposit().getId()))
                         accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart,
-                                constantService.getAccountingJournalSales());
+                                constantService.getAccountingJournalPurchases());
             }
 
         // Refresh invoice
