@@ -78,6 +78,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   PAYMENT_WAY_REFERENTIAL = "Sens de paiement";
   BILLING_REGIE = "Régie";
   PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL = "Compte comptable principal";
+  CUSTOMER_ORDER_ORIGIN_REFERENTIAL = "Origine des commandes";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -139,6 +140,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.PAYMENT_WAY_REFERENTIAL);
     this.referentials.push(this.BILLING_REGIE);
     this.referentials.push(this.PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL);
+    this.referentials.push(this.CUSTOMER_ORDER_ORIGIN_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(

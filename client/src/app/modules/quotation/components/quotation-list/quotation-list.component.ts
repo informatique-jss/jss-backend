@@ -5,6 +5,7 @@ import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAc
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { AppService } from 'src/app/services/app.service';
+import { formatDateTimeForSortTable } from '../../../../libs/FormatHelper';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Employee } from '../../../profile/model/Employee';
 import { IQuotation } from '../../model/IQuotation';
@@ -12,7 +13,6 @@ import { QuotationSearch } from '../../model/QuotationSearch';
 import { QuotationSearchResult } from '../../model/QuotationSearchResult';
 import { QuotationSearchResultService } from '../../services/quotation.search.result.service';
 import { QuotationComponent } from '../quotation/quotation.component';
-import { formatDateTimeForSortTable } from '../../../../libs/FormatHelper';
 @Component({
   selector: 'quotation-list',
   templateUrl: './quotation-list.component.html',
@@ -58,6 +58,7 @@ export class QuotationListComponent implements OnInit {
       this.availableColumns = [];
       this.availableColumns.push({ id: "id", fieldName: "quotationId", label: "N° du devis" } as SortTableColumn);
       this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateForSortTable } as SortTableColumn);
+      this.availableColumns.push({ id: "origin", fieldName: "customerOrderOriginLabel", label: "Origine" } as SortTableColumn);
       this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn);
       this.availableColumns.push({ id: "quotationStatus", fieldName: "quotationStatus", label: "Statut" } as SortTableColumn);
       this.availableColumns.push({ id: "quotationDescription", fieldName: "quotationDescription", label: "Description", isShrinkColumn: true } as SortTableColumn);

@@ -679,4 +679,12 @@ export class ConstantService extends AppRestService<Constant>{
   getAccountingAccountCaisse() {
     return this.constant.accountingAccountCaisse;
   }
+
+  getCustomerOrderOriginWebSite() {
+    return this.constant.customerOrderOriginWebSite;
+  }
+
+  getCustomerOrderOriginOsiris() {
+    return this.constant.customerOrderOriginOsiris;
+  }
 }

@@ -84,8 +84,8 @@ public class QuotationValidationHelper {
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
                 boolean isOpen = false;
 
-                if (quotation.getIsCreatedFromWebSite() == null)
-                        quotation.setIsCreatedFromWebSite(false);
+                if (quotation.getCustomerOrderOrigin() == null)
+                        quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
 
                 if (quotation instanceof CustomerOrder) {
                         CustomerOrder customerOrder = (CustomerOrder) quotation;
@@ -135,7 +135,8 @@ public class QuotationValidationHelper {
                                 validationHelper.validateReferential(specialOffer, false, "specialOffer");
 
                 // If from website, grab special offer from tiers / responsable / confrere
-                if (quotation.getIsCreatedFromWebSite()
+                if (quotation.getCustomerOrderOrigin().getId()
+                                .equals(constantService.getCustomerOrderOriginWebSite().getId())
                                 && (quotation.getSpecialOffers() == null || quotation.getSpecialOffers().size() == 0)) {
                         ITiers tiers = quotationService.getCustomerOrderOfQuotation(quotation);
                         if (tiers instanceof Responsable)
@@ -232,7 +233,8 @@ public class QuotationValidationHelper {
 
                 // Do not check anything from website with no provision, a human will correct if
                 // after
-                if (isOpen && quotation.getIsCreatedFromWebSite()
+                if (isOpen && quotation.getCustomerOrderOrigin().getId()
+                                .equals(constantService.getCustomerOrderOriginWebSite().getId())
                                 && (quotation.getAssoAffaireOrders() == null
                                                 || quotation.getAssoAffaireOrders().size() == 0))
                         return;

@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.profile.model.Employee;
@@ -108,14 +109,16 @@ public class Quotation implements IQuotation {
 	@JsonIgnore // For client-side performance purpose
 	private List<CustomerOrder> customerOrders;
 
-	private Boolean isCreatedFromWebSite;
-
 	private LocalDateTime firstReminderDateTime;
 	private LocalDateTime secondReminderDateTime;
 	private LocalDateTime thirdReminderDateTime;
 
 	@Column(columnDefinition = "TEXT")
 	private String customerMailCustomMessage;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_customer_order_origin")
+	private CustomerOrderOrigin customerOrderOrigin;
 
 	public Integer getId() {
 		return id;
@@ -237,14 +240,6 @@ public class Quotation implements IQuotation {
 		this.lastStatusUpdate = lastStatusUpdate;
 	}
 
-	public Boolean getIsCreatedFromWebSite() {
-		return isCreatedFromWebSite;
-	}
-
-	public void setIsCreatedFromWebSite(Boolean isCreatedFromWebSite) {
-		this.isCreatedFromWebSite = isCreatedFromWebSite;
-	}
-
 	public LocalDateTime getFirstReminderDateTime() {
 		return firstReminderDateTime;
 	}
@@ -299,6 +294,14 @@ public class Quotation implements IQuotation {
 
 	public void setAssignedTo(Employee assignedTo) {
 		this.assignedTo = assignedTo;
+	}
+
+	public CustomerOrderOrigin getCustomerOrderOrigin() {
+		return customerOrderOrigin;
+	}
+
+	public void setCustomerOrderOrigin(CustomerOrderOrigin customerOrderOrigin) {
+		this.customerOrderOrigin = customerOrderOrigin;
 	}
 
 }

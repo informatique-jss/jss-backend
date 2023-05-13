@@ -202,6 +202,7 @@ import { SelectBodaccPublicationTypeComponent } from '../forms/select-bodacc-pub
 import { SelectBuildingDomicilationComponent } from '../forms/select-building-domicilation/select-building-domicilation.component';
 import { SelectCompetentAuthorityTypeComponent } from '../forms/select-competent-authority-type/select-competent-authority-type.component';
 import { SelectContractTypeComponent } from '../forms/select-contract-type/select-contract-type.component';
+import { SelectCustomerOrderOriginComponent } from '../forms/select-customer-order-origin/select-customer-order-origin.component';
 import { SelectCustomerOrderStatusComponent } from '../forms/select-customer-order-status/select-customer-order-status.component';
 import { SelectDayComponent } from '../forms/select-day/select-day.component';
 import { SelectDeliveryServiceComponent } from '../forms/select-delivery-service/select-delivery-service.component';
@@ -399,6 +400,7 @@ const routes: Routes = [
     SelectReportingDatasetComponent,
     ChipsPaymentTypeComponent,
     AutocompleteAzureInvoiceComponent,
+    SelectCustomerOrderOriginComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     ChipsTypeDocumentComponent,
@@ -716,6 +718,7 @@ const routes: Routes = [
     AutocompleteGuichetUniqueFormaliteComponent,
     AutocompleteInfogreffeInvoiceComponent,
     ChipsFormaliteGuichetUniqueComponent,
+    SelectCustomerOrderOriginComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
   ]

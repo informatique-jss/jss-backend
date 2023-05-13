@@ -4,14 +4,13 @@ import { formatDateForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
-import { formatEurosForSortTable } from '../../../../libs/FormatHelper';
+import { formatDateTimeForSortTable, formatEurosForSortTable } from '../../../../libs/FormatHelper';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Employee } from '../../../profile/model/Employee';
 import { EmployeeService } from '../../../profile/services/employee.service';
 import { OrderingSearch } from '../../model/OrderingSearch';
 import { OrderingSearchResult } from '../../model/OrderingSearchResult';
 import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
-import { formatDateTimeForSortTable } from '../../../../libs/FormatHelper';
 @Component({
   selector: 'ordering-list',
   templateUrl: './ordering-list.component.html',
@@ -63,6 +62,7 @@ export class OrderingListComponent implements OnInit {
       this.availableColumns = [];
       this.availableColumns.push({ id: "id", fieldName: "customerOrderId", label: "N° de la commande" } as SortTableColumn);
       this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateForSortTable } as SortTableColumn);
+      this.availableColumns.push({ id: "origin", fieldName: "customerOrderOriginLabel", label: "Origine" } as SortTableColumn);
       this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: false } as SortTableColumn);
       this.availableColumns.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut" } as SortTableColumn);
       this.availableColumns.push({ id: "customerOrderDescription", fieldName: "customerOrderDescription", label: "Description", isShrinkColumn: true } as SortTableColumn);

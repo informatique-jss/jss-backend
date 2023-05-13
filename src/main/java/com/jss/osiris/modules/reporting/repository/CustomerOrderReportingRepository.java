@@ -40,6 +40,7 @@ public interface CustomerOrderReportingRepository extends QueryCacheCrudReposito
                         " ntf.label as noticeTypeFamilyLabel, " +
                         " (select STRING_AGG(DISTINCT nt.label ,', '  ) from    asso_announcement_notice_type nta   left join notice_type nt on nt.id = nta.id_notice_type  where nta.id_announcement = a.id )  as noticeTypeLabel,   "
                         +
+                        " origin.label as customerOrderOriginLabel," +
                         " e1.firstname || ' ' || e1.lastname as provisionAssignedToLabel, " +
                         " e2.firstname || ' ' || e2.lastname as salesEmployeeLabel, " +
                         " invoice_status.label as invoiceStatusLabel, " +
@@ -54,6 +55,7 @@ public interface CustomerOrderReportingRepository extends QueryCacheCrudReposito
                         " left join employee e1 on e1.id = provision.id_employee " +
                         " join affaire on affaire.id = asso.id_affaire " +
                         " join customer_order customer_order on customer_order.id = asso.id_customer_order " +
+                        " join customer_order_origin origin on origin.id = customer_order.id_customer_order_origin" +
                         " join customer_order_status customer_order_status on customer_order_status.id = customer_order.id_customer_order_status "
                         +
                         " left join responsable respo on respo.id = customer_order.id_responsable " +
@@ -90,7 +92,7 @@ public interface CustomerOrderReportingRepository extends QueryCacheCrudReposito
                         " and customer_order.id_customer_order_status<>:customerOrderStatusAbandonnedId " +
                         " and (:tiersId=0 or tiers.id = :tiersId) " +
                         " group by " +
-                        " affaire.id , a.id," +
+                        " affaire.id ,origin.label,  a.id," +
                         " affaire.siren , " +
                         " affaire.siret , " +
                         " ca.label , " +

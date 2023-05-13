@@ -23,6 +23,7 @@ export interface OrderingSearchResult {
   domiciliationNbr: number;
   simpleProvisionNbr: number;
   lastStatusUpdate: Date;
+  customerOrderOriginLabel: string;
 }
 
 

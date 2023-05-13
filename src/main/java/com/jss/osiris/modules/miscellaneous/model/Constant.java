@@ -679,6 +679,14 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_billing_type_correspondence_fees")
 	private BillingType billingTypeCorrespondenceFees;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_customer_order_origin_website")
+	private CustomerOrderOrigin customerOrderOriginWebSite;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_customer_order_origin_osiris")
+	private CustomerOrderOrigin customerOrderOriginOsiris;
+
 	public Integer getId() {
 		return id;
 	}
@@ -1990,6 +1998,22 @@ public class Constant implements Serializable, IId {
 
 	public void setAttachmentTypeComplexAnnouncement(AttachmentType attachmentTypeComplexAnnouncement) {
 		this.attachmentTypeComplexAnnouncement = attachmentTypeComplexAnnouncement;
+	}
+
+	public CustomerOrderOrigin getCustomerOrderOriginWebSite() {
+		return customerOrderOriginWebSite;
+	}
+
+	public void setCustomerOrderOriginWebSite(CustomerOrderOrigin customerOrderOriginWebSite) {
+		this.customerOrderOriginWebSite = customerOrderOriginWebSite;
+	}
+
+	public CustomerOrderOrigin getCustomerOrderOriginOsiris() {
+		return customerOrderOriginOsiris;
+	}
+
+	public void setCustomerOrderOriginOsiris(CustomerOrderOrigin customerOrderOriginOsiris) {
+		this.customerOrderOriginOsiris = customerOrderOriginOsiris;
 	}
 
 }

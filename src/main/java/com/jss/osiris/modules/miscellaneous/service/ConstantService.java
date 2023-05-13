@@ -12,6 +12,7 @@ import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.miscellaneous.model.Constant;
 import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.DocumentType;
@@ -367,4 +368,8 @@ public interface ConstantService {
     public AccountingAccount getAccountingAccountBankJss() throws OsirisException;
 
     public AccountingAccount getAccountingAccountCaisse() throws OsirisException;
+
+    public CustomerOrderOrigin getCustomerOrderOriginWebSite() throws OsirisException;
+
+    public CustomerOrderOrigin getCustomerOrderOriginOsiris() throws OsirisException;
 }

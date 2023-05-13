@@ -50,4 +50,6 @@ public interface IQuotationReporting {
     public String getQuotationCreator();
 
     public Float getPreTaxPriceWithoutDebour();
+
+    public String getCustomerOrderOriginLabel();
 }

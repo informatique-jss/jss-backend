@@ -19,6 +19,7 @@ export interface QuotationSearchResult {
   domiciliationNbr: number;
   simpleProvisionNbr: number;
   lastStatusUpdate: Date;
+  customerOrderOriginLabel: string;
 }
 
 

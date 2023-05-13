@@ -40,5 +40,6 @@ export const Dictionnary = {
   "vatLabel": "Libellé de TVA",
   "vatCode": "Type de TVA",
   "invoiceStatusLabel": "Statut de la facture",
+  "customerOrderOriginLabel": "Origine de la commande/devis",
 };
 

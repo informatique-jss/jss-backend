@@ -25,6 +25,7 @@ import { BillingType } from "./BillingType";
 import { CompetentAuthority } from './CompetentAuthority';
 import { CompetentAuthorityType } from "./CompetentAuthorityType";
 import { Country } from "./Country";
+import { CustomerOrderOrigin } from './CustomerOrderOrigin';
 import { DeliveryService } from './DeliveryService';
 import { Department } from "./Department";
 import { DocumentType } from "./DocumentType";
@@ -197,4 +198,6 @@ export interface Constant {
   accountingAccountBankCentralPay: AccountingAccount;
   accountingAccountBankJss: AccountingAccount;
   accountingAccountCaisse: AccountingAccount;
+  customerOrderOriginWebSite: CustomerOrderOrigin;
+  customerOrderOriginOsiris: CustomerOrderOrigin;
 }

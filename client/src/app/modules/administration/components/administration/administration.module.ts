@@ -48,6 +48,7 @@ import { ReferentialCivilityComponent } from '../referentials/referential-civili
 import { ReferentialCompetentAuthorityTypeComponent } from '../referentials/referential-competent-authority-type/referential-competent-authority-type.component';
 import { ReferentialCompetitorComponent } from '../referentials/referential-competitor/referential-competitor.component';
 import { ReferentialCountryComponent } from '../referentials/referential-country/referential-country.component';
+import { ReferentialCustomerOrderOriginComponent } from '../referentials/referential-customer-order-origin/referential-customer-order-origin.component';
 import { ReferentialDeliveryServiceComponent } from '../referentials/referential-delivery-service/referential-delivery-service.component';
 import { ReferentialDepartmentComponent } from '../referentials/referential-department/referential-department.component';
 import { ReferentialDocumentTypeComponent } from '../referentials/referential-document-type/referential-document-type.component';
@@ -179,6 +180,7 @@ const routes: Routes = [
     ViewLogComponent,
     CompetentAuthorityComponent,
     ProviderComponent,
+    ReferentialCustomerOrderOriginComponent,
   ], exports: [LogComponent]
 })
 export class AdministrationModule { }

@@ -45,6 +45,7 @@ import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.miscellaneous.model.Constant;
 import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.DocumentType;
@@ -70,6 +71,7 @@ import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityTypeService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CountryService;
+import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.miscellaneous.service.DeliveryServiceService;
 import com.jss.osiris.modules.miscellaneous.service.DepartmentService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentTypeService;
@@ -233,6 +235,27 @@ public class MiscellaneousController {
 
     @Autowired
     DebourService debourService;
+
+    @Autowired
+    CustomerOrderOriginService customerOrderOriginService;
+
+    @GetMapping(inputEntryPoint + "/customer-order-origins")
+    public ResponseEntity<List<CustomerOrderOrigin>> getCustomerOrderOrigins() {
+        return new ResponseEntity<List<CustomerOrderOrigin>>(customerOrderOriginService.getCustomerOrderOrigins(),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/customer-order-origin")
+    public ResponseEntity<CustomerOrderOrigin> addOrUpdateCustomerOrderOrigin(
+            @RequestBody CustomerOrderOrigin customerOrderOrigins) throws OsirisValidationException, OsirisException {
+        if (customerOrderOrigins.getId() != null)
+            validationHelper.validateReferential(customerOrderOrigins, true, "customerOrderOrigins");
+        validationHelper.validateString(customerOrderOrigins.getCode(), true, "code");
+        validationHelper.validateString(customerOrderOrigins.getLabel(), true, "label");
+
+        return new ResponseEntity<CustomerOrderOrigin>(
+                customerOrderOriginService.addOrUpdateCustomerOrderOrigin(customerOrderOrigins), HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/notifications")
     public ResponseEntity<List<Notification>> getNotifications(@RequestParam Boolean displayFuture) {

@@ -28,6 +28,7 @@ import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.profile.model.Employee;
@@ -152,8 +153,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonIgnore // For client-side performance purpose
 	private List<AccountingRecord> accountingRecords;
 
-	private Boolean isCreatedFromWebSite;
-
 	private LocalDateTime firstReminderDateTime;
 	private LocalDateTime secondReminderDateTime;
 	private LocalDateTime thirdReminderDateTime;
@@ -165,6 +164,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@Column(columnDefinition = "TEXT")
 	private String customerMailCustomMessage;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_customer_order_origin")
+	private CustomerOrderOrigin customerOrderOrigin;
 
 	public Integer getId() {
 		return id;
@@ -318,14 +321,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.accountingRecords = accountingRecords;
 	}
 
-	public Boolean getIsCreatedFromWebSite() {
-		return isCreatedFromWebSite;
-	}
-
-	public void setIsCreatedFromWebSite(Boolean isCreatedFromWebSite) {
-		this.isCreatedFromWebSite = isCreatedFromWebSite;
-	}
-
 	public LocalDateTime getFirstReminderDateTime() {
 		return firstReminderDateTime;
 	}
@@ -372,6 +367,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setAssignedTo(Employee assignedTo) {
 		this.assignedTo = assignedTo;
+	}
+
+	public CustomerOrderOrigin getCustomerOrderOrigin() {
+		return customerOrderOrigin;
+	}
+
+	public void setCustomerOrderOrigin(CustomerOrderOrigin customerOrderOrigin) {
+		this.customerOrderOrigin = customerOrderOrigin;
 	}
 
 }
