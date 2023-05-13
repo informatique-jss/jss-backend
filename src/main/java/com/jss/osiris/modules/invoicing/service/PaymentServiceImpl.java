@@ -307,7 +307,7 @@ public class PaymentServiceImpl implements PaymentService {
             if (generateWaitingAccountAccountingRecords.getValue())
                 accountingRecordService.generateAccountingRecordsForWaitingInboundPayment(payment);
 
-        } else {
+        } else if (payment.getId().equals(1)) { // TODO remove
             // Get corresponding entities
             List<IndexEntity> correspondingEntities = getCorrespondingEntityForOutboundPayment(payment);
             List<Invoice> correspondingInvoices = new ArrayList<Invoice>();

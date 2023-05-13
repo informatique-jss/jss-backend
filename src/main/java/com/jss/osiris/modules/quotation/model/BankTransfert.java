@@ -54,15 +54,15 @@ public class BankTransfert implements Serializable, IId {
 			"azureInvoice", "azureReceipt",
 			"reverseCreditNote" }, allowSetters = true)
 	List<Invoice> invoices;
-
+ 
 	private Boolean isCancelled;
-	private Boolean isSelectedForExport;
+	private Boolean isSelectedForExport; 
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "deposits" }, allowSetters = true)
-	private CustomerOrder customerOrder;
-
+	private CustomerOrder customerOrder; 
+  
 	public Integer getId() {
 		return id;
 	}
@@ -134,7 +134,7 @@ public class BankTransfert implements Serializable, IId {
 	public void setInvoices(List<Invoice> invoices) {
 		this.invoices = invoices;
 	}
-
+ 
 	public Boolean getIsCancelled() {
 		return isCancelled;
 	}
@@ -149,8 +149,7 @@ public class BankTransfert implements Serializable, IId {
 
 	public void setIsSelectedForExport(Boolean isSelectedForExport) {
 		this.isSelectedForExport = isSelectedForExport;
-	}
-
+	} 
 	public CustomerOrder getCustomerOrder() {
 		return customerOrder;
 	}
@@ -158,5 +157,5 @@ public class BankTransfert implements Serializable, IId {
 	public void setCustomerOrder(CustomerOrder customerOrder) {
 		this.customerOrder = customerOrder;
 	}
-
+ 
 }

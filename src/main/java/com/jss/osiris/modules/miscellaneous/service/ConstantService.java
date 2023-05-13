@@ -131,9 +131,9 @@ public interface ConstantService {
     public BillingType getBillingTypeBaloPackage() throws OsirisException;
 
     public BillingType getBillingTypeBaloNormalization() throws OsirisException;
-
+ 
     public BillingType getBillingTypeBaloPublicationFlag() throws OsirisException;
-
+ 
     public BillingType getBillingTypePublicationPaper() throws OsirisException;
 
     public BillingType getBillingTypePublicationReceipt() throws OsirisException;
