@@ -36,9 +36,6 @@ dependencies {
     implementation 'com.hazelcast:hazelcast-all:4.2.7'
     implementation 'com.hazelcast:hazelcast-hibernate53:5.0.0'
 
-
-
-    
     // Database
     implementation 'org.hibernate:hibernate-c3p0:5.6.9.Final'
 	implementation 'org.postgresql:postgresql:42.3.5' 
@@ -49,6 +46,7 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'commons-validator:commons-validator:1.7'
     implementation 'org.apache.commons:commons-text:1.10.0'
+    implementation 'fr.marcwrobel:jbanking:4.1.0'
     
     // PDF, XML, Office & HTML generation
     implementation 'com.itextpdf:itextpdf:5.5.13.3'
@@ -66,10 +64,15 @@ dependencies {
     implementation 'com.google.zxing:core:3.5.1'
     implementation 'com.google.zxing:javase:3.5.1'
 
+    // Azure libs
+    implementation 'com.azure:azure-ai-formrecognizer:4.0.6'
+    implementation 'com.azure:azure-identity:1.8.3'
+
+
 }
   
 group = 'com.jss.osiris'
-version = '10.0-beta1'
+version = '11.0'
 description = 'Outil Sympa, Interactif, Révolutionnairement Intuitif et Simple'
 sourceCompatibility = '17'
 targetCompatibility = '17'

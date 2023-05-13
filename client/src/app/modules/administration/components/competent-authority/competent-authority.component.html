@@ -23,9 +23,9 @@
   </div>
 
   <div class="mat-elevation-z2 form-div" *ngIf="selectedcompetentAuthority ">
-    <mat-tab-group animationDuration="0ms">
-      <mat-tab label="Fiche de l'autorité compétente">
-        <form [formGroup]="entityForm2">
+    <form [formGroup]="entityForm2">
+      <mat-tab-group animationDuration="0ms">
+        <mat-tab label="Fiche de l'autorité compétente">
           <div class="full-width">
             <fieldset [disabled]="editMode==false" class="fieldset-no-border">
               <table class="full-width">
@@ -34,8 +34,6 @@
                     <generic-input [(model)]="selectedcompetentAuthority.id" label="Identifiant technique"
                       [form]="entityForm2" propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
                   </td>
-                </tr>
-                <tr>
                   <td>
                     <generic-input [(model)]="selectedcompetentAuthority.code" label="Codification" [maxLength]="20"
                       [form]="entityForm2" propertyName="code" [isMandatory]="true"
@@ -53,6 +51,18 @@
                       [maxLength]="200" [form]="entityForm2" propertyName="label" [isMandatory]="true"
                       [isDisabled]="!editMode"></generic-input>
                   </td>
+                  <td>
+                    <generic-input [(model)]="selectedcompetentAuthority.owncloudFolderName"
+                      label="Nom du dossier Owncloud" [form]="entityForm2" propertyName="owncloudFolderName"
+                      [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="250"></generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedcompetentAuthority.azureCustomReference"
+                      label="Référence de recherche Azure" [maxLength]="250" [form]="entityForm2"
+                      propertyName="azureCustomReference" [isMandatory]="false"
+                      hint="A utiliser lorsque la TVA intercommunautaire n'est pas présente sur les factures"
+                      [isDisabled]="!editMode"></generic-input>
+                  </td>
                 </tr>
               </table>
               <table class="full-width">
@@ -61,26 +71,6 @@
                     <select-competent-authority-type [(model)]="selectedcompetentAuthority.competentAuthorityType"
                       label="Type d'autorité compétente" [form]="entityForm2" propertyName="competentAuthorityType"
                       [isMandatory]="true" [isDisabled]="!editMode"></select-competent-authority-type>
-                  </td>
-                </tr>
-              </table>
-              <table class="full-width">
-                <tr>
-                  <td>
-                    <select-regions [(model)]="selectedcompetentAuthority.regions" label="Régions" [form]="entityForm2"
-                      propertyName="regions" [isMandatory]="false" [isDisabled]="!editMode"
-                      [conditionnalRequired]="!selectedcompetentAuthority.departments && !selectedcompetentAuthority.cities"></select-regions>
-                  </td>
-                  <td>
-                    <select-departments [(model)]="selectedcompetentAuthority.departments" label="Départements"
-                      [form]="entityForm2"
-                      [conditionnalRequired]="!selectedcompetentAuthority.regions && !selectedcompetentAuthority.cities"
-                      propertyName="departments" [isMandatory]="false" [isDisabled]="!editMode"></select-departments>
-                  </td>
-                  <td>
-                    <chips-city [(model)]="selectedcompetentAuthority.cities" [form]="entityForm2" propertyName="cities"
-                      [isMandatory]="false" [isDisabled]="!editMode" label="Villes"
-                      [conditionnalRequired]="!selectedcompetentAuthority.regions && !selectedcompetentAuthority.departments"></chips-city>
                   </td>
                 </tr>
               </table>
@@ -107,9 +97,11 @@
                       [isMandatory]="false" [isDisabled]="!editMode"></select-payment-types>
                   </td>
                   <td>
-                    <generic-input [(model)]="selectedcompetentAuthority.owncloudFolderName"
-                      label="Nom du dossier Owncloud" [form]="entityForm2" propertyName="owncloudFolderName"
-                      [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="250"></generic-input>
+                    <generic-input [(model)]="selectedcompetentAuthority.intercommunityVat" [isDisabled]="!editMode"
+                      label="TVA intercommunaitaire" [form]="entityForm2" propertyName="intercommunityVat"
+                      [isMandatory]="false" [conditionnalRequired]=""
+                      [customValidators]="[checkVAT('intercommunityVat')]">
+                    </generic-input>
                   </td>
                 </tr>
               </table>
@@ -220,27 +212,76 @@
               </table>
             </fieldset>
           </div>
-        </form>
-      </mat-tab>
-      <mat-tab label="Documents" *ngIf="selectedcompetentAuthority.id">
-        <attachments [entity]="selectedcompetentAuthority" [editMode]="editMode"
-          [entityType]="COMPETENT_AUTHORITY_ENTITY_TYPE.entityType">
-        </attachments>
-      </mat-tab>
-    </mat-tab-group>
+          <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true"
+            (click)="saveCompetentAuthority()">
+            <mat-icon>save</mat-icon>
+          </button>
+          <button matTooltip="Modifier le confrère" mat-fab color="accent" class="second-fab-button"
+            *ngIf="editMode==false && selectedcompetentAuthority &&  selectedcompetentAuthority.id"
+            (click)="editCompetentAuthority()">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button matTooltip="Ajouter un confrère" mat-fab color="accent" class="fab-button" *ngIf="editMode==false"
+            (click)="addCompetentAuthority()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </mat-tab>
+        <mat-tab label="Périmètre">
+          <div class="full-width">
+            <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <select-regions [(model)]="selectedcompetentAuthority.regions" label="Régions" [form]="entityForm2"
+                      propertyName="regions" [isMandatory]="false" [isDisabled]="!editMode"
+                      [conditionnalRequired]="!selectedcompetentAuthority.departments && !selectedcompetentAuthority.cities"></select-regions>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <select-departments [(model)]="selectedcompetentAuthority.departments" label="Départements"
+                      [form]="entityForm2"
+                      [conditionnalRequired]="!selectedcompetentAuthority.regions && !selectedcompetentAuthority.cities"
+                      propertyName="departments" [isMandatory]="false" [isDisabled]="!editMode"></select-departments>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <chips-city [(model)]="selectedcompetentAuthority.cities" [form]="entityForm2" propertyName="cities"
+                      [isMandatory]="false" [isDisabled]="!editMode" label="Villes"
+                      [conditionnalRequired]="!selectedcompetentAuthority.regions && !selectedcompetentAuthority.departments"></chips-city>
+                  </td>
+                </tr>
+              </table>
+            </fieldset>
+          </div>
+          <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true"
+            (click)="saveCompetentAuthority()">
+            <mat-icon>save</mat-icon>
+          </button>
+          <button matTooltip="Modifier le confrère" mat-fab color="accent" class="second-fab-button"
+            *ngIf="editMode==false && selectedcompetentAuthority &&  selectedcompetentAuthority.id"
+            (click)="editCompetentAuthority()">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button matTooltip="Ajouter un confrère" mat-fab color="accent" class="fab-button" *ngIf="editMode==false"
+            (click)="addCompetentAuthority()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </mat-tab>
+        <!--mat-tab label="Pointage des relevés" *ngIf="selectedcompetentAuthority.id">
+          <receipt-reconciliation [provider]="selectedcompetentAuthority"></receipt-reconciliation>
+        </mat-tab-->
+        <mat-tab label=" Documents" *ngIf="selectedcompetentAuthority.id">
+          <attachments [entity]="selectedcompetentAuthority" [editMode]="editMode"
+            [entityType]="COMPETENT_AUTHORITY_ENTITY_TYPE.entityType">
+          </attachments>
+        </mat-tab>
+      </mat-tab-group>
+    </form>
   </div>
-
-  <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true"
-    (click)="saveCompetentAuthority()">
-    <mat-icon>save</mat-icon>
-  </button>
-  <button matTooltip="Modifier le confrère" mat-fab color="accent" class="second-fab-button"
-    *ngIf="editMode==false && selectedcompetentAuthority &&  selectedcompetentAuthority.id"
-    (click)="editCompetentAuthority()">
-    <mat-icon>edit</mat-icon>
-  </button>
-  <button matTooltip="Ajouter un confrère" mat-fab color="accent" class="fab-button" *ngIf="editMode==false"
-    (click)="addCompetentAuthority()">
-    <mat-icon>add</mat-icon>
-  </button>
 </div>

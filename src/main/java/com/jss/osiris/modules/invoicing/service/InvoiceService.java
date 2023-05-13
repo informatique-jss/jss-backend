@@ -9,6 +9,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -18,6 +19,12 @@ public interface InvoiceService {
         public List<Invoice> getAllInvoices();
 
         public Invoice getInvoice(Integer id);
+
+        public List<Invoice> findByCompetentAuthorityAndManualDocumentNumber(CompetentAuthority competentAuthority,
+                        String manualDocumentNumber);
+
+        public List<Invoice> findByCompetentAuthorityAndManualDocumentNumberContains(
+                        CompetentAuthority competentAuthority, String manualDocumentNumber);
 
         public Invoice addOrUpdateInvoice(Invoice invoice);
 

@@ -29,6 +29,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
@@ -180,6 +181,9 @@ public class QuotationController {
 
   @Autowired
   CityService cityService;
+
+  @Autowired
+  GeneratePdfDelegate generatePdfDelegate;
 
   @Autowired
   CountryService countryService;
@@ -950,7 +954,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/confrere")
   public ResponseEntity<Confrere> addOrUpdateConfrere(
-      @RequestBody Confrere confrere) throws OsirisValidationException, OsirisException {
+      @RequestBody Confrere confrere) throws OsirisValidationException, OsirisException, OsirisClientMessageException {
     if (confrere.getId() != null)
       validationHelper.validateReferential(confrere, true, "confrere");
     validationHelper.validateString(confrere.getCode(), true, 20, "code");
@@ -979,8 +983,8 @@ public class QuotationController {
     validationHelper.validateReferential(confrere.getCountry(), false, "Country");
     validationHelper.validateReferential(confrere.getVatCollectionType(), true, "VatCollectionType");
     validationHelper.validateReferential(confrere.getPaymentType(), true, "PaymentType");
-    validationHelper.validateString(confrere.getPaymentIban(), false, 40, "PaymentIBAN");
-    validationHelper.validateString(confrere.getPaymentBic(), false, 40, "PaymentBic");
+    validationHelper.validateIban(confrere.getPaymentIban(), false, "PaymentIBAN");
+    validationHelper.validateBic(confrere.getPaymentBic(), false, "PaymentBic");
     validationHelper.validateString(confrere.getIntercommunityVat(), false, 20, "intercommunityVat");
 
     if (confrere.getPaymentType() != null
@@ -1013,7 +1017,8 @@ public class QuotationController {
         validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
         validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
         validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
-        validationHelper.validateString(document.getRefundIBAN(), false, 40, "RefundIBAN");
+        validationHelper.validateIban(document.getRefundIBAN(), false, "RefundIBAN");
+        validationHelper.validateBic(document.getRefundBic(), false, "RefundBic");
         validationHelper.validateReferential(document.getBillingClosureType(), false, "BillingClosureType");
         validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
             "BillingClosureRecipientType");
@@ -1522,7 +1527,7 @@ public class QuotationController {
     if (announcement == null)
       throw new OsirisValidationException("Annonce non trouvée");
 
-    File file = mailHelper.generatePublicationReceiptPdf(announcement, true, provision);
+    File file = generatePdfDelegate.generatePublicationForAnnouncement(announcement, provision, false, true, false);
 
     if (file != null) {
       try {
@@ -1578,7 +1583,7 @@ public class QuotationController {
     if (announcement == null)
       throw new OsirisValidationException("Annonce non trouvée");
 
-    File file = mailHelper.generatePublicationReceiptPdf(announcement, false, provision);
+    File file = generatePdfDelegate.generatePublicationForAnnouncement(announcement, provision, false, false, true);
 
     if (file != null) {
       try {
@@ -1637,7 +1642,7 @@ public class QuotationController {
     if (provision == null)
       throw new OsirisValidationException("Provision non trouvée");
 
-    File file = mailHelper.generatePublicationFlagPdf(announcement, provision);
+    File file = generatePdfDelegate.generatePublicationForAnnouncement(announcement, provision, true, false, false);
 
     if (file != null) {
       try {

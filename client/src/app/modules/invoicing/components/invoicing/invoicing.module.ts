@@ -3,7 +3,9 @@ import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from "@angular/material/dialog";
+import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
@@ -21,6 +23,8 @@ import { AmountDialogComponent } from "../amount-dialog/amount-dialog.component"
 import { AppointListComponent } from "../appoint-list/appoint-list.component";
 import { AssociateDepositDialogComponent } from '../associate-deposit-dialog/associate-deposit-dialog.component';
 import { AssociatePaymentDialogComponent } from "../associate-payment-dialog/associate-payment-dialog.component";
+import { AzureInvoiceEditComponent } from "../azure-invoice-edit/azure-invoice-edit.component";
+import { AzureInvoiceListComponent } from "../azure-invoice-list/azure-invoice-list.component";
 import { BankTransfertListComponent } from '../bank-transfert-list/bank-transfert-list.component';
 import { DeboursAmountInvoicedDialogComponent } from '../debours-amount-invoiced-dialog/debours-amount-invoiced-dialog.component';
 import { DeboursAmountTaxableDialogComponent } from "../debours-amount-taxable-dialog/debours-amount-taxable-dialog.component";
@@ -29,6 +33,8 @@ import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.comp
 import { InvoiceListComponent } from "../invoice-list/invoice-list.component";
 import { InvoicePaymentTableComponent } from "../invoice-payment-table/invoice-payment-table.component";
 import { InvoicePaymentComponent } from "../invoice-payment/invoice-payment.component";
+import { ReceiptReconciliationEditDialogComponent } from "../receipt-reconciliation-edit-dialog/receipt-reconciliation-edit-dialog.component";
+import { ReceiptReconciliationComponent } from "../receipt-reconciliation/receipt-reconciliation.component";
 import { RefundListComponent } from '../refund-list/refund-list.component';
 import { InvoiceComponent } from "./invoicing.component";
 
@@ -39,6 +45,7 @@ const routes: Routes = [
   { path: 'invoicing/credit-note/:idInvoice', component: AddInvoiceComponent },
   { path: 'invoicing/payment/add', component: AddPaymentComponent },
   { path: 'invoicing/add/debour/:idCompetentAuhority/:idCustomerOrder', component: AddInvoiceComponent },
+  { path: 'invoicing/azure/edit/:idAzureInvoice', component: AzureInvoiceEditComponent },
 ];
 
 @NgModule({
@@ -54,8 +61,10 @@ const routes: Routes = [
     MatDialogModule,
     MatIconModule,
     MatExpansionModule,
+    MatCardModule,
     MatTooltipModule,
     MatStepperModule,
+    MatDividerModule,
     MiscellaneousModule,
     QuotationModule,
     MatRadioModule,
@@ -76,10 +85,15 @@ const routes: Routes = [
     AddPaymentComponent,
     InfogreffeInvoiceListComponent,
     AppointListComponent,
+    AzureInvoiceListComponent,
+    AzureInvoiceEditComponent,
+    ReceiptReconciliationComponent,
+    ReceiptReconciliationEditDialogComponent,
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,
     RefundListComponent,
+    ReceiptReconciliationComponent,
   ]
 })
 export class InvoicingModule { }

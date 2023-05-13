@@ -448,7 +448,7 @@ public class MiscellaneousController {
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/regie")
     public ResponseEntity<Regie> addOrUpdateRegie(
-            @RequestBody Regie regie) throws OsirisValidationException, OsirisException {
+            @RequestBody Regie regie) throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (regie.getId() != null)
             validationHelper.validateReferential(regie, true, "regie");
         validationHelper.validateString(regie.getCode(), true, "Code");
@@ -458,8 +458,8 @@ public class MiscellaneousController {
         validationHelper.validateString(regie.getPostalCode(), false, 10, "PostalCode");
         validationHelper.validateString(regie.getCedexComplement(), false, 20, "CedexComplement");
         validationHelper.validateString(regie.getAddress(), true, 100, "Address");
-        validationHelper.validateString(regie.getIban(), true, 40, "Iban");
-        validationHelper.validateString(regie.getBic(), true, 40, "BIC");
+        validationHelper.validateIban(regie.getIban(), true, "Iban");
+        validationHelper.validateBic(regie.getBic(), true, "BIC");
 
         return new ResponseEntity<Regie>(regieService.addOrUpdateRegie(regie), HttpStatus.OK);
     }
@@ -472,12 +472,13 @@ public class MiscellaneousController {
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/provider")
     public ResponseEntity<Provider> addOrUpdateProvider(
-            @RequestBody Provider provider) throws OsirisValidationException, OsirisException {
+            @RequestBody Provider provider)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (provider.getId() != null)
             validationHelper.validateReferential(provider, true, "provider");
         validationHelper.validateString(provider.getLabel(), true, "Label");
-        validationHelper.validateString(provider.getIban(), false, 40, "Iban");
-        validationHelper.validateString(provider.getBic(), false, 40, "Bic");
+        validationHelper.validateIban(provider.getIban(), false, "Iban");
+        validationHelper.validateBic(provider.getBic(), false, "Bic");
         validationHelper.validateString(provider.getJssReference(), false, 20, "JssReference");
         validationHelper.validateReferential(provider.getVatCollectionType(), true, "VatCollectionType");
         validationHelper.validateReferential(provider.getPaymentType(), false, "PaymentType");
@@ -595,6 +596,16 @@ public class MiscellaneousController {
             @RequestParam String city, @RequestParam(required = false) String postalCode) {
         return new ResponseEntity<List<City>>(cityService.getCitiesByCountry(countryId, city, postalCode),
                 HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/cities/search/competent-authority")
+    public ResponseEntity<List<City>> getCitiesForCompetentAuthority(@RequestParam Integer competentAuthorityId)
+            throws OsirisValidationException {
+        CompetentAuthority competentAuthority = competentAuthorityService.getCompetentAuthority(competentAuthorityId);
+        if (competentAuthority == null)
+            throw new OsirisValidationException("competentAuthorityId");
+
+        return new ResponseEntity<List<City>>(competentAuthority.getCities(), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/billing-types")
@@ -824,7 +835,8 @@ public class MiscellaneousController {
 
     @PostMapping(inputEntryPoint + "/competent-authority")
     public ResponseEntity<CompetentAuthority> addOrUpdateCompetentAuthority(
-            @RequestBody CompetentAuthority competentAuthority) throws OsirisValidationException, OsirisException {
+            @RequestBody CompetentAuthority competentAuthority)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (competentAuthority.getId() != null)
             validationHelper.validateReferential(competentAuthority, true, "competentAuthorities");
         validationHelper.validateString(competentAuthority.getCode(), true, 20, "code");
@@ -850,10 +862,11 @@ public class MiscellaneousController {
             for (Department department : competentAuthority.getDepartments())
                 validationHelper.validateReferential(department, false, "department");
 
-        validationHelper.validateString(competentAuthority.getIban(), false, 40,
-                "Iban");
-        validationHelper.validateString(competentAuthority.getBic(), false, 40,
-                "Bic");
+        validationHelper.validateIban(competentAuthority.getIban(), false, "Iban");
+        validationHelper.validateBic(competentAuthority.getBic(), false, "Bic");
+        validationHelper.validateString(competentAuthority.getIntercommunityVat(), false, 20, "IntercommunityVat");
+        validationHelper.validateString(competentAuthority.getAzureCustomReference(), false, 250,
+                "azureCustomReference");
         validationHelper.validateString(competentAuthority.getContact(), false, 40, "Contact");
         validationHelper.validateString(competentAuthority.getMailRecipient(), false, 60, "MailRecipient");
         validationHelper.validateString(competentAuthority.getAddress(), false, 200, "Address");

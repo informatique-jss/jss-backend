@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { Provider } from 'src/app/modules/miscellaneous/model/Provider';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
 import { ProviderService } from 'src/app/modules/miscellaneous/services/provider.service';
+import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { PROVIDER_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 
@@ -32,6 +34,7 @@ export class ProviderComponent implements OnInit {
   selectedProviderId: number | undefined;
   displayedColumns: SortTableColumn[] = [];
   editMode: boolean = false;
+  invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
 
   saveObservableSubscription: Subscription = new Subscription;
   PROVIDER_ENTITY_TYPE = PROVIDER_ENTITY_TYPE;
@@ -64,7 +67,7 @@ export class ProviderComponent implements OnInit {
       if (this.selectedProviderId && this.providers)
         for (let provider of this.providers)
           if (provider.id == this.selectedProviderId)
-            this.selectedProvider = provider;
+            this.selectProvider(provider);
     });
 
   }
@@ -80,6 +83,9 @@ export class ProviderComponent implements OnInit {
     this.selectedProvider = element;
     this.selectedProviderId = element.id;
     this.appService.changeHeaderTitle(element.label);
+    this.invoiceSearch.customerOrders = [];
+    setTimeout(() =>
+      this.invoiceSearch.customerOrders = [({ id: this.selectedProvider!.id } as any) as ITiers], 0);
   }
 
   applyFilter(filterValue: any) {

@@ -10,19 +10,18 @@ export interface QuotationReporting {
   provisionFamilyTypeLabel: string;
   customerOrderLabel: string;
   tiersLabel: string;
-  preTaxPrice: number;
-  preTaxPriceWithoutDebour: number;
-  taxedPrice: number;
   provisionStatus: string;
   provisionAssignedToLabel: string;
   publicationDateMonth: string;
   salesEmployeeLabel: string;
-  customerOrderStatusLabel: string;
-  customerOrderCreatedDateMonth: string;
+  quotationStatusLabel: string;
+  quotationCreatedDateMonth: string;
+  quotationCreatedDateDay: string;
   characterNumber: number;
-  invoiceDateMonth: string;
   publicationDateWeek: string;
   confrereAnnouncementLabel: string;
   noticeTypeFamilyLabel: string;
   noticeTypeLabel: string;
+  quotationCreator: string;
+  preTaxPriceWithoutDebour: number;
 }

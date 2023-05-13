@@ -15,14 +15,6 @@
             propertyName="label" [isMandatory]="false" [isDisabled]="false"></generic-input>
         </td>
         <td>
-          <generic-toggle [(model)]="refundSearch.isHideMatchedRefunds" label="Masquer les remboursements rapprochés"
-            [form]="refundForm" propertyName="isHideMatchedPayments"></generic-toggle>
-        </td>
-        <td>
-          <generic-toggle [(model)]="refundSearch.isHideExportedRefunds" label="Masquer les paiements exportés"
-            [form]="refundForm" propertyName="isHideExportedRefunds"></generic-toggle>
-        </td>
-        <td>
           <generic-date-range-picker [(modelStart)]="refundSearch.startDate" [(modelEnd)]="refundSearch.endDate"
             label="Plage de recherche" [form]="refundForm" propertyNameStart="startDate" propertyNameEnd="endDate">
           </generic-date-range-picker>
@@ -31,6 +23,16 @@
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchRefunds()" class="add-button">
             <mat-icon>search</mat-icon>
           </button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <generic-toggle [(model)]="refundSearch.isHideMatchedRefunds" label="Masquer les remboursements rapprochés"
+            [form]="refundForm" propertyName="isHideMatchedPayments"></generic-toggle>
+        </td>
+        <td>
+          <generic-toggle [(model)]="refundSearch.isHideExportedRefunds" label="Masquer les paiements exportés"
+            [form]="refundForm" propertyName="isHideExportedRefunds"></generic-toggle>
         </td>
       </tr>
     </table>

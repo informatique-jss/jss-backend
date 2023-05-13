@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { REPORTING_DATASET_QUOTATION } from 'src/app/libs/Constants';
+import { REPORTING_DATASET_CUSTOMER_ORDER, REPORTING_DATASET_QUOTATION } from 'src/app/libs/Constants';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { REPORTING_DATASET_VAT } from '../../../../../libs/Constants';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -21,8 +21,9 @@ export class SelectReportingDatasetComponent extends GenericSelectComponent<stri
 
   initTypes(): void {
     this.types = [];
-    this.types.push(REPORTING_DATASET_QUOTATION);
+    this.types.push(REPORTING_DATASET_CUSTOMER_ORDER);
     this.types.push(REPORTING_DATASET_VAT);
+    this.types.push(REPORTING_DATASET_QUOTATION);
     this.types = this.types.sort((a, b) => a.localeCompare(b));
   }
 

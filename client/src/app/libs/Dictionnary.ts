@@ -21,8 +21,14 @@ export const Dictionnary = {
   "publicationDateMonth": "Mois de publication",
   "salesEmployeeLabel": "Commercial",
   "customerOrderStatusLabel": "Statut de la commande",
+  "quotationStatusLabel": "Statut du devis",
   "customerOrderCreatedDateMonth": "Mois de la commande",
+  "quotationCreatedDateMonth": "Mois du devis",
+  "quotationCreatedDateDay": "Jour du devis",
   "invoiceDateMonth": "Mois de la facture",
+  "invoiceDateDay": "Jour de la facture",
+  "invoiceCreator": "Créateur de la facture",
+  "quotationCreator": "Créateur du devis",
   "characterNumber": "Nombre de caractères",
   "publicationDateWeek": "Semaine de publication",
   "confrereAnnouncementLabel": "Confrère de l'annonce",
@@ -33,5 +39,6 @@ export const Dictionnary = {
   "turnoverAmount": "Montant du CA",
   "vatLabel": "Libellé de TVA",
   "vatCode": "Type de TVA",
+  "invoiceStatusLabel": "Statut de la facture",
 };
 

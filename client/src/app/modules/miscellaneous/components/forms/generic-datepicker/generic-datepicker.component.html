@@ -4,4 +4,6 @@
     autocomplete="do-not-autocomplete" (dateChange)="dateChange($event.value)">
   <mat-datepicker-toggle matSuffix [for]="datetimePicker"></mat-datepicker-toggle>
   <mat-datepicker #datetimePicker></mat-datepicker>
+  <mat-hint *ngIf="hint && hint.length>0">
+    {{hint}}</mat-hint>
 </mat-form-field>

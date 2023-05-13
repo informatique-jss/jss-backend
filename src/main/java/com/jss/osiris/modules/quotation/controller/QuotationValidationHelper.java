@@ -288,7 +288,8 @@ public class QuotationValidationHelper {
                                 validationHelper.validateReferential(document.getPaymentDeadlineType(), false,
                                                 "PaymentDeadlineType");
                                 validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
-                                validationHelper.validateString(document.getRefundIBAN(), false, 40, "RefundIBAN");
+                                validationHelper.validateIban(document.getRefundIBAN(), false, "RefundIBAN");
+                                validationHelper.validateBic(document.getRefundBic(), false, "RefundBic");
                                 validationHelper.validateReferential(document.getBillingClosureType(), false,
                                                 "BillingClosureType");
                                 validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,

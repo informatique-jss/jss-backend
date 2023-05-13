@@ -20,6 +20,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { EditorModule } from '@tinymce/tinymce-angular';
+import { InvoicingModule } from 'src/app/modules/invoicing/components/invoicing/invoicing.module';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AccountingModule } from '../../../accounting/components/accounting/accounting.module';
 import { QuotationModule } from '../../../quotation/components/quotation/quotation.module';
@@ -85,6 +86,7 @@ import { AdministrationComponent } from './administration.component';
 const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
   { path: 'administration/competent/authority', component: CompetentAuthorityComponent },
+  { path: 'administration/competent/authority/:id', component: CompetentAuthorityComponent },
   { path: 'administration/provider', component: ProviderComponent },
   { path: 'administration/provider/:id', component: ProviderComponent },
   { path: 'administration/log/:id', component: ViewLogComponent },
@@ -118,6 +120,7 @@ const routes: Routes = [
     TiersModule,
     QuotationModule,
     AccountingModule,
+    InvoicingModule,
   ],
   declarations: [AdministrationComponent,
     ReferentialActTypeComponent,

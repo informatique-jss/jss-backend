@@ -1,6 +1,6 @@
 declare var require: any
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
@@ -30,7 +30,6 @@ import { CharacterPriceService } from '../../services/character.price.service';
 import { ConfrereService } from '../../services/confrere.service';
 import { JournalTypeService } from '../../services/journal.type.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
-import { ImportHtmlAnnouncementDialogComponent } from '../import-html-announcement-dialog/import-html-announcement-dialog.component';
 
 @Component({
   selector: 'announcement',
@@ -61,6 +60,7 @@ export class AnnouncementComponent implements OnInit {
   confrereJssSpel: Confrere = this.constantService.getConfrereJssSpel();
   attachmentTypePublicationReceipt: AttachmentType = this.constantService.getAttachmentTypePublicationReceipt();
   attachmentTypePublicationFlag: AttachmentType = this.constantService.getAttachmentTypePublicationFlag();
+  attachmentTypeComplexAnnouncement: AttachmentType = this.constantService.getAttachmentTypeComplexAnnouncement();
 
   characterPrice: CharacterPrice = {} as CharacterPrice;
 
@@ -127,6 +127,8 @@ export class AnnouncementComponent implements OnInit {
         this.announcement.isHeader = false;
       if (!this.announcement.isHeaderFree)
         this.announcement.isHeaderFree = false;
+      if (!this.announcement.isComplexAnnouncement)
+        this.announcement.isComplexAnnouncement = false;
       if (!this.announcement.isProofReadingDocument)
         this.announcement.isProofReadingDocument = false;
       if (this.announcement.publicationDate)
@@ -147,7 +149,7 @@ export class AnnouncementComponent implements OnInit {
   announcementForm = this.formBuilder.group({
     noticeTypes: [''],
     noticeTemplates: [''],
-    notice: ['', Validators.required],
+    notice: [''],
     noticeHeader: [''],
     confrere: [''],
     journalType: [''],
@@ -155,7 +157,7 @@ export class AnnouncementComponent implements OnInit {
 
   getFormStatus(): boolean {
     this.announcementForm.markAllAsTouched();
-    if (this.announcement && (this.announcement.notice == null || this.announcement.notice == undefined || this.announcement.notice.length == 0) && !this.isStatusOpen && this.instanceOfCustomerOrder) {
+    if (this.announcement && !this.announcement.isComplexAnnouncement && (this.announcement.notice == null || this.announcement.notice == undefined || this.announcement.notice.length == 0) && !this.isStatusOpen && this.instanceOfCustomerOrder) {
       this.appService.displaySnackBar("Le texte de l'annonce est obligatoire", true, 15);
       return false;
     }
@@ -208,7 +210,7 @@ export class AnnouncementComponent implements OnInit {
     if (this.announcement.notice)
       this.announcement.notice = this.announcement.notice.replace(/<img[^>]*>/g, "");
     if (this.announcement.noticeHeader)
-      this.announcement.noticeHeader = this.announcement.notice.replace(/<img[^>]*>/g, "");
+      this.announcement.noticeHeader = this.announcement.noticeHeader.replace(/<img[^>]*>/g, "");
   }
 
   toggleTabs() {
@@ -311,16 +313,5 @@ export class AnnouncementComponent implements OnInit {
 
   canEditJournal() {
     return this.announcement.publicationDate.getTime() < (new Date()).getTime();
-  }
-
-  importComplexAnnouncement() {
-    let importHtmlDialogRef = this.importHtmlAnnouncementDialog.open(ImportHtmlAnnouncementDialogComponent, {
-      width: '100%'
-    });
-    importHtmlDialogRef.afterClosed().subscribe(response => {
-      if (response) {
-        this.announcement.notice = response;
-      }
-    })
   }
 }

@@ -16,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
@@ -67,6 +69,8 @@ public class CompetentAuthority implements IId, IAttachment {
 
 	@ManyToMany
 	@JoinTable(name = "asso_competent_authority_city", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_city"))
+	@JsonIgnoreProperties(value = { "department", "country" }, allowSetters = true)
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private List<City> cities;
 
 	@ManyToMany
@@ -127,6 +131,11 @@ public class CompetentAuthority implements IId, IAttachment {
 	private String owncloudFolderName;
 
 	private String inpiReference;
+
+	private String azureCustomReference;
+
+	@Column(length = 20)
+	private String intercommunityVat;
 
 	public Integer getId() {
 		return id;
@@ -374,6 +383,22 @@ public class CompetentAuthority implements IId, IAttachment {
 
 	public void setInpiReference(String inpiReference) {
 		this.inpiReference = inpiReference;
+	}
+
+	public String getAzureCustomReference() {
+		return azureCustomReference;
+	}
+
+	public void setAzureCustomReference(String azureCustomReference) {
+		this.azureCustomReference = azureCustomReference;
+	}
+
+	public String getIntercommunityVat() {
+		return intercommunityVat;
+	}
+
+	public void setIntercommunityVat(String intercommunityVat) {
+		this.intercommunityVat = intercommunityVat;
 	}
 
 }

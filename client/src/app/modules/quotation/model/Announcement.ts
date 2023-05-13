@@ -23,4 +23,5 @@ export interface Announcement extends IDocument {
   announcementStatus: AnnouncementStatus;
   actuLegaleId: number;
   confrere: Confrere;
+  isComplexAnnouncement: boolean;
 }

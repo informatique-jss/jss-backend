@@ -16,11 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.miscellaneous.model.ICode;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
+
+import fr.marcwrobel.jbanking.bic.Bic;
+import fr.marcwrobel.jbanking.iban.Iban;
 
 @Service
 public class ValidationHelper {
@@ -245,6 +249,30 @@ public class ValidationHelper {
     public void validateInteger(Integer value, Boolean isMandatory, String fieldName) throws OsirisValidationException {
         if ((value == null) && isMandatory)
             throw new OsirisValidationException(fieldName);
+    }
+
+    public void validateIban(String value, Boolean isMandatory, String fieldName)
+            throws OsirisValidationException, OsirisClientMessageException {
+        if ((value == null) && isMandatory)
+            throw new OsirisValidationException(fieldName);
+
+        if (!isMandatory && (value == null || value.trim().equals("")))
+            return;
+
+        if (value != null && !Iban.isValid(value.replaceAll(" ", "")))
+            throw new OsirisClientMessageException("IBAN saisi non valide");
+    }
+
+    public void validateBic(String value, Boolean isMandatory, String fieldName)
+            throws OsirisValidationException, OsirisClientMessageException {
+        if ((value == null) && isMandatory)
+            throw new OsirisValidationException(fieldName);
+
+        if (!isMandatory && (value == null || value.trim().equals("")))
+            return;
+
+        if (value != null && !Bic.isValid(value.replaceAll(" ", "")))
+            throw new OsirisClientMessageException("BIC saisi non valide");
     }
 
     public void validateFloat(Float value, Boolean isMandatory, String fieldName) throws OsirisValidationException {

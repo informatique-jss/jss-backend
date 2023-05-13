@@ -42,6 +42,7 @@ import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.co
 import { EmployeeDialogComponent } from '../employee-dialog/employee-dialog.component';
 import { AutocompleteAccountingAccountComponent } from '../forms/autocomplete-accounting-account/autocomplete-accounting-account.component';
 import { AutocompleteAffaireComponent } from '../forms/autocomplete-affaire/autocomplete-affaire.component';
+import { AutocompleteAzureInvoiceComponent } from '../forms/autocomplete-azure-invoice/autocomplete-azure-invoice';
 import { AutocompleteBillingItemComponent } from '../forms/autocomplete-billing-item/autocomplete-billing-item.component';
 import { AutocompleteBillingTypeComponent } from '../forms/autocomplete-billing-type/autocomplete-billing-type.component';
 import { AutocompleteCityComponent } from '../forms/autocomplete-city/autocomplete-city.component';
@@ -397,6 +398,7 @@ const routes: Routes = [
     GenericChipsInputComponent,
     SelectReportingDatasetComponent,
     ChipsPaymentTypeComponent,
+    AutocompleteAzureInvoiceComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     ChipsTypeDocumentComponent,
@@ -609,6 +611,7 @@ const routes: Routes = [
     GenericChipsInputComponent,
     SelectReportingDatasetComponent,
     ChipsPaymentTypeComponent,
+    AutocompleteAzureInvoiceComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     RadioGroupMotifRejetCmaComponent,

@@ -32,11 +32,13 @@ import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.BodaccService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
@@ -111,6 +113,9 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    CustomerOrderStatusService customerOrderStatusService;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -321,5 +326,21 @@ public class AttachmentServiceImpl implements AttachmentService {
         newAttachment.setTiers(attachment.getTiers());
         newAttachment.setUploadedFile(attachment.getUploadedFile());
         return newAttachment;
+    }
+
+    @Override
+    public List<Attachment> getInvoiceAttachmentOnProvisionToAnalyse() throws OsirisException {
+        return attachmentRepository
+                .findInvoiceAttachmentOnProvisionToAnalyse(constantService.getAttachmentTypeInvoice().getId(),
+                        Arrays.asList(
+                                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED),
+                                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BILLED)));
+    }
+
+    @Override
+    public List<Attachment> getReceiptAttachmentOnCompetentAuthorityToAnalyse() throws OsirisException {
+        return attachmentRepository
+                .findReceiptAttachmentOnCompetentAuthorityToAnalyse(
+                        constantService.getAttachmentTypeBillingClosure().getId());
     }
 }

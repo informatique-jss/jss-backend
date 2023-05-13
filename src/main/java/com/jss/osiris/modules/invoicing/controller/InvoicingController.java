@@ -27,6 +27,10 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.modules.invoicing.model.Appoint;
+import com.jss.osiris.modules.invoicing.model.AzureInvoice;
+import com.jss.osiris.modules.invoicing.model.AzureReceipt;
+import com.jss.osiris.modules.invoicing.model.AzureReceiptInvoice;
+import com.jss.osiris.modules.invoicing.model.AzureReceiptInvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.DebourSearch;
@@ -50,6 +54,9 @@ import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.invoicing.model.RefundSearch;
 import com.jss.osiris.modules.invoicing.model.RefundSearchResult;
 import com.jss.osiris.modules.invoicing.service.AppointService;
+import com.jss.osiris.modules.invoicing.service.AzureInvoiceService;
+import com.jss.osiris.modules.invoicing.service.AzureReceiptInvoiceService;
+import com.jss.osiris.modules.invoicing.service.AzureReceiptService;
 import com.jss.osiris.modules.invoicing.service.DepositService;
 import com.jss.osiris.modules.invoicing.service.InfogreffeInvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
@@ -146,6 +153,106 @@ public class InvoicingController {
     @Autowired
     AppointService appointService;
 
+    @Autowired
+    AzureInvoiceService azureInvoiceService;
+
+    @Autowired
+    AzureReceiptInvoiceService azureReceiptInvoiceService;
+
+    @Autowired
+    AzureReceiptService azureReceiptService;
+
+    @PostMapping(inputEntryPoint + "/azure-receipt/invoice")
+    public ResponseEntity<AzureReceiptInvoice> updateAzureReceiptInvoice(
+            @RequestBody AzureReceiptInvoice azureReceiptInvoice)
+            throws OsirisValidationException, OsirisException {
+        AzureReceiptInvoice currentInvoice = (AzureReceiptInvoice) validationHelper
+                .validateReferential(azureReceiptInvoice, true, "azureReceipt");
+
+        azureReceiptInvoice.setAzureReceipt(currentInvoice.getAzureReceipt());
+        return new ResponseEntity<AzureReceiptInvoice>(
+                azureReceiptInvoiceService.addOrUpdateAzureReceiptInvoice(azureReceiptInvoice), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/azure-receipt")
+    public ResponseEntity<AzureReceipt> getAzureReceipt(@RequestParam Integer idAzureReceipt)
+            throws OsirisValidationException, OsirisException {
+        return new ResponseEntity<AzureReceipt>(
+                azureReceiptService.getAzureReceiptFromUser(idAzureReceipt), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/azure-receipt/invoice/status")
+    public ResponseEntity<AzureReceiptInvoiceStatus> getAzureReceiptInvoiceStatus(
+            @RequestParam Integer idAzureReceiptInvoice)
+            throws OsirisValidationException, OsirisException {
+        AzureReceiptInvoice invoice = azureReceiptInvoiceService.getAzureReceiptInvoice(idAzureReceiptInvoice);
+
+        if (invoice == null)
+            throw new OsirisValidationException("idAzureReceiptInvoice");
+
+        return new ResponseEntity<AzureReceiptInvoiceStatus>(
+                azureReceiptInvoiceService.getAzureReceiptInvoiceStatus(invoice), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/azure-receipt/invoice/reconciliated")
+    public ResponseEntity<AzureReceiptInvoice> markAsReconciliated(@RequestParam Integer idAzureReceiptInvoice,
+            @RequestParam boolean isReconciliated) throws OsirisValidationException {
+        AzureReceiptInvoice invoice = azureReceiptInvoiceService.getAzureReceiptInvoice(idAzureReceiptInvoice);
+
+        if (invoice == null)
+            throw new OsirisValidationException("idAzureReceiptInvoice");
+        return new ResponseEntity<AzureReceiptInvoice>(
+                azureReceiptInvoiceService.markAsReconciliated(invoice, isReconciliated),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/azure-invoices")
+    public ResponseEntity<List<AzureInvoice>> getAzureInvoices(@RequestParam Boolean displayOnlyToCheck) {
+        return new ResponseEntity<List<AzureInvoice>>(azureInvoiceService.getAzureInvoices(displayOnlyToCheck),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/azure-invoices/search")
+    public ResponseEntity<List<AzureInvoice>> searchAzureInvoices(@RequestParam String invoiceId) {
+        return new ResponseEntity<List<AzureInvoice>>(azureInvoiceService.searchAzureInvoicesByInvoiceId(invoiceId),
+                HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    @GetMapping(inputEntryPoint + "/azure-invoice/create")
+    public ResponseEntity<Invoice> createInvoiceFromAzureInvoice(@RequestParam Integer provisionId,
+            @RequestParam Integer azureInvoiceId)
+            throws OsirisValidationException, OsirisClientMessageException, OsirisException {
+        Provision provision = provisionService.getProvision(provisionId);
+        if (provision == null)
+            throw new OsirisValidationException("provisionId");
+
+        AzureInvoice azureInvoice = azureInvoiceService.getAzureInvoice(azureInvoiceId);
+        if (azureInvoice == null)
+            throw new OsirisValidationException("azureInvoice");
+
+        return new ResponseEntity<Invoice>(
+                azureInvoiceService.generateDeboursAndInvoiceFromInvoiceFromUser(azureInvoice, provision),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/azure-invoice")
+    public ResponseEntity<AzureInvoice> getAzureInvoice(@RequestParam Integer idInvoice) {
+        return new ResponseEntity<AzureInvoice>(azureInvoiceService.getAzureInvoice(idInvoice),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/azure-invoice")
+    public ResponseEntity<AzureInvoice> updateAzureInvoice(@RequestBody AzureInvoice azureInvoice)
+            throws OsirisException, OsirisValidationException {
+        validationHelper.validateReferential(azureInvoice.getCompetentAuthority(), true, "competentAuthority");
+        validationHelper.validateDate(azureInvoice.getInvoiceDate(), true, "InvoiceDate");
+        validationHelper.validateString(azureInvoice.getInvoiceId(), true, "InvoiceId");
+        azureInvoice.setToCheck(false);
+        return new ResponseEntity<AzureInvoice>(azureInvoiceService.addOrUpdateAzureInvoice(azureInvoice),
+                HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/appoints")
     public ResponseEntity<List<Appoint>> getAppoints(@RequestParam String searchLabel) {
         return new ResponseEntity<List<Appoint>>(appointService.getAppoints(searchLabel), HttpStatus.OK);
@@ -187,6 +294,7 @@ public class InvoicingController {
                 HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     @GetMapping(inputEntryPoint + "/infogreffe-invoice/create")
     public ResponseEntity<Invoice> createInvoiceFromInfogreffeInvoice(
             @RequestParam Integer provisionId, @RequestParam Integer infogreffeInvoiceId)
@@ -921,10 +1029,8 @@ public class InvoicingController {
         if (invoice.getIsInvoiceFromProvider()
                 && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())
                 && (invoice.getCompetentAuthority() == null || invoice.getCustomerOrderForInboundInvoice() == null)) {
-            if (invoiceHelper.getIbanOfOrderingCustomer(invoice) == null)
-                throw new OsirisClientMessageException("Aucun IBAN trouvé sur le donneur d'ordre");
-            if (invoiceHelper.getBicOfOrderingCustomer(invoice) == null)
-                throw new OsirisClientMessageException("Aucun BIC trouvé sur le donneur d'ordre");
+            validationHelper.validateIban(invoiceHelper.getIbanOfOrderingCustomer(invoice), true, "IBAN");
+            validationHelper.validateBic(invoiceHelper.getBicOfOrderingCustomer(invoice), true, "BIC");
         }
     }
 

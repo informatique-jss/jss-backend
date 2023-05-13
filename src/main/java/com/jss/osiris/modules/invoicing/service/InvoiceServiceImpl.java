@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
@@ -37,6 +38,7 @@ import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
@@ -92,6 +94,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     NotificationService notificationService;
 
     @Autowired
+    GeneratePdfDelegate generatePdfDelegate;
+
+    @Autowired
     TiersService tiersService;
 
     @Autowired
@@ -132,6 +137,20 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.isPresent())
             return invoice.get();
         return null;
+    }
+
+    @Override
+    public List<Invoice> findByCompetentAuthorityAndManualDocumentNumber(CompetentAuthority competentAuthority,
+            String manualDocumentNumber) {
+        return invoiceRepository.findByCompetentAuthorityAndManualAccountingDocumentNumber(competentAuthority,
+                manualDocumentNumber);
+    }
+
+    @Override
+    public List<Invoice> findByCompetentAuthorityAndManualDocumentNumberContains(CompetentAuthority competentAuthority,
+            String manualDocumentNumber) {
+        return invoiceRepository.findByCompetentAuthorityAndManualAccountingDocumentNumberContainingIgnoreCase(
+                competentAuthority, manualDocumentNumber);
     }
 
     @Override
@@ -189,7 +208,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         if (customerOrder != null) {
             // Generate PDF and attached it to customer order
-            File creditNotePdf = mailHelper.generateInvoicePdf(customerOrder, creditNote, invoice);
+            File creditNotePdf = generatePdfDelegate.generateInvoicePdf(customerOrder, creditNote, invoice);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
                 attachmentService.addAttachment(new FileInputStream(creditNotePdf), customerOrder.getId(),
@@ -233,7 +252,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                     if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
                             .equals(constantService.getPrincipalAccountingAccountDeposit().getId()))
                         accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart,
-                                constantService.getAccountingJournalSales());
+                                constantService.getAccountingJournalPurchases());
             }
 
         // Refresh invoice
@@ -497,6 +516,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                                                 InvoiceItem invoiceItem = getInvoiceItemFromDebour(nonTaxableDebour,
                                                         true);
+                                                invoiceItem.setVatPrice(0f);
+                                                invoiceItem.setVat(constantService.getVatZero());
                                                 invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
                                                 invoice.getInvoiceItems().add(invoiceItem);
                                                 nonTaxableDebour.setInvoiceItem(invoiceItem);

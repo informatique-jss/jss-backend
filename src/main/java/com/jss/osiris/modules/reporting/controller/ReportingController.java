@@ -16,9 +16,11 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.reporting.model.ICustomerOrderReporting;
 import com.jss.osiris.modules.reporting.model.IQuotationReporting;
 import com.jss.osiris.modules.reporting.model.IVatReporting;
 import com.jss.osiris.modules.reporting.model.UserReporting;
+import com.jss.osiris.modules.reporting.service.CustomerOrderReportingService;
 import com.jss.osiris.modules.reporting.service.QuotationReportingService;
 import com.jss.osiris.modules.reporting.service.UserReportingService;
 import com.jss.osiris.modules.reporting.service.VatReportingService;
@@ -32,6 +34,9 @@ public class ReportingController {
 	ValidationHelper validationHelper;
 
 	@Autowired
+	CustomerOrderReportingService customerOrderReportingService;
+
+	@Autowired
 	QuotationReportingService quotationReportingService;
 
 	@Autowired
@@ -40,11 +45,19 @@ public class ReportingController {
 	@Autowired
 	EmployeeService employeeService;
 
+	@GetMapping(inputEntryPoint + "/customer-order")
+	public ResponseEntity<List<ICustomerOrderReporting>> getCustomerOrderReporting()
+			throws OsirisValidationException, OsirisException {
+
+		return new ResponseEntity<List<ICustomerOrderReporting>>(
+				customerOrderReportingService.getCustomerOrderReporting(0),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/quotation")
 	public ResponseEntity<List<IQuotationReporting>> getQuotationReporting()
 			throws OsirisValidationException, OsirisException {
-
-		return new ResponseEntity<List<IQuotationReporting>>(quotationReportingService.getQuotationReporting(0),
+		return new ResponseEntity<List<IQuotationReporting>>(quotationReportingService.getQuotationReporting(),
 				HttpStatus.OK);
 	}
 
@@ -56,11 +69,12 @@ public class ReportingController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/quotation/tiers")
-	public ResponseEntity<List<IQuotationReporting>> getQuotationReportingForTiers(@RequestParam Integer tiersId)
+	@GetMapping(inputEntryPoint + "/customer-order/tiers")
+	public ResponseEntity<List<ICustomerOrderReporting>> getQuotationReportingForTiers(@RequestParam Integer tiersId)
 			throws OsirisValidationException, OsirisException {
 
-		return new ResponseEntity<List<IQuotationReporting>>(quotationReportingService.getQuotationReporting(tiersId),
+		return new ResponseEntity<List<ICustomerOrderReporting>>(
+				customerOrderReportingService.getCustomerOrderReporting(tiersId),
 				HttpStatus.OK);
 	}
 

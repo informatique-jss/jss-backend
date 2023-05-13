@@ -64,7 +64,4 @@ export class AppointListComponent implements OnInit {
       })
     }
   }
-
-  refundAppoint(appoint: Appoint) {
-  }
 }

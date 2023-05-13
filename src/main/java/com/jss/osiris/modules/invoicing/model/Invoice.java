@@ -42,7 +42,8 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.model.TiersFollowup;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_invoice_status", columnList = "id_invoice_status") })
+@Table(indexes = { @Index(name = "idx_invoice_status", columnList = "id_invoice_status"),
+		@Index(name = "idx_invoice_manual_document_number", columnList = "id_competent_authority,manualAccountingDocumentNumber"), })
 public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@Id
@@ -196,6 +197,11 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@JoinColumn(name = "id_bank_transfert")
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private BankTransfert bankTransfert;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_azure_invoice")
+	@JsonIgnoreProperties(value = { "invoices" }, allowSetters = true)
+	private AzureInvoice azureInvoice;
 
 	public Integer getId() {
 		return id;
@@ -531,6 +537,14 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	public void setAppoints(List<Appoint> appoints) {
 		this.appoints = appoints;
+	}
+
+	public AzureInvoice getAzureInvoice() {
+		return azureInvoice;
+	}
+
+	public void setAzureInvoice(AzureInvoice azureInvoice) {
+		this.azureInvoice = azureInvoice;
 	}
 
 }

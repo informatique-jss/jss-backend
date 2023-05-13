@@ -14,6 +14,7 @@ import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -76,7 +77,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + " and  ( COALESCE(:customerOrderId)=0 or c.id in (:customerOrderId)) "
                         + " and  ( COALESCE(:customerOrderForInboundInvoiceId)=0 or i.id_customer_order_for_inbound_invoice in (:customerOrderForInboundInvoiceId)) "
                         + " and  ( COALESCE(:invoiceId)=0 or i.id in (:invoiceId)) "
-                        + " and  ( COALESCE(:customerOrderIds) =0 or t.id in (:customerOrderIds) or r1.id in (:customerOrderIds) or co.id in (:customerOrderIds) ) "
+                        + " and  ( COALESCE(:customerOrderIds) =0 or t.id in (:customerOrderIds) or r1.id in (:customerOrderIds) or co.id in (:customerOrderIds) or pro.id in (:customerOrderIds) ) "
                         + " and (:minAmount is null or total_price>=CAST(CAST(:minAmount as text) as real) ) "
                         + " and (:maxAmount is null or total_price<=CAST(CAST(:maxAmount as text) as real) )"
                         + " and (:showToRecover is false or (  i.first_reminder_date_time is not null and  i.second_reminder_date_time  is not null and  i.third_reminder_date_time  is not null and i.id_invoice_status<>:invoicePayedStatusId ) )"
@@ -99,5 +100,11 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
 
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<Invoice> findByCustomerOrderForInboundInvoiceId(Integer customerOrderId);
+
+        List<Invoice> findByCompetentAuthorityAndManualAccountingDocumentNumber(CompetentAuthority competentAuthority,
+                        String manualDocumentNumber);
+
+        List<Invoice> findByCompetentAuthorityAndManualAccountingDocumentNumberContainingIgnoreCase(
+                        CompetentAuthority competentAuthority, String manualDocumentNumber);
 
 }

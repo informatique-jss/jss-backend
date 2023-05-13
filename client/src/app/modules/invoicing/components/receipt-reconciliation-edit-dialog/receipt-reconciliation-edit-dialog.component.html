@@ -1,0 +1,22 @@
+<h1 mat-dialog-title>Modifier la reconnaissance</h1>
+<div mat-dialog-content *ngIf="azureReceiptInvoice">
+  <table class="full-width">
+    <tr>
+      <td>
+        <generic-input [(model)]="azureReceiptInvoice.invoiceId" label="Numéro de facture fournisseur"
+          [form]="invoiceForm" propertyName="invoiceId" [isMandatory]="true" [isDisabled]="false"></generic-input>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <generic-input [(model)]="azureReceiptInvoice.invoiceTotal" label="Montant TTC de la facture"
+          [form]="invoiceForm" propertyName="invoiceTotal" [isMandatory]="true" [isDisabled]="false"
+          type="number"></generic-input>
+      </td>
+    </tr>
+  </table>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">Valider</button>
+</div>

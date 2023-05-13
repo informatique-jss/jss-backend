@@ -95,7 +95,16 @@ public class ProfileController {
 			throws OsirisValidationException {
 		validationHelper.validateString(user.getUsername(), true, 255, "Username");
 		validationHelper.validateString(user.getPassword(), true, 255, "Password");
-		return new ResponseEntity<Responsable>(employeeService.loginWebsiteUser(user), HttpStatus.OK);
+		return new ResponseEntity<Responsable>(employeeService.loginWebsiteUser(user, false), HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/introspection/login/website")
+	public ResponseEntity<Responsable> loginWebsiteUserWithIntrospection(@RequestBody User user,
+			HttpServletRequest request)
+			throws OsirisValidationException {
+		validationHelper.validateString(user.getUsername(), true, 255, "Username");
+		validationHelper.validateString(user.getPassword(), true, 255, "Password");
+		return new ResponseEntity<Responsable>(employeeService.loginWebsiteUser(user, true), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/responsable/password")

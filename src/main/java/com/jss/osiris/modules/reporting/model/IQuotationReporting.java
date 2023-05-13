@@ -23,12 +23,6 @@ public interface IQuotationReporting {
 
     public String getTiersLabel();
 
-    public Float getPreTaxPrice();
-
-    public Float getPreTaxPriceWithoutDebour();
-
-    public Float getTaxedPrice();
-
     public String getProvisionStatus();
 
     public String getProvisionAssignedToLabel();
@@ -37,11 +31,11 @@ public interface IQuotationReporting {
 
     public String getSalesEmployeeLabel();
 
-    public String getCustomerOrderStatusLabel();
+    public String getQuotationStatusLabel();
 
-    public String getCustomerOrderCreatedDateMonth();
+    public String getQuotationCreatedDateMonth();
 
-    public String getInvoiceDateMonth();
+    public String getQuotationCreatedDateDay();
 
     public Integer getCharacterNumber();
 
@@ -52,4 +46,8 @@ public interface IQuotationReporting {
     public String getNoticeTypeFamilyLabel();
 
     public String getNoticeTypeLabel();
+
+    public String getQuotationCreator();
+
+    public Float getPreTaxPriceWithoutDebour();
 }

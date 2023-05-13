@@ -124,9 +124,13 @@
                 <generic-toggle *ngIf="announcement.isHeader" [(model)]="announcement.isHeaderFree"
                   label="En-tête gratuit ?" [form]="announcementForm" propertyName="isHeaderFree"></generic-toggle>
               </td>
+              <td>
+                <generic-toggle [(model)]="announcement.isComplexAnnouncement" label="Annonce complexe ?"
+                  [form]="announcementForm" propertyName="isComplexAnnouncement"></generic-toggle>
+              </td>
             </tr>
           </table>
-          <table class="full-width">
+          <table class="full-width" *ngIf="!announcement.isComplexAnnouncement">
             <tr>
               <td>
                 <mat-form-field class="full-width">
@@ -178,9 +182,6 @@
             </tr>
             <tr>
               <td>
-                <p>Annonce <span *ngIf="editMode" (click)="importComplexAnnouncement()" class="pointer">(importer une
-                    annonce
-                    complexe)</span> : </p>
                 <div *ngIf="!editMode">
                   <span [innerHTML]="announcement.notice | trustHtml" class="announce-container"></span>
                 </div>
@@ -199,6 +200,28 @@
      alignleft aligncenter alignright alignjustify | numlist bullist | \
      bullist numlist outdent indent | removeformat | fullscreen |  table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
    }"></editor>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width" *ngIf="announcement.isComplexAnnouncement">
+            <tr *ngIf="announcement.id">
+              <td>
+                <single-attachment [entity]="provision!" [entityType]="PROVISION_ENTITY_TYPE.entityType"
+                  [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypeComplexAnnouncement"
+                  [forcedFileExtension]="'pdf'" (onUploadedFile)="updateAttachments($event)">
+                </single-attachment>
+              </td>
+            </tr>
+            <tr *ngIf="editMode && announcement.id">
+              <td>
+                <p>Ajoutez ici le PDF de l'annonce à publier.</p>
+                <p class="color-warn">Attention à bien laisser un en-tête de 5 cm sur la première page.</p>
+                <p>Le nombre de caractères et le prix seront calculés à l'enregistrement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p>Enregistrez une première fois l'annonce avant de pouvoir ajouter le PDF</p>
               </td>
             </tr>
           </table>
