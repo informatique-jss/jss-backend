@@ -304,7 +304,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           }
           this.saveAsso();
         });
-      } else if ((status.code == ANNOUNCEMENT_STATUS_DONE || status.code == ANNOUNCEMENT_PUBLISHED) && !provision.announcement.isPublicationFlagAlreadySent) {
+      } else if ((status.code == ANNOUNCEMENT_STATUS_DONE || status.code == ANNOUNCEMENT_PUBLISHED) && (provision.announcement.isPublicationFlagAlreadySent == null || provision.announcement.isPublicationFlagAlreadySent == undefined)) {
         saveAsso = false;
         const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
           maxWidth: "400px",

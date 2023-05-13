@@ -256,7 +256,7 @@ public class ValidationHelper {
         if ((value == null) && isMandatory)
             throw new OsirisValidationException(fieldName);
 
-        if (!isMandatory && (value == null || value.equals("")))
+        if (!isMandatory && (value == null || value.trim().equals("")))
             return;
 
         if (value != null && !Iban.isValid(value.replaceAll(" ", "")))
@@ -268,7 +268,7 @@ public class ValidationHelper {
         if ((value == null) && isMandatory)
             throw new OsirisValidationException(fieldName);
 
-        if (!isMandatory && (value == null || value.equals("")))
+        if (!isMandatory && (value == null || value.trim().equals("")))
             return;
 
         if (value != null && !Bic.isValid(value.replaceAll(" ", "")))
