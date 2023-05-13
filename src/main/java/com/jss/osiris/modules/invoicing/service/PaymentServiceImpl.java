@@ -471,6 +471,8 @@ public class PaymentServiceImpl implements PaymentService {
                 accountingRecordService.generateAccountingRecordsForRefundOnGeneration(refund);
             }
         } else {
+            if (!payment.getId().equals(1))
+                throw new OsirisClientMessageException("Not for now ..."); // TODO : refund...
             // Invoices to payed found
             if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
                 remainingMoney = associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0),
