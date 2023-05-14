@@ -125,11 +125,22 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
                     else
                         addOrUpdateAzureInvoice(invoice); // status changed, save it
                 }
+
                 // If find in multiple provision, or if we don't have default payment for AC do
                 // nothing...
                 if (invoice.getAttachments() != null && invoice.getAttachments().size() == 1
                         && invoice.getCompetentAuthority().getDefaultPaymentType() != null) {
                     Provision provision = invoice.getAttachments().get(0).getProvision();
+
+                    if (invoice.getReference() == null) {
+                        // Cannot cross verify customer order, stop here
+                        continue;
+                    }
+                    if (!invoice.getReference()
+                            .contains(provision.getAssoAffaireOrder().getCustomerOrder().getId() + "")) {
+                        // Cannot cross verify customer order, stop here
+                        continue;
+                    }
 
                     // Check if all debours of this AC are not attached to an invoice to delete them
                     boolean allDeboursDeletables = true;
