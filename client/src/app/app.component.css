@@ -24,7 +24,7 @@ main {
   z-index: 999999 !important;
 }
 
-.mat-header-row>th {
+.mat-mdc-header-row>th {
   text-align: left !important;
   padding-left: 7px !important;
 }

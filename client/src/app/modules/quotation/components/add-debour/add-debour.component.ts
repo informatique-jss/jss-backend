@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { AmountDialogComponent } from 'src/app/modules/invoicing/components/amount-dialog/amount-dialog.component';

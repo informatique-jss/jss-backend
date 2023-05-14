@@ -5,7 +5,7 @@
         {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}<chips-status class="invoice-chip"
           [status]="invoice.invoiceStatusCode" [value]="invoice.invoiceStatus">
         </chips-status>
-        <mat-icon (click)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)"
+        <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)"
           (auxclick)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)" matTooltip="Voir la facture"
           color="accent" class="pointer invoice-chip">visibility
         </mat-icon>
@@ -20,7 +20,7 @@
       de {{invoice.totalPrice}} €
       <chips-status class="invoice-chip" [status]="invoice.invoiceStatusCode" [value]="invoice.invoiceStatus">
       </chips-status>
-      <mat-icon (click)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)"
+      <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)"
         (auxclick)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)" matTooltip="Voir la facture" color="accent"
         class="pointer invoice-chip">visibility
       </mat-icon>
@@ -87,11 +87,12 @@
             <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
               <tr class="mat-row">
                 <td class="mat-cell">
-                  {{invoiceItem.label}} <mat-icon inline="true"
+                  {{invoiceItem.label}} <mat-icon color="accent" inline="true"
                     [matTooltip]="invoiceItem.isGifted?'Ne plus offrir cette ligne de facturation':'Offrir cette ligne de facturation'"
                     *ngIf="editMode && !getLetteringDate(invoiceItem.invoice)" class="info-icon pointer"
                     (click)="toggleIsGifTed(invoiceItem)">redeem</mat-icon>
-                  <mat-icon inline="true" matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
+                  <mat-icon color="accent" inline="true"
+                    matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
                     *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && !invoiceItem.invoice"
                     class="info-icon">info</mat-icon>
                 </td>

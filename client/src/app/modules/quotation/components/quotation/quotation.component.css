@@ -26,44 +26,27 @@ td {
   margin: 5px
 }
 
-.sidenav-container {
-  background-color: transparent;
-}
-
 table {
   width: 100%;
-}
-
-.validation-pending {
-  color: rgb(211, 84, 0)
-}
-
-.validated {
-  color: rgb(39, 174, 96)
 }
 
 .mat-accordion-container {
   padding-top: 15px
 }
 
-::ng-deep.mat-menu-panel {
+::ng-deep.mat-mdc-menu-panel {
   max-width: none !important;
 }
 
 .status-text {
   white-space: nowrap;
   padding-right: 10px;
-  color: rgba(0, 0, 0, 0.54);
   padding-top: 5px;
 }
 
 .td-price {
   width: 70px;
   text-align: right;
-}
-
-.remise {
-  color: red
 }
 
 .affaire {

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { Dictionnary } from 'src/app/libs/Dictionnary';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { IReferential } from 'src/app/modules/administration/model/IReferential';

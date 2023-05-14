@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { AzureReceiptInvoice } from '../../model/AzureReceiptInvoice';
 import { AzureReceiptInvoiceService } from '../../services/azure.receipt.invoice.service';
 

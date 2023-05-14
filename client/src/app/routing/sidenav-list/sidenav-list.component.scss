@@ -1,0 +1,37 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin color($theme) {
+  $color-config: mat.get-color-config($theme);
+
+  $accent-palette: map.get($color-config, 'accent');
+
+  $color-keys: map-keys($accent-palette);
+
+  .nav-list-main-menu a:hover,
+  .menu-item-active {
+    background: mat.get-color-from-palette($accent-palette, main);
+  }
+
+  .nav-list-main-menu a {
+    border: 1px solid mat.get-color-from-palette($accent-palette, main);
+  }
+
+  .nav-list-main-menu a:hover .mdc-list-item__primary-text,
+  .menu-item-active .mdc-list-item__primary-text {
+    color: white;
+  }
+
+  .light .nav-list-main-menu .menu-item-active .mdc-list-item__primary-text {
+    color: mat.get-color-from-palette($accent-palette, lighter) !important;
+  }
+
+}
+
+@mixin theme($theme) {
+  $color-config: mat.get-color-config($theme);
+
+  @if $color-config !=null {
+    @include color($theme);
+  }
+}

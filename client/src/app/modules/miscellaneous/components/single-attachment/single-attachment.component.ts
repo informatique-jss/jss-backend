@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Attachment } from '../../model/Attachment';
 import { AttachmentType } from '../../model/AttachmentType';
 import { IAttachment } from '../../model/IAttachment';

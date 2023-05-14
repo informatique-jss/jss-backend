@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from '@angular/material/legacy-autocomplete';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { map, Observable, startWith } from 'rxjs';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { PaymentType } from '../../../model/PaymentType';

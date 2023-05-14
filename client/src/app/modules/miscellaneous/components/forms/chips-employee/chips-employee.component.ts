@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from '@angular/material/legacy-autocomplete';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { map, Observable, startWith } from 'rxjs';
 import { displayInTeams } from 'src/app/libs/MailHelper';
 import { Employee } from 'src/app/modules/profile/model/Employee';

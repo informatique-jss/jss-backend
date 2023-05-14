@@ -10,7 +10,6 @@
   border: solid 1px #ccc;
   display: flex;
   justify-content: center;
-  background: #fff;
   border-radius: 4px;
   position: relative;
   overflow-y: auto;
@@ -50,38 +49,23 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  color: #ccc;
   cursor: move;
   width: 24px;
   height: 24px;
-}
-
-.dashboard-box-handle:hover {
-  color: grey;
 }
 
 .dashboard-box-delete {
   position: absolute;
   top: 10px;
   right: 37px;
-  color: #ccc;
   cursor: pointer;
   width: 24px;
   height: 24px;
 }
 
-.dashboard-box-delete:hover {
-  color: grey;
-}
-
 .dashboard-box-settings {
-  color: #ccc;
   text-align: right;
   padding-right: 4px;
-}
-
-.dashboard-box-settings:hover {
-  color: grey;
 }
 
 .dashboard-box-component {
@@ -89,17 +73,14 @@
   height: 100%;
 }
 
-
 .dashboard-title {
   position: absolute;
   top: 10px;
   left: 10px;
-  font-family: "Avenir Black";
   font-size: 15px;
   text-transform: uppercase;
-  color: #4D4D4D;
 }
 
-::ng-deep.mat-menu-panel {
+::ng-deep.mat-mdc-menu-panel {
   max-width: none !important;
 }

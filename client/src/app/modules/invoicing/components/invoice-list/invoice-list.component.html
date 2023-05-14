@@ -40,7 +40,8 @@
         </td>
       </tr>
     </table>
-    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="invoices" tableName="Factures">
+    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="invoices" tableName="Factures"
+      *ngIf="displayedColumns && displayedColumns.length>0 ">
     </sort-table>
   </div>
 </div>

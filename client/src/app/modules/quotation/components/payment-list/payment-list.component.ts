@@ -1,6 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormBuilder } from "@angular/forms";
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from "@angular/material/legacy-dialog";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from "src/app/libs/FormatHelper";
 import { AssociatePaymentDialogComponent } from "src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component";
 import { Payment } from "src/app/modules/invoicing/model/Payment";

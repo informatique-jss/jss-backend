@@ -3,22 +3,13 @@
   justify-content: center;
 }
 
-.mat-form-field {
+.login-card {
+  margin: 25px
+}
+
+.mat-mdc-form-field {
   width: 100%;
   min-width: 300px;
-}
-
-mat-card-title,
-mat-card-content {
-  display: flex;
-  justify-content: center;
-}
-
-.error {
-  padding: 16px;
-  width: 300px;
-  color: white;
-  background-color: red;
 }
 
 .button {

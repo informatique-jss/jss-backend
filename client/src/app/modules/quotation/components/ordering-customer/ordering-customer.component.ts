@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { getCustomerOrderForIQuotation } from 'src/app/modules/invoicing/components/invoice-tools';

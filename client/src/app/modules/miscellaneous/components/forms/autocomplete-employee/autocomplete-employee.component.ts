@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { MatLegacyAutocompleteTrigger as MatAutocompleteTrigger } from '@angular/material/legacy-autocomplete';
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { UserNoteService } from 'src/app/services/user.notes.service';

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { MatLegacyTabGroup as MatTabGroup } from '@angular/material/legacy-tabs';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatTabGroup } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { AppService } from '../../services/app.service';
 import { EntityType } from './EntityType';

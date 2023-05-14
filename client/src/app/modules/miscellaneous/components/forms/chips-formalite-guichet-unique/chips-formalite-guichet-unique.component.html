@@ -1,7 +1,7 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label>{{label}}</mat-label>
-  <mat-chip-list #chipListFormaliteGuichetUnique>
-    <mat-chip *ngFor="let formaliteGuichetUnique of model" (removed)="removeElement(formaliteGuichetUnique)">
+  <mat-chip-grid #chipListFormaliteGuichetUnique>
+    <mat-chip-row *ngFor="let formaliteGuichetUnique of model" (removed)="removeElement(formaliteGuichetUnique)">
       {{formaliteGuichetUnique.referenceMandataire}} ({{formaliteGuichetUnique.liasseNumber}})
       <button matChipRemove *ngIf="!isDisabled">
         <mat-icon>cancel</mat-icon>
@@ -10,11 +10,11 @@
         (click)="openGuichetUnique($event,formaliteGuichetUnique )">
         <mat-icon>language</mat-icon>
       </button>
-    </mat-chip>
+    </mat-chip-row>
     <input matInput placeholder="Choisir un dossier du GU" [formControlName]="propertyName" #formaliteGuichetUniqueInput
       [matChipInputFor]="chipListFormaliteGuichetUnique" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
       [disabled]="isDisabled" [matAutocomplete]="autoComplete">
-  </mat-chip-list>
+  </mat-chip-grid>
   <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)="addFormaliteGuichetUnique($event)">
     <mat-option *ngFor="let formaliteGuichetUnique of filteredFormaliteGuichetUniques "

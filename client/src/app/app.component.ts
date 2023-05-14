@@ -1,6 +1,6 @@
 import { CdkDragEnd, Point } from '@angular/cdk/drag-drop';
 import { Component, HostListener } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { NOTIFICATION_KEY_CODE, SAVE_KEY_CODE, SEARCH_KEY_CODE } from './libs/Constants';

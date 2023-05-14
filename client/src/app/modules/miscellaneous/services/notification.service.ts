@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable, retry, share, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
 import { NOTIFICATION_REFRESH_INTERVAL } from 'src/app/libs/Constants';
 import { AppRestService } from 'src/app/services/appRest.service';

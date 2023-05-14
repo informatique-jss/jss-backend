@@ -2,11 +2,12 @@
   <mat-label>{{label}}</mat-label>
   <input #affaireInput matInput placeholder="Récupérer une affaire existante" [matAutocomplete]="autoCompleteAffaire"
     [formControlName]="propertyName" autocomplete="do-not-autofill">
-  <mat-icon matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined" class="pointer">
+  <mat-icon color="accent" matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined" class="pointer">
     close
   </mat-icon>
-  <mat-icon matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)" matTooltipShowDelay="1000"
-    matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined" class="pointer note-icon">
+  <mat-icon color="accent" matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)"
+    matTooltipShowDelay="1000" matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined"
+    class="pointer ">
     adjust
   </mat-icon>
   <mat-autocomplete autoActiveFirstOption #autoCompleteAffaire="matAutocomplete" [displayWith]="displayAffaire"

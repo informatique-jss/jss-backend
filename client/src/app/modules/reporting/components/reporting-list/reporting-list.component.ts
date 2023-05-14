@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { EmployeeDialogComponent } from 'src/app/modules/miscellaneous/components/employee-dialog/employee-dialog.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';

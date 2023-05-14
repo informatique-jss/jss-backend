@@ -30,7 +30,8 @@
         </td>
       </tr>
     </table>
-    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="quotations" tableName="Devis">
+    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="quotations" tableName="Devis"
+      *ngIf="displayedColumns && displayedColumns.length>0 ">
     </sort-table>
   </div>
 </div>

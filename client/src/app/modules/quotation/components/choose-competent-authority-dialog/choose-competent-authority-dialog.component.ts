@@ -1,6 +1,6 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { CompetentAuthority } from '../../../miscellaneous/model/CompetentAuthority';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 

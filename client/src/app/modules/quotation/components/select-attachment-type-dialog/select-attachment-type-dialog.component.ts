@@ -1,6 +1,6 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AppService } from 'src/app/services/app.service';
 import { AttachmentTypeMailQuery } from '../../model/AttachmentTypeMailQuery';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';

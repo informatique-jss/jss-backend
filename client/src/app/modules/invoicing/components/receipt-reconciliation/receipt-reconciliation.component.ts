@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';

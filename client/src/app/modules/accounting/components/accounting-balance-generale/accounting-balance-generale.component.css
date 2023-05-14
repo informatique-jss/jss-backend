@@ -21,7 +21,7 @@
   text-overflow: ellipsis;
 }
 
-::ng-deep.mat-menu-panel {
+::ng-deep.mat-mdc-menu-panel {
   max-width: none !important;
 }
 

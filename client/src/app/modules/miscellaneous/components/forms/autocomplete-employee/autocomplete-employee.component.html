@@ -5,14 +5,16 @@
     </avatar>
     <input type="text" matInput [formControlName]="propertyName" [matAutocomplete]="matAutocomplete">
   </div>
-  <mat-icon matSuffix matTooltip="Me choisir" (click)="chooseMyself()" *ngIf="!isDisabled" class="pointer note-icon">
+  <mat-icon color="accent" matSuffix matTooltip="Me choisir" (click)="chooseMyself()" *ngIf="!isDisabled"
+    class="pointer ">
     account_circle
   </mat-icon>
-  <mat-icon matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined" class="pointer">
+  <mat-icon color="accent" matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined" class="pointer">
     close
   </mat-icon>
-  <mat-icon matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)" matTooltipShowDelay="1000"
-    matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined" class="pointer note-icon">
+  <mat-icon color="accent" matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)"
+    matTooltipShowDelay="1000" matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined"
+    class="pointer ">
     adjust
   </mat-icon>
   <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete" [displayWith]="displayLabel"
