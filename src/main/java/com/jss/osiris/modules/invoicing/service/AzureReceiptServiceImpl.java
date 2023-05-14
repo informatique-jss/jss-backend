@@ -72,7 +72,7 @@ public class AzureReceiptServiceImpl implements AzureReceiptService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public void checkReciptToAnalyse() throws OsirisException, OsirisClientMessageException {
+    public void checkReceiptToAnalyse() throws OsirisException, OsirisClientMessageException {
         List<Attachment> attachments = attachmentService.getReceiptAttachmentOnCompetentAuthorityToAnalyse();
         if (attachments != null && attachments.size() > 0) {
             for (Attachment attachment : attachments)
