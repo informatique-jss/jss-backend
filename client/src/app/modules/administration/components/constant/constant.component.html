@@ -178,6 +178,14 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeProviderInvoice"
+                label="Type de pièce-jointe - Facture fournisseur" [form]="constantForm"
+                propertyName="attachmentTypeProviderInvoice" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-attachment-type [(model)]="constant.attachmentTypeCreditNote" label="Type de pièce-jointe - Avoir"
                 [form]="constantForm" propertyName="attachmentTypeCreditNote" [isMandatory]="true"
                 [isDisabled]="!editMode">
@@ -818,6 +826,14 @@
               <select-customer-order-origin [(model)]="constant.customerOrderOriginWebSite"
                 label="Origine des commandes - site www.jss.fr" [form]="constantForm"
                 propertyName="customerOrderOriginWebSite" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-customer-order-origin>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-customer-order-origin [(model)]="constant.customerOrderOriginOsiris"
+                label="Origine des commandes - Osiris" [form]="constantForm" propertyName="customerOrderOriginOsiris"
+                [isMandatory]="true" [isDisabled]="!editMode">
               </select-customer-order-origin>
             </td>
           </tr>

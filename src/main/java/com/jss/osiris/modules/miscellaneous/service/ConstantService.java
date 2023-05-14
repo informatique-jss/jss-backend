@@ -91,6 +91,8 @@ public interface ConstantService {
 
     public AttachmentType getAttachmentTypeInvoice() throws OsirisException;
 
+    public AttachmentType getAttachmentTypeProviderInvoice() throws OsirisException;
+
     public AttachmentType getAttachmentTypeCreditNote() throws OsirisException;
 
     public AttachmentType getAttachmentTypeKbisUpdated() throws OsirisException;

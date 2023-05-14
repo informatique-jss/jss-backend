@@ -59,6 +59,7 @@ export interface Constant {
   attachmentTypeLogo: AttachmentType;
   attachmentTypeProofOfAddress: AttachmentType;
   attachmentTypeInvoice: AttachmentType;
+  attachmentTypeProviderInvoice: AttachmentType;
   attachmentTypeCreditNote: AttachmentType;
   attachmentTypeKbisUpdated: AttachmentType;
   attachmentTypeRbe: AttachmentType;

@@ -134,6 +134,10 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeInvoice;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_provider_invoice")
+	private AttachmentType attachmentTypeProviderInvoice;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_attachment_type_credit_note")
 	private AttachmentType attachmentTypeCreditNote;
 
@@ -2014,6 +2018,14 @@ public class Constant implements Serializable, IId {
 
 	public void setCustomerOrderOriginOsiris(CustomerOrderOrigin customerOrderOriginOsiris) {
 		this.customerOrderOriginOsiris = customerOrderOriginOsiris;
+	}
+
+	public AttachmentType getAttachmentTypeProviderInvoice() {
+		return attachmentTypeProviderInvoice;
+	}
+
+	public void setAttachmentTypeProviderInvoice(AttachmentType attachmentTypeProviderInvoice) {
+		this.attachmentTypeProviderInvoice = attachmentTypeProviderInvoice;
 	}
 
 }

@@ -192,6 +192,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AttachmentType getAttachmentTypeProviderInvoice() throws OsirisException {
+        return getConstants().getAttachmentTypeProviderInvoice();
+    }
+
+    @Override
     public AttachmentType getAttachmentTypeCreditNote() throws OsirisException {
         return getConstants().getAttachmentTypeCreditNote();
     }

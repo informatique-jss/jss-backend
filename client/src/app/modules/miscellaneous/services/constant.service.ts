@@ -126,6 +126,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.attachmentTypeInvoice;
   }
 
+  getAttachmentTypeProviderInvoice() {
+    return this.constant.attachmentTypeProviderInvoice;
+  }
+
   getAttachmentTypeCreditNote() {
     return this.constant.attachmentTypeCreditNote;
   }
