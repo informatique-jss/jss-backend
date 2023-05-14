@@ -165,8 +165,8 @@ export interface Constant {
   paymentWayInbound: PaymentWay;
   paymentWayOutboud: PaymentWay;
   vatTwenty: Vat;
-  vatEight: Vat;
   vatZero: Vat;
+  vatTwo: Vat;
   vatDeductible: Vat;
   departmentMartinique: Department;
   departmentGuadeloupe: Department;

@@ -39,6 +39,7 @@ import com.jss.osiris.libs.PictureHelper;
 import com.jss.osiris.libs.QrCodeHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.model.LetterModel;
 import com.jss.osiris.libs.mail.model.VatMail;
 import com.jss.osiris.modules.accounting.model.BillingClosureReceiptValue;
@@ -51,6 +52,7 @@ import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
@@ -94,6 +96,9 @@ public class GeneratePdfDelegate {
 
     @Autowired
     InvoiceHelper invoiceHelper;
+
+    @Autowired
+    VatService vatService;
 
     public File generatePublicationForAnnouncement(Announcement announcement, Provision provision,
             boolean isPublicationFlag,
@@ -340,7 +345,7 @@ public class GeneratePdfDelegate {
     }
 
     public File generateInvoicePdf(CustomerOrder customerOrder, Invoice invoice, Invoice originalInvoice)
-            throws OsirisException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         final Context ctx = new Context();
 
         if (originalInvoice != null)
@@ -392,16 +397,22 @@ public class GeneratePdfDelegate {
         }
 
         // Compute base for debours
-        Vat vatDebour = constantService.getVatDeductible();
+        ctx.setVariable("vatDebour", null);
         if (vats == null)
             vats = new ArrayList<VatMail>();
         for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
             for (Provision provision : asso.getProvisions()) {
                 if (provision.getDebours() != null && provision.getDebours().size() > 0) {
                     for (Debour debour : provision.getDebours()) {
+                        Vat vatDebour = vatService
+                                .getGeographicalApplicableVatForPurshases(debour.getCompetentAuthority(),
+                                        constantService.getVatDeductible());
+
                         Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
                                 : debour.getDebourAmount();
-                        if (!debour.getBillingType().getIsNonTaxable()) {
+                        if (!debour.getBillingType().getIsNonTaxable() && vatDebour != null) {
+                            ctx.setVariable("vatDebour", vatDebour);
+
                             boolean vatFound = false;
                             for (VatMail vatMail : vats) {
                                 if (vatMail.getLabel().equals(vatDebour.getLabel())) {
@@ -435,7 +446,6 @@ public class GeneratePdfDelegate {
             }
         }
 
-        ctx.setVariable("vatDebour", vatDebour);
         ctx.setVariable("vats", vats);
         ctx.setVariable("priceTotal", Math.round(invoiceHelper.getPriceTotal(invoice) * 100f) / 100f);
         ctx.setVariable("invoice", invoice);

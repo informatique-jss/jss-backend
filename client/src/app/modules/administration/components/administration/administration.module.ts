@@ -1,22 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSortModule } from '@angular/material/sort';
 import { RouterModule, Routes } from '@angular/router';
 import { EditorModule } from '@tinymce/tinymce-angular';
 import { InvoicingModule } from 'src/app/modules/invoicing/components/invoicing/invoicing.module';
@@ -49,6 +49,7 @@ import { ReferentialCompetitorComponent } from '../referentials/referential-comp
 import { ReferentialCountryComponent } from '../referentials/referential-country/referential-country.component';
 import { ReferentialCustomerOrderOriginComponent } from '../referentials/referential-customer-order-origin/referential-customer-order-origin.component';
 import { ReferentialDeliveryServiceComponent } from '../referentials/referential-delivery-service/referential-delivery-service.component';
+import { ReferentialDepartmentVatSettingComponent } from '../referentials/referential-department-vat-setting/referential-department-vat-setting.component';
 import { ReferentialDepartmentComponent } from '../referentials/referential-department/referential-department.component';
 import { ReferentialDocumentTypeComponent } from '../referentials/referential-document-type/referential-document-type.component';
 import { ReferentialDomiciliationContractTypeComponent } from '../referentials/referential-domiciliation-contract-type/referential-domiciliation-contract-type.componentt';
@@ -179,6 +180,7 @@ const routes: Routes = [
     CompetentAuthorityComponent,
     ProviderComponent,
     ReferentialCustomerOrderOriginComponent,
+    ReferentialDepartmentVatSettingComponent,
   ], exports: [LogComponent]
 })
 export class AdministrationModule { }

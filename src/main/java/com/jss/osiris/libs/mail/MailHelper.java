@@ -61,6 +61,7 @@ import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
@@ -160,6 +161,9 @@ public class MailHelper {
 
     @Autowired
     CustomerMailService mailService;
+
+    @Autowired
+    VatService vatService;
 
     @Bean
     public TemplateEngine emailTemplateEngine() {
@@ -408,7 +412,8 @@ public class MailHelper {
         return emailTemplateEngine().process("model", ctx);
     }
 
-    private void computeQuotationPrice(CustomerMail mail, IQuotation quotation) throws OsirisException {
+    private void computeQuotationPrice(CustomerMail mail, IQuotation quotation)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         // Compute prices
         Float preTaxPriceTotal = 0f;
         Float discountTotal = null;
@@ -416,7 +421,6 @@ public class MailHelper {
         ArrayList<VatMail> vats = null;
         Float vatTotal = 0f;
         Float priceTotal = null;
-        Vat vatDebour = constantService.getVatDeductible();
 
         for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
             for (Provision provision : asso.getProvisions()) {
@@ -465,9 +469,13 @@ public class MailHelper {
                         }
                     } else if (provision.getDebours() != null && provision.getDebours().size() > 0) {
                         for (Debour debour : provision.getDebours()) {
+                            Vat vatDebour = vatService
+                                    .getGeographicalApplicableVatForPurshases(debour.getCompetentAuthority(),
+                                            constantService.getVatDeductible());
+
                             Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
                                     : debour.getDebourAmount();
-                            if (!debour.getBillingType().getIsNonTaxable()) {
+                            if (!debour.getBillingType().getIsNonTaxable() && vatDebour != null) {
                                 vatTotal += (debourAmount / (1f + (vatDebour.getRate() / 100f)))
                                         * vatDebour.getRate() / 100f;
                                 boolean vatFound = false;
@@ -522,12 +530,13 @@ public class MailHelper {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void generateQuotationMail(Quotation quotation) throws OsirisException, OsirisClientMessageException {
+    public void generateQuotationMail(Quotation quotation)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         sendQuotationToCustomer(quotation, true);
     }
 
     public void sendQuotationToCustomer(Quotation quotation, boolean sendToMe)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         CustomerMail mail = new CustomerMail();
         mail.setQuotation(quotation);
         mail.setHeaderPicture("images/quotation-header.png");
@@ -634,7 +643,7 @@ public class MailHelper {
     }
 
     public void sendQuotationCreationConfirmationToCustomer(Quotation quotation)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         CustomerMail mail = new CustomerMail();
         mail.setQuotation(quotation);
         mail.setHeaderPicture("images/quotation-header.png");
@@ -700,13 +709,13 @@ public class MailHelper {
     }
 
     public void generateCustomerOrderCreationConfirmationToCustomer(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         sendCustomerOrderCreationConfirmationToCustomer(customerOrder, true, false);
     }
 
     public void sendCustomerOrderCreationConfirmationToCustomer(CustomerOrder customerOrder, boolean sendToMe,
             boolean isReminder)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
@@ -838,12 +847,12 @@ public class MailHelper {
     }
 
     public void generateCustomerOrderDepositConfirmationToCustomer(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         sendCustomerOrderDepositConfirmationToCustomer(customerOrder, true);
     }
 
     public void sendCustomerOrderDepositConfirmationToCustomer(CustomerOrder customerOrder, boolean sendToMe)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
@@ -1113,7 +1122,7 @@ public class MailHelper {
 
     public void sendCreditNoteToCustomer(CustomerOrder customerOrder, boolean sendToMe, Invoice creditNote,
             Invoice invoice)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
@@ -1172,7 +1181,7 @@ public class MailHelper {
     public void sendCustomerOrderAttachmentsToCustomer(CustomerOrder customerOrder, AssoAffaireOrder asso,
             boolean sendToMe,
             List<Attachment> attachmentsToSend)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
         asso = assoAffaireOrderService.getAssoAffaireOrder(asso.getId());
@@ -1222,7 +1231,7 @@ public class MailHelper {
 
     public void sendAnnouncementRequestToConfrere(CustomerOrder customerOrder, AssoAffaireOrder asso,
             boolean sendToMe, Provision provision, Announcement announcement, boolean isReminder)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         if (announcement == null || announcement.getConfrere() == null || announcement.getPublicationDate() == null
                 || announcement.getNoticeTypes() == null || announcement.getNoticeTypes().size() == 0)

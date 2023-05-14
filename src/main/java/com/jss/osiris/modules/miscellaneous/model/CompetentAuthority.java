@@ -22,7 +22,7 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
-public class CompetentAuthority implements IId, IAttachment {
+public class CompetentAuthority implements IId, IAttachment, IVat {
 
 	@Id
 	@SequenceGenerator(name = "competent_authority_sequence", sequenceName = "competent_authority_sequence", allocationSize = 1)

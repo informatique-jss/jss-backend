@@ -305,7 +305,7 @@ public interface ConstantService {
 
     public Vat getVatZero() throws OsirisException;
 
-    public Vat getVatEight() throws OsirisException;
+    public Vat getVatTwo() throws OsirisException;
 
     public Vat getVatDeductible() throws OsirisException;
 

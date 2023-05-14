@@ -1010,14 +1010,14 @@
           </tr>
           <tr>
             <td>
-              <select-vat [(model)]="constant.vatTwenty" label="Taux de TVA - 20%" [form]="constantForm"
+              <select-vat [(model)]="constant.vatTwenty" label="Taux de TVA - 20% à la vente" [form]="constantForm"
                 propertyName="vatTwenty" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
             </td>
           </tr>
           <tr>
             <td>
-              <select-vat [(model)]="constant.vatEight" label="Taux de TVA - 8.5%" [form]="constantForm"
-                propertyName="vatEight" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
+              <select-vat [(model)]="constant.vatTwo" label="Taux de TVA - 2.1% à la vente" [form]="constantForm"
+                propertyName="vatTwo" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
             </td>
           </tr>
           <tr>
@@ -1028,7 +1028,7 @@
           </tr>
           <tr>
             <td>
-              <select-vat [(model)]="constant.vatDeductible" label="Taux de TVA - TVA déductible" [form]="constantForm"
+              <select-vat [(model)]="constant.vatDeductible" label="Taux de TVA - 20% à l'achat" [form]="constantForm"
                 propertyName="vatDeductible" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
             </td>
           </tr>
