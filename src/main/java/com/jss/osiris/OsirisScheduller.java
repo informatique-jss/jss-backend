@@ -9,6 +9,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.service.AzureInvoiceService;
@@ -269,7 +270,7 @@ public class OsirisScheduller {
 	}
 
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.central.pay.payment.request.validation.check}")
-	private void checkAllCentralPayPaymentRequests() {
+	private void checkAllCentralPayPaymentRequests() throws OsirisException {
 		try {
 			centralPayPaymentRequestService.checkAllPaymentRequests();
 		} catch (Exception e) {

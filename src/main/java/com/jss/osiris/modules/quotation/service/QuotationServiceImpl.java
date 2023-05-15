@@ -319,8 +319,10 @@ public class QuotationServiceImpl implements QuotationService {
                     .getPaymentRequest(request.getPaymentRequestId());
 
             if (centralPayPaymentRequest != null) {
-                if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.ACTIVE))
+                if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.ACTIVE)) {
                     centralPayDelegateService.cancelPaymentRequest(request.getPaymentRequestId());
+                    centralPayPaymentRequestService.deleteCentralPayPaymentRequest(request);
+                }
 
                 if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
                         && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)) {
@@ -345,12 +347,13 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean validateCardPaymentLinkForQuotationDeposit(Quotation quotation, String paymentRequestId)
+    public Boolean validateCardPaymentLinkForQuotationDeposit(Quotation quotation,
+            com.jss.osiris.modules.quotation.model.CentralPayPaymentRequest request)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         quotation = getQuotation(quotation.getId());
-        if (paymentRequestId != null) {
+        if (request != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
-                    .getPaymentRequest(paymentRequestId);
+                    .getPaymentRequest(request.getPaymentRequestId());
 
             if (centralPayPaymentRequest != null) {
                 if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
@@ -361,6 +364,12 @@ public class QuotationServiceImpl implements QuotationService {
                         unlockQuotationFromDeposit(quotation, centralPayPaymentRequest);
                     }
                 }
+                if (centralPayPaymentRequest.getCreationDate().isBefore(LocalDateTime.now().minusMinutes(5))) {
+                    if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.ACTIVE))
+                        centralPayDelegateService.cancelPaymentRequest(centralPayPaymentRequest.getPaymentRequestId());
+                    return true;
+                }
+
                 return centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
                         || centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CANCELED);
             }

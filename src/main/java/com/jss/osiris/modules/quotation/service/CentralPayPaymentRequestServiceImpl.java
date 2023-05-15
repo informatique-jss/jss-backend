@@ -79,7 +79,7 @@ public class CentralPayPaymentRequestServiceImpl implements CentralPayPaymentReq
                         deleteCentralPayPaymentRequest(request);
                 } else if (request.getQuotation() != null) {
                     if (quotationService.validateCardPaymentLinkForQuotationDeposit(request.getQuotation(),
-                            request.getPaymentRequestId()))
+                            request))
                         deleteCentralPayPaymentRequest(request);
                 }
             }

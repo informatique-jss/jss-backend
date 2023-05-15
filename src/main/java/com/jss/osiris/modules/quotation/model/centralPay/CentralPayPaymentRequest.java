@@ -22,8 +22,6 @@ public class CentralPayPaymentRequest {
     public LocalDateTime deadline;
     @JsonDeserialize(using = JacksonLocalDateTimeGmtDeserializer.class)
     public LocalDateTime linkExpirationDate;
-    @JsonDeserialize(using = JacksonLocalDateTimeGmtDeserializer.class)
-    public LocalDateTime endingDate;
     public String scenarioId;
     @JsonDeserialize(using = JacksonLocalDateTimeGmtDeserializer.class)
     public LocalDateTime scenarioStartingDate;
@@ -79,14 +77,6 @@ public class CentralPayPaymentRequest {
 
     public void setLinkExpirationDate(LocalDateTime linkExpirationDate) {
         this.linkExpirationDate = linkExpirationDate;
-    }
-
-    public LocalDateTime getEndingDate() {
-        return endingDate;
-    }
-
-    public void setEndingDate(LocalDateTime endingDate) {
-        this.endingDate = endingDate;
     }
 
     public String getScenarioId() {
