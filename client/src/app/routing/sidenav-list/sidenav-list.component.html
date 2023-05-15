@@ -65,6 +65,9 @@
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/administration' )>=0 && getCurrentRoute().indexOf('/administration/competent/authority' )<0 && getCurrentRoute().indexOf('/administration/provider' )<0}">
     <mat-icon>settings</mat-icon> <span>Administration</span>
   </a>
+  <a mat-list-item routerLink="/pdf-tools" [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/pdf-tools' )>=0}">
+    <mat-icon>description</mat-icon> <span>Pdf outils</span>
+  </a>
   <a mat-list-item routerLink="/my-profil" [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/my-profil' )>=0}">
     <mat-icon>manage_accounts</mat-icon> <span>Mon profil</span>
   </a>
