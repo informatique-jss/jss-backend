@@ -168,6 +168,7 @@ export interface Constant {
   vatZero: Vat;
   vatTwo: Vat;
   vatDeductible: Vat;
+  vatDeductibleTwo: Vat;
   departmentMartinique: Department;
   departmentGuadeloupe: Department;
   departmentReunion: Department;

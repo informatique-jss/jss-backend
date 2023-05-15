@@ -737,6 +737,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public Vat getVatDeductibleTwo() throws OsirisException {
+        return getConstants().getVatDeductibleTwo();
+    }
+
+    @Override
     public Department getDepartmentMartinique() throws OsirisException {
         return getConstants().getDepartmentMartinique();
     }

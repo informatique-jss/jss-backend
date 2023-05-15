@@ -107,7 +107,7 @@ public class VatServiceImpl implements VatService {
             return settings.getIntermediateVatForPurshase().getRate() > 0 ? settings.getIntermediateVatForPurshase()
                     : null;
 
-        if (vat.getId().equals(constantService.getVatTwo().getId()))
+        if (vat.getId().equals(constantService.getVatDeductibleTwo().getId()))
             return settings.getReducedVatForPurshase().getRate() > 0 ? settings.getReducedVatForPurshase() : null;
 
         return constantService.getVatDeductible();
