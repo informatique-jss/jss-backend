@@ -45,4 +45,6 @@ public interface QuotationService {
 
         public List<QuotationSearchResult> searchByCustomerOrderId(Integer idCustomerOrder);
 
+        public boolean getIsOpenedQuotation(IQuotation quotation);
+
 }
