@@ -424,7 +424,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (targetStatusCode.equals(CustomerOrderStatus.TO_BILLED)) {
             notificationService.notifyCustomerOrderToBeingToBilled(customerOrder);
 
-            // Auto billed for JSS Announcement only customer order 
+            // Auto billed for JSS Announcement only customer order
             if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     && isOnlyJssAnnouncement(customerOrder)
                     && getRemainingAmountToPayForCustomerOrder(customerOrder) >= 0) {
@@ -907,8 +907,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     .getPaymentRequest(request.getPaymentRequestId());
 
             if (centralPayPaymentRequest != null) {
-                if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.ACTIVE))
+                if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.ACTIVE)) {
                     centralPayDelegateService.cancelPaymentRequest(request.getPaymentRequestId());
+                    centralPayPaymentRequestService.deleteCentralPayPaymentRequest(request);
+                }
 
                 if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
                         && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)) {
@@ -973,6 +975,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         unlockCustomerOrderFromDeposit(customerOrder);
                     }
                 }
+
+                if (centralPayPaymentRequest.getCreationDate().isBefore(LocalDateTime.now().minusMinutes(5))) {
+                    if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.ACTIVE))
+                        centralPayDelegateService.cancelPaymentRequest(centralPayPaymentRequest.getPaymentRequestId());
+                    return true;
+                }
+
                 return centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
                         || centralPayPaymentRequest.getPaymentRequestStatus()
                                 .equals(CentralPayPaymentRequest.CANCELED);
