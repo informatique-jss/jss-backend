@@ -671,7 +671,6 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/asso/affaire/order/update")
-  @Transactional
   public ResponseEntity<AssoAffaireOrder> addOrUpdateAssoAffaireOrder(@RequestBody AssoAffaireOrder assoAffaireOrder)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
     validationHelper.validateReferential(assoAffaireOrder, true, "assoAffaireOrder");
