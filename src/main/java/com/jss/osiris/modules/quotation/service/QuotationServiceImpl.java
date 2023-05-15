@@ -33,6 +33,7 @@ import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
@@ -475,6 +476,23 @@ public class QuotationServiceImpl implements QuotationService {
         return quotationRepository.findQuotations(
                 Arrays.asList(0), Arrays.asList(0), Arrays.asList(0), LocalDateTime.now().minusYears(100),
                 LocalDateTime.now().plusYears(100), Arrays.asList(0), Arrays.asList(0), idCustomerOrder);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean getIsOpenedQuotation(IQuotation quotation) {
+        if (quotation instanceof CustomerOrder) {
+            CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotation.getId());
+            return customerOrder.getCustomerOrderStatus() != null
+                    && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN);
+        }
+
+        if (quotation instanceof Quotation) {
+            Quotation quotationQuotation = getQuotation(quotation.getId());
+            return quotationQuotation.getQuotationStatus() != null
+                    && quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
+        }
+        return false;
     }
 
 }
