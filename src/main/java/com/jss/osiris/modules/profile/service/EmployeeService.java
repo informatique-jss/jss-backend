@@ -20,7 +20,7 @@ public interface EmployeeService {
 
     public List<Employee> getMyHolidaymaker(Employee requestedEmployee);
 
-    public Responsable loginWebsiteUser(User user);
+    public Responsable loginWebsiteUser(User user, boolean isIntrospection);
 
     public boolean renewResponsablePassword(Responsable responsable) throws OsirisException;
 }

@@ -59,6 +59,7 @@ import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
@@ -208,7 +209,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws OsirisException {
+  public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice)
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
     AccountingJournal salesJournal = constantService.getAccountingJournalSales();
 
     if (invoice == null)
@@ -277,14 +279,17 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
                 if (provision.getDebours() != null && provision.getDebours().size() > 0) {
                   for (Debour debour : provision.getDebours()) {
 
+                    Vat vatDebour = vatService.getGeographicalApplicableVatForPurshases(debour.getCompetentAuthority(),
+                        constantService.getVatDeductible());
+
                     // Compute debour prices
                     Float total = 0f;
                     Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
                         : debour.getDebourAmount();
-                    if (debour.getBillingType().getIsNonTaxable())
+                    if (debour.getBillingType().getIsNonTaxable() || vatDebour == null)
                       total += debourAmount;
                     else
-                      total += debourAmount / ((100 + constantService.getVatDeductible().getRate()) / 100f);
+                      total += debourAmount / ((100 + vatDebour.getRate()) / 100f);
                     Float vatAmount = debourAmount - total;
 
                     generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(),
@@ -293,12 +298,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
                         null, debour.getBillingType().getAccountingAccountProduct(), invoiceItem,
                         invoice, null, salesJournal, null, null, null, null, null);
 
-                    if (vatAmount > 0) {
+                    if (vatAmount > 0 && vatDebour != null) {
                       generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(),
                           invoice.getManualAccountingDocumentNumber(), invoice.getManualAccountingDocumentDate(),
                           labelPrefix + " - TVA pour le produit "
                               + invoiceItem.getBillingItem().getBillingType().getLabel(),
-                          vatAmount, null, constantService.getVatDeductible().getAccountingAccount(),
+                          vatAmount, null, vatDebour.getAccountingAccount(),
                           invoiceItem, invoice, null, salesJournal, null, null, null, null, null);
                     }
                   }

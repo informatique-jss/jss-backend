@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
@@ -71,12 +72,12 @@ public class PricingHelper {
 
     @Transactional
     public IQuotation getAndSetInvoiceItemsForQuotationForFront(IQuotation quotation, boolean persistInvoiceItem)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         return getAndSetInvoiceItemsForQuotation(quotation, persistInvoiceItem);
     }
 
     public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation, boolean persistInvoiceItem)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (quotation.getAssoAffaireOrders() != null) {
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                 if (assoAffaireOrder.getProvisions() != null)
@@ -145,7 +146,7 @@ public class PricingHelper {
     }
 
     private void setInvoiceItemPreTaxPriceAndLabel(InvoiceItem invoiceItem, BillingItem billingItem,
-            Provision provision) throws OsirisException {
+            Provision provision) throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         invoiceItem.setLabel(billingItem.getBillingType().getLabel());
         if (billingItem.getBillingType().getIsPriceBasedOnCharacterNumber()) {
             CharacterPrice characterPrice = characterPriceService.getCharacterPrice(provision);
@@ -246,10 +247,13 @@ public class PricingHelper {
             for (Debour debour : provision.getDebours()) {
                 Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
                         : debour.getDebourAmount();
-                if (debour.getBillingType().getIsNonTaxable())
+                Vat vat = vatService.getGeographicalApplicableVatForPurshases(debour.getCompetentAuthority(),
+                        constantService.getVatDeductible());
+
+                if (debour.getBillingType().getIsNonTaxable() || vat == null)
                     total += debourAmount;
                 else
-                    total += debourAmount / ((100 + constantService.getVatDeductible().getRate()) / 100f);
+                    total += debourAmount / ((100 + vat.getRate()) / 100f);
             }
             invoiceItem.setPreTaxPrice(total);
         } else {
@@ -288,7 +292,7 @@ public class PricingHelper {
     }
 
     private void setInvoiceItemsForProvision(Provision provision, IQuotation quotation, boolean persistInvoiceItem)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         if (quotation != null && provision != null) {
             if (provision.getInvoiceItems() == null)
@@ -501,7 +505,7 @@ public class PricingHelper {
     }
 
     private void computeInvoiceItemsVatAndDiscount(InvoiceItem invoiceItem, IQuotation quotation, Provision provision)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         AssoSpecialOfferBillingType assoSpecialOfferBillingType = getAppliableSpecialOfferForProvision(
                 invoiceItem.getBillingItem().getBillingType(), quotation);
 
@@ -562,15 +566,12 @@ public class PricingHelper {
             country = billingDocument.getBillingLabelCountry();
         }
 
-        if (country != null && !country.getId().equals(constantService.getCountryFrance().getId())
-                && !country.getId().equals(constantService.getCountryMonaco().getId())) {
-            vat = null;
-        } else if (invoiceItem.getBillingItem() != null && invoiceItem.getBillingItem().getBillingType() != null
-                && invoiceItem.getBillingItem().getBillingType().getIsOverrideVat()) {
-            vat = invoiceItem.getBillingItem().getBillingType().getVat();
-        } else if (city != null) {
-            vat = vatService.getGeographicalApplicableVat(country, city.getDepartment());
-        }
+        if (city == null)
+            throw new OsirisClientMessageException(
+                    "Ville non trouvée dans l'adresse indiquée dans la configuration de facturation de la commande");
+
+        vat = vatService.getGeographicalApplicableVatForSales(country, city.getDepartment(),
+                invoiceItem.getBillingItem().getBillingType().getVat());
 
         if (vat != null && (invoiceItem.getIsGifted() == null || !invoiceItem.getIsGifted())) {
             Float vatPrice = 0f;
@@ -578,13 +579,17 @@ public class PricingHelper {
                     && (invoiceItem.getBillingItem().getBillingType().getIsDebour()
                             || invoiceItem.getBillingItem().getBillingType().getIsFee())) {
                 vatPrice = 0f;
-                for (Debour debour : provision.getDebours())
-                    if (!debour.getBillingType().getIsNonTaxable()) {
+                for (Debour debour : provision.getDebours()) {
+                    Vat competentAuthorityVat = vatService
+                            .getGeographicalApplicableVatForPurshases(debour.getCompetentAuthority(),
+                                    constantService.getVatDeductible());
+                    if (!debour.getBillingType().getIsNonTaxable() && competentAuthorityVat != null) {
                         Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
                                 : debour.getDebourAmount();
-                        vatPrice += (constantService.getVatDeductible().getRate() / 100f) * debourAmount
-                                / ((100 + constantService.getVatDeductible().getRate()) / 100f);
+                        vatPrice += (competentAuthorityVat.getRate() / 100f) * debourAmount
+                                / ((100 + competentAuthorityVat.getRate()) / 100f);
                     }
+                }
             } else {
                 vatPrice = vat.getRate() / 100
                         * ((invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0)

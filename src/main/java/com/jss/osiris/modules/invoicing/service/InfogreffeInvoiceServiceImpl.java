@@ -14,9 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.InfogreffeInvoice;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.repository.InfogreffeInvoiceRepository;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
@@ -79,14 +81,16 @@ public class InfogreffeInvoiceServiceImpl implements InfogreffeInvoiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean importInfogreffeInvoices(String csv) throws OsirisException, OsirisClientMessageException {
+    public Boolean importInfogreffeInvoices(String csv)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (csv != null && csv.length() > 0 && csv.contains(";")) {
             String[] lines = csv.split("\\r?\\n|\\r");
             for (String line : lines) {
                 String[] fields = line.split(";");
                 InfogreffeInvoice invoice = new InfogreffeInvoice();
-                invoice.setCompetentAuthority(
-                        competentAuthorityService.getCompetentAuthorityByInpiReference("G" + fields[2]));
+                List<CompetentAuthority> competentAuthorities = competentAuthorityService
+                        .getCompetentAuthorityByInpiReference("G" + fields[2]);
+                invoice.setCompetentAuthority(competentAuthorities.get(0));
                 if (fields.length > 10)
                     invoice.setCustomerReference(fields[10]);
                 if (!fields[5].equals(""))
@@ -188,7 +192,7 @@ public class InfogreffeInvoiceServiceImpl implements InfogreffeInvoiceService {
     }
 
     private Invoice generateInvoiceFromDebourAndInfogreffeInvoice(InfogreffeInvoice greffeInvoice)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         Invoice invoice = new Invoice();
         invoice.setCompetentAuthority(constantService.getCompetentAuthorityInfogreffe());
         invoice.setCustomerOrderForInboundInvoice(customerOrderService.getCustomerOrder(
@@ -210,7 +214,7 @@ public class InfogreffeInvoiceServiceImpl implements InfogreffeInvoiceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Invoice generateInvoiceFromProvisionAndGreffeInvoice(InfogreffeInvoice greffeInvoice, Provision provision)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         greffeInvoice = getInfogreffeInvoice(greffeInvoice.getId());
         greffeInvoice.setDebour(generateDebourFromInfogreffeInvoice(greffeInvoice, provision));
         addOrUpdateInfogreffeInvoice(greffeInvoice);

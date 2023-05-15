@@ -27,9 +27,10 @@ public interface CompetentAuthorityRepository extends QueryCacheCrudRepository<C
     Optional<CompetentAuthority> findByOwncloudFolderName(String folderName);
 
     @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-    Optional<CompetentAuthority> findByInpiReference(String inpiReference);
 
     CompetentAuthority findByIntercommunityVat(String intercommunityVat);
 
     CompetentAuthority findByAzureCustomReference(String azureCustomReference);
+
+    List<CompetentAuthority> findByInpiReference(String inpiReference);
 }

@@ -178,6 +178,14 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeProviderInvoice"
+                label="Type de pièce-jointe - Facture fournisseur" [form]="constantForm"
+                propertyName="attachmentTypeProviderInvoice" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-attachment-type [(model)]="constant.attachmentTypeCreditNote" label="Type de pièce-jointe - Avoir"
                 [form]="constantForm" propertyName="attachmentTypeCreditNote" [isMandatory]="true"
                 [isDisabled]="!editMode">
@@ -813,6 +821,23 @@
             </td>
           </tr>
           <tr>
+          <tr>
+            <td>
+              <select-customer-order-origin [(model)]="constant.customerOrderOriginWebSite"
+                label="Origine des commandes - site www.jss.fr" [form]="constantForm"
+                propertyName="customerOrderOriginWebSite" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-customer-order-origin>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-customer-order-origin [(model)]="constant.customerOrderOriginOsiris"
+                label="Origine des commandes - Osiris" [form]="constantForm" propertyName="customerOrderOriginOsiris"
+                [isMandatory]="true" [isDisabled]="!editMode">
+              </select-customer-order-origin>
+            </td>
+          </tr>
+          <tr>
             <td>
               <autocomplete-employee [(model)]="constant.employeeBillingResponsible" [form]="constantForm"
                 propertyName="employeeBillingResponsible" [isMandatory]="true" [isDisabled]="!editMode"
@@ -985,14 +1010,14 @@
           </tr>
           <tr>
             <td>
-              <select-vat [(model)]="constant.vatTwenty" label="Taux de TVA - 20%" [form]="constantForm"
+              <select-vat [(model)]="constant.vatTwenty" label="Taux de TVA - 20% à la vente" [form]="constantForm"
                 propertyName="vatTwenty" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
             </td>
           </tr>
           <tr>
             <td>
-              <select-vat [(model)]="constant.vatEight" label="Taux de TVA - 8.5%" [form]="constantForm"
-                propertyName="vatEight" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
+              <select-vat [(model)]="constant.vatTwo" label="Taux de TVA - 2.1% à la vente" [form]="constantForm"
+                propertyName="vatTwo" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
             </td>
           </tr>
           <tr>
@@ -1003,7 +1028,7 @@
           </tr>
           <tr>
             <td>
-              <select-vat [(model)]="constant.vatDeductible" label="Taux de TVA - TVA déductible" [form]="constantForm"
+              <select-vat [(model)]="constant.vatDeductible" label="Taux de TVA - 20% à l'achat" [form]="constantForm"
                 propertyName="vatDeductible" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
             </td>
           </tr>

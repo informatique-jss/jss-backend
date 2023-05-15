@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.libs.azure.FormRecognizerService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.AzureInvoice;
@@ -90,11 +91,12 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public void checkInvoiceToAnalyse() throws OsirisException, OsirisClientMessageException {
+    public void checkInvoiceToAnalyse()
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         List<Attachment> attachments = attachmentService.getInvoiceAttachmentOnProvisionToAnalyse();
         if (attachments != null && attachments.size() > 0) {
             for (Attachment attachment : attachments)
-                if (attachment.getId().equals(5826951)) // TODO remove
+                if (attachment.getId() >= 6421151) // TODO remove
                     formRecognizerService.recongnizeInvoice(attachment);
         }
         matchAzureInvoiceAndDebours();
@@ -107,7 +109,8 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         return IterableUtils.toList(azureInvoiceRepository.findAll());
     }
 
-    private void matchAzureInvoiceAndDebours() throws OsirisClientMessageException, OsirisException {
+    private void matchAzureInvoiceAndDebours()
+            throws OsirisClientMessageException, OsirisException, OsirisValidationException {
         List<AzureInvoice> invoices = azureInvoiceRepository
                 .findInvoicesToMatch(
                         Arrays.asList(
@@ -125,11 +128,22 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
                     else
                         addOrUpdateAzureInvoice(invoice); // status changed, save it
                 }
+
                 // If find in multiple provision, or if we don't have default payment for AC do
                 // nothing...
                 if (invoice.getAttachments() != null && invoice.getAttachments().size() == 1
                         && invoice.getCompetentAuthority().getDefaultPaymentType() != null) {
                     Provision provision = invoice.getAttachments().get(0).getProvision();
+
+                    if (invoice.getReference() == null) {
+                        // Cannot cross verify customer order, stop here
+                        continue;
+                    }
+                    if (!invoice.getReference()
+                            .contains(provision.getAssoAffaireOrder().getCustomerOrder().getId() + "")) {
+                        // Cannot cross verify customer order, stop here
+                        continue;
+                    }
 
                     // Check if all debours of this AC are not attached to an invoice to delete them
                     boolean allDeboursDeletables = true;
@@ -178,14 +192,14 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public Invoice generateDeboursAndInvoiceFromInvoiceFromUser(AzureInvoice azureInvoice, Provision currentProvision)
-            throws OsirisClientMessageException, OsirisException {
+            throws OsirisClientMessageException, OsirisException, OsirisValidationException {
         azureInvoice = getAzureInvoice(azureInvoice.getId());
         currentProvision = provisionService.getProvision(currentProvision.getId());
         return generateDeboursAndInvoiceFromInvoice(azureInvoice, currentProvision);
     }
 
     private Invoice generateDeboursAndInvoiceFromInvoice(AzureInvoice azureInvoice, Provision currentProvision)
-            throws OsirisClientMessageException, OsirisException {
+            throws OsirisClientMessageException, OsirisException, OsirisValidationException {
         Debour newDebour = new Debour();
         newDebour.setBillingType(constantService.getBillingTypeEmolumentsDeGreffeDebour());
         newDebour.setComments("Créé depuis la facture " + azureInvoice.getInvoiceId());

@@ -16,7 +16,7 @@
         <div class="invoice-title" *ngIf="invoice.creditNote">
           <span>Avoir n°{{invoice.creditNote.id}} émis à Paris, le
             {{invoice.creditNote.createdDate|date:'dd/MM/yyyy à HH:mm'}}</span>
-          <mat-icon (click)="openRoute($event,'/invoicing/view/'+invoice.creditNote.id)"
+          <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.creditNote.id)"
             (auxclick)="openRoute($event,'/invoicing/view/'+invoice.creditNote.id)" matTooltip="Voir l'avoir"
             color="accent" class="pointer invoice-chip">visibility
           </mat-icon>
@@ -24,25 +24,30 @@
         <div class="invoice-title" *ngIf="invoice.isCreditNote">
           <span>Pour la facture n°{{invoice.reverseCreditNote.id}} émise à Paris, le
             {{invoice.reverseCreditNote.createdDate|date:'dd/MM/yyyy à HH:mm'}}</span>
-          <mat-icon (click)="openRoute($event,'/invoicing/view/'+invoice.reverseCreditNote.id)"
+          <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.reverseCreditNote.id)"
             (auxclick)="openRoute($event,'/invoicing/view/'+invoice.reverseCreditNote.id)" matTooltip="Voir la facture"
             color="accent" class="pointer invoice-chip">visibility
           </mat-icon>
         </div>
         <p *ngIf="invoice.customerOrder">Commande n°{{invoice.customerOrder.id}}
-          <mat-icon matTooltip="Voir la commande" color="accent" class="pointer"
+          <mat-icon color="accent" matTooltip="Voir la commande" color="accent" class="pointer"
             (click)="openRoute($event,'/order/'+invoice.customerOrder.id)"
             (auxclick)="openRoute($event,'/order/'+invoice.customerOrder.id)">visibility
           </mat-icon>
         </p>
         <p *ngIf="invoice.customerOrderForInboundInvoice">Commande n°{{invoice.customerOrderForInboundInvoice.id}}
-          <mat-icon matTooltip="Voir la commande" color="accent" class="pointer"
+          <mat-icon color="accent" matTooltip="Voir la commande" color="accent" class="pointer"
             (click)="openRoute($event,'/order/'+invoice.customerOrderForInboundInvoice.id)"
             (auxclick)="openRoute($event,'/order/'+invoice.customerOrderForInboundInvoice.id)">visibility
           </mat-icon>
         </p>
-        <p *ngIf="invoice.attachments && !invoice.isCreditNote"> <single-attachment [entity]="invoice"
-            [entityType]="INVOICE_ENTITY_TYPE.entityType" [editMode]="false"
+        <p *ngIf="invoice.attachments && !invoice.isCreditNote && !invoice.customerOrder"> <single-attachment
+            [entity]="invoice" [entityType]="INVOICE_ENTITY_TYPE.entityType" [editMode]="false"
+            [attachmentTypeToDisplay]="attachmentTypeInvoice">
+          </single-attachment>
+        </p>
+        <p *ngIf="invoice.attachments && !invoice.isCreditNote && invoice.customerOrder"> <single-attachment
+            [entity]="invoice.customerOrder" [entityType]="CUSTOMER_ORDER_ENTITY_TYPE.entityType" [editMode]="false"
             [attachmentTypeToDisplay]="attachmentTypeInvoice">
           </single-attachment>
         </p>
@@ -72,8 +77,8 @@
             </td>
             <td class="mat-cell td-info"
               *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">
-              <p>{{getCustomerOrderName(invoice)}} <mat-icon matTooltip="Voir le donneur d'ordre" color="accent"
-                  class="pointer" (click)="openCustomerOrderLink($event )"
+              <p>{{getCustomerOrderName(invoice)}} <mat-icon color="accent" matTooltip="Voir le donneur d'ordre"
+                  color="accent" class="pointer" (click)="openCustomerOrderLink($event )"
                   (auxclick)="openCustomerOrderLink($event)">visibility</mat-icon></p>
               <p>{{getCustomerOrder(invoice).address}}</p>
               <p>{{getCustomerOrder(invoice).postalCode}}
@@ -97,8 +102,8 @@
           </tr>
           <tr class=" mat-row">
             <td class="mat-cell td-info">
-              <p>{{invoice.provider.label}} <mat-icon matTooltip="Voir le fournisseur" color="accent" class="pointer"
-                  (click)="openRoute($event,'/administration/provider/'+invoice.provider.id)"
+              <p>{{invoice.provider.label}} <mat-icon color="accent" matTooltip="Voir le fournisseur" color="accent"
+                  class="pointer" (click)="openRoute($event,'/administration/provider/'+invoice.provider.id)"
                   (auxclick)="openRoute($event,'/administration/provider/'+invoice.provider.id)">visibility
                 </mat-icon></p>
               <p>IBAN : {{invoice.provider.iban}}</p>

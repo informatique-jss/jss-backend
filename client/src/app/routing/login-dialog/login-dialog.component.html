@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card appearance="outlined" class="login-card">
   <mat-card-content>
     <form [formGroup]="loginForm" (ngSubmit)="submitLogin()">
       <p class="text-center"><img class="navbar-brand" ui-sref='main.tiers' [src]="logoOsiris" /></p>
@@ -16,9 +16,6 @@
             placeholder="Mot de passe">
           <mat-hint>Mot de passe de votre session Windows</mat-hint>
         </mat-form-field>
-      </p>
-      <p *ngIf="false" class="error">
-        {{ false }}
       </p>
       <div class="button">
         <button mat-raised-button color="warn" type="submit">Se connecter</button>

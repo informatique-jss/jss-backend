@@ -72,11 +72,11 @@ public class AzureReceiptServiceImpl implements AzureReceiptService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public void checkReciptToAnalyse() throws OsirisException, OsirisClientMessageException {
+    public void checkReceiptToAnalyse() throws OsirisException, OsirisClientMessageException {
         List<Attachment> attachments = attachmentService.getReceiptAttachmentOnCompetentAuthorityToAnalyse();
         if (attachments != null && attachments.size() > 0) {
             for (Attachment attachment : attachments)
-                if (attachment.getId().equals(5827201)) // TODO remove
+                if (attachment.getId() >= 6421151) // TODO remove
                     formRecognizerService.recongnizeRecipts(attachment);
         }
     }

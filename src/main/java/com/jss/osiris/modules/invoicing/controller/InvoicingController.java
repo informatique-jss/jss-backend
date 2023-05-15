@@ -289,7 +289,7 @@ public class InvoicingController {
 
     @PostMapping(inputEntryPoint + "/infogreffe-invoice/import")
     public ResponseEntity<Boolean> importInfogreffeInvoices(@RequestBody String csv)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         return new ResponseEntity<Boolean>(infogreffeInvoiceService.importInfogreffeInvoices(csv),
                 HttpStatus.OK);
     }
@@ -591,7 +591,8 @@ public class InvoicingController {
                 .equals(constantService.getPaymentWayInbound().getId())) {
             if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null
                     && paymentAssociate.getPayment().getPaymentAmount() > totalAmount
-                    && paymentAssociate.getPayment().getPaymentAmount() > payementLimitRefundInEuros)
+                    && Math.abs(paymentAssociate.getPayment().getPaymentAmount()
+                            - totalAmount) > payementLimitRefundInEuros)
                 throw new OsirisValidationException("TiersRefund or ConfrereRefund");
             validationHelper.validateReferential(paymentAssociate.getTiersRefund(), false, "TiersRefund");
             validationHelper.validateReferential(paymentAssociate.getConfrereRefund(), false, "ConfrereRefund");
@@ -599,11 +600,6 @@ public class InvoicingController {
 
         if (paymentAssociate.getPayment().getPaymentAmount() < totalAmount)
             throw new OsirisValidationException("not all payment used");
-
-        if (paymentAssociate.getPayment().getPaymentAmount() > totalAmount
-                && paymentAssociate.getTiersRefund() == null && paymentAssociate.getAffaire() == null
-                && Math.abs(paymentAssociate.getPayment().getPaymentAmount()) > payementLimitRefundInEuros)
-            throw new OsirisValidationException("no refund tiers set");
 
         ITiers commonCustomerOrder = null;
         if (paymentAssociate.getPayment().getPaymentWay().getId()

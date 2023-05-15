@@ -331,7 +331,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     public List<Attachment> getInvoiceAttachmentOnProvisionToAnalyse() throws OsirisException {
         return attachmentRepository
-                .findInvoiceAttachmentOnProvisionToAnalyse(constantService.getAttachmentTypeInvoice().getId(),
+                .findInvoiceAttachmentOnProvisionToAnalyse(constantService.getAttachmentTypeProviderInvoice().getId(),
                         Arrays.asList(
                                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED),
                                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BILLED)));

@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -560,6 +561,7 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/mail/generate/attachments")
+  @Transactional
   public ResponseEntity<CustomerOrder> generateAttachmentMail(@RequestBody AttachmentMailRequest attachmentMailRequest)
       throws OsirisValidationException, OsirisClientMessageException, OsirisException {
     attachmentMailRequest.setCustomerOrder((CustomerOrder) validationHelper
@@ -674,8 +676,9 @@ public class QuotationController {
     validationHelper.validateReferential(assoAffaireOrder, true, "assoAffaireOrder");
     validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true, "Affaire");
     validationHelper.validateReferential(assoAffaireOrder.getAssignedTo(), true, "AssignedTo");
-    assoAffaireOrder.setCustomerOrder((CustomerOrder) validationHelper
-        .validateReferential(assoAffaireOrder.getCustomerOrder(), true, "CustomerOrder"));
+    validationHelper.validateReferential(assoAffaireOrder.getCustomerOrder(), true, "CustomerOrder");
+    assoAffaireOrder.setCustomerOrder(
+        (CustomerOrder) customerOrderService.getCustomerOrder(assoAffaireOrder.getCustomerOrder().getId()));
 
     if (assoAffaireOrder.getProvisions() == null)
       throw new OsirisValidationException("Provisions");
@@ -877,7 +880,8 @@ public class QuotationController {
     if (department == null)
       throw new OsirisValidationException("department");
 
-    return new ResponseEntity<CharacterPrice>(characterPriceService.getCharacterPrice(department, date), HttpStatus.OK);
+    return new ResponseEntity<CharacterPrice>(characterPriceService.getCharacterPriceFromUser(department, date),
+        HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/character/number")
@@ -1522,7 +1526,7 @@ public class QuotationController {
     if (announcement == null)
       throw new OsirisValidationException("Annonce non trouvée");
 
-    File file = generatePdfDelegate.generatePublicationReceiptPdf(announcement, true, provision);
+    File file = generatePdfDelegate.generatePublicationForAnnouncement(announcement, provision, false, true, false);
 
     if (file != null) {
       try {
@@ -1578,7 +1582,7 @@ public class QuotationController {
     if (announcement == null)
       throw new OsirisValidationException("Annonce non trouvée");
 
-    File file = generatePdfDelegate.generatePublicationReceiptPdf(announcement, false, provision);
+    File file = generatePdfDelegate.generatePublicationForAnnouncement(announcement, provision, false, false, true);
 
     if (file != null) {
       try {
@@ -1637,7 +1641,7 @@ public class QuotationController {
     if (provision == null)
       throw new OsirisValidationException("Provision non trouvée");
 
-    File file = generatePdfDelegate.generatePublicationFlagPdf(announcement, provision);
+    File file = generatePdfDelegate.generatePublicationForAnnouncement(announcement, provision, true, false, false);
 
     if (file != null) {
       try {

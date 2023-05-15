@@ -551,13 +551,6 @@ public class TiersController {
             validationHelper.validateString(document.getAffaireRecipient(), false, 100, "AffaireRecipient");
             validationHelper.validateString(document.getClientRecipient(), false, 200, "ClientRecipient");
             validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
-            validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
-            validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
-            validationHelper.validateIban(document.getRefundIBAN(), false, "RefundIBAN");
-            validationHelper.validateBic(document.getRefundBic(), false, "RefundBic");
-            validationHelper.validateReferential(document.getBillingClosureType(), false, "BillingClosureType");
-            validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
-                "BillingClosureRecipientType");
             validationHelper.validateReferential(document.getBillingLabelCity(), false, "BillingLabelCity");
             validationHelper.validateReferential(document.getBillingLabelCountry(), false, "BillingLabelCountry");
             validationHelper.validateString(document.getBillingAddress(), false, 100, "BillingAddress");

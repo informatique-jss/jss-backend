@@ -34,7 +34,6 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public FormaliteStatus addOrUpdateFormaliteStatus(
             FormaliteStatus formaliteStatus) {
         return formaliteStatusRepository.save(formaliteStatus);

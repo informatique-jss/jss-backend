@@ -1,4 +1,4 @@
-<div>
+<div class="search-component">
   <form [formGroup]="searchForm">
     <table class="full-width">
       <tr>
@@ -19,9 +19,9 @@
             <mat-tab-group animationDuration="0ms">
               <mat-tab [label]="getTabLabel(TIERS_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
-                  <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(TIERS_ENTITY_TYPE)"
+                  <mat-card class="pointer mat-card" *ngFor="let entity of getEntitiesForTab(TIERS_ENTITY_TYPE)"
                     (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
-                    <mat-card-title-group>
+                    <mat-card-header>
                       <mat-card-title>{{entity.text.denomination}} {{entity.text.firstname}} {{entity.text.lastname}}
                         {{entity.text.idAs400?"("+entity.text.idAs400+")":""}}</mat-card-title>
                       <mat-card-subtitle *ngIf="entity.text.salesEmployee">Commercial
@@ -31,17 +31,17 @@
                         {{entity.text.address}} {{entity.text.postalCode}}
                         {{entity.text.city?entity.text.city.label:""}}
                       </mat-card-subtitle>
-                      <mat-icon class="mat-card-icon">group</mat-icon>
-                    </mat-card-title-group>
-                    <mat-divider></mat-divider>
+                      <mat-icon color="accent" class="mat-card-icon">group</mat-icon>
+                    </mat-card-header>
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>
               <mat-tab [label]="getTabLabel(RESPONSABLE_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
-                  <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(RESPONSABLE_ENTITY_TYPE)"
+                  <mat-card appearance="outlined" class="pointer mat-card"
+                    *ngFor="let entity of getEntitiesForTab(RESPONSABLE_ENTITY_TYPE)"
                     (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
-                    <mat-card-title-group>
+                    <mat-card-header>
                       <mat-card-title>{{entity.text.firstname}} {{entity.text.lastname}}
                         ({{entity.text.tiers.denomination?entity.text.tiers.denomination:entity.text.tiers.firstname+"
                         "+entity.text.tiers.lastname}})
@@ -54,18 +54,19 @@
                         {{entity.text.city?entity.text.city.label:""}} -
                         {{entity.text.idAs400?"("+entity.text.idAs400+")":""}}
                       </mat-card-subtitle>
-                      <mat-icon class="mat-card-icon">group</mat-icon>
-                    </mat-card-title-group>
-                    <mat-divider></mat-divider>
+                      <mat-icon color="accent" class="mat-card-icon">group</mat-icon>
+                    </mat-card-header>
+
                   </mat-card>
 
                 </mat-dialog-content>
               </mat-tab>
               <mat-tab [label]="getTabLabel(QUOTATION_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
-                  <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(QUOTATION_ENTITY_TYPE)"
-                    (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
-                    <mat-card-title-group>
+                  <mat-card appearance="outlined" class="pointer mat-card"
+                    *ngFor="let entity of getEntitiesForTab(QUOTATION_ENTITY_TYPE)" (click)="openEntity($event, entity)"
+                    (auxclick)="openEntity($event, entity)">
+                    <mat-card-header>
                       <mat-card-title>{{entity.text.id}}</mat-card-title>
                       <mat-card-subtitle><span *ngIf="entity.text.tiers!=null">Pour {{entity.text.tiers.firstname}}
                           {{entity.text.tiers.lastname}}</span><span
@@ -77,17 +78,18 @@
                           *ngIf="entity.text.responsable!=null">{{entity.text.responsable.salesEmployee.firstname}}
                           {{entity.text.responsable.salesEmployee.lastname}}</span>
                       </mat-card-subtitle>
-                      <mat-icon class="mat-card-icon">request_quote</mat-icon>
-                    </mat-card-title-group>
-                    <mat-divider></mat-divider>
+                      <mat-icon color="accent" class="mat-card-icon">request_quote</mat-icon>
+                    </mat-card-header>
+
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>
               <mat-tab [label]="getTabLabel(CUSTOMER_ORDER_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
-                  <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(CUSTOMER_ORDER_ENTITY_TYPE)"
+                  <mat-card appearance="outlined" class="pointer mat-card"
+                    *ngFor="let entity of getEntitiesForTab(CUSTOMER_ORDER_ENTITY_TYPE)"
                     (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
-                    <mat-card-title-group>
+                    <mat-card-header>
                       <mat-card-title>{{entity.text.id}}</mat-card-title>
                       <mat-card-subtitle><span *ngIf="entity.text.tiers!=null">Pour {{entity.text.tiers.firstname}}
                           {{entity.text.tiers.lastname}}</span><span
@@ -99,33 +101,35 @@
                           *ngIf="entity.text.responsable!=null">{{entity.text.responsable.salesEmployee.firstname}}
                           {{entity.text.responsable.salesEmployee.lastname}}</span>
                       </mat-card-subtitle>
-                      <mat-icon class="mat-card-icon">request_quote</mat-icon>
-                    </mat-card-title-group>
-                    <mat-divider></mat-divider>
+                      <mat-icon color="accent" class="mat-card-icon">request_quote</mat-icon>
+                    </mat-card-header>
+
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>
               <mat-tab [label]="getTabLabel(INVOICE_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
-                  <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(INVOICE_ENTITY_TYPE)"
-                    (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
-                    <mat-card-title-group>
+                  <mat-card appearance="outlined" class="pointer mat-card"
+                    *ngFor="let entity of getEntitiesForTab(INVOICE_ENTITY_TYPE)" (click)="openEntity($event, entity)"
+                    (auxclick)="openEntity($event, entity)">
+                    <mat-card-header>
                       <mat-card-title>{{entity.text.id}}</mat-card-title>
                       <mat-card-subtitle>
                         Commandé par {{getOrderingCustomerForInvoice(entity)}} - libellé au nom de
                         {{entity.text.billingLabel}} - {{entity.text.invoiceStatus.label}}
                       </mat-card-subtitle>
-                      <mat-icon class="mat-card-icon">point_of_sale</mat-icon>
-                    </mat-card-title-group>
-                    <mat-divider></mat-divider>
+                      <mat-icon color="accent" class="mat-card-icon">point_of_sale</mat-icon>
+                    </mat-card-header>
+
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>
               <mat-tab [label]="getTabLabel(ASSO_AFFAIRE_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
-                  <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(ASSO_AFFAIRE_ENTITY_TYPE)"
+                  <mat-card appearance="outlined" class="pointer mat-card"
+                    *ngFor="let entity of getEntitiesForTab(ASSO_AFFAIRE_ENTITY_TYPE)"
                     (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
-                    <mat-card-title-group>
+                    <mat-card-header>
                       <mat-card-title>
                         {{entity.text.affaire.denomination?entity.text.affaire.denomination:(entity.text.affaire.firstname+"
                         "+entity.text.affaire.lastname)}}</mat-card-title>
@@ -139,17 +143,18 @@
                           : "+entity.text.affaire.rna):""}}</p>
                         <p>{{getProvisionLabel(entity)}}</p>
                       </mat-card-subtitle>
-                      <mat-icon class="mat-card-icon">work</mat-icon>
-                    </mat-card-title-group>
-                    <mat-divider></mat-divider>
+                      <mat-icon color="accent" class="mat-card-icon">work</mat-icon>
+                    </mat-card-header>
+
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>
               <mat-tab [label]="getTabLabel(AFFAIRE_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
-                  <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(AFFAIRE_ENTITY_TYPE)"
-                    (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
-                    <mat-card-title-group>
+                  <mat-card appearance="outlined" class="pointer mat-card"
+                    *ngFor="let entity of getEntitiesForTab(AFFAIRE_ENTITY_TYPE)" (click)="openEntity($event, entity)"
+                    (auxclick)="openEntity($event, entity)">
+                    <mat-card-header>
                       <mat-card-title>
                         {{entity.text.denomination?entity.text.denomination:(entity.text.firstname+"
                         "+entity.text.lastname)}}</mat-card-title>
@@ -162,9 +167,9 @@
                           : "+entity.text.siret):""}}{{entity.text.rna?(" - RNA
                           : "+entity.text.rna):""}}</p>
                       </mat-card-subtitle>
-                      <mat-icon class="mat-card-icon">work</mat-icon>
-                    </mat-card-title-group>
-                    <mat-divider></mat-divider>
+                      <mat-icon color="accent" class="mat-card-icon">work</mat-icon>
+                    </mat-card-header>
+
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>

@@ -37,6 +37,12 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
     }
 
     @Override
+    @Transactional
+    public CharacterPrice getCharacterPriceFromUser(Department department, LocalDate date) {
+        return getCharacterPrice(department, date);
+    }
+
+    @Override
     public CharacterPrice getCharacterPrice(Department department, LocalDate date) {
         List<CharacterPrice> characterPrices = IterableUtils.toList(characterPriceRepository.findAll());
         if (characterPrices != null) {

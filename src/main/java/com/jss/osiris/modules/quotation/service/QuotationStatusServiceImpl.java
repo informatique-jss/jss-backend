@@ -33,7 +33,6 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public QuotationStatus addOrUpdateQuotationStatus(QuotationStatus quotationStatus) {
         return quotationStatusRepository.save(quotationStatus);
     }

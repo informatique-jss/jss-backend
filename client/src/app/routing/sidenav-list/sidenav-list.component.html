@@ -1,18 +1,7 @@
 <div class="sidebar-header">
-  <div class="menu bug-report" id="jiraBugReporter">
-    <mat-icon>bug_report</mat-icon>
-  </div>
-  <div class="menu">
-    <mat-icon (click)="openSearch()">search</mat-icon>
-  </div>
-  <div class="menu notif">
-    <mat-icon (click)="openNotificationDialog()" [matBadge]="getNotificationNumber()" matBadgePosition="below after"
-      [matBadgeHidden]="getNotificationNumber()==0" matBadgeColor="warn" matBadgeSize="small">
-      notifications</mat-icon>
-  </div>
-  <img class="navbar-brand" ui-sref='main.tiers' [src]="logoOsiris" />
+  <img class="navbar-brand" ui-sref='main.tiers' [src]="logoOsiris" [ngClass]="{'navbar-brand-invert':isDarkTheme}" />
 </div>
-<mat-nav-list>
+<mat-nav-list class="nav-list-main-menu">
   <a mat-list-item routerLink="/dashboard" *ngIf="canViewDashboardModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/dashboard' )>=0}">
     <mat-icon>dashboard</mat-icon> <span>Tableau de bord</span>
@@ -72,3 +61,20 @@
     <mat-icon>manage_accounts</mat-icon> <span>Mon profil</span>
   </a>
 </mat-nav-list>
+<<<<<<< HEAD
+=======
+<button mat-mini-fab color="accent" class="light" (click)="toggleDarkTheme()" matTooltip="Ca va être tout noir ...">
+  <mat-icon>lightbulb</mat-icon>
+</button>
+<button mat-mini-fab color="accent" class="bug-report" id="jiraBugReporter">
+  <mat-icon>bug_report</mat-icon>
+</button>
+<button mat-mini-fab color="accent" class="search" (click)="openSearch()">
+  <mat-icon>search</mat-icon>
+</button>
+<button mat-mini-fab color="accent" class="notif" (click)="openNotificationDialog()"
+  [matBadge]="getNotificationNumber()" matBadgePosition="below after" [matBadgeHidden]="getNotificationNumber()==0"
+  matBadgeColor="warn" matBadgeSize="small">
+  <mat-icon>notifications</mat-icon>
+</button>
+>>>>>>> e00ef2d72dcac439f887bd1d9b8d8b75f6e71848

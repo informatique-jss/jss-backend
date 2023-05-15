@@ -12,14 +12,6 @@ td {
   padding-right: 8px;
 }
 
-.selected-mat-row {
-  background-color: #6B9CBF;
-}
-
-.selected-mat-row:hover {
-  background-color: #6B9CBF;
-}
-
 .card-margin {
   margin: 20px;
   width: 550px;

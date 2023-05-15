@@ -1,8 +1,8 @@
 <ng-template #accordionTools>
-  <mat-icon matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
+  <mat-icon color="accent" matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
     class="pointer">
     unfold_more_double</mat-icon>
-  <mat-icon matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
+  <mat-icon color="accent" matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
     unfold_less_double</mat-icon>
 </ng-template>
 <div class="mat-accordion-container full-width" *ngIf="asso && asso.affaire">
@@ -14,7 +14,7 @@
         </mat-panel-title>
         <mat-panel-description>
           <span class="status-text">{{asso.customerOrder.customerOrderStatus.label}}</span>
-          <mat-icon matTooltip="Voir/éditer la commande" (click)="displayCustomerOrder($event)"
+          <mat-icon color="accent" matTooltip="Voir/éditer la commande" (click)="displayCustomerOrder($event)"
             (auxclick)="displayCustomerOrder($event)" class="pointer status-text">
             shopping_cart</mat-icon>
           <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
@@ -38,7 +38,8 @@
           <avatar-chip *ngIf="asso.assignedTo" [employee]="asso.assignedTo"
             (onChangeAssigne)="updateAssignedToForAffaire($event,asso)">
           </avatar-chip>
-          <mat-icon matTooltip="Voir/éditer l'affaire" (click)="displayAffaire($event);$event.stopPropagation();"
+          <mat-icon color="accent" matTooltip="Voir/éditer l'affaire"
+            (click)="displayAffaire($event);$event.stopPropagation();"
             (auxclick)="displayAffaire($event);$event.stopPropagation();" class="pointer status-text">
             edit</mat-icon>
           <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
@@ -71,7 +72,8 @@
           <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
         </mat-panel-description>
         <mat-panel-description *ngIf="editMode">
-          <mat-icon matTooltip="Supprimer la prestation" (click)="deleteProvision(asso,provision)" class="pointer">
+          <mat-icon color="accent" matTooltip="Supprimer la prestation" (click)="deleteProvision(asso,provision)"
+            class="pointer">
             delete</mat-icon>
         </mat-panel-description>
       </mat-expansion-panel-header>

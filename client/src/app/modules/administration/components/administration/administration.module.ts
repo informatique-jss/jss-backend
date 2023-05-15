@@ -8,7 +8,6 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
@@ -48,7 +47,9 @@ import { ReferentialCivilityComponent } from '../referentials/referential-civili
 import { ReferentialCompetentAuthorityTypeComponent } from '../referentials/referential-competent-authority-type/referential-competent-authority-type.component';
 import { ReferentialCompetitorComponent } from '../referentials/referential-competitor/referential-competitor.component';
 import { ReferentialCountryComponent } from '../referentials/referential-country/referential-country.component';
+import { ReferentialCustomerOrderOriginComponent } from '../referentials/referential-customer-order-origin/referential-customer-order-origin.component';
 import { ReferentialDeliveryServiceComponent } from '../referentials/referential-delivery-service/referential-delivery-service.component';
+import { ReferentialDepartmentVatSettingComponent } from '../referentials/referential-department-vat-setting/referential-department-vat-setting.component';
 import { ReferentialDepartmentComponent } from '../referentials/referential-department/referential-department.component';
 import { ReferentialDocumentTypeComponent } from '../referentials/referential-document-type/referential-document-type.component';
 import { ReferentialDomiciliationContractTypeComponent } from '../referentials/referential-domiciliation-contract-type/referential-domiciliation-contract-type.componentt';
@@ -100,7 +101,6 @@ const routes: Routes = [
     FormsModule,
     EditorModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
@@ -179,6 +179,8 @@ const routes: Routes = [
     ViewLogComponent,
     CompetentAuthorityComponent,
     ProviderComponent,
+    ReferentialCustomerOrderOriginComponent,
+    ReferentialDepartmentVatSettingComponent,
   ], exports: [LogComponent]
 })
 export class AdministrationModule { }

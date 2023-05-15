@@ -1,9 +1,10 @@
 <ng-template #accordionTools>
   <mat-panel-description>
-    <mat-icon matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
-      class="pointer">
+    <mat-icon color="accent" matTooltip="Ouvrir tous les onglets"
+      (click)="accordion!.openAll();$event.stopPropagation();" class="pointer">
       unfold_more_double</mat-icon>
-    <mat-icon matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
+    <mat-icon color="accent" matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();"
+      class="pointer">
       unfold_less_double</mat-icon>
   </mat-panel-description>
 </ng-template>
@@ -56,18 +57,18 @@
               <td *ngIf="announcement.noticeTypeFamily">
                 <mat-form-field class="full-width">
                   <mat-label>Sous-rubrique(s)</mat-label>
-                  <mat-chip-list #chipListNoticeTypes>
-                    <mat-chip *ngFor="let noticeType of announcement.noticeTypes"
+                  <mat-chip-grid #chipListNoticeTypes>
+                    <mat-chip-row *ngFor="let noticeType of announcement.noticeTypes"
                       (removed)="removeNoticeType(noticeType)">
                       {{noticeType.label}}
                       <button matChipRemove *ngIf="editMode">
                         <mat-icon>cancel</mat-icon>
                       </button>
-                    </mat-chip>
+                    </mat-chip-row>
                     <input placeholder="Saisir une sous-rubrique" #noticeTypesInput formControlName="noticeTypes"
                       [matChipInputFor]="chipListNoticeTypes" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
                       [matAutocomplete]="autoCompleteNoticeTypes">
-                  </mat-chip-list>
+                  </mat-chip-grid>
                   <mat-autocomplete autoActiveFirstOption #autoCompleteNoticeTypes="matAutocomplete"
                     [displayWith]="displayLabel" (optionSelected)="addNoticeType($event)">
                     <mat-option *ngFor="let noticeType of filteredNoticeTypes | async" [value]="noticeType">
@@ -135,19 +136,19 @@
               <td>
                 <mat-form-field class="full-width">
                   <mat-label>Utiliser des modèles d'annonces</mat-label>
-                  <mat-chip-list #chipListNoticeTemplates>
-                    <mat-chip *ngFor="let noticeTemplate of selectedNoticeTemplates"
+                  <mat-chip-grid #chipListNoticeTemplates>
+                    <mat-chip-row *ngFor="let noticeTemplate of selectedNoticeTemplates"
                       (removed)="removeNoticeTemplate(noticeTemplate)">
                       {{noticeTemplate.label}}
                       <button matChipRemove *ngIf="editMode">
                         <mat-icon>cancel</mat-icon>
                       </button>
-                    </mat-chip>
+                    </mat-chip-row>
                     <input placeholder="Saisir un modèle d'annonce" #noticeTemplateInput
                       formControlName="noticeTemplates" [matChipInputFor]="chipListNoticeTemplates"
                       [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
                       [matAutocomplete]="autoCompleteNoticeTemplates">
-                  </mat-chip-list>
+                  </mat-chip-grid>
                   <mat-autocomplete autoActiveFirstOption #autoCompleteNoticeTemplates="matAutocomplete"
                     [displayWith]="displayLabel" (optionSelected)="addNoticeTemplate($event)">
                     <mat-option *ngFor="let noticeTemplate of filteredNoticeTemplates | async" [value]="noticeTemplate">
@@ -204,7 +205,7 @@
             </tr>
           </table>
           <table class="full-width" *ngIf="announcement.isComplexAnnouncement">
-            <tr>
+            <tr *ngIf="announcement.id">
               <td>
                 <single-attachment [entity]="provision!" [entityType]="PROVISION_ENTITY_TYPE.entityType"
                   [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypeComplexAnnouncement"
@@ -212,11 +213,16 @@
                 </single-attachment>
               </td>
             </tr>
-            <tr *ngIf="editMode">
+            <tr *ngIf="editMode && announcement.id">
               <td>
                 <p>Ajoutez ici le PDF de l'annonce à publier.</p>
                 <p class="color-warn">Attention à bien laisser un en-tête de 5 cm sur la première page.</p>
                 <p>Le nombre de caractères et le prix seront calculés à l'enregistrement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p>Enregistrez une première fois l'annonce avant de pouvoir ajouter le PDF</p>
               </td>
             </tr>
           </table>

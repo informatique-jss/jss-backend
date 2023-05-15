@@ -11,7 +11,7 @@ public interface AzureReceiptService {
 
     public AzureReceipt addOrUpdateAzureReceipt(AzureReceipt azureReceipt);
 
-    public void checkReciptToAnalyse() throws OsirisException, OsirisClientMessageException;
+    public void checkReceiptToAnalyse() throws OsirisException, OsirisClientMessageException;
 
     public AzureReceipt checkAllInvoicesReconciliated(AzureReceipt azureReceipt);
 

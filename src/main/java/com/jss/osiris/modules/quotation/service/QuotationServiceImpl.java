@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -20,7 +21,10 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.DepositService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
@@ -90,6 +94,15 @@ public class QuotationServiceImpl implements QuotationService {
     @Autowired
     CentralPayPaymentRequestService centralPayPaymentRequestService;
 
+    @Autowired
+    ConstantService constantService;
+
+    @Autowired
+    ActiveDirectoryHelper activeDirectoryHelper;
+
+    @Autowired
+    CustomerOrderOriginService customerOrderOriginService;
+
     @Override
     public Quotation getQuotation(Integer id) {
         Optional<Quotation> quotation = quotationRepository.findById(id);
@@ -146,7 +159,15 @@ public class QuotationServiceImpl implements QuotationService {
         if (isNewQuotation) {
             notificationService.notifyNewQuotation(quotation);
 
-            if (quotation.getIsCreatedFromWebSite())
+            List<CustomerOrderOrigin> origins = customerOrderOriginService
+                    .getByUsername(activeDirectoryHelper.getCurrentUsername());
+            if (origins != null && origins.size() == 1)
+                quotation.setCustomerOrderOrigin(origins.get(0));
+            else
+                quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
+
+            if (quotation.getCustomerOrderOrigin().getId()
+                    .equals(constantService.getCustomerOrderOriginWebSite().getId()))
                 mailHelper.sendQuotationCreationConfirmationToCustomer(quotation);
         }
         return quotation;

@@ -134,6 +134,10 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeInvoice;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_provider_invoice")
+	private AttachmentType attachmentTypeProviderInvoice;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_attachment_type_credit_note")
 	private AttachmentType attachmentTypeCreditNote;
 
@@ -533,8 +537,8 @@ public class Constant implements Serializable, IId {
 	private Vat vatTwenty;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_vat_eight")
-	private Vat vatEight;
+	@JoinColumn(name = "id_vat_two")
+	private Vat vatTwo;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_vat_zero")
@@ -678,6 +682,14 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_correspondence_fees")
 	private BillingType billingTypeCorrespondenceFees;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_customer_order_origin_website")
+	private CustomerOrderOrigin customerOrderOriginWebSite;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_customer_order_origin_osiris")
+	private CustomerOrderOrigin customerOrderOriginOsiris;
 
 	public Integer getId() {
 		return id;
@@ -1112,14 +1124,6 @@ public class Constant implements Serializable, IId {
 
 	public void setVatTwenty(Vat vatTwenty) {
 		this.vatTwenty = vatTwenty;
-	}
-
-	public Vat getVatEight() {
-		return vatEight;
-	}
-
-	public void setVatEight(Vat vatEight) {
-		this.vatEight = vatEight;
 	}
 
 	public Department getDepartmentMartinique() {
@@ -1990,6 +1994,38 @@ public class Constant implements Serializable, IId {
 
 	public void setAttachmentTypeComplexAnnouncement(AttachmentType attachmentTypeComplexAnnouncement) {
 		this.attachmentTypeComplexAnnouncement = attachmentTypeComplexAnnouncement;
+	}
+
+	public CustomerOrderOrigin getCustomerOrderOriginWebSite() {
+		return customerOrderOriginWebSite;
+	}
+
+	public void setCustomerOrderOriginWebSite(CustomerOrderOrigin customerOrderOriginWebSite) {
+		this.customerOrderOriginWebSite = customerOrderOriginWebSite;
+	}
+
+	public CustomerOrderOrigin getCustomerOrderOriginOsiris() {
+		return customerOrderOriginOsiris;
+	}
+
+	public void setCustomerOrderOriginOsiris(CustomerOrderOrigin customerOrderOriginOsiris) {
+		this.customerOrderOriginOsiris = customerOrderOriginOsiris;
+	}
+
+	public AttachmentType getAttachmentTypeProviderInvoice() {
+		return attachmentTypeProviderInvoice;
+	}
+
+	public void setAttachmentTypeProviderInvoice(AttachmentType attachmentTypeProviderInvoice) {
+		this.attachmentTypeProviderInvoice = attachmentTypeProviderInvoice;
+	}
+
+	public Vat getVatTwo() {
+		return vatTwo;
+	}
+
+	public void setVatTwo(Vat vatTwo) {
+		this.vatTwo = vatTwo;
 	}
 
 }

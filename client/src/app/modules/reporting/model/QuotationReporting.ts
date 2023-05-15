@@ -23,4 +23,6 @@ export interface QuotationReporting {
   noticeTypeFamilyLabel: string;
   noticeTypeLabel: string;
   quotationCreator: string;
+  preTaxPriceWithoutDebour: number;
+  customerOrderOriginLabel: string;
 }

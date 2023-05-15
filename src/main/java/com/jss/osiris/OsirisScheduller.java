@@ -281,7 +281,7 @@ public class OsirisScheduller {
 	private void checkInvoiceToAnalyse() {
 		try {
 			azureInvoiceService.checkInvoiceToAnalyse();
-			azureReceiptService.checkReciptToAnalyse();
+			azureReceiptService.checkReceiptToAnalyse();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
@@ -296,7 +296,7 @@ public class OsirisScheduller {
 			formaliteStatusService.updateStatusReferential();
 			domiciliationStatusService.updateStatusReferential();
 			simpleProvisionStatusService.updateStatusReferential();
-			bodaccStatusService.updateStatusReferential();
+			bodaccStatusService.updateBodaccStatusReferential();
 			assignationTypeService.updateAssignationTypes();
 			provisionScreenTypeService.updateScreenTypes();
 		} catch (Exception e) {

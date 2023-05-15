@@ -7,7 +7,7 @@ import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { VatBase } from 'src/app/modules/quotation/model/VatBase';
-import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { instanceOfConfrere, instanceOfResponsable, instanceOfTiers } from '../../../../libs/TypeHelper';
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
@@ -40,6 +40,8 @@ export class InvoiceDetailsComponent implements OnInit {
   invoiceStatusPayed = this.constantService.getInvoiceStatusPayed();
   invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
   attachmentTypeInvoice = this.constantService.getAttachmentTypeInvoice();
+
+  CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
 
   ngOnInit() {
     this.refreshData();

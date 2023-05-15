@@ -1,15 +1,17 @@
-.mat-chip.mat-standard-chip.ok-status {
-  color: white;
+.mat-mdc-chip.mat-mdc-standard-chip.ok-status {
   background-color: #2ecc71;
 }
 
-.mat-chip.mat-standard-chip.ko-status {
-  color: white;
+.mat-mdc-chip {
+  --mdc-chip-label-text-color: #fff !important;
+  --mdc-chip-with-icon-selected-icon-color: #fff !important;
+}
+
+.mat-mdc-chip.mat-mdc-standard-chip.ko-status {
   background-color: #c0392b;
 }
 
-.mat-chip.mat-standard-chip.warn-status {
-  color: white;
+.mat-mdc-chip.mat-mdc-standard-chip.warn-status {
   background-color: #f39c12;
 }
 
