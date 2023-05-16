@@ -686,19 +686,7 @@ public class QuotationController {
     IQuotation quotation = assoAffaireOrder.getCustomerOrder() != null ? assoAffaireOrder.getCustomerOrder()
         : assoAffaireOrder.getQuotation();
 
-    boolean isOpen = false;
-
-    if (quotation instanceof CustomerOrder) {
-      CustomerOrder customerOrder = (CustomerOrder) quotation;
-      isOpen = customerOrder.getCustomerOrderStatus() != null
-          && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN);
-    }
-
-    if (quotation instanceof Quotation) {
-      Quotation quotationQuotation = (Quotation) quotation;
-      isOpen = quotationQuotation.getQuotationStatus() != null
-          && quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
-    }
+    boolean isOpen = quotationService.getIsOpenedQuotation(quotation);
 
     boolean isCustomerOrder = quotation instanceof CustomerOrder && !isOpen;
 

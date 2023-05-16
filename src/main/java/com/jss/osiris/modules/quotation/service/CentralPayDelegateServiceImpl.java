@@ -55,15 +55,21 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
     }
 
     @Override
-    public CentralPayPaymentRequest getPaymentRequest(String centralPayPaymentRequestId) {
+    public CentralPayPaymentRequest getPaymentRequest(String centralPayPaymentRequestId) throws OsirisException {
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = createHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        ResponseEntity<CentralPayPaymentRequest> res = new RestTemplate().exchange(
-                centralPayEndpoint + paymentRequestUrl + "/" + centralPayPaymentRequestId, HttpMethod.GET,
-                new HttpEntity<Object>(headers),
-                CentralPayPaymentRequest.class);
+        ResponseEntity<CentralPayPaymentRequest> res;
+        try {
+            res = new RestTemplate().exchange(
+                    centralPayEndpoint + paymentRequestUrl + "/" + centralPayPaymentRequestId, HttpMethod.GET,
+                    new HttpEntity<Object>(headers),
+                    CentralPayPaymentRequest.class);
+        } catch (Exception e) {
+            throw new OsirisException(e,
+                    "Impossible to fetch central pay payment request n°" + centralPayPaymentRequestId);
+        }
 
         if (res.getBody() != null) {
             return res.getBody();

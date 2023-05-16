@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
+import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { NotificationService } from '../../modules/miscellaneous/services/notification.service';
 import { SearchService } from '../../services/search.service';
 @Component({
@@ -12,15 +13,17 @@ import { SearchService } from '../../services/search.service';
 export class SidenavListComponent implements OnInit {
   logoOsiris: string = '/assets/images/jss_icon.png';
   @Input() isDarkTheme: boolean = false;
-  @Output() isDarkThemeChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(protected appService: AppService, protected router: Router,
     protected habilitationService: HabilitationsService,
     private notidicationService: NotificationService,
+    private userPreferenceService: UserPreferenceService,
     protected searchService: SearchService) { }
 
   ngOnInit() {
     this.notidicationService.getNotificationsObservable().subscribe();
+    this.isDarkTheme = this.userPreferenceService.getDarkMode();
+    this.refreshBodyTheme();
   }
 
   public onSidenavClose = () => {
@@ -33,8 +36,11 @@ export class SidenavListComponent implements OnInit {
 
   toggleDarkTheme() {
     this.isDarkTheme = !this.isDarkTheme;
-    this.isDarkThemeChange.emit(this.isDarkTheme);
+    this.userPreferenceService.setDarkMode(this.isDarkTheme);
+    this.refreshBodyTheme();
+  }
 
+  refreshBodyTheme() {
     // get html body element
     const bodyElement = document.body;
 

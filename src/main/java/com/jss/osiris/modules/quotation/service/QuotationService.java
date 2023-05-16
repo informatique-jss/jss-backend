@@ -34,7 +34,8 @@ public interface QuotationService {
                         String subject)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public Boolean validateCardPaymentLinkForQuotationDeposit(Quotation quotation, String paymentRequestId)
+        public Boolean validateCardPaymentLinkForQuotationDeposit(Quotation quotation,
+                        com.jss.osiris.modules.quotation.model.CentralPayPaymentRequest request)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void sendRemindersForQuotation()
@@ -44,5 +45,7 @@ public interface QuotationService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public List<QuotationSearchResult> searchByCustomerOrderId(Integer idCustomerOrder);
+
+        public boolean getIsOpenedQuotation(IQuotation quotation);
 
 }

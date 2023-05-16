@@ -185,11 +185,13 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
                             ((String) documentField.getValue()).toUpperCase().trim().replaceAll(" ", ""));
 
                     CompetentAuthority competentAuthority = null;
-                    competentAuthority = competentAuthorityService
-                            .getCompetentAuthorityByIntercommunityVat(azureInvoice.getVendorTaxId());
-                    if (competentAuthority == null)
+                    if (azureInvoice.getVendorTaxId() != null && !azureInvoice.getVendorTaxId().equals("")) {
                         competentAuthority = competentAuthorityService
-                                .getCompetentAuthorityByAzureCustomReference(azureInvoice.getVendorTaxId());
+                                .getCompetentAuthorityByIntercommunityVat(azureInvoice.getVendorTaxId());
+                        if (competentAuthority == null)
+                            competentAuthority = competentAuthorityService
+                                    .getCompetentAuthorityByAzureCustomReference(azureInvoice.getVendorTaxId());
+                    }
 
                     if (competentAuthority != null)
                         azureInvoice.setCompetentAuthority(competentAuthority);

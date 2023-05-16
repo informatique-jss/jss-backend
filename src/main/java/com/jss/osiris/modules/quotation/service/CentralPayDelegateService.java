@@ -6,13 +6,13 @@ import com.jss.osiris.modules.quotation.model.centralPay.CentralPayTransaction;
 
 public interface CentralPayDelegateService {
 
-    public CentralPayPaymentRequest cancelPaymentRequest(String centralPayPaymentRequestId);
+        public CentralPayPaymentRequest cancelPaymentRequest(String centralPayPaymentRequestId);
 
-    public CentralPayPaymentRequest generatePayPaymentRequest(Float amount, String mail, String entityId,
-            String subject);
+        public CentralPayPaymentRequest generatePayPaymentRequest(Float amount, String mail, String entityId,
+                        String subject);
 
-    public CentralPayPaymentRequest getPaymentRequest(String centralPayPaymentRequestId);
+        public CentralPayPaymentRequest getPaymentRequest(String centralPayPaymentRequestId) throws OsirisException;
 
-    public CentralPayTransaction getTransaction(CentralPayPaymentRequest centralPayPaymentRequest)
-            throws OsirisException;
+        public CentralPayTransaction getTransaction(CentralPayPaymentRequest centralPayPaymentRequest)
+                        throws OsirisException;
 }

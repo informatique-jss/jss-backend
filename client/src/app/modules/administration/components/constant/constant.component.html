@@ -142,21 +142,24 @@
           <tr>
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeKbis" label="Type de pièce-jointe - KBIS"
-                [form]="constantForm" propertyName="attachmentTypeKbis" [isMandatory]="true" [isDisabled]="!editMode">
+                [form]="constantForm" propertyName="attachmentTypeKbis" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
           <tr>
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeCni" label="Type de pièce-jointe - CNI"
-                [form]="constantForm" propertyName="attachmentTypeCni" [isMandatory]="true" [isDisabled]="!editMode">
+                [form]="constantForm" propertyName="attachmentTypeCni" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
           <tr>
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeLogo" label="Type de pièce-jointe - Logo"
-                [form]="constantForm" propertyName="attachmentTypeLogo" [isMandatory]="true" [isDisabled]="!editMode">
+                [form]="constantForm" propertyName="attachmentTypeLogo" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
@@ -164,15 +167,16 @@
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeProofOfAddress"
                 label="Type de pièce-jointe - Justificatif de domicile" [form]="constantForm"
-                propertyName="attachmentTypeProofOfAddress" [isMandatory]="true" [isDisabled]="!editMode">
+                propertyName="attachmentTypeProofOfAddress" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
           <tr>
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeInvoice" label="Type de pièce-jointe - Facture"
-                [form]="constantForm" propertyName="attachmentTypeInvoice" [isMandatory]="true"
-                [isDisabled]="!editMode">
+                [form]="constantForm" propertyName="attachmentTypeInvoice" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
@@ -180,7 +184,8 @@
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeProviderInvoice"
                 label="Type de pièce-jointe - Facture fournisseur" [form]="constantForm"
-                propertyName="attachmentTypeProviderInvoice" [isMandatory]="true" [isDisabled]="!editMode">
+                propertyName="attachmentTypeProviderInvoice" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
@@ -188,7 +193,7 @@
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeCreditNote" label="Type de pièce-jointe - Avoir"
                 [form]="constantForm" propertyName="attachmentTypeCreditNote" [isMandatory]="true"
-                [isDisabled]="!editMode">
+                [byPassAttachmentHiddenFilter]="true" [isDisabled]="!editMode">
               </select-attachment-type>
             </td>
           </tr>
@@ -196,14 +201,16 @@
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeKbisUpdated"
                 label="Type de pièce-jointe - Kbis mis à jour" [form]="constantForm"
-                propertyName="attachmentTypeKbisUpdated" [isMandatory]="true" [isDisabled]="!editMode">
+                propertyName="attachmentTypeKbisUpdated" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
           <tr>
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeRbe" label="Type de pièce-jointe - RBE"
-                [form]="constantForm" propertyName="attachmentTypeRbe" [isMandatory]="true" [isDisabled]="!editMode">
+                [form]="constantForm" propertyName="attachmentTypeRbe" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
@@ -211,7 +218,8 @@
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeDepositReceipt"
                 label="Type de pièce-jointe - Récépissé de dépot" [form]="constantForm"
-                propertyName="attachmentTypeDepositReceipt" [isMandatory]="true" [isDisabled]="!editMode">
+                propertyName="attachmentTypeDepositReceipt" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
@@ -219,7 +227,8 @@
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypePublicationFlag"
                 label="Type de pièce-jointe - Témoin de publication" [form]="constantForm"
-                propertyName="attachmentTypePublicationFlag" [isMandatory]="true" [isDisabled]="!editMode">
+                propertyName="attachmentTypePublicationFlag" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
@@ -227,7 +236,8 @@
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypePublicationReceipt"
                 label="Type de pièce-jointe - Attestation de parution" [form]="constantForm"
-                propertyName="attachmentTypePublicationReceipt" [isMandatory]="true" [isDisabled]="!editMode">
+                propertyName="attachmentTypePublicationReceipt" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
@@ -235,7 +245,8 @@
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypePublicationProof"
                 label="Type de pièce-jointe - Justificatif de parution" [form]="constantForm"
-                propertyName="attachmentTypePublicationProof" [isMandatory]="true" [isDisabled]="!editMode">
+                propertyName="attachmentTypePublicationProof" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
@@ -243,7 +254,7 @@
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeJournal" label="Type de pièce-jointe - Journal"
                 [form]="constantForm" propertyName="attachmentTypeJournal" [isMandatory]="true"
-                [isDisabled]="!editMode">
+                [byPassAttachmentHiddenFilter]="true" [isDisabled]="!editMode">
               </select-attachment-type>
             </td>
           </tr>
@@ -251,7 +262,8 @@
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeBillingClosure"
                 label="Type de pièce-jointe - relevé de compte" [form]="constantForm"
-                propertyName="attachmentTypeBillingClosure" [isMandatory]="true" [isDisabled]="!editMode">
+                propertyName="attachmentTypeBillingClosure" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
@@ -259,7 +271,8 @@
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeProofReading"
                 label="Type de pièce-jointe - bon à tirer" [form]="constantForm"
-                propertyName="attachmentTypeProofReading" [isMandatory]="true" [isDisabled]="!editMode">
+                propertyName="attachmentTypeProofReading" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
@@ -267,7 +280,8 @@
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeAutomaticMail"
                 label="Type de pièce-jointe - mails automatiques" [form]="constantForm"
-                propertyName="attachmentTypeAutomaticMail" [isMandatory]="true" [isDisabled]="!editMode">
+                propertyName="attachmentTypeAutomaticMail" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
@@ -275,7 +289,7 @@
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeAnnouncement"
                 label="Type de pièce-jointe - annonce" [form]="constantForm" propertyName="attachmentTypeAnnouncement"
-                [isMandatory]="true" [isDisabled]="!editMode">
+                [byPassAttachmentHiddenFilter]="true" [isMandatory]="true" [isDisabled]="!editMode">
               </select-attachment-type>
             </td>
           </tr>
@@ -283,7 +297,8 @@
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypeComplexAnnouncement"
                 label="Type de pièce-jointe - annonce complexe" [form]="constantForm"
-                propertyName="attachmentTypeComplexAnnouncement" [isMandatory]="true" [isDisabled]="!editMode">
+                propertyName="attachmentTypeComplexAnnouncement" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
@@ -1030,6 +1045,13 @@
             <td>
               <select-vat [(model)]="constant.vatDeductible" label="Taux de TVA - 20% à l'achat" [form]="constantForm"
                 propertyName="vatDeductible" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-vat [(model)]="constant.vatDeductibleTwo" label="Taux de TVA - 2.1% à l'achat"
+                [form]="constantForm" propertyName="vatDeductibleTwo" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-vat>
             </td>
           </tr>
           <tr>
