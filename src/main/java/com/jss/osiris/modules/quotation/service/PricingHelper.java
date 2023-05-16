@@ -209,9 +209,10 @@ public class PricingHelper {
 
             // Check if we have a character based price announcement
             boolean hasPriceBasedProvisionType = false;
-            for (BillingType otherBillingType : provision.getProvisionType().getBillingTypes())
-                if (otherBillingType.getIsPriceBasedOnCharacterNumber())
-                    hasPriceBasedProvisionType = true;
+            if (provision.getProvisionType() != null && provision.getProvisionType().getBillingTypes() != null)
+                for (BillingType otherBillingType : provision.getProvisionType().getBillingTypes())
+                    if (otherBillingType.getIsPriceBasedOnCharacterNumber())
+                        hasPriceBasedProvisionType = true;
 
             if (isNotJssConfrere(provision) && hasPriceBasedProvisionType) {
                 CharacterPrice characterPrice = characterPriceService.getCharacterPrice(provision);

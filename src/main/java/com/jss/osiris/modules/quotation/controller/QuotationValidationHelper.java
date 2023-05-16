@@ -79,10 +79,18 @@ public class QuotationValidationHelper {
         @Autowired
         ProvisionService provisionService;
 
-        @Transactional
+        @Transactional(rollbackFor = Exception.class)
         public void validateQuotationAndCustomerOrder(IQuotation quotation, String targetStatusCode)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
                 boolean isOpen = false;
+
+                if (targetStatusCode != null) {
+                        // Is for status update, override input quotation with database one
+                        if (quotation instanceof CustomerOrder)
+                                quotation = quotationService.getQuotation(quotation.getId());
+                        if (quotation instanceof Quotation)
+                                quotation = customerOrderService.getCustomerOrder(quotation.getId());
+                }
 
                 if (quotation.getCustomerOrderOrigin() == null)
                         quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
@@ -330,10 +338,10 @@ public class QuotationValidationHelper {
         }
 
         @Transactional
-        public void validateProvisionTransactionnal(Provision provision, boolean isOpen, boolean isCustomerOrder,
-                        IQuotation quotation)
+        public void validateProvisionTransactionnal(Provision provision, boolean isOpen, CustomerOrder customerOrder)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-                validateProvision(provision, isOpen, isCustomerOrder, quotation);
+                validateProvision(provision, isOpen, true,
+                                customerOrderService.getCustomerOrder(customerOrder.getId()));
         }
 
         private void validateProvision(Provision provision, boolean isOpen, boolean isCustomerOrder,

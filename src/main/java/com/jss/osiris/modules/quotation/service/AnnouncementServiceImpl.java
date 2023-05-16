@@ -82,6 +82,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Autowired
     GeneratePdfDelegate generatePdfDelegate;
 
+    @Autowired
+    ProvisionService provisionService;
+
     @Override
     public List<Announcement> getAnnouncements() {
         return IterableUtils.toList(announcementRepository.findAll());
@@ -311,8 +314,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void generateAndStorePublicationFlag(Announcement announcement, Provision currentProvision)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        // To avoid no session error
+        announcement = getAnnouncement(announcement.getId());
+        currentProvision = provisionService.getProvision(currentProvision.getId());
         if (announcement.getConfrere() != null
                 && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
             File publicationReceiptPdf = generatePdfDelegate.generatePublicationForAnnouncement(announcement,
