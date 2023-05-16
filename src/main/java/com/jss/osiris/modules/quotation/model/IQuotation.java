@@ -72,4 +72,5 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 
 	public String getCustomerMailCustomMessage();
 
+	public Boolean getOverrideSpecialOffer();
 }
