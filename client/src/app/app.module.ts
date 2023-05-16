@@ -33,7 +33,8 @@ import { TiersModule } from './modules/tiers/components/tiers/tiers.module';
 import { HeaderComponent } from './routing/header/header.component';
 import { RoutingModule } from './routing/routing.module';
 import { SidenavListComponent } from './routing/sidenav-list/sidenav-list.component';
-import { PdfToolsModule } from "./modules/tools/pdf-tools.module";
+import { PdfToolsModule } from "./modules/tools/pdf-tools/pdf-tools.module";
+import { CompressedComponent } from './modules/tools/compressed/compressed/compressed.component';
 registerLocaleData(localeFr, 'fr');
 
 @NgModule({
@@ -42,6 +43,7 @@ registerLocaleData(localeFr, 'fr');
     SidenavListComponent,
     HeaderComponent,
     MyProfilComponent,
+    CompressedComponent,
   ],
   imports: [
     // Core modules

@@ -1,19 +1,29 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/services/appRest.service';
 import { Observable } from 'rxjs';
+import { AppRestService } from 'src/app/services/appRest.service';
+import { Attachment } from '../model/Attachment';
+import { AttachmentType } from '../model/AttachmentType';
+import { IAttachment } from '../model/IAttachment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PdfToolsService extends AppRestService<any> {
+export class PdfToolsService extends AppRestService<IAttachment>{
 
-  constructor(private http: HttpClient) {
+  constructor(http: HttpClient) {
     super(http, "pdf-tools");
   }
 
-  sendPdf(pdf: any): Observable<any> {
-    return this.postItem(new HttpParams(), pdf);
+  uploadAttachment(file: File, filename: string): Observable<any> {
+    let formData = new FormData();
+    formData.append("file", file);
+    return this.uploadPost('attachment/upload', file, formData);
   }
-}
 
+  downloadAttachment(attachment: Attachment) {
+    this.downloadGet(new HttpParams().set("idAttachment", attachment.id + ""), "attachment/download");
+  }
+
+
+}
