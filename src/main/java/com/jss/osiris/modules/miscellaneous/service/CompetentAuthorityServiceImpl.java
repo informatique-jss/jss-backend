@@ -106,6 +106,7 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<CompetentAuthority> getCompetentAuthorityByDepartment(Integer departmentId, String authority) {
         List<CompetentAuthority> outAuthorities = new ArrayList<CompetentAuthority>();
         List<CompetentAuthority> authorities;

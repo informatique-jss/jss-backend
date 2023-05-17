@@ -93,7 +93,8 @@ public class PricingHelper {
 
     private List<SpecialOffer> getAppliableSpecialOffersForQuotation(IQuotation quotation) {
         if (quotation != null) {
-            if (quotation.getSpecialOffers() != null && quotation.getSpecialOffers().size() > 0)
+            if (quotation.getSpecialOffers() != null && quotation.getSpecialOffers().size() > 0
+                    || quotation.getOverrideSpecialOffer() != null && quotation.getOverrideSpecialOffer())
                 return quotation.getSpecialOffers();
 
             if (quotation.getResponsable() != null && quotation.getResponsable().getTiers() != null
@@ -209,9 +210,10 @@ public class PricingHelper {
 
             // Check if we have a character based price announcement
             boolean hasPriceBasedProvisionType = false;
-            for (BillingType otherBillingType : provision.getProvisionType().getBillingTypes())
-                if (otherBillingType.getIsPriceBasedOnCharacterNumber())
-                    hasPriceBasedProvisionType = true;
+            if (provision.getProvisionType() != null && provision.getProvisionType().getBillingTypes() != null)
+                for (BillingType otherBillingType : provision.getProvisionType().getBillingTypes())
+                    if (otherBillingType.getIsPriceBasedOnCharacterNumber())
+                        hasPriceBasedProvisionType = true;
 
             if (isNotJssConfrere(provision) && hasPriceBasedProvisionType) {
                 CharacterPrice characterPrice = characterPriceService.getCharacterPrice(provision);

@@ -677,24 +677,24 @@ public class QuotationController {
     validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true, "Affaire");
     validationHelper.validateReferential(assoAffaireOrder.getAssignedTo(), true, "AssignedTo");
     validationHelper.validateReferential(assoAffaireOrder.getCustomerOrder(), true, "CustomerOrder");
-    assoAffaireOrder.setCustomerOrder(
-        (CustomerOrder) customerOrderService.getCustomerOrder(assoAffaireOrder.getCustomerOrder().getId()));
 
     if (assoAffaireOrder.getProvisions() == null)
       throw new OsirisValidationException("Provisions");
 
-    IQuotation quotation = assoAffaireOrder.getCustomerOrder() != null ? assoAffaireOrder.getCustomerOrder()
-        : assoAffaireOrder.getQuotation();
+    CustomerOrder customerOrder = assoAffaireOrder.getCustomerOrder() != null ? assoAffaireOrder.getCustomerOrder()
+        : null;
 
-    boolean isOpen = quotationService.getIsOpenedQuotation(quotation);
+    if (customerOrder == null)
+      throw new OsirisValidationException("CustomerOrder");
 
-    boolean isCustomerOrder = quotation instanceof CustomerOrder && !isOpen;
+    boolean isOpen = quotationService.getIsOpenedQuotation(customerOrder);
 
     for (Provision provision : assoAffaireOrder.getProvisions())
-      quotationValidationHelper.validateProvisionTransactionnal(provision, isOpen, isCustomerOrder, quotation);
+      quotationValidationHelper.validateProvisionTransactionnal(provision, isOpen, customerOrder);
 
-    return new ResponseEntity<AssoAffaireOrder>(
-        assoAffaireOrderService.addOrUpdateAssoAffaireOrderFromUser(assoAffaireOrder),
+    assoAffaireOrderService.addOrUpdateAssoAffaireOrderFromUser(assoAffaireOrder);
+
+    return new ResponseEntity<AssoAffaireOrder>(assoAffaireOrderService.getAssoAffaireOrder(assoAffaireOrder.getId()),
         HttpStatus.OK);
   }
 

@@ -17,6 +17,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
@@ -61,6 +62,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -100,9 +102,16 @@ public class GeneratePdfDelegate {
     @Autowired
     VatService vatService;
 
+    @Autowired
+    ProvisionService provisionService;
+
+    @Transactional(rollbackFor = Exception.class)
     public File generatePublicationForAnnouncement(Announcement announcement, Provision provision,
             boolean isPublicationFlag,
             boolean isPublicationReceipt, boolean isProofReading) throws OsirisException {
+        // To avoid proxy error
+        provision = provisionService.getProvision(provision.getId());
+
         File tempFile;
         if (!announcement.getIsComplexAnnouncement()) {
             // Generate announcement PDF

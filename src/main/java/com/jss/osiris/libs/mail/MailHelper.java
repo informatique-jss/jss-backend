@@ -81,6 +81,7 @@ import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.service.ResponsableService;
 
 @Service
 public class MailHelper {
@@ -164,6 +165,9 @@ public class MailHelper {
 
     @Autowired
     VatService vatService;
+
+    @Autowired
+    ResponsableService responsableService;
 
     @Bean
     public TemplateEngine emailTemplateEngine() {
@@ -918,6 +922,7 @@ public class MailHelper {
             AttachmentTypeMailQuery query)
             throws OsirisException, OsirisClientMessageException {
 
+        customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
 
@@ -1584,9 +1589,11 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void sendNewPasswordMail(Responsable responsable, String password)
             throws OsirisException {
-
+        // To avoid proxy error
+        responsableService.getResponsable(responsable.getId());
         CustomerMail mail = new CustomerMail();
 
         mail.setHeaderPicture("images/password-header.png");
