@@ -692,8 +692,9 @@ public class QuotationController {
     for (Provision provision : assoAffaireOrder.getProvisions())
       quotationValidationHelper.validateProvisionTransactionnal(provision, isOpen, customerOrder);
 
-    return new ResponseEntity<AssoAffaireOrder>(
-        assoAffaireOrderService.addOrUpdateAssoAffaireOrderFromUser(assoAffaireOrder),
+    assoAffaireOrderService.addOrUpdateAssoAffaireOrderFromUser(assoAffaireOrder);
+
+    return new ResponseEntity<AssoAffaireOrder>(assoAffaireOrderService.getAssoAffaireOrder(assoAffaireOrder.getId()),
         HttpStatus.OK);
   }
 
