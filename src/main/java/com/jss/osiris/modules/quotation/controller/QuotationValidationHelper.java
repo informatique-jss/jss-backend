@@ -87,9 +87,9 @@ public class QuotationValidationHelper {
                 if (targetStatusCode != null) {
                         // Is for status update, override input quotation with database one
                         if (quotation instanceof CustomerOrder)
-                                quotation = quotationService.getQuotation(quotation.getId());
-                        if (quotation instanceof Quotation)
                                 quotation = customerOrderService.getCustomerOrder(quotation.getId());
+                        if (quotation instanceof Quotation)
+                                quotation = quotationService.getQuotation(quotation.getId());
                 }
 
                 if (quotation.getCustomerOrderOrigin() == null)

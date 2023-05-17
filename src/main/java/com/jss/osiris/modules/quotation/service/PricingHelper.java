@@ -94,7 +94,7 @@ public class PricingHelper {
     private List<SpecialOffer> getAppliableSpecialOffersForQuotation(IQuotation quotation) {
         if (quotation != null) {
             if (quotation.getSpecialOffers() != null && quotation.getSpecialOffers().size() > 0
-                    || quotation.getOverrideSpecialOffer())
+                    || quotation.getOverrideSpecialOffer() != null && quotation.getOverrideSpecialOffer())
                 return quotation.getSpecialOffers();
 
             if (quotation.getResponsable() != null && quotation.getResponsable().getTiers() != null
