@@ -1441,7 +1441,10 @@ public class QuotationController {
     try {
       CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
       if (customerOrder == null)
-        throw new OsirisValidationException("customerOrder n°" + customerOrderId);
+        return new ResponseEntity<String>(
+            mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande inconnue",
+                "Nous sommes désolé, mais ce numéro de commande est inconnue.", null, "Bonne journée !"),
+            HttpStatus.INTERNAL_SERVER_ERROR);
 
       String link = customerOrderService.getCardPaymentLinkForCustomerOrderDeposit(customerOrder, mail,
           "Paiement de l'acompte pour la commande n°" + customerOrderId);
@@ -1475,7 +1478,10 @@ public class QuotationController {
     try {
       CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
       if (customerOrder == null)
-        throw new OsirisValidationException("customerOrder n°" + customerOrderId);
+        return new ResponseEntity<String>(
+            mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande inconnue",
+                "Nous sommes désolé, mais ce numéro de commande est inconnue.", null, "Bonne journée !"),
+            HttpStatus.INTERNAL_SERVER_ERROR);
 
       String link = customerOrderService.getCardPaymentLinkForPaymentInvoice(customerOrder, mail,
           "Paiement de la facture pour la commande n°" + customerOrderId);
