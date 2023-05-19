@@ -3,14 +3,17 @@ package com.jss.osiris.modules.miscellaneous.model;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_department_vat_setting", columnList = "department", unique = true) })
+@Table(indexes = { @Index(name = "idx_department_vat_setting", columnList = "id_department", unique = true) })
 public class DepartmentVatSetting implements Serializable, IId {
 
 	@Id
@@ -19,14 +22,24 @@ public class DepartmentVatSetting implements Serializable, IId {
 
 	private String code;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_department")
 	private Department department;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_intermediate_vat")
 	private Vat intermediateVat;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_reduced_vat")
 	private Vat reducedVat;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_intermediate_vat_for_purshase")
 	private Vat intermediateVatForPurshase;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_reduced_vat_for_purshase")
 	private Vat reducedVatForPurshase;
 
 	public Integer getId() {
