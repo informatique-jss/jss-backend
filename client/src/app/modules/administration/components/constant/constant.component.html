@@ -847,7 +847,7 @@
             <td>
               <select-customer-order-origin [(model)]="constant.customerOrderOriginWebSite"
                 label="Origine des commandes - site www.jss.fr" [form]="constantForm"
-                propertyName="customerOrderOriginWebSite" [isMandatory]="false" [isDisabled]="!editMode">
+                propertyName="customerOrderOriginWebSite" [isMandatory]="true" [isDisabled]="!editMode">
               </select-customer-order-origin>
             </td>
           </tr>
@@ -855,7 +855,7 @@
             <td>
               <select-customer-order-origin [(model)]="constant.customerOrderOriginOsiris"
                 label="Origine des commandes - Osiris" [form]="constantForm" propertyName="customerOrderOriginOsiris"
-                [isMandatory]="false" [isDisabled]="!editMode">
+                [isMandatory]="true" [isDisabled]="!editMode">
               </select-customer-order-origin>
             </td>
           </tr>
@@ -914,7 +914,7 @@
           <tr>
             <td>
               <autocomplete-competent-authority [(model)]="constant.competentAuthorityInfogreffe" [form]="constantForm"
-                propertyName="competentAuthorityInfogreffe" [isMandatory]="false"
+                propertyName="competentAuthorityInfogreffe" [isMandatory]="true"
                 label="Autorité compétante - Infogreffe"></autocomplete-competent-authority>
             </td>
           </tr>
