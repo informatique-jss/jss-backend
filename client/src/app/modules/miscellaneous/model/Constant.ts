@@ -17,6 +17,7 @@ import { TransfertFundsType } from "../../quotation/model/TransfertFundsType";
 import { BillingClosureRecipientType } from '../../tiers/model/BillingClosureRecipientType';
 import { BillingClosureType } from '../../tiers/model/BillingClosureType';
 import { BillingLabelType } from "../../tiers/model/BillingLabelType";
+import { PaymentDeadlineType } from '../../tiers/model/PaymentDeadlineType';
 import { RefundType } from "../../tiers/model/RefundType";
 import { SubscriptionPeriodType } from "../../tiers/model/SubscriptionPeriodType";
 import { TiersType } from "../../tiers/model/TiersType";
@@ -123,6 +124,7 @@ export interface Constant {
   paymentTypeAccount: PaymentType;
   refundTypeVirement: RefundType;
   subscriptionPeriodType12M: SubscriptionPeriodType;
+  paymentDeadLineTypeOne: PaymentDeadlineType;
   legalFormUnregistered: LegalForm;
   journalTypeSpel: JournalType;
   journalTypePaper: JournalType;

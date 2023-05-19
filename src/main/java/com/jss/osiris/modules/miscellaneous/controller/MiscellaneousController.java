@@ -354,6 +354,8 @@ public class MiscellaneousController {
             validationHelper.validateReferential(constant, true, "constant");
         validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true,
                 "BillingLabelTypeCodeAffaire");
+        validationHelper.validateReferential(constant.getPaymentDeadLineTypeOne(), true,
+                "PaymentDeadLineTypeOne");
         validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true,
                 "BillingLabelTypeCodeAffaire");
         validationHelper.validateReferential(constant.getBillingLabelTypeOther(), true, "BillingLabelTypeOther");

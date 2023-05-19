@@ -27,6 +27,13 @@
           </tr>
           <tr>
             <td>
+              <select-payment-deadline [(model)]="constant.paymentDeadLineTypeOne" [form]="constantForm"
+                propertyName="paymentDeadLineTypeOne" label="Dead line payment 30 days"  [isMandatory]="true" [isDisabled]="!editMode">
+              </select-payment-deadline>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-accounting-journal [(model)]="constant.accountingJournalANouveau" [form]="constantForm"
                 propertyName="accountingJournalANouveau" label="Journal de comptabilité - A Nouveau"
                 [isMandatory]="true" [isDisabled]="!editMode">
@@ -840,7 +847,7 @@
             <td>
               <select-customer-order-origin [(model)]="constant.customerOrderOriginWebSite"
                 label="Origine des commandes - site www.jss.fr" [form]="constantForm"
-                propertyName="customerOrderOriginWebSite" [isMandatory]="true" [isDisabled]="!editMode">
+                propertyName="customerOrderOriginWebSite" [isMandatory]="false" [isDisabled]="!editMode">
               </select-customer-order-origin>
             </td>
           </tr>
@@ -848,7 +855,7 @@
             <td>
               <select-customer-order-origin [(model)]="constant.customerOrderOriginOsiris"
                 label="Origine des commandes - Osiris" [form]="constantForm" propertyName="customerOrderOriginOsiris"
-                [isMandatory]="true" [isDisabled]="!editMode">
+                [isMandatory]="false" [isDisabled]="!editMode">
               </select-customer-order-origin>
             </td>
           </tr>
@@ -907,7 +914,7 @@
           <tr>
             <td>
               <autocomplete-competent-authority [(model)]="constant.competentAuthorityInfogreffe" [form]="constantForm"
-                propertyName="competentAuthorityInfogreffe" [isMandatory]="true"
+                propertyName="competentAuthorityInfogreffe" [isMandatory]="false"
                 label="Autorité compétante - Infogreffe"></autocomplete-competent-authority>
             </td>
           </tr>

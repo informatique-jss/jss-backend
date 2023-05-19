@@ -34,6 +34,7 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePer
 import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
+import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
 import com.jss.osiris.modules.tiers.model.TiersType;
@@ -376,4 +377,6 @@ public interface ConstantService {
     public CustomerOrderOrigin getCustomerOrderOriginWebSite() throws OsirisException;
 
     public CustomerOrderOrigin getCustomerOrderOriginOsiris() throws OsirisException;
+
+    public PaymentDeadlineType getPaymentDeadLineTypeOne() throws OsirisException;
 }
