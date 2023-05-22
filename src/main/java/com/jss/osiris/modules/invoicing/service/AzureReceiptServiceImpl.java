@@ -77,7 +77,12 @@ public class AzureReceiptServiceImpl implements AzureReceiptService {
         if (attachments != null && attachments.size() > 0) {
             for (Attachment attachment : attachments)
                 if (attachment.getId() >= 6421151) // TODO remove
-                    formRecognizerService.recongnizeRecipts(attachment);
+                    try {
+                        formRecognizerService.recongnizeRecipts(attachment);
+                    } catch (Exception e) {
+                        attachmentService.disableDocument(attachment);
+                        throw new OsirisException(e, "Erreur while recongnize receipt with Azure");
+                    }
         }
     }
 
