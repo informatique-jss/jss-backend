@@ -96,8 +96,12 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         List<Attachment> attachments = attachmentService.getInvoiceAttachmentOnProvisionToAnalyse();
         if (attachments != null && attachments.size() > 0) {
             for (Attachment attachment : attachments)
-                if (attachment.getId() >= 6421151) // TODO remove
+                try {
                     formRecognizerService.recongnizeInvoice(attachment);
+                } catch (Exception e) {
+                    attachmentService.disableDocument(attachment);
+                    throw new OsirisException(e, "Erreur while recongnize invoice with Azure");
+                }
         }
         matchAzureInvoiceAndDebours();
     }
@@ -146,6 +150,7 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
                     }
 
                     // Check if all debours of this AC are not attached to an invoice to delete them
+                    // TODO reprendre avec les condifitions de delete du delete front
                     boolean allDeboursDeletables = true;
                     if (provision.getDebours() != null && provision.getDebours().size() > 0)
                         for (Debour debour : provision.getDebours())
