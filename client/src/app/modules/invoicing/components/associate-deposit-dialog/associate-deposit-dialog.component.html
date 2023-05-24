@@ -5,20 +5,22 @@
   </sort-table>
   <div class="mat-elevation-z2"
     *ngIf="amountToPayCompletely()<0 && amountRemaining()>0 && amountRemaining()>INVOICING_PAYMENT_LIMIT_REFUND_EUROS">
-    <table class=" full-width mat-table top" *ngIf="selectedRefundTiers">
-      <tr class=" mat-header-row">
-        <th class="mat-header-cell">Acompte</th>
-        <th class="mat-header-cell">Tiers remboursé</th>
-        <th class="mat-header-cell">Montant du remboursement</th>
-      </tr>
-      <tr class=" mat-row">
-        <td class="mat-cell">{{deposit.id}}</td>
-        <td class="mat-cell" *ngIf="selectedRefundTiers.rna==undefined">
+    <table class="mat-table mat-mdc-table mdc-data-table__table full-width  top" *ngIf="selectedRefundTiers">
+      <thead>
+        <tr class="mat-mdc-header-row mdc-data-table__header-row ">
+          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Acompte</th>
+          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Tiers remboursé</th>
+          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Montant du remboursement</th>
+        </tr>
+      </thead>
+      <tr class="mat-mdc-row mdc-data-table__row ">
+        <td class="mat-mdc-cell mdc-data-table__cell ">{{deposit.id}}</td>
+        <td class="mat-mdc-cell mdc-data-table__cell " *ngIf="selectedRefundTiers.rna==undefined">
           {{getCustomerOrderNameForITiers(selectedRefundTiers)}}</td>
-        <td class="mat-cell" *ngIf="selectedRefundTiers.rna!=undefined">
+        <td class="mat-mdc-cell mdc-data-table__cell " *ngIf="selectedRefundTiers.rna!=undefined">
           {{(selectedRefundTiers.denomination)?selectedRefundTiers.denomination : selectedRefundTiers.firstname + "
           "+selectedRefundTiers.lastname}}</td>
-        <td class="mat-cell">{{amountRemaining()}} €</td>
+        <td class="mat-mdc-cell mdc-data-table__cell ">{{amountRemaining()}} €</td>
       </tr>
     </table>
   </div>

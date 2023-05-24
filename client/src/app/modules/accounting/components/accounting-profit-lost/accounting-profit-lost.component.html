@@ -18,54 +18,64 @@
     </table>
     <div *ngFor="let profitAndLostTable of profitAndLost">
       <h1>{{profitAndLostTable.label}}</h1>
-      <table class="mat-table   profit-lost-table" *ngIf="profitAndLost">
-        <tr class="mat-header-row">
-          <th class="mat-header-cell"></th>
-          <th class="mat-header-cell">Solde N</th>
-          <th class="mat-header-cell">Solde N-1</th>
-        </tr>
-        <tr class="mat-row" *ngFor="let item of profitAndLostTable.items">
-          <td class="mat-cell">{{item.label}}</td>
-          <td class="mat-cell">{{item.soldeN}} €</td>
-          <td class="mat-cell">{{item.soldeN1}} €</td>
+      <table class="mat-table mat-mdc-table mdc-data-table__table   profit-lost-table" *ngIf="profitAndLost">
+        <thead>
+          <tr class="mat-mdc-header-row mdc-data-table__header-row ">
+            <th class="mat-mdc-header-cell mdc-data-table__header-cell "></th>
+            <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Solde N</th>
+            <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Solde N-1</th>
+          </tr>
+        </thead>
+        <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let item of profitAndLostTable.items">
+          <td class="mat-mdc-cell mdc-data-table__cell ">{{item.label}}</td>
+          <td class="mat-mdc-cell mdc-data-table__cell ">{{item.soldeN}} €</td>
+          <td class="mat-mdc-cell mdc-data-table__cell ">{{item.soldeN1}} €</td>
         </tr>
         <ng-container *ngFor="let subtitle of profitAndLostTable.subTitles">
           <ng-container *ngFor="let item of subtitle.items; let index = index">
-            <tr class="mat-header-row" *ngIf="index==0 &&  subtitle.label!=''">
-              <th class="mat-header-cell" colspan="3">{{subtitle.label}}</th>
+            <thead>
+              <tr class="mat-mdc-header-row mdc-data-table__header-row " *ngIf="index==0 &&  subtitle.label!=''">
+                <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="3">{{subtitle.label}}</th>
+              </tr>
+            </thead>
+            <tr class="mat-mdc-row mdc-data-table__row ">
+              <td class="mat-mdc-cell mdc-data-table__cell ">{{item.label}}</td>
+              <td class="mat-mdc-cell mdc-data-table__cell ">{{item.soldeN}} €</td>
+              <td class="mat-mdc-cell mdc-data-table__cell ">{{item.soldeN1}} €</td>
             </tr>
-            <tr class="mat-row">
-              <td class="mat-cell">{{item.label}}</td>
-              <td class="mat-cell">{{item.soldeN}} €</td>
-              <td class="mat-cell">{{item.soldeN1}} €</td>
-            </tr>
-            <tr class="mat-header-row" *ngIf="index==subtitle.items.length-1 && subtitle.label!=''">
-              <th class="mat-header-cell">Sous-total - {{subtitle.label}}</th>
-              <th class="mat-header-cell">{{getSoldeN(subtitle)}} €</th>
-              <th class="mat-header-cell">{{getSoldeN1(subtitle)}} €</th>
-            </tr>
+            <thead>
+              <tr class="mat-mdc-header-row mdc-data-table__header-row "
+                *ngIf="index==subtitle.items.length-1 && subtitle.label!=''">
+                <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Sous-total - {{subtitle.label}}</th>
+                <th class="mat-mdc-header-cell mdc-data-table__header-cell ">{{getSoldeN(subtitle)}} €</th>
+                <th class="mat-mdc-header-cell mdc-data-table__header-cell ">{{getSoldeN1(subtitle)}} €</th>
+              </tr>
+            </thead>
           </ng-container>
-          <tr class="mat-header-row" *ngIf="!subtitle.items">
-            <th class="mat-header-cell">{{subtitle.label}}</th>
-            <th class="mat-header-cell">{{subtitle.soldeN}} €</th>
-            <th class="mat-header-cell">{{subtitle.soldeN1}} €</th>
-          </tr>
+          <thead>
+            <tr class="mat-mdc-header-row mdc-data-table__header-row " *ngIf="!subtitle.items">
+              <th class="mat-mdc-header-cell mdc-data-table__header-cell ">{{subtitle.label}}</th>
+              <th class="mat-mdc-header-cell mdc-data-table__header-cell ">{{subtitle.soldeN}} €</th>
+              <th class="mat-mdc-header-cell mdc-data-table__header-cell ">{{subtitle.soldeN1}} €</th>
+            </tr>
+          </thead>
         </ng-container>
       </table>
-      <table class="mat-table total-table" cdkDrag [cdkDragFreeDragPosition]="currentUserPosition"
-        (cdkDragEnded)="dropTotalDiv($event)" *ngIf="profitAndLostTable.totals">
-        <tr class="mat-header-row">
-          <th class="mat-header-cell without-padding-left">
-            <mat-icon color="accent"  (click)="restoreDefaultTotalDivPosition()" class="pointer"
+      <table class="mat-table mat-mdc-table mdc-data-table__table total-table" cdkDrag
+        [cdkDragFreeDragPosition]="currentUserPosition" (cdkDragEnded)="dropTotalDiv($event)"
+        *ngIf="profitAndLostTable.totals">
+        <tr class="mat-mdc-header-row mdc-data-table__header-row ">
+          <th class="mat-mdc-header-cell mdc-data-table__header-cell without-padding-left">
+            <mat-icon color="accent" (click)="restoreDefaultTotalDivPosition()" class="pointer"
               matTooltip="Restaurer la position initiale">location_on</mat-icon>
           </th>
-          <th class="mat-header-cell">Solde N</th>
-          <th class="mat-header-cell">Solde N-1</th>
+          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Solde N</th>
+          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Solde N-1</th>
         </tr>
-        <tr class="mat-row" *ngFor="let total of profitAndLostTable.totals">
-          <td class="mat-cell">{{total.label}}</td>
-          <td class="mat-cell">{{total.soldeN}} €</td>
-          <td class="mat-cell">{{total.soldeN1}} €</td>
+        <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let total of profitAndLostTable.totals">
+          <td class="mat-mdc-cell mdc-data-table__cell ">{{total.label}}</td>
+          <td class="mat-mdc-cell mdc-data-table__cell ">{{total.soldeN}} €</td>
+          <td class="mat-mdc-cell mdc-data-table__cell ">{{total.soldeN1}} €</td>
         </tr>
       </table>
     </div>

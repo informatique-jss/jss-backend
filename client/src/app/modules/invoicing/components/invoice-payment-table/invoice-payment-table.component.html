@@ -1,61 +1,64 @@
-<table class="mat-table middle-width">
-  <tr class=" mat-header-row"
-    *ngIf="invoice.payments && invoice.payments.length>0 || invoice.deposits && invoice.deposits.length>0">
-    <th class="mat-header-cell" colspan="2">Paiements associés</th>
-  </tr>
+<table class="mat-table mat-mdc-table mdc-data-table__table middle-width">
+  <thead>
+    <tr class="mat-mdc-header-row mdc-data-table__header-row "
+      *ngIf="invoice.payments && invoice.payments.length>0 || invoice.deposits && invoice.deposits.length>0">
+      <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Paiements associés</th>
+    </tr>
+  </thead>
   <ng-container *ngIf="invoice.payments && invoice.payments.length>0 ">
-    <tr class="mat-row" *ngFor="let payment of invoice.payments">
-      <td class="mat-cell">
+    <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let payment of invoice.payments">
+      <td class="mat-mdc-cell mdc-data-table__cell ">
         N°{{payment.id}} du {{formatDate(payment.paymentDate)}} - {{payment.label}}
       </td>
-      <td class="td-price mat-cell">
+      <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
         {{payment.paymentAmount}} €
       </td>
     </tr>
   </ng-container>
   <ng-container *ngIf="invoice.deposits && invoice.deposits.length>0 ">
-    <tr class="mat-row" *ngFor="let deposit of invoice.deposits">
-      <td class="mat-cell payment-label" [matTooltip]="deposit.originPayment.label">
+    <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let deposit of invoice.deposits">
+      <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="deposit.originPayment.label">
         N°{{deposit.id}} du {{formatDate(deposit.depositDate)}} - {{deposit.label}} - montant du paiement :
         {{deposit.originPayment.paymentAmount}} € - {{deposit.originPayment.label}}
       </td>
-      <td class="td-price mat-cell">
+      <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
         {{deposit.depositAmount}} €
       </td>
     </tr>
   </ng-container>
   <ng-container *ngIf="invoice.appoints && invoice.appoints.length>0 ">
-    <tr class="mat-row" *ngFor="let appoint of invoice.appoints">
-      <td class="mat-cell payment-label" [matTooltip]="appoint.originPayment.label">
+    <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let appoint of invoice.appoints">
+      <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="appoint.originPayment.label">
         Dont appoint n°{{appoint.id}} du {{formatDate(appoint.appointDate)}} - {{appoint.label}}
       </td>
-      <td class="td-price mat-cell">
+      <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
         {{appoint.appointAmount | number}} €
       </td>
     </tr>
   </ng-container>
-  <tr class="mat-row"
+  <tr class="mat-mdc-row mdc-data-table__row "
     *ngIf="invoice.payments && invoice.payments.length>0 || invoice.deposits && invoice.deposits.length>0">
-    <td class="mat-cell">
+    <td class="mat-mdc-cell mdc-data-table__cell ">
     </td>
-    <td class="td-price mat-cell">
-    </td>
-  </tr>
-  <tr class="mat-row" *ngIf="!invoice.isCreditNote">
-    <td class="mat-cell">Reste à payer
-    </td>
-    <td class="td-price mat-cell">{{getAmountRemaining(invoice)}} €
+    <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
     </td>
   </tr>
-  <tr class="mat-row" *ngIf="invoice.isCreditNote">
-    <td class="mat-cell">Net à créditer
+  <tr class="mat-mdc-row mdc-data-table__row " *ngIf="!invoice.isCreditNote">
+    <td class="mat-mdc-cell mdc-data-table__cell ">Reste à payer
     </td>
-    <td class="td-price mat-cell">{{getAmountPayed(invoice)}} €
+    <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{getAmountRemaining(invoice)}} €
+    </td>
+  </tr>
+  <tr class="mat-mdc-row mdc-data-table__row " *ngIf="invoice.isCreditNote">
+    <td class="mat-mdc-cell mdc-data-table__cell ">Net à créditer
+    </td>
+    <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{getAmountPayed(invoice)}} €
     </td>
   </tr>
   <tr
     *ngIf="invoice && invoice.customerOrder && invoice.customerOrder.centralPayPendingPaymentAmount  && invoice.customerOrder.centralPayPendingPaymentAmount >0">
-    <td class="mat-cell">Paiement reçu par CB en attente de réception</td>
-    <td class="td-price mat-cell">{{invoice.customerOrder.centralPayPendingPaymentAmount | number}} €</td>
+    <td class="mat-mdc-cell mdc-data-table__cell ">Paiement reçu par CB en attente de réception</td>
+    <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{invoice.customerOrder.centralPayPendingPaymentAmount |
+      number}} €</td>
   </tr>
 </table>

@@ -1,11 +1,11 @@
 <div class="mat-elevation-z2 form-div">
   <h3 *ngIf="customerOrder.deposits && customerOrder.deposits.length>0">Acomptes associés :</h3>
-  <table class="total-table mat-table full-width">
-    <tr class="mat-row" *ngFor="let deposit of customerOrder.deposits">
-      <td class="mat-cell">
+  <table class="mat-table mat-mdc-table mdc-data-table__table total-table  full-width">
+    <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let deposit of customerOrder.deposits">
+      <td class="mat-mdc-cell mdc-data-table__cell ">
         Acompte n°{{deposit.id}}
       </td>
-      <td class="td-price mat-cell">
+      <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
         {{deposit.depositAmount|number}} €
       </td>
     </tr>
