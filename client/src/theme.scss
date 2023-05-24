@@ -337,3 +337,7 @@ tr.table-row:hover {
 .dark .mat-mdc-card {
   background-color: $dark-bg-lighter-20 !important;
 }
+
+.mdc-evolution-chip__text-label {
+  display: flex;
+}
