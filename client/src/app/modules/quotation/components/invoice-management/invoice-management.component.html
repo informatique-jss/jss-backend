@@ -201,6 +201,16 @@
           </td>
         </tr>
       </ng-container>
+      <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()!=undefined">
+        <tr class="mat-row" *ngFor="let deposit of quotation.deposits">
+          <td class="mat-cell">
+            Acompte n°{{deposit.id}} - {{deposit.label}}
+          </td>
+          <td class="td-price mat-cell">
+            - {{deposit.depositAmount|number}} € (montant du paiement : {{deposit.originPayment.paymentAmount}} €)
+          </td>
+        </tr>
+      </ng-container>
       <tr class="mat-mdc-row mdc-data-table__row ">
         <td class="mat-mdc-cell mdc-data-table__cell ">Reste à payer
         </td>
