@@ -76,7 +76,7 @@ public class AzureReceiptServiceImpl implements AzureReceiptService {
         List<Attachment> attachments = attachmentService.getReceiptAttachmentOnCompetentAuthorityToAnalyse();
         if (attachments != null && attachments.size() > 0) {
             for (Attachment attachment : attachments)
-                if (attachment.getId() >= 6421151) // TODO remove
+                if (attachment.getId() == 1) // TODO remove
                     try {
                         formRecognizerService.recongnizeRecipts(attachment);
                     } catch (Exception e) {
