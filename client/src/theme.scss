@@ -341,3 +341,8 @@ tr.table-row:hover {
 .mdc-evolution-chip__text-label {
   display: flex;
 }
+
+.upload-label {
+  background-color: mat.get-color-from-palette($mat-warn, main) !important;
+  color: white;
+}

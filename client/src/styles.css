@@ -181,3 +181,7 @@ tr.table-row:hover {
   margin-left: 5px;
   margin-top: 3px;
 }
+
+.min-widht-table {
+  min-width: auto !important;
+}
