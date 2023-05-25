@@ -56,7 +56,8 @@ public interface InvoiceService {
 
         public void unletterInvoiceEmitted(Invoice invoice) throws OsirisException;
 
-        public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws OsirisException, OsirisClientMessageException;
+        public Invoice addOrUpdateInvoiceFromUser(Invoice invoice)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public Invoice cancelInvoiceEmitted(Invoice invoice, CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;

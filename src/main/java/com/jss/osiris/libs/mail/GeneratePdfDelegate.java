@@ -40,6 +40,7 @@ import com.jss.osiris.libs.PictureHelper;
 import com.jss.osiris.libs.QrCodeHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.model.LetterModel;
 import com.jss.osiris.libs.mail.model.VatMail;
 import com.jss.osiris.modules.accounting.model.BillingClosureReceiptValue;
@@ -353,7 +354,7 @@ public class GeneratePdfDelegate {
     }
 
     public File generateInvoicePdf(CustomerOrder customerOrder, Invoice invoice, Invoice originalInvoice)
-            throws OsirisException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         final Context ctx = new Context();
 
         if (originalInvoice != null)
@@ -405,16 +406,22 @@ public class GeneratePdfDelegate {
         }
 
         // Compute base for debours
-        Vat vatDebour = constantService.getVatDeductible();
+        ctx.setVariable("vatDebour", null);
         if (vats == null)
             vats = new ArrayList<VatMail>();
         for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
             for (Provision provision : asso.getProvisions()) {
                 if (provision.getDebours() != null && provision.getDebours().size() > 0) {
                     for (Debour debour : provision.getDebours()) {
+                        Vat vatDebour = vatService
+                                .getGeographicalApplicableVatForPurshases(debour.getCompetentAuthority(),
+                                        constantService.getVatDeductible());
+
                         Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
                                 : debour.getDebourAmount();
-                        if (!debour.getBillingType().getIsNonTaxable()) {
+                        if (!debour.getBillingType().getIsNonTaxable() && vatDebour != null) {
+                            ctx.setVariable("vatDebour", vatDebour);
+
                             boolean vatFound = false;
                             for (VatMail vatMail : vats) {
                                 if (vatMail.getLabel().equals(vatDebour.getLabel())) {
@@ -448,7 +455,6 @@ public class GeneratePdfDelegate {
             }
         }
 
-        ctx.setVariable("vatDebour", vatDebour);
         ctx.setVariable("vats", vats);
         ctx.setVariable("priceTotal", Math.round(invoiceHelper.getPriceTotal(invoice) * 100f) / 100f);
         ctx.setVariable("invoice", invoice);

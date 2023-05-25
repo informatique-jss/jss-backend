@@ -58,4 +58,6 @@ public interface ICustomerOrderReporting {
     public String getNoticeTypeLabel();
 
     public String getInvoiceStatusLabel();
+
+    public String getCustomerOrderOriginLabel();
 }

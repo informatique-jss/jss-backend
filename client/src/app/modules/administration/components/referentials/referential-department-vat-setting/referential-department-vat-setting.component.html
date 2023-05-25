@@ -1,0 +1,69 @@
+<div>
+  <div>
+    <mat-form-field class="full-width">
+      <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+    </mat-form-field>
+  </div>
+  <div class="table-container-scroll">
+    <sort-table [columns]="displayedColumns" (onRowClick)="selectEntity($event)" [values]="entities"
+      tableName="Référentiel" [idRowSelected]="idRowSelected" [filterText]="searchText">
+    </sort-table>
+  </div>
+</div>
+<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
+  <form [formGroup]="entityForm">
+    <div class="full-width">
+      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+        <p>Indiquez ici les taux de TVA pour les départements français qui dérogent à la règle.</p>
+        <table class="full-width">
+          <tr *ngIf="selectedEntity.id">
+            <td>
+              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
+                propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-department [(model)]="selectedEntity.department" label="Département" [form]="entityForm"
+                propertyName="department" [isMandatory]="true" [isDisabled]="!editMode"></select-department>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-vat [(model)]="selectedEntity.intermediateVat" label="Taux de TVA intermédiaire à la vente"
+                [form]="entityForm" propertyName="intermediateVat" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-vat>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-vat [(model)]="selectedEntity.reducedVat" label="Taux de TVA réduite à la vente"
+                [form]="entityForm" propertyName="reducedVat" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-vat>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-vat [(model)]="selectedEntity.intermediateVatForPurshase"
+                label="Taux de TVA intermédiaire à l'achat" [form]="entityForm"
+                propertyName="intermediateVatForPurshase" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-vat [(model)]="selectedEntity.reducedVatForPurshase" label="Taux de TVA réduite à l'achat"
+                [form]="entityForm" propertyName="reducedVatForPurshase" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-vat>
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+    </div>
+  </form>
+</div>

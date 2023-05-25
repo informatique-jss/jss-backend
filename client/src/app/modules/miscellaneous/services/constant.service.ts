@@ -126,6 +126,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.attachmentTypeInvoice;
   }
 
+  getAttachmentTypeProviderInvoice() {
+    return this.constant.attachmentTypeProviderInvoice;
+  }
+
   getAttachmentTypeCreditNote() {
     return this.constant.attachmentTypeCreditNote;
   }
@@ -540,12 +544,16 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.vatTwenty;
   }
 
-  getVatEight() {
-    return this.constant.vatEight;
-  }
-
   getVatZero() {
     return this.constant.vatZero;
+  }
+
+  getVatTwo() {
+    return this.constant.vatTwo;
+  }
+
+  getVatDeductibleTwo() {
+    return this.constant.vatDeductibleTwo;
   }
 
   getVatDeductible() {
@@ -678,5 +686,13 @@ export class ConstantService extends AppRestService<Constant>{
 
   getAccountingAccountCaisse() {
     return this.constant.accountingAccountCaisse;
+  }
+
+  getCustomerOrderOriginWebSite() {
+    return this.constant.customerOrderOriginWebSite;
+  }
+
+  getCustomerOrderOriginOsiris() {
+    return this.constant.customerOrderOriginOsiris;
   }
 }

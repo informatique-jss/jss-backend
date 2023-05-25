@@ -1,6 +1,8 @@
 import { AccountingAccount } from "../../accounting/model/AccountingAccount";
 import { IReferential } from "../../administration/model/IReferential";
 import { BillingItem } from './BillingItem';
+import { City } from "./City";
+import { Country } from "./Country";
 import { IAttachment } from './IAttachment';
 import { Mail } from "./Mail";
 import { PaymentType } from "./PaymentType";
@@ -22,4 +24,6 @@ export interface Provider extends IReferential, IAttachment {
   jssReference: string;
   vatCollectionType: VatCollectionType;
   paymentType: PaymentType;
+  country: Country;
+  city: City;
 }

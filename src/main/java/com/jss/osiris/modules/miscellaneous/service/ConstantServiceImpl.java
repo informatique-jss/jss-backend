@@ -20,6 +20,7 @@ import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.miscellaneous.model.Constant;
 import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.DocumentType;
@@ -188,6 +189,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public AttachmentType getAttachmentTypeInvoice() throws OsirisException {
         return getConstants().getAttachmentTypeInvoice();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeProviderInvoice() throws OsirisException {
+        return getConstants().getAttachmentTypeProviderInvoice();
     }
 
     @Override
@@ -721,13 +727,18 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public Vat getVatEight() throws OsirisException {
-        return getConstants().getVatEight();
+    public Vat getVatTwo() throws OsirisException {
+        return getConstants().getVatTwo();
     }
 
     @Override
     public Vat getVatDeductible() throws OsirisException {
         return getConstants().getVatDeductible();
+    }
+
+    @Override
+    public Vat getVatDeductibleTwo() throws OsirisException {
+        return getConstants().getVatDeductibleTwo();
     }
 
     @Override
@@ -883,6 +894,16 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public AccountingAccount getAccountingAccountCaisse() throws OsirisException {
         return getConstants().getAccountingAccountCaisse();
+    }
+
+    @Override
+    public CustomerOrderOrigin getCustomerOrderOriginWebSite() throws OsirisException {
+        return getConstants().getCustomerOrderOriginWebSite();
+    }
+
+    @Override
+    public CustomerOrderOrigin getCustomerOrderOriginOsiris() throws OsirisException {
+        return getConstants().getCustomerOrderOriginOsiris();
     }
 
 }

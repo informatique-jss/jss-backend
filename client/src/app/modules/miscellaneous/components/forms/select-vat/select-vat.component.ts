@@ -20,7 +20,7 @@ export class SelectVatComponent extends GenericSelectComponent<Vat> implements O
 
   initTypes(): void {
     this.vatService.getVats().subscribe(response => {
-      this.types = response;
+      this.types = response.sort((a, b) => a.label.localeCompare(b.label));
     })
   }
 

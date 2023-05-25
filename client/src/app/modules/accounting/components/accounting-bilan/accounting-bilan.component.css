@@ -35,6 +35,5 @@
 .flex-child:nth-of-type(2n) {
   padding-left: 30px;
   border-left: solid;
-  border-color: #1C3D58;
   border-left-width: 1px;
 }

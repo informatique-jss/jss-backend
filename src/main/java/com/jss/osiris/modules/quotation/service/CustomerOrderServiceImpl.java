@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.JacksonLocalDateDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
@@ -55,10 +56,12 @@ import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
@@ -185,6 +188,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     CentralPayPaymentRequestService centralPayPaymentRequestService;
 
+    @Autowired
+    ActiveDirectoryHelper activeDirectoryHelper;
+
+    @Autowired
+    CustomerOrderOriginService customerOrderOriginService;
+
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
         Optional<CustomerOrder> customerOrder = customerOrderRepository.findById(id);
@@ -215,10 +224,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (customerOrder.getId() == null) {
             customerOrder.setCreatedDate(LocalDateTime.now());
+
+            List<CustomerOrderOrigin> origins = customerOrderOriginService
+                    .getByUsername(activeDirectoryHelper.getCurrentUsername());
+            if (origins != null && origins.size() == 1)
+                customerOrder.setCustomerOrderOrigin(origins.get(0));
+            else
+                customerOrder.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
         }
 
-        if (customerOrder.getIsCreatedFromWebSite() == null)
-            customerOrder.setIsCreatedFromWebSite(false);
+        if (customerOrder.getCustomerOrderOrigin() == null)
+            customerOrder.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
 
         // Set default customer order assignation to sales employee if not set
         if (customerOrder.getAssignedTo() == null)
@@ -270,7 +286,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         // Trigger move forward for announcement created in website
         if (!isFromUser && customerOrder.getAssoAffaireOrders() != null
                 && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
-                && customerOrder.getIsCreatedFromWebSite() != null && customerOrder.getIsCreatedFromWebSite()
+                && customerOrder.getCustomerOrderOrigin().getId()
+                        .equals(constantService.getCustomerOrderOriginWebSite().getId())
                 && isOnlyAnnouncement(customerOrder))
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.OPEN, isFromUser);
         return customerOrder;
@@ -344,8 +361,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         // Handle automatic workflow for Announcement created from website
         boolean checkAllProvisionEnded = false;
         boolean onlyAnnonceLegale = isOnlyAnnouncement(customerOrder);
-        boolean isFromWebsite = (customerOrder.getIsCreatedFromWebSite() != null
-                && customerOrder.getIsCreatedFromWebSite()) ? true : false;
+        boolean isFromWebsite = customerOrder.getCustomerOrderOrigin().getId()
+                .equals(constantService.getCustomerOrderOriginWebSite().getId());
 
         // Determine if deposit is mandatory or not
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IDocument;
@@ -66,11 +67,13 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 
 	public void setConfrere(Confrere confrere);
 
-	public Boolean getIsCreatedFromWebSite();
-
-	public void setIsCreatedFromWebSite(Boolean createdFromWebSite);
-
 	public String getCustomerMailCustomMessage();
+
+	public CustomerOrderOrigin getCustomerOrderOrigin();
+
+	public void setCustomerOrderOrigin(CustomerOrderOrigin customerOrderOrigin);
+
+	public Boolean getOverrideSpecialOffer();
 
 	public Boolean getOverrideSpecialOffer();
 }

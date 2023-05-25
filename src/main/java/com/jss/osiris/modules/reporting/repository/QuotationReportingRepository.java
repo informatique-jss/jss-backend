@@ -36,6 +36,7 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " confrere_a.label as confrereAnnouncementLabel,   " +
                         " ntf.label as noticeTypeFamilyLabel,   " +
                         "  STRING_AGG(DISTINCT nt.label ,', '  ) as noticeTypeLabel,   " +
+                        " origin.label as customerOrderOriginLabel," +
                         " e1.firstname || ' ' || e1.lastname as provisionAssignedToLabel,   " +
                         " e2.firstname || ' ' || e2.lastname as salesEmployeeLabel,   " +
                         " sum(coalesce(case when billing_type.is_fee=false and billing_type.is_debour = false then invoice_item.pre_tax_price end,0)) as preTaxPriceWithoutDebour, "
@@ -48,6 +49,7 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " left join employee e1 on e1.id = provision.id_employee   " +
                         " join affaire on affaire.id = asso.id_affaire   " +
                         " join quotation customer_order on customer_order.id = asso.id_quotation   " +
+                        " join customer_order_origin origin on origin.id = customer_order.id_customer_order_origin" +
                         " join quotation_status customer_order_status on customer_order_status.id = customer_order.id_quotation_status  "
                         +
                         " left join responsable respo on respo.id = customer_order.id_responsable   " +
@@ -82,7 +84,7 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         "  where customer_order.created_date BETWEEN  date_trunc('year', now()) AND CURRENT_TIMESTAMP   "
                         +
                         "    group by   " +
-                        " affaire.id ,   " +
+                        " affaire.id , origin.label,  " +
                         " affaire.siren ,   " +
                         " affaire.siret ,   " +
                         " ca.label ,   " +

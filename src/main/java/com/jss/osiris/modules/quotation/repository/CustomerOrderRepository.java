@@ -32,6 +32,7 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
                         + " min(quotation.id_quotation) as quotationId,"
                         + " coalesce(t2.id,t.id) as tiersId,"
                         + " cf.id as confrereId,"
+                        + " origin.label as customerOrderOriginLabel,"
                         + " sum(COALESCE(i.pre_tax_price,0)+COALESCE(i.vat_price,0)-COALESCE(i.discount_amount,0)) as totalPrice ,"
                         + " (select sum(COALESCE(deposit.deposit_amount,0)) from deposit where deposit.id_customer_order = co.id and deposit.is_cancelled=false ) as depositTotalAmount ,"
                         + " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')' ,', ' ) as affaireLabel,"
@@ -44,6 +45,7 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
                         + " count(distinct provision.id_simple_provision) as simpleProvisionNbr,"
                         + " co.description as customerOrderDescription"
                         + " from customer_order co"
+                        + " join customer_order_origin origin on origin.id = co.id_customer_order_origin"
                         + " join customer_order_status cos on cos.id = co.id_customer_order_status"
                         + " left join asso_quotation_customer_order quotation on quotation.id_customer_order = co.id"
                         + " left join asso_affaire_order asso on asso.id_customer_order = co.id"
@@ -64,7 +66,7 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
                         + " and ( COALESCE(:salesEmployee) =0 or cf.id_commercial in (:salesEmployee) or r.id_commercial in (:salesEmployee) or t.id_commercial in (:salesEmployee) or t.id_commercial is null and t2.id_commercial in (:salesEmployee))"
                         + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder))"
                         + " and ( COALESCE(:affaire)=0 or af.id in (:affaire) )"
-                        + " group by cf.id, cf.label, r.id, r.firstname, r.lastname, t.denomination, t.firstname, t.lastname, t2.denomination, t2.firstname, t2.lastname, cos.label, "
+                        + " group by cf.id, cf.label, r.id, r.firstname,origin.label,  r.lastname, t.denomination, t.firstname, t.lastname, t2.denomination, t2.firstname, t2.lastname, cos.label, "
                         + " co.created_date, cf.id_commercial, r.id_commercial, t.id_commercial, t2.id_commercial, co.id, r.id, t.id,t2.id, cf.id, co.description,co.id_assigned_to ")
         List<OrderingSearchResult> findCustomerOrders(@Param("salesEmployee") List<Integer> salesEmployee,
                         @Param("assignedToEmployee") List<Integer> assignedToEmployee,

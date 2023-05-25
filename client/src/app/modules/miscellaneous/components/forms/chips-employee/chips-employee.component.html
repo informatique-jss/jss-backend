@@ -1,19 +1,19 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label>{{label}}</mat-label>
-  <mat-chip-list #chipListEmployee>
-    <mat-chip *ngFor="let employee of model" (removed)="removeElement(employee)">
+  <mat-chip-grid #chipListEmployee>
+    <mat-chip-row *ngFor="let employee of model" (removed)="removeElement(employee)" class="row-field-container">
       <avatar [employee]="employee" [size]="17" class="chips-avatar"></avatar>
       {{employee.firstname}} {{employee.lastname}}
       <button matChipRemove *ngIf="!isDisabled">
         <mat-icon>cancel</mat-icon>
       </button>
-      <mat-icon matChipRemove *ngIf="isDisabled" (click)="displayInTeams(employee)">
+      <mat-icon color="accent" matChipRemove *ngIf="isDisabled" (click)="displayInTeams(employee)">
         chat_bubble</mat-icon>
-    </mat-chip>
+    </mat-chip-row>
     <input matInput placeholder="Choisir un collaborateur" [formControlName]="propertyName" #employeeInput
       [matChipInputFor]="chipListEmployee" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES" [disabled]="isDisabled"
       [matAutocomplete]="autoComplete">
-  </mat-chip-list>
+  </mat-chip-grid>
   <mat-hint #employeHint *ngIf="hint">{{hint}}</mat-hint>
   <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)="addEmployee($event)">

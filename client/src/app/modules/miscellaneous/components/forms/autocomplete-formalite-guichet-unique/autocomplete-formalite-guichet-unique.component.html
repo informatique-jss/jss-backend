@@ -2,17 +2,19 @@
   <mat-label>{{label}}</mat-label>
   <input #inputField matInput [placeholder]="label" [matAutocomplete]="autoCompleteField"
     [formControlName]="propertyName" autocomplete="organization-title" [required]="isMandatory">
-  <mat-icon matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined && !isLoading" class="pointer">
+  <mat-icon color="accent" matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined && !isLoading"
+    class="pointer">
     close
   </mat-icon>
   <mat-spinner *ngIf="isLoading" diameter="16" style="display: inline-flex" matSuffix color="accent"></mat-spinner>
-  <mat-icon matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)" matTooltipShowDelay="1000"
-    matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined" class="pointer note-icon">
+  <mat-icon color="accent" matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)"
+    matTooltipShowDelay="1000" matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined"
+    class="pointer ">
     adjust
   </mat-icon>
-  <mat-icon matTooltip="Voir le dossier sur le GU" matTooltipShowDelay="1000" matSuffix
+  <mat-icon color="accent" matTooltip="Voir le dossier sur le GU" matTooltipShowDelay="1000" matSuffix
     (click)="openGuichetUnique($event)" (auxclick)="openGuichetUnique($event)" *ngIf="isDisabled && model!=undefined"
-    class="pointer note-icon">
+    class="pointer ">
     language
   </mat-icon>
   <mat-autocomplete panelWidth="auto" autoActiveFirstOption panelOpen="true" #autoCompleteField="matAutocomplete"

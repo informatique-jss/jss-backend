@@ -22,6 +22,7 @@ import com.github.sardine.Sardine;
 import com.github.sardine.impl.SardineImpl;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -84,7 +85,7 @@ public class OwncloudGreffeDelegateImpl implements OwncloudGreffeDelegate {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public void grabAllFiles() throws OsirisException, OsirisClientMessageException {
+    public void grabAllFiles() throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         Sardine sardine = new SardineImpl(login, password);
         List<DavResource> resources;
@@ -125,7 +126,7 @@ public class OwncloudGreffeDelegateImpl implements OwncloudGreffeDelegate {
     }
 
     private void fetchInvoiceDetails(DavResource file, OwncloudGreffeFile owncloudGreffeFile, Sardine sardine)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         String xml = "";
         try {
             xml = new String(sardine.get(rootUrl + file.getPath()).readAllBytes(), StandardCharsets.ISO_8859_1);
@@ -229,7 +230,7 @@ public class OwncloudGreffeDelegateImpl implements OwncloudGreffeDelegate {
     }
 
     private Invoice generateInvoiceFromDebourAndGreffeInvoice(OwncloudGreffeInvoice greffeInvoice)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         Invoice invoice = new Invoice();
         invoice.setCompetentAuthority(greffeInvoice.getOwncloudGreffeFile().getCompetentAuthority());
         invoice.setCustomerOrderForInboundInvoice(greffeInvoice.getCustomerOrder());
@@ -250,7 +251,7 @@ public class OwncloudGreffeDelegateImpl implements OwncloudGreffeDelegate {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public Invoice generateInvoiceFromProvisionAndGreffeInvoice(OwncloudGreffeInvoice greffeInvoice,
-            Provision provision) throws OsirisClientMessageException, OsirisException {
+            Provision provision) throws OsirisClientMessageException, OsirisException, OsirisValidationException {
         if (greffeInvoice.getOwncloudGreffeFile().getCompetentAuthority().getDefaultPaymentType() == null)
             throw new OsirisClientMessageException(
                     "Le mode de paiement par défaut de l'autorité compétente n'a pas été renseigné");

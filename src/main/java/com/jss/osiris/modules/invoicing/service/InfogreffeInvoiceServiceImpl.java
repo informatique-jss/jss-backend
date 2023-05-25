@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.InfogreffeInvoice;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.repository.InfogreffeInvoiceRepository;
@@ -80,7 +81,8 @@ public class InfogreffeInvoiceServiceImpl implements InfogreffeInvoiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean importInfogreffeInvoices(String csv) throws OsirisException, OsirisClientMessageException {
+    public Boolean importInfogreffeInvoices(String csv)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (csv != null && csv.length() > 0 && csv.contains(";")) {
             String[] lines = csv.split("\\r?\\n|\\r");
             for (String line : lines) {
@@ -190,7 +192,7 @@ public class InfogreffeInvoiceServiceImpl implements InfogreffeInvoiceService {
     }
 
     private Invoice generateInvoiceFromDebourAndInfogreffeInvoice(InfogreffeInvoice greffeInvoice)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         Invoice invoice = new Invoice();
         invoice.setCompetentAuthority(constantService.getCompetentAuthorityInfogreffe());
         invoice.setCustomerOrderForInboundInvoice(customerOrderService.getCustomerOrder(
@@ -212,7 +214,7 @@ public class InfogreffeInvoiceServiceImpl implements InfogreffeInvoiceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Invoice generateInvoiceFromProvisionAndGreffeInvoice(InfogreffeInvoice greffeInvoice, Provision provision)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         greffeInvoice = getInfogreffeInvoice(greffeInvoice.getId());
         greffeInvoice.setDebour(generateDebourFromInfogreffeInvoice(greffeInvoice, provision));
         addOrUpdateInfogreffeInvoice(greffeInvoice);

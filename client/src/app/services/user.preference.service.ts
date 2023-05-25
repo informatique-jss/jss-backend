@@ -77,6 +77,22 @@ export class UserPreferenceService {
     }
     return [];
   }
+
+  // Dark mode
+  setDarkMode(darkMode: boolean) {
+    if (darkMode != undefined && darkMode != null)
+      localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }
+
+  getDarkMode(): boolean {
+    let value = localStorage.getItem('darkMode');
+    if (value) {
+      let darkMode = JSON.parse(value!);
+      if (darkMode)
+        return darkMode;
+    }
+    return false;
+  }
 }
 
 

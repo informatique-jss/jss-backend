@@ -45,8 +45,10 @@ import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.miscellaneous.model.Constant;
 import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.miscellaneous.model.Department;
+import com.jss.osiris.modules.miscellaneous.model.DepartmentVatSetting;
 import com.jss.osiris.modules.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.miscellaneous.model.Gift;
 import com.jss.osiris.modules.miscellaneous.model.Language;
@@ -70,8 +72,10 @@ import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityTypeService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CountryService;
+import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.miscellaneous.service.DeliveryServiceService;
 import com.jss.osiris.modules.miscellaneous.service.DepartmentService;
+import com.jss.osiris.modules.miscellaneous.service.DepartmentVatSettingService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.GiftService;
 import com.jss.osiris.modules.miscellaneous.service.LanguageService;
@@ -234,6 +238,54 @@ public class MiscellaneousController {
     @Autowired
     DebourService debourService;
 
+    @Autowired
+    CustomerOrderOriginService customerOrderOriginService;
+
+    @Autowired
+    DepartmentVatSettingService departmentVatSettingService;
+
+    @GetMapping(inputEntryPoint + "/department-vat-settings")
+    public ResponseEntity<List<DepartmentVatSetting>> getDepartmentVatSettings() {
+        return new ResponseEntity<List<DepartmentVatSetting>>(departmentVatSettingService.getDepartmentVatSettings(),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/department-vat-setting")
+    public ResponseEntity<DepartmentVatSetting> addOrUpdateDepartmentVatSetting(
+            @RequestBody DepartmentVatSetting departmentVatSettings) throws OsirisValidationException, OsirisException {
+        if (departmentVatSettings.getId() != null)
+            validationHelper.validateReferential(departmentVatSettings, true, "departmentVatSettings");
+        validationHelper.validateString(departmentVatSettings.getCode(), true, "code");
+        validationHelper.validateReferential(departmentVatSettings.getDepartment(), true, "department");
+        validationHelper.validateReferential(departmentVatSettings.getIntermediateVat(), true, "IntermediateVat");
+        validationHelper.validateReferential(departmentVatSettings.getReducedVat(), true, "ReducedVat");
+        validationHelper.validateReferential(departmentVatSettings.getIntermediateVatForPurshase(), true,
+                "IntermediateVatForPurshase");
+        validationHelper.validateReferential(departmentVatSettings.getReducedVatForPurshase(), true,
+                "ReducedVatForPurshase");
+
+        return new ResponseEntity<DepartmentVatSetting>(
+                departmentVatSettingService.addOrUpdateDepartmentVatSetting(departmentVatSettings), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/customer-order-origins")
+    public ResponseEntity<List<CustomerOrderOrigin>> getCustomerOrderOrigins() {
+        return new ResponseEntity<List<CustomerOrderOrigin>>(customerOrderOriginService.getCustomerOrderOrigins(),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/customer-order-origin")
+    public ResponseEntity<CustomerOrderOrigin> addOrUpdateCustomerOrderOrigin(
+            @RequestBody CustomerOrderOrigin customerOrderOrigins) throws OsirisValidationException, OsirisException {
+        if (customerOrderOrigins.getId() != null)
+            validationHelper.validateReferential(customerOrderOrigins, true, "customerOrderOrigins");
+        validationHelper.validateString(customerOrderOrigins.getCode(), true, "code");
+        validationHelper.validateString(customerOrderOrigins.getLabel(), true, "label");
+
+        return new ResponseEntity<CustomerOrderOrigin>(
+                customerOrderOriginService.addOrUpdateCustomerOrderOrigin(customerOrderOrigins), HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/notifications")
     public ResponseEntity<List<Notification>> getNotifications(@RequestParam Boolean displayFuture) {
         return new ResponseEntity<List<Notification>>(
@@ -390,7 +442,6 @@ public class MiscellaneousController {
         validationHelper.validateReferential(constant.getPaymentWayInbound(), true, "PaymentWayInbound");
         validationHelper.validateReferential(constant.getPaymentWayOutboud(), true, "PaymentWayOutboud");
         validationHelper.validateReferential(constant.getVatTwenty(), true, "VatTwenty");
-        validationHelper.validateReferential(constant.getVatEight(), true, "VatEight");
         validationHelper.validateReferential(constant.getDepartmentMartinique(), true, "DepartmentMartinique");
         validationHelper.validateReferential(constant.getDepartmentGuadeloupe(), true, "DepartmentGuadeloupe");
         validationHelper.validateReferential(constant.getDepartmentReunion(), true, "DepartmentReunion");

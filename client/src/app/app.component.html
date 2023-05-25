@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href='../assets/images/jss_icon.png' />
 </head>
 
-<body>
+<body class="mat-body">
   <ng-progress #progressBar></ng-progress>
   <mat-drawer-container autosize *ngIf="loggedIn">
     <mat-drawer #sidenav [opened]="sidenavOpenState" mode="side">
@@ -20,54 +20,62 @@
     <main>
       <router-outlet></router-outlet>
     </main>
-    <table *ngIf="userNotes && userNotes.length>0" class="mat-table notes-table " cdkDrag
+    <table *ngIf="userNotes && userNotes.length>0"
+      class="mat-table mat-mdc-table mdc-data-table__table notes-table min-widht-table" cdkDrag
       [cdkDragFreeDragPosition]="currentUserNotePosition" (cdkDragEnded)="dropNoteTable($event)">
-      <tr class="mat-header-row   drag-cursor" cdkDragHandle>
-        <th colspan="3" class="icon-row-th mat-header-cell">
-          <mat-icon (click)="restoreDefaultNoteTablePosition()" class="pointer first-mat-icon small-icon"
-            matTooltip="Restaurer la position initiale" matTooltipShowDelay="1000">location_on</mat-icon>
-          <mat-icon (click)="deleteAllNotes()" class="pointer second-mat-icon small-icon" matTooltipShowDelay="1000"
-            matTooltip="Supprimer toutes les notes">
-            cancel</mat-icon>
-          <mat-icon (click)="displayEditNotes()" class="pointer second-mat-icon small-icon" matTooltipShowDelay="1000"
-            [matTooltip]="(displayEditNote)?'Cacher les outils de notes':'Afficher les outils de notes'">
-            edit</mat-icon>
-        </th>
-      </tr>
-      <ng-container *ngFor="let note of userNotes;let index = index">
-        <tr class="mat-header-row" *ngIf="note.isHeader">
-          <th class="mat-header-cell mat-header-cell-actions" style="padding-left: 0px !important;"
-            *ngIf="displayEditNote">
-            <mat-icon (click)="deleteNote(note)" class="pointer small-icon" matTooltipShowDelay="2000"
-              matTooltip="Supprimer la note">cancel
-            </mat-icon>
-            <mat-icon (click)="upNote(note)" class="pointer small-icon" matTooltipShowDelay="2000"
-              matTooltip="Monter la note" *ngIf="index>0">arrow_upward
-            </mat-icon>
-            <mat-icon (click)="downNote(note)" class="pointer small-icon" matTooltipShowDelay="2000"
-              matTooltip="Descendre la note" *ngIf="index<userNotes.length-1">arrow_downward
-            </mat-icon>
-          </th>
-          <th class="mat-header-cell" colspan="2" *ngIf="!note.link">{{note.value}}</th>
-          <th class="mat-header-cell note-link pointer" colspan="2" *ngIf="note.link"
-            (click)="openRoute($event, note.link)" (auxclick)="openRoute($event, note.link)">
-            {{note.value}}<mat-icon class="small-icon ">link</mat-icon>
+      <thead>
+        <tr class="mat-mdc-header-row mdc-data-table__header-row    drag-cursor" cdkDragHandle>
+          <th colspan="3" class="mat-mdc-header-cell mdc-data-table__header-cell icon-row-th ">
+            <mat-icon color="accent" (click)="restoreDefaultNoteTablePosition()"
+              class="pointer first-mat-icon small-icon" matTooltip="Restaurer la position initiale"
+              matTooltipShowDelay="1000">location_on</mat-icon>
+            <mat-icon color="accent" (click)="deleteAllNotes()" class="pointer second-mat-icon small-icon"
+              matTooltipShowDelay="1000" matTooltip="Supprimer toutes les notes">
+              cancel</mat-icon>
+            <mat-icon color="accent" (click)="displayEditNotes()" class="pointer second-mat-icon small-icon"
+              matTooltipShowDelay="1000"
+              [matTooltip]="(displayEditNote)?'Cacher les outils de notes':'Afficher les outils de notes'">
+              edit</mat-icon>
           </th>
         </tr>
-        <tr class="mat-row " *ngIf="!note.isHeader">
-          <td class="mat-header-cell mat-header-cell-actions" *ngIf="displayEditNote">
-            <mat-icon (click)="deleteNote(note)" class="pointer small-icon" matTooltipShowDelay="2000"
+      </thead>
+      <ng-container *ngFor="let note of userNotes;let index = index">
+        <thead>
+          <tr class="mat-mdc-header-row mdc-data-table__header-row " *ngIf="note.isHeader">
+            <th class="mat-mdc-header-cell mdc-data-table__header-cell mat-header-cell-actions"
+              style="padding-left: 0px !important;" *ngIf="displayEditNote">
+              <mat-icon color="accent" (click)="deleteNote(note)" class="pointer small-icon" matTooltipShowDelay="2000"
+                matTooltip="Supprimer la note">cancel
+              </mat-icon>
+              <mat-icon color="accent" (click)="upNote(note)" class="pointer small-icon" matTooltipShowDelay="2000"
+                matTooltip="Monter la note" *ngIf="index>0">arrow_upward
+              </mat-icon>
+              <mat-icon color="accent" (click)="downNote(note)" class="pointer small-icon" matTooltipShowDelay="2000"
+                matTooltip="Descendre la note" *ngIf="index<userNotes.length-1">arrow_downward
+              </mat-icon>
+            </th>
+            <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2" *ngIf="!note.link">{{note.value}}
+            </th>
+            <th class="mat-mdc-header-cell mdc-data-table__header-cell note-link pointer" colspan="2" *ngIf="note.link"
+              (click)="openRoute($event, note.link)" (auxclick)="openRoute($event, note.link)">
+              {{note.value}}<mat-icon color="accent" class="small-icon ">link</mat-icon>
+            </th>
+          </tr>
+        </thead>
+        <tr class="mat-mdc-row mdc-data-table__row  " *ngIf="!note.isHeader">
+          <td class="mat-mdc-header-cell mdc-data-table__header-cell mat-header-cell-actions" *ngIf="displayEditNote">
+            <mat-icon color="accent" (click)="deleteNote(note)" class="pointer small-icon" matTooltipShowDelay="2000"
               matTooltip="Supprimer la note">cancel
             </mat-icon>
-            <mat-icon (click)="upNote(note)" class="pointer small-icon" matTooltipShowDelay="2000"
+            <mat-icon color="accent" (click)="upNote(note)" class="pointer small-icon" matTooltipShowDelay="2000"
               matTooltip="Monter la note" *ngIf="index>0">arrow_upward
             </mat-icon>
-            <mat-icon (click)="downNote(note)" class="pointer small-icon" matTooltipShowDelay="2000"
+            <mat-icon color="accent" (click)="downNote(note)" class="pointer small-icon" matTooltipShowDelay="2000"
               matTooltip="Descendre la note" *ngIf="index<userNotes.length-1">arrow_downward
             </mat-icon>
           </td>
-          <td class="mat-cell">{{note.label}}</td>
-          <td class="mat-cell">{{note.value}}</td>
+          <td class="mat-mdc-cell mdc-data-table__cell ">{{note.label}}</td>
+          <td class="mat-mdc-cell mdc-data-table__cell ">{{note.value}}</td>
         </tr>
       </ng-container>
     </table>

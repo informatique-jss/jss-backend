@@ -72,7 +72,7 @@ dependencies {
 }
   
 group = 'com.jss.osiris'
-version = '11.0'
+version = '12.0'
 description = 'Outil Sympa, Interactif, Révolutionnairement Intuitif et Simple'
 sourceCompatibility = '17'
 targetCompatibility = '17'

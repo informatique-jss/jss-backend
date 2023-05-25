@@ -40,4 +40,6 @@ public interface QuotationSearchResult {
     public Integer getSimpleProvisionNbr();
 
     public LocalDateTime getLastStatusUpdate();
+
+    public String getCustomerOrderOriginLabel();
 }

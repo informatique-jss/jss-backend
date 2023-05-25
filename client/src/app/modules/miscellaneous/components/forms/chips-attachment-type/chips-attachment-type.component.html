@@ -1,16 +1,16 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label>{{label}}</mat-label>
-  <mat-chip-list #chipListAttachmentType>
-    <mat-chip *ngFor="let attachmentType of model" (removed)="removeElement(attachmentType)">
+  <mat-chip-grid #chipListAttachmentType>
+    <mat-chip-row *ngFor="let attachmentType of model" (removed)="removeElement(attachmentType)">
       {{attachmentType.label}}
       <button matChipRemove *ngIf="!isDisabled">
         <mat-icon>cancel</mat-icon>
       </button>
-    </mat-chip>
+    </mat-chip-row>
     <input matInput placeholder="Choisir un type de pièce jointe" [formControlName]="propertyName" #attachmentTypeInput
       [matChipInputFor]="chipListAttachmentType" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
       [disabled]="isDisabled" [matAutocomplete]="autoComplete">
-  </mat-chip-list>
+  </mat-chip-grid>
   <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)="addAttachmentType($event)">
     <mat-option *ngFor="let attachmentType of filteredAttachmentTypes | async" [value]="attachmentType">

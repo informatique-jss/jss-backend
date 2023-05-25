@@ -1,3 +1,4 @@
+import { CustomerOrderOrigin } from "../../miscellaneous/model/CustomerOrderOrigin";
 import { IAttachment } from "../../miscellaneous/model/IAttachment";
 import { IDocument } from "../../miscellaneous/model/IDocument";
 import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
@@ -24,4 +25,5 @@ export interface IQuotation extends IAttachment, IDocument {
   secondReminderDateTime: Date;
   thirdReminderDateTime: Date;
   customerMailCustomMessage: string;
+  customerOrderOrigin: CustomerOrderOrigin;
 }

@@ -48,4 +48,6 @@ public interface OrderingSearchResult {
     public Integer getSimpleProvisionNbr();
 
     public LocalDateTime getLastStatusUpdate();
+
+    public String getCustomerOrderOriginLabel();
 }

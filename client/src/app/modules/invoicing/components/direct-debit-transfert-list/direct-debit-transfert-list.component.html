@@ -33,7 +33,8 @@
         </td>
       </tr>
     </table>
-    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="transfers" tableName="Virements">
+    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="transfers" tableName="Virements"
+      *ngIf="displayedColumns && displayedColumns.length>0 ">
     </sort-table>
   </div>
 </div>

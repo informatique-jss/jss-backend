@@ -12,6 +12,7 @@ import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.miscellaneous.model.Constant;
 import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.DocumentType;
@@ -89,6 +90,8 @@ public interface ConstantService {
     public AttachmentType getAttachmentTypeProofOfAddress() throws OsirisException;
 
     public AttachmentType getAttachmentTypeInvoice() throws OsirisException;
+
+    public AttachmentType getAttachmentTypeProviderInvoice() throws OsirisException;
 
     public AttachmentType getAttachmentTypeCreditNote() throws OsirisException;
 
@@ -302,7 +305,9 @@ public interface ConstantService {
 
     public Vat getVatZero() throws OsirisException;
 
-    public Vat getVatEight() throws OsirisException;
+    public Vat getVatTwo() throws OsirisException;
+
+    public Vat getVatDeductibleTwo() throws OsirisException;
 
     public Vat getVatDeductible() throws OsirisException;
 
@@ -367,4 +372,8 @@ public interface ConstantService {
     public AccountingAccount getAccountingAccountBankJss() throws OsirisException;
 
     public AccountingAccount getAccountingAccountCaisse() throws OsirisException;
+
+    public CustomerOrderOrigin getCustomerOrderOriginWebSite() throws OsirisException;
+
+    public CustomerOrderOrigin getCustomerOrderOriginOsiris() throws OsirisException;
 }

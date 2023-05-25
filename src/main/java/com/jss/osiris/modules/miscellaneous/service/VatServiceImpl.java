@@ -10,8 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Department;
+import com.jss.osiris.modules.miscellaneous.model.DepartmentVatSetting;
+import com.jss.osiris.modules.miscellaneous.model.IVat;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.repository.VatRepository;
 
@@ -23,6 +26,9 @@ public class VatServiceImpl implements VatService {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    DepartmentVatSettingService departmentVatSettingService;
 
     @Override
     public List<Vat> getVats() {
@@ -44,49 +50,111 @@ public class VatServiceImpl implements VatService {
         return vatRepository.save(vat);
     }
 
-    /**
-     * Using https://sumup.fr/factures/essentiels-facturation/tva-dom-tom/
-     * 
-     * @throws OsirisException
-     * @throws OsirisClientMessageException
-     */
     @Override
-    public Vat getGeographicalApplicableVat(Country country, Department departement)
+    public Vat getGeographicalApplicableVatForSales(Country country, Department departement, Vat vat)
             throws OsirisException, OsirisClientMessageException {
         if (country == null)
             throw new OsirisClientMessageException(
                     "Pays non trouvé sur le donneur d'ordre, l'affaire ou le libellé de facturation");
 
-        Vat vatTwenty = constantService.getVatTwenty();
-        if (vatTwenty == null) {
-            throw new OsirisException(null, "VAT not found for code " + constantService.getVatTwenty().getCode());
-        }
+        if (!country.getId().equals(constantService.getCountryFrance().getId())
+                && !country.getId().equals(constantService.getCountryMonaco().getId()))
+            return null;
 
-        // 20% in Monaco
         if (country.getId().equals(constantService.getCountryMonaco().getId()))
-            return vatTwenty;
-
-        Vat vatEight = constantService.getVatEight();
-        if (vatEight == null) {
-            throw new OsirisException(null, "VAT not found for code " + constantService.getVatEight().getCode());
-        }
+            return vat != null ? vat : constantService.getVatTwenty();
 
         if (departement == null)
             throw new OsirisClientMessageException("Département non trouvé pour le calcul de la TVA");
 
-        // 8 % for individual of DOM excepted Guyane and Mayotte (0 %), 20 % for
-        // professionals
-        if (departement.getId().equals(constantService.getDepartmentMartinique().getId())
-                || departement.getId().equals(constantService.getDepartmentGuadeloupe().getId())
-                || departement.getId().equals(constantService.getDepartmentReunion().getId())) {
-            return vatEight;
-        }
+        DepartmentVatSetting settings = departmentVatSettingService.getDepartmentVatSettingByDepartment(departement);
 
-        // No VAT for TOM and other DOM
-        if (departement.getCode().length() > 2)
+        if (settings == null)
+            return vat != null ? vat : constantService.getVatTwenty();
+
+        if (vat == null || vat.getId().equals(constantService.getVatTwenty().getId()))
+            return settings.getIntermediateVat().getRate() > 0 ? settings.getIntermediateVat() : null;
+
+        if (vat.getId().equals(constantService.getVatTwo().getId()))
+            return settings.getReducedVat().getRate() > 0 ? settings.getReducedVat() : null;
+
+        return constantService.getVatTwenty();
+    }
+
+    @Override
+    public Vat getGeographicalApplicableVatForPurshase(Country country, Department departement, Vat vat)
+            throws OsirisException, OsirisClientMessageException {
+        if (country == null)
+            throw new OsirisClientMessageException(
+                    "Pays non trouvé sur le donneur d'ordre, l'affaire ou le libellé de facturation");
+
+        if (!country.getId().equals(constantService.getCountryFrance().getId())
+                && !country.getId().equals(constantService.getCountryMonaco().getId()))
             return null;
 
-        // 20 % for all other departments
-        return vatTwenty;
+        if (country.getId().equals(constantService.getCountryMonaco().getId()))
+            return vat != null ? vat : constantService.getVatTwenty();
+
+        if (departement == null)
+            throw new OsirisClientMessageException("Département non trouvé pour le calcul de la TVA");
+
+        DepartmentVatSetting settings = departmentVatSettingService.getDepartmentVatSettingByDepartment(departement);
+
+        if (settings == null)
+            return vat != null ? vat : constantService.getVatTwenty();
+
+        if (vat == null || vat.getId().equals(constantService.getVatDeductible().getId()))
+            return settings.getIntermediateVatForPurshase().getRate() > 0 ? settings.getIntermediateVatForPurshase()
+                    : null;
+
+        if (vat.getId().equals(constantService.getVatDeductibleTwo().getId()))
+            return settings.getReducedVatForPurshase().getRate() > 0 ? settings.getReducedVatForPurshase() : null;
+
+        return constantService.getVatDeductible();
     }
+
+    @Override
+    public Vat getGeographicalApplicableVatForPurshases(IVat vatTiers, Vat vat)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        if (vatTiers == null)
+            throw new OsirisValidationException("provider");
+
+        if (vatTiers.getCountry() == null)
+            throw new OsirisValidationException("country");
+
+        if (!vatTiers.getCountry().getId().equals(constantService.getCountryFrance().getId())
+                && !vatTiers.getCountry().getId().equals(constantService.getCountryMonaco().getId())) {
+            return getGeographicalApplicableVatForPurshase(vatTiers.getCountry(), null, null);
+        }
+
+        if (vatTiers.getCity() == null || vatTiers.getCity().getDepartment() == null
+                || vatTiers.getCountry() == null) {
+            throw new OsirisValidationException("city");
+        }
+
+        return getGeographicalApplicableVatForPurshase(vatTiers.getCountry(), vatTiers.getCity().getDepartment(), vat);
+    }
+
+    @Override
+    public Vat getGeographicalApplicableVatForSales(IVat vatTiers, Vat vat)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        if (vatTiers == null)
+            throw new OsirisValidationException("provider");
+
+        if (vatTiers.getCountry() == null)
+            throw new OsirisValidationException("country");
+
+        if (!vatTiers.getCountry().getId().equals(constantService.getCountryFrance().getId())
+                && !vatTiers.getCountry().getId().equals(constantService.getCountryMonaco().getId())) {
+            return getGeographicalApplicableVatForSales(vatTiers.getCountry(), null, null);
+        }
+
+        if (vatTiers.getCity() == null || vatTiers.getCity().getDepartment() == null
+                || vatTiers.getCountry() == null) {
+            throw new OsirisValidationException("city");
+        }
+
+        return getGeographicalApplicableVatForSales(vatTiers.getCountry(), vatTiers.getCity().getDepartment(), vat);
+    }
+
 }

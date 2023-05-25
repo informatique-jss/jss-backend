@@ -10,8 +10,6 @@
   width: 0px;
   height: 0px;
   cursor: pointer;
-  color: #44546A;
-  background-color: #f0f0f0;
   padding: 16px;
   border-radius: 23px;
   margin-right: 5px;
@@ -24,24 +22,35 @@
   font-size: 20px;
 }
 
-.menu:hover {
-  background: #4d4d4d;
-  color: #ffffff;
-}
-
-.tab-icon {
-  color: #44546A;
-}
-
-.tab-icon:hover {
-  color: grey
-}
-
-.mat-badge.hide-text .mat-badge-content {
-  color: transparent;
-}
-
 .div-personnal-action {
   text-align: right;
   padding: 8px;
+}
+
+.notification-component {
+  margin: 10px;
+}
+
+
+.mat-card {
+  margin-right: 10px;
+  margin-top: 15px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+}
+
+.mat-mdc-card-header {
+  padding-top: 10px;
+}
+
+.mat-card-icon {
+  position: absolute;
+  right: 15px;
+}
+
+.mat-badge-content {
+  color: transparent !important;
+  top: -2px !important;
+  left: -12px !important;
 }

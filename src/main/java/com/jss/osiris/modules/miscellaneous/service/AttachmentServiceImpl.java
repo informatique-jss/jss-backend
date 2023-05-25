@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -257,7 +258,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void disableDocument(Attachment attachment) {
         attachment.setIsDisabled(true);
         addOrUpdateAttachment(attachment);
@@ -331,7 +332,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     public List<Attachment> getInvoiceAttachmentOnProvisionToAnalyse() throws OsirisException {
         return attachmentRepository
-                .findInvoiceAttachmentOnProvisionToAnalyse(constantService.getAttachmentTypeInvoice().getId(),
+                .findInvoiceAttachmentOnProvisionToAnalyse(constantService.getAttachmentTypeProviderInvoice().getId(),
                         Arrays.asList(
                                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED),
                                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BILLED)));

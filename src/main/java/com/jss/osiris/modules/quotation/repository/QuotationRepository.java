@@ -30,6 +30,7 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         + " r.id as responsableId,"
                         + " coalesce(t2.id,t.id) as tiersId,"
                         + " cf.id as confrereId,"
+                        + " origin.label as customerOrderOriginLabel,"
                         + " sum(COALESCE(i.pre_tax_price,0)+COALESCE(i.vat_price,0)-COALESCE(i.discount_amount,0)) as totalPrice ,"
                         + " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')' ,', ') as affaireLabel,"
                         + " count(distinct provision.id_announcement) as announcementNbr,"
@@ -39,6 +40,7 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         + " count(distinct provision.id_simple_provision) as simpleProvisionNbr,"
                         + " co.description as quotationDescription"
                         + " from quotation co"
+                        + " join customer_order_origin origin on origin.id = co.id_customer_order_origin"
                         + " join quotation_status cos on cos.id = co.id_quotation_status"
                         + " left join asso_affaire_order asso on asso.id_quotation = co.id"
                         + " left join provision on provision.id_asso_affaire_order = asso.id"
@@ -57,7 +59,7 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         + " and ( COALESCE(:salesEmployee) =0 or cf.id_commercial in (:salesEmployee) or r.id_commercial in (:salesEmployee) or t.id_commercial in (:salesEmployee) or t.id_commercial is null and t2.id_commercial in (:salesEmployee))"
                         + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder))"
                         + " and ( COALESCE(:affaire)=0 or af.id in (:affaire) )"
-                        + " group by cf.id, cf.label, r.id, r.firstname, r.lastname, t.denomination, t.firstname, t.lastname, t2.denomination, t2.firstname, t2.lastname, cos.label, "
+                        + " group by cf.id, cf.label, r.id,origin.label, r.firstname, r.lastname, t.denomination, t.firstname, t.lastname, t2.denomination, t2.firstname, t2.lastname, cos.label, "
                         + " co.created_date, cf.id_commercial, r.id_commercial, t.id_commercial, t2.id_commercial, co.id, r.id, t.id,t2.id, cf.id, co.description,co.id_assigned_to ")
         List<QuotationSearchResult> findQuotations(@Param("salesEmployee") List<Integer> salesEmployee,
                         @Param("assignedToEmployee") List<Integer> assignedToEmployee,

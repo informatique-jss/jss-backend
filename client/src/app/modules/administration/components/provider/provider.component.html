@@ -62,6 +62,21 @@
             <table class="full-width">
               <tr>
                 <td>
+                  <autocomplete-city [(model)]="selectedProvider.city" [modelCountry]="selectedProvider.country"
+                    [form]="entityForm2" propertyName="city" [isMandatory]="true" [isDisabled]="!editMode"
+                    label="Ville">
+                  </autocomplete-city>
+                </td>
+                <td>
+                  <autocomplete-country [(model)]="selectedProvider.country" [form]="entityForm2" propertyName="country"
+                    label="Pays" [isDisabled]="!editMode" [isMandatory]="false" [isDisabled]="!editMode">
+                  </autocomplete-country>
+                </td>
+              </tr>
+            </table>
+            <table class="full-width">
+              <tr>
+                <td>
                   <chips-mail [(model)]="selectedProvider.mails" label="Mails" [form]="entityForm2" propertyName="mails"
                     [isMandatory]="true" [isDisabled]="!editMode"></chips-mail>
                 </td>
