@@ -75,4 +75,5 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 
 	public Boolean getOverrideSpecialOffer();
 
+	public Boolean getOverrideSpecialOffer();
 }

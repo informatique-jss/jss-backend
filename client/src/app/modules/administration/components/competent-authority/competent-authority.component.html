@@ -273,9 +273,9 @@
             <mat-icon>add</mat-icon>
           </button>
         </mat-tab>
-        <mat-tab label="Pointage des relevés" *ngIf="selectedcompetentAuthority.id">
+        <!--mat-tab label="Pointage des relevés" *ngIf="selectedcompetentAuthority.id">
           <receipt-reconciliation [provider]="selectedcompetentAuthority"></receipt-reconciliation>
-        </mat-tab>
+        </mat-tab-->
         <mat-tab label=" Documents" *ngIf="selectedcompetentAuthority.id">
           <attachments [entity]="selectedcompetentAuthority" [editMode]="editMode"
             [entityType]="COMPETENT_AUTHORITY_ENTITY_TYPE.entityType">

@@ -473,7 +473,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         List<Announcement> announcements = announcementRepository
                 .getAnnouncementForConfrereReminder(announcementStatusService
-                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE));
+                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE)); 
 
         if (announcements != null && announcements.size() > 0) {
             for (Announcement announcement : announcements) {
