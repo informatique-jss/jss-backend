@@ -78,7 +78,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " join accounting_account a on a.id = r.id_accounting_account " +
                         " join principal_accounting_account pa on pa.id = a.id_principal_accounting_account " +
                         " left join tiers t on (t.id_accounting_account_customer = r.id_accounting_account  or t.id_accounting_account_deposit=r.id_accounting_account) "
-                        + " left join confrere cf on (cf.id_accounting_account_customer = r.id_accounting_account  or cf.id_accounting_account_deposit=r.id_accounting_account) "
+                        + " left join confrere cf on (cf.id_accounting_account_customer = r.id_accounting_account  or cf.id_accounting_account_deposit=r.id_accounting_account or cf.id_accounting_account_provider = r.id_accounting_account) "
                         + " left join accounting_record r2 on r2.id = r.id_contre_passe " +
                         " left join invoice i on i.id = r.id_invoice " +
                         " left join customer_order co on co.id = r.id_customer_order " +
@@ -109,19 +109,20 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("endDate") LocalDateTime endDate,
                         @Param("canViewRestricted") boolean canViewRestricted);
 
-        @Query(nativeQuery = true, value = "select" + "        sum(case "
+        @Query(nativeQuery = true, value = "" +
+                        "select  sum(case "
                         + "            when record.isanouveau=false then record.credit_amount "
                         + "        end) as creditAmount," + "        sum(case "
                         + "            when record.isanouveau=false then record.debit_amount "
                         + "        end) as debitAmount," + "		accounting.label as accountingAccountLabel,"
                         + "		pa.code as principalAccountingAccountCode,"
                         + "		accounting.accounting_account_sub_number as accountingAccountSubNumber,"
-                        + "		sum(case when substring(pa.code,1,1) in ('6','7') and i.due_date>now() and i.due_date<= (now() +INTERVAL '30 day') then i.total_price  end) as echoir30, "
-                        + "		sum(case when substring(pa.code,1,1) in ('6','7') and i.due_date>now() and i.due_date<= (now() +INTERVAL '60 day') and i.due_date> (now() +INTERVAL '30 day')  then i.total_price  end) as echoir60, "
-                        + "		sum(case when substring(pa.code,1,1) in ('6','7') and  i.due_date>now() and i.due_date> (now() +INTERVAL '60 day')  then i.total_price  end) as echoir90, "
-                        + "		sum(case when substring(pa.code,1,1) in ('6','7') and  i.due_date<=now() and i.due_date>= (now() -INTERVAL '30 day')  then i.total_price  end) as echu30, "
-                        + "		sum(case when substring(pa.code,1,1) in ('6','7') and  i.due_date<=now() and i.due_date>= (now() -INTERVAL '60 day') and i.due_date< (now() -INTERVAL '30 day')  then i.total_price  end) as echu60, "
-                        + "		sum(case when substring(pa.code,1,1) in ('6','7') and  i.due_date<=now() and i.due_date< (now() -INTERVAL '60 day')  then i.total_price  end) as echu90 "
+                        + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '30 day') then i.total_price  end) as echoir30, "
+                        + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '60 day') and i.due_date> (now() +INTERVAL '30 day')  then i.total_price  end) as echoir60, "
+                        + "		sum(case when  i.due_date>now() and i.due_date> (now() +INTERVAL '60 day')  then i.total_price  end) as echoir90, "
+                        + "		sum(case when  i.due_date<=now() and i.due_date>= (now() -INTERVAL '30 day')  then i.total_price  end) as echu30, "
+                        + "		sum(case when  i.due_date<=now() and i.due_date>= (now() -INTERVAL '60 day') and i.due_date< (now() -INTERVAL '30 day')  then i.total_price  end) as echu60, "
+                        + "		sum(case when  i.due_date<=now() and i.due_date< (now() -INTERVAL '60 day')  then i.total_price  end) as echu90 "
                         + "    from" + "        accounting_record record " + "    inner join"
                         + "        accounting_account accounting join principal_accounting_account pa on pa.id = accounting.id_principal_accounting_account "
                         + "            on record.id_accounting_account=accounting.id   "
@@ -134,7 +135,8 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false ) " +
-                        " group by accounting.label,pa.code,accounting.accounting_account_sub_number ")
+                        " group by accounting.label,pa.code,accounting.accounting_account_sub_number " +
+                        "")
         List<AccountingBalance> searchAccountingBalance(
                         @Param("accountingClassId") Integer accountingClassId,
                         @Param("accountingAccountId") Integer accountingAccountId,
@@ -151,12 +153,12 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "		pa.code as principalAccountingAccountCode,"
                         + "		pa.label as principalAccountingAccountLabel,"
                         + "		case when pa.code in ('401','411','4091','4191') then '' else accounting.accounting_account_sub_number ||'' end as accountingAccountSubNumber,"
-                        + "		sum(case when substring(pa.code,1,1) in ('6','7') and i.due_date>now() and i.due_date<= (now() +INTERVAL '30 day') then i.total_price  end) as echoir30, "
-                        + "		sum(case when substring(pa.code,1,1) in ('6','7') and i.due_date>now() and i.due_date<= (now() +INTERVAL '60 day') and i.due_date> (now() +INTERVAL '30 day')  then i.total_price  end) as echoir60, "
-                        + "		sum(case when substring(pa.code,1,1) in ('6','7') and  i.due_date>now() and i.due_date> (now() +INTERVAL '60 day')  then i.total_price  end) as echoir90, "
-                        + "		sum(case when substring(pa.code,1,1) in ('6','7') and  i.due_date<=now() and i.due_date>= (now() -INTERVAL '30 day')  then i.total_price  end) as echu30, "
-                        + "		sum(case when substring(pa.code,1,1) in ('6','7') and  i.due_date<=now() and i.due_date>= (now() -INTERVAL '60 day') and i.due_date< (now() -INTERVAL '30 day')  then i.total_price  end) as echu60, "
-                        + "		sum(case when substring(pa.code,1,1) in ('6','7') and  i.due_date<=now() and i.due_date< (now() -INTERVAL '60 day')  then i.total_price  end) as echu90 "
+                        + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '30 day') then i.total_price  end) as echoir30, "
+                        + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '60 day') and i.due_date> (now() +INTERVAL '30 day')  then i.total_price  end) as echoir60, "
+                        + "		sum(case when  i.due_date>now() and i.due_date> (now() +INTERVAL '60 day')  then i.total_price  end) as echoir90, "
+                        + "		sum(case when  i.due_date<=now() and i.due_date>= (now() -INTERVAL '30 day')  then i.total_price  end) as echu30, "
+                        + "		sum(case when  i.due_date<=now() and i.due_date>= (now() -INTERVAL '60 day') and i.due_date< (now() -INTERVAL '30 day')  then i.total_price  end) as echu60, "
+                        + "		sum(case when  i.due_date<=now() and i.due_date< (now() -INTERVAL '60 day')  then i.total_price  end) as echu90 "
                         + "    from" + "        accounting_record record " + "    inner join"
                         + "        accounting_account accounting  join principal_accounting_account pa on pa.id = accounting.id_principal_accounting_account  "
                         + "            on record.id_accounting_account=accounting.id "

@@ -19,7 +19,7 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
-public class Provider implements IId, IAttachment {
+public class Provider implements IId, IAttachment, IVat {
 
 	@Id
 	@SequenceGenerator(name = "provider_sequence", sequenceName = "provider_sequence", allocationSize = 1)
@@ -77,6 +77,14 @@ public class Provider implements IId, IAttachment {
 
 	@OneToMany(mappedBy = "provider")
 	private List<Attachment> attachments;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_city")
+	private City city;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_country")
+	private Country country;
 
 	public Integer getId() {
 		return id;
@@ -196,6 +204,22 @@ public class Provider implements IId, IAttachment {
 
 	public void setAttachments(List<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+
+	public City getCity() {
+		return city;
+	}
+
+	public void setCity(City city) {
+		this.city = city;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
 	}
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { AttachmentType } from '../../../model/AttachmentType';
@@ -13,6 +13,7 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 export class SelectAttachmentTypeComponent extends GenericSelectComponent<AttachmentType> implements OnInit {
 
   types: AttachmentType[] = [] as Array<AttachmentType>;
+  @Input() byPassAttachmentHiddenFilter: boolean = false;
 
   constructor(private formBuild: UntypedFormBuilder, private attachmentTypeService: AttachmentTypeService, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
@@ -20,7 +21,10 @@ export class SelectAttachmentTypeComponent extends GenericSelectComponent<Attach
 
   initTypes(): void {
     this.attachmentTypeService.getAttachmentTypes().subscribe(response => {
-      this.types = response.filter(attachmentType => !attachmentType.isHiddenFromUser).sort((a, b) => a.label.localeCompare(b.label));
+      if (this.byPassAttachmentHiddenFilter)
+        this.types = response.sort((a, b) => a.label.localeCompare(b.label));
+      else
+        this.types = response.filter(attachmentType => !attachmentType.isHiddenFromUser).sort((a, b) => a.label.localeCompare(b.label));
     })
   }
 }

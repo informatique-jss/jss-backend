@@ -40,11 +40,14 @@ import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.model.IVat;
+import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
+import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -125,6 +128,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     DepositService depositService;
+
+    @Autowired
+    VatService vatService;
 
     @Override
     public List<Invoice> getAllInvoices() {
@@ -437,10 +443,26 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws OsirisException, OsirisClientMessageException {
+    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if ((invoice.getCompetentAuthority() == null || invoice.getCustomerOrderForInboundInvoice() == null)
                 && !hasAtLeastOneInvoiceItemNotNull(invoice))
             throw new OsirisException(null, "No invoice item found on manual invoice");
+
+        IVat vatTiers = null;
+        if (invoice.getTiers() != null)
+            vatTiers = invoice.getTiers();
+        if (invoice.getResponsable() != null)
+            vatTiers = invoice.getResponsable().getTiers();
+        if (invoice.getProvider() != null)
+            vatTiers = invoice.getProvider();
+        if (invoice.getConfrere() != null)
+            vatTiers = invoice.getConfrere();
+        if (invoice.getCompetentAuthority() != null)
+            vatTiers = invoice.getCompetentAuthority();
+
+        if (vatTiers == null)
+            throw new OsirisValidationException("vatTiers");
 
         boolean isNewInvoice = invoice.getId() == null;
         HashMap<Integer, Debour> debourPayments = new HashMap<Integer, Debour>();
@@ -474,7 +496,17 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             if (invoice.getInvoiceItems() != null && invoice.getInvoiceItems().size() > 0)
                 for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-                    if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable())
+                    Vat invoiceItemVat = null;
+                    if (invoice.getIsInvoiceFromProvider())
+                        invoiceItemVat = vatService.getGeographicalApplicableVatForPurshases(vatTiers,
+                                invoiceItem.getVat());
+                    else
+                        invoiceItemVat = vatService.getGeographicalApplicableVatForSales(vatTiers,
+                                invoiceItem.getVat());
+
+                    invoiceItem.setVat(invoiceItemVat);
+
+                    if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable() || invoiceItemVat == null)
                         invoiceItem.setVatPrice(0f);
                     else
                         invoiceItem.setVatPrice(invoiceItem.getVat().getRate() * invoiceItem.getPreTaxPrice() / 100f);
@@ -531,11 +563,15 @@ public class InvoiceServiceImpl implements InvoiceService {
                                             InvoiceItem invoiceItem = getInvoiceItemFromDebour(debour,
                                                     debour.getBillingType().getIsNonTaxable());
 
-                                            if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable()) {
+                                            Vat vatDebour = vatService.getGeographicalApplicableVatForPurshases(
+                                                    debour.getCompetentAuthority(), constantService.getVatDeductible());
+
+                                            if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable()
+                                                    || vatDebour == null) {
                                                 invoiceItem.setVatPrice(0f);
                                                 invoiceItem.setVat(constantService.getVatZero());
                                             } else {
-                                                invoiceItem.setVat(constantService.getVatDeductible());
+                                                invoiceItem.setVat(vatDebour);
                                                 invoiceItem.setVatPrice(invoiceItem.getVat().getRate()
                                                         * invoiceItem.getPreTaxPrice() / 100f);
                                             }
@@ -635,24 +671,29 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoice;
     }
 
-    private InvoiceItem getInvoiceItemFromDebour(Debour debour, boolean isNonTaxable) throws OsirisException {
+    private InvoiceItem getInvoiceItemFromDebour(Debour debour, boolean isNonTaxable)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         InvoiceItem invoiceItem = new InvoiceItem();
         BillingItem billingItem = pricingHelper
                 .getAppliableBillingItem(billingItemService.getBillingItemByBillingType(debour.getBillingType()));
         if (billingItem == null)
             throw new OsirisException(null,
                     "No appliable billing item found for billing type n°" + debour.getBillingType().getId());
+
+        Vat vatDebour = vatService.getGeographicalApplicableVatForPurshases(debour.getCompetentAuthority(),
+                constantService.getVatDeductible());
+
         invoiceItem.setBillingItem(billingItem);
 
         invoiceItem.setDiscountAmount(0f);
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);
         invoiceItem.setLabel(debour.getBillingType().getLabel());
-        if (isNonTaxable) {
+        if (isNonTaxable || vatDebour == null) {
             invoiceItem.setPreTaxPrice(debour.getDebourAmount());
         } else {
             invoiceItem.setPreTaxPrice(
-                    debour.getDebourAmount() / ((100 + constantService.getVatDeductible().getRate()) / 100f));
+                    debour.getDebourAmount() / ((100 + vatDebour.getRate()) / 100f));
         }
         return invoiceItem;
     }

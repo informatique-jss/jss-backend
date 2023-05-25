@@ -29,7 +29,7 @@
           <tr>
             <td>
               <generic-toggle [(model)]="tiers.isIndividual" label="Particulier ?" [form]="principalForm"
-                propertyName="isIndividual"></generic-toggle>
+                color="primary" propertyName="isIndividual"></generic-toggle>
             </td>
             <td [hidden]="tiers.isIndividual==false">
               <radio-group-civility [conditionnalRequired]="tiers.isIndividual" [(model)]="tiers.civility"

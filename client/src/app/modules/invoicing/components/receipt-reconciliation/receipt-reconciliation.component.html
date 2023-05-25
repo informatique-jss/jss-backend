@@ -5,7 +5,8 @@
     </sort-table>
   </div>
   <div *ngIf="selectedAzureReceipt" class="flex-card">
-    <mat-card class="card-margin" *ngFor="let invoice of selectedAzureReceipt.azureReceiptInvoices">
+    <mat-card appearance="outlined" class="card-margin"
+      *ngFor="let invoice of selectedAzureReceipt.azureReceiptInvoices">
       <mat-card-header>
         <mat-card-title>{{invoice.invoiceId}} - <span class="pointer" matTooltip="Non pointée"
             *ngIf="!invoice.isReconciliated">❌</span><span class="pointer" matTooltip="Pointée"
@@ -82,7 +83,7 @@
     <li>
       <span style="display: flex;"><span class="text-status">Numéro de facture Osiris : n°{{invoice.id}}
         </span><chips-status [status]="invoice.invoiceStatus.code" [value]="invoice.invoiceStatus.label"></chips-status>
-        <mat-icon (click)="openInvoice($event,invoice)" (auxclick)="openInvoice($event, invoice)"
+        <mat-icon color="accent" (click)="openInvoice($event,invoice)" (auxclick)="openInvoice($event, invoice)"
           class="pointer small-icon" matTooltip="Voir la facture">visibility</mat-icon></span>
     </li>
     <li>
@@ -121,8 +122,8 @@
           (click)="unmarkBankTransfertForExport(invoice.bankTransfert,azureReceiptInvoice)" class="pointer small-icon"
           matTooltip="Exclure du prochain export">check_box</mat-icon></span>
       <span *ngIf="!invoice.bankTransfert.isAlreadyExported  && !invoice.bankTransfert.isSelectedForExport">: ❌ virement
-        en attente <mat-icon (click)="markBankTransfertForExport(invoice.bankTransfert,azureReceiptInvoice)"
-          class="pointer small-icon"
+        en attente <mat-icon color="accent"
+          (click)="markBankTransfertForExport(invoice.bankTransfert,azureReceiptInvoice)" class="pointer small-icon"
           matTooltip="Inclure dans le prochain export">check_box_outline_blank</mat-icon></span>
     </span>
     <span *ngIf="invoice.manualPaymentType.id==paymentTypeEspece.id">✔️</span>
@@ -140,9 +141,9 @@
         class="pointer small-icon" matTooltip="Voir la commande">visibility</mat-icon>
     <li>Affaire : {{getAffaireLabel(attachment.provision.assoAffaireOrder.affaire)}}
     <li>Prestation : {{attachment.provision.provisionFamilyType.label}} -
-      {{attachment.provision.provisionType.label}} <mat-icon (click)="openProvision($event,attachment.provision)"
-        (auxclick)="openProvision($event, attachment.provision)" class="pointer small-icon"
-        matTooltip="Voir la prestation">visibility</mat-icon>
+      {{attachment.provision.provisionType.label}} <mat-icon color="accent"
+        (click)="openProvision($event,attachment.provision)" (auxclick)="openProvision($event, attachment.provision)"
+        class="pointer small-icon" matTooltip="Voir la prestation">visibility</mat-icon>
     </li>
   </ul>
   <mat-divider *ngIf="multiple"></mat-divider>

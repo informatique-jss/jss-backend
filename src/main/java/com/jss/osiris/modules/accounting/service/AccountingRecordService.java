@@ -34,7 +34,8 @@ public interface AccountingRecordService {
 
         public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord);
 
-        public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws OsirisException;
+        public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice)
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void generateAccountingRecordsForPurshaseOnInvoiceGeneration(Invoice invoice) throws OsirisException;
 

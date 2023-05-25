@@ -259,7 +259,8 @@ public class AccountingController {
 
     @PostMapping(inputEntryPoint + "/accounting-record/search")
     public ResponseEntity<List<AccountingRecordSearchResult>> searchAccountingRecords(
-            @RequestBody AccountingRecordSearch accountingRecordSearch) throws OsirisValidationException {
+            @RequestBody AccountingRecordSearch accountingRecordSearch)
+            throws OsirisValidationException, OsirisClientMessageException {
         if (accountingRecordSearch == null)
             throw new OsirisValidationException("accountingRecordSearch");
 
@@ -279,8 +280,8 @@ public class AccountingController {
             Duration duration = Duration.between(accountingRecordSearch.getStartDate(),
                     accountingRecordSearch.getEndDate());
 
-            if (duration.toDays() > 366)
-                throw new OsirisValidationException("Duration");
+            if (duration.toDays() > 32)
+                throw new OsirisClientMessageException("Veuillez choisir une période inférieure à un mois");
         }
 
         return new ResponseEntity<List<AccountingRecordSearchResult>>(

@@ -469,7 +469,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     @Transactional
-    public void sendRemindersToConfrereForAnnouncement() throws OsirisException, OsirisClientMessageException {
+    public void sendRemindersToConfrereForAnnouncement()
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         List<Announcement> announcements = announcementRepository
                 .getAnnouncementForConfrereReminder(announcementStatusService
                         .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE)); 

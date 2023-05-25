@@ -282,7 +282,7 @@ public class OsirisScheduller {
 	private void checkInvoiceToAnalyse() {
 		try {
 			azureInvoiceService.checkInvoiceToAnalyse();
-			azureReceiptService.checkReciptToAnalyse();
+			azureReceiptService.checkReceiptToAnalyse();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}

@@ -1,13 +1,13 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label>Tarifs spéciaux</mat-label>
-  <mat-chip-list class="mat-chip-list-stacked" #chipListSpecialOffers cdkDropList cdkDropListOrientation="vertical"
+  <mat-chip-grid class="mat-chip-list-stacked" #chipListSpecialOffers cdkDropList cdkDropListOrientation="vertical"
     [formControlName]="propertyName" (cdkDropListDropped)="changeSpecialOfferOrder($event)">
-    <mat-chip *ngFor="let specialOffer of model" cdkDrag (removed)="removeElement(specialOffer)">
+    <mat-chip-row *ngFor="let specialOffer of model" cdkDrag (removed)="removeElement(specialOffer)">
       {{specialOffer.label}}
       <button matChipRemove *ngIf="!isDisabled">
         <mat-icon>cancel</mat-icon>
       </button>
-    </mat-chip>
+    </mat-chip-row>
     <input class="input-vertical" matInput placeholder="Saisir une offre spéciale" #specialOfferInput
       [matChipInputFor]="chipListSpecialOffers" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
       [disabled]="isDisabled" [matAutocomplete]="autoComplete">
@@ -19,7 +19,7 @@
       matSuffix mat-icon-button>
       <mat-icon>close</mat-icon>
     </button>
-  </mat-chip-list>
+  </mat-chip-grid>
   <mat-hint>Glisser/déposer pour ordonner</mat-hint>
   <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)="addSpecialOffer($event)">

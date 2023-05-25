@@ -1,34 +1,27 @@
 .navbar-brand {
   padding: 0;
-  padding-right: 15px;
   border-radius: 3px;
   margin-right: 2px;
   position: absolute;
-  left: 62px;
+  left: 47px;
   z-index: 1;
   height: 70px;
-  top: 30px;
+  top: 10px;
+}
+
+.navbar-brand-invert {
+  filter: invert(1);
 }
 
 .sidebar-header {
   padding-top: 35px;
-  padding-bottom: 45px;
+  padding-bottom: 0px;
   padding-left: 25px;
   padding-right: 43px;
   border-bottom: solid #ebebeb 1px;
   display: inline-flex;
   width: 100%;
-}
-
-.menu {
-  width: 0px;
-  height: 0px;
-  cursor: pointer;
-  color: #44546A;
-  background-color: #f0f0f0;
-  padding: 16px;
-  border-radius: 23px;
-  margin-right: 20px;
+  height: 57px;
 }
 
 .menu .mat-icon {
@@ -38,20 +31,28 @@
   font-size: 20px;
 }
 
-.menu:hover {
-  background: #4d4d4d;
-  transition: all 0.2s ease;
-  color: #ffffff;
+.notif {
+  position: absolute !important;
+  bottom: 10px;
+  left: 8px;
 }
 
-.notif {
+.light {
   position: absolute;
-  top: 72px;
+  bottom: 10px;
+  left: 158px;
+}
+
+.search {
+  position: absolute;
+  bottom: 10px;
+  left: 59px;
 }
 
 .bug-report {
   position: absolute;
-  top: 0px;
+  bottom: 10px;
+  left: 108px;
 }
 
 mat-nav-list {
@@ -60,38 +61,29 @@ mat-nav-list {
 
 mat-nav-list a {
   display: block;
-  padding-left: 0px;
-  margin-right: 22px;
+  padding-left: 12px;
+  padding-top: 2px;
+  margin-right: 15px;
   margin-bottom: 10px;
-  margin-left: 22px;
-  width: 168px;
+  margin-left: 8px;
+  width: 196px;
   height: 32px;
   border-radius: 24px;
-  font-family: "Antagometrica BT";
   font-size: 14px;
   letter-spacing: 0;
   text-decoration: none;
-  color: #44546A;
-  background: #ffffff;
-  border: 1px solid #44546A;
   z-index: 99;
-}
-
-.mat-ripple-element {
-  border-radius: 24px !important;
 }
 
 mat-nav-list a mat-icon {
   padding-right: 5px;
 }
 
-mat-nav-list a:hover,
-.menu-item-active {
-  transition: all 0.5s ease;
-  color: #ffffff !important;
-  background: #44546A !important;
+mat-nav-list a span {
+  position: absolute !important;
 }
 
-.mat-list-item-content {
-  margin-left: 10px !important;
+.nav-list-main-menu a:hover,
+.menu-item-active {
+  transition: all 0.5s ease;
 }

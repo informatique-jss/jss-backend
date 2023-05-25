@@ -25,6 +25,7 @@ import { BillingType } from "./BillingType";
 import { CompetentAuthority } from './CompetentAuthority';
 import { CompetentAuthorityType } from "./CompetentAuthorityType";
 import { Country } from "./Country";
+import { CustomerOrderOrigin } from './CustomerOrderOrigin';
 import { DeliveryService } from './DeliveryService';
 import { Department } from "./Department";
 import { DocumentType } from "./DocumentType";
@@ -58,6 +59,7 @@ export interface Constant {
   attachmentTypeLogo: AttachmentType;
   attachmentTypeProofOfAddress: AttachmentType;
   attachmentTypeInvoice: AttachmentType;
+  attachmentTypeProviderInvoice: AttachmentType;
   attachmentTypeCreditNote: AttachmentType;
   attachmentTypeKbisUpdated: AttachmentType;
   attachmentTypeRbe: AttachmentType;
@@ -163,9 +165,10 @@ export interface Constant {
   paymentWayInbound: PaymentWay;
   paymentWayOutboud: PaymentWay;
   vatTwenty: Vat;
-  vatEight: Vat;
   vatZero: Vat;
+  vatTwo: Vat;
   vatDeductible: Vat;
+  vatDeductibleTwo: Vat;
   departmentMartinique: Department;
   departmentGuadeloupe: Department;
   departmentReunion: Department;
@@ -197,4 +200,6 @@ export interface Constant {
   accountingAccountBankCentralPay: AccountingAccount;
   accountingAccountBankJss: AccountingAccount;
   accountingAccountCaisse: AccountingAccount;
+  customerOrderOriginWebSite: CustomerOrderOrigin;
+  customerOrderOriginOsiris: CustomerOrderOrigin;
 }

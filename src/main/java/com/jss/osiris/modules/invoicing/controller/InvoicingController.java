@@ -289,7 +289,7 @@ public class InvoicingController {
 
     @PostMapping(inputEntryPoint + "/infogreffe-invoice/import")
     public ResponseEntity<Boolean> importInfogreffeInvoices(@RequestBody String csv)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         return new ResponseEntity<Boolean>(infogreffeInvoiceService.importInfogreffeInvoices(csv),
                 HttpStatus.OK);
     }
