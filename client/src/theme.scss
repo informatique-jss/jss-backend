@@ -346,3 +346,8 @@ tr.table-row:hover {
   background-color: mat.get-color-from-palette($mat-warn, main) !important;
   color: white;
 }
+
+.mdc-checkbox .mdc-checkbox__native-control:checked~.mdc-checkbox__background {
+  border-color: mat.get-color-from-palette($mat-accent, main);
+  background-color: mat.get-color-from-palette($mat-accent, main);
+}
