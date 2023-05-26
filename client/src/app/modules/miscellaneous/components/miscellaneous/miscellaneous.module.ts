@@ -245,6 +245,7 @@ import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.compone
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
+import { SortTableEditDialogComponent } from '../sort-table-edit-dialog-component/sort-table-edit-dialog-component.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
@@ -401,6 +402,7 @@ const routes: Routes = [
     ChipsPaymentTypeComponent,
     AutocompleteAzureInvoiceComponent,
     SelectCustomerOrderOriginComponent,
+    SortTableEditDialogComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     ChipsTypeDocumentComponent,
@@ -598,6 +600,7 @@ const routes: Routes = [
     SelectAccountingJournalComponent,
     SingleAttachmentComponent,
     SortTableComponent,
+    SortTableEditDialogComponent,
     SelectInvoiceStatusComponent,
     AutocompleteRegieComponent,
     SelectAssignationTypeComponent,
@@ -721,6 +724,7 @@ const routes: Routes = [
     SelectCustomerOrderOriginComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
+    , SortTableComponent
   ]
 })
 export class MiscellaneousModule { }

@@ -8,14 +8,19 @@ import { AppService } from '../../../../services/app.service';
 import { Employee } from '../../../profile/model/Employee';
 import { SortTableAction } from '../../model/SortTableAction';
 import { SortTableColumn } from '../../model/SortTableColumn';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { SortTableEditDialogComponent } from '../sort-table-edit-dialog-component/sort-table-edit-dialog-component.component';
+import { Payment } from 'src/app/modules/invoicing/model/Payment';
+import { PaymentSearchResult } from 'src/app/modules/invoicing/model/PaymentSearchResult';
+import { BankTransfertSearchResult } from 'src/app/modules/invoicing/model/BankTransfertSearchResult';
 
 @Component({
   selector: 'sort-table',
   templateUrl: './sort-table.component.html',
   styleUrls: ['./sort-table.component.css']
 })
-export class SortTableComponent implements OnInit {
 
+export class SortTableComponent implements OnInit {
   @Input() columns: SortTableColumn[] | undefined;
   @Input() values: any[] | undefined;
   @Input() actions: SortTableAction[] | undefined;
@@ -34,11 +39,14 @@ export class SortTableComponent implements OnInit {
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatSort) sort!: MatSort;
 
+  private payment: PaymentSearchResult | undefined;
+  comment: any;
+
   internalActions: SortTableAction[] | undefined = [] as Array<SortTableAction>;
 
   constructor(protected userPreferenceService: UserPreferenceService,
-    private appService: AppService
-
+    private appService: AppService,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -98,6 +106,30 @@ export class SortTableComponent implements OnInit {
     if (changes.filterText != undefined && this.values) {
       this.applyFilter();
     }
+  }
+
+  modifyDialogTransfert(transfer: BankTransfertSearchResult, callback: (editedPayment: BankTransfertSearchResult) => void) {
+    const dialogConfig: MatDialogConfig = {
+      data: transfer,
+      disableClose: true
+    };
+    const dialogRef = this.dialog.open(SortTableEditDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe((editedTransfer: BankTransfertSearchResult) => {
+      console.log('closed');
+    });
+  }
+
+  modifyDialogPayment(payment: PaymentSearchResult, callback: (editedPayment: Payment) => void) {
+    const dialogConfig: MatDialogConfig = {
+      data: payment,
+      disableClose: true
+    };
+    const dialogRef = this.dialog.open(SortTableEditDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe((editedPayment: Payment) => {
+      console.log('closed');
+    });
   }
 
   setSorter() {

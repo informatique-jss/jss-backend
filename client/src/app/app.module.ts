@@ -42,6 +42,7 @@ registerLocaleData(localeFr, 'fr');
     SidenavListComponent,
     HeaderComponent,
     MyProfilComponent,
+
   ],
   imports: [
     // Core modules
@@ -91,7 +92,7 @@ registerLocaleData(localeFr, 'fr');
     multi: true
   },
   { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
-  { provide: LOCALE_ID, useValue: 'fr' }
+  { provide: LOCALE_ID, useValue: 'fr' },
   ],
   bootstrap: [AppComponent]
 })

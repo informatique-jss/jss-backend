@@ -17,4 +17,5 @@ export interface Payment {
   isExternallyAssociated: boolean;
   isCancelled: boolean;
   paymentType: PaymentType;
+  commentPayment: string;
 }

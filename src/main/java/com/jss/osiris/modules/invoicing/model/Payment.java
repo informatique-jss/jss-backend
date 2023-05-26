@@ -3,7 +3,7 @@ package com.jss.osiris.modules.invoicing.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -53,6 +53,9 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@JoinColumn(name = "id_invoice")
 	@JsonIgnoreProperties(value = { "payments", "accountingRecords" }, allowSetters = true)
 	private Invoice invoice;
+
+	@Column(columnDefinition = "TEXT")
+	private String commentPayment;
 
 	@Column(nullable = false)
 	private Boolean isExternallyAssociated;
@@ -178,6 +181,14 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	public LocalDateTime getCreatedDate() {
 		return getPaymentDate();
+	}
+
+	public String getCommentPayment() {
+		return commentPayment;
+	}
+
+	public void SetCommentPayment(String commentPayement) {
+		this.commentPayment = commentPayement;
 	}
 
 }

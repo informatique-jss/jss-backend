@@ -41,6 +41,9 @@ public class BankTransfert implements Serializable, IId {
 	@Column(length = 40)
 	private String transfertBic;
 
+	@Column(columnDefinition = "TEXT")
+	private String commentTransfert;
+
 	private Boolean isAlreadyExported;
 
 	@OneToMany(mappedBy = "bankTransfert")
@@ -157,6 +160,14 @@ public class BankTransfert implements Serializable, IId {
 
 	public void setCustomerOrder(CustomerOrder customerOrder) {
 		this.customerOrder = customerOrder;
+	}
+
+	public String getCommentTransfert() {
+		return commentTransfert;
+	}
+
+	public void setCommentTransfert(String commentTransfert) {
+		this.commentTransfert = commentTransfert;
 	}
 
 }

@@ -10,4 +10,5 @@ export interface BankTransfert {
   isAlreadyExported: boolean;
   debours: Debour[];
   invoices: Invoice[];
+  commentTransfert: String;
 }

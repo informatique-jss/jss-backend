@@ -18,7 +18,7 @@ import { AppService } from "src/app/services/app.service";
 import { HabilitationsService } from "src/app/services/habilitations.service";
 import { AccountingAccount } from '../../../accounting/model/AccountingAccount';
 import { SelectAccountingAccountDialogComponent } from "../select-accounting-account-dialog/select-accounting-account-dialog.component";
-
+import { SortTableComponent } from '../../../miscellaneous/components/sort-table/sort-table.component';
 
 @Component({
   selector: 'payment-list',
@@ -28,7 +28,7 @@ import { SelectAccountingAccountDialogComponent } from "../select-accounting-acc
 export class PaymentListComponent implements OnInit, AfterContentChecked {
   @Input() paymentSearch: PaymentSearch = {} as PaymentSearch;
   @Input() isForDashboard: boolean = false;
-  payments: PaymentSearchResult[] | undefined;
+  payments: PaymentSearchResult[]| undefined;
   availableColumns: SortTableColumn[] = [];
   displayedColumns: SortTableColumn[] = [];
   columnToDisplayOnDashboard: string[] = ["payemntDate", "payemntAmount", "label"];
@@ -53,6 +53,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     public associatePaymentDialog: MatDialog,
     private formBuilder: FormBuilder,
     private habilitationService: HabilitationsService,
+    private sortTableComponent: SortTableComponent,
   ) { }
 
   ngAfterContentChecked(): void {
@@ -65,6 +66,18 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
 
   canAddCheckPayment() {
     return this.habilitationService.canAddCheckPayment();
+  }
+
+  openEditDialog(element: any) {
+    if (this.payments !== undefined && this.payments.length > 0) {
+      const paymentSearchResult = element;
+
+      this.sortTableComponent.modifyDialogPayment(paymentSearchResult, (editedPayment: Payment) => {
+        if (editedPayment) {
+          paymentSearchResult.commentPayment = editedPayment.commentPayment;
+        }
+      });
+    }
   }
 
   openRoute(event: any, link: string) {
@@ -83,8 +96,17 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "isExternallyAssociated", fieldName: "isExternallyAssociated", label: "Associé hors Osiris", valueFonction: (element: any) => { return element.isExternallyAssociated ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé", valueFonction: (element: any) => { return element.isCancelled ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture associée", actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
+    this.availableColumns.push({ id: "commentPayment", fieldName: "commentPayment", label: "Commentaire" } as SortTableColumn);
 
     if (this.overrideIconAction == "") {
+      this.tableAction.push({
+        actionIcon: 'edit',
+        actionName: 'editer commentaire',
+        actionClick: (action: SortTableAction, element: any): void => {
+        this.openEditDialog(element);
+        }, display: true
+      } as SortTableAction);
+
       if (this.habilitationService.canModifyPaymentAssociation()) {
         this.tableAction.push({
           actionIcon: "login", actionName: "Est non associé hors Osiris", actionClick: (action: SortTableAction, element: any) => {

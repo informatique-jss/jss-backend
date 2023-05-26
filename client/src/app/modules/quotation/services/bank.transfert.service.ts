@@ -28,4 +28,7 @@ export class BankTransfertService extends AppRestService<BankTransfert>{
     return this.get(new HttpParams().set("idBankTranfert", bankTransfert.id), "bank-transfert/export/unselect");
   }
 
+  addOrUpdateTransfertComment(transfer: BankTransfert) {
+    return this.postItem(new HttpParams(), "bank-transfert/save-comment", transfer);
+  }
 }

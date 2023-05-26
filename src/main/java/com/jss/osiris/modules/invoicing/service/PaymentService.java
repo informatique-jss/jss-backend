@@ -24,7 +24,7 @@ public interface PaymentService {
 
         public Payment addOrUpdatePayment(Payment payment);
 
-        public List<PaymentSearchResult> searchPayments(PaymentSearch payemntSearch);
+        public List<PaymentSearchResult> searchPayments(PaymentSearch paymentSearch);
 
         public void payementGrab() throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 

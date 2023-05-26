@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -376,6 +377,18 @@ public class InvoicingController {
 
         return new ResponseEntity<List<PaymentSearchResult>>(paymentService.searchPayments(paymentSearch),
                 HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/payments/save-comment")
+    public ResponseEntity<Payment> addOrUpdatePaymentComment(@RequestBody Payment payment)
+            throws OsirisValidationException {
+
+        String commentaire = payment.getCommentPayment();
+        payment = paymentService.getPayment(payment.getId());
+        payment.SetCommentPayment(commentaire);
+        paymentService.addOrUpdatePayment(payment);
+
+        return new ResponseEntity<>(payment, HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/debours/search")

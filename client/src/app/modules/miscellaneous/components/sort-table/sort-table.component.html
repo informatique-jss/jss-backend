@@ -48,7 +48,7 @@
             {{action.actionIcon}}
           </mat-icon>
         </ng-container>
-      </td>
+              </td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="getDisplayedColumns()"></tr>
     <tr mat-row *matRowDef="let row; columns: getDisplayedColumns();" (click)="rowClicked(row)" [ngClass]="{'pointer':onRowClick && onRowClick.observers && onRowClick.observers.length>0,
