@@ -80,7 +80,7 @@ export class UserPreferenceService {
 
   // Dark mode
   setDarkMode(darkMode: boolean) {
-    if (darkMode)
+    if (darkMode != undefined && darkMode != null)
       localStorage.setItem("darkMode", JSON.stringify(darkMode));
   }
 

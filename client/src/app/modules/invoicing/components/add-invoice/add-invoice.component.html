@@ -175,10 +175,10 @@
     </sort-table>
   </div>
   <div class="align-right" *ngIf="!displayDeboursTable()">
-    <span class="mat-cell">Total TTC : {{getInvoiceTotal()}} €</span>
+    <span class="mat-mdc-cell mdc-data-table__cell ">Total TTC : {{getInvoiceTotal()}} €</span>
   </div>
   <div class="align-right" *ngIf="displayDeboursTable()">
-    <span class="mat-cell">Total TTC : {{getDeboursTotal()}} €</span>
+    <span class="mat-mdc-cell mdc-data-table__cell ">Total TTC : {{getDeboursTotal()}} €</span>
   </div>
   <div *ngIf="!displayDeboursTable()">
     <table class="full-width ">
