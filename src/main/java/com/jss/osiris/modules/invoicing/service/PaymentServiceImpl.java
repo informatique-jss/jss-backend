@@ -840,6 +840,12 @@ public class PaymentServiceImpl implements PaymentService {
                     debourFound = searchService.searchForEntities(idToFind + "", Debour.class.getSimpleName(), true);
                     if (debourFound != null && debourFound.size() > 0)
                         tmpEntitiesFound.addAll(debourFound);
+
+                    Invoice directDebitTransfertInvoice = invoiceService
+                            .searchInvoicesByIdDirectDebitTransfert(idToFind);
+                    if (directDebitTransfertInvoice != null)
+                        tmpEntitiesFound.addAll(searchService.searchForEntitiesById(directDebitTransfertInvoice.getId(),
+                                Arrays.asList(Invoice.class.getSimpleName())));
                 }
                 if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                     for (IndexEntity newEntity : tmpEntitiesFound) {

@@ -107,4 +107,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
         List<Invoice> findByCompetentAuthorityAndManualAccountingDocumentNumberContainingIgnoreCase(
                         CompetentAuthority competentAuthority, String manualDocumentNumber);
 
+        @Query("select i from Invoice i where id_direct_debit_transfert=:id")
+        Invoice searchInvoicesByIdDirectDebitTransfert(@Param("id") Integer idToFind);
+
 }
