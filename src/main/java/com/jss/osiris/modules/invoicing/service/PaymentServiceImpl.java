@@ -746,7 +746,6 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (refundAmount.equals(paymentAmount)) {
             generateWaitingAccountAccountingRecords.setFalse();
-            accountingRecordService.generateAccountingRecordsForRefundOnVirement(refund);
 
             refund.setIsMatched(true);
             refund.setPayment(payment);
