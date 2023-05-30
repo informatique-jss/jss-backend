@@ -78,6 +78,7 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Debour;
+import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
@@ -476,7 +477,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
             if (paymentType != null
                     && paymentType.getId().equals(constantService.getPaymentTypePrelevement().getId())) {
-                debitTransfertService.generateDirectDebitTransfertForOutboundInvoice(invoice);
+                DirectDebitTransfert directDebitTransfert = debitTransfertService
+                        .generateDirectDebitTransfertForOutboundInvoice(invoice);
+                invoice.setDirectDebitTransfert(directDebitTransfert);
             }
 
             invoice.setManualPaymentType(paymentType);

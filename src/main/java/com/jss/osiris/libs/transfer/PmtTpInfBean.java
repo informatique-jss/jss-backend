@@ -17,7 +17,7 @@ public class PmtTpInfBean {
 	CtgyPurpBean ctgyPurpBean;
 
 	@JacksonXmlProperty(localName = "LclInstrm")
-	CtgyPurpBean lclInstrmBean;
+	LclInstrmBean lclInstrmBean;
 
 	@JacksonXmlProperty(localName = "SeqTp")
 	String seqTp;
@@ -46,11 +46,11 @@ public class PmtTpInfBean {
 		this.ctgyPurpBean = ctgyPurpBean;
 	}
 
-	public CtgyPurpBean getLclInstrmBean() {
+	public LclInstrmBean getLclInstrmBean() {
 		return lclInstrmBean;
 	}
 
-	public void setLclInstrmBean(CtgyPurpBean lclInstrmBean) {
+	public void setLclInstrmBean(LclInstrmBean lclInstrmBean) {
 		this.lclInstrmBean = lclInstrmBean;
 	}
 

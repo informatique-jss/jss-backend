@@ -38,6 +38,7 @@ import com.jss.osiris.libs.transfer.GrpHdrBean;
 import com.jss.osiris.libs.transfer.IdBean;
 import com.jss.osiris.libs.transfer.InitgPtyBean;
 import com.jss.osiris.libs.transfer.InstdAmtBean;
+import com.jss.osiris.libs.transfer.LclInstrmBean;
 import com.jss.osiris.libs.transfer.MndtRltdInfBean;
 import com.jss.osiris.libs.transfer.PmtIdBean;
 import com.jss.osiris.libs.transfer.PmtInfBean;
@@ -227,11 +228,15 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                 body.setPmtInfId(bankTransfert.getId() + "");
                 body.setPmtMtd("DD");
                 body.setBtchBookg(false);
-                body.setNbOfTxs(bankTransferts.size());
-                body.setCtrlSum(Math.round(totalAmount * 100f) / 100f);
+                body.setNbOfTxs(1);
+                body.setCtrlSum(Math.round(bankTransfert.getTransfertAmount() * 100f) / 100f);
 
                 PmtTpInfBean bodyTransfertType = new PmtTpInfBean();
                 body.setPmtTpInfBean(bodyTransfertType);
+
+                LclInstrmBean lclInstrmBean = new LclInstrmBean();
+                lclInstrmBean.setCd("CORE");
+                bodyTransfertType.setLclInstrmBean(lclInstrmBean);
 
                 SvcLvlBean transfertNorm = new SvcLvlBean();
                 bodyTransfertType.setSvcLvlBean(transfertNorm);
@@ -260,7 +265,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                 DbtrAgtBean bic = new DbtrAgtBean();
                 body.setCdtrAgtBean(bic);
                 FinInstnIdBean financialInstitution = new FinInstnIdBean();
-                financialInstitution.setBic(bankTransfert.getTransfertBic());
+                financialInstitution.setBic(bicJss);
                 bic.setFinInstnIdBean(financialInstitution);
 
                 CdtrSchmeIdBean cdtrSchmeIdBean = new CdtrSchmeIdBean();
