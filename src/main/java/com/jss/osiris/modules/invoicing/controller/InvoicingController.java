@@ -541,6 +541,9 @@ public class InvoicingController {
                 .setPayment(
                         (Payment) validationHelper.validateReferential(paymentAssociate.getPayment(), true, "Payment"));
 
+        if (paymentAssociate.getPayment().getIsCancelled())
+            throw new OsirisValidationException("Payment already cancelled !");
+
         if (paymentAssociate.getInvoices() != null) {
             if (paymentAssociate.getInvoices().size() == 0)
                 paymentAssociate.setInvoices(null);
@@ -761,6 +764,9 @@ public class InvoicingController {
         paymentAssociate
                 .setDeposit(
                         (Deposit) validationHelper.validateReferential(paymentAssociate.getDeposit(), true, "Deposit"));
+
+        if (paymentAssociate.getDeposit().getIsCancelled())
+            throw new OsirisValidationException("Deposit already cancelled !");
 
         if (paymentAssociate.getInvoices() != null) {
             if (paymentAssociate.getInvoices().size() == 0)
