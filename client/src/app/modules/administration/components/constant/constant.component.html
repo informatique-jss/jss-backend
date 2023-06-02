@@ -118,6 +118,14 @@
           </tr>
           <tr>
             <td>
+              <select-provision-family [(model)]="constant.provisionFamilyTypeRegister"
+                label="Provision family type - Registre" [form]="constantForm"
+                propertyName="provisionFamilyType" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-provision-family>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-document-type [(model)]="constant.documentTypeProvisionnalReceipt"
                 label="Type de document - Provision" [form]="constantForm"
                 propertyName="documentTypeProvisionnalReceipt" [isMandatory]="true" [isDisabled]="!editMode">

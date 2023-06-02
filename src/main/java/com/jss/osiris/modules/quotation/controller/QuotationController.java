@@ -1782,10 +1782,11 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/customer-order/print/label")
   public ResponseEntity<byte[]> printMailingLabel(@RequestParam List<String> customerOrders,
-      @RequestParam boolean printLabel, @RequestParam boolean printLetters)
+      @RequestParam boolean printLabel, @RequestParam boolean printLetters,
+      @RequestParam boolean printProvisionRegister)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
 
-    return customerOrderService.printMailingLabel(customerOrders, printLabel, printLetters);
+    return customerOrderService.printMailingLabel(customerOrders, printLabel, printLetters, printProvisionRegister);
   }
 
   @PostMapping(inputEntryPoint + "/dashboard/employee")

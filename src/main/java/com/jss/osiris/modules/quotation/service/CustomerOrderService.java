@@ -76,7 +76,7 @@ public interface CustomerOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrders, boolean printLabel,
-                        boolean printLetters)
+                        boolean printLetters, boolean printProvisionRegister)
                         throws OsirisException, OsirisClientMessageException;
 
         public void updateAssignedToForCustomerOrder(CustomerOrder customerOrder, Employee employee)

@@ -13,8 +13,14 @@ import { Quotation } from '../model/Quotation';
 })
 export class CustomerOrderService extends AppRestService<IQuotation>{
 
+  printProvisionRegister: boolean = false;
+
   constructor(http: HttpClient) {
     super(http, "quotation");
+  }
+
+  setProvisionRegister(value: boolean) {
+    this.printProvisionRegister = value;
   }
 
   updateCustomerStatus(customerOrder: IQuotation, targetStatusCode: string) {
@@ -42,7 +48,7 @@ export class CustomerOrderService extends AppRestService<IQuotation>{
   }
 
   generateMailingLabel(customerOrders: string[], printLabel: boolean, printLetters: boolean) {
-    return this.get(new HttpParams().set("customerOrders", customerOrders.join(",")).set("printLabel", printLabel).set("printLetters", printLetters), "customer-order/print/label", "Etiquettes en cours d'impression", "Erreur lors de l'impression");
+    return this.get(new HttpParams().set("customerOrders", customerOrders.join(",")).set("printLabel", printLabel).set("printLetters", printLetters).set("printProvisionRegister",this.printProvisionRegister), "customer-order/print/label", "Etiquettes en cours d'impression", "Erreur lors de l'impression");
   }
 
   updateAssignedToForCustomerOrder(customerOrder: CustomerOrder, employee: Employee) {

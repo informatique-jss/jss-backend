@@ -102,6 +102,11 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.documentTypeBillingClosure;
   }
 
+  getProvisionFamilyTypeRegister(){
+    return this.constant.provisionFamilyTypeRegister;
+
+  }
+
   getDocumentTypeProvisionnalReceipt() {
     return this.constant.documentTypeProvisionnalReceipt;
   }

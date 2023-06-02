@@ -49,18 +49,23 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { IQuotation } from './../../model/IQuotation';
+import { ProvisionFamilyType } from '../../model/ProvisionFamilyType';
 @Component({
   selector: 'quotation',
   templateUrl: './quotation.component.html',
   styleUrls: ['./quotation.component.css']
 })
 export class QuotationComponent implements OnInit, AfterContentChecked {
+
+  printProvisionRegister = false;
   quotation: IQuotation = {} as IQuotation;
   editMode: boolean = false;
   createMode: boolean = false;
   quotationStatusList: QuotationStatus[] = [] as Array<QuotationStatus>;
   customerOrderStatusList: CustomerOrderStatus[] = [] as Array<CustomerOrderStatus>;
   isQuotationUrl = false;
+  provisionContainsRegister: boolean = false;
+  provisionFamilyTypeRegister: ProvisionFamilyType = this.constantService.getProvisionFamilyTypeRegister();
 
   VALIDATED_BY_CUSTOMER = VALIDATED_BY_CUSTOMER;
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
@@ -774,7 +779,15 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     const dialogRef = this.mailLabelDialog.open(PrintLabelDialogComponent, {
       maxWidth: "600px",
     });
+    this.customerOrderService.setProvisionRegister(false);
+    dialogRef.componentInstance.customerOrders.push(this.quotation.id + "");
+  }
 
+  generateRegisterMailingLabel() {
+    const dialogRef = this.mailLabelDialog.open(PrintLabelDialogComponent, {
+      maxWidth: "600px",
+    });
+    this.customerOrderService.setProvisionRegister(true);
     dialogRef.componentInstance.customerOrders.push(this.quotation.id + "");
   }
 
@@ -792,6 +805,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
 
   getProvisionLabel(provision: Provision): string {
+    if(provision.provisionFamilyType.label == this.provisionFamilyTypeRegister.label){
+      this.provisionContainsRegister = true;
+    }
     return QuotationComponent.computeProvisionLabel(provision);
   }
 

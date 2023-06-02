@@ -13,6 +13,7 @@ import { TypeFormalite } from '../../quotation/model/guichet-unique/referentials
 import { TypePersonne } from '../../quotation/model/guichet-unique/referentials/TypePersonne';
 import { JournalType } from "../../quotation/model/JournalType";
 import { MailRedirectionType } from "../../quotation/model/MailRedirectionType";
+import { ProvisionFamilyType } from '../../quotation/model/ProvisionFamilyType';
 import { TransfertFundsType } from "../../quotation/model/TransfertFundsType";
 import { BillingClosureRecipientType } from '../../tiers/model/BillingClosureRecipientType';
 import { BillingClosureType } from '../../tiers/model/BillingClosureType';
@@ -47,6 +48,7 @@ export interface Constant {
   accountingJournalMiscellaneousOperations: AccountingJournal;
   tiersTypeProspect: TiersType;
   tiersTypeClient: TiersType;
+  provisionFamilyTypeRegister: ProvisionFamilyType;
   documentTypeDigital: DocumentType;
   documentTypePaper: DocumentType;
   documentTypeBilling: DocumentType;

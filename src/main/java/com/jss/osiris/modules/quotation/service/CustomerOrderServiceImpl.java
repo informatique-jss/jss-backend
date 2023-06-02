@@ -1137,7 +1137,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrdersIn, boolean printLabel,
-            boolean printLetters)
+            boolean printLetters, boolean printProvisionRegister)
             throws OsirisException, OsirisClientMessageException {
         ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
         for (String id : customerOrdersIn) {
@@ -1148,7 +1148,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             for (CustomerOrder customerOrder : customerOrders) {
                 try {
                     printDelegate.printMailingLabel(mailComputeHelper.computePaperLabelResult(customerOrder),
-                            customerOrder);
+                            customerOrder, printProvisionRegister);
                 } catch (NumberFormatException e) {
                 } catch (Exception e) {
                     throw new OsirisException(e, "Error when printing label");
