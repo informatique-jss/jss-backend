@@ -61,6 +61,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
 
   getAmountRemaining = getRemainingToPay;
 
+  doNotInitializeAsso: boolean = false;
+
   constructor(public dialogRef: MatDialogRef<AssociatePaymentDialogComponent>,
     private appService: AppService,
     private invoiceService: InvoiceService,
@@ -102,12 +104,12 @@ export class AssociatePaymentDialogComponent implements OnInit {
       }, display: true,
     } as SortTableAction);
 
-    if (this.payment && this.invoice)
+    if (this.payment && this.invoice && !this.doNotInitializeAsso)
       this.associationSummaryTable.push({
         payment: this.payment, invoice: this.invoice, amountUsed: Math.min(this.getInitialAmount({ invoice: this.invoice }) - this.getInitialPayedAmount({ invoice: this.invoice }), this.payment.paymentAmount)
       } as AssociationSummaryTable);
 
-    if (this.payment && this.customerOrder)
+    if (this.payment && this.customerOrder && !this.doNotInitializeAsso)
       this.associationSummaryTable.push({
         payment: this.payment, customerOrder: this.customerOrder, amountUsed: this.payment.paymentAmount
       } as AssociationSummaryTable);

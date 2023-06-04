@@ -430,6 +430,14 @@ public class PaymentServiceImpl implements PaymentService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         payment = getPayment(payment.getId());
+
+        // If payment already associated, create a new fresh one
+        if (payment.getInvoice() != null && (payment.getInvoice().getIsInvoiceFromProvider() == null
+                || payment.getInvoice().getIsInvoiceFromProvider() == false)) {
+            cancelPayment(payment, constantService.getAccountingJournalMiscellaneousOperations());
+            payment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount());
+        }
+
         String refundLabelSuffix = "";
         float remainingMoney = payment.getPaymentAmount();
         if (payment.getPaymentWay().getId().equals(constantService.getPaymentWayInbound().getId())) {
@@ -1040,6 +1048,11 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Payment cancelPayment(Payment payment, AccountingJournal journal) throws OsirisException {
         Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
+
+        if (payment.getInvoice() != null && (payment.getInvoice().getIsInvoiceFromProvider() == null
+                || payment.getInvoice().getIsInvoiceFromProvider() == false))
+            invoiceService.unletterInvoiceEmitted(payment.getInvoice());
+
         if (payment.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : payment.getAccountingRecords()) {
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
