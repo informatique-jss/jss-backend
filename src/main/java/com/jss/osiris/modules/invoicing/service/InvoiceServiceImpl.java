@@ -506,7 +506,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         invoiceItemVat = vatService.getGeographicalApplicableVatForPurshases(vatTiers,
                                 invoiceItem.getVat());
                     else
-                        invoiceItemVat = vatService.getGeographicalApplicableVatForSales(vatTiers,
+                        invoiceItemVat = vatService.getGeographicalApplicableVatForSales(invoice,
                                 invoiceItem.getVat());
 
                     invoiceItem.setVat(invoiceItemVat);
