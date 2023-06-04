@@ -165,6 +165,18 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Invoice cancelInvoice(Invoice invoice)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        invoice = getInvoice(invoice.getId());
+        if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId()))
+            return cancelInvoiceEmitted(invoice, invoice.getCustomerOrder());
+        if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusReceived().getId()))
+            return cancelInvoiceReceived(invoice);
+        return invoice;
+    }
+
+    @Override
     public Invoice cancelInvoiceEmitted(Invoice invoice, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Unletter
@@ -245,11 +257,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoice;
     }
 
-    @Override
-    public Invoice generateInvoiceCreditNote(Invoice newInvoice, Integer idOriginInvoiceForCreditNote)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-
-        Invoice invoice = getInvoice(idOriginInvoiceForCreditNote);
+    private Invoice cancelInvoiceReceived(Invoice invoice) throws OsirisException {
         // Unletter
         unletterInvoiceReceived(invoice);
 
@@ -269,19 +277,22 @@ public class InvoiceServiceImpl implements InvoiceService {
         // Refresh invoice
         invoice = getInvoice(invoice.getId());
 
+        if (invoice.getBankTransfert() != null && invoice.getBankTransfert().getIsAlreadyExported() == false)
+            bankTransfertService.cancelBankTransfert(invoice.getBankTransfert());
+
+        // Cancel invoice
+        invoice.setInvoiceStatus(constantService.getInvoiceStatusCancelled());
+        return addOrUpdateInvoice(invoice);
+    }
+
+    @Override
+    public Invoice generateInvoiceCreditNote(Invoice newInvoice, Integer idOriginInvoiceForCreditNote)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        Invoice invoice = getInvoice(idOriginInvoiceForCreditNote);
         // Create credit note
-        Invoice creditNote = cloneInvoice(invoice);
-        creditNote = addOrUpdateInvoice(creditNote);
+        Invoice creditNote = addOrUpdateInvoiceFromUser(newInvoice);
         if (invoice.getInvoiceItems() != null) {
-            ArrayList<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
-            for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-                InvoiceItem newInvoiceItem = invoiceItemService.cloneInvoiceItem(invoiceItem);
-                newInvoiceItem.setInvoice(creditNote);
-                invoiceItemService.addOrUpdateInvoiceItem(newInvoiceItem);
-                invoiceItems.add(newInvoiceItem);
-            }
-            creditNote.setInvoiceItems(invoiceItems);
-            creditNote.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteEmited());
+            creditNote.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
             creditNote.setIsCreditNote(true);
         }
 
@@ -289,32 +300,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice = addOrUpdateInvoice(invoice);
         creditNote = addOrUpdateInvoice(creditNote);
 
-        accountingRecordService.letterCreditNoteAndInvoice(invoice, creditNote);
-
-        if (invoice.getBankTransfert() != null && invoice.getBankTransfert().getIsAlreadyExported() == false)
-            bankTransfertService.cancelBankTransfert(invoice.getBankTransfert());
-
-        // Cancel invoice
-        invoice.setInvoiceStatus(constantService.getInvoiceStatusCancelled());
-        addOrUpdateInvoice(invoice);
-
-        // Create new invoice
-        if (newInvoice.getInvoiceItems() != null)
-            for (InvoiceItem invoiceItem : newInvoice.getInvoiceItems())
-                invoiceItem.setId(null);
-
-        addOrUpdateInvoiceFromUser(newInvoice);
-
-        // Move payment from old to new invoice
-        if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
-            for (Payment payment : invoice.getPayments()) {
-                payment.setInvoice(newInvoice);
-                paymentService.addOrUpdatePayment(payment);
-                accountingRecordService.generateAccountingRecordsForPurshaseOnInvoicePayment(newInvoice,
-                        Arrays.asList(payment), payment.getPaymentAmount());
-            }
-
-        return newInvoice;
+        return creditNote;
     }
 
     @Override

@@ -916,6 +916,21 @@ public class InvoicingController {
         return new ResponseEntity<Invoice>(invoiceService.addOrUpdateInvoiceFromUser(invoice), HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/invoice/cancel")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    public ResponseEntity<Invoice> cancelInvoice(@RequestParam Integer idInvoice)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        if (idInvoice == null)
+            throw new OsirisValidationException("Id");
+
+        Invoice invoice = invoiceService.getInvoice(idInvoice);
+        if (invoice == null)
+            throw new OsirisValidationException("Invoice");
+
+        return new ResponseEntity<Invoice>(invoiceService.cancelInvoice(invoice),
+                HttpStatus.OK);
+    }
+
     @PostMapping(inputEntryPoint + "/invoice/credit-note")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<Invoice> generateInvoiceCreditNote(@RequestBody Invoice newInvoice,
