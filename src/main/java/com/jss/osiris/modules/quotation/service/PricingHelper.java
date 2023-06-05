@@ -18,9 +18,6 @@ import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
-import com.jss.osiris.modules.miscellaneous.model.City;
-import com.jss.osiris.modules.miscellaneous.model.Country;
-import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
@@ -29,7 +26,6 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
-import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
@@ -38,7 +34,6 @@ import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
-import com.jss.osiris.modules.tiers.model.ITiers;
 
 @Service
 public class PricingHelper {
@@ -249,7 +244,10 @@ public class PricingHelper {
             for (Debour debour : provision.getDebours()) {
                 Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
                         : debour.getDebourAmount();
-                Vat vat = vatService.getGeographicalApplicableVatForPurshases(debour.getCompetentAuthority(),
+                IQuotation quotation = provision.getAssoAffaireOrder().getCustomerOrder() != null
+                        ? provision.getAssoAffaireOrder().getCustomerOrder()
+                        : provision.getAssoAffaireOrder().getQuotation();
+                Vat vat = vatService.getGeographicalApplicableVatForSales(quotation,
                         constantService.getVatDeductible());
 
                 if (debour.getBillingType().getIsNonTaxable() || vat == null)
@@ -523,56 +521,7 @@ public class PricingHelper {
                         / 100f);
         }
 
-        Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
-        Vat vat = null;
-
-        // Search for customer order
-        ITiers customerOrder = null;
-        if (quotation.getConfrere() != null)
-            customerOrder = quotation.getConfrere();
-        else if (quotation.getResponsable() != null)
-            customerOrder = quotation.getResponsable().getTiers();
-        else
-            customerOrder = quotation.getTiers();
-
-        if (customerOrder.getCity() == null)
-            throw new OsirisClientMessageException(
-                    "Aucune ville trouvée sur le donneur d'ordre pour générer le prix. Merci de compléter le donneur d'ordre");
-
-        // If document not found or document indicate to use it, take customer order as
-        // default
-
-        // No VAT abroad (France and Monaco)
-        Country country = null;
-        City city = null;
-        if (billingDocument == null || billingDocument.getBillingLabelType() == null
-                || billingDocument.getBillingLabelType().getId()
-                        .equals(constantService.getBillingLabelTypeCustomer().getId())) {
-            country = customerOrder.getCountry();
-            city = cityService.getCity(customerOrder.getCity().getId());
-        } else if (billingDocument.getBillingLabelType().getId()
-                .equals(constantService.getBillingLabelTypeCodeAffaire().getId())) {
-            Affaire affaire = invoiceItem.getProvision().getAssoAffaireOrder().getAffaire();
-            city = affaire.getCity();
-            country = affaire.getCountry();
-        } else {
-            if (billingDocument.getBillingLabelCountry() == null)
-                throw new OsirisClientMessageException(
-                        "Pays non trouvé dans l'adresse indiquée dans la configuration de facturation de la commande");
-            if (billingDocument.getBillingLabelCountry() == null)
-                throw new OsirisClientMessageException(
-                        "Pays non trouvé dans l'adresse indiquée dans la configuration de facturation de la commande");
-            city = billingDocument.getBillingLabelCity();
-            if (city != null && city.getId() != null)
-                city = cityService.getCity(city.getId());
-            country = billingDocument.getBillingLabelCountry();
-        }
-
-        if (city == null)
-            throw new OsirisClientMessageException(
-                    "Ville non trouvée dans l'adresse indiquée dans la configuration de facturation de la commande");
-
-        vat = vatService.getGeographicalApplicableVatForSales(country, city.getDepartment(),
+        Vat vat = vatService.getGeographicalApplicableVatForSales(quotation,
                 invoiceItem.getBillingItem().getBillingType().getVat());
 
         if (vat != null && (invoiceItem.getIsGifted() == null || !invoiceItem.getIsGifted())) {

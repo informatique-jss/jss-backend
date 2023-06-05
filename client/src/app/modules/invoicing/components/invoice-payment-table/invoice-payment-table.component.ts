@@ -1,6 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { formatDate } from 'src/app/libs/FormatHelper';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
+import { AppService } from 'src/app/services/app.service';
+import { Deposit } from '../../model/Deposit';
+import { Payment } from '../../model/Payment';
+import { PaymentService } from '../../services/payment.service';
+import { AssociateDepositDialogComponent } from '../associate-deposit-dialog/associate-deposit-dialog.component';
+import { AssociatePaymentDialogComponent } from '../associate-payment-dialog/associate-payment-dialog.component';
 import { getAmountPayed, getRemainingToPay } from '../invoice-tools';
 
 @Component({
@@ -16,11 +23,40 @@ export class InvoicePaymentTableComponent implements OnInit {
   getAmountRemaining = getRemainingToPay;
   getAmountPayed = getAmountPayed;
 
-  constructor() { }
+  constructor(
+    public associateDepositDialog: MatDialog,
+    public appService: AppService,
+    public associatePaymentDialog: MatDialog,
+    private paymentService: PaymentService,
+  ) { }
 
   ngOnInit() {
   }
 
+
+  moveDeposit(deposit: Deposit) {
+    let dialogDepositDialogRef = this.associateDepositDialog.open(AssociateDepositDialogComponent, {
+      width: '100%'
+    });
+    dialogDepositDialogRef.componentInstance.deposit = deposit;
+    dialogDepositDialogRef.componentInstance.doNotInitializeAsso = true;
+    dialogDepositDialogRef.afterClosed().subscribe(response => {
+      this.appService.openRoute(null, '/invoicing/view/' + this.invoice.id, null);
+    });
+  }
+
+  movePayment(payment: Payment) {
+    this.paymentService.getPaymentById(payment.id).subscribe(element => {
+      let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
+        width: '100%'
+      });
+      dialogPaymentDialogRef.componentInstance.payment = element;
+      dialogPaymentDialogRef.componentInstance.doNotInitializeAsso = true;
+      dialogPaymentDialogRef.afterClosed().subscribe(response => {
+        this.appService.openRoute(null, '/invoicing/view/' + this.invoice.id, null);
+      });
+    })
+  }
 
 
 }

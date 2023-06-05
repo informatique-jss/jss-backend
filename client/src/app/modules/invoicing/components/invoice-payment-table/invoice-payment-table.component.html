@@ -8,7 +8,8 @@
   <ng-container *ngIf="invoice.payments && invoice.payments.length>0 ">
     <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let payment of invoice.payments">
       <td class="mat-mdc-cell mdc-data-table__cell ">
-        N°{{payment.id}} du {{formatDate(payment.paymentDate)}} - {{payment.label}}
+        N°{{payment.id}} du {{formatDate(payment.paymentDate)}} (<span class="pointer"
+          (click)="movePayment(payment)">déplacer</span>) - {{payment.label}}
       </td>
       <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
         {{payment.paymentAmount}} €
@@ -18,7 +19,8 @@
   <ng-container *ngIf="invoice.deposits && invoice.deposits.length>0 ">
     <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let deposit of invoice.deposits">
       <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="deposit.originPayment.label">
-        N°{{deposit.id}} du {{formatDate(deposit.depositDate)}} - {{deposit.label}} - montant du paiement :
+        N°{{deposit.id}} du {{formatDate(deposit.depositDate)}} - {{deposit.label}} (<span class="pointer"
+          (click)="moveDeposit(deposit)">déplacer</span>) - montant du paiement :
         {{deposit.originPayment.paymentAmount}} € - {{deposit.originPayment.label}}
       </td>
       <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
@@ -54,11 +56,5 @@
     </td>
     <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{getAmountPayed(invoice)}} €
     </td>
-  </tr>
-  <tr
-    *ngIf="invoice && invoice.customerOrder && invoice.customerOrder.centralPayPendingPaymentAmount  && invoice.customerOrder.centralPayPendingPaymentAmount >0">
-    <td class="mat-mdc-cell mdc-data-table__cell ">Paiement reçu par CB en attente de réception</td>
-    <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{invoice.customerOrder.centralPayPendingPaymentAmount |
-      number}} €</td>
   </tr>
 </table>

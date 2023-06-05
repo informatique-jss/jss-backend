@@ -474,7 +474,7 @@ public class MailHelper {
                     } else if (provision.getDebours() != null && provision.getDebours().size() > 0) {
                         for (Debour debour : provision.getDebours()) {
                             Vat vatDebour = vatService
-                                    .getGeographicalApplicableVatForPurshases(debour.getCompetentAuthority(),
+                                    .getGeographicalApplicableVatForSales(quotation,
                                             constantService.getVatDeductible());
 
                             Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()

@@ -279,7 +279,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
                 if (provision.getDebours() != null && provision.getDebours().size() > 0) {
                   for (Debour debour : provision.getDebours()) {
 
-                    Vat vatDebour = vatService.getGeographicalApplicableVatForPurshases(debour.getCompetentAuthority(),
+                    Vat vatDebour = vatService.getGeographicalApplicableVatForSales(invoice,
                         constantService.getVatDeductible());
 
                     // Compute debour prices

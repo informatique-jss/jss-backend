@@ -27,7 +27,7 @@ import { DepositService } from '../../services/deposit.service';
 import { InvoiceSearchResultService } from '../../services/invoice.search.result.service';
 import { InvoiceService } from '../../services/invoice.service';
 import { AmountDialogComponent } from '../amount-dialog/amount-dialog.component';
-import { getAmountPayed, getCustomerOrderForInvoice, getCustomerOrderForIQuotation, getCustomerOrderNameForITiers, getRemainingToPay } from '../invoice-tools';
+import { getAmountPayed, getCustomerOrderForIQuotation, getCustomerOrderForInvoice, getCustomerOrderNameForITiers, getRemainingToPay } from '../invoice-tools';
 
 @Component({
   selector: 'associate-deposit-dialog',
@@ -53,6 +53,8 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
   paymentWayInbound = this.constantService.getPaymentWayInbound();
 
   getAmountRemaining = getRemainingToPay;
+
+  doNotInitializeAsso: boolean = false;
 
   constructor(public dialogRef: MatDialogRef<AssociateDepositDialogComponent>,
     private appService: AppService,
@@ -99,7 +101,7 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
       }, display: true,
     } as SortTableAction);
 
-    if (this.deposit && this.customerOrder) {
+    if (this.deposit && this.customerOrder && !this.doNotInitializeAsso) {
       this.associationSummaryTable.push({
         deposit: this.deposit, customerOrder: this.customerOrder, amountUsed: Math.min(this.getInitialAmount({ customerOrder: this.customerOrder }) - this.getInitialPayedAmount({ customerOrder: this.customerOrder }), this.deposit.depositAmount)
       } as AssociationSummaryTable)
@@ -331,7 +333,7 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
   }
 
   amountToPayCompletely() {
-    let amount = 0;
+    let amount = -1;
     if (this.customerOrder && this.deposit) {
       let remainingToPay = Math.round((QuotationComponent.computePriceTotal(this.customerOrder) - QuotationComponent.computePayed(this.customerOrder)) * 100) / 100;
       amount = remainingToPay - Math.round(this.deposit.depositAmount * 100) / 100;

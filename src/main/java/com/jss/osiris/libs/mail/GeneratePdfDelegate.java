@@ -414,7 +414,7 @@ public class GeneratePdfDelegate {
                 if (provision.getDebours() != null && provision.getDebours().size() > 0) {
                     for (Debour debour : provision.getDebours()) {
                         Vat vatDebour = vatService
-                                .getGeographicalApplicableVatForPurshases(debour.getCompetentAuthority(),
+                                .getGeographicalApplicableVatForSales(customerOrder,
                                         constantService.getVatDeductible());
 
                         Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
