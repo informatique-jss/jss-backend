@@ -21,160 +21,178 @@ import com.jss.osiris.modules.quotation.model.Provision;
 @Service
 public class PrintDelegate {
 
-    @Value("${printer.label.ip}")
-    private String printerIp;
+  @Value("${printer.label.ip}")
+  private String printerIp;
 
-    @Value("${printer.label.port}")
-    private Integer printerPort;
+  @Value("${printer.label.port}")
+  private Integer printerPort;
 
-    @Autowired
-    ConstantService constantService;
+  @Autowired
+  ConstantService constantService;
 
-    public void printMailingLabel(InvoiceLabelResult label, CustomerOrder customerOrder, boolean printProvisionRegister)
-            throws OsirisException {
+  public void printMailingLabel(InvoiceLabelResult label, CustomerOrder customerOrder, boolean printProvisionRegister)
+      throws OsirisException {
 
-        String provisionType = "";
-        String nomAffaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire().getFirstname() +
-                " " + customerOrder.getAssoAffaireOrders().get(0).getAffaire().getLastname();
-        String addressAffaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire().getAddress();
-        String cpCedexVille = customerOrder.getAssoAffaireOrders().get(0).getAffaire().getCedexComplement();
-        String siren = customerOrder.getAssoAffaireOrders().get(0).getAffaire().getSiren();
+    String provisionType = "";
+    String nomAffaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire().getDenomination();
+    String addressAffaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire().getAddress();
+    String cpCedexVille = customerOrder.getAssoAffaireOrders().get(0).getAffaire().getCedexComplement();
+    String siren = customerOrder.getAssoAffaireOrders().get(0).getAffaire().getSiren();
 
-        boolean hasProvisionRegister = false;
+    boolean hasProvisionRegister = false;
 
-        Socket socket = null;
-        DataOutputStream dOut = null;
+    Socket socket = null;
+    DataOutputStream dOut = null;
 
-        try {
-            socket = new Socket(printerIp, printerPort);
-            dOut = new DataOutputStream(socket.getOutputStream());
+    try {
+      socket = new Socket(printerIp, printerPort);
+      dOut = new DataOutputStream(socket.getOutputStream());
 
-            List<Provision> customerOrders = customerOrder.getAssoAffaireOrders().get(0).getProvisions();
+      List<Provision> customerOrders = customerOrder.getAssoAffaireOrders().get(0).getProvisions();
 
-            for (Provision c : customerOrders) {
-                System.out.println("Provision family type: " + c.getProvisionFamilyType().getLabel());
-                if (c.getProvisionFamilyType().getLabel()
-                        .equals(constantService.getProvisionFamilyTypeRegister().getLabel())) {
-                    hasProvisionRegister = true;
-                    provisionType = c.getProvisionType().getLabel();
-                }
+      for (Provision c : customerOrders) {
+        System.out.println("Provision family type: " + c.getProvisionFamilyType().getLabel());
+        if (c.getProvisionFamilyType().getLabel()
+            .equals(constantService.getProvisionFamilyTypeRegister().getLabel())) {
+          hasProvisionRegister = true;
+          provisionType = c.getProvisionType().getLabel();
+        }
+      }
+
+      if (hasProvisionRegister && printProvisionRegister) {
+
+        dOut.writeUTF("\r\n");
+        if (provisionType != null)
+          dOut.writeUTF("               " + provisionType.toUpperCase());
+        dOut.writeUTF("\r\n");
+        dOut.flush();
+        dOut.writeUTF("\r\n");
+        dOut.flush();
+        if (nomAffaire != null)
+          dOut.writeUTF("               " + nomAffaire.toUpperCase());
+        dOut.writeUTF("\r\n");
+        dOut.flush();
+        dOut.writeUTF("\r\n");
+        dOut.flush();
+        if (addressAffaire != null) {
+          dOut.writeUTF("               " + addressAffaire);
+        }
+        if (cpCedexVille != null) {
+          dOut.writeUTF("               " + cpCedexVille);
+        }
+        dOut.flush();
+        dOut.writeUTF("\r\n");
+        dOut.flush();
+        dOut.writeUTF("\r\n");
+        if (siren != null) {
+          dOut.writeUTF("               " + siren);
+        }
+        dOut.flush();
+        dOut.writeUTF("\r\n");
+        dOut.flush();
+        dOut.writeUTF("\r\n");
+
+      } else {
+
+        // Handle manual adresses
+        if (label.getBillingLabelCity() == null) {
+          List<String> lines = Arrays.asList(label.getBillingLabelAddress().split("\\R"));
+          if (lines != null && lines.size() > 1) {
+            label.setBillingLabelAddress(lines.get(0));
+            label.setBillingLabelPostalCode("");
+            for (int i = 1; i < lines.size(); i++)
+              label.setBillingLabelPostalCode(label.getBillingLabelPostalCode() + " " + lines.get(i));
+          }
+        }
+        dOut.writeUTF("\r\n");
+        dOut.writeUTF(" " + customerOrder.getId());
+        dOut.writeUTF("\r\n");
+        dOut.flush();
+        dOut.writeUTF("\r\n");
+        dOut.flush();
+        if (label.getBillingLabel() != null) {
+          List<String> labelLines = Arrays.asList(label.getBillingLabel().split("\\R"));
+          if (labelLines != null) {
+            for (String line : labelLines) {
+              List<String> lineToPrint = new ArrayList<String>();
+              if (line.contains("\r\n")) {
+                lineToPrint = Arrays.asList(line.split("\r\n"));
+              } else
+                lineToPrint.add(line);
+              for (String lin : lineToPrint) {
+                dOut.writeUTF("               " + StringUtils.stripAccents(lin).toUpperCase());
+                dOut.writeUTF("\r\n");
+                dOut.flush();
+              }
             }
-
-            if (hasProvisionRegister && printProvisionRegister) {
-                dOut.writeUTF("\r\n");
-                dOut.writeUTF(provisionType);
-                dOut.writeUTF("\r\n");
-                dOut.writeUTF(nomAffaire);
-                dOut.writeUTF("\r\n");
-                dOut.writeUTF(addressAffaire);
-                dOut.writeUTF("\r\n");
-                dOut.writeUTF(cpCedexVille);
-                dOut.writeUTF("\r\n");
-                dOut.writeUTF(siren);
-
-                dOut.flush();
-
-            } else {
-
-                // Handle manual adresses
-                if (label.getBillingLabelCity() == null) {
-                    List<String> lines = Arrays.asList(label.getBillingLabelAddress().split("\\R"));
-                    if (lines != null && lines.size() > 1) {
-                        label.setBillingLabelAddress(lines.get(0));
-                        label.setBillingLabelPostalCode("");
-                        for (int i = 1; i < lines.size(); i++)
-                            label.setBillingLabelPostalCode(label.getBillingLabelPostalCode() + " " + lines.get(i));
-                    }
-                }
-                dOut.writeUTF("\r\n");
-                dOut.writeUTF(" " + customerOrder.getId());
-                dOut.writeUTF("\r\n");
-                dOut.flush();
-                dOut.writeUTF("\r\n");
-                dOut.flush();
-                if (label.getBillingLabel() != null) {
-                    List<String> labelLines = Arrays.asList(label.getBillingLabel().split("\\R"));
-                    if (labelLines != null) {
-                        for (String line : labelLines) {
-                            List<String> lineToPrint = new ArrayList<String>();
-                            if (line.contains("\r\n")) {
-                                lineToPrint = Arrays.asList(line.split("\r\n"));
-                            } else
-                                lineToPrint.add(line);
-                            for (String lin : lineToPrint) {
-                                dOut.writeUTF("               " + StringUtils.stripAccents(lin).toUpperCase());
-                                dOut.writeUTF("\r\n");
-                                dOut.flush();
-                            }
-                        }
-                    }
-                }
-
-                dOut.writeUTF(
-                        "               " + StringUtils
-                                .stripAccents((label.getBillingLabelAddress() != null ? label.getBillingLabelAddress()
-                                        : ""))
-                                .toUpperCase());
-                dOut.writeUTF("\r\n");
-                dOut.flush();
-                dOut.writeUTF("\r\n");
-                dOut.flush();
-                dOut.writeUTF(
-                        "               ");
-                if (customerOrder.getTiers() != null) {
-                    dOut.writeUTF(StringUtils.stripAccents((customerOrder.getTiers().getIntercom() != null
-                            ? customerOrder.getTiers().getIntercom()
-                            : ""))
-                            .toUpperCase() + " ");
-                }
-                if (customerOrder.getResponsable() != null) {
-                    dOut.writeUTF((customerOrder.getResponsable().getBuilding() != null
-                            ? (" | " + customerOrder.getResponsable().getBuilding())
-                            : "") + " "
-                            + (customerOrder.getResponsable().getFloor() != null
-                                    ? (" | " + customerOrder.getResponsable().getFloor())
-                                    : ""));
-                }
-                dOut.flush();
-                dOut.writeUTF("\r\n");
-                dOut.flush();
-                dOut.writeUTF("\r\n");
-                dOut.flush();
-                dOut.writeUTF("               " + (label.getBillingLabelPostalCode() != null
-                        ? label.getBillingLabelPostalCode()
-                        : "") + " "
-                        + (label.getBillingLabelCity() != null
-                                ? label.getBillingLabelCity().getLabel()
-                                : "")
-                        + " "
-                        + (label.getCedexComplement() != null
-                                ? StringUtils.stripAccents(label.getCedexComplement()).toUpperCase()
-                                : "")
-                        + " "
-                        + ((label.getBillingLabelCountry() == null || label
-                                .getBillingLabelCountry().getId()
-                                .equals(constantService.getCountryFrance().getId())) ? ""
-                                        : label.getBillingLabelCountry().getLabel()));
-                dOut.writeUTF("\r\n");
-                dOut.flush();
-            }
-
-        } catch (IOException e) {
-            throw new OsirisException(e, "Error when printing");
-        } finally {
-            if (dOut != null)
-                try {
-                    dOut.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+          }
         }
 
+        dOut.writeUTF(
+            "               " + StringUtils
+                .stripAccents((label.getBillingLabelAddress() != null ? label.getBillingLabelAddress()
+                    : ""))
+                .toUpperCase());
+        dOut.writeUTF("\r\n");
+        dOut.flush();
+        dOut.writeUTF("\r\n");
+        dOut.flush();
+        dOut.writeUTF(
+            "               ");
+        if (customerOrder.getTiers() != null) {
+          dOut.writeUTF(StringUtils.stripAccents((customerOrder.getTiers().getIntercom() != null
+              ? customerOrder.getTiers().getIntercom()
+              : ""))
+              .toUpperCase() + " ");
+        }
+        if (customerOrder.getResponsable() != null) {
+          dOut.writeUTF((customerOrder.getResponsable().getBuilding() != null
+              ? (" | " + customerOrder.getResponsable().getBuilding())
+              : "") + " "
+              + (customerOrder.getResponsable().getFloor() != null
+                  ? (" | " + customerOrder.getResponsable().getFloor())
+                  : ""));
+        }
+        dOut.flush();
+        dOut.writeUTF("\r\n");
+        dOut.flush();
+        dOut.writeUTF("\r\n");
+        dOut.flush();
+        dOut.writeUTF("               " + (label.getBillingLabelPostalCode() != null
+            ? label.getBillingLabelPostalCode()
+            : "") + " "
+            + (label.getBillingLabelCity() != null
+                ? label.getBillingLabelCity().getLabel()
+                : "")
+            + " "
+            + (label.getCedexComplement() != null
+                ? StringUtils.stripAccents(label.getCedexComplement()).toUpperCase()
+                : "")
+            + " "
+            + ((label.getBillingLabelCountry() == null || label
+                .getBillingLabelCountry().getId()
+                .equals(constantService.getCountryFrance().getId())) ? ""
+                    : label.getBillingLabelCountry().getLabel()));
+        dOut.writeUTF("\r\n");
+        dOut.flush();
+      }
+
+    } catch (IOException e) {
+      throw new OsirisException(e, "Error when printing");
+    } finally {
+      if (dOut != null)
         try {
-            if (socket != null)
-                socket.close();
+          dOut.close();
         } catch (IOException e) {
-            throw new OsirisException(e, "Error when printing");
+          e.printStackTrace();
         }
     }
+
+    try {
+      if (socket != null)
+        socket.close();
+    } catch (IOException e) {
+      throw new OsirisException(e, "Error when printing");
+    }
+  }
 }

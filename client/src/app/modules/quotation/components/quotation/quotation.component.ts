@@ -805,7 +805,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
 
   getProvisionLabel(provision: Provision): string {
-    if(provision.provisionFamilyType.label == this.provisionFamilyTypeRegister.label){
+    if (provision && provision.provisionFamilyType && provision.provisionFamilyType.label == this.provisionFamilyTypeRegister.label) {
       this.provisionContainsRegister = true;
     }
     return QuotationComponent.computeProvisionLabel(provision);
