@@ -65,6 +65,9 @@ public class PricingHelper {
     @Autowired
     CityService cityService;
 
+    @Autowired
+    ProvisionService provisionService;
+
     @Transactional
     public IQuotation getAndSetInvoiceItemsForQuotationForFront(IQuotation quotation, boolean persistInvoiceItem)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
@@ -244,9 +247,11 @@ public class PricingHelper {
             for (Debour debour : provision.getDebours()) {
                 Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
                         : debour.getDebourAmount();
-                IQuotation quotation = provision.getAssoAffaireOrder().getCustomerOrder() != null
-                        ? provision.getAssoAffaireOrder().getCustomerOrder()
-                        : provision.getAssoAffaireOrder().getQuotation();
+
+                Provision completeProvision = provisionService.getProvision(provision.getId());
+                IQuotation quotation = completeProvision.getAssoAffaireOrder().getCustomerOrder() != null
+                        ? completeProvision.getAssoAffaireOrder().getCustomerOrder()
+                        : completeProvision.getAssoAffaireOrder().getQuotation();
                 Vat vat = vatService.getGeographicalApplicableVatForSales(quotation,
                         constantService.getVatDeductible());
 
