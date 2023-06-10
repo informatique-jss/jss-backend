@@ -1160,9 +1160,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingRecordSearch.getTiersId() == null)
       accountingRecordSearch.setTiersId(0);
 
-    if (accountingRecordSearch.getResponsableId() == null)
-      accountingRecordSearch.setResponsableId(0);
-
     if (accountingRecordSearch.getConfrereId() == null)
       accountingRecordSearch.setConfrereId(0);
 
@@ -1173,7 +1170,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       accountingRecordSearch.setEndDate(LocalDateTime.now().plusYears(100));
 
     return accountingRecordRepository.searchAccountingRecords(accountingAccountId, accountingClass, journalId,
-        accountingRecordSearch.getResponsableId(), accountingRecordSearch.getTiersId(),
+        accountingRecordSearch.getTiersId(),
         accountingRecordSearch.getConfrereId(),
         accountingRecordSearch.getHideLettered(),
         accountingRecordSearch.getStartDate().withHour(0).withMinute(0),

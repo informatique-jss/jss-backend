@@ -9,7 +9,6 @@ public class AccountingRecordSearch {
   private LocalDateTime startDate;
   private LocalDateTime endDate;
   private Boolean hideLettered;
-  private Integer responsableId;
   private Integer confrereId;
   private Integer tiersId;
 
@@ -51,14 +50,6 @@ public class AccountingRecordSearch {
 
   public void setEndDate(LocalDateTime endDate) {
     this.endDate = endDate;
-  }
-
-  public Integer getResponsableId() {
-    return responsableId;
-  }
-
-  public void setResponsableId(Integer responsableId) {
-    this.responsableId = responsableId;
   }
 
   public Integer getTiersId() {
