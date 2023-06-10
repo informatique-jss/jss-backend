@@ -32,7 +32,7 @@ export class AzureInvoiceEditComponent implements OnInit {
   hideConfidentFields: boolean = true;
   confidentThreshold: number = AZURE_CONFIDENT_THRESHOLD;
   AZURE_INVOICE_ENTITY_TYPE = AZURE_INVOICE_ENTITY_TYPE;
-  attachmentTypeInvoice = this.constantService.getAttachmentTypeInvoice();
+  attachmentTypeProviderInvoice = this.constantService.getAttachmentTypeProviderInvoice();
 
   ngOnInit() {
     this.idAzureInvoice = this.activatedRoute.snapshot.params.idAzureInvoice;
@@ -44,6 +44,15 @@ export class AzureInvoiceEditComponent implements OnInit {
 
   editInvoice() {
     if (this.invoice && this.invoiceForm.valid) {
+      this.azureInvoiceService.updateAzureInvoice(this.invoice).subscribe(response => {
+        this.appService.openRoute(null, "/invoicing", undefined);
+      })
+    }
+  }
+
+  disableInvoice() {
+    if (this.invoice && this.invoiceForm.valid) {
+      this.invoice.isDisabled = true;
       this.azureInvoiceService.updateAzureInvoice(this.invoice).subscribe(response => {
         this.appService.openRoute(null, "/invoicing", undefined);
       })

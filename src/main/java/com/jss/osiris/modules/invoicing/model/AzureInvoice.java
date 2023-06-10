@@ -26,7 +26,7 @@ public class AzureInvoice {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-
+    private Boolean isDisabled;
     private String modelUsed;
     private Float globalDocumentConfidence;
 
@@ -60,6 +60,8 @@ public class AzureInvoice {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_competent_authority")
+    @JsonIgnoreProperties(value = { "departments", "cities", "regions", "attachments", "accountingAccountProvider",
+            "accountingAccountCustomer", "accountingAccountDepositProvider" }, allowSetters = true)
     private CompetentAuthority competentAuthority;
 
     Boolean toCheck;
@@ -262,6 +264,14 @@ public class AzureInvoice {
 
     public void setToCheck(Boolean toCheck) {
         this.toCheck = toCheck;
+    }
+
+    public Boolean getIsDisabled() {
+        return isDisabled;
+    }
+
+    public void setIsDisabled(Boolean isDisabled) {
+        this.isDisabled = isDisabled;
     }
 
 }

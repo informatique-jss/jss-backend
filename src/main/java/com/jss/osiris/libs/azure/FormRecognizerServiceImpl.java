@@ -85,6 +85,7 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
         final AnalyzedDocument analyzedDocument = analyzeResult.getDocuments().get(0);
 
         AzureInvoice azureInvoice = new AzureInvoice();
+        azureInvoice.setIsDisabled(false);
         azureInvoice.setGlobalDocumentConfidence(analyzeResult.getDocuments().get(0).getConfidence());
         azureInvoice.setModelUsed(analyzeResult.getDocuments().get(0).getDocType());
         azureInvoice.setToCheck(true);
