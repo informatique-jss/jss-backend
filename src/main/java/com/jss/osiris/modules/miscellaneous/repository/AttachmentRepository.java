@@ -43,7 +43,7 @@ public interface AttachmentRepository extends QueryCacheCrudRepository<Attachmen
                         " join provision p on p.id = a.id_provision " +
                         " join asso_affaire_order asso on asso.id = p.id_asso_affaire_order " +
                         " join customer_order c on c.id = asso.id_customer_order " +
-                        " where a.is_disabled=false and a.description like '%.pdf' and a.id_attachment_type =:attachmentTypeInvoiceId and a.id_azure_invoice is  null  and c.id_customer_order_status not in (:customerOrderStatusExcluded)  limit 10 ")
+                        " where a.is_disabled=false and lower(a.description) like '%.pdf' and a.id_attachment_type =:attachmentTypeInvoiceId and a.id_azure_invoice is  null  and c.id_customer_order_status not in (:customerOrderStatusExcluded)  limit 10 ")
         List<Attachment> findInvoiceAttachmentOnProvisionToAnalyse(
                         @Param("attachmentTypeInvoiceId") Integer attachmentTypeInvoiceId,
                         @Param("customerOrderStatusExcluded") List<CustomerOrderStatus> customerOrderStatusExcluded);
