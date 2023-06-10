@@ -1,9 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
+import { AssociateDepositDialogComponent } from 'src/app/modules/invoicing/components/associate-deposit-dialog/associate-deposit-dialog.component';
 import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
+import { Deposit } from 'src/app/modules/invoicing/model/Deposit';
 import { InvoiceSearchResultService } from 'src/app/modules/invoicing/services/invoice.search.result.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from '../../../../services/app.service';
@@ -48,6 +51,7 @@ export class InvoiceManagementComponent implements OnInit {
     private constantService: ConstantService,
     private appService: AppService,
     private invoiceLabelResultService: InvoiceLabelResultService,
+    public associateDepositDialog: MatDialog,
     protected invoiceSearchResultService: InvoiceSearchResultService,) { }
 
   ngOnInit() {
@@ -139,5 +143,17 @@ export class InvoiceManagementComponent implements OnInit {
         if (invoice.invoiceStatus && (invoice.invoiceStatusId == this.constantService.getInvoiceStatusSend().id || invoice.invoiceStatusId == this.constantService.getInvoiceStatusPayed().id))
           return invoice;
     return undefined;
+  }
+
+  moveDeposit(deposit: Deposit) {
+    let dialogDepositDialogRef = this.associateDepositDialog.open(AssociateDepositDialogComponent, {
+      width: '100%'
+    });
+    dialogDepositDialogRef.componentInstance.deposit = deposit;
+    dialogDepositDialogRef.componentInstance.customerOrder = (this.quotation as CustomerOrder);
+    dialogDepositDialogRef.componentInstance.doNotInitializeAsso = true;
+    dialogDepositDialogRef.afterClosed().subscribe(response => {
+      this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+    });
   }
 }

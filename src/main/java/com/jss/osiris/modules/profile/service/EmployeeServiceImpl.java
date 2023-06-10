@@ -132,6 +132,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             String passwordExpected = responsable.getPassword();
             String passwordGiven = diggestPassword(user.getPassword(), responsable.getSalt());
 
+            // TODO : rajouter le check sur le user serv web
             if (passwordExpected != null && passwordExpected.equals(passwordGiven) || isIntrospection)
                 return responsable;
         }

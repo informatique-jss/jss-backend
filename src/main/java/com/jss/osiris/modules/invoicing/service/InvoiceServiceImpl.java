@@ -138,6 +138,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    public Invoice searchInvoicesByIdDirectDebitTransfert(Integer idToFind) {
+        return invoiceRepository.searchInvoicesByIdDirectDebitTransfert(idToFind);
+    }
+
+    @Override
     public Invoice getInvoice(Integer id) {
         Optional<Invoice> invoice = invoiceRepository.findById(id);
         if (invoice.isPresent())
@@ -501,7 +506,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         invoiceItemVat = vatService.getGeographicalApplicableVatForPurshases(vatTiers,
                                 invoiceItem.getVat());
                     else
-                        invoiceItemVat = vatService.getGeographicalApplicableVatForSales(vatTiers,
+                        invoiceItemVat = vatService.getGeographicalApplicableVatForSales(invoice,
                                 invoiceItem.getVat());
 
                     invoiceItem.setVat(invoiceItemVat);

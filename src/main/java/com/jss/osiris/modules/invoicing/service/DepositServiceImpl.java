@@ -141,6 +141,10 @@ public class DepositServiceImpl implements DepositService {
 
     private Deposit cancelDeposit(Deposit deposit) throws OsirisException {
         Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
+
+        if (deposit.getInvoice() != null)
+            invoiceService.unletterInvoiceEmitted(deposit.getInvoice());
+
         if (deposit.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : deposit.getAccountingRecords()) {
                 if ((accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
@@ -148,8 +152,9 @@ public class DepositServiceImpl implements DepositService {
                                 .equals(constantService.getPrincipalAccountingAccountBank().getId())
                         && !accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
                                 .equals(constantService.getPrincipalAccountingAccountCharge().getId()))
-                    accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart,
-                            constantService.getAccountingJournalMiscellaneousOperations());
+                    accountingRecordService.letterCounterPartRecords(accountingRecord,
+                            accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart,
+                                    constantService.getAccountingJournalMiscellaneousOperations()));
             }
         deposit.setIsCancelled(true);
         deposit.setCustomerOrder(null);
@@ -181,12 +186,12 @@ public class DepositServiceImpl implements DepositService {
                 getNewDepositForInvoice(remainingToPayForInvoice, LocalDateTime.now(), invoice, deposit.getId(),
                         deposit.getOriginPayment(), false);
 
+                remainingMoney -= remainingToPayForInvoice;
                 remainingToPayForInvoice = Math.min(invoiceService.getRemainingAmountToPayForInvoice(invoice),
                         byPassAmount.get(i));
 
                 accountingRecordService.checkInvoiceForLettrage(invoice);
 
-                remainingMoney -= remainingToPayForInvoice;
                 refundLabelSuffix = "facture n°" + invoice.getId();
 
                 if (Math.abs(remainingMoney) <= Float.parseFloat(payementLimitRefundInEuros)) {

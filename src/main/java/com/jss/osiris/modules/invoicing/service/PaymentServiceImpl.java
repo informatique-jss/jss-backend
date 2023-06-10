@@ -430,6 +430,14 @@ public class PaymentServiceImpl implements PaymentService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         payment = getPayment(payment.getId());
+
+        // If payment already associated, create a new fresh one
+        if (payment.getInvoice() != null && (payment.getInvoice().getIsInvoiceFromProvider() == null
+                || payment.getInvoice().getIsInvoiceFromProvider() == false)) {
+            cancelPayment(payment, constantService.getAccountingJournalMiscellaneousOperations());
+            payment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount());
+        }
+
         String refundLabelSuffix = "";
         float remainingMoney = payment.getPaymentAmount();
         if (payment.getPaymentWay().getId().equals(constantService.getPaymentWayInbound().getId())) {
@@ -746,7 +754,6 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (refundAmount.equals(paymentAmount)) {
             generateWaitingAccountAccountingRecords.setFalse();
-            accountingRecordService.generateAccountingRecordsForRefundOnVirement(refund);
 
             refund.setIsMatched(true);
             refund.setPayment(payment);
@@ -782,7 +789,7 @@ public class PaymentServiceImpl implements PaymentService {
                         if (record.getIsCounterPart() == null || !record.getIsCounterPart()) {
                             if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
                                     .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
-                                accountingRecordService.letterWaitingRecords(record,
+                                accountingRecordService.letterCounterPartRecords(record,
                                         accountingRecordService.generateCounterPart(record, payment.getId(),
                                                 constantService.getAccountingJournalBank()));
                             }
@@ -840,6 +847,12 @@ public class PaymentServiceImpl implements PaymentService {
                     debourFound = searchService.searchForEntities(idToFind + "", Debour.class.getSimpleName(), true);
                     if (debourFound != null && debourFound.size() > 0)
                         tmpEntitiesFound.addAll(debourFound);
+
+                    Invoice directDebitTransfertInvoice = invoiceService
+                            .searchInvoicesByIdDirectDebitTransfert(idToFind);
+                    if (directDebitTransfertInvoice != null)
+                        tmpEntitiesFound.addAll(searchService.searchForEntitiesById(directDebitTransfertInvoice.getId(),
+                                Arrays.asList(Invoice.class.getSimpleName())));
                 }
                 if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                     for (IndexEntity newEntity : tmpEntitiesFound) {
@@ -1035,6 +1048,11 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Payment cancelPayment(Payment payment, AccountingJournal journal) throws OsirisException {
         Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
+
+        if (payment.getInvoice() != null && (payment.getInvoice().getIsInvoiceFromProvider() == null
+                || payment.getInvoice().getIsInvoiceFromProvider() == false))
+            invoiceService.unletterInvoiceEmitted(payment.getInvoice());
+
         if (payment.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : payment.getAccountingRecords()) {
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
@@ -1045,7 +1063,7 @@ public class PaymentServiceImpl implements PaymentService {
                         if (accountingRecord.getAccountingId() == null) {
                             accountingRecordService.deleteAccountingRecord(accountingRecord);
                         } else {
-                            accountingRecordService.letterWaitingRecords(accountingRecord,
+                            accountingRecordService.letterCounterPartRecords(accountingRecord,
                                     accountingRecordService.generateCounterPart(accountingRecord,
                                             operationIdCounterPart, journal));
                         }

@@ -19,6 +19,7 @@ export class ReportingAddComponent implements OnInit {
   idReporting: number | undefined;
   reporting: UserReporting | undefined;
   dataToDisplay: any | undefined;
+  loadingDataset: boolean = false;
 
   @ViewChild(ReportingComponent) reportingComponent: ReportingComponent | undefined;
 
@@ -77,6 +78,12 @@ export class ReportingAddComponent implements OnInit {
   }
 
   selectDataSet(dataset: string) {
-    this.reportingService.getDataset(dataset, undefined).subscribe(data => this.dataToDisplay = data)
+    if (!this.loadingDataset) {
+      this.loadingDataset = true;
+      this.reportingService.getDataset(dataset, undefined).subscribe(data => {
+        this.dataToDisplay = data;
+        this.loadingDataset = false;
+      });
+    }
   }
 }

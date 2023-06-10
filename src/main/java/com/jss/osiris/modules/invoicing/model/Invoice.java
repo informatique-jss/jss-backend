@@ -36,6 +36,7 @@ import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -197,6 +198,10 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@JoinColumn(name = "id_bank_transfert")
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private BankTransfert bankTransfert;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_direct_debit_transfert")
+	private DirectDebitTransfert directDebitTransfert;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_azure_invoice")
@@ -545,6 +550,14 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	public void setAzureInvoice(AzureInvoice azureInvoice) {
 		this.azureInvoice = azureInvoice;
+	}
+
+	public DirectDebitTransfert getDirectDebitTransfert() {
+		return directDebitTransfert;
+	}
+
+	public void setDirectDebitTransfert(DirectDebitTransfert directDebitTransfert) {
+		this.directDebitTransfert = directDebitTransfert;
 	}
 
 }

@@ -180,7 +180,9 @@
       <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()==undefined">
         <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let deposit of quotation.deposits">
           <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="deposit.originPayment.label">
-            Acompte n°{{deposit.id}} - {{deposit.label}} - montant du paiement :
+            Acompte n°{{deposit.id}} - {{deposit.label}} (<span class="pointer"
+              (click)="moveDeposit(deposit)">déplacer</span>) -
+            montant du paiement :
             {{deposit.originPayment.paymentAmount}}
             € - {{deposit.originPayment.label}}
           </td>
@@ -210,17 +212,11 @@
             - {{deposit.depositAmount|number}} € (montant du paiement : {{deposit.originPayment.paymentAmount}} €)
           </td>
         </tr>
-      </ng-container>
-     <tr class="mat-mdc-row mdc-data-table__row ">
+      </ng-container> 
+      <tr class="mat-mdc-row mdc-data-table__row "> 
         <td class="mat-mdc-cell mdc-data-table__cell ">Reste à payer
         </td>
         <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{getRemainingToPay()}} €
-        </td>
-      </tr>
-      <tr
-        *ngIf="quotation && instanceOfCustomerOrderFn(quotation) && quotation.centralPayPendingPaymentAmount  && quotation.centralPayPendingPaymentAmount >0">
-        <td class="mat-mdc-cell mdc-data-table__cell ">Paiement reçu par CB en attente de réception</td>
-        <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{quotation.centralPayPendingPaymentAmount | number}} €
         </td>
       </tr>
     </table>
