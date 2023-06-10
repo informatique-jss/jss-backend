@@ -99,7 +99,8 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
                     formRecognizerService.recongnizeInvoice(attachment);
                 } catch (Exception e) {
                     attachmentService.disableDocument(attachment);
-                    throw new OsirisException(e, "Erreur while recongnize invoice with Azure");
+                    throw new OsirisException(e,
+                            "Erreur while recongnize invoice with Azure for attachment " + attachment.getId());
                 }
         }
         matchAzureInvoiceAndDebours();

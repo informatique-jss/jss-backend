@@ -3,6 +3,7 @@ package com.jss.osiris.modules.invoicing.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -27,17 +28,26 @@ public class AzureInvoice {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private Boolean isDisabled;
+
+    @Column(length = 2500)
     private String modelUsed;
     private Float globalDocumentConfidence;
 
+    @Column(length = 2500)
     private String customerId;
+
+    @Column(length = 2500)
     private String reference;
     private LocalDate invoiceDate;
+
+    @Column(length = 2500)
     private String invoiceId;
     private Float invoiceTotal;
     private Float invoicePreTaxTotal;
     private Float invoiceTaxTotal;
     private Float invoiceNonTaxableTotal;
+
+    @Column(length = 2500)
     private String vendorTaxId;
 
     private Float customerIdConfidence;
