@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -109,8 +108,8 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
     @Override
     public List<AzureInvoice> getAzureInvoices(Boolean displayOnlyToCheck) {
         if (displayOnlyToCheck)
-            return azureInvoiceRepository.findByToCheck(displayOnlyToCheck);
-        return IterableUtils.toList(azureInvoiceRepository.findAll());
+            return azureInvoiceRepository.findByToCheckAndIsDisabled(displayOnlyToCheck, false);
+        return azureInvoiceRepository.findByIsDisabled(false);
     }
 
     private void matchAzureInvoiceAndDebours()
