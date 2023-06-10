@@ -150,7 +150,6 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
                     }
 
                     // Check if all debours of this AC are not attached to an invoice to delete them
-                    // TODO reprendre avec les condifitions de delete du delete front
                     boolean allDeboursDeletables = true;
                     if (provision.getDebours() != null && provision.getDebours().size() > 0)
                         for (Debour debour : provision.getDebours())
@@ -164,6 +163,18 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
                                     allDeboursDeletables = false;
                                 if (debour.getPaymentType().getId()
                                         .equals(constantService.getPaymentTypeEspeces().getId()))
+                                    allDeboursDeletables = false;
+                                if (debour.getPaymentType().getId()
+                                        .equals(constantService.getPaymentTypeCheques().getId()))
+                                    allDeboursDeletables = false;
+                                if (debour.getPaymentType().getId()
+                                        .equals(constantService.getPaymentTypeAccount().getId()))
+                                    allDeboursDeletables = false;
+                                if (debour.getInvoiceItem() != null)
+                                    allDeboursDeletables = false;
+                                if (debour.getPayment() != null)
+                                    allDeboursDeletables = false;
+                                if (debour.getIsAssociated() != null)
                                     allDeboursDeletables = false;
                             }
 
