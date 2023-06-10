@@ -51,7 +51,7 @@ export class AzureInvoiceEditComponent implements OnInit {
   }
 
   disableInvoice() {
-    if (this.invoice && this.invoiceForm.valid) {
+    if (this.invoice) {
       this.invoice.isDisabled = true;
       this.azureInvoiceService.updateAzureInvoice(this.invoice).subscribe(response => {
         this.appService.openRoute(null, "/invoicing", undefined);

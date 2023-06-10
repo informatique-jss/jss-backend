@@ -245,10 +245,12 @@ public class InvoicingController {
     @PostMapping(inputEntryPoint + "/azure-invoice")
     public ResponseEntity<AzureInvoice> updateAzureInvoice(@RequestBody AzureInvoice azureInvoice)
             throws OsirisException, OsirisValidationException {
-        validationHelper.validateReferential(azureInvoice.getCompetentAuthority(), true, "competentAuthority");
-        validationHelper.validateDate(azureInvoice.getInvoiceDate(), true, "InvoiceDate");
-        validationHelper.validateString(azureInvoice.getInvoiceId(), true, "InvoiceId");
-        azureInvoice.setToCheck(false);
+        if (azureInvoice.getIsDisabled() == false) {
+            validationHelper.validateReferential(azureInvoice.getCompetentAuthority(), true, "competentAuthority");
+            validationHelper.validateDate(azureInvoice.getInvoiceDate(), true, "InvoiceDate");
+            validationHelper.validateString(azureInvoice.getInvoiceId(), true, "InvoiceId");
+            azureInvoice.setToCheck(false);
+        }
         return new ResponseEntity<AzureInvoice>(azureInvoiceService.addOrUpdateAzureInvoice(azureInvoice),
                 HttpStatus.OK);
     }
@@ -824,7 +826,8 @@ public class InvoicingController {
         commonCustomerOrder = paymentAssociate.getTiersRefund() != null ? paymentAssociate.getTiersRefund()
                 : paymentAssociate.getConfrereRefund();
 
-        if (paymentAssociate.getInvoices() != null && Math.round(paymentAssociate.getDeposit().getDepositAmount()*100f) == Math.round(totalAmount*100f))
+        if (paymentAssociate.getInvoices() != null && Math
+                .round(paymentAssociate.getDeposit().getDepositAmount() * 100f) == Math.round(totalAmount * 100f))
             commonCustomerOrder = invoiceHelper.getCustomerOrder(paymentAssociate.getInvoices().get(0));
 
         if (paymentAssociate.getInvoices() != null) {
