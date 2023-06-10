@@ -789,7 +789,7 @@ public class PaymentServiceImpl implements PaymentService {
                         if (record.getIsCounterPart() == null || !record.getIsCounterPart()) {
                             if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
                                     .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
-                                accountingRecordService.letterWaitingRecords(record,
+                                accountingRecordService.letterCounterPartRecords(record,
                                         accountingRecordService.generateCounterPart(record, payment.getId(),
                                                 constantService.getAccountingJournalBank()));
                             }
@@ -1063,7 +1063,7 @@ public class PaymentServiceImpl implements PaymentService {
                         if (accountingRecord.getAccountingId() == null) {
                             accountingRecordService.deleteAccountingRecord(accountingRecord);
                         } else {
-                            accountingRecordService.letterWaitingRecords(accountingRecord,
+                            accountingRecordService.letterCounterPartRecords(accountingRecord,
                                     accountingRecordService.generateCounterPart(accountingRecord,
                                             operationIdCounterPart, journal));
                         }

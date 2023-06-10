@@ -150,7 +150,8 @@ public interface AccountingRecordService {
 
         public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException;
 
-        public void letterWaitingRecords(AccountingRecord record, AccountingRecord counterPart) throws OsirisException;
+        public void letterCounterPartRecords(AccountingRecord record, AccountingRecord counterPart)
+                        throws OsirisException;
 
         public void letterCreditNoteAndInvoice(Invoice invoice, Invoice creditNote) throws OsirisException;
 

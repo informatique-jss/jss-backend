@@ -417,7 +417,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
             if (accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
                 .equals(constantService.getPrincipalAccountingAccountWaiting().getId()))
-              letterWaitingRecords(accountingRecord,
+              letterCounterPartRecords(accountingRecord,
                   generateCounterPart(accountingRecord, operationIdCounterPart, journal));
       }
       operationId = invoice.getId() + payment.getId();
@@ -456,7 +456,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
             if (accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
                 .equals(constantService.getPrincipalAccountingAccountWaiting().getId()))
-              letterWaitingRecords(accountingRecord,
+              letterCounterPartRecords(accountingRecord,
                   generateCounterPart(accountingRecord, operationIdCounterPart, journal));
       }
       operationId = invoice.getId() + payment.getId();
@@ -496,7 +496,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             // Counter part waiting account record
             if ((accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                 && accountingRecord.getAccountingAccount().getId().equals(waitingAccountingAccount.getId()))
-              letterWaitingRecords(accountingRecord,
+              letterCounterPartRecords(accountingRecord,
                   generateCounterPart(accountingRecord, operationIdCounterPart, bankJournal));
       }
 
@@ -934,7 +934,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void letterWaitingRecords(AccountingRecord record, AccountingRecord counterPart) throws OsirisException {
+  public void letterCounterPartRecords(AccountingRecord record, AccountingRecord counterPart) throws OsirisException {
     Integer maxLetteringNumber = accountingRecordRepository
         .findMaxLetteringNumberForMinLetteringDateTime(LocalDateTime.now().with(ChronoField.DAY_OF_YEAR, 1)
             .with(ChronoField.HOUR_OF_DAY, 0)
