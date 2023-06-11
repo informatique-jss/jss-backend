@@ -187,7 +187,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_credit_note")
-	@JsonIgnoreProperties(value = { "reverseCreditNote" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "reverseCreditNote", "accountingRecords" }, allowSetters = true)
 	private Invoice creditNote;
 
 	@OneToOne(mappedBy = "creditNote", fetch = FetchType.LAZY)
