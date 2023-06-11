@@ -1820,8 +1820,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     value.setEventDescription("Facture n°" + invoice.getId());
 
     if (invoice.getCustomerOrder() != null) {
+      String customerOrderValue = invoice.getCustomerOrder().getId() != null
+          ? " / Commande n°" + invoice.getCustomerOrder().getId()
+          : "";
       value.setEventDescription(
-          "Facture n°" + invoice.getId()
+          "Facture n°" + invoice.getId() + customerOrderValue
               + "<br/>"
               + String.join("<br/>", getAllAffairesLabelForCustomerOrder(invoice.getCustomerOrder())).replaceAll("&",
                   "<![CDATA[&]]>")
