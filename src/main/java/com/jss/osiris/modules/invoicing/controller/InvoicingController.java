@@ -73,6 +73,7 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DebourService;
@@ -81,6 +82,8 @@ import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.service.TiersService;
 
 @RestController
 public class InvoicingController {
@@ -139,10 +142,16 @@ public class InvoicingController {
     DebourService debourService;
 
     @Autowired
+    AffaireService affaireService;
+
+    @Autowired
     OwncloudGreffeDelegateImpl owncloudGreffeDelegateImpl;
 
     @Autowired
     ProvisionService provisionService;
+
+    @Autowired
+    TiersService tiersService;
 
     @Value("${invoicing.payment.limit.refund.euros}")
     private Integer payementLimitRefundInEuros;
@@ -400,6 +409,25 @@ public class InvoicingController {
 
         return new ResponseEntity<List<RefundSearchResult>>(refundService.searchRefunds(refundSearch),
                 HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/refund/payment")
+    public ResponseEntity<Boolean> refundPayment(@RequestParam Integer paymentId,
+            @RequestParam Integer tiersId, @RequestParam Integer affaireId)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        Payment payment = paymentService.getPayment(paymentId);
+        Tiers tiers = tiersService.getTiers(tiersId);
+        Affaire affaire = affaireService.getAffaire(affaireId);
+
+        if (payment == null)
+            throw new OsirisValidationException("payment");
+
+        if (tiers == null)
+            throw new OsirisValidationException("tiers");
+
+        paymentService.refundPayment(payment, tiers, affaire);
+
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/refunds/export")

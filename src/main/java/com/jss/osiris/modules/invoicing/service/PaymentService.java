@@ -18,6 +18,7 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Tiers;
 
 public interface PaymentService {
         public Payment getPayment(Integer id);
@@ -67,5 +68,8 @@ public interface PaymentService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public Payment cancelPayment(Payment payment, AccountingJournal journal) throws OsirisException;
+
+        public void refundPayment(Payment payment, Tiers tiers, Affaire affaire)
+                        throws OsirisException, OsirisClientMessageException;
 
 }

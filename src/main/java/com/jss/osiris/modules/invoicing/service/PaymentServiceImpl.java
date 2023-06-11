@@ -48,11 +48,14 @@ import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
+import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DebourService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.service.TiersService;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -107,6 +110,12 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     AppointService appointService;
+
+    @Autowired
+    TiersService tiersService;
+
+    @Autowired
+    AffaireService affaireService;
 
     @Value("${invoicing.payment.limit.refund.euros}")
     private String payementLimitRefundInEuros;
@@ -1090,5 +1099,17 @@ public class PaymentServiceImpl implements PaymentService {
                 new ArrayList<Invoice>(),
                 new MutableBoolean(false), null, cashPayment.getPaymentAmount());
         cancelPayment(getPayment(cashPayment.getId()), constantService.getAccountingJournalBank());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void refundPayment(Payment payment, Tiers tiers, Affaire affaire)
+            throws OsirisException, OsirisClientMessageException {
+        tiers = tiersService.getTiers(tiers.getId());
+        if (affaire != null)
+            affaire = affaireService.getAffaire(affaire.getId());
+        payment = getPayment(payment.getId());
+        refundService.generateRefund(tiers, affaire, payment, null, payment.getPaymentAmount(), null, null, null);
+        payment.setIsCancelled(true);
     }
 }
