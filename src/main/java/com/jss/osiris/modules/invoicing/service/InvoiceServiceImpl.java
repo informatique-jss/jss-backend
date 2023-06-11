@@ -277,6 +277,11 @@ public class InvoiceServiceImpl implements InvoiceService {
                                 constantService.getAccountingJournalPurchases());
             }
 
+        for (InvoiceItem invoiceItem : invoice.getInvoiceItems())
+            if (invoiceItem.getDebours() != null)
+                for (Debour debour : invoiceItem.getDebours())
+                    debourService.unassociateDebourFromInvoice(debour);
+
         // Refresh invoice
         invoice = getInvoice(invoice.getId());
 

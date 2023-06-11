@@ -22,4 +22,6 @@ public interface DebourService {
     public void setDebourAsAssociated(Debour debour);
 
     public List<Debour> findNonAssociatedDeboursForDateAndAmount(LocalDate date, Float amount) throws OsirisException;
+
+    public void unassociateDebourFromInvoice(Debour debour) throws OsirisException;
 }
