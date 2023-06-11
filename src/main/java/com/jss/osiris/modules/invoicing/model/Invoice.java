@@ -36,6 +36,7 @@ import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -47,11 +48,7 @@ import com.jss.osiris.modules.tiers.model.TiersFollowup;
 public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@Id
-	// @SequenceGenerator(name = "invoice_sequence", sequenceName =
-	// "invoice_sequence", allocationSize = 1)
 	@IndexedField
-	// @GeneratedValue(strategy = GenerationType.SEQUENCE, generator =
-	// "invoice_sequence")
 	@GenericGenerator(name = "invoice_id", strategy = "com.jss.osiris.modules.invoicing.model.InvoiceKeyGenerator")
 	@GeneratedValue(generator = "invoice_id")
 	private Integer id;
@@ -183,10 +180,11 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	private CustomerOrder customerOrderForInboundInvoice;
 
 	private Boolean isCreditNote;
+	private Boolean isProviderCreditNote;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_credit_note")
-	@JsonIgnoreProperties(value = { "reverseCreditNote" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "reverseCreditNote", "accountingRecords" }, allowSetters = true)
 	private Invoice creditNote;
 
 	@OneToOne(mappedBy = "creditNote", fetch = FetchType.LAZY)
@@ -197,6 +195,10 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@JoinColumn(name = "id_bank_transfert")
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private BankTransfert bankTransfert;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_direct_debit_transfert")
+	private DirectDebitTransfert directDebitTransfert;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_azure_invoice")
@@ -545,6 +547,22 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	public void setAzureInvoice(AzureInvoice azureInvoice) {
 		this.azureInvoice = azureInvoice;
+	}
+
+	public DirectDebitTransfert getDirectDebitTransfert() {
+		return directDebitTransfert;
+	}
+
+	public void setDirectDebitTransfert(DirectDebitTransfert directDebitTransfert) {
+		this.directDebitTransfert = directDebitTransfert;
+	}
+
+	public Boolean getIsProviderCreditNote() {
+		return isProviderCreditNote;
+	}
+
+	public void setIsProviderCreditNote(Boolean isProviderCreditNote) {
+		this.isProviderCreditNote = isProviderCreditNote;
 	}
 
 }

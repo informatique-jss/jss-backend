@@ -104,7 +104,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public Announcement updateComplexAnnouncementNotice(Announcement announcement, Provision provision)
+    public Announcement updateComplexAnnouncementNotice(Announcement announcement, Provision provision,
+            Boolean isFromUser)
             throws OsirisException {
         // Get announcement PDF
         File complexePdf = null;
@@ -117,7 +118,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 }
 
         if (complexePdf == null)
-            throw new OsirisException(null, "No announncement PDF found");
+            if (!isFromUser)
+                return announcement;
+            else
+                throw new OsirisException(null, "No announncement PDF found");
 
         PdfReader reader;
         FileInputStream in;

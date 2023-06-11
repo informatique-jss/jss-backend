@@ -48,4 +48,7 @@ public interface QuotationService {
 
         public boolean getIsOpenedQuotation(IQuotation quotation);
 
+        public void validateQuotationFromCustomer(Quotation quotation)
+                        throws OsirisValidationException, OsirisException, OsirisClientMessageException;
+
 }

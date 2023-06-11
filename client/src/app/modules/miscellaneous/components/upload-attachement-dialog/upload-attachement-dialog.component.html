@@ -1,11 +1,11 @@
-<div class="mat-elevation-z2 form-div" *ngIf="entity && entity.id!=undefined && entity.id!=null">
+<div class="mat-elevation-z2 form-div mat-body" *ngIf="entity && entity.id!=undefined && entity.id!=null">
   <form [formGroup]="attachmentForm" *ngIf="entity">
     <div class="full-width container" *ngIf="file==null ">
       <input class="pointer" type="file" #fileDropRef id="fileDropRef" (change)="fileBrowseHandler($event.target)" />
-      <mat-icon color="accent"  class="mat-icon-upload" color="warn">file_upload</mat-icon>
+      <mat-icon color="accent" class="mat-icon-upload" color="warn">file_upload</mat-icon>
       <h3>Glissez/déposez votre fichier ici</h3>
       <h3>ou</h3>
-      <label for="fileDropRef">Recherchez sur votre ordinateur</label>
+      <label for="fileDropRef" class="upload-label" color="warn">Recherchez sur votre ordinateur</label>
       <p class="max-size">(5 Mo max.)</p>
     </div>
     <select-attachment-type *ngIf="file!=null" [(model)]="attachmentType" label="Type de fichier"
@@ -16,7 +16,7 @@
     <div *ngIf="file!=null">
       <mat-list>
         <mat-list-item>
-          <mat-icon color="accent"  mat-list-icon (click)="deleteFile()" class="pointer"
+          <mat-icon color="accent" mat-list-icon (click)="deleteFile()" class="pointer"
             *ngIf="!isSending">delete_forever</mat-icon>
           <div mat-line> {{ file?.name }} ({{ formatBytes(file?.size,2) }})</div>
           <div mat-line>

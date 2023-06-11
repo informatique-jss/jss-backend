@@ -3,42 +3,31 @@
   <sort-table [columns]="displayedColumns" [values]="associationSummaryTable" tableName="Association acompte / commande"
     [actions]="tableAction" [refreshTable]="refreshTable.asObservable()">
   </sort-table>
-  <div class="mat-elevation-z2"
-    *ngIf="amountToPayCompletely()<0 && amountRemaining()>0 && amountRemaining()>INVOICING_PAYMENT_LIMIT_REFUND_EUROS">
-    <table class=" full-width mat-table top" *ngIf="selectedRefundTiers">
-      <tr class=" mat-header-row">
-        <th class="mat-header-cell">Acompte</th>
-        <th class="mat-header-cell">Tiers remboursé</th>
-        <th class="mat-header-cell">Montant du remboursement</th>
-      </tr>
-      <tr class=" mat-row">
-        <td class="mat-cell">{{deposit.id}}</td>
-        <td class="mat-cell" *ngIf="selectedRefundTiers.rna==undefined">
+  <div class="mat-elevation-z2" *ngIf=" amountRemaining()>0 && amountRemaining()>INVOICING_PAYMENT_LIMIT_REFUND_EUROS">
+    <table class="mat-table mat-mdc-table mdc-data-table__table full-width  top" *ngIf="selectedRefundTiers">
+      <thead>
+        <tr class="mat-mdc-header-row mdc-data-table__header-row ">
+          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Acompte</th>
+          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Tiers remboursé</th>
+          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Montant du remboursement</th>
+        </tr>
+      </thead>
+      <tr class="mat-mdc-row mdc-data-table__row ">
+        <td class="mat-mdc-cell mdc-data-table__cell ">{{deposit.id}}</td>
+        <td class="mat-mdc-cell mdc-data-table__cell " *ngIf="selectedRefundTiers.rna==undefined">
           {{getCustomerOrderNameForITiers(selectedRefundTiers)}}</td>
-        <td class="mat-cell" *ngIf="selectedRefundTiers.rna!=undefined">
+        <td class="mat-mdc-cell mdc-data-table__cell " *ngIf="selectedRefundTiers.rna!=undefined">
           {{(selectedRefundTiers.denomination)?selectedRefundTiers.denomination : selectedRefundTiers.firstname + "
           "+selectedRefundTiers.lastname}}</td>
-        <td class="mat-cell">{{amountRemaining()}} €</td>
+        <td class="mat-mdc-cell mdc-data-table__cell ">{{amountRemaining()}} €</td>
       </tr>
     </table>
   </div>
-  <div *ngIf="amountToPayCompletely()>=0" class="top">
-    <div>
-      <p>L'acompte associé à la commande est trop important. Le solde doit être associé ou remboursé avant de changer le
-        statut de la commande.</p>
-    </div>
-  </div>
-  <div mat-dialog-actions align="end" *ngIf="amountToPayCompletely()>=0">
-    <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
-    <button mat-raised-button color="warn" (click)="onConfirm()">Ok</button>
-  </div>
-  <div class="top">
-  </div>
 
-  <div class="big-chip" *ngIf="amountToPayCompletely()<0  ">
+  <div class="big-chip">
     <chips-status [value]="'Solde '+amountRemaining()+' €'"></chips-status>
   </div>
-  <div *ngIf="amountToPayCompletely()<0  ">
+  <div>
     <mat-vertical-stepper [linear]="false" #stepper animationDuration="500">
       <mat-step>
         <ng-template matStepLabel>Acompte trop important</ng-template>

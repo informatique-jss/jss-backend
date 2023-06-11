@@ -78,6 +78,7 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Debour;
+import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
@@ -254,7 +255,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                 assoAffaireOrder.setCustomerOrder(customerOrder);
-                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder);
+                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
             }
 
         boolean isNewCustomerOrder = customerOrder.getId() == null;
@@ -476,7 +477,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
             if (paymentType != null
                     && paymentType.getId().equals(constantService.getPaymentTypePrelevement().getId())) {
-                debitTransfertService.generateDirectDebitTransfertForOutboundInvoice(invoice);
+                DirectDebitTransfert directDebitTransfert = debitTransfertService
+                        .generateDirectDebitTransfertForOutboundInvoice(invoice);
+                invoice.setDirectDebitTransfert(directDebitTransfert);
             }
 
             invoice.setManualPaymentType(paymentType);
@@ -659,11 +662,18 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         File invoicePdf = generatePdfDelegate.generateInvoicePdf(customerOrder, invoice, null);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
         try {
-            attachmentService.addAttachment(new FileInputStream(invoicePdf), customerOrder.getId(),
+            List<Attachment> attachments = attachmentService.addAttachment(new FileInputStream(invoicePdf),
+                    customerOrder.getId(),
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeInvoice(),
                     "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
                     false, "Facture n°" + invoice.getId());
+
+            for (Attachment attachment : attachments)
+                if (attachment.getDescription().contains(invoice.getId() + "")) {
+                    attachment.setInvoice(invoice);
+                    attachmentService.addOrUpdateAttachment(attachment);
+                }
         } catch (FileNotFoundException e) {
             throw new OsirisException(e, "Impossible to read invoice PDF temp file");
         } finally {
@@ -892,6 +902,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public void generateInvoiceMail(CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, true, false, false);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void sendInvoiceMail(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, false, true, false);
     }
 
     @Override

@@ -27,17 +27,19 @@
     </h3>
   </ng-container>
   <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-    <table class="full-width mat-table description-table ">
-      <tr class=" mat-header-row">
-        <th class="mat-header-cell">Affaire(s)</th>
-        <th class="mat-header-cell">Payeur</th>
-        <th class="mat-header-cell">Donneur d'ordre</th>
-      </tr>
-      <tr class=" mat-row">
-        <td class="mat-cell td-info">
+    <table class="mat-table mat-mdc-table mdc-data-table__table full-width  description-table ">
+      <thead>
+        <tr class="mat-mdc-header-row mdc-data-table__header-row ">
+          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Affaire(s)</th>
+          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Payeur</th>
+          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Donneur d'ordre</th>
+        </tr>
+      </thead>
+      <tr class="mat-mdc-row mdc-data-table__row ">
+        <td class="mat-mdc-cell mdc-data-table__cell  td-info">
           <p>{{getAffaireListFromIQuotation(quotation)}}</p>
         </td>
-        <td class="mat-cell td-info">
+        <td class="mat-mdc-cell mdc-data-table__cell  td-info">
           <ng-container *ngIf="invoiceLabelResult">
             <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabel}">
               {{invoiceLabelResult.billingLabel?invoiceLabelResult.billingLabel:"Libellé inconnu"}}</p>
@@ -55,7 +57,7 @@
               {{invoiceLabelResult.billingLabelIntercommunityVat}}</p>
           </ng-container>
         </td>
-        <td class="mat-cell td-info">
+        <td class="mat-mdc-cell mdc-data-table__cell  td-info">
           <p>{{getCustomerOrderNameForIQuotation(quotation)}}</p>
           <p>{{getCustomerOrderForIQuotation(quotation).address}}</p>
           <p>{{getCustomerOrderForIQuotation(quotation).postalCode}}
@@ -65,28 +67,32 @@
       </tr>
     </table>
     <form [formGroup]="invoiceManagementForm">
-      <table class="full-width container-affaire mat-table">
-        <tr class=" mat-header-row">
-          <th class="mat-header-cell" colspan="2">Facture</th>
-        </tr>
+      <table class="mat-table mat-mdc-table mdc-data-table__table full-width container-affaire ">
+        <thead>
+          <tr class="mat-mdc-header-row mdc-data-table__header-row ">
+            <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Facture</th>
+          </tr>
+        </thead>
         <ng-container *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index">
-          <tr class="mat-row">
-            <td class="affaire mat-cell" colspan="2" *ngIf="asso.affaire && asso.affaire.denomination">
+          <tr class="mat-mdc-row mdc-data-table__row ">
+            <td class="mat-mdc-cell mdc-data-table__cell  affaire " colspan="2"
+              *ngIf="asso.affaire && asso.affaire.denomination">
               {{asso.affaire.denomination}}
             </td>
-            <td class="affaire mat-cell" colspan="2" *ngIf="asso.affaire && asso.affaire.firstname">
+            <td class="mat-mdc-cell mdc-data-table__cell  affaire " colspan="2"
+              *ngIf="asso.affaire && asso.affaire.firstname">
               {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
             </td>
           </tr>
           <ng-container *ngFor="let provision of asso.provisions;let indexProvision = index">
-            <tr class="mat-row" *ngIf="provision.provisionType">
-              <td class="affaire mat-cell" colspan="2">
+            <tr class="mat-mdc-row mdc-data-table__row " *ngIf="provision.provisionType">
+              <td class="mat-mdc-cell mdc-data-table__cell  affaire " colspan="2">
                 {{provision.provisionType.label}}
               </td>
             </tr>
             <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
-              <tr class="mat-row">
-                <td class="mat-cell">
+              <tr class="mat-mdc-row mdc-data-table__row ">
+                <td class="mat-mdc-cell mdc-data-table__cell ">
                   {{invoiceItem.label}} <mat-icon color="accent" inline="true"
                     [matTooltip]="invoiceItem.isGifted?'Ne plus offrir cette ligne de facturation':'Offrir cette ligne de facturation'"
                     *ngIf="editMode && !getLetteringDate(invoiceItem.invoice)" class="info-icon pointer"
@@ -96,11 +102,11 @@
                     *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && !invoiceItem.invoice"
                     class="info-icon">info</mat-icon>
                 </td>
-                <td class="td-price mat-cell"
+                <td class="mat-mdc-cell mdc-data-table__cell  td-price "
                   *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.id || invoiceItem.invoice">
                   {{invoiceItem.preTaxPrice|number}} €
                 </td>
-                <td class="mat-cell"
+                <td class="mat-mdc-cell mdc-data-table__cell "
                   *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.id && !invoiceItem.invoice">
                   <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
                     [propertyName]='"preTaxPrice"+indexInvoiceItem+indexProvision+indexAsso' [isMandatory]="true"
@@ -109,11 +115,12 @@
                   </generic-input>
                 </td>
               </tr>
-              <tr class="mat-row" *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
-                <td class="mat-cell">
+              <tr class="mat-mdc-row mdc-data-table__row "
+                *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
+                <td class="mat-mdc-cell mdc-data-table__cell ">
                   Remise
                 </td>
-                <td class="td-price remise mat-cell">
+                <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
                   - {{invoiceItem.discountAmount|number}} €
                 </td>
               </tr>
@@ -122,86 +129,95 @@
         </ng-container>
       </table>
     </form>
-    <table class="total-table mat-table full-width">
-      <tr class=" mat-header-row">
-        <th class="mat-header-cell" colspan="2">Total</th>
-      </tr>
-      <tr class="mat-row">
-        <td class="mat-cell">
+    <table class="mat-table mat-mdc-table mdc-data-table__table total-table  full-width">
+      <thead>
+        <tr class="mat-mdc-header-row mdc-data-table__header-row ">
+          <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Total</th>
+        </tr>
+      </thead>
+      <tr class="mat-mdc-row mdc-data-table__row ">
+        <td class="mat-mdc-cell mdc-data-table__cell ">
           Prix total HT
         </td>
-        <td class="td-price mat-cell">
+        <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
           {{getPreTaxPriceTotal() |number}} €
         </td>
       </tr>
-      <tr class="mat-row" *ngIf="getDiscountTotal() && getDiscountTotal()>0">
-        <td class="mat-cell">
+      <tr class="mat-mdc-row mdc-data-table__row " *ngIf="getDiscountTotal() && getDiscountTotal()>0">
+        <td class="mat-mdc-cell mdc-data-table__cell ">
           Remise totale
         </td>
-        <td class="td-price remise mat-cell">
+        <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
           - {{getDiscountTotal()|number}} €
         </td>
       </tr>
-      <tr class="mat-row" *ngIf="getDiscountTotal() && getDiscountTotal()>0">
-        <td class="mat-cell">
+      <tr class="mat-mdc-row mdc-data-table__row " *ngIf="getDiscountTotal() && getDiscountTotal()>0">
+        <td class="mat-mdc-cell mdc-data-table__cell ">
           Total HT avec remise
         </td>
-        <td class="td-price mat-cell">
+        <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
           {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
         </td>
       </tr>
       <ng-container *ngIf="getApplicableVat().length>0">
         <tr *ngFor="let vat of getApplicableVat()">
-          <td class="mat-cell">
+          <td class="mat-mdc-cell mdc-data-table__cell ">
             Total {{vat.label}} sur la base de {{vat.base |number}} €
           </td>
-          <td class="td-price mat-cell">
+          <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
             {{vat.total|number}} €
           </td>
         </tr>
       </ng-container>
-      <tr class="mat-row">
-        <td class="mat-cell">
+      <tr class="mat-mdc-row mdc-data-table__row ">
+        <td class="mat-mdc-cell mdc-data-table__cell ">
           Total TTC
         </td>
-        <td class="td-price mat-cell">
+        <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
           {{getPriceTotal()|number}} €
         </td>
       </tr>
       <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()==undefined">
-        <tr class="mat-row" *ngFor="let deposit of quotation.deposits">
-          <td class="mat-cell payment-label" [matTooltip]="deposit.originPayment.label">
+        <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let deposit of quotation.deposits">
+          <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="deposit.originPayment.label">
+            Acompte n°{{deposit.id}} - {{deposit.label}} (<span class="pointer"
+              (click)="moveDeposit(deposit)">déplacer</span>) -
+            montant du paiement :
+            {{deposit.originPayment.paymentAmount}}
+            € - {{deposit.originPayment.label}}
+          </td>
+          <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+            - {{deposit.depositAmount|number}} €
+          </td>
+        </tr>
+      </ng-container>
+      <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()!=undefined">
+        <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let deposit of quotation.deposits">
+          <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="deposit.originPayment.label">
             Acompte n°{{deposit.id}} - {{deposit.label}} - montant du paiement :
             {{deposit.originPayment.paymentAmount}}
             € - {{deposit.originPayment.label}}
           </td>
-          <td class="td-price mat-cell">
+          <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
             - {{deposit.depositAmount|number}} €
           </td>
         </tr>
       </ng-container>
       <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()!=undefined">
         <tr class="mat-row" *ngFor="let deposit of quotation.deposits">
-          <td class="mat-cell payment-label" [matTooltip]="deposit.originPayment.label">
-            Acompte n°{{deposit.id}} - {{deposit.label}} - montant du paiement :
-            {{deposit.originPayment.paymentAmount}}
-            € - {{deposit.originPayment.label}}
+          <td class="mat-cell">
+            Acompte n°{{deposit.id}} - {{deposit.label}}
           </td>
           <td class="td-price mat-cell">
-            - {{deposit.depositAmount|number}} €
+            - {{deposit.depositAmount|number}} € (montant du paiement : {{deposit.originPayment.paymentAmount}} €)
           </td>
         </tr>
       </ng-container>
-      <tr class="mat-row">
-        <td class="mat-cell">Reste à payer
+      <tr class="mat-mdc-row mdc-data-table__row ">
+        <td class="mat-mdc-cell mdc-data-table__cell ">Reste à payer
         </td>
-        <td class="td-price mat-cell">{{getRemainingToPay()}} €
+        <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{getRemainingToPay()}} €
         </td>
-      </tr>
-      <tr
-        *ngIf="quotation && instanceOfCustomerOrderFn(quotation) && quotation.centralPayPendingPaymentAmount  && quotation.centralPayPendingPaymentAmount >0">
-        <td class="mat-cell">Paiement reçu par CB en attente de réception</td>
-        <td class="td-price mat-cell">{{quotation.centralPayPendingPaymentAmount | number}} €</td>
       </tr>
     </table>
   </fieldset>

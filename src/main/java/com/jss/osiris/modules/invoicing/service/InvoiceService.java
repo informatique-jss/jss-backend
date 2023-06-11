@@ -75,4 +75,9 @@ public interface InvoiceService {
         public Invoice generateInvoiceCreditNote(Invoice newInvoice, Integer idOriginInvoiceForCreditNote)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
+        public Invoice searchInvoicesByIdDirectDebitTransfert(Integer idToFind);
+
+        public Invoice cancelInvoice(Invoice invoice)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
 }

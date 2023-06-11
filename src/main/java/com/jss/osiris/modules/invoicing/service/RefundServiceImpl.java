@@ -285,6 +285,7 @@ public class RefundServiceImpl implements RefundService {
                                         139)));
 
                 completeRefund.setIsAlreadyExported(true);
+                accountingRecordService.generateAccountingRecordsForRefundOnVirement(completeRefund);
                 addOrUpdateRefund(completeRefund);
 
             }

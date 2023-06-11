@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -96,8 +95,13 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         List<Attachment> attachments = attachmentService.getInvoiceAttachmentOnProvisionToAnalyse();
         if (attachments != null && attachments.size() > 0) {
             for (Attachment attachment : attachments)
-                if (attachment.getId() >= 6421151) // TODO remove
+                try {
                     formRecognizerService.recongnizeInvoice(attachment);
+                } catch (Exception e) {
+                    attachmentService.disableDocument(attachment);
+                    throw new OsirisException(e,
+                            "Erreur while recongnize invoice with Azure for attachment " + attachment.getId());
+                }
         }
         matchAzureInvoiceAndDebours();
     }
@@ -105,8 +109,8 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
     @Override
     public List<AzureInvoice> getAzureInvoices(Boolean displayOnlyToCheck) {
         if (displayOnlyToCheck)
-            return azureInvoiceRepository.findByToCheck(displayOnlyToCheck);
-        return IterableUtils.toList(azureInvoiceRepository.findAll());
+            return azureInvoiceRepository.findByToCheckAndIsDisabled(displayOnlyToCheck, false);
+        return azureInvoiceRepository.findByIsDisabled(false);
     }
 
     private void matchAzureInvoiceAndDebours()
@@ -159,6 +163,18 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
                                     allDeboursDeletables = false;
                                 if (debour.getPaymentType().getId()
                                         .equals(constantService.getPaymentTypeEspeces().getId()))
+                                    allDeboursDeletables = false;
+                                if (debour.getPaymentType().getId()
+                                        .equals(constantService.getPaymentTypeCheques().getId()))
+                                    allDeboursDeletables = false;
+                                if (debour.getPaymentType().getId()
+                                        .equals(constantService.getPaymentTypeAccount().getId()))
+                                    allDeboursDeletables = false;
+                                if (debour.getInvoiceItem() != null)
+                                    allDeboursDeletables = false;
+                                if (debour.getPayment() != null)
+                                    allDeboursDeletables = false;
+                                if (debour.getIsAssociated() != null)
                                     allDeboursDeletables = false;
                             }
 
