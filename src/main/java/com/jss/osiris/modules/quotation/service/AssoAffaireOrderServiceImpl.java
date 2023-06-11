@@ -173,7 +173,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         List<AssoAffaireOrder> affaires = getAssoAffaireOrders();
         if (affaires != null)
             for (AssoAffaireOrder affaire : affaires)
-                indexEntityService.indexEntity(affaire, affaire.getId());
+                if (affaire.getCustomerOrder() != null)
+                    indexEntityService.indexEntity(affaire, affaire.getId());
     }
 
     @Override
