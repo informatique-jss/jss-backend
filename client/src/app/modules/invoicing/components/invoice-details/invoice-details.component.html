@@ -21,7 +21,8 @@
             color="accent" class="pointer invoice-chip">visibility
           </mat-icon>
         </div>
-        <div class="invoice-title" *ngIf="invoice.isCreditNote">
+        <div class="invoice-title"
+          *ngIf="(invoice.isCreditNote || invoice.isProviderCreditNote) && invoice.reverseCreditNote">
           <span>Pour la facture n°{{invoice.reverseCreditNote.id}} émise à Paris, le
             {{invoice.reverseCreditNote.createdDate|date:'dd/MM/yyyy à HH:mm'}}</span>
           <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.reverseCreditNote.id)"
@@ -55,23 +56,27 @@
           <thead>
             <tr class="mat-mdc-header-row mdc-data-table__header-row ">
               <th class="mat-mdc-header-cell mdc-data-table__header-cell "
-                *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">Affaire(s)</th>
+                *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false &&invoice.isProviderCreditNote==false">
+                Affaire(s)</th>
               <th class="mat-mdc-header-cell mdc-data-table__header-cell "
-                *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">Payeur</th>
+                *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false&&invoice.isProviderCreditNote==false">
+                Payeur</th>
               <th class="mat-mdc-header-cell mdc-data-table__header-cell "
-                *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">Donneur d'ordre
+                *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false&&invoice.isProviderCreditNote==false">
+                Donneur d'ordre
               </th>
-              <th class="mat-mdc-header-cell mdc-data-table__header-cell " *ngIf="invoice.isInvoiceFromProvider">
+              <th class="mat-mdc-header-cell mdc-data-table__header-cell "
+                *ngIf="invoice.isInvoiceFromProvider || invoice.isProviderCreditNote">
                 Fournisseur</th>
             </tr>
           </thead>
           <tr class="mat-mdc-row mdc-data-table__row ">
             <td class="mat-mdc-cell mdc-data-table__cell  td-info"
-              *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">
+              *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false&&invoice.isProviderCreditNote==false">
               <p>{{getAffaireList(invoice)}}</p>
             </td>
             <td class="mat-mdc-cell mdc-data-table__cell  td-info"
-              *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">
+              *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false&&invoice.isProviderCreditNote==false">
               <p>{{invoice.billingLabel}}</p>
               <p>{{invoice.billingLabelAddress}}</p>
               <p>{{invoice.billingLabelPostalCode}} {{invoice.billingLabelCity?invoice.billingLabelCity.label:""}}
@@ -79,7 +84,7 @@
               <p *ngIf="invoice.billingLabelIntercommunityVat">N° de TVA : {{invoice.billingLabelIntercommunityVat}}</p>
             </td>
             <td class="mat-mdc-cell mdc-data-table__cell  td-info"
-              *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">
+              *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false &&  invoice.isProviderCreditNote==false">
               <p>{{getCustomerOrderName(invoice)}} <mat-icon color="accent" matTooltip="Voir le donneur d'ordre"
                   color="accent" class="pointer" (click)="openCustomerOrderLink($event )"
                   (auxclick)="openCustomerOrderLink($event)">visibility</mat-icon></p>
@@ -93,7 +98,8 @@
                 {{getCustomerOrder(invoice).accountingAccountProvider.principalAccountingAccount.code}}{{getCustomerOrder(invoice).accountingAccountProvider.accountingAccountSubNumber}}
               </p>
             </td>
-            <td class="mat-mdc-cell mdc-data-table__cell  td-info" *ngIf="invoice.isInvoiceFromProvider">
+            <td class="mat-mdc-cell mdc-data-table__cell  td-info"
+              *ngIf="invoice.isInvoiceFromProvider || invoice.isProviderCreditNote">
               <p>Fournisseur : {{getProviderName(invoice)}}
               </p>
             </td>
@@ -120,7 +126,7 @@
           </tr>
         </table>
         <table class="mat-table mat-mdc-table mdc-data-table__table full-width  description-table "
-          *ngIf="invoice.confrere && invoice.isInvoiceFromProvider">
+          *ngIf="invoice.confrere && (invoice.isInvoiceFromProvider || invoice.isProviderCreditNote)">
           <thead>
             <tr class="mat-mdc-header-row mdc-data-table__header-row ">
               <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Confrère (fournisseur)</th>
@@ -133,7 +139,7 @@
           </tr>
         </table>
         <table class="mat-table mat-mdc-table mdc-data-table__table full-width  description-table "
-          *ngIf="invoice.tiers && invoice.isInvoiceFromProvider">
+          *ngIf="invoice.tiers && (invoice.isInvoiceFromProvider || invoice.isProviderCreditNote)">
           <thead>
             <tr class="mat-mdc-header-row mdc-data-table__header-row ">
               <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Tiers (fournisseur)</th>
@@ -148,7 +154,7 @@
           </tr>
         </table>
         <table class="mat-table mat-mdc-table mdc-data-table__table full-width  description-table "
-          *ngIf="invoice.responsable && invoice.isInvoiceFromProvider">
+          *ngIf="invoice.responsable && (invoice.isInvoiceFromProvider || invoice.isProviderCreditNote)">
           <thead>
             <tr class="mat-mdc-header-row mdc-data-table__header-row ">
               <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Responsable (fournisseur)</th>
@@ -302,8 +308,8 @@
         <invoice-payment-table [invoice]="invoice"></invoice-payment-table>
       </div>
     </mat-tab>
-    <mat-tab label="Associer un paiement"
-      *ngIf="getAmountRemaining(invoice)>0 && (invoice.invoiceStatus.id==invoiceStatusSend.id ||invoice.invoiceStatus.id==invoiceStatusReceived.id)">
+    <mat-tab label="Associer un paiement" *ngIf="getAmountRemaining(invoice)>0 && (invoice.invoiceStatus.id==invoiceStatusSend.id ||invoice.invoiceStatus.id==invoiceStatusReceived.id
+      ||invoice.invoiceStatus.id==invoiceStatusCreditNoteReceived.id)">
       <invoice-payment (stateChanged)=" onStateChange()" [invoice]="invoice">
       </invoice-payment>
     </mat-tab>
@@ -340,8 +346,9 @@
   (auxclick)="editInvoice($event)">
   <mat-icon>edit</mat-icon>
 </button>
-<button
-  *ngIf="canCancelInvoice() && canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code || invoice.invoiceStatus.code==invoiceStatusSend.code)"
+<button *ngIf="canCancelInvoice() && canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code
+  || invoice.invoiceStatus.code==invoiceStatusSend.code
+  || invoice.isInvoiceFromProvider && invoice.invoiceStatus.code == invoiceStatusPayed.code)"
   matTooltip="Annuler la facture" mat-fab color="accent" class="second-fab-button" (click)="cancelInvoice($event)">
   <mat-icon>close</mat-icon>
 </button>

@@ -28,6 +28,9 @@ public interface PaymentService {
 
         public void payementGrab() throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
+        public void automatchPaymentInvoicesAndGeneratePaymentAccountingRecords(Payment payment)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
         public List<Payment> getAdvisedPaymentForInvoice(Invoice invoice);
 
         public List<Payment> getAdvisedPaymentForCustomerOrder(CustomerOrder customerOrder);

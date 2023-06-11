@@ -55,6 +55,7 @@ export interface Invoice extends IAttachment {
   tiersFollowups: TiersFollowup[];
   customerOrderForInboundInvoice: CustomerOrder;
   isCreditNote: boolean;
+  isProviderCreditNote: boolean;
   creditNote: Invoice;
   reverseCreditNote: Invoice;
   appoints: Appoint[];

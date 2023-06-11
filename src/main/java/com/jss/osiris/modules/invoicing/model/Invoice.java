@@ -48,11 +48,7 @@ import com.jss.osiris.modules.tiers.model.TiersFollowup;
 public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@Id
-	// @SequenceGenerator(name = "invoice_sequence", sequenceName =
-	// "invoice_sequence", allocationSize = 1)
 	@IndexedField
-	// @GeneratedValue(strategy = GenerationType.SEQUENCE, generator =
-	// "invoice_sequence")
 	@GenericGenerator(name = "invoice_id", strategy = "com.jss.osiris.modules.invoicing.model.InvoiceKeyGenerator")
 	@GeneratedValue(generator = "invoice_id")
 	private Integer id;
@@ -184,6 +180,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	private CustomerOrder customerOrderForInboundInvoice;
 
 	private Boolean isCreditNote;
+	private Boolean isProviderCreditNote;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_credit_note")
@@ -558,6 +555,14 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	public void setDirectDebitTransfert(DirectDebitTransfert directDebitTransfert) {
 		this.directDebitTransfert = directDebitTransfert;
+	}
+
+	public Boolean getIsProviderCreditNote() {
+		return isProviderCreditNote;
+	}
+
+	public void setIsProviderCreditNote(Boolean isProviderCreditNote) {
+		this.isProviderCreditNote = isProviderCreditNote;
 	}
 
 }

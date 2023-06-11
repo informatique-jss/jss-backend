@@ -204,7 +204,8 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    private void automatchPaymentInvoicesAndGeneratePaymentAccountingRecords(Payment payment)
+    @Override
+    public void automatchPaymentInvoicesAndGeneratePaymentAccountingRecords(Payment payment)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Match inbound payment
         if (payment.getPaymentWay().getId().equals(constantService.getPaymentWayInbound().getId())) {
@@ -478,16 +479,6 @@ public class PaymentServiceImpl implements PaymentService {
                         refundLabelSuffix, customerOrder, null);
                 accountingRecordService.generateAccountingRecordsForRefundOnGeneration(refund);
             }
-        } else {
-            if (!payment.getId().equals(1))
-                throw new OsirisClientMessageException("Not for now ..."); // TODO : refund...
-            // Invoices to payed found
-            if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
-                remainingMoney = associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0),
-                        new MutableBoolean(true),
-                        byPassAmount);
-                refundLabelSuffix = "facture n°" + correspondingInvoices.get(0).getId();
-            }
         }
     }
 
@@ -613,12 +604,12 @@ public class PaymentServiceImpl implements PaymentService {
                         break;
                     }
                 } else if (correspondingInvoices.get(i).getInvoiceStatus().getId()
-                        .equals(constantService.getInvoiceStatusReceived().getId())
-                        && correspondingInvoices.get(i).getIsInvoiceFromProvider()) {
+                        .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())) {
                     // It's a refund
                     accountingRecordService
                             .generateAccountingRecordsForProviderInvoiceRefund(correspondingInvoices.get(i), payment);
                     payment.setInvoice(correspondingInvoices.get(i));
+                    accountingRecordService.checkInvoiceForLettrage(correspondingInvoices.get(i));
                     addOrUpdatePayment(payment);
                     remainingMoney = 0f;
                 }

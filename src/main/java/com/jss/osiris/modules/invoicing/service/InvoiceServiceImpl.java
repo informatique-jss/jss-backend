@@ -171,7 +171,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice = getInvoice(invoice.getId());
         if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId()))
             return cancelInvoiceEmitted(invoice, invoice.getCustomerOrder());
-        if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusReceived().getId()))
+        if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusReceived().getId())
+                || invoice.getIsInvoiceFromProvider()
+                        && invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusPayed().getId()))
             return cancelInvoiceReceived(invoice);
         return invoice;
     }
@@ -257,7 +259,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoice;
     }
 
-    private Invoice cancelInvoiceReceived(Invoice invoice) throws OsirisException {
+    private Invoice cancelInvoiceReceived(Invoice invoice)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Unletter
         unletterInvoiceReceived(invoice);
 
@@ -280,6 +283,13 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.getBankTransfert() != null && invoice.getBankTransfert().getIsAlreadyExported() == false)
             bankTransfertService.cancelBankTransfert(invoice.getBankTransfert());
 
+        // Unassociate payment
+        if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
+            for (Payment payment : invoice.getPayments()) {
+                payment.setInvoice(null);
+                paymentService.automatchPaymentInvoicesAndGeneratePaymentAccountingRecords(payment);
+            }
+
         // Cancel invoice
         invoice.setInvoiceStatus(constantService.getInvoiceStatusCancelled());
         return addOrUpdateInvoice(invoice);
@@ -289,11 +299,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Invoice generateInvoiceCreditNote(Invoice newInvoice, Integer idOriginInvoiceForCreditNote)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         Invoice invoice = getInvoice(idOriginInvoiceForCreditNote);
+        newInvoice.setIsInvoiceFromProvider(false);
+        newInvoice.setIsProviderCreditNote(true);
         // Create credit note
         Invoice creditNote = addOrUpdateInvoiceFromUser(newInvoice);
         if (invoice.getInvoiceItems() != null) {
             creditNote.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
-            creditNote.setIsCreditNote(true);
+            creditNote.setIsProviderCreditNote(true);
         }
 
         invoice.setCreditNote(creditNote);
@@ -350,6 +362,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoiceHelper.setInvoiceLabel(invoice, billingDocument, customerOrder, orderingCustomer);
         invoice.setIsCreditNote(false);
+        invoice.setIsProviderCreditNote(false);
 
         InvoiceStatus statusSent = constantService.getInvoiceStatusSend();
 
@@ -488,7 +501,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             if (invoice.getInvoiceItems() != null && invoice.getInvoiceItems().size() > 0)
                 for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
                     Vat invoiceItemVat = null;
-                    if (invoice.getIsInvoiceFromProvider())
+                    if (invoice.getIsInvoiceFromProvider() || invoice.getIsProviderCreditNote())
                         invoiceItemVat = vatService.getGeographicalApplicableVatForPurshases(vatTiers,
                                 invoiceItem.getVat());
                     else
@@ -583,7 +596,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         // Defined billing label
-        if (!invoice.getIsInvoiceFromProvider()
+        if (!invoice.getIsInvoiceFromProvider() && !invoice.getIsProviderCreditNote()
                 && !constantService.getBillingLabelTypeOther().getId().equals(invoice.getBillingLabelType().getId())) {
 
             ITiers customerOrder = invoice.getTiers();
@@ -599,6 +612,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (isNewInvoice) {
             if (invoice.getIsInvoiceFromProvider())
                 invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
+            else if (invoice.getIsProviderCreditNote())
+                invoice.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
             else
                 invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
         }
@@ -616,6 +631,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (isNewInvoice) {
             if (invoice.getIsInvoiceFromProvider())
                 accountingRecordService.generateAccountingRecordsForPurshaseOnInvoiceGeneration(invoice);
+            else if (invoice.getIsProviderCreditNote())
+                accountingRecordService.generateAccountingRecordsForPurshaseOnInvoiceRefund(invoice);
             else
                 accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(invoice);
         }

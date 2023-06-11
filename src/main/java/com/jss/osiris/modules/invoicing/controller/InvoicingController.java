@@ -561,8 +561,17 @@ public class InvoicingController {
 
                 if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
                         && !invoice.getInvoiceStatus().getId()
-                                .equals(constantService.getInvoiceStatusReceived().getId()))
+                                .equals(constantService.getInvoiceStatusReceived().getId())
+                        && !invoice.getInvoiceStatus().getId()
+                                .equals(constantService.getInvoiceStatusCreditNoteReceived().getId()))
                     throw new OsirisValidationException("invoice not send or received");
+
+                if (invoice.getInvoiceStatus().getId()
+                        .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())) {
+                    if (Math.round(invoice.getTotalPrice() * 100f) != Math
+                            .round(paymentAssociate.getPayment().getPaymentAmount() * 100f))
+                        throw new OsirisValidationException("Wrong payment amount");
+                }
             }
         }
 
@@ -955,8 +964,8 @@ public class InvoicingController {
         if (originInvoice == null)
             throw new OsirisValidationException("originInvoice");
 
-        if (newInvoice.getIsInvoiceFromProvider() == null || newInvoice.getIsInvoiceFromProvider() == false)
-            throw new OsirisValidationException("IsInvoiceFromProvider");
+        if (newInvoice.getIsProviderCreditNote() == null || newInvoice.getIsProviderCreditNote() == false)
+            throw new OsirisValidationException("isProviderCreditNote");
         validateInvoice(newInvoice);
         return new ResponseEntity<Invoice>(
                 invoiceService.generateInvoiceCreditNote(newInvoice, idOriginInvoiceForCreditNote),
@@ -967,6 +976,9 @@ public class InvoicingController {
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (invoice.getIsInvoiceFromProvider() == null)
             invoice.setIsInvoiceFromProvider(false);
+
+        if (invoice.getIsProviderCreditNote() == null)
+            invoice.setIsProviderCreditNote(false);
 
         int doFound = 0;
 
@@ -998,12 +1010,12 @@ public class InvoicingController {
         if (doFound != 1)
             throw new OsirisValidationException("Too many customer order");
 
-        if (!invoice.getIsInvoiceFromProvider() && invoice.getProvider() != null)
+        if (!invoice.getIsInvoiceFromProvider() && !invoice.getIsProviderCreditNote() && invoice.getProvider() != null)
             throw new OsirisValidationException("Provider not allowed");
 
         BillingLabelType billingLabelAffaire = constantService.getBillingLabelTypeCodeAffaire();
 
-        if (invoice.getIsInvoiceFromProvider() == false) {
+        if (invoice.getIsInvoiceFromProvider() == false && invoice.getIsProviderCreditNote() == false) {
             validationHelper.validateReferential(invoice.getBillingLabelType(), true, "BillingLabelType");
             validationHelper.validateString(invoice.getBillingLabelAddress(),
                     invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 160,
@@ -1046,7 +1058,7 @@ public class InvoicingController {
         }
 
         if (invoice.getCustomerOrderForInboundInvoice() != null) {
-            if (!invoice.getIsInvoiceFromProvider())
+            if (!invoice.getIsInvoiceFromProvider() && !invoice.getIsProviderCreditNote())
                 throw new OsirisValidationException("customerOrderForInboundInvoice");
             validationHelper.validateReferential(invoice.getCustomerOrderForInboundInvoice(), false,
                     "customerOrderForInboundInvoice");
