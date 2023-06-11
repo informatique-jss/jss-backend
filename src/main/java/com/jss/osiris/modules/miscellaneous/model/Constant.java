@@ -2049,7 +2049,7 @@ public class Constant implements Serializable, IId {
 		return paymentDeadLineType30;
 	}
 
-	public void setPaymentDeadLineType30(PaymentDeadlineType paymentDeadLineTypeOne) {
-		this.paymentDeadLineType30 = paymentDeadLineTypeOne;
+	public void setPaymentDeadLineType30(PaymentDeadlineType paymentDeadLineType30) {
+		this.paymentDeadLineType30 = paymentDeadLineType30;
 	}
 }
