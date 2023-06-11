@@ -140,7 +140,7 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotation.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                 assoAffaireOrder.setQuotation(quotation);
-                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation);
+                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation, true);
             }
 
         boolean isNewQuotation = quotation.getId() == null;

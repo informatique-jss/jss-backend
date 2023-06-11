@@ -152,7 +152,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             provision.setAssoAffaireOrder(assoAffaireOrder);
         }
 
-        assoAffaireOrder = completeAssoAffaireOrder(assoAffaireOrder, assoAffaireOrder.getCustomerOrder());
+        assoAffaireOrder = completeAssoAffaireOrder(assoAffaireOrder, assoAffaireOrder.getCustomerOrder(), true);
         assoAffaireOrder.setCustomerOrder(assoAffaireOrder.getCustomerOrder());
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
         if (affaireSaved.getCustomerOrder() != null)
@@ -178,7 +178,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     }
 
     @Override
-    public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder)
+    public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder,
+            Boolean isFromUser)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Complete domiciliation end date
         int nbrAssignation = 0;
@@ -310,7 +311,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 // If complex, extract string from PDF and put it to notice
                 if (announcement.getIsComplexAnnouncement())
-                    announcement = announcementService.updateComplexAnnouncementNotice(announcement, provision);
+                    announcement = announcementService.updateComplexAnnouncementNotice(announcement, provision,
+                            isFromUser);
 
                 if (customerOrder.getId() == null || announcement.getAnnouncementStatus() == null)
                     announcement.setAnnouncementStatus(announcementStatusService

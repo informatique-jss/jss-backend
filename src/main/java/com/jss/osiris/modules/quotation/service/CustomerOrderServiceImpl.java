@@ -255,7 +255,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                 assoAffaireOrder.setCustomerOrder(customerOrder);
-                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder);
+                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
             }
 
         boolean isNewCustomerOrder = customerOrder.getId() == null;
