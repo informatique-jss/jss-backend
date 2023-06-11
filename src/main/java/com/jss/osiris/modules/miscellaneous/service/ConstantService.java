@@ -378,5 +378,5 @@ public interface ConstantService {
 
     public CustomerOrderOrigin getCustomerOrderOriginOsiris() throws OsirisException;
 
-    public PaymentDeadlineType getPaymentDeadLineTypeOne() throws OsirisException;
+    public PaymentDeadlineType getPaymentDeadLineType30() throws OsirisException;
 }

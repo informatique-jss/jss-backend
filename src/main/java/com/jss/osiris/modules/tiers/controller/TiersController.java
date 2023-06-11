@@ -497,7 +497,7 @@ public class TiersController {
           document.setIsRecipientClient(false);
 
         if (document.getPaymentDeadlineType() == null) {
-          document.setPaymentDeadlineType(constantService.getPaymentDeadLineTypeOne());
+          document.setPaymentDeadlineType(constantService.getPaymentDeadLineType30());
         }
       }
     }

@@ -908,7 +908,7 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public PaymentDeadlineType getPaymentDeadLineTypeOne() throws OsirisException {
+    public PaymentDeadlineType getPaymentDeadLineType30() throws OsirisException {
         return getConstants().getPaymentDeadLineType30();
     }
 }
