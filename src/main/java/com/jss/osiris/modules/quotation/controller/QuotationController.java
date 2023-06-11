@@ -530,6 +530,24 @@ public class QuotationController {
     return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/mail/send/invoice")
+  public ResponseEntity<CustomerOrder> sendInvoiceMail(@RequestParam Integer customerOrderId)
+      throws OsirisValidationException, OsirisClientMessageException {
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+    try {
+      MailComputeResult mailComputeResult = mailComputeHelper
+          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
+      if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+        throw new OsirisValidationException("MailTo");
+      customerOrderService.sendInvoiceMail(customerOrder);
+    } catch (OsirisException e) {
+      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+    }
+    return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/mail/generate/confrere/request")
   public ResponseEntity<CustomerOrder> generateAnnouncementRequestToConfrereMail(@RequestParam Integer idCustomerOrder,
       @RequestParam Integer idAnnouncement, @RequestParam Integer idProvision, @RequestParam Integer idAssoAffaireOrder)

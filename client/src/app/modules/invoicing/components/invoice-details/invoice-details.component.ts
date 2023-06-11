@@ -7,6 +7,7 @@ import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { VatBase } from 'src/app/modules/quotation/model/VatBase';
+import { QuotationService } from 'src/app/modules/quotation/services/quotation.service';
 import { CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
@@ -33,7 +34,8 @@ export class InvoiceDetailsComponent implements OnInit {
     private appService: AppService,
     private activatedRoute: ActivatedRoute,
     private constantService: ConstantService,
-    private habilitationService: HabilitationsService
+    private habilitationService: HabilitationsService,
+    private quotationService: QuotationService,
   ) { }
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
@@ -205,6 +207,11 @@ export class InvoiceDetailsComponent implements OnInit {
       return this.habilitationService.canAddNewInvoice();
     }
     return false;
+  }
+
+  sendMailReminder() {
+    if (this.invoice && this.invoice.customerOrder)
+      this.quotationService.sendCustomerOrderFinalisationToCustomer(this.invoice.customerOrder).subscribe();
   }
 
 }

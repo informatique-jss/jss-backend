@@ -336,6 +336,10 @@
         </ul>
       </div>
       <tiers-followup [invoice]="invoice" [editMode]="true"></tiers-followup>
+      <button matTooltip="Renvoyer le mail de relance" mat-fab color="accent" class="third-fab-button"
+        *ngIf="invoice.invoiceStatus.code==invoiceStatusSend.code" (click)="sendMailReminder()">
+        <mat-icon>mail</mat-icon>
+      </button>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="invoice.id">
       <history [entity]="invoice" [entityType]="INVOICE_ENTITY_TYPE"></history>

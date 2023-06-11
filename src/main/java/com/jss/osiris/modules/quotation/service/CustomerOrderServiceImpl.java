@@ -899,6 +899,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public void sendInvoiceMail(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, false, true, false);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public String getCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder, String mail, String subject)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         customerOrder = getCustomerOrder(customerOrder.getId());
