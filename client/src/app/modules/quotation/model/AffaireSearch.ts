@@ -2,6 +2,7 @@ import { CompetentAuthority } from '../../miscellaneous/model/CompetentAuthority
 import { IWorkflowElement } from '../../miscellaneous/model/IWorkflowElement';
 import { Employee } from "../../profile/model/Employee";
 import { ITiers } from '../../tiers/model/ITiers';
+import { Affaire } from './Affaire';
 
 export interface AffaireSearch {
   responsible: Employee | undefined;
@@ -9,5 +10,6 @@ export interface AffaireSearch {
   label: string | undefined;
   status: IWorkflowElement[];
   customerOrders: ITiers[];
+  affaire: Affaire;
   waitedCompetentAuthority: CompetentAuthority;
 }

@@ -462,6 +462,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         ArrayList<Integer> statusId = null;
         ArrayList<Integer> assignedId = null;
         ArrayList<Integer> responsibleId = null;
+        Integer affaireId = null;
 
         statusId = new ArrayList<Integer>();
         if (affaireSearch.getStatus() != null) {
@@ -485,6 +486,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             responsibleId.add(0);
         }
 
+        affaireId = 0;
+        if (affaireSearch.getAffaire() != null)
+            affaireId = affaireSearch.getAffaire().getId();
+
         if (affaireSearch.getLabel() == null)
             affaireSearch.setLabel("");
 
@@ -507,7 +512,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
         return assoAffaireOrderRepository.findAsso(responsibleId,
                 assignedId, affaireSearch.getLabel(),
-                statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId);
+                statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId, affaireId);
     }
 
 }

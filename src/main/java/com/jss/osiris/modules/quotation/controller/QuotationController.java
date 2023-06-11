@@ -676,7 +676,8 @@ public class QuotationController {
 
     if (affaireSearch.getLabel() == null
         && affaireSearch.getAssignedTo() == null && affaireSearch.getResponsible() == null
-        && affaireSearch.getStatus() == null && affaireSearch.getCustomerOrders() == null)
+        && affaireSearch.getStatus() == null && affaireSearch.getCustomerOrders() == null
+        && affaireSearch.getAffaire() == null)
       throw new OsirisValidationException("Label or AssignedTo or Responsible or Status");
 
     if (affaireSearch.getLabel() == null)
