@@ -33,7 +33,6 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
   paymentTypeCB: PaymentType = this.constantService.getPaymentTypeCB();
   paymentTypeEspeces: PaymentType = this.constantService.getPaymentTypeEspeces();
   paymentTypeVirement: PaymentType = this.constantService.getPaymentTypeVirement();
-  paymentDeadLineTypeOne: PaymentDeadlineType = this.constantService.getPaymentDeadLineType30();
   refundTypeVirement = this.constantService.getRefundTypeVirement();
 
   billingLableTypeOther = this.constantService.getBillingLabelTypeOther();
@@ -103,7 +102,7 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
         this.provisionalReceiptDocument = getDocument(this.constantService.getDocumentTypeProvisionnalReceipt(), this.tiers);
       }
       if (!this.dunningDocument.paymentDeadlineType) {
-        this.dunningDocument.paymentDeadlineType = this.paymentDeadLineTypeOne;
+        this.dunningDocument.paymentDeadlineType = this.constantService.getPaymentDeadLineType30();
       }
 
     }
