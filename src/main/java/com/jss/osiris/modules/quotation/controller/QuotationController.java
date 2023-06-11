@@ -1422,6 +1422,30 @@ public class QuotationController {
 
   // Payment deposit
 
+  @GetMapping(inputEntryPoint + "/payment/cb/quotation/validate")
+  public ResponseEntity<String> validateQuotationFromCustomer(@RequestParam Integer quotationId) {
+    try {
+      Quotation quotation = quotationService.getQuotation(quotationId);
+      if (quotation == null)
+        throw new OsirisValidationException("quotation");
+
+      quotationService.validateQuotationFromCustomer(quotation);
+      return new ResponseEntity<String>(
+          mailHelper.generateGenericHtmlConfirmation("Devis validé", null, "Devis n°" + quotationId,
+              "Votre validation pour le devis n°" + quotationId
+                  + " a bien été pris en compte. Nous débutons immédiatement le traitement de ce dernier.",
+              null, "Bonne journée !"),
+          HttpStatus.OK);
+    } catch (Exception e) {
+      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+      return new ResponseEntity<String>(
+          mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Devis n°" + quotationId,
+              "Nous sommes désolé, mais une erreur est survenue lors de votre vaidation.",
+              "Veuillez réessayer en utilisant le lien présent dans le mail de notification.", "Bonne journée !"),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   @GetMapping(inputEntryPoint + "/payment/cb/quotation/deposit")
   public ResponseEntity<String> getCardPaymentLinkForQuotationDeposit(@RequestParam Integer quotationId,
       @RequestParam String mail) {
