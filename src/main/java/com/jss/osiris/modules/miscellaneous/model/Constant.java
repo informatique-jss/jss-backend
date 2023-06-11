@@ -216,7 +216,7 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_payment_deadline_type")
-	private PaymentDeadlineType paymentDeadLineTypeOne;
+	private PaymentDeadlineType paymentDeadLineType30;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_balo_package")
@@ -2045,11 +2045,11 @@ public class Constant implements Serializable, IId {
 		this.vatDeductibleTwo = vatDeductibleTwo;
 	}
 
-	public PaymentDeadlineType getPaymentDeadLineTypeOne() {
-		return paymentDeadLineTypeOne;
+	public PaymentDeadlineType getPaymentDeadLineType30() {
+		return paymentDeadLineType30;
 	}
 
-	public void setPaymentDeadLineTypeOne(PaymentDeadlineType paymentDeadLineTypeOne) {
-		this.paymentDeadLineTypeOne = paymentDeadLineTypeOne;
+	public void setPaymentDeadLineType30(PaymentDeadlineType paymentDeadLineTypeOne) {
+		this.paymentDeadLineType30 = paymentDeadLineTypeOne;
 	}
 }

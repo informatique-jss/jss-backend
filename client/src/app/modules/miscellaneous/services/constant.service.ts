@@ -2,7 +2,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { Constant } from '../../miscellaneous/model/Constant';
-import { PaymentDeadlineType } from '../../tiers/model/PaymentDeadlineType';
 
 @Injectable({
   providedIn: 'root'
@@ -187,8 +186,8 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.countryFrance;
   }
 
-  getPaymentDeadLineTypeOne() {
-    return this.constant.paymentDeadLineTypeOne;
+  getPaymentDeadLineType30() {
+    return this.constant.paymentDeadLineType30;
   }
 
   getCountryMonaco() {

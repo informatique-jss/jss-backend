@@ -12,10 +12,9 @@ import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payme
 import { Document } from "../../../miscellaneous/model/Document";
 import { BillingClosureRecipientType } from '../../model/BillingClosureRecipientType';
 import { ITiers } from '../../model/ITiers';
+import { PaymentDeadlineType } from '../../model/PaymentDeadlineType';
 import { Responsable } from '../../model/Responsable';
 import { TiersService } from '../../services/tiers.service';
-import { PaymentDeadlineType } from '../../model/PaymentDeadlineType';
-import { PaymentDeadlineTypeService } from '../../services/payment.deadline.type.service';
 
 @Component({
   selector: 'settlement-billing',
@@ -34,7 +33,7 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
   paymentTypeCB: PaymentType = this.constantService.getPaymentTypeCB();
   paymentTypeEspeces: PaymentType = this.constantService.getPaymentTypeEspeces();
   paymentTypeVirement: PaymentType = this.constantService.getPaymentTypeVirement();
-  paymentDeadLineTypeOne: PaymentDeadlineType = this.constantService.getPaymentDeadLineTypeOne();
+  paymentDeadLineTypeOne: PaymentDeadlineType = this.constantService.getPaymentDeadLineType30();
   refundTypeVirement = this.constantService.getRefundTypeVirement();
 
   billingLableTypeOther = this.constantService.getBillingLabelTypeOther();
@@ -60,17 +59,12 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
     protected cityService: CityService,
     private constantService: ConstantService,
     private changeDetectorRef: ChangeDetectorRef,
-    private paymentDeadlineTypeService: PaymentDeadlineTypeService,
   ) { }
 
   ngOnInit() {
     // Referential loading
     this.paymentTypeService.getPaymentTypes().subscribe(response => {
       this.paymentTypes = response;
-    })
-
-    this.paymentDeadlineTypeService.getPaymentDeadlineTypes().subscribe(response => {
-      this.paymentDeadLineTypes = response;
     })
 
     // Trigger it to show mandatory fields
@@ -108,9 +102,9 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
         this.refundDocument = getDocument(this.constantService.getDocumentTypeRefund(), this.tiers);
         this.provisionalReceiptDocument = getDocument(this.constantService.getDocumentTypeProvisionnalReceipt(), this.tiers);
       }
-     if (!this.dunningDocument.paymentDeadlineType) {
-      this.dunningDocument.paymentDeadlineType = this.paymentDeadLineTypeOne;
-    }
+      if (!this.dunningDocument.paymentDeadlineType) {
+        this.dunningDocument.paymentDeadlineType = this.paymentDeadLineTypeOne;
+      }
 
     }
     this.settlementBillingForm.markAllAsTouched();

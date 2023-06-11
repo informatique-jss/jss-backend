@@ -124,7 +124,7 @@ export interface Constant {
   paymentTypeAccount: PaymentType;
   refundTypeVirement: RefundType;
   subscriptionPeriodType12M: SubscriptionPeriodType;
-  paymentDeadLineTypeOne: PaymentDeadlineType;
+  paymentDeadLineType30: PaymentDeadlineType;
   legalFormUnregistered: LegalForm;
   journalTypeSpel: JournalType;
   journalTypePaper: JournalType;
