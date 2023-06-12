@@ -658,16 +658,17 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                       if (!debour.billingType.isNonTaxable) {
                         let vatFound = false;
                         let debourAmount = debour.invoicedAmount ? debour.invoicedAmount : debour.debourAmount;
+                        let applicableDebourVat = debour.invoiceItem ? debour.invoiceItem.vat : debourVat;
 
                         for (let vatBase of vatBases) {
-                          if (vatBase.label == debourVat.label) {
+                          if (vatBase.label == applicableDebourVat.label) {
                             vatFound = true;
-                            vatBase.base += debourAmount / (1 + (debourVat.rate / 100));
-                            vatBase.total += (debourAmount / (1 + (debourVat.rate / 100))) * debourVat.rate / 100;
+                            vatBase.base += debourAmount / (1 + (applicableDebourVat.rate / 100));
+                            vatBase.total += (debourAmount / (1 + (applicableDebourVat.rate / 100))) * applicableDebourVat.rate / 100;
                           }
                         }
                         if (!vatFound) {
-                          vatBases.push({ label: debourVat.label, base: debourAmount / (1 + (debourVat.rate / 100)), total: (debourAmount / (1 + (debourVat.rate / 100))) * debourVat.rate / 100 });
+                          vatBases.push({ label: applicableDebourVat.label, base: debourAmount / (1 + (applicableDebourVat.rate / 100)), total: (debourAmount / (1 + (applicableDebourVat.rate / 100))) * applicableDebourVat.rate / 100 });
                         }
                       }
                     }
