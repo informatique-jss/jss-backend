@@ -1036,7 +1036,8 @@ public class MailHelper {
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
                         if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
-                            for (Attachment attachment : provision.getAttachments())
+                            for (Attachment attachment : attachmentService
+                                    .sortAttachmentByDateDesc(provision.getAttachments()))
                                 if (attachment.getAttachmentType().getIsToSentOnFinalizationMail()
                                         && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())) {
                                     attachments.add(attachment);
