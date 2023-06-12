@@ -819,7 +819,8 @@ public class InvoicingController {
 
         if (paymentAssociate.getDeposit().getDepositAmount() > totalAmount
                 && paymentAssociate.getTiersRefund() == null && paymentAssociate.getAffaire() == null
-                && Math.abs(paymentAssociate.getDeposit().getDepositAmount()) > payementLimitRefundInEuros)
+                && Math.abs(Math.round(paymentAssociate.getDeposit().getDepositAmount() * 100f) / 100f
+                        - Math.round(totalAmount * 100f) / 100f) > payementLimitRefundInEuros)
             throw new OsirisValidationException("no refund tiers set");
 
         ITiers commonCustomerOrder;
