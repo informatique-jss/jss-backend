@@ -13,7 +13,7 @@ public interface AzureInvoiceRepository extends QueryCacheCrudRepository<AzureIn
 
         AzureInvoice findByInvoiceId(String invoiceId);
 
-        List<AzureInvoice> findByToCheck(Boolean displayOnlyToCheck);
+        List<AzureInvoice> findByToCheckAndIsDisabled(Boolean displayOnlyToCheck, Boolean isDisabled);
 
         @Query(nativeQuery = true, value = " " +
                         " select distinct i.* " +
@@ -31,7 +31,7 @@ public interface AzureInvoiceRepository extends QueryCacheCrudRepository<AzureIn
                         " select distinct i.* " +
                         " from azure_invoice i " +
                         " left join invoice invoice on invoice.id_azure_invoice = i.id " +
-                        " where  invoice.id is null and to_check = false and i.invoice_id like '%' || trim(upper(CAST(:invoiceId as text)))  || '%' ")
+                        " where i.is_disabled = false and  invoice.id is null and to_check = false and i.invoice_id like '%' || trim(upper(CAST(:invoiceId as text)))  || '%' ")
         List<AzureInvoice> findByInvoiceIdContainingAndToChekAndInvoice(@Param("invoiceId") String invoiceId);
 
         List<AzureInvoice> findByCompetentAuthorityAndInvoiceId(CompetentAuthority competentAuthority,
@@ -40,4 +40,6 @@ public interface AzureInvoiceRepository extends QueryCacheCrudRepository<AzureIn
         List<AzureInvoice> findByCompetentAuthorityAndInvoiceIdContainingIgnoreCase(
                         CompetentAuthority competentAuthority,
                         String invoiceId);
+
+        List<AzureInvoice> findByIsDisabled(boolean b);
 }

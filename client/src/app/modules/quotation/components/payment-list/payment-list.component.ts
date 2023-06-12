@@ -17,6 +17,7 @@ import { OFX_ENTITY_TYPE } from "src/app/routing/search/search.component";
 import { AppService } from "src/app/services/app.service";
 import { HabilitationsService } from "src/app/services/habilitations.service";
 import { AccountingAccount } from '../../../accounting/model/AccountingAccount';
+import { RefundPaymentDialogComponent } from "../refund-payment-dialog/refund-payment-dialog.component";
 import { SelectAccountingAccountDialogComponent } from "../select-accounting-account-dialog/select-accounting-account-dialog.component";
 
 
@@ -51,6 +52,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     private changeDetectorRef: ChangeDetectorRef,
     private appService: AppService,
     public associatePaymentDialog: MatDialog,
+    public refundPaymentDialog: MatDialog,
     private formBuilder: FormBuilder,
     private habilitationService: HabilitationsService,
   ) { }
@@ -110,6 +112,12 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
           actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (action: SortTableAction, element: any) => {
             if ((!element.invoice && !element.customerOrder && !element.isExternallyAssociated && !element.isCancelled && !element.isAssociated))
               this.openAssociationDialog(element);
+          }, display: true,
+        } as SortTableAction);
+        this.tableAction.push({
+          actionIcon: "savings", actionName: "Rembourser le paiement", actionClick: (action: SortTableAction, element: PaymentSearchResult) => {
+            if ((!element.invoiceId && !element.isExternallyAssociated && !element.isCancelled && !element.isAssociated && element.paymentWayId == this.constantService.getPaymentWayInbound().id))
+              this.openRefundPaymentDialog(element);
           }, display: true,
         } as SortTableAction);
       }
@@ -195,6 +203,17 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
       dialogPaymentDialogRef.componentInstance.payment = element;
       dialogPaymentDialogRef.afterClosed().subscribe(response => {
         this.searchPayments();
+      });
+    })
+  }
+
+  openRefundPaymentDialog(payment: PaymentSearchResult) {
+    this.paymentService.getPaymentById(payment.id).subscribe(element => {
+      let dialogPaymentDialogRef = this.refundPaymentDialog.open(RefundPaymentDialogComponent, {
+        width: '100%'
+      });
+      dialogPaymentDialogRef.afterClosed().subscribe(response => {
+        this.paymentService.refundPayment(element, response.tiers, response.affaire).subscribe(response => this.searchPayments());
       });
     })
   }

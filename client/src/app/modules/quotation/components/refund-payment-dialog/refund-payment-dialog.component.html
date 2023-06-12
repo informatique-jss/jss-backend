@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<div mat-dialog-content>
+  <p>{{text}}</p>
+  <form [formGroup]="refundPaymentForm">
+    <div>
+      <autocomplete-tiers-individual [(model)]="tiers" [form]="refundPaymentForm" propertyName="tiers"
+        label="Tiers à rembourser" [authorizeNonIndividualTiers]="true"></autocomplete-tiers-individual>
+    </div>
+    <div>
+      <autocomplete-affaire [(model)]="affaire" [form]="refundPaymentForm" propertyName="affaire"
+        label="Affaire à rembourser" [isMandatory]="false"></autocomplete-affaire>
+    </div>
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">Valider</button>
+</div>

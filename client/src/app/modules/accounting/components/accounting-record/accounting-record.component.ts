@@ -8,7 +8,7 @@ import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAc
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
-import { instanceOfConfrere, instanceOfResponsable } from '../../../../libs/TypeHelper';
+import { instanceOfConfrere } from '../../../../libs/TypeHelper';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { AccountingRecord } from '../../model/AccountingRecord';
@@ -99,9 +99,7 @@ export class AccountingRecordComponent implements OnInit {
     }
 
     if (this.tiersToDisplay && this.tiersToDisplay.id) {
-      if (instanceOfResponsable(this.tiersToDisplay))
-        this.accountingRecordSearch.responsableId = this.tiersToDisplay.id;
-      else if (instanceOfConfrere(this.tiersToDisplay))
+      if (instanceOfConfrere(this.tiersToDisplay))
         this.accountingRecordSearch.confrereId = this.tiersToDisplay.id;
       else
         this.accountingRecordSearch.tiersId = this.tiersToDisplay.id;
@@ -160,7 +158,7 @@ export class AccountingRecordComponent implements OnInit {
 
   searchRecords() {
     this.restoreTotalDivPosition();
-    if (!this.accountingRecordSearch.tiersId && !this.accountingRecordSearch.responsableId && !this.accountingRecordSearch.confrereId) {
+    if (!this.accountingRecordSearch.tiersId && !this.accountingRecordSearch.confrereId) {
       if (this.tiersToDisplay == undefined && (!this.accountingRecordSearch.startDate || !this.accountingRecordSearch.endDate)) {
         this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", false, 10);
         return;

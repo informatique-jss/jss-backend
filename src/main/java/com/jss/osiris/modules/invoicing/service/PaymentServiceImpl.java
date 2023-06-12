@@ -48,11 +48,14 @@ import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
+import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DebourService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.service.TiersService;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -107,6 +110,12 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     AppointService appointService;
+
+    @Autowired
+    TiersService tiersService;
+
+    @Autowired
+    AffaireService affaireService;
 
     @Value("${invoicing.payment.limit.refund.euros}")
     private String payementLimitRefundInEuros;
@@ -204,7 +213,8 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    private void automatchPaymentInvoicesAndGeneratePaymentAccountingRecords(Payment payment)
+    @Override
+    public void automatchPaymentInvoicesAndGeneratePaymentAccountingRecords(Payment payment)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Match inbound payment
         if (payment.getPaymentWay().getId().equals(constantService.getPaymentWayInbound().getId())) {
@@ -478,16 +488,6 @@ public class PaymentServiceImpl implements PaymentService {
                         refundLabelSuffix, customerOrder, null);
                 accountingRecordService.generateAccountingRecordsForRefundOnGeneration(refund);
             }
-        } else {
-            if (!payment.getId().equals(1))
-                throw new OsirisClientMessageException("Not for now ..."); // TODO : refund...
-            // Invoices to payed found
-            if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
-                remainingMoney = associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0),
-                        new MutableBoolean(true),
-                        byPassAmount);
-                refundLabelSuffix = "facture n°" + correspondingInvoices.get(0).getId();
-            }
         }
     }
 
@@ -613,12 +613,12 @@ public class PaymentServiceImpl implements PaymentService {
                         break;
                     }
                 } else if (correspondingInvoices.get(i).getInvoiceStatus().getId()
-                        .equals(constantService.getInvoiceStatusReceived().getId())
-                        && correspondingInvoices.get(i).getIsInvoiceFromProvider()) {
+                        .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())) {
                     // It's a refund
                     accountingRecordService
                             .generateAccountingRecordsForProviderInvoiceRefund(correspondingInvoices.get(i), payment);
                     payment.setInvoice(correspondingInvoices.get(i));
+                    accountingRecordService.checkInvoiceForLettrage(correspondingInvoices.get(i));
                     addOrUpdatePayment(payment);
                     remainingMoney = 0f;
                 }
@@ -789,7 +789,7 @@ public class PaymentServiceImpl implements PaymentService {
                         if (record.getIsCounterPart() == null || !record.getIsCounterPart()) {
                             if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
                                     .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
-                                accountingRecordService.letterWaitingRecords(record,
+                                accountingRecordService.letterCounterPartRecords(record,
                                         accountingRecordService.generateCounterPart(record, payment.getId(),
                                                 constantService.getAccountingJournalBank()));
                             }
@@ -1063,7 +1063,7 @@ public class PaymentServiceImpl implements PaymentService {
                         if (accountingRecord.getAccountingId() == null) {
                             accountingRecordService.deleteAccountingRecord(accountingRecord);
                         } else {
-                            accountingRecordService.letterWaitingRecords(accountingRecord,
+                            accountingRecordService.letterCounterPartRecords(accountingRecord,
                                     accountingRecordService.generateCounterPart(accountingRecord,
                                             operationIdCounterPart, journal));
                         }
@@ -1099,5 +1099,17 @@ public class PaymentServiceImpl implements PaymentService {
                 new ArrayList<Invoice>(),
                 new MutableBoolean(false), null, cashPayment.getPaymentAmount());
         cancelPayment(getPayment(cashPayment.getId()), constantService.getAccountingJournalBank());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void refundPayment(Payment payment, Tiers tiers, Affaire affaire)
+            throws OsirisException, OsirisClientMessageException {
+        tiers = tiersService.getTiers(tiers.getId());
+        if (affaire != null)
+            affaire = affaireService.getAffaire(affaire.getId());
+        payment = getPayment(payment.getId());
+        refundService.generateRefund(tiers, affaire, payment, null, payment.getPaymentAmount(), null, null, null);
+        payment.setIsCancelled(true);
     }
 }

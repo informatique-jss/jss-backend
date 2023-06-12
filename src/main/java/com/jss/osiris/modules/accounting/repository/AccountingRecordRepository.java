@@ -87,8 +87,6 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " where ( COALESCE(:accountingAccountIds) =0 or r.id_accounting_account in (:accountingAccountIds)) "
                         +
                         " and (:journalId =0 or r.id_accounting_journal = :journalId) " +
-                        " and (:responsableId =0 or COALESCE(re1.id ,re2.id )  = :responsableId and t.id is not null) "
-                        +
                         " and (:confrereId =0 or cf.id is not null and cf.id =:confrereId ) "
                         +
                         " and (:tiersId =0 or t.id is not null and t.id = :tiersId) " +
@@ -101,7 +99,6 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("accountingAccountIds") List<Integer> accountingAccountIds,
                         @Param("accountingClassId") Integer accountingClassId,
                         @Param("journalId") Integer journalId,
-                        @Param("responsableId") Integer responsableId,
                         @Param("tiersId") Integer tiersId,
                         @Param("confrereId") Integer confrereId,
                         @Param("hideLettered") Boolean hideLettered,

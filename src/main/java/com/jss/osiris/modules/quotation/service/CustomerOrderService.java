@@ -50,6 +50,9 @@ public interface CustomerOrderService {
         public void generateInvoiceMail(CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
+        public void sendInvoiceMail(CustomerOrder customerOrder)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
         public String getCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder, String mail,
                         String subject)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;

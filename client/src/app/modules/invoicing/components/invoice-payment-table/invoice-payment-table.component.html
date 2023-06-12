@@ -45,7 +45,7 @@
     <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
     </td>
   </tr>
-  <tr class="mat-mdc-row mdc-data-table__row " *ngIf="!invoice.isCreditNote">
+  <tr class="mat-mdc-row mdc-data-table__row " *ngIf="!invoice.isCreditNote && !invoice.isProviderCreditNote">
     <td class="mat-mdc-cell mdc-data-table__cell ">Reste à payer
     </td>
     <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{getAmountRemaining(invoice)}} €
@@ -55,6 +55,12 @@
     <td class="mat-mdc-cell mdc-data-table__cell ">Net à créditer
     </td>
     <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{getAmountPayed(invoice)}} €
+    </td>
+  </tr>
+  <tr class="mat-mdc-row mdc-data-table__row " *ngIf="invoice.isProviderCreditNote">
+    <td class="mat-mdc-cell mdc-data-table__cell ">Remboursement à percevoir
+    </td>
+    <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{getAmountRemaining(invoice)}} €
     </td>
   </tr>
 </table>
