@@ -90,6 +90,7 @@ public class PrintDelegate {
                                     ? (" | " + customerOrder.getResponsable().getFloor())
                                     : "")
                             : ""));
+            // etat acctuel
             dOut.flush();
             dOut.writeUTF("\r\n");
 
