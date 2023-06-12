@@ -140,7 +140,7 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotation.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                 assoAffaireOrder.setQuotation(quotation);
-                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation);
+                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation, true);
             }
 
         boolean isNewQuotation = quotation.getId() == null;
@@ -505,6 +505,31 @@ public class QuotationServiceImpl implements QuotationService {
                     && quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
         }
         return false;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void validateQuotationFromCustomer(Quotation quotation)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        quotation = getQuotation(quotation.getId());
+
+        if (!quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER))
+            throw new OsirisValidationException("Wrong quotation status");
+
+        boolean isDepositMandatory = false;
+
+        if (quotation.getTiers() != null) {
+            isDepositMandatory = quotation.getTiers().getIsProvisionalPaymentMandatory();
+        } else if (quotation.getConfrere() != null) {
+            isDepositMandatory = quotation.getConfrere().getIsProvisionalPaymentMandatory();
+        } else if (quotation.getResponsable() != null) {
+            isDepositMandatory = quotation.getResponsable().getTiers().getIsProvisionalPaymentMandatory();
+        }
+
+        if (isDepositMandatory)
+            throw new OsirisValidationException("Deposit mandatory");
+
+        addOrUpdateQuotationStatus(quotation, QuotationStatus.VALIDATED_BY_CUSTOMER);
     }
 
 }

@@ -152,7 +152,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             provision.setAssoAffaireOrder(assoAffaireOrder);
         }
 
-        assoAffaireOrder = completeAssoAffaireOrder(assoAffaireOrder, assoAffaireOrder.getCustomerOrder());
+        assoAffaireOrder = completeAssoAffaireOrder(assoAffaireOrder, assoAffaireOrder.getCustomerOrder(), true);
         assoAffaireOrder.setCustomerOrder(assoAffaireOrder.getCustomerOrder());
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
         if (affaireSaved.getCustomerOrder() != null)
@@ -173,11 +173,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         List<AssoAffaireOrder> affaires = getAssoAffaireOrders();
         if (affaires != null)
             for (AssoAffaireOrder affaire : affaires)
-                indexEntityService.indexEntity(affaire, affaire.getId());
+                if (affaire.getCustomerOrder() != null)
+                    indexEntityService.indexEntity(affaire, affaire.getId());
     }
 
     @Override
-    public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder)
+    public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder,
+            Boolean isFromUser)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Complete domiciliation end date
         int nbrAssignation = 0;
@@ -309,7 +311,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 // If complex, extract string from PDF and put it to notice
                 if (announcement.getIsComplexAnnouncement())
-                    announcement = announcementService.updateComplexAnnouncementNotice(announcement, provision);
+                    announcement = announcementService.updateComplexAnnouncementNotice(announcement, provision,
+                            isFromUser);
 
                 if (customerOrder.getId() == null || announcement.getAnnouncementStatus() == null)
                     announcement.setAnnouncementStatus(announcementStatusService
@@ -461,6 +464,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         ArrayList<Integer> statusId = null;
         ArrayList<Integer> assignedId = null;
         ArrayList<Integer> responsibleId = null;
+        Integer affaireId = null;
 
         statusId = new ArrayList<Integer>();
         if (affaireSearch.getStatus() != null) {
@@ -484,6 +488,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             responsibleId.add(0);
         }
 
+        affaireId = 0;
+        if (affaireSearch.getAffaire() != null)
+            affaireId = affaireSearch.getAffaire().getId();
+
         if (affaireSearch.getLabel() == null)
             affaireSearch.setLabel("");
 
@@ -506,7 +514,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
         return assoAffaireOrderRepository.findAsso(responsibleId,
                 assignedId, affaireSearch.getLabel(),
-                statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId);
+                statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId, affaireId);
     }
 
 }

@@ -3,17 +3,20 @@ package com.jss.osiris.modules.invoicing.service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Appoint;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.repository.AppointRepository;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 
 @Service
 public class AppointServiceImpl implements AppointService {
@@ -26,6 +29,9 @@ public class AppointServiceImpl implements AppointService {
 
     @Autowired
     InvoiceHelper invoiceHelper;
+
+    @Autowired
+    ConstantService constantService;
 
     @Override
     public List<Appoint> getAppoints(String searchLabel) {
@@ -68,7 +74,16 @@ public class AppointServiceImpl implements AppointService {
     }
 
     @Override
-    public void deleteAppoint(Appoint appoint) {
+    public void deleteAppoint(Appoint appoint) throws OsirisException {
+        // Remove accounting records
+        Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
+        if (appoint.getAccountingRecords() != null)
+            for (AccountingRecord accountingRecord : appoint.getAccountingRecords()) {
+                if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
+                    accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart,
+                            constantService.getAccountingJournalSales());
+            }
+
         appointRepository.delete(appoint);
     }
 }

@@ -397,6 +397,8 @@ public class MailHelper {
         ctx.setVariable("greetings", mail.getGreetings());
         ctx.setVariable("cbExplanation", mail.getCbExplanation());
         ctx.setVariable("cbLink", mail.getCbLink());
+        ctx.setVariable("quotationValidationLink", mail.getQuotationValidationLink());
+        ctx.setVariable("quotationValidation", mail.getQuotationValidation());
         ctx.setVariable("qrCodePicture", mail.getCbLink() != null ? "qrCodePicture" : null);
     }
 
@@ -610,11 +612,13 @@ public class MailHelper {
                 mail.setPaymentExplaination(
                         "Votre devis est en attente d'acompte. Pour le valider et lancer votre commande, effectuez dès maintenant un virement de "
                                 + mail.getPriceTotal() + " € sur le compte ci-dessous.");
-            else
-                mail.setPaymentExplaination(
-                        "Vous pouvez, si vous le souhaitez, régler un acompte pour ce devis d'un montant de "
-                                + mail.getPriceTotal() + " € en suivant les instructions ci-dessous.");
-
+            else {
+                mail.setQuotationValidation("Vous pouvez, si vous le souhaitez, valider ce devis en cliquant ");
+                mail.setQuotationValidationLink(
+                        paymentCbEntryPoint + "/quotation/validate?quotationId=" + quotation.getId());
+                mail.setPaymentExplaination(" ou régler un acompte pour ce devis d'un montant de "
+                        + mail.getPriceTotal() + " € en suivant les instructions ci-dessous.");
+            }
             mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
 
             if (!disableCbLink) {

@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { AFFAIRE_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
 import { Affaire } from '../../model/Affaire';
+import { AffaireSearch } from '../../model/AffaireSearch';
 import { OrderingSearch } from '../../model/OrderingSearch';
 import { QuotationSearch } from '../../model/QuotationSearch';
 import { AffaireService } from '../../services/affaire.service';
@@ -22,6 +23,7 @@ export class AffaireComponent implements OnInit {
   AFFAIRE_ENTITY_TYPE = AFFAIRE_ENTITY_TYPE;
   orderingSearch: OrderingSearch = {} as OrderingSearch;
   quotationSearch: QuotationSearch = {} as QuotationSearch;
+  provisionSearch: AffaireSearch = {} as AffaireSearch;
 
   saveObservableSubscription: Subscription = new Subscription;
 
@@ -41,6 +43,7 @@ export class AffaireComponent implements OnInit {
           this.orderingSearch.affaires = [this.affaire];
           this.quotationSearch.affaires = [this.affaire];
           this.appService.changeHeaderTitle("Affaire - " + (this.affaire.denomination ? this.affaire.denomination : this.affaire.firstname + " " + this.affaire.lastname));
+          this.provisionSearch.affaire = this.affaire;
         }
       })
 

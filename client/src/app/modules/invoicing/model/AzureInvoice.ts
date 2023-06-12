@@ -5,6 +5,7 @@ import { Invoice } from "../../quotation/model/Invoice";
 export interface AzureInvoice extends IAttachment {
   id: number;
   modelUsed: string;
+  isDisabled: boolean;
   globalDocumentConfidence: number;
   customerId: string;
   reference: string;

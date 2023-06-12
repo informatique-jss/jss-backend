@@ -85,6 +85,7 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
         final AnalyzedDocument analyzedDocument = analyzeResult.getDocuments().get(0);
 
         AzureInvoice azureInvoice = new AzureInvoice();
+        azureInvoice.setIsDisabled(false);
         azureInvoice.setGlobalDocumentConfidence(analyzeResult.getDocuments().get(0).getConfidence());
         azureInvoice.setModelUsed(analyzeResult.getDocuments().get(0).getDocType());
         azureInvoice.setToCheck(true);
@@ -225,6 +226,7 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
             nbrConfident++;
 
         if (nbrConfident == 3) {
+            resetConfidence = true;
             if (azureInvoice.getInvoiceTotalConfidence() < confidenceLimit)
                 azureInvoice.setInvoiceTotal(azureInvoice.getInvoiceTaxTotal()
                         + azureInvoice.getInvoiceNonTaxableTotal() + azureInvoice.getInvoicePreTaxTotal());
@@ -239,7 +241,9 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
                         .setInvoiceNonTaxableTotal(azureInvoice.getInvoiceTotal() - azureInvoice.getInvoiceTaxTotal()
                                 - azureInvoice.getInvoicePreTaxTotal());
 
-            resetConfidence = true;
+            if (azureInvoice.getInvoiceTotal() < 0 || azureInvoice.getInvoicePreTaxTotal() < 0 ||
+                    azureInvoice.getInvoiceTaxTotal() < 0 || azureInvoice.getInvoiceNonTaxableTotal() < 0)
+                resetConfidence = false;
         }
 
         if (resetConfidence) {

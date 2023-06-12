@@ -32,6 +32,7 @@ export class InvoicePaymentComponent implements OnInit {
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
   invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
+  invoiceStatusCreditNoteReceived = this.constantService.getInvoiceStatusCreditNoteReceived();
 
   constructor(private paymentService: PaymentService,
     private appService: AppService,
@@ -60,7 +61,7 @@ export class InvoicePaymentComponent implements OnInit {
         this.openAssociationDialog(element);
       }, display: true,
     } as SortTableAction);
-    if (this.invoice) {
+    if (this.invoice && !this.invoice.isProviderCreditNote) {
       this.paymentService.getAdvisedPayment(this.invoice).subscribe(response => {
         this.advisedPayment = response;
       })

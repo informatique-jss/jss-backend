@@ -530,6 +530,24 @@ public class QuotationController {
     return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/mail/send/invoice")
+  public ResponseEntity<CustomerOrder> sendInvoiceMail(@RequestParam Integer customerOrderId)
+      throws OsirisValidationException, OsirisClientMessageException {
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+    try {
+      MailComputeResult mailComputeResult = mailComputeHelper
+          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
+      if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+        throw new OsirisValidationException("MailTo");
+      customerOrderService.sendInvoiceMail(customerOrder);
+    } catch (OsirisException e) {
+      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+    }
+    return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/mail/generate/confrere/request")
   public ResponseEntity<CustomerOrder> generateAnnouncementRequestToConfrereMail(@RequestParam Integer idCustomerOrder,
       @RequestParam Integer idAnnouncement, @RequestParam Integer idProvision, @RequestParam Integer idAssoAffaireOrder)
@@ -658,7 +676,8 @@ public class QuotationController {
 
     if (affaireSearch.getLabel() == null
         && affaireSearch.getAssignedTo() == null && affaireSearch.getResponsible() == null
-        && affaireSearch.getStatus() == null && affaireSearch.getCustomerOrders() == null)
+        && affaireSearch.getStatus() == null && affaireSearch.getCustomerOrders() == null
+        && affaireSearch.getAffaire() == null)
       throw new OsirisValidationException("Label or AssignedTo or Responsible or Status");
 
     if (affaireSearch.getLabel() == null)
@@ -1402,6 +1421,30 @@ public class QuotationController {
   }
 
   // Payment deposit
+
+  @GetMapping(inputEntryPoint + "/payment/cb/quotation/validate")
+  public ResponseEntity<String> validateQuotationFromCustomer(@RequestParam Integer quotationId) {
+    try {
+      Quotation quotation = quotationService.getQuotation(quotationId);
+      if (quotation == null)
+        throw new OsirisValidationException("quotation");
+
+      quotationService.validateQuotationFromCustomer(quotation);
+      return new ResponseEntity<String>(
+          mailHelper.generateGenericHtmlConfirmation("Devis validé", null, "Devis n°" + quotationId,
+              "Votre validation pour le devis n°" + quotationId
+                  + " a bien été pris en compte. Nous débutons immédiatement le traitement de ce dernier.",
+              null, "Bonne journée !"),
+          HttpStatus.OK);
+    } catch (Exception e) {
+      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+      return new ResponseEntity<String>(
+          mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Devis n°" + quotationId,
+              "Nous sommes désolé, mais une erreur est survenue lors de votre vaidation.",
+              "Veuillez réessayer en utilisant le lien présent dans le mail de notification.", "Bonne journée !"),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 
   @GetMapping(inputEntryPoint + "/payment/cb/quotation/deposit")
   public ResponseEntity<String> getCardPaymentLinkForQuotationDeposit(@RequestParam Integer quotationId,

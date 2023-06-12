@@ -98,10 +98,14 @@ export class AddInvoiceComponent implements OnInit {
       });
     } else if (this.idInvoiceForCreditNote != null && this.idInvoiceForCreditNote != "null") {
       this.invoiceService.getInvoiceById(parseInt(this.idInvoiceForCreditNote)).subscribe(response => {
-        this.invoice = response;
+        this.invoice = {} as Invoice;
+        this.invoice.invoiceItems = [{} as InvoiceItem];
         this.invoiceItems = this.invoice.invoiceItems;
-        (this.invoice as any).id = null;
-        this.appService.changeHeaderTitle("Annuler la facture n°" + this.idInvoiceForCreditNote);
+        this.selectInvoiceItem(this.invoiceItems[0]);
+        this.invoice.isInvoiceFromProvider = false;
+        this.invoice.isProviderCreditNote = true;
+        this.invoice.manualPaymentType = this.contantService.getPaymentTypeVirement();
+        this.appService.changeHeaderTitle("Saisir un avoir sur la facture n°" + this.idInvoiceForCreditNote);
       });
     } else {
       this.addInvoiceItem();
