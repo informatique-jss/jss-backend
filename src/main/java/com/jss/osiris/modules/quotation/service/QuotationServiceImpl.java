@@ -290,6 +290,7 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void reindexQuotation() {
         List<Quotation> quotations = IterableUtils.toList(quotationRepository.findAll());
         if (quotations != null)

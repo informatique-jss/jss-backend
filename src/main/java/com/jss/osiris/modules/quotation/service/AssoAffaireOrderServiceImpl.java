@@ -169,6 +169,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void reindexAffaires() {
         List<AssoAffaireOrder> affaires = getAssoAffaireOrders();
         if (affaires != null)
@@ -334,7 +335,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 }
 
                 // Handle status change
-                if (announcement.getAnnouncementStatus() != null && announcement.getConfrere() != null) {
+                if (announcement.getId() != null && announcement.getAnnouncementStatus() != null
+                        && announcement.getConfrere() != null) {
 
                     if (announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId()) &&
                             announcement.getAnnouncementStatus().getCode()

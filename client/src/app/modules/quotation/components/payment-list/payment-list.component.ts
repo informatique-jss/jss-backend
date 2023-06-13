@@ -208,13 +208,19 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
   }
 
   openRefundPaymentDialog(payment: PaymentSearchResult) {
-    this.paymentService.getPaymentById(payment.id).subscribe(element => {
-      let dialogPaymentDialogRef = this.refundPaymentDialog.open(RefundPaymentDialogComponent, {
-        width: '100%'
-      });
-      dialogPaymentDialogRef.afterClosed().subscribe(response => {
-        this.paymentService.refundPayment(element, response.tiers, response.affaire).subscribe(response => this.searchPayments());
-      });
-    })
+    if (!this.habilitationService.canRefundPayment())
+      this.appService.displaySnackBar("Non autorisé", true, 10);
+    if (payment && payment.paymentWayId == this.constantService.getPaymentWayInbound().id) {
+      this.paymentService.getPaymentById(payment.id).subscribe(element => {
+        let dialogPaymentDialogRef = this.refundPaymentDialog.open(RefundPaymentDialogComponent, {
+          width: '100%'
+        });
+        dialogPaymentDialogRef.afterClosed().subscribe(response => {
+          this.paymentService.refundPayment(element, response.tiers, response.affaire).subscribe(response => this.searchPayments());
+        });
+      })
+    } else {
+      this.appService.displaySnackBar("Impossible de rembourser un paiement sortant", true, 10);
+    }
   }
 }
