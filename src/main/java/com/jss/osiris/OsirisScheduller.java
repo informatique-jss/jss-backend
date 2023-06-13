@@ -136,7 +136,9 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.active.directory.user.update}")
 	private void activeDirectoryUserUpdate() {
 		try {
+			System.out.println("Start AD update");
 			employeeService.updateUserFromActiveDirectory();
+			System.out.println("End AD update");
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
@@ -163,7 +165,9 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.log.osiris.quotation.reminder}")
 	private void reminderQuotation() {
 		try {
+			System.out.println("Start quotation reminder");
 			quotationService.sendRemindersForQuotation();
+			System.out.println("End quotation reminder");
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
@@ -172,7 +176,9 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.log.osiris.customerOrder.deposit.reminder}")
 	private void reminderCustomerOrderDeposit() {
 		try {
+			System.out.println("Start customer order deposit");
 			customerOrderService.sendRemindersForCustomerOrderDeposit();
+			System.out.println("End customer order deposit");
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
@@ -181,7 +187,9 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.log.osiris.customerOrder.invoice.reminder}")
 	private void reminderCustomerOrderInvoice() {
 		try {
+			System.out.println("Start invoice remidner");
 			invoiceService.sendRemindersForInvoices();
+			System.out.println("End invoice reminder");
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
@@ -190,7 +198,9 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.log.osiris.announcement.confrere.query.reminder}")
 	private void reminderConfrereForAnnouncementQuery() {
 		try {
+			System.out.println("Start reminder for confrere");
 			announcementService.sendRemindersToConfrereForAnnouncement();
+			System.out.println("End reminder for confrere");
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
@@ -199,7 +209,9 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.log.osiris.customer.proof.reading.reminder}")
 	private void reminderClientReviewQuery() {
 		try {
+			System.out.println("Start proof reading reminder");
 			announcementService.sendRemindersToCustomerForProofReading();
+			System.out.println("End proof reading reminder");
 
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
@@ -254,7 +266,9 @@ public class OsirisScheduller {
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.opened}")
 	private void refreshAllOpenFormalities() {
 		try {
+			System.out.println("Start GU refresh opened");
 			guichetUniqueDelegateService.refreshAllOpenFormalities();
+			System.out.println("End GU refresh opened");
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
@@ -263,7 +277,9 @@ public class OsirisScheduller {
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.update.last.hour}")
 	private void refreshFormalitiesFromLastHour() {
 		try {
+			System.out.println("Start GU refresh last hour");
 			guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
+			System.out.println("End GU refresh last hour");
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
@@ -272,7 +288,9 @@ public class OsirisScheduller {
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.central.pay.payment.request.validation.check}")
 	private void checkAllCentralPayPaymentRequests() throws OsirisException {
 		try {
+			System.out.println("Start payment validation check");
 			centralPayPaymentRequestService.checkAllPaymentRequests();
+			System.out.println("End payment validation check");
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
@@ -281,8 +299,10 @@ public class OsirisScheduller {
 	@Scheduled(initialDelay = 500, fixedDelayString = "${azure.form.recognizer.invoice.check}")
 	private void checkInvoiceToAnalyse() {
 		try {
+			System.out.println("Start azure invoice");
 			azureInvoiceService.checkInvoiceToAnalyse();
 			azureReceiptService.checkReceiptToAnalyse();
+			System.out.println("End azure invoice");
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
