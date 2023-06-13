@@ -107,6 +107,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
+  canRefundPayment() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
   canImportInfogreffeInvoice() {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
   }
