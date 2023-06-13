@@ -477,6 +477,13 @@ public class MailHelper {
                                     .getGeographicalApplicableVatForSales(quotation,
                                             constantService.getVatDeductible());
 
+                            Vat competentAuthorityVatPurschase = vatService.getGeographicalApplicableVatForPurshases(
+                                    debour.getCompetentAuthority(),
+                                    constantService.getVatDeductible());
+
+                            if (competentAuthorityVatPurschase.getRate() < vatDebour.getRate())
+                                vatDebour = competentAuthorityVatPurschase;
+
                             Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
                                     : debour.getDebourAmount();
                             if (!debour.getBillingType().getIsNonTaxable() && vatDebour != null) {
