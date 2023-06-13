@@ -539,6 +539,14 @@ public class PricingHelper {
                     Vat competentAuthorityVat = vatService
                             .getGeographicalApplicableVatForPurshases(debour.getCompetentAuthority(),
                                     constantService.getVatDeductible());
+
+                    Vat competentAuthorityVatSales = vatService
+                            .getGeographicalApplicableVatForSales(quotation,
+                                    constantService.getVatDeductible());
+
+                    if (competentAuthorityVatSales.getRate() < competentAuthorityVat.getRate())
+                        competentAuthorityVat = competentAuthorityVatSales;
+
                     if (!debour.getBillingType().getIsNonTaxable() && competentAuthorityVat != null) {
                         Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
                                 : debour.getDebourAmount();
