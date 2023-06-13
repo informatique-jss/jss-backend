@@ -331,7 +331,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 }
 
                 // Handle status change
-                if (announcement.getAnnouncementStatus() != null && announcement.getConfrere() != null) {
+                if (announcement.getId() != null && announcement.getAnnouncementStatus() != null
+                        && announcement.getConfrere() != null) {
 
                     if (announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId()) &&
                             announcement.getAnnouncementStatus().getCode()
