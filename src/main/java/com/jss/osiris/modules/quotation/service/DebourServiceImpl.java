@@ -63,6 +63,7 @@ public class DebourServiceImpl implements DebourService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void reindexDebours() {
         List<Debour> debours = IterableUtils.toList(debourRepository.findAll());
         if (debours != null)

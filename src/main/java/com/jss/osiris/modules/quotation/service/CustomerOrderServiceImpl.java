@@ -770,6 +770,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void reindexCustomerOrder() {
         List<CustomerOrder> customerOrders = IterableUtils.toList(customerOrderRepository.findAll());
         if (customerOrders != null)

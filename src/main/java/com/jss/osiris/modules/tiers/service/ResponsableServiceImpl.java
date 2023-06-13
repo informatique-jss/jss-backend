@@ -54,6 +54,7 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void reindexResponsable() {
         List<Responsable> responsables = IterableUtils.toList(responsableRepository.findAll());
         if (responsables != null)

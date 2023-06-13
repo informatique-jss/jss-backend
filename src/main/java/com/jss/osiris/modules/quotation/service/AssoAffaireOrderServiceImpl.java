@@ -169,6 +169,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void reindexAffaires() {
         List<AssoAffaireOrder> affaires = getAssoAffaireOrders();
         if (affaires != null)

@@ -1102,7 +1102,6 @@ public class MiscellaneousController {
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/index/reindex/all")
-    @Transactional
     public ResponseEntity<Boolean> reindexAll() {
         invoiceService.reindexInvoices();
         tiersService.reindexTiers();
@@ -1116,6 +1115,83 @@ public class MiscellaneousController {
         debourService.reindexDebours();
         directDebitTransfertService.reindexDirectDebitTransfert();
 
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/directDebitTransfert")
+    public ResponseEntity<Boolean> reindexDirectDebitTransfert() {
+        directDebitTransfertService.reindexDirectDebitTransfert();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/debour")
+    public ResponseEntity<Boolean> reindexDebours() {
+        debourService.reindexDebours();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/bankTransfert")
+    public ResponseEntity<Boolean> reindexBankTransfert() {
+        bankTransfertService.reindexBankTransfert();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/affaire")
+    public ResponseEntity<Boolean> reindexAffaire() {
+        affaireService.reindexAffaire();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/assoAffaireOrder")
+    public ResponseEntity<Boolean> reindexAffaires() {
+        assoAffaireOrderService.reindexAffaires();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/customerOrder")
+    public ResponseEntity<Boolean> reindexCustomerOrder() {
+        customerOrderService.reindexCustomerOrder();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/quotation")
+    public ResponseEntity<Boolean> reindexQuotation() {
+        quotationService.reindexQuotation();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/responsable")
+    public ResponseEntity<Boolean> reindexResponsable() {
+        responsableService.reindexResponsable();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/refund")
+    public ResponseEntity<Boolean> reindexRefunds() {
+        refundService.reindexRefunds();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/tiers")
+    public ResponseEntity<Boolean> reindexTiers() {
+        tiersService.reindexTiers();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/invoice")
+    public ResponseEntity<Boolean> reindexInvoices() {
+        invoiceService.reindexInvoices();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 

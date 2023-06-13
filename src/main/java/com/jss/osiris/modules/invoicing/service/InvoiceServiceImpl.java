@@ -439,6 +439,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void reindexInvoices() {
         List<Invoice> invoices = getAllInvoices();
         if (invoices != null)
