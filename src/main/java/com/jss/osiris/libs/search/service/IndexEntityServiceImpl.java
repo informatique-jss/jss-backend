@@ -37,6 +37,8 @@ public class IndexEntityServiceImpl implements IndexEntityService {
     @Override
     public void indexEntity(Object entity, Integer entityId) {
         IndexEntity indexedEntity = new IndexEntity();
+        if (entity.getClass().getSimpleName().contains("HibernateProxy"))
+            entity = Hibernate.unproxy(entity);
 
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
