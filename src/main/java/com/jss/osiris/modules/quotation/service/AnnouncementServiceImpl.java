@@ -236,7 +236,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
-                        if (provision.getAnnouncement() != null
+                        if (provision.getAnnouncement() != null && provision.getAnnouncement().getId() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             currentProvision = provision;
                             break;
@@ -292,7 +292,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
-                        if (provision.getAnnouncement() != null
+                        if (provision.getAnnouncement() != null && provision.getAnnouncement().getId() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             currentProvision = provision;
                             break;
@@ -378,7 +378,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
-                        if (provision.getAnnouncement() != null
+                        if (provision.getAnnouncement() != null && provision.getAnnouncement().getId() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             currentProvision = provision;
                             break;
@@ -473,7 +473,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         List<Announcement> announcements = announcementRepository
                 .getAnnouncementForConfrereReminder(announcementStatusService
-                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE)); 
+                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE));
 
         if (announcements != null && announcements.size() > 0) {
             for (Announcement announcement : announcements) {
