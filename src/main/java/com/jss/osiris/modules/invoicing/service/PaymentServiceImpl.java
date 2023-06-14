@@ -1110,6 +1110,5 @@ public class PaymentServiceImpl implements PaymentService {
             affaire = affaireService.getAffaire(affaire.getId());
         payment = getPayment(payment.getId());
         refundService.generateRefund(tiers, affaire, payment, null, payment.getPaymentAmount(), null, null, null);
-        payment.setIsCancelled(true);
     }
 }
