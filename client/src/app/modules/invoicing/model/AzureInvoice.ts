@@ -1,6 +1,5 @@
 import { CompetentAuthority } from "../../miscellaneous/model/CompetentAuthority";
 import { IAttachment } from "../../miscellaneous/model/IAttachment";
-import { Invoice } from "../../quotation/model/Invoice";
 
 export interface AzureInvoice extends IAttachment {
   id: number;
@@ -25,7 +24,6 @@ export interface AzureInvoice extends IAttachment {
   invoiceTaxTotalConfidence: number;
   invoiceNonTaxableTotalConfidence: number;
   vendorTaxIdConfidence: number;
-  invoices: Invoice[];
   competentAuthority: CompetentAuthority;
   toCheck: boolean;
 }
