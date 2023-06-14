@@ -109,7 +109,7 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
     @Override
     public List<AzureInvoice> getAzureInvoices(Boolean displayOnlyToCheck) {
         if (displayOnlyToCheck)
-            return azureInvoiceRepository.findByToCheckAndIsDisabled(displayOnlyToCheck, false);
+            return azureInvoiceRepository.findTop100ByToCheckAndIsDisabled(displayOnlyToCheck, false);
         return azureInvoiceRepository.findByIsDisabled(false);
     }
 
