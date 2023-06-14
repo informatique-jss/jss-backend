@@ -252,8 +252,9 @@ public class PricingHelper {
                 IQuotation quotation = completeProvision.getAssoAffaireOrder().getCustomerOrder() != null
                         ? completeProvision.getAssoAffaireOrder().getCustomerOrder()
                         : completeProvision.getAssoAffaireOrder().getQuotation();
-                Vat vat = vatService.getGeographicalApplicableVatForSales(quotation,
-                        constantService.getVatDeductible());
+                Vat vat = debour.getInvoiceItem() != null ? debour.getInvoiceItem().getVat()
+                        : vatService.getGeographicalApplicableVatForSales(quotation,
+                                constantService.getVatDeductible());
 
                 if (debour.getBillingType().getIsNonTaxable() || vat == null)
                     total += debourAmount;
