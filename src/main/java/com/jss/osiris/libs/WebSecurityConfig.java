@@ -74,6 +74,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					.antMatchers(HttpMethod.POST, "/quotation/payment/cb/quotation/deposit/validate").permitAll()
 					.antMatchers(HttpMethod.GET, "/quotation/payment/cb/order/invoice").permitAll()
 					.antMatchers(HttpMethod.POST, "/quotation/payment/cb/order/invoice/validate").permitAll()
+					.antMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/validate").permitAll()
 					.anyRequest().authenticated()
 					.and().cors().and().csrf().disable();
 		} else {

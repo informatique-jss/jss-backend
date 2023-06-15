@@ -13,7 +13,7 @@ public interface AzureInvoiceRepository extends QueryCacheCrudRepository<AzureIn
 
         AzureInvoice findByInvoiceId(String invoiceId);
 
-        List<AzureInvoice> findByToCheckAndIsDisabled(Boolean displayOnlyToCheck, Boolean isDisabled);
+        List<AzureInvoice> findTop100ByToCheckAndIsDisabled(Boolean displayOnlyToCheck, Boolean isDisabled);
 
         @Query(nativeQuery = true, value = " " +
                         " select distinct i.* " +
