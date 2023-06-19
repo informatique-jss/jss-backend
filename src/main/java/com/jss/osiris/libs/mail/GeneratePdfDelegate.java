@@ -421,7 +421,7 @@ public class GeneratePdfDelegate {
                                 debour.getCompetentAuthority(),
                                 constantService.getVatDeductible());
 
-                        if (competentAuthorityVatPurschase.getRate() < vatDebour.getRate())
+                        if (vatDebour != null && competentAuthorityVatPurschase.getRate() < vatDebour.getRate())
                             vatDebour = competentAuthorityVatPurschase;
 
                         Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
