@@ -465,25 +465,28 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             // If deposit already set, associate them to invoice
             moveCustomerOrderDepositToInvoiceDeposit(customerOrder, invoice);
 
-            // If customer order is on direct debit, generate it
-            ITiers tiers = invoiceHelper.getCustomerOrder(invoice);
-            PaymentType paymentType = null;
-            if (tiers instanceof Responsable)
-                paymentType = ((Responsable) tiers).getTiers().getPaymentType();
-            if (tiers instanceof Tiers)
-                paymentType = ((Tiers) tiers).getPaymentType();
-            if (tiers instanceof Confrere)
-                paymentType = ((Confrere) tiers).getPaymentType();
+            // If customer order is on direct debit and we bill the tiers, generate it
+            if (documentService.getBillingDocument(customerOrder.getDocuments()).getBillingLabelType().getId()
+                    .equals(constantService.getBillingLabelTypeCustomer().getId())) {
+                ITiers tiers = invoiceHelper.getCustomerOrder(invoice);
+                PaymentType paymentType = null;
+                if (tiers instanceof Responsable)
+                    paymentType = ((Responsable) tiers).getTiers().getPaymentType();
+                if (tiers instanceof Tiers)
+                    paymentType = ((Tiers) tiers).getPaymentType();
+                if (tiers instanceof Confrere)
+                    paymentType = ((Confrere) tiers).getPaymentType();
 
-            if (paymentType != null
-                    && paymentType.getId().equals(constantService.getPaymentTypePrelevement().getId())) {
-                DirectDebitTransfert directDebitTransfert = debitTransfertService
-                        .generateDirectDebitTransfertForOutboundInvoice(invoice);
-                invoice.setDirectDebitTransfert(directDebitTransfert);
+                if (paymentType != null
+                        && paymentType.getId().equals(constantService.getPaymentTypePrelevement().getId())) {
+                    DirectDebitTransfert directDebitTransfert = debitTransfertService
+                            .generateDirectDebitTransfertForOutboundInvoice(invoice);
+                    invoice.setDirectDebitTransfert(directDebitTransfert);
+                }
+
+                invoice.setManualPaymentType(paymentType);
+                invoiceService.addOrUpdateInvoice(invoice);
             }
-
-            invoice.setManualPaymentType(paymentType);
-            invoiceService.addOrUpdateInvoice(invoice);
 
             // Handle appoint
             if (remainingToPayForCurrentCustomerOrder != 0 && customerOrder.getDeposits() != null
