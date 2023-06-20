@@ -44,6 +44,10 @@ export class AzureInvoiceEditComponent implements OnInit {
 
   editInvoice() {
     if (this.invoice && this.invoiceForm.valid) {
+      // Remove UTC delay
+      if (this.invoice.invoiceDate)
+        this.invoice.invoiceDate = new Date(this.invoice.invoiceDate.setHours(12));
+
       this.azureInvoiceService.updateAzureInvoice(this.invoice).subscribe(response => {
         this.appService.openRoute(null, "/invoicing", undefined);
       })
