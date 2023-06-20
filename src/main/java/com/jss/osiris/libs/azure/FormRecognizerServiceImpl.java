@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -136,8 +136,12 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
                                     DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                         } catch (DateTimeParseException e2) {
                             try {
-                                invoiceDate = LocalDate.parse(content,
-                                        DateTimeFormatter.ofPattern("d MMMM u", Locale.FRENCH));
+                                DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder();
+                                builder.parseCaseInsensitive();
+                                builder.appendPattern("d MMMM yyyy");
+                                DateTimeFormatter dateFormat = builder.toFormatter();
+
+                                invoiceDate = LocalDate.parse(content, dateFormat);
                             } catch (DateTimeParseException e3) {
                             }
                         }
