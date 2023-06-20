@@ -319,7 +319,7 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
                         receiptInvoice.setAzureReceipt(azureReceipt);
 
                         if (keyMap.equals("InvoiceTotal") && fieldMap.get(keyMap).getValue() != null) {
-                            currentInvoiceTotal = ((Double) fieldMap.get(keyMap).getValue()).floatValue() / 100f;
+                            currentInvoiceTotal = ((Double) fieldMap.get(keyMap).getValue()).floatValue();
                             receiptInvoice.setInvoiceTotal(currentInvoiceTotal);
                         } else if (keyMap.equals("InvoiceId") && fieldMap.get(keyMap).getValue() != null) {
                             currentInvoiceId = ((String) fieldMap.get(keyMap).getValue()).toUpperCase().trim()
