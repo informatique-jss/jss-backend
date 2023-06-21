@@ -3,7 +3,9 @@ package com.jss.osiris.libs.audit;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.hibernate.EmptyInterceptor;
@@ -71,6 +73,9 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
         return super.onSave(entity, id, state, propertyNames, types);
     }
 
+    List<Object> newFieldList = new ArrayList<>();
+    List<Object> newCodeList = new ArrayList<>();
+
     private void auditEntity(Object[] previousState, Object[] currentState, Object entity,
             Serializable id, String[] propertyNames) {
         if (!entity.getClass().getName().equals(IndexEntity.class.getName()) && id instanceof Integer) {
@@ -80,19 +85,27 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
                 if (oldField != null && WRAPPER_TYPES.contains(oldField.getClass())
                         || newField != null && WRAPPER_TYPES.contains(newField.getClass())) {
                     if (newField != null && oldField == null
-                            || newField == null && oldField != null
-                            || (newField != null && !newField.equals(oldField))) {
-                        Audit audit = new Audit();
-                        audit.setUsername(activeDirectoryHelper.getCurrentUsername());
-                        audit.setDatetime(LocalDateTime.now());
-                        audit.setEntity(entity.getClass().getSimpleName());
-                        audit.setEntityId((Integer) id);
-                        if (newField != null)
-                            audit.setNewValue(newField.toString());
-                        if (oldField != null)
-                            audit.setOldValue(oldField.toString());
-                        audit.setFieldName(propertyNames[i]);
-                        auditService.addOrUpdateAudit(audit);
+                            || newField == null && oldField != null || newField == null && oldField == null
+                            || (newField != null && !newField.equals(oldField) && oldField == null)) {
+
+                        if (newFieldList.contains(newField)) {
+                            continue;
+                        } else if (!newFieldList.contains(newField)) {
+
+                            Audit audit = new Audit();
+                            audit.setUsername(activeDirectoryHelper.getCurrentUsername());
+                            audit.setDatetime(LocalDateTime.now());
+                            audit.setEntity(entity.getClass().getSimpleName());
+                            audit.setEntityId((Integer) id);
+                            if (newField != null)
+                                audit.setNewValue(newField.toString());
+                            if (oldField != null)
+                                audit.setOldValue(oldField.toString());
+                            audit.setFieldName(propertyNames[i]);
+                            auditService.addOrUpdateAudit(audit);
+                            newFieldList.add(newField);
+
+                        }
                     }
                 } else {
                     String oldCode = getCodeValue(oldField);
@@ -100,17 +113,26 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
                     if (newCode != null && oldCode == null
                             || newCode == null && oldCode != null
                             || (newCode != null && !newCode.equals(oldCode))) {
-                        Audit audit = new Audit();
-                        audit.setUsername(activeDirectoryHelper.getCurrentUsername());
-                        audit.setDatetime(LocalDateTime.now());
-                        audit.setEntity(entity.getClass().getSimpleName());
-                        audit.setEntityId((Integer) id);
-                        if (newCode != null)
-                            audit.setNewValue(newCode.toString());
-                        if (oldCode != null)
-                            audit.setOldValue(oldCode.toString());
-                        audit.setFieldName(propertyNames[i]);
-                        auditService.addOrUpdateAudit(audit);
+
+                        if (newCodeList.contains(newField)) {
+                            continue;
+                        } else if (!newCodeList.contains(newField)) {
+
+                            Audit audit = new Audit();
+                            audit.setUsername(activeDirectoryHelper.getCurrentUsername());
+                            audit.setDatetime(LocalDateTime.now());
+                            audit.setEntity(entity.getClass().getSimpleName());
+                            audit.setEntityId((Integer) id);
+                            if (newCode != null)
+                                audit.setNewValue(newCode.toString());
+                            if (oldCode != null)
+                                audit.setOldValue(oldCode.toString());
+                            audit.setFieldName(propertyNames[i]);
+                            auditService.addOrUpdateAudit(audit);
+
+                            newCodeList.add(newField);
+
+                        }
                     }
                 }
             }
