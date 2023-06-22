@@ -211,7 +211,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public void publishAnnouncementsToActuLegale() throws OsirisException {
         List<Announcement> announcements = announcementRepository.getAnnouncementByStatusAndPublicationDateMin(
                 announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE),
-                LocalDate.now().minusDays(3), constantService.getConfrereJssSpel());
+                LocalDate.now().minusDays(2), constantService.getConfrereJssSpel());
         if (announcements != null && announcements.size() > 0)
             for (Announcement announcement : announcements) {
                 Integer affaire = announcementRepository.getAffaireForAnnouncement(announcement.getId());
