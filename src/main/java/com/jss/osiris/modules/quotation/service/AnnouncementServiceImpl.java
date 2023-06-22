@@ -104,7 +104,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public Announcement updateComplexAnnouncementNotice(Announcement announcement, Provision provision)
+    public Announcement updateComplexAnnouncementNotice(Announcement announcement, Provision provision,
+            Boolean isFromUser)
             throws OsirisException {
         // Get announcement PDF
         File complexePdf = null;
@@ -117,7 +118,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 }
 
         if (complexePdf == null)
-            throw new OsirisException(null, "No announncement PDF found");
+            if (!isFromUser)
+                return announcement;
+            else
+                throw new OsirisException(null, "No announncement PDF found");
 
         PdfReader reader;
         FileInputStream in;
@@ -207,7 +211,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public void publishAnnouncementsToActuLegale() throws OsirisException {
         List<Announcement> announcements = announcementRepository.getAnnouncementByStatusAndPublicationDateMin(
                 announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE),
-                LocalDate.now().minusDays(2), constantService.getConfrereJssSpel());
+                LocalDate.now().minusDays(3), constantService.getConfrereJssSpel());
         if (announcements != null && announcements.size() > 0)
             for (Announcement announcement : announcements) {
                 Integer affaire = announcementRepository.getAffaireForAnnouncement(announcement.getId());
