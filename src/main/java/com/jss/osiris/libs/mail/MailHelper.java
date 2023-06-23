@@ -622,7 +622,8 @@ public class MailHelper {
             else {
                 mail.setQuotationValidation("Vous pouvez, si vous le souhaitez, valider ce devis en cliquant ");
                 mail.setQuotationValidationLink(
-                        paymentCbEntryPoint + "/quotation/validate?quotationId=" + quotation.getId());
+                        paymentCbEntryPoint + "/quotation/validate?quotationId=" + quotation.getId()
+                                + "&validationToken=" + quotation.getValidationToken());
                 mail.setPaymentExplaination(" ou régler un acompte pour ce devis d'un montant de "
                         + mail.getPriceTotal() + " € en suivant les instructions ci-dessous.");
             }

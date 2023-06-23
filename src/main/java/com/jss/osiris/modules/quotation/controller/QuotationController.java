@@ -1423,11 +1423,16 @@ public class QuotationController {
   // Payment deposit
 
   @GetMapping(inputEntryPoint + "/payment/cb/quotation/validate")
-  public ResponseEntity<String> validateQuotationFromCustomer(@RequestParam Integer quotationId) {
+  public ResponseEntity<String> validateQuotationFromCustomer(@RequestParam Integer quotationId,
+      @RequestParam String validationToken) {
     try {
       Quotation quotation = quotationService.getQuotation(quotationId);
       if (quotation == null)
         throw new OsirisValidationException("quotation");
+
+      if (validationToken == null || validationToken.equals("")
+          || !validationToken.equals(quotation.getValidationToken()))
+        throw new OsirisValidationException("validationToken");
 
       quotationService.validateQuotationFromCustomer(quotation);
       return new ResponseEntity<String>(
