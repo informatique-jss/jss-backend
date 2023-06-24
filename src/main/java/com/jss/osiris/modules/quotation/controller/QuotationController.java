@@ -1445,7 +1445,7 @@ public class QuotationController {
       globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
       return new ResponseEntity<String>(
           mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Devis n°" + quotationId,
-              "Nous sommes désolé, mais une erreur est survenue lors de votre vaidation.",
+              "Nous sommes désolé, mais une erreur est survenue lors de votre validation.",
               "Veuillez réessayer en utilisant le lien présent dans le mail de notification.", "Bonne journée !"),
           HttpStatus.INTERNAL_SERVER_ERROR);
     }

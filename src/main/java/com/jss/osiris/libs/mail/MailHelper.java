@@ -1018,7 +1018,8 @@ public class MailHelper {
         Invoice invoice = null;
         if (customerOrder.getInvoices() != null && customerOrder.getInvoices().size() > 0)
             for (Invoice invoiceCo : customerOrder.getInvoices())
-                if (invoiceCo.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId()))
+                if (invoiceCo.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
+                        || invoiceCo.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusPayed().getId()))
                     invoice = invoiceCo;
 
         Float remainingToPay = 0f;
