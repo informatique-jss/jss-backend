@@ -667,7 +667,8 @@ public class MailHelper {
         mail.setLabel("Devis n°" + quotation.getId());
         mail.setLabelSubtitle("Nous vous confirmons la réception de votre demande de devis décrite ci-dessous.");
 
-        if (quotation.getAssoAffaireOrders() != null) {
+        if (quotation.getAssoAffaireOrders() != null && quotation.getCustomerOrderOrigin().getId()
+                .equals(constantService.getCustomerOrderOriginOsiris().getId())) {
             if (quotation.getAssoAffaireOrders().size() == 1) {
                 Affaire affaire = quotation.getAssoAffaireOrders().get(0).getAffaire();
                 mail.setExplaination("Ce devis concerne la société "
@@ -701,16 +702,15 @@ public class MailHelper {
                     mail.setCustomerMailAssoAffaireOrders(customerAssos);
             }
 
+            mail.setTotalSubtitle("Ce devis est valable jusqu'au "
+                    + LocalDate.now().withMonth(12).withDayOfMonth(31).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    + " et sous réserve que les prestations à réaliser, au vu des documents transmis, correspondent à la demande de devis. Toute modification entraînera son actualisation.");
+
             computeQuotationPrice(mail, quotation);
         } else {
             mail.setExplaination("Description du devis : " + quotation.getDescription());
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        mail.setTotalSubtitle("Ce devis est valable jusqu'au "
-                + LocalDate.now().withMonth(12).withDayOfMonth(31).format(formatter)
-                + " et sous réserve que les prestations à réaliser, au vu des documents transmis, correspondent à la demande de devis. Toute modification entraînera son actualisation.");
         mail.setExplaination3(
                 "Nos équipes vont vous contacter dans les plus brefs délais pour détailler ensemble votre besoin, si nécessaire.");
         mail.setGreetings("Bonne journée !");
@@ -719,7 +719,8 @@ public class MailHelper {
         mail.setSendToMe(false);
         mail.setMailComputeResult(mailComputeHelper.computeMailForQuotationCreationConfirmation(quotation));
 
-        mail.setSubject("Votre devis n°" + quotation.getId() + " du " + LocalDate.now().format(formatter));
+        mail.setSubject("Votre devis n°" + quotation.getId() + " du "
+                + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
         mailService.addMailToQueue(mail);
     }
