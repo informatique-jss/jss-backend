@@ -761,12 +761,26 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     } else {
       customerAccountingAccount = getCustomerAccountingAccountForITiers(refund.getTiers());
     }
-    generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null, "Remboursement n°" + refund.getId(),
-        refund.getRefundAmount(), null, constantService.getAccountingAccountBankJss(), null, null, null,
-        bankJournal, null, null, null, refund, null);
-    generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null, "Remboursement n°" + refund.getId(),
-        null, refund.getRefundAmount(), customerAccountingAccount, null, null, null,
-        bankJournal, null, null, null, refund, null);
+
+    if (refund.getAppoint() == null) {
+      generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null, "Remboursement n°" + refund.getId(),
+          refund.getRefundAmount(), null, constantService.getAccountingAccountBankJss(), null, null, null,
+          bankJournal, null, null, null, refund, null);
+      generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null, "Remboursement n°" + refund.getId(),
+          null, refund.getRefundAmount(), customerAccountingAccount, null, null, null,
+          bankJournal, null, null, null, refund, null);
+    } else {
+      if (refund.getAppoint().getAppointAmount() > 0) {
+        generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null,
+            "Remboursement n°" + refund.getId(),
+            refund.getRefundAmount(), null, accountingAccountService.getProfitAccountingAccount(), null, null, null,
+            bankJournal, null, null, null, refund, null);
+        generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null,
+            "Remboursement n°" + refund.getId(),
+            null, refund.getRefundAmount(), customerAccountingAccount, null, null, null,
+            bankJournal, null, null, null, refund, null);
+      }
+    }
   }
 
   @Override
