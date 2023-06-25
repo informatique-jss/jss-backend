@@ -124,7 +124,6 @@ import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.quotation.service.FundTypeService;
-import com.jss.osiris.modules.quotation.service.GuichetUniqueDelegateService;
 import com.jss.osiris.modules.quotation.service.JournalTypeService;
 import com.jss.osiris.modules.quotation.service.MailRedirectionTypeService;
 import com.jss.osiris.modules.quotation.service.NoticeTypeFamilyService;
@@ -141,6 +140,7 @@ import com.jss.osiris.modules.quotation.service.RnaDelegateService;
 import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.quotation.service.SireneDelegateService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.GuichetUniqueDelegateService;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
@@ -1885,20 +1885,12 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/formalite-guichet-unique/search")
   public ResponseEntity<List<FormaliteGuichetUnique>> findFormaliteGuichetUniqueServiceByReference(
-      @RequestParam String value, @RequestParam Integer provisionId)
+      @RequestParam String value)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-
-    Provision provision = provisionService.getProvision(provisionId);
-    if (provision == null)
-      throw new OsirisValidationException("ProvisionId");
-
-    if (provision.getAssignedTo() == null)
-      throw new OsirisClientMessageException(
-          "La prestation doit être associée avant de pouvoir rechercher une formalité sur le GU");
 
     List<FormaliteGuichetUnique> formalites = null;
     if (value != null && value.length() > 2)
-      formalites = guichetUniqueDelegateService.getFormalitiesByRefenceMandataire(value, provision.getAssignedTo());
+      formalites = guichetUniqueDelegateService.getFormalitiesByRefenceMandataire(value);
 
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
   }

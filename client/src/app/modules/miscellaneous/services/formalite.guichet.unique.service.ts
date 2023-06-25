@@ -1,7 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
-import { Provision } from '../../quotation/model/Provision';
 import { FormaliteGuichetUnique } from '../../quotation/model/guichet-unique/FormaliteGuichetUnique';
 
 @Injectable({
@@ -13,8 +12,8 @@ export class FormaliteGuichetUniqueService extends AppRestService<FormaliteGuich
     super(http, "quotation");
   }
 
-  getFormaliteGuichetUniqueServiceByReference(value: string, provision: Provision) {
-    return this.getList(new HttpParams().set("value", value).set("provisionId", provision.id), "formalite-guichet-unique/search");
+  getFormaliteGuichetUniqueServiceByReference(value: string) {
+    return this.getList(new HttpParams().set("value", value), "formalite-guichet-unique/search");
   }
 
 }

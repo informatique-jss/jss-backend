@@ -934,19 +934,35 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           .getAccountingAccountDepositProvider();
     }
 
-    generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
-        "Debour n°" + debour.getId(), null, debour.getDebourAmount(), accountingAccountProvider,
-        null, null, customerOrder, bankJournal, null, null, debour, null, null);
+    if (debour.getDebourAmount() > 0) {
+      generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+          "Debour n°" + debour.getId(), null, debour.getDebourAmount(), accountingAccountProvider,
+          null, null, customerOrder, bankJournal, null, null, debour, null, null);
 
-    if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
+      if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
+        generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+            "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
+            debour.getBillingType().getAccountingAccountCharge(),
+            null, null, customerOrder, bankJournal, null, null, debour, null, null);
+      else
+        generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+            "Debour n°" + debour.getId(), debour.getDebourAmount(), null, accountingAccountDepositProvider,
+            null, null, customerOrder, bankJournal, null, null, debour, null, null);
+    } else {
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
-          "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
-          debour.getBillingType().getAccountingAccountCharge(),
+          "Debour n°" + debour.getId(), Math.abs(debour.getDebourAmount()), null, accountingAccountProvider,
           null, null, customerOrder, bankJournal, null, null, debour, null, null);
-    else
-      generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
-          "Debour n°" + debour.getId(), debour.getDebourAmount(), null, accountingAccountDepositProvider,
-          null, null, customerOrder, bankJournal, null, null, debour, null, null);
+
+      if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
+        generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+            "Debour n°" + debour.getId(), null, Math.abs(debour.getDebourAmount()),
+            debour.getBillingType().getAccountingAccountCharge(),
+            null, null, customerOrder, bankJournal, null, null, debour, null, null);
+      else
+        generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+            "Debour n°" + debour.getId(), null, Math.abs(debour.getDebourAmount()), accountingAccountDepositProvider,
+            null, null, customerOrder, bankJournal, null, null, debour, null, null);
+    }
   }
 
   @Override

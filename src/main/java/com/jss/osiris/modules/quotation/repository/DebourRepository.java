@@ -4,11 +4,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.invoicing.model.DebourSearchResult;
 import com.jss.osiris.modules.quotation.model.Debour;
+import com.jss.osiris.modules.quotation.model.Provision;
 
 public interface DebourRepository extends QueryCacheCrudRepository<Debour, Integer> {
 
@@ -53,4 +54,6 @@ public interface DebourRepository extends QueryCacheCrudRepository<Debour, Integ
         @Query(nativeQuery = true, value = "select d.* from Debour d where is_associated = false and d.id_payment_type = :paymentTypeCb and round(CAST (debour_amount as numeric),2) = round(CAST (:amount as numeric),2) and cast(payment_date_time as date)= cast(:date as date) ")
         List<Debour> findNonAssociatedDeboursForDateAndAmount(@Param("date") LocalDate date,
                         @Param("amount") Float amount, @Param("paymentTypeCb") Integer idPaymentTypeCb);
+
+        List<Debour> findByProvision(Provision provision);
 }
