@@ -1007,9 +1007,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                     break;
                                 }
                     } else {
-                        Payment payment = generateDepositOnCustomerOrderForCbPayment(customerOrder,
+                        generateDepositOnCustomerOrderForCbPayment(customerOrder,
                                 centralPayPaymentRequest);
-                        accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment, null);
                         unlockCustomerOrderFromDeposit(customerOrder);
                     }
                 }
