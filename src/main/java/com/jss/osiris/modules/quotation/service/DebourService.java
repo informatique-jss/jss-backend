@@ -7,9 +7,12 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.DebourSearch;
 import com.jss.osiris.modules.invoicing.model.DebourSearchResult;
 import com.jss.osiris.modules.quotation.model.Debour;
+import com.jss.osiris.modules.quotation.model.Provision;
 
 public interface DebourService {
     public Debour getDebour(Integer id);
+
+    public List<Debour> getDeboursForProvision(Provision provision);
 
     public void deleteDebour(Debour debour);
 

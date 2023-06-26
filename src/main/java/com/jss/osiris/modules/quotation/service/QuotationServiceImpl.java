@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,6 +147,7 @@ public class QuotationServiceImpl implements QuotationService {
         boolean isNewQuotation = quotation.getId() == null;
         if (isNewQuotation) {
             quotation.setCreatedDate(LocalDateTime.now());
+            quotation.setValidationToken(UUID.randomUUID().toString());
             quotation = quotationRepository.save(quotation);
         }
 

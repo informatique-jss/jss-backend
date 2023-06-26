@@ -17,6 +17,7 @@ import com.jss.osiris.modules.invoicing.model.DebourSearch;
 import com.jss.osiris.modules.invoicing.model.DebourSearchResult;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Debour;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.repository.DebourRepository;
 
 @Service
@@ -40,6 +41,11 @@ public class DebourServiceImpl implements DebourService {
         if (debour.isPresent())
             return debour.get();
         return null;
+    }
+
+    @Override
+    public List<Debour> getDeboursForProvision(Provision provision) {
+        return debourRepository.findByProvision(provision);
     }
 
     @Override
