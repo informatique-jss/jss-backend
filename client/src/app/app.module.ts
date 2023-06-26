@@ -33,6 +33,7 @@ import { TiersModule } from './modules/tiers/components/tiers/tiers.module';
 import { HeaderComponent } from './routing/header/header.component';
 import { RoutingModule } from './routing/routing.module';
 import { SidenavListComponent } from './routing/sidenav-list/sidenav-list.component';
+
 registerLocaleData(localeFr, 'fr');
 
 @NgModule({
@@ -79,7 +80,7 @@ registerLocaleData(localeFr, 'fr');
     AccountingModule,
     InvoicingModule,
     DashboardModule,
-    ReportingModule
+    ReportingModule,
   ],
   exports: [
   ],

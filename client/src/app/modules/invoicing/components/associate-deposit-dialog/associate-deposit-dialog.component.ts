@@ -332,15 +332,6 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
     return affaires;
   }
 
-  amountToPayCompletely() {
-    let amount = -1;
-    if (this.customerOrder && this.deposit) {
-      let remainingToPay = Math.round((QuotationComponent.computePriceTotal(this.customerOrder) - QuotationComponent.computePayed(this.customerOrder)) * 100) / 100;
-      amount = remainingToPay - Math.round(this.deposit.depositAmount * 100) / 100;
-    }
-    return amount;
-  }
-
   amountRemaining(): number {
     if (this.deposit) {
       let amountRemaining = this.deposit.depositAmount;

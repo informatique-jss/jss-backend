@@ -27,6 +27,14 @@
           </tr>
           <tr>
             <td>
+              <select-payment-deadline [(model)]="constant.paymentDeadLineType30" [form]="constantForm"
+                propertyName="paymentDeadLineType30" label="Délai de paiement - 30 jours" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </select-payment-deadline>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-accounting-journal [(model)]="constant.accountingJournalANouveau" [form]="constantForm"
                 propertyName="accountingJournalANouveau" label="Journal de comptabilité - A Nouveau"
                 [isMandatory]="true" [isDisabled]="!editMode">

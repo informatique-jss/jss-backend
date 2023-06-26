@@ -5,13 +5,13 @@
         <table class="full-width">
           <tr>
             <td>
-              <generic-toggle [(model)]="hideConfidentFields" label="Cacher les champs surs" [form]="invoiceForm"
+              <generic-toggle [(model)]="hideConfidentFields" label="Cacher les champs sûrs" [form]="invoiceForm"
                 propertyName="hideConfidentFields"></generic-toggle>
             </td>
             <td>
               <single-attachment *ngIf="invoice.id" [entity]="invoice"
                 [entityType]="AZURE_INVOICE_ENTITY_TYPE.entityType" [editMode]="false"
-                [attachmentTypeToDisplay]="attachmentTypeInvoice">
+                [attachmentTypeToDisplay]="attachmentTypeProviderInvoice">
               </single-attachment>
             </td>
           </tr>
@@ -69,4 +69,7 @@
 </div>
 <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" (click)="editInvoice()">
   <mat-icon>save</mat-icon>
+</button>
+<button matTooltip="Désactiver la facture" mat-fab color="accent" class="second-fab-button" (click)="disableInvoice()">
+  <mat-icon>close</mat-icon>
 </button>

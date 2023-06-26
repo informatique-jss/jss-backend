@@ -77,4 +77,7 @@ public interface InvoiceService {
 
         public Invoice searchInvoicesByIdDirectDebitTransfert(Integer idToFind);
 
+        public Invoice cancelInvoice(Invoice invoice)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
 }

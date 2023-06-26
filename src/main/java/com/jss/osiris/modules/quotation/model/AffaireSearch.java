@@ -14,6 +14,7 @@ public class AffaireSearch {
     private String label;
     private ArrayList<IWorkflowElement> status;
     private List<Tiers> customerOrders;
+    private Affaire affaire;
     private CompetentAuthority waitedCompetentAuthority;
 
     public List<Tiers> getCustomerOrders() {
@@ -62,6 +63,14 @@ public class AffaireSearch {
 
     public void setWaitedCompetentAuthority(CompetentAuthority waitedCompetentAuthority) {
         this.waitedCompetentAuthority = waitedCompetentAuthority;
+    }
+
+    public Affaire getAffaire() {
+        return affaire;
+    }
+
+    public void setAffaire(Affaire affaire) {
+        this.affaire = affaire;
     }
 
 }

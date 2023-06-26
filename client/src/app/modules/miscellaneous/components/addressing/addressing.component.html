@@ -36,16 +36,15 @@
     </tr>
     <tr *ngIf=" document.isRecipientAffaire && overrideAffaireAddress">
       <td>
-        <generic-input [(model)]="document.affaireRecipient" label="Autres destinataires pour l'affaire"
+        <generic-textarea [(model)]="document.affaireRecipient" label="Autres destinataires pour l'affaire"
           (onFormChange)="changeDocument()" [form]="adressingForm" propertyName="affaireRecipient"
-          [isDisabled]="!editMode" [maxLength]="100">
-        </generic-input>
+          [isDisabled]="!editMode" [maxLength]="100" (filterInput)="limitTextareaSizeAffaire(3)">
+        </generic-textarea>
       </td>
       <td colspan="2">
-        <generic-textarea [(model)]="document.affaireAddress" label="Autres adresses pour l'affaire"
-          [form]="adressingForm" propertyName="affaireAddress" [isDisabled]="!editMode"
-          (onFormChange)="changeDocument()" [maxLength]="100"
-          (filterInput)="limitTextareaSizeAffaire(3)"></generic-textarea>
+        <generic-input [(model)]="document.affaireAddress" label="Autres adresses pour l'affaire" [form]="adressingForm"
+          propertyName="affaireAddress" [isDisabled]="!editMode" (onFormChange)="changeDocument()"
+          [maxLength]="100"></generic-input>
       </td>
       <td [hidden]="!editMode" align="end"><button mat-icon-button color="accent"
           (click)="overrideAffaireAddress=false ; document.affaireRecipient='' ; document.affaireAddress='';changeDocument()">
@@ -72,15 +71,15 @@
     </tr>
     <tr *ngIf="document.isRecipientClient && overrideClientAddress">
       <td>
-        <generic-input [(model)]="document.clientRecipient" label="Autres destinataires pour le client"
+        <generic-textarea [(model)]="document.clientRecipient" label="Autres destinataires pour le client"
           (onFormChange)="changeDocument()" [form]="adressingForm" propertyName="clientRecipient"
-          [isDisabled]="!editMode" [maxLength]="200">
-        </generic-input>
+          [isDisabled]="!editMode" [maxLength]="200" (filterInput)="limitTextareaSizeClient(3)">
+        </generic-textarea>
       </td>
       <td colspan="2">
-        <generic-textarea [(model)]="document.clientAddress" label="Autres adresses pour le client"
-          [form]="adressingForm" propertyName="clientAddress" [isDisabled]="!editMode" (onFormChange)="changeDocument()"
-          [maxLength]="100" (filterInput)="limitTextareaSizeClient(3)"></generic-textarea>
+        <generic-input [(model)]="document.clientAddress" label="Autres adresses pour le client" [form]="adressingForm"
+          propertyName="clientAddress" [isDisabled]="!editMode" (onFormChange)="changeDocument()"
+          [maxLength]="100"></generic-input>
       </td>
       <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
           (click)="overrideClientAddress=false ; document.clientAddress='' ; document.clientRecipient='';changeDocument()">

@@ -1,9 +1,8 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { debounceTime, filter, switchMap, tap } from 'rxjs';
 import { GUICHET_UNIQUE_BASE_URL } from 'src/app/libs/Constants';
-import { Provision } from 'src/app/modules/quotation/model/Provision';
 import { FormaliteGuichetUnique } from 'src/app/modules/quotation/model/guichet-unique/FormaliteGuichetUnique';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { FormaliteGuichetUniqueService } from '../../../services/formalite.guichet.unique.service';
@@ -16,7 +15,6 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 })
 export class ChipsFormaliteGuichetUniqueComponent extends GenericChipsComponent<FormaliteGuichetUnique> implements OnInit {
 
-  @Input() provision: Provision | undefined;
   formaliteGuichetUniques: FormaliteGuichetUnique[] = [] as Array<FormaliteGuichetUnique>;
   filteredFormaliteGuichetUniques: FormaliteGuichetUnique[] | undefined;
   @ViewChild('formaliteGuichetUniqueInput') formaliteGuichetUniqueInput: ElementRef<HTMLInputElement> | undefined;
@@ -38,7 +36,7 @@ export class ChipsFormaliteGuichetUniqueComponent extends GenericChipsComponent<
           this.filteredFormaliteGuichetUniques = [];
           this.modelChange.emit(this.model);
         }),
-        switchMap(value => this.formaliteGuichetUniqueService.getFormaliteGuichetUniqueServiceByReference(value, this.provision!)
+        switchMap(value => this.formaliteGuichetUniqueService.getFormaliteGuichetUniqueServiceByReference(value)
         )
       ).subscribe(response => {
         this.filteredFormaliteGuichetUniques = response;

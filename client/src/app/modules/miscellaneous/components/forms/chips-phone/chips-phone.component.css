@@ -1,0 +1,4 @@
+.always-clickable {
+  pointer-events: auto !important;
+  cursor: pointer;
+}

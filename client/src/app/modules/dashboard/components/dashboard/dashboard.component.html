@@ -18,7 +18,8 @@
           <div class="dashboard-box-handle" cdkDragHandle>
             <mat-icon color="accent" matTooltip="Déplacer le widget">zoom_out_map</mat-icon>
           </div>
-        </div>
+        </div><ordering-list class="dashboard-box-component" *ngIf="item==ORDERS_AWAITING_DEPOSIT"
+        [orderingSearch]="orderingSearchToAwaitingDeposit" [isForDashboard]="true"></ordering-list>
         <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_IN_PROGRESS"
           [affaireSearch]="affaireSearchInProgress" [isForDashboard]="true"></provision-list>
         <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_TO_DO" [affaireSearch]="affaireSearchToDo"

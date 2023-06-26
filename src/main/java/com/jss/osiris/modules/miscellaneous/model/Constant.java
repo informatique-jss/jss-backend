@@ -31,6 +31,7 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePer
 import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
+import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
 import com.jss.osiris.modules.tiers.model.TiersType;
@@ -213,6 +214,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_redacted_by_jss")
 	private BillingType billingTypeRedactedByJss;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_payment_deadline_type")
+	private PaymentDeadlineType paymentDeadLineType30;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_balo_package")
@@ -2053,4 +2058,11 @@ public class Constant implements Serializable, IId {
 		this.provisionFamilyTypeRegister = provisionFamilyTypeRegister;
 	}
 
+	public PaymentDeadlineType getPaymentDeadLineType30() {
+		return paymentDeadLineType30;
+	}
+
+	public void setPaymentDeadLineType30(PaymentDeadlineType paymentDeadLineType30) {
+		this.paymentDeadLineType30 = paymentDeadLineType30;
+	}
 }

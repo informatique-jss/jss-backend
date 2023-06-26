@@ -25,6 +25,8 @@ export interface InvoiceSearchResult {
   paymentId: string;
   remainingToPay: number;
   invoiceRecipient: string;
+  isInvoiceFromProvider: boolean;
+  isProviderCreditNote: boolean;
 }
 
 

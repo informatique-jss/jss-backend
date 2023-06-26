@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { CustomerOrder } from '../../quotation/model/CustomerOrder';
 import { Invoice } from '../../quotation/model/Invoice';
@@ -48,5 +49,12 @@ export class PaymentService extends AppRestService<Payment>{
 
   addCheckPayment(payment: Payment) {
     return this.postItem(new HttpParams(), "payment/check/add", payment);
+  }
+
+  refundPayment(payment: Payment, tiers: IndexEntity, affaire: IndexEntity) {
+    if (affaire)
+      return this.get(new HttpParams().set("paymentId", payment.id).set("tiersId", tiers.entityId).set("affaireId", affaire.entityId), "refund/payment", "Paiement remboursé", "Erreur lors du remboursement du paiement");
+    else
+      return this.get(new HttpParams().set("paymentId", payment.id).set("tiersId", tiers.entityId).set("affaireId", 1), "refund/payment", "Paiement remboursé", "Erreur lors du remboursement du paiement");
   }
 }

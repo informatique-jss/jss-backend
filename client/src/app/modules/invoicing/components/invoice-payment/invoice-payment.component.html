@@ -1,6 +1,7 @@
 <h3>Paiements associés :</h3>
 <invoice-payment-table [invoice]="invoice"></invoice-payment-table>
-<div *ngIf="invoice.invoiceStatus.id==invoiceStatusSend.id || invoice.invoiceStatus.id==invoiceStatusReceived.id">
+<div
+  *ngIf="invoice.invoiceStatus.id==invoiceStatusSend.id || invoice.invoiceStatus.id==invoiceStatusReceived.id || invoice.invoiceStatus.id==invoiceStatusCreditNoteReceived.id">
   <div class="advise" *ngIf="advisedPayment && advisedPayment.length>0">
     <h3>Paiements conseillés par Osiris :</h3>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="advisedPayment"
@@ -12,7 +13,7 @@
     <payment-list [overrideIconAction]="'merge_type'" [overrideTooltipAction]="'Associer le paiement'"
       (actionBypass)="openAssociationDialog($event)"></payment-list>
   </div>
-  <div class=" advise" *ngIf="displayAddCashPayment && !invoice.isInvoiceFromProvider">
+  <div class=" advise" *ngIf="displayAddCashPayment && !invoice.isInvoiceFromProvider && !invoice.isProviderCreditNote">
     <h3>Déclarer un paiement en espèces</h3>
     <div>
       <form [formGroup]="invoicePaymentForm">

@@ -42,7 +42,7 @@ export class AzureInvoiceListComponent implements OnInit {
     this.tableAction.push({
       actionIcon: "edit", actionName: "Contrôler la facture", actionLinkFunction: (action: SortTableAction, element: any) => {
         if (element)
-          return ['/invoicing/azure/edit/', element.id];
+          return ['/invoicing/azure/edit', element.id];
         return undefined;
       }, display: true,
     } as SortTableAction);

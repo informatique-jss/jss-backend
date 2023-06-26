@@ -5,7 +5,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { GUICHET_UNIQUE_BASE_URL } from 'src/app/libs/Constants';
-import { Provision } from 'src/app/modules/quotation/model/Provision';
 import { FormaliteGuichetUnique } from 'src/app/modules/quotation/model/guichet-unique/FormaliteGuichetUnique';
 import { AppService } from 'src/app/services/app.service';
 import { UserNoteService } from 'src/app/services/user.notes.service';
@@ -23,8 +22,6 @@ export class AutocompleteGuichetUniqueFormaliteComponent extends GenericAutocomp
  */
   @Input() label: string = "Label";
 
-  @Input() provision: Provision | undefined;
-
   constructor(private formBuild: UntypedFormBuilder,
     private formaliteGuichetUniqueService: FormaliteGuichetUniqueService,
     private appService: AppService,
@@ -33,7 +30,7 @@ export class AutocompleteGuichetUniqueFormaliteComponent extends GenericAutocomp
   }
 
   searchEntities(value: string): Observable<FormaliteGuichetUnique[]> {
-    return this.formaliteGuichetUniqueService.getFormaliteGuichetUniqueServiceByReference(value, this.provision!);
+    return this.formaliteGuichetUniqueService.getFormaliteGuichetUniqueServiceByReference(value);
   }
 
   mapResponse(response: FormaliteGuichetUnique[]): FormaliteGuichetUnique[] {

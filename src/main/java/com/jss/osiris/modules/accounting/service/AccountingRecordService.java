@@ -37,6 +37,9 @@ public interface AccountingRecordService {
         public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
+        public void generateAccountingRecordsForPurshaseOnInvoiceRefund(Invoice invoice)
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
+
         public void generateAccountingRecordsForPurshaseOnInvoiceGeneration(Invoice invoice) throws OsirisException;
 
         public void generateAccountingRecordsForProviderInvoiceRefund(Invoice invoice, Payment payment)
@@ -150,7 +153,8 @@ public interface AccountingRecordService {
 
         public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException;
 
-        public void letterWaitingRecords(AccountingRecord record, AccountingRecord counterPart) throws OsirisException;
+        public void letterCounterPartRecords(AccountingRecord record, AccountingRecord counterPart)
+                        throws OsirisException;
 
         public void letterCreditNoteAndInvoice(Invoice invoice, Invoice creditNote) throws OsirisException;
 

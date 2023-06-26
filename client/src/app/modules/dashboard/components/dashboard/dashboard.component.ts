@@ -1,7 +1,7 @@
 import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, FORMALITE_STATUS_WAITING_DOCUMENT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED,CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, FORMALITE_STATUS_WAITING_DOCUMENT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { PaymentSearch } from 'src/app/modules/invoicing/model/PaymentSearch';
 import { RefundSearch } from 'src/app/modules/invoicing/model/RefundSearch';
@@ -79,10 +79,12 @@ export class DashboardComponent implements OnInit {
   ORDER_OPEN = "Mes commandes ouvertes";
   ORDER_BEING_PROCESSED = "Mes commandes en cours";
   ORDER_TO_BILLED = "Commandes en attente de facturation";
+  ORDERS_AWAITING_DEPOSIT = "Mes commandes en attente d’acompte";
 
   orderingSearchOpen: OrderingSearch = {} as OrderingSearch;
   orderingSearchBeingProcessed: OrderingSearch = {} as OrderingSearch;
   orderingSearchToBilled: OrderingSearch = {} as OrderingSearch;
+  orderingSearchToAwaitingDeposit: OrderingSearch = {} as OrderingSearch;
 
   QUOTATION_OPEN = "Mes devis ouverts";
   QUOTATION_TO_VERIFY = "Mes devis à vérifier";
@@ -107,7 +109,7 @@ export class DashboardComponent implements OnInit {
   PROVISION_BOARD = "Suivi d'équipe";
 
   allItems: Array<string> = [this.QUOTATION_REFUSED, this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY,
-  this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDER_OPEN,
+  this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED,this.ORDERS_AWAITING_DEPOSIT, this.ORDER_OPEN,
   this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY,
   this.AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO, this.QUOTATION_SENT,
   this.PROVISION_BOARD].sort((a, b) => a.localeCompare(b));
@@ -189,6 +191,9 @@ export class DashboardComponent implements OnInit {
 
         this.orderingSearchBeingProcessed.assignedToEmployee = this.currentEmployee!;
         this.orderingSearchBeingProcessed.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_BEING_PROCESSED)!];
+
+        this.orderingSearchToAwaitingDeposit.assignedToEmployee = this.currentEmployee!;
+        this.orderingSearchToAwaitingDeposit.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT)!];
 
         this.orderingSearchToBilled.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_TO_BILLED)!];
 

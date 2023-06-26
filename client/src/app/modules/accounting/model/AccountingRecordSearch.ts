@@ -9,7 +9,6 @@ export interface AccountingRecordSearch {
   startDate: Date | undefined;
   endDate: Date | undefined;
   hideLettered: boolean;
-  responsableId: number;
   tiersId: number;
   confrereId: number;
 

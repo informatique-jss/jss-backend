@@ -22,7 +22,6 @@ import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.PaymentTypeService;
-import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Formalite;
@@ -32,7 +31,6 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.CartRate;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.repository.guichetUnique.FormaliteGuichetUniqueRepository;
 import com.jss.osiris.modules.quotation.service.DebourService;
-import com.jss.osiris.modules.quotation.service.GuichetUniqueDelegateService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 
 @Service
@@ -65,6 +63,14 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     @Autowired
     NotificationService notificationService;
 
+    private String cartStatusPayed = "PAID";
+    private String cartStatusRefund = "REFUNDED";
+
+    @Override
+    public FormaliteGuichetUnique addOrUpdateFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique) {
+        return formaliteGuichetUniqueRepository.save(formaliteGuichetUnique);
+    }
+
     @Override
     public FormaliteGuichetUnique getFormaliteGuichetUnique(Integer id) {
         Optional<FormaliteGuichetUnique> formaliteGuichetUnique = formaliteGuichetUniqueRepository.findById(id);
@@ -75,19 +81,17 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public FormaliteGuichetUnique refreshFormaliteGuichetUnique(Integer id, Employee employee, Formalite formalite)
+    public FormaliteGuichetUnique refreshFormaliteGuichetUnique(Integer id, Formalite formalite)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-        if (employee == null)
-            throw new OsirisValidationException("Employee");
         if (id == null)
             throw new OsirisValidationException("id");
 
-        FormaliteGuichetUnique formaliteGuichetUnique = guichetUniqueDelegateService.getFormalityById(id, employee);
+        FormaliteGuichetUnique formaliteGuichetUnique = guichetUniqueDelegateService.getFormalityById(id);
         FormaliteGuichetUnique originalFormalite = getFormaliteGuichetUnique(id);
         boolean cartChange = false;
 
         if (originalFormalite == null) {
-            originalFormalite = formaliteGuichetUniqueRepository.save(formaliteGuichetUnique);
+            originalFormalite = addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
             if (originalFormalite.getCarts() != null && originalFormalite.getCarts().size() > 0)
                 cartChange = true;
         } else {
@@ -128,7 +132,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     }
                 }
             }
-            formaliteGuichetUniqueRepository.save(originalFormalite);
+            addOrUpdateFormaliteGuichetUnique(originalFormalite);
 
             if (cartChange)
                 refreshDeboursFromFormalite(originalFormalite);
@@ -136,18 +140,22 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             if (originalFormalite != null && originalFormalite.getCarts() != null
                     && originalFormalite.getCarts().size() > 0)
                 for (Cart cart : originalFormalite.getCarts()) {
-                    if (cart.getStatus().equals("PAID") && cart.getInvoice() == null
+                    if (cart.getInvoice() == null
                             && cart.getFormaliteGuichetUnique().getFormalite() != null
                             && cart.getFormaliteGuichetUnique().getFormalite().getProvision() != null) {
-                        cart.setInvoice(generateInvoiceFromCart(cart,
-                                cart.getFormaliteGuichetUnique().getFormalite().getProvision().get(0)));
+                        if (cart.getStatus().equals(cartStatusPayed))
+                            cart.setInvoice(generateInvoiceFromCart(cart,
+                                    cart.getFormaliteGuichetUnique().getFormalite().getProvision().get(0)));
+                        else if (cart.getStatus().equals(cartStatusRefund))
+                            cart.setInvoice((generateCreditNoteFromCart(cart,
+                                    cart.getFormaliteGuichetUnique().getFormalite().getProvision().get(0))));
                     }
                 }
         }
 
         if (formalite != null) {
             originalFormalite.setFormalite(formalite);
-            formaliteGuichetUniqueRepository.save(originalFormalite);
+            addOrUpdateFormaliteGuichetUnique(originalFormalite);
         }
         return originalFormalite;
     }
@@ -156,23 +164,46 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (formalite != null && formalite.getCarts() != null && formalite.getCarts().size() > 0)
             for (Cart cart : formalite.getCarts()) {
-                if (cart.getStatus().equals("PAID") && cart.getFormaliteGuichetUnique().getFormalite() != null
+                if ((cart.getStatus().equals(cartStatusPayed) || cart.getStatus().equals(cartStatusRefund))
+                        && cart.getFormaliteGuichetUnique().getFormalite() != null
                         && cart.getFormaliteGuichetUnique().getFormalite().getProvision() != null
                         && cart.getFormaliteGuichetUnique().getFormalite().getProvision().size() > 0) {
                     Provision provision = cart.getFormaliteGuichetUnique().getFormalite().getProvision().get(0);
-                    if (cart.getCartRates() != null && cart.getCartRates().size() > 0
+                    if (cart.getTotal() != 0 && cart.getCartRates() != null && cart.getCartRates().size() > 0
                             && (cart.getCartRates().get(0).getDebours() == null
                                     || cart.getCartRates().get(0).getDebours().size() == 0)) {
-                        if (cart.getCartRates() != null)
-                            for (CartRate cartRate : cart.getCartRates()) {
-                                if (cartRate.getAmount() > 0) {
-                                    Debour newDebour = getDebourFromCart(cart, cartRate, provision);
-                                    if (provision.getDebours() == null)
-                                        provision.setDebours(new ArrayList<Debour>());
-                                    provision.getDebours().add(newDebour);
-                                    provisionService.addOrUpdateProvision(provision);
+                        if (cart.getStatus().equals(cartStatusPayed)) {
+                            if (cart.getCartRates() != null) {
+                                for (CartRate cartRate : cart.getCartRates()) {
+                                    if (cartRate.getAmount() != 0) {
+                                        Debour newDebour = getDebourFromCart(cart, cartRate, provision);
+                                        if (provision.getDebours() == null)
+                                            provision.setDebours(new ArrayList<Debour>());
+                                        provision.getDebours().add(newDebour);
+                                        provisionService.addOrUpdateProvision(provision);
+                                    }
                                 }
                             }
+                        } else if (cart.getStatus().equals(cartStatusRefund)) {
+                            // Aggregate CartRate on first one to take account of positive / negatif rates
+                            // possibles
+                            if (cart.getCartRates() != null) {
+                                CartRate cartRateFinal = null;
+                                for (CartRate cartRate : cart.getCartRates()) {
+                                    if (cartRate.getAmount() != 0) {
+                                        if (cartRateFinal == null)
+                                            cartRateFinal = cartRate;
+                                        else
+                                            cartRateFinal
+                                                    .setAmount(cartRateFinal.getAmount() + cartRate.getAmount());
+                                    }
+                                }
+                                Debour newDebour = getDebourFromCart(cart, cartRateFinal, provision);
+                                provision.setDebours(new ArrayList<Debour>());
+                                provision.getDebours().add(newDebour);
+                                provisionService.addOrUpdateProvision(provision);
+                            }
+                        }
                     }
                 }
             }
@@ -197,9 +228,15 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         newDebour.setDebourAmount(Float.parseFloat(cartRate.getAmount() + "") / 100f);
         newDebour.setInvoicedAmount(newDebour.getDebourAmount());
         newDebour
-                .setPaymentDateTime(LocalDateTime.parse(cart.getPaymentDate(), DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+                .setPaymentDateTime(
+                        LocalDateTime.parse(cart.getPaymentDate() != null ? cart.getPaymentDate() : cart.getUpdated(),
+                                DateTimeFormatter.ISO_OFFSET_DATE_TIME));
 
-        PaymentType paymentType = paymentTypeService.getPaymentTypeByCodeInpi(cart.getPaymentType());
+        PaymentType paymentType = null;
+        if (cart.getPaymentType() == null && cart.getStatus().equals(cartStatusRefund))
+            paymentType = constantService.getPaymentTypeAccount();
+        else
+            paymentType = paymentTypeService.getPaymentTypeByCodeInpi(cart.getPaymentType());
 
         if (paymentType == null)
             throw new OsirisValidationException("Unable to find payment type for INPI code "
@@ -230,18 +267,62 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 LocalDate.parse(cart.getPaymentDate(), DateTimeFormatter.ISO_OFFSET_DATE_TIME));
         for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
             if (asso.getId().equals(provision.getAssoAffaireOrder().getId()))
-                for (Provision inProvision : asso.getProvisions())
-                    if (provision.getId().equals(inProvision.getId()) && inProvision.getDebours() != null
-                            && inProvision.getDebours().size() > 0)
-                        for (Debour debour : inProvision.getDebours()) {
-                            for (CartRate cartRate : cart.getCartRates()) {
-                                if (debour.getCartRate() != null
-                                        && debour.getCartRate().getId().equals(cartRate.getId())) {
-                                    debour.setNonTaxableAmount(0f);
+                for (Provision inProvision : asso.getProvisions()) {
+                    if (provision.getId().equals(inProvision.getId())) {
+                        List<Debour> debours = debourService.getDeboursForProvision(provision);
+                        if (debours != null && debours.size() > 0)
+                            for (Debour debour : debours) {
+                                for (CartRate cartRate : cart.getCartRates()) {
+                                    if (debour.getCartRate() != null
+                                            && debour.getCartRate().getId().equals(cartRate.getId())) {
+                                        debour.setNonTaxableAmount(0f);
+                                    }
                                 }
                             }
-                        }
+                    }
+                }
 
         return invoiceService.addOrUpdateInvoiceFromUser(invoice);
+    }
+
+    private Invoice generateCreditNoteFromCart(Cart cart, Provision provision)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        Invoice invoice = new Invoice();
+        invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
+        invoice.setCustomerOrderForInboundInvoice(provision.getAssoAffaireOrder().getCustomerOrder());
+        invoice.setManualAccountingDocumentNumber(cart.getMipOrderNum() + "/" + cart.getId());
+
+        PaymentType paymentType = null;
+        if (cart.getPaymentType() == null && cart.getStatus().equals(cartStatusRefund))
+            paymentType = constantService.getPaymentTypeAccount();
+        else
+            paymentType = paymentTypeService.getPaymentTypeByCodeInpi(cart.getPaymentType());
+
+        if (paymentType == null)
+            throw new OsirisValidationException("Unable to find payment type for INPI code "
+                    + cart.getPaymentType() + ". Please fill referential with correct value");
+        invoice.setManualPaymentType(paymentType);
+
+        invoice.setManualAccountingDocumentDate(
+                LocalDate.parse(cart.getPaymentDate() != null ? cart.getPaymentDate() : cart.getUpdated(),
+                        DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
+            if (asso.getId().equals(provision.getAssoAffaireOrder().getId()))
+                for (Provision inProvision : asso.getProvisions()) {
+                    if (provision.getId().equals(inProvision.getId())) {
+                        List<Debour> debours = debourService.getDeboursForProvision(provision);
+                        if (debours != null && debours.size() > 0)
+                            for (Debour debour : debours) {
+                                for (CartRate cartRate : cart.getCartRates()) {
+                                    if (debour.getCartRate() != null
+                                            && debour.getCartRate().getId().equals(cartRate.getId())) {
+                                        debour.setNonTaxableAmount(0f);
+                                    }
+                                }
+                            }
+                    }
+                }
+
+        return invoiceService.generateInvoiceCreditNote(invoice, null);
     }
 }

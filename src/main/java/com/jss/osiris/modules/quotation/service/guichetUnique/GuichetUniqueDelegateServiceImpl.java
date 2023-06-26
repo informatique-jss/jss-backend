@@ -1,11 +1,10 @@
-package com.jss.osiris.modules.quotation.service;
+package com.jss.osiris.modules.quotation.service.guichetUnique;
 
 import java.net.HttpCookie;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,18 +23,23 @@ import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.GuichetUniqueLogin;
-import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
+import com.jss.osiris.modules.quotation.service.FormaliteService;
 
 @Service
 public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateService {
 
     @Value("${guichet.unique.entry.point}")
     private String guichetUniqueEntryPoint;
+
+    @Value("${guichet.unique.password}")
+    private String guichetUniquePassword;
+
+    @Value("${guichet.unique.login}")
+    private String guichetUniqueLogin;
 
     @Autowired
     FormaliteGuichetUniqueService formaliteGuichetUniqueService;
@@ -53,36 +57,30 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     private String ssoRequestUrl = "/sso";
     private String formalitiesRequestUrl = "/formalities";
 
-    private HashMap<Integer, String> bearerValues = new HashMap<Integer, String>();
-    private HashMap<Integer, LocalDateTime> bearerExpireDateTimes = new HashMap<Integer, LocalDateTime>();
+    private String bearerValue = null;
+    private LocalDateTime bearerExpireDateTime = LocalDateTime.now().minusYears(100);
 
-    HttpHeaders createHeaders(Employee employee) throws OsirisException, OsirisClientMessageException {
-        if (bearerValues.get(employee.getId()) == null || bearerExpireDateTimes.get(employee.getId()) == null
-                || bearerExpireDateTimes.get(employee.getId()).isBefore(LocalDateTime.now()))
-            loginUser(employee);
+    HttpHeaders createHeaders() throws OsirisException, OsirisClientMessageException {
+        if (bearerValue == null || bearerExpireDateTime.isBefore(LocalDateTime.now()))
+            loginUser();
         return new HttpHeaders() {
             {
-                add("Cookie", "BEARER=" + bearerValues.get(employee.getId()));
+                add("Cookie", "BEARER=" + bearerValue);
                 setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
                 setContentType(MediaType.APPLICATION_JSON);
             }
         };
     }
 
-    private void loginUser(Employee employee) throws OsirisException, OsirisClientMessageException {
+    private void loginUser() throws OsirisException, OsirisClientMessageException {
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         GuichetUniqueLogin login = new GuichetUniqueLogin();
-        employee = employeeService.getEmployee(employee.getId());
 
-        if (employee.getInpiLogin() == null || employee.getInpiPassword() == null)
-            throw new OsirisClientMessageException("Login INPI non renseigné pour l'utilisateur "
-                    + employee.getFirstname() + " " + employee.getLastname());
-
-        login.setUsername(employee.getInpiLogin());
-        login.setPassword(employee.getInpiPassword());
+        login.setUsername(guichetUniqueLogin);
+        login.setPassword(guichetUniquePassword);
 
         ResponseEntity<GuichetUniqueLogin> res;
         try {
@@ -91,43 +89,39 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
                     new HttpEntity<Object>(login, headers),
                     GuichetUniqueLogin.class);
         } catch (Exception e) {
-            throw new OsirisClientMessageException("Impossible de se connecter pour l'utilisateur "
-                    + employee.getFirstname() + " " + employee.getLastname() + ". Merci de vérifier les identifiants");
+            throw new OsirisClientMessageException("Impossible de se connecter pour l'utilisateur " + guichetUniqueLogin
+                    + ". Merci de vérifier les identifiants");
         }
 
         if (res.getHeaders() != null && res.getHeaders().getFirst(HttpHeaders.SET_COOKIE) != null) {
             List<HttpCookie> cookies = HttpCookie.parse(res.getHeaders().getFirst(HttpHeaders.SET_COOKIE));
-            bearerValues.put(employee.getId(), cookies.get(0).getValue());
-            bearerExpireDateTimes.put(employee.getId(),
-                    LocalDateTime.now().plusSeconds(cookies.get(0).getMaxAge()).minusMinutes(10));
+            bearerValue = cookies.get(0).getValue();
+            bearerExpireDateTime = LocalDateTime.now().plusSeconds(cookies.get(0).getMaxAge()).minusMinutes(10);
         } else {
             throw new OsirisException(null, "No bearer cookie found in response");
         }
     }
 
     @Override
-    public List<FormaliteGuichetUnique> getFormalitiesByDate(LocalDateTime createdAfter, LocalDateTime updatedAfter,
-            Employee employee)
+    public List<FormaliteGuichetUnique> getFormalitiesByDate(LocalDateTime createdAfter, LocalDateTime updatedAfter)
             throws OsirisException, OsirisClientMessageException {
         List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
         int page = 1;
-        List<FormaliteGuichetUnique> inFormalites = getFormalitiesByDatePaginated(page, createdAfter, updatedAfter,
-                employee);
+        List<FormaliteGuichetUnique> inFormalites = getFormalitiesByDatePaginated(page, createdAfter, updatedAfter);
         while (inFormalites.size() > 0) {
             formalites.addAll(inFormalites);
             page++;
-            inFormalites = getFormalitiesByDatePaginated(page, createdAfter, updatedAfter, employee);
+            inFormalites = getFormalitiesByDatePaginated(page, createdAfter, updatedAfter);
         }
 
         return formalites;
     }
 
     private List<FormaliteGuichetUnique> getFormalitiesByDatePaginated(int page, LocalDateTime createdAfter,
-            LocalDateTime updatedAfter,
-            Employee employee)
+            LocalDateTime updatedAfter)
             throws OsirisException, OsirisClientMessageException {
         SSLHelper.disableCertificateValidation();
-        HttpHeaders headers = createHeaders(employee);
+        HttpHeaders headers = createHeaders();
 
         ResponseEntity<List<FormaliteGuichetUnique>> response = new RestTemplate().exchange(
                 guichetUniqueEntryPoint + formalitiesRequestUrl + "?page=" + page + "&created[after]="
@@ -144,26 +138,24 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     }
 
     @Override
-    public List<FormaliteGuichetUnique> getFormalitiesByRefenceMandataire(String reference, Employee employee)
+    public List<FormaliteGuichetUnique> getFormalitiesByRefenceMandataire(String reference)
             throws OsirisException, OsirisClientMessageException {
         List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
         int page = 1;
-        List<FormaliteGuichetUnique> inFormalites = getFormalitiesByRefenceMandatairePaginated(page, reference,
-                employee);
+        List<FormaliteGuichetUnique> inFormalites = getFormalitiesByRefenceMandatairePaginated(page, reference);
         while (inFormalites.size() > 0) {
             formalites.addAll(inFormalites);
             page++;
-            inFormalites = getFormalitiesByRefenceMandatairePaginated(page, reference, employee);
+            inFormalites = getFormalitiesByRefenceMandatairePaginated(page, reference);
         }
 
         return formalites;
     }
 
-    private List<FormaliteGuichetUnique> getFormalitiesByRefenceMandatairePaginated(int page, String reference,
-            Employee employee)
+    private List<FormaliteGuichetUnique> getFormalitiesByRefenceMandatairePaginated(int page, String reference)
             throws OsirisException, OsirisClientMessageException {
         SSLHelper.disableCertificateValidation();
-        HttpHeaders headers = createHeaders(employee);
+        HttpHeaders headers = createHeaders();
 
         ResponseEntity<List<FormaliteGuichetUnique>> response = new RestTemplate().exchange(
                 guichetUniqueEntryPoint + formalitiesRequestUrl + "?page=" + page + "&search=" + reference,
@@ -179,10 +171,9 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
 
     @Override
     @SuppressWarnings({ "all" })
-    public FormaliteGuichetUnique getFormalityById(Integer id, Employee employee)
-            throws OsirisException, OsirisClientMessageException {
+    public FormaliteGuichetUnique getFormalityById(Integer id) throws OsirisException, OsirisClientMessageException {
         SSLHelper.disableCertificateValidation();
-        HttpHeaders headers = createHeaders(employee);
+        HttpHeaders headers = createHeaders();
 
         ResponseEntity<FormaliteGuichetUnique> response = new RestTemplate().exchange(
                 guichetUniqueEntryPoint + formalitiesRequestUrl + "/" + id,
@@ -200,16 +191,11 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     @Override
     public void refreshFormalitiesFromLastHour()
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-        List<Employee> employees = employeeService.getEmployees();
-        for (Employee employee : employees) {
-            if (employee.getInpiLogin() != null && employee.getInpiPassword() != null) {
-                List<FormaliteGuichetUnique> formalites = getFormalitiesByDate(LocalDateTime.now().minusYears(10),
-                        LocalDateTime.now().minusHours(1), employee);
-                if (formalites != null && formalites.size() > 0) {
-                    for (FormaliteGuichetUnique formalite : formalites)
-                        formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formalite.getId(), employee, null);
-                }
-            }
+        List<FormaliteGuichetUnique> formalites = getFormalitiesByDate(LocalDateTime.now().minusYears(10),
+                LocalDateTime.now().minusHours(1));
+        if (formalites != null && formalites.size() > 0) {
+            for (FormaliteGuichetUnique formalite : formalites)
+                formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formalite.getId(), null);
         }
     }
 
@@ -217,20 +203,14 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     @Transactional(rollbackFor = Exception.class)
     public void refreshAllOpenFormalities()
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-        List<Employee> employees = employeeService.getEmployees();
-        for (Employee employee : employees) {
-            if (employee.getInpiLogin() != null && employee.getInpiPassword() != null) {
-                List<Formalite> formalites = formaliteService.getFormaliteForGURefresh(employee);
-                if (formalites != null && formalites.size() > 0) {
-                    for (Formalite formalite : formalites)
-                        if (formalite.getFormalitesGuichetUnique() != null
-                                && formalite.getFormalitesGuichetUnique().size() > 0)
-                            for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique())
-                                formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(
-                                        formaliteGuichetUnique.getId(),
-                                        employee, formalite);
-                }
-            }
+        List<Formalite> formalites = formaliteService.getFormaliteForGURefresh();
+        if (formalites != null && formalites.size() > 0) {
+            for (Formalite formalite : formalites)
+                if (formalite.getFormalitesGuichetUnique() != null
+                        && formalite.getFormalitesGuichetUnique().size() > 0)
+                    for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique())
+                        formaliteGuichetUniqueService
+                                .refreshFormaliteGuichetUnique(formaliteGuichetUnique.getId(), formalite);
         }
     }
 }

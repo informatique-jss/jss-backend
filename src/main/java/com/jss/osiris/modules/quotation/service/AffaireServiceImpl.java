@@ -77,6 +77,7 @@ public class AffaireServiceImpl implements AffaireService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void reindexAffaire() {
         List<Affaire> affaires = IterableUtils.toList(affaireRepository.findAll());
         if (affaires != null)

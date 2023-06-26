@@ -29,11 +29,11 @@ import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
-import com.jss.osiris.modules.quotation.service.GuichetUniqueDelegateService;
 import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.GuichetUniqueDelegateService;
 
 @Service
 @ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")

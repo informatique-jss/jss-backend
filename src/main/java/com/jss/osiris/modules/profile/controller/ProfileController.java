@@ -136,8 +136,6 @@ public class ProfileController {
 	public ResponseEntity<Employee> addOrUpdateEmployee(
 			@RequestBody Employee employee) throws OsirisValidationException, OsirisException {
 		List<Employee> backups = new ArrayList<Employee>();
-		String loginInpi = employee.getInpiLogin();
-		String passwordInpi = employee.getInpiPassword();
 
 		if (employee != null)
 			backups = employee.getBackups();
@@ -149,12 +147,6 @@ public class ProfileController {
 				validationHelper.validateReferential(backup, true, "backup");
 
 		employee.setBackups(backups);
-
-		if (loginInpi != null && !loginInpi.equals(""))
-			employee.setInpiLogin(loginInpi);
-
-		if (passwordInpi != null && !passwordInpi.equals(""))
-			employee.setInpiPassword(passwordInpi);
 
 		return new ResponseEntity<Employee>(employeeService.addOrUpdateEmployee(employee), HttpStatus.OK);
 	}

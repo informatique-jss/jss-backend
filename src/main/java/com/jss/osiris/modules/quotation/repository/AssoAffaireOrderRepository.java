@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 
@@ -75,6 +75,8 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         +
                         " and ( :waitedCompetentAuthorityId =0 or sp.id_waited_competent_authority =:waitedCompetentAuthorityId) "
                         +
+                        " and ( :affaireId =0 or a.id =:affaireId) "
+                        +
                         " and ( COALESCE(:assignedTo) =0 or p.id_employee in (:assignedTo)) " +
                         " and (:label ='' or upper(a.denomination)  like '%' || upper(CAST(:label as text))  || '%'  or upper(a.firstname)  like '%' || upper(CAST(:label as text)) || '%' or upper(a.lastname)  like '%' || upper(CAST(:label as text)) || '%') "
                         +
@@ -93,5 +95,6 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         @Param("label") String label, @Param("status") ArrayList<Integer> status,
                         @Param("excludedCustomerOrderStatusCode") List<String> excludedCustomerOrderStatusCode,
                         @Param("customerOrder") List<Integer> customerOrder,
-                        @Param("waitedCompetentAuthorityId") Integer waitedCompetentAuthorityId);
+                        @Param("waitedCompetentAuthorityId") Integer waitedCompetentAuthorityId,
+                        @Param("affaireId") Integer affaireId);
 }

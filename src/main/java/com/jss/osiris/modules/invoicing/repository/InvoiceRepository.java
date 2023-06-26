@@ -30,6 +30,8 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
 
         @Query(nativeQuery = true, value = "select "
                         + " i.id as invoiceId,"
+                        + " i.is_invoice_from_provider as isInvoiceFromProvider,"
+                        + " i.is_provider_credit_note as isProviderCreditNote,"
                         + " ist.label as invoiceStatus,"
                         + " ist.code as invoiceStatusCode,"
                         + " ist.id as invoiceStatusId,"

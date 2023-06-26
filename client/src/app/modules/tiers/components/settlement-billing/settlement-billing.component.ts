@@ -12,6 +12,7 @@ import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payme
 import { Document } from "../../../miscellaneous/model/Document";
 import { BillingClosureRecipientType } from '../../model/BillingClosureRecipientType';
 import { ITiers } from '../../model/ITiers';
+import { PaymentDeadlineType } from '../../model/PaymentDeadlineType';
 import { Responsable } from '../../model/Responsable';
 import { TiersService } from '../../services/tiers.service';
 
@@ -26,12 +27,12 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
   @Input() editMode: boolean = false;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
   paymentTypes: PaymentType[] = [] as Array<PaymentType>;
+  paymentDeadLineTypes: PaymentDeadlineType[] = [] as Array<PaymentDeadlineType>;
 
   paymentTypePrelevement: PaymentType = this.constantService.getPaymentTypePrelevement();
   paymentTypeCB: PaymentType = this.constantService.getPaymentTypeCB();
   paymentTypeEspeces: PaymentType = this.constantService.getPaymentTypeEspeces();
   paymentTypeVirement: PaymentType = this.constantService.getPaymentTypeVirement();
-
   refundTypeVirement = this.constantService.getRefundTypeVirement();
 
   billingLableTypeOther = this.constantService.getBillingLabelTypeOther();
@@ -56,7 +57,7 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
     protected tiersService: TiersService,
     protected cityService: CityService,
     private constantService: ConstantService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
   ) { }
 
   ngOnInit() {
@@ -82,8 +83,8 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
               this.tiers.paymentType = paymentType;
           }
         }
-      }
 
+      }
       this.billingDocument = getDocument(this.constantService.getDocumentTypeBilling(), this.tiers);
       this.paperDocument = getDocument(this.constantService.getDocumentTypePaper(), this.tiers);
       this.digitalDocument = getDocument(this.constantService.getDocumentTypeDigital(), this.tiers);
@@ -100,6 +101,10 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
         this.refundDocument = getDocument(this.constantService.getDocumentTypeRefund(), this.tiers);
         this.provisionalReceiptDocument = getDocument(this.constantService.getDocumentTypeProvisionnalReceipt(), this.tiers);
       }
+      if (!this.dunningDocument.paymentDeadlineType) {
+        this.dunningDocument.paymentDeadlineType = this.constantService.getPaymentDeadLineType30();
+      }
+
     }
     this.settlementBillingForm.markAllAsTouched();
   }

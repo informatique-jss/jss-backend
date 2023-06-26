@@ -120,6 +120,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void reindexBankTransfert() {
         List<BankTransfert> bankTransferts = getBankTransfers();
         if (bankTransferts != null)

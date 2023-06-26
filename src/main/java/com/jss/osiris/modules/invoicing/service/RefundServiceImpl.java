@@ -102,6 +102,7 @@ public class RefundServiceImpl implements RefundService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void reindexRefunds() {
         List<Refund> refunds = getRefunds();
         if (refunds != null)

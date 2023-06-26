@@ -7,9 +7,12 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.DebourSearch;
 import com.jss.osiris.modules.invoicing.model.DebourSearchResult;
 import com.jss.osiris.modules.quotation.model.Debour;
+import com.jss.osiris.modules.quotation.model.Provision;
 
 public interface DebourService {
     public Debour getDebour(Integer id);
+
+    public List<Debour> getDeboursForProvision(Provision provision);
 
     public void deleteDebour(Debour debour);
 
@@ -22,4 +25,6 @@ public interface DebourService {
     public void setDebourAsAssociated(Debour debour);
 
     public List<Debour> findNonAssociatedDeboursForDateAndAmount(LocalDate date, Float amount) throws OsirisException;
+
+    public void unassociateDebourFromInvoice(Debour debour) throws OsirisException;
 }

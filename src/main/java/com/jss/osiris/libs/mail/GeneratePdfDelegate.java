@@ -417,6 +417,13 @@ public class GeneratePdfDelegate {
                                 .getGeographicalApplicableVatForSales(customerOrder,
                                         constantService.getVatDeductible());
 
+                        Vat competentAuthorityVatPurschase = vatService.getGeographicalApplicableVatForPurshases(
+                                debour.getCompetentAuthority(),
+                                constantService.getVatDeductible());
+
+                        if (vatDebour != null && competentAuthorityVatPurschase.getRate() < vatDebour.getRate())
+                            vatDebour = competentAuthorityVatPurschase;
+
                         Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
                                 : debour.getDebourAmount();
                         if (!debour.getBillingType().getIsNonTaxable() && vatDebour != null) {
@@ -508,7 +515,7 @@ public class GeneratePdfDelegate {
         ctx.setVariable("remainingToPay",
                 Math.round((invoiceHelper.getPriceTotal(invoice) - depositTotal) * 100f) / 100f);
         ctx.setVariable("hasAppoint",
-                Math.abs(Math.round((invoiceHelper.getPriceTotal(invoice) - depositTotal) * 100f) / 100f) <= Float
+                Math.abs(Math.round((invoiceHelper.getPriceTotal(invoice) - payementTotal) * 100f) / 100f) <= Float
                         .parseFloat(payementLimitRefundInEuros));
         ctx.setVariable("tooMuchPerceived", null);
         Float amountPerceived = payementTotal - Math.round((invoiceHelper.getPriceTotal(invoice)) * 100f) / 100f;

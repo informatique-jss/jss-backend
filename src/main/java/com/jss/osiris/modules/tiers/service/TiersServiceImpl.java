@@ -186,6 +186,7 @@ public class TiersServiceImpl implements TiersService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void reindexTiers() {
         List<Tiers> tiers = IterableUtils.toList(tiersRepository.findAll());
         if (tiers != null)

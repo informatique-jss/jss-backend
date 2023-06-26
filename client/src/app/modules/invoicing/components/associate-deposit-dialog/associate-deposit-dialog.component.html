@@ -3,8 +3,7 @@
   <sort-table [columns]="displayedColumns" [values]="associationSummaryTable" tableName="Association acompte / commande"
     [actions]="tableAction" [refreshTable]="refreshTable.asObservable()">
   </sort-table>
-  <div class="mat-elevation-z2"
-    *ngIf="amountToPayCompletely()<0 && amountRemaining()>0 && amountRemaining()>INVOICING_PAYMENT_LIMIT_REFUND_EUROS">
+  <div class="mat-elevation-z2" *ngIf=" amountRemaining()>0 && amountRemaining()>INVOICING_PAYMENT_LIMIT_REFUND_EUROS">
     <table class="mat-table mat-mdc-table mdc-data-table__table full-width  top" *ngIf="selectedRefundTiers">
       <thead>
         <tr class="mat-mdc-header-row mdc-data-table__header-row ">
@@ -24,23 +23,11 @@
       </tr>
     </table>
   </div>
-  <div *ngIf="amountToPayCompletely()>=0" class="top">
-    <div>
-      <p>L'acompte associé à la commande est trop important. Le solde doit être associé ou remboursé avant de changer le
-        statut de la commande.</p>
-    </div>
-  </div>
-  <div mat-dialog-actions align="end" *ngIf="amountToPayCompletely()>=0">
-    <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
-    <button mat-raised-button color="warn" (click)="onConfirm()">Ok</button>
-  </div>
-  <div class="top">
-  </div>
 
-  <div class="big-chip" *ngIf="amountToPayCompletely()<0  ">
+  <div class="big-chip">
     <chips-status [value]="'Solde '+amountRemaining()+' €'"></chips-status>
   </div>
-  <div *ngIf="amountToPayCompletely()<0  ">
+  <div>
     <mat-vertical-stepper [linear]="false" #stepper animationDuration="500">
       <mat-step>
         <ng-template matStepLabel>Acompte trop important</ng-template>

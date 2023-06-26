@@ -104,7 +104,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public Announcement updateComplexAnnouncementNotice(Announcement announcement, Provision provision)
+    public Announcement updateComplexAnnouncementNotice(Announcement announcement, Provision provision,
+            Boolean isFromUser)
             throws OsirisException {
         // Get announcement PDF
         File complexePdf = null;
@@ -117,7 +118,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 }
 
         if (complexePdf == null)
-            throw new OsirisException(null, "No announncement PDF found");
+            if (!isFromUser)
+                return announcement;
+            else
+                throw new OsirisException(null, "No announncement PDF found");
 
         PdfReader reader;
         FileInputStream in;
@@ -236,7 +240,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
-                        if (provision.getAnnouncement() != null
+                        if (provision.getAnnouncement() != null && provision.getAnnouncement().getId() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             currentProvision = provision;
                             break;
@@ -292,7 +296,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
-                        if (provision.getAnnouncement() != null
+                        if (provision.getAnnouncement() != null && provision.getAnnouncement().getId() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             currentProvision = provision;
                             break;
@@ -378,7 +382,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
-                        if (provision.getAnnouncement() != null
+                        if (provision.getAnnouncement() != null && provision.getAnnouncement().getId() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             currentProvision = provision;
                             break;

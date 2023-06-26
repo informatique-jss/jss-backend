@@ -65,6 +65,9 @@ public class PricingHelper {
     @Autowired
     CityService cityService;
 
+    @Autowired
+    ProvisionService provisionService;
+
     @Transactional
     public IQuotation getAndSetInvoiceItemsForQuotationForFront(IQuotation quotation, boolean persistInvoiceItem)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
@@ -244,11 +247,14 @@ public class PricingHelper {
             for (Debour debour : provision.getDebours()) {
                 Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
                         : debour.getDebourAmount();
-                IQuotation quotation = provision.getAssoAffaireOrder().getCustomerOrder() != null
-                        ? provision.getAssoAffaireOrder().getCustomerOrder()
-                        : provision.getAssoAffaireOrder().getQuotation();
-                Vat vat = vatService.getGeographicalApplicableVatForSales(quotation,
-                        constantService.getVatDeductible());
+
+                Provision completeProvision = provisionService.getProvision(provision.getId());
+                IQuotation quotation = completeProvision.getAssoAffaireOrder().getCustomerOrder() != null
+                        ? completeProvision.getAssoAffaireOrder().getCustomerOrder()
+                        : completeProvision.getAssoAffaireOrder().getQuotation();
+                Vat vat = debour.getInvoiceItem() != null ? debour.getInvoiceItem().getVat()
+                        : vatService.getGeographicalApplicableVatForSales(quotation,
+                                constantService.getVatDeductible());
 
                 if (debour.getBillingType().getIsNonTaxable() || vat == null)
                     total += debourAmount;
@@ -534,6 +540,14 @@ public class PricingHelper {
                     Vat competentAuthorityVat = vatService
                             .getGeographicalApplicableVatForPurshases(debour.getCompetentAuthority(),
                                     constantService.getVatDeductible());
+
+                    Vat competentAuthorityVatSales = vatService
+                            .getGeographicalApplicableVatForSales(quotation,
+                                    constantService.getVatDeductible());
+
+                    if (competentAuthorityVatSales.getRate() < competentAuthorityVat.getRate())
+                        competentAuthorityVat = competentAuthorityVatSales;
+
                     if (!debour.getBillingType().getIsNonTaxable() && competentAuthorityVat != null) {
                         Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
                                 : debour.getDebourAmount();

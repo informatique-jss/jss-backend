@@ -78,7 +78,7 @@ export class ReportingAddComponent implements OnInit {
   }
 
   selectDataSet(dataset: string) {
-    if (!this.loadingDataset) {
+    if (!this.loadingDataset && dataset) {
       this.loadingDataset = true;
       this.reportingService.getDataset(dataset, undefined).subscribe(data => {
         this.dataToDisplay = data;

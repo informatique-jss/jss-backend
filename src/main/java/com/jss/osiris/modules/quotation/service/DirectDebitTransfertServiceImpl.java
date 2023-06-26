@@ -101,6 +101,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void reindexDirectDebitTransfert() {
         List<DirectDebitTransfert> directDebitTransferts = getDirectDebitTransferts();
         if (directDebitTransferts != null)

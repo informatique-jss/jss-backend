@@ -7,10 +7,11 @@ import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { VatBase } from 'src/app/modules/quotation/model/VatBase';
+import { QuotationService } from 'src/app/modules/quotation/services/quotation.service';
 import { CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
+import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { instanceOfConfrere, instanceOfResponsable, instanceOfTiers } from '../../../../libs/TypeHelper';
-import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { InvoiceService } from '../../services/invoice.service';
 import { getAffaireList, getAffaireListArray, getCustomerOrderForInvoice, getCustomerOrderNameForInvoice, getLetteringDate, getProviderLabelForInvoice, getRemainingToPay, getResponsableName } from '../invoice-tools';
@@ -33,12 +34,14 @@ export class InvoiceDetailsComponent implements OnInit {
     private appService: AppService,
     private activatedRoute: ActivatedRoute,
     private constantService: ConstantService,
-    private customerOrderService: CustomerOrderService,
+    private habilitationService: HabilitationsService,
+    private quotationService: QuotationService,
   ) { }
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
   invoiceStatusPayed = this.constantService.getInvoiceStatusPayed();
   invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
+  invoiceStatusCreditNoteReceived = this.constantService.getInvoiceStatusCreditNoteReceived();
   attachmentTypeInvoice = this.constantService.getAttachmentTypeInvoice();
 
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
@@ -185,8 +188,30 @@ export class InvoiceDetailsComponent implements OnInit {
 
   cancelInvoice(event: any) {
     if (this.invoice) {
+      this.invoiceService.cancelInvoice(this.invoice).subscribe(response => this.appService.openRoute(event, "/invoicing/view/" + response.id, undefined));
+    }
+  }
+
+  addCreditNote(event: any) {
+    if (this.invoice) {
       this.appService.openRoute(null, 'invoicing/credit-note/' + this.invoice.id, undefined);
     }
+  }
+
+  canCancelInvoice() {
+    return this.habilitationService.canCancelInvoice();
+  }
+
+  canAddCreditNote() {
+    if (this.invoice && !this.invoice.isCreditNote && !this.invoice.creditNote) {
+      return this.habilitationService.canAddNewInvoice();
+    }
+    return false;
+  }
+
+  sendMailReminder() {
+    if (this.invoice && this.invoice.customerOrder)
+      this.quotationService.sendCustomerOrderFinalisationToCustomer(this.invoice.customerOrder).subscribe();
   }
 
 }

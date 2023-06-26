@@ -267,12 +267,11 @@ public class AccountingController {
         if (accountingRecordSearch.getAccountingAccount() == null
                 && accountingRecordSearch.getAccountingClass() == null
                 && accountingRecordSearch.getAccountingJournal() == null
-                && accountingRecordSearch.getResponsableId() == null
                 && accountingRecordSearch.getConfrereId() == null
                 && accountingRecordSearch.getTiersId() == null)
             throw new OsirisValidationException("AccountingAccount or AccountingClass or AccountingJournal");
 
-        if (accountingRecordSearch.getResponsableId() == null && accountingRecordSearch.getTiersId() == null
+        if (accountingRecordSearch.getTiersId() == null
                 && accountingRecordSearch.getConfrereId() == null) {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
                 throw new OsirisValidationException("StartDate or EndDate");
