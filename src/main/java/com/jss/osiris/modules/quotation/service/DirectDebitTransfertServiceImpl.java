@@ -314,7 +314,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                 DbtrAgtBean bicVirement = new DbtrAgtBean();
                 prelevement.setDbtrAgtBean(bicVirement);
                 FinInstnIdBean bicVirementId = new FinInstnIdBean();
-                bicVirement.setFinInstnIdBean(financialInstitution);
+                bicVirement.setFinInstnIdBean(bicVirementId);
                 bicVirementId.setBic(bankTransfert.getTransfertBic());
 
                 DbtrBean customerOrder = new DbtrBean();
