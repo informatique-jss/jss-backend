@@ -110,6 +110,11 @@
         <generic-input [(model)]="affaire.shareCapital" label="Capital social" [form]="affaireForm"
           propertyName="shareCapital" [isDisabled]="!editMode" type="number"></generic-input>
       </td>
+      <td>
+        <autocomplete-forme-juridique [(model)]="affaire.formeJuridique"
+          label="Forme juridique" [form]="affaireForm" propertyName="formeJuridique"
+          [isDisabled]="!editMode"></autocomplete-forme-juridique>
+      </td>
     </tr>
   </table>
   <table class="full-width" *ngIf="editMode">

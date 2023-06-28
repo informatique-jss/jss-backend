@@ -4,6 +4,7 @@ import { Civility } from "../../miscellaneous/model/Civility";
 import { Country } from "../../miscellaneous/model/Country";
 import { Mail } from "../../miscellaneous/model/Mail";
 import { Phone } from "../../miscellaneous/model/Phone";
+import { FormeJuridique } from './guichet-unique/referentials/FormeJuridique';
 
 export interface Affaire extends IReferential {
   id: number;
@@ -29,4 +30,5 @@ export interface Affaire extends IReferential {
   paymentBic: string;
   isUnregistered: boolean;
   intercommunityVat: string | null;
+  formeJuridique: FormeJuridique;
 }

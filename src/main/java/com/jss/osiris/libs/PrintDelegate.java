@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 
@@ -34,10 +35,38 @@ public class PrintDelegate {
       throws OsirisException {
 
     String provisionType = "";
-    String nomAffaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire().getDenomination();
-    String addressAffaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire().getAddress();
-    String cpCedexVille = customerOrder.getAssoAffaireOrders().get(0).getAffaire().getCedexComplement();
-    String siren = customerOrder.getAssoAffaireOrders().get(0).getAffaire().getSiren();
+    String registreAC = "";
+    String nomAffaire = "";
+    String addressAffaire = "";
+    String cpCedexVille = "";
+    String siren = "";
+    String formeJuridiqueAffaire = "";
+
+    if (customerOrder.getAssoAffaireOrders() != null
+        && !customerOrder.getAssoAffaireOrders().isEmpty()
+        && customerOrder.getAssoAffaireOrders().get(0).getAffaire() != null) {
+      Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
+
+      if (affaire.getDenomination() != null) {
+        nomAffaire = affaire.getDenomination();
+      }
+
+      if (affaire.getAddress() != null) {
+        addressAffaire = affaire.getAddress();
+      }
+
+      if (affaire.getCedexComplement() != null) {
+        cpCedexVille = affaire.getCedexComplement();
+      }
+
+      if (affaire.getSiren() != null) {
+        siren = affaire.getSiren();
+      }
+
+      if (affaire.getFormeJuridique() != null) {
+        formeJuridiqueAffaire = affaire.getFormeJuridique().getLabel();
+      }
+    }
 
     boolean hasProvisionRegister = false;
 
@@ -55,7 +84,12 @@ public class PrintDelegate {
         if (c.getProvisionFamilyType().getLabel()
             .equals(constantService.getProvisionFamilyTypeRegister().getLabel())) {
           hasProvisionRegister = true;
-          provisionType = c.getProvisionType().getLabel();
+          if (c.getProvisionType() != null) {
+            provisionType = c.getProvisionType().getLabel();
+          }
+          if (c.getSimpleProvision() != null && c.getSimpleProvision().getWaitedCompetentAuthority() != null) {
+            registreAC = c.getSimpleProvision().getWaitedCompetentAuthority().getLabel();
+          }
         }
       }
 
@@ -63,35 +97,61 @@ public class PrintDelegate {
 
         dOut.writeUTF("\r\n");
         if (provisionType != null)
-          dOut.writeUTF("               " + provisionType.toUpperCase());
+          dOut.writeUTF("   " + StringUtils.stripAccents(provisionType.toUpperCase()));
         dOut.writeUTF("\r\n");
+
         dOut.flush();
+        if (registreAC != null)
+          dOut.writeUTF("         " + StringUtils.stripAccents(registreAC.toUpperCase()));
         dOut.writeUTF("\r\n");
         dOut.flush();
         if (nomAffaire != null)
-          dOut.writeUTF("               " + nomAffaire.toUpperCase());
+          dOut.writeUTF("          " + StringUtils.stripAccents(nomAffaire.toUpperCase()));
         dOut.writeUTF("\r\n");
         dOut.flush();
-        dOut.writeUTF("\r\n");
-        dOut.flush();
+        if (formeJuridiqueAffaire != null) {
+          String upperCaseFormeJuridique = StringUtils.stripAccents(formeJuridiqueAffaire.toUpperCase());
+          int maxLengthPerLine = 55;
+
+          StringBuilder wrappedString = new StringBuilder();
+          int length = upperCaseFormeJuridique.length();
+          int startIndex = 0;
+
+          while (startIndex < length) {
+            int endIndex = Math.min(startIndex + maxLengthPerLine, length);
+            String line = upperCaseFormeJuridique.substring(startIndex, endIndex);
+
+            if (endIndex < length && line.charAt(maxLengthPerLine - 1) != ' '
+                && upperCaseFormeJuridique.charAt(endIndex) != ' ') {
+
+              int lastSpaceIndex = line.lastIndexOf(" ");
+              if (lastSpaceIndex != -1) {
+                endIndex = startIndex + lastSpaceIndex + 1;
+                line = upperCaseFormeJuridique.substring(startIndex, endIndex);
+              }
+            }
+
+            wrappedString.append("         ").append(line).append(System.lineSeparator());
+            startIndex = endIndex;
+          }
+
+          dOut.writeUTF(wrappedString.toString());
+          dOut.writeUTF("\r\n");
+          dOut.flush();
+        }
+
         if (addressAffaire != null) {
-          dOut.writeUTF("               " + addressAffaire);
+          dOut.writeUTF("          " + StringUtils.stripAccents(addressAffaire));
+          dOut.flush();
         }
-        if (cpCedexVille != null) {
-          dOut.writeUTF("               " + cpCedexVille);
-        }
-        dOut.flush();
         dOut.writeUTF("\r\n");
-        dOut.flush();
+        if (cpCedexVille != null) {
+          dOut.writeUTF("          " + cpCedexVille);
+        }
         dOut.writeUTF("\r\n");
         if (siren != null) {
-          dOut.writeUTF("               " + siren);
+          dOut.writeUTF("          " + siren);
         }
-        dOut.flush();
-        dOut.writeUTF("\r\n");
-        dOut.flush();
-        dOut.writeUTF("\r\n");
-
       } else {
 
         // Handle manual adresses
