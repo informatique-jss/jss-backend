@@ -317,6 +317,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             Invoice invoice = getInvoice(idOriginInvoiceForCreditNote);
             invoice.setCreditNote(creditNote);
             invoice = addOrUpdateInvoice(invoice);
+            creditNote.setReverseCreditNote(invoice);
         }
 
         creditNote = addOrUpdateInvoice(creditNote);
