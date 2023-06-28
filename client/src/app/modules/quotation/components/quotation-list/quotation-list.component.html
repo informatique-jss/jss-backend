@@ -31,7 +31,7 @@
       </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="quotations" tableName="Devis"
-      *ngIf="displayedColumns && displayedColumns.length>0 ">
+      *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="isForDashboard">
     </sort-table>
   </div>
 </div>
