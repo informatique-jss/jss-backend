@@ -36,7 +36,7 @@
       </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="payments" tableName="Paiements"
-      *ngIf="displayedColumns && displayedColumns.length>0 ">
+      *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="isForDashboard">
     </sort-table>
   </div>
 </div>

@@ -15,6 +15,10 @@
   background-color: #f39c12;
 }
 
+.mat-mdc-chip.mat-mdc-standard-chip.standard-status {
+  background-color: #c4ae8b;
+}
+
 .div-wrapper {
   display: flex;
 }

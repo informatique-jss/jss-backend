@@ -77,4 +77,8 @@
       {{getColumnLabel(column)}}
     </button>
   </mat-menu>
+  <div *ngIf="values && displayTotalLines" class="column-icon-number"
+    [matTooltip]="values.length+' ligne'+(values.length>1?'s':'')">
+    <chips-status [value]="values.length+''"></chips-status>
+  </div>
 </div>

@@ -31,7 +31,7 @@
       </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="orders" tableName="Commandes"
-      *ngIf="displayedColumns && displayedColumns.length>0 ">
+      *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="isForDashboard">
     </sort-table>
   </div>
 </div>

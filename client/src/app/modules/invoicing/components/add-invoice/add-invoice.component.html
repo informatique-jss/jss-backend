@@ -130,7 +130,7 @@
           </td>
         </tr>
       </table>
-      <table class="full-width">
+      <table class="full-width" *ngIf="!invoice.isProviderCreditNote">
         <tr>
           <td>
             <select-payment-types [(model)]="invoice.manualPaymentType" label="Type de paiement" [form]="invoiceForm"

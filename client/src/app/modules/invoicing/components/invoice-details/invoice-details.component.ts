@@ -61,7 +61,7 @@ export class InvoiceDetailsComponent implements OnInit {
       this.appService.changeHeaderTitle("Facture/avoir n°" + idInvoice);
       this.invoiceService.getInvoiceById(idInvoice).subscribe(response => {
         this.invoice = response;
-        this.appService.changeHeaderTitle((this.invoice.isCreditNote ? "Avoir" : "Facture") + " n°" + idInvoice + " - " + this.invoice.invoiceStatus.label);
+        this.appService.changeHeaderTitle((this.invoice.isCreditNote || this.invoice.isProviderCreditNote ? "Avoir" : "Facture") + " n°" + idInvoice + " - " + this.invoice.invoiceStatus.label);
       })
     }
   }

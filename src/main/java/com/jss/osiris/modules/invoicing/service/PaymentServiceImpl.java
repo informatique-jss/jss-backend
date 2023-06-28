@@ -488,6 +488,10 @@ public class PaymentServiceImpl implements PaymentService {
                         refundLabelSuffix, customerOrder, null);
                 accountingRecordService.generateAccountingRecordsForRefundOnGeneration(refund);
             }
+        } else {
+            if (correspondingInvoices != null && correspondingInvoices.size() == 1)
+                associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0), new MutableBoolean(true),
+                        byPassAmount);
         }
     }
 

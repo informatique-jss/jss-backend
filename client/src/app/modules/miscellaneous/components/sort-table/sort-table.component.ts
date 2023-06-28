@@ -23,6 +23,7 @@ export class SortTableComponent implements OnInit {
   @Input() tableName: string = "table";
   @Input() idRowSelected: number | undefined;
   @Input() filterPredicate: any;
+  @Input() displayTotalLines: boolean = false;
   /**
  * Fired when row is clicked is modified by user
  */

@@ -37,7 +37,7 @@
       </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="refunds" tableName="Remboursements"
-      *ngIf="displayedColumns && displayedColumns.length>0 ">
+      *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="isForDashboard">
     </sort-table>
   </div>
 </div>
