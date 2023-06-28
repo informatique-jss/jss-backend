@@ -778,6 +778,15 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           "Remboursement n°" + refund.getId(),
           refund.getRefundAmount(), null, customerAccountingAccount, null, null, null,
           bankJournal, null, null, null, refund, null);
+
+      generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null,
+          "Remboursement n°" + refund.getId(),
+          refund.getRefundAmount(), null, constantService.getAccountingAccountBankJss(), null, null, null,
+          bankJournal, null, null, null, refund, null);
+      generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null,
+          "Remboursement n°" + refund.getId(),
+          null, refund.getRefundAmount(), customerAccountingAccount, null, null, null,
+          bankJournal, null, null, null, refund, null);
     }
   }
 
