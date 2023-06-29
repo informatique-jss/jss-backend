@@ -772,7 +772,16 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     } else {
       generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null,
           "Remboursement n°" + refund.getId(),
-          refund.getRefundAmount(), null, accountingAccountService.getProfitAccountingAccount(), null, null, null,
+          null, refund.getRefundAmount(), accountingAccountService.getProfitAccountingAccount(), null, null, null,
+          bankJournal, null, null, null, refund, null);
+      generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null,
+          "Remboursement n°" + refund.getId(),
+          refund.getRefundAmount(), null, customerAccountingAccount, null, null, null,
+          bankJournal, null, null, null, refund, null);
+
+      generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null,
+          "Remboursement n°" + refund.getId(),
+          refund.getRefundAmount(), null, constantService.getAccountingAccountBankJss(), null, null, null,
           bankJournal, null, null, null, refund, null);
       generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null,
           "Remboursement n°" + refund.getId(),
@@ -981,7 +990,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException {
     AccountingAccount accountingAccount;
     invoice = invoiceService.getInvoice(invoice.getId());
-    if (invoice.getProvider() != null || invoice.getCompetentAuthority() != null)
+    if (invoice.getIsInvoiceFromProvider())
       accountingAccount = getProviderAccountingAccountForInvoice(invoice);
     else
       accountingAccount = getCustomerAccountingAccountForInvoice(invoice);
