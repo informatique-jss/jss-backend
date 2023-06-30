@@ -192,8 +192,8 @@
         <td>
           <autocomplete-billing-item [(model)]="invoiceItem.billingItem" [form]="invoiceForm"
             label="Poste de facturation" propertyName="Poste de facturation" [isMandatory]="true"
-            (onOptionSelected)="fillBillingItem(invoiceItem,invoiceItem.billingItem)"
-            [isDisabled]="!editMode || invoice.id!=undefined">
+            (onOptionSelected)="fillBillingItem(invoiceItem,invoiceItem.billingItem)" [isMandatory]="true"
+             [isDisabled]="!editMode || invoice.id!=undefined">
           </autocomplete-billing-item>
         </td>
       </tr>
