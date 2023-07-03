@@ -22,7 +22,7 @@
       </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="announcements" tableName="Annonces"
-      *ngIf="displayedColumns && displayedColumns.length>0 ">
+      [displayTotalLines]="true" *ngIf="displayedColumns && displayedColumns.length>0 ">
     </sort-table>
   </div>
 </div>
