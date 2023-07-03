@@ -1097,12 +1097,8 @@ public class MailHelper {
         mail.setExplaination(explainationText);
 
         if (remainingToPay > 0 && !isPaymentTypePrelevement) {
-            mail.setPaymentExplaination(
-                    "Vous pouvez régler cette facture d'un montant de " + remainingToPay
-                            + " € par virement à l'aide des informations suivantes");
 
             mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
-
             if (!disableCbLink) {
                 mail.setCbExplanation(
                         "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");

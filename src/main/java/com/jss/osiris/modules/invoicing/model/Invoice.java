@@ -83,10 +83,10 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@JoinColumn(name = "id_tiers")
 	@IndexedField
 	private Tiers tiers;
-
+ 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_competent_authority")
-	@IndexedField
+	@IndexedField 
 	@JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
 	private CompetentAuthority competentAuthority;
 
