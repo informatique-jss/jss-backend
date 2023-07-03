@@ -193,7 +193,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                     // Do not touch deposit records, they are already handled before
                     if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
                             .equals(constantService.getPrincipalAccountingAccountDeposit().getId())
-                            && accountingRecord.getDeposit() == null)
+                            && accountingRecord.getContrePasse() == null)
                         accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart,
                                 constantService.getAccountingJournalSales());
             }
@@ -273,7 +273,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                     // Do not touch deposit records, they are already handled before
                     if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                            .equals(constantService.getPrincipalAccountingAccountDeposit().getId()))
+                            .equals(constantService.getPrincipalAccountingAccountDeposit().getId())
+                            && accountingRecord.getContrePasse() == null)
                         accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart,
                                 constantService.getAccountingJournalPurchases());
             }
