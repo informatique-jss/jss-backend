@@ -6,7 +6,8 @@
       <button matChipRemove *ngIf="!isDisabled">
         <mat-icon>cancel</mat-icon>
       </button>
-      <mat-icon color="accent"  matChipRemove *ngIf="isDisabled" (click)="prepareMail(chip)">mail</mat-icon>
+      <mat-icon color="accent" matChipRemove *ngIf="isDisabled" class="always-clickable"
+        (click)="prepareMail(chip)">mail</mat-icon>
     </mat-chip-row>
     <input [placeholder]="isDisabled?'':'Saisir un mail et appuyer sur Entrée'" #chipInput [matChipInputFor]="chipList"
       [disabled]="isDisabled" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"

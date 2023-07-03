@@ -255,7 +255,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                 assoAffaireOrder.setCustomerOrder(customerOrder);
-                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder);
+                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
             }
 
         boolean isNewCustomerOrder = customerOrder.getId() == null;
@@ -465,25 +465,28 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             // If deposit already set, associate them to invoice
             moveCustomerOrderDepositToInvoiceDeposit(customerOrder, invoice);
 
-            // If customer order is on direct debit, generate it
-            ITiers tiers = invoiceHelper.getCustomerOrder(invoice);
-            PaymentType paymentType = null;
-            if (tiers instanceof Responsable)
-                paymentType = ((Responsable) tiers).getTiers().getPaymentType();
-            if (tiers instanceof Tiers)
-                paymentType = ((Tiers) tiers).getPaymentType();
-            if (tiers instanceof Confrere)
-                paymentType = ((Confrere) tiers).getPaymentType();
+            // If customer order is on direct debit and we bill the tiers, generate it
+            if (documentService.getBillingDocument(customerOrder.getDocuments()).getBillingLabelType().getId()
+                    .equals(constantService.getBillingLabelTypeCustomer().getId())) {
+                ITiers tiers = invoiceHelper.getCustomerOrder(invoice);
+                PaymentType paymentType = null;
+                if (tiers instanceof Responsable)
+                    paymentType = ((Responsable) tiers).getTiers().getPaymentType();
+                if (tiers instanceof Tiers)
+                    paymentType = ((Tiers) tiers).getPaymentType();
+                if (tiers instanceof Confrere)
+                    paymentType = ((Confrere) tiers).getPaymentType();
 
-            if (paymentType != null
-                    && paymentType.getId().equals(constantService.getPaymentTypePrelevement().getId())) {
-                DirectDebitTransfert directDebitTransfert = debitTransfertService
-                        .generateDirectDebitTransfertForOutboundInvoice(invoice);
-                invoice.setDirectDebitTransfert(directDebitTransfert);
+                if (paymentType != null
+                        && paymentType.getId().equals(constantService.getPaymentTypePrelevement().getId())) {
+                    DirectDebitTransfert directDebitTransfert = debitTransfertService
+                            .generateDirectDebitTransfertForOutboundInvoice(invoice);
+                    invoice.setDirectDebitTransfert(directDebitTransfert);
+                }
+
+                invoice.setManualPaymentType(paymentType);
+                invoiceService.addOrUpdateInvoice(invoice);
             }
-
-            invoice.setManualPaymentType(paymentType);
-            invoiceService.addOrUpdateInvoice(invoice);
 
             // Handle appoint
             if (remainingToPayForCurrentCustomerOrder != 0 && customerOrder.getDeposits() != null
@@ -662,11 +665,18 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         File invoicePdf = generatePdfDelegate.generateInvoicePdf(customerOrder, invoice, null);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
         try {
-            attachmentService.addAttachment(new FileInputStream(invoicePdf), customerOrder.getId(),
+            List<Attachment> attachments = attachmentService.addAttachment(new FileInputStream(invoicePdf),
+                    customerOrder.getId(),
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeInvoice(),
                     "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
                     false, "Facture n°" + invoice.getId());
+
+            for (Attachment attachment : attachments)
+                if (attachment.getDescription().contains(invoice.getId() + "")) {
+                    attachment.setInvoice(invoice);
+                    attachmentService.addOrUpdateAttachment(attachment);
+                }
         } catch (FileNotFoundException e) {
             throw new OsirisException(e, "Impossible to read invoice PDF temp file");
         } finally {
@@ -900,6 +910,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public void sendInvoiceMail(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, false, true, false);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public String getCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder, String mail, String subject)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         customerOrder = getCustomerOrder(customerOrder.getId());
@@ -990,9 +1007,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                     break;
                                 }
                     } else {
-                        Payment payment = generateDepositOnCustomerOrderForCbPayment(customerOrder,
+                        generateDepositOnCustomerOrderForCbPayment(customerOrder,
                                 centralPayPaymentRequest);
-                        accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment, null);
                         unlockCustomerOrderFromDeposit(customerOrder);
                     }
                 }

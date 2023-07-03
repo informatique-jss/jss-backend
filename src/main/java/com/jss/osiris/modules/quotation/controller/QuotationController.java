@@ -124,7 +124,6 @@ import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.quotation.service.FundTypeService;
-import com.jss.osiris.modules.quotation.service.GuichetUniqueDelegateService;
 import com.jss.osiris.modules.quotation.service.JournalTypeService;
 import com.jss.osiris.modules.quotation.service.MailRedirectionTypeService;
 import com.jss.osiris.modules.quotation.service.NoticeTypeFamilyService;
@@ -141,6 +140,7 @@ import com.jss.osiris.modules.quotation.service.RnaDelegateService;
 import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.quotation.service.SireneDelegateService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.GuichetUniqueDelegateService;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
@@ -530,6 +530,24 @@ public class QuotationController {
     return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/mail/send/invoice")
+  public ResponseEntity<CustomerOrder> sendInvoiceMail(@RequestParam Integer customerOrderId)
+      throws OsirisValidationException, OsirisClientMessageException {
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+    try {
+      MailComputeResult mailComputeResult = mailComputeHelper
+          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
+      if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+        throw new OsirisValidationException("MailTo");
+      customerOrderService.sendInvoiceMail(customerOrder);
+    } catch (OsirisException e) {
+      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+    }
+    return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/mail/generate/confrere/request")
   public ResponseEntity<CustomerOrder> generateAnnouncementRequestToConfrereMail(@RequestParam Integer idCustomerOrder,
       @RequestParam Integer idAnnouncement, @RequestParam Integer idProvision, @RequestParam Integer idAssoAffaireOrder)
@@ -658,7 +676,8 @@ public class QuotationController {
 
     if (affaireSearch.getLabel() == null
         && affaireSearch.getAssignedTo() == null && affaireSearch.getResponsible() == null
-        && affaireSearch.getStatus() == null && affaireSearch.getCustomerOrders() == null)
+        && affaireSearch.getStatus() == null && affaireSearch.getCustomerOrders() == null
+        && affaireSearch.getAffaire() == null)
       throw new OsirisValidationException("Label or AssignedTo or Responsible or Status");
 
     if (affaireSearch.getLabel() == null)
@@ -1403,6 +1422,35 @@ public class QuotationController {
 
   // Payment deposit
 
+  @GetMapping(inputEntryPoint + "/payment/cb/quotation/validate")
+  public ResponseEntity<String> validateQuotationFromCustomer(@RequestParam Integer quotationId,
+      @RequestParam String validationToken) {
+    try {
+      Quotation quotation = quotationService.getQuotation(quotationId);
+      if (quotation == null)
+        throw new OsirisValidationException("quotation");
+
+      if (validationToken == null || validationToken.equals("")
+          || !validationToken.equals(quotation.getValidationToken()))
+        throw new OsirisValidationException("validationToken");
+
+      quotationService.validateQuotationFromCustomer(quotation);
+      return new ResponseEntity<String>(
+          mailHelper.generateGenericHtmlConfirmation("Devis validé", null, "Devis n°" + quotationId,
+              "Votre validation pour le devis n°" + quotationId
+                  + " a bien été pris en compte. Nous débutons immédiatement le traitement de ce dernier.",
+              null, "Bonne journée !"),
+          HttpStatus.OK);
+    } catch (Exception e) {
+      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+      return new ResponseEntity<String>(
+          mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Devis n°" + quotationId,
+              "Nous sommes désolé, mais une erreur est survenue lors de votre validation.",
+              "Veuillez réessayer en utilisant le lien présent dans le mail de notification.", "Bonne journée !"),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   @GetMapping(inputEntryPoint + "/payment/cb/quotation/deposit")
   public ResponseEntity<String> getCardPaymentLinkForQuotationDeposit(@RequestParam Integer quotationId,
       @RequestParam String mail) {
@@ -1837,20 +1885,12 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/formalite-guichet-unique/search")
   public ResponseEntity<List<FormaliteGuichetUnique>> findFormaliteGuichetUniqueServiceByReference(
-      @RequestParam String value, @RequestParam Integer provisionId)
+      @RequestParam String value)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-
-    Provision provision = provisionService.getProvision(provisionId);
-    if (provision == null)
-      throw new OsirisValidationException("ProvisionId");
-
-    if (provision.getAssignedTo() == null)
-      throw new OsirisClientMessageException(
-          "La prestation doit être associée avant de pouvoir rechercher une formalité sur le GU");
 
     List<FormaliteGuichetUnique> formalites = null;
     if (value != null && value.length() > 2)
-      formalites = guichetUniqueDelegateService.getFormalitiesByRefenceMandataire(value, provision.getAssignedTo());
+      formalites = guichetUniqueDelegateService.getFormalitiesByRefenceMandataire(value);
 
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
   }

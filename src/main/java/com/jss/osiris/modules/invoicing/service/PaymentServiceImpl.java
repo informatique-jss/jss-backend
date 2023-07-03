@@ -48,11 +48,14 @@ import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
+import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DebourService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.service.TiersService;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -107,6 +110,12 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     AppointService appointService;
+
+    @Autowired
+    TiersService tiersService;
+
+    @Autowired
+    AffaireService affaireService;
 
     @Value("${invoicing.payment.limit.refund.euros}")
     private String payementLimitRefundInEuros;
@@ -204,7 +213,8 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    private void automatchPaymentInvoicesAndGeneratePaymentAccountingRecords(Payment payment)
+    @Override
+    public void automatchPaymentInvoicesAndGeneratePaymentAccountingRecords(Payment payment)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Match inbound payment
         if (payment.getPaymentWay().getId().equals(constantService.getPaymentWayInbound().getId())) {
@@ -312,6 +322,27 @@ public class PaymentServiceImpl implements PaymentService {
             List<IndexEntity> correspondingEntities = getCorrespondingEntityForOutboundPayment(payment);
             List<Invoice> correspondingInvoices = new ArrayList<Invoice>();
 
+            Refund refundFound = null;
+            // Try to match refunds
+            if (correspondingEntities != null && correspondingEntities.size() > 0) {
+                for (IndexEntity foundEntity : correspondingEntities) {
+                    if (foundEntity.getEntityType().equals(Refund.class.getSimpleName())) {
+                        Refund refund = refundService.getRefund(foundEntity.getEntityId());
+                        if (refund != null && refund.getIsMatched() == false)
+                            refundFound = refund;
+                    }
+                }
+            }
+
+            if (refundFound != null) {
+                associateOutboundPaymentAndRefund(payment, refundFound);
+                // remove bank accounting account
+                if (payment.getAccountingRecords() != null)
+                    for (AccountingRecord accountingRecord : payment.getAccountingRecords())
+                        accountingRecordService.deleteAccountingRecord(accountingRecord);
+                return;
+            }
+
             MutableBoolean generateWaitingAccountAccountingRecords = new MutableBoolean(true);
             if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0) {
                 generateWaitingAccountAccountingRecords = new MutableBoolean(false);
@@ -332,28 +363,12 @@ public class PaymentServiceImpl implements PaymentService {
                 }
             }
 
-            Refund refundFound = null;
-
             // Invoices to payed found
             if (correspondingInvoices.size() > 0) {
                 associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0),
                         generateWaitingAccountAccountingRecords,
                         null);
             }
-
-            // If not found, try to match refunds
-            if (correspondingEntities != null && correspondingEntities.size() > 0) {
-                for (IndexEntity foundEntity : correspondingEntities) {
-                    if (foundEntity.getEntityType().equals(Refund.class.getSimpleName())) {
-                        Refund refund = refundService.getRefund(foundEntity.getEntityId());
-                        if (refund != null && refund.getIsMatched() == false)
-                            refundFound = refund;
-                    }
-                }
-            }
-
-            if (refundFound != null)
-                associateOutboundPaymentAndRefund(payment, refundFound, generateWaitingAccountAccountingRecords);
 
             // If not found, try to match debour
             if (correspondingEntities != null && correspondingEntities.size() > 0) {
@@ -479,15 +494,9 @@ public class PaymentServiceImpl implements PaymentService {
                 accountingRecordService.generateAccountingRecordsForRefundOnGeneration(refund);
             }
         } else {
-            if (!payment.getId().equals(1))
-                throw new OsirisClientMessageException("Not for now ..."); // TODO : refund...
-            // Invoices to payed found
-            if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
-                remainingMoney = associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0),
-                        new MutableBoolean(true),
+            if (correspondingInvoices != null && correspondingInvoices.size() == 1)
+                associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0), new MutableBoolean(true),
                         byPassAmount);
-                refundLabelSuffix = "facture n°" + correspondingInvoices.get(0).getId();
-            }
         }
     }
 
@@ -613,12 +622,12 @@ public class PaymentServiceImpl implements PaymentService {
                         break;
                     }
                 } else if (correspondingInvoices.get(i).getInvoiceStatus().getId()
-                        .equals(constantService.getInvoiceStatusReceived().getId())
-                        && correspondingInvoices.get(i).getIsInvoiceFromProvider()) {
+                        .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())) {
                     // It's a refund
                     accountingRecordService
                             .generateAccountingRecordsForProviderInvoiceRefund(correspondingInvoices.get(i), payment);
                     payment.setInvoice(correspondingInvoices.get(i));
+                    accountingRecordService.checkInvoiceForLettrage(correspondingInvoices.get(i));
                     addOrUpdatePayment(payment);
                     remainingMoney = 0f;
                 }
@@ -746,15 +755,12 @@ public class PaymentServiceImpl implements PaymentService {
         return remainingMoney;
     }
 
-    private Float associateOutboundPaymentAndRefund(Payment payment, Refund refund,
-            MutableBoolean generateWaitingAccountAccountingRecords) throws OsirisException {
+    private Float associateOutboundPaymentAndRefund(Payment payment, Refund refund) throws OsirisException {
 
         Float refundAmount = Math.round(refund.getRefundAmount() * 100f) / 100f;
         Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
 
         if (refundAmount.equals(paymentAmount)) {
-            generateWaitingAccountAccountingRecords.setFalse();
-
             refund.setIsMatched(true);
             refund.setPayment(payment);
             refundService.addOrUpdateRefund(refund);
@@ -1099,5 +1105,16 @@ public class PaymentServiceImpl implements PaymentService {
                 new ArrayList<Invoice>(),
                 new MutableBoolean(false), null, cashPayment.getPaymentAmount());
         cancelPayment(getPayment(cashPayment.getId()), constantService.getAccountingJournalBank());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void refundPayment(Payment payment, Tiers tiers, Affaire affaire)
+            throws OsirisException, OsirisClientMessageException {
+        tiers = tiersService.getTiers(tiers.getId());
+        if (affaire != null)
+            affaire = affaireService.getAffaire(affaire.getId());
+        payment = getPayment(payment.getId());
+        refundService.generateRefund(tiers, affaire, payment, null, payment.getPaymentAmount(), null, null, null);
     }
 }

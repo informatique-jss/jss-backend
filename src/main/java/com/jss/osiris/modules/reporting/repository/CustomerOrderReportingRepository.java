@@ -25,12 +25,13 @@ public interface CustomerOrderReportingRepository extends QueryCacheCrudReposito
                         " ca.label as waitedCompetentAuthorityLabel, " +
                         " customer_order_status.label as customerOrderStatusLabel, " +
                         " provision_ft.label as provisionFamilyTypeLabel, " +
-                        " coalesce(initcap(to_char(a.publication_date,'tmmonth')),'N/A') as publicationDateMonth, " +
+                        " coalesce(initcap(to_char(a.publication_date,'MM - tmmonth')),'N/A') as publicationDateMonth, "
+                        +
                         " coalesce(initcap(to_char(a.publication_date,'tmw')),'N/A') as publicationDateWeek, " +
-                        " coalesce(initcap(to_char(invoice.created_date,'tmmonth')),'N/A') as invoiceDateMonth, " +
+                        " coalesce(initcap(to_char(invoice.created_date,'MM - tmmonth')),'N/A') as invoiceDateMonth, " +
                         " coalesce(initcap(to_char(invoice.created_date,'YYYY-MM-DD')),'N/A') as invoiceDateDay, " +
                         " employee_invoice.firstname || ' ' || employee_invoice.lastname as invoiceCreator, " +
-                        " coalesce(initcap(to_char(customer_order.created_date,'tmmonth')),'N/A') as customerOrderCreatedDateMonth, "
+                        " coalesce(initcap(to_char(customer_order.created_date,'MM - tmmonth')),'N/A') as customerOrderCreatedDateMonth, "
                         +
                         " coalesce(confrere.label, respo.firstname || ' '||respo.lastname, coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname)) as customerOrderLabel, "
                         +

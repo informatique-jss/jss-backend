@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { UserNoteService } from 'src/app/services/user.notes.service';
-import { IndexEntityService } from '../../../../../routing/search/index.entity.service';
 import { IndexEntity } from '../../../../../routing/search/IndexEntity';
+import { IndexEntityService } from '../../../../../routing/search/index.entity.service';
+import { TIERS_ENTITY_TYPE } from '../../../../../routing/search/search.component';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
@@ -17,8 +18,13 @@ export class AutocompleteTiersIndividualComponent extends GenericAutocompleteCom
     super(formBuild, userNoteService2)
   }
 
+  @Input() authorizeNonIndividualTiers: boolean = false;
+
   searchEntities(value: string): Observable<IndexEntity[]> {
-    return this.indexEntityService.getIndividualTiersByKeyword(value);
+    if (this.authorizeNonIndividualTiers)
+      return this.indexEntityService.searchEntitiesByType(value, TIERS_ENTITY_TYPE);
+    else
+      return this.indexEntityService.getIndividualTiersByKeyword(value);
   }
 
   mapResponse(response: IndexEntity[]): IndexEntity[] {
@@ -26,7 +32,7 @@ export class AutocompleteTiersIndividualComponent extends GenericAutocompleteCom
     if (response)
       for (let u of response) {
         let text = JSON.parse(u.text);
-        if (text.isIndividual)
+        if (text.isIndividual || this.authorizeNonIndividualTiers)
           out.push(u);
       }
     return out;

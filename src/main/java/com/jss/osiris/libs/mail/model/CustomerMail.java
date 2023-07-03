@@ -79,6 +79,12 @@ public class CustomerMail {
     private String cbLink;
 
     @Column(length = 2000)
+    private String quotationValidation;
+
+    @Column(length = 1000)
+    private String quotationValidationLink;
+
+    @Column(length = 2000)
     private String paymentExplainationWarning;
 
     @OneToMany(mappedBy = "customerMail", cascade = CascadeType.ALL)
@@ -475,6 +481,22 @@ public class CustomerMail {
 
     public void setCopyToMe(Boolean copyToMe) {
         this.copyToMe = copyToMe;
+    }
+
+    public String getQuotationValidation() {
+        return quotationValidation;
+    }
+
+    public void setQuotationValidation(String quotationValidation) {
+        this.quotationValidation = quotationValidation;
+    }
+
+    public String getQuotationValidationLink() {
+        return quotationValidationLink;
+    }
+
+    public void setQuotationValidationLink(String quotationValidationLink) {
+        this.quotationValidationLink = quotationValidationLink;
     }
 
 }

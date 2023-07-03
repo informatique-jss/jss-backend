@@ -103,6 +103,9 @@ public class Quotation implements IQuotation {
 	@Column(nullable = false)
 	private Boolean isQuotation;
 
+	@Column(length = 40)
+	private String validationToken;
+
 	@ManyToMany
 	@JoinTable(name = "asso_quotation_customer_order", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_customer_order"))
 	@JsonIgnoreProperties(value = { "quotations" }, allowSetters = true)
@@ -302,6 +305,14 @@ public class Quotation implements IQuotation {
 
 	public void setCustomerOrderOrigin(CustomerOrderOrigin customerOrderOrigin) {
 		this.customerOrderOrigin = customerOrderOrigin;
+	}
+
+	public String getValidationToken() {
+		return validationToken;
+	}
+
+	public void setValidationToken(String validationToken) {
+		this.validationToken = validationToken;
 	}
 
 }

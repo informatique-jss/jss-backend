@@ -44,12 +44,14 @@ import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
+import com.jss.osiris.modules.quotation.service.ProvisionTypeService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -78,6 +80,9 @@ public class QuotationValidationHelper {
 
         @Autowired
         ProvisionService provisionService;
+
+        @Autowired
+        ProvisionTypeService provisionTypeService;
 
         @Transactional(rollbackFor = Exception.class)
         public void validateQuotationAndCustomerOrder(IQuotation quotation, String targetStatusCode)
@@ -516,7 +521,9 @@ public class QuotationValidationHelper {
                                 currentAnnouncement = announcementService.getAnnouncement(announcement.getId());
                         } else {
                                 // By default, always redacted by JSS if option exists
-                                for (BillingType billingType : provision.getProvisionType().getBillingTypes()) {
+                                ProvisionType provisionType = provisionTypeService
+                                                .getProvisionType(provision.getProvisionType().getId());
+                                for (BillingType billingType : provisionType.getBillingTypes()) {
                                         if (billingType.getId()
                                                         .equals(constantService.getBillingTypeRedactedByJss().getId()))
                                                 provision.setIsRedactedByJss(true);

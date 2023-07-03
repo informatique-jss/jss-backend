@@ -14,6 +14,11 @@
     <ordering-list class="integration-component" [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
     </ordering-list>
   </mat-tab>
+  <mat-tab label="Prestations" *ngIf="affaire && affaire.id">
+    <provision-list class="integration-component" *ngIf="this.provisionSearch.affaire" [affaireSearch]="provisionSearch"
+      [isForTiersIntegration]="true">
+    </provision-list>
+  </mat-tab>
   <mat-tab label="Historique" *ngIf="affaire && affaire.id">
     <history [entity]="affaire" [entityType]="AFFAIRE_ENTITY_TYPE"></history>
   </mat-tab>

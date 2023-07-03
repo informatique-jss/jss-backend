@@ -11,10 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
+import com.jss.osiris.modules.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.DebourSearch;
 import com.jss.osiris.modules.invoicing.model.DebourSearchResult;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Debour;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.repository.DebourRepository;
 
 @Service
@@ -29,12 +32,20 @@ public class DebourServiceImpl implements DebourService {
     @Autowired
     ConstantService constantService;
 
+    @Autowired
+    AccountingRecordService accountingRecordService;
+
     @Override
     public Debour getDebour(Integer id) {
         Optional<Debour> debour = debourRepository.findById(id);
         if (debour.isPresent())
             return debour.get();
         return null;
+    }
+
+    @Override
+    public List<Debour> getDeboursForProvision(Provision provision) {
+        return debourRepository.findByProvision(provision);
     }
 
     @Override
@@ -81,5 +92,15 @@ public class DebourServiceImpl implements DebourService {
     public List<Debour> findNonAssociatedDeboursForDateAndAmount(LocalDate date, Float amount) throws OsirisException {
         return debourRepository.findNonAssociatedDeboursForDateAndAmount(date, amount,
                 constantService.getPaymentTypeCB().getId());
+    }
+
+    @Override
+    public void unassociateDebourFromInvoice(Debour debour) throws OsirisException {
+        if (debour.getAccountingRecords() != null && debour.getAccountingRecords().size() > 0) {
+            for (AccountingRecord accountingRecord : debour.getAccountingRecords())
+                accountingRecordService.generateCounterPart(accountingRecord, debour.getId(),
+                        constantService.getAccountingJournalPurchases());
+        }
+        debour.setInvoiceItem(null);
     }
 }

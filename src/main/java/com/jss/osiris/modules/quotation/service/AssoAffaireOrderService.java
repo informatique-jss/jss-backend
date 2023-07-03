@@ -29,7 +29,8 @@ public interface AssoAffaireOrderService {
 
         public void reindexAffaires();
 
-        public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder)
+        public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder,
+                        Boolean isFromUser)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
 }

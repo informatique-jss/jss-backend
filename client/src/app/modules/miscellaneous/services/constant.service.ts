@@ -186,6 +186,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.countryFrance;
   }
 
+  getPaymentDeadLineType30() {
+    return this.constant.paymentDeadLineType30;
+  }
+
   getCountryMonaco() {
     return this.constant.countryMonaco;
   }
