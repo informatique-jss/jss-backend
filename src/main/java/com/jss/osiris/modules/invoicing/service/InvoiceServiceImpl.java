@@ -466,6 +466,17 @@ public class InvoiceServiceImpl implements InvoiceService {
                 && !hasAtLeastOneInvoiceItemNotNull(invoice))
             throw new OsirisException(null, "No invoice item found on manual invoice");
 
+        // TODO : get rid of this disgusting block ...
+        if (invoice.getCustomerOrderForInboundInvoice() != null
+                && invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getDebours() != null)
+                            for (Debour debour : provision.getDebours())
+                                if (debour.getNonTaxableAmount() != null)
+                                    debourService.addOrUpdateDebour(debour);
+
         IVat vatTiers = null;
         if (invoice.getTiers() != null)
             vatTiers = invoice.getTiers();
