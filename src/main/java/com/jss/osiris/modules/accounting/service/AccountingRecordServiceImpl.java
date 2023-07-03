@@ -990,7 +990,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException {
     AccountingAccount accountingAccount;
     invoice = invoiceService.getInvoice(invoice.getId());
-    if (invoice.getIsInvoiceFromProvider())
+    if (invoice.getIsInvoiceFromProvider() != null && invoice.getIsInvoiceFromProvider())
       accountingAccount = getProviderAccountingAccountForInvoice(invoice);
     else
       accountingAccount = getCustomerAccountingAccountForInvoice(invoice);

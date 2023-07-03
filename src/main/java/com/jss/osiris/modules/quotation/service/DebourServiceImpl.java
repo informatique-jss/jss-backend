@@ -98,7 +98,7 @@ public class DebourServiceImpl implements DebourService {
     public void unassociateDebourFromInvoice(Debour debour) throws OsirisException {
         if (debour.getAccountingRecords() != null && debour.getAccountingRecords().size() > 0) {
             for (AccountingRecord accountingRecord : debour.getAccountingRecords())
-                accountingRecordService.generateCounterPart(accountingRecord, null,
+                accountingRecordService.generateCounterPart(accountingRecord, debour.getId(),
                         constantService.getAccountingJournalPurchases());
         }
         debour.setInvoiceItem(null);
