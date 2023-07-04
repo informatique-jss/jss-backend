@@ -82,6 +82,7 @@ import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
@@ -700,17 +701,26 @@ public class InvoicingController {
         } else {
             // All invoice same provider / AC
             if (paymentAssociate.getInvoices() != null && paymentAssociate.getInvoices().size() > 1) {
-                Integer providerId = paymentAssociate.getInvoices().get(0).getProvider() != null
-                        ? paymentAssociate.getInvoices().get(0).getProvider().getId()
-                        : paymentAssociate.getInvoices().get(0).getCompetentAuthority().getId();
-                for (Invoice invoice : paymentAssociate.getInvoices()) {
-                    if (invoice.getProvider() != null
-                            && !providerId.equals(invoice.getProvider().getId()))
-                        throw new OsirisValidationException("not same customer order chosed");
-                    if (invoice.getCompetentAuthority() != null
-                            && !providerId.equals(invoice.getCompetentAuthority().getId()))
-                        throw new OsirisValidationException("not same customer order chosed");
-                }
+                Integer providerId = null;
+                if (paymentAssociate.getInvoices().get(0).getProvider() != null)
+                    providerId = paymentAssociate.getInvoices().get(0).getProvider().getId();
+                if (paymentAssociate.getInvoices().get(0).getCompetentAuthority() != null)
+                    providerId = paymentAssociate.getInvoices().get(0).getCompetentAuthority().getId();
+                if (paymentAssociate.getInvoices().get(0).getConfrere() != null)
+                    providerId = paymentAssociate.getInvoices().get(0).getConfrere().getId();
+
+                if (providerId != null)
+                    for (Invoice invoice : paymentAssociate.getInvoices()) {
+                        if (invoice.getProvider() != null
+                                && !providerId.equals(invoice.getProvider().getId()))
+                            throw new OsirisValidationException("not same customer order chosed");
+                        if (invoice.getCompetentAuthority() != null
+                                && !providerId.equals(invoice.getCompetentAuthority().getId()))
+                            throw new OsirisValidationException("not same customer order chosed");
+                        if (invoice.getConfrere() != null
+                                && !providerId.equals(invoice.getConfrere().getId()))
+                            throw new OsirisValidationException("not same customer order chosed");
+                    }
             }
         }
 
@@ -871,9 +881,13 @@ public class InvoicingController {
                 commonCustomerOrder = invoiceHelper.getCustomerOrder(paymentAssociate.getInvoices().get(0));
 
             if (paymentAssociate.getInvoices() != null) {
-                for (Invoice invoice : paymentAssociate.getInvoices())
-                    if (!invoiceHelper.getCustomerOrder(invoice).getId().equals(commonCustomerOrder.getId()))
+                for (Invoice invoice : paymentAssociate.getInvoices()) {
+                    ITiers invoiceCustomerOrder = invoiceHelper.getCustomerOrder(invoice);
+                    if (invoiceCustomerOrder instanceof Responsable)
+                        invoiceCustomerOrder = ((Responsable) invoiceCustomerOrder).getTiers();
+                    if (!invoiceCustomerOrder.getId().equals(commonCustomerOrder.getId()))
                         throw new OsirisValidationException("not same customer order chosed");
+                }
             }
 
             if (paymentAssociate.getCustomerOrders() != null) {
