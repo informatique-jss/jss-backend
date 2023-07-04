@@ -29,8 +29,8 @@
           <div class="full-width">
             <fieldset [disabled]="editMode==false" class="fieldset-no-border">
               <table class="full-width">
-                <tr *ngIf="selectedcompetentAuthority.id">
-                  <td>
+                <tr>
+                  <td *ngIf="selectedcompetentAuthority.id">
                     <generic-input [(model)]="selectedcompetentAuthority.id" label="Identifiant technique"
                       [form]="entityForm2" propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
                   </td>
