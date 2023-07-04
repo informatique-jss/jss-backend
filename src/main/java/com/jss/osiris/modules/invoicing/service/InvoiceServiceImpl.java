@@ -475,8 +475,11 @@ public class InvoiceServiceImpl implements InvoiceService {
                     for (Provision provision : asso.getProvisions())
                         if (provision.getDebours() != null)
                             for (Debour debour : provision.getDebours())
-                                if (debour.getNonTaxableAmount() != null)
+                                if (debour.getNonTaxableAmount() != null) {
+                                    Debour currentDebour = debourService.getDebour(debour.getId());
+                                    currentDebour.setNonTaxableAmount(debour.getNonTaxableAmount());
                                     debourService.addOrUpdateDebour(debour);
+                                }
 
         IVat vatTiers = null;
         if (invoice.getTiers() != null)
