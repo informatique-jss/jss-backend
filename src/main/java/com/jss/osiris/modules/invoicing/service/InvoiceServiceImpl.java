@@ -478,7 +478,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                                 if (debour.getNonTaxableAmount() != null) {
                                     Debour currentDebour = debourService.getDebour(debour.getId());
                                     currentDebour.setNonTaxableAmount(debour.getNonTaxableAmount());
-                                    debourService.addOrUpdateDebour(debour);
+                                    debourService.addOrUpdateDebour(currentDebour);
                                 }
 
         IVat vatTiers = null;
