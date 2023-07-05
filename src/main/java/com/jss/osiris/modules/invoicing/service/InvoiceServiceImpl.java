@@ -193,7 +193,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                     // Do not touch deposit records, they are already handled before
                     if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
                             .equals(constantService.getPrincipalAccountingAccountDeposit().getId())
-                            && accountingRecord.getDeposit() == null)
+                            && accountingRecord.getContrePasse() == null)
                         accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart,
                                 constantService.getAccountingJournalSales());
             }
@@ -273,7 +273,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                     // Do not touch deposit records, they are already handled before
                     if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                            .equals(constantService.getPrincipalAccountingAccountDeposit().getId()))
+                            .equals(constantService.getPrincipalAccountingAccountDeposit().getId())
+                            && accountingRecord.getContrePasse() == null)
                         accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart,
                                 constantService.getAccountingJournalPurchases());
             }
@@ -465,6 +466,20 @@ public class InvoiceServiceImpl implements InvoiceService {
         if ((invoice.getCompetentAuthority() == null || invoice.getCustomerOrderForInboundInvoice() == null)
                 && !hasAtLeastOneInvoiceItemNotNull(invoice))
             throw new OsirisException(null, "No invoice item found on manual invoice");
+
+        // TODO : get rid of this disgusting block ...
+        if (invoice.getCustomerOrderForInboundInvoice() != null
+                && invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getDebours() != null)
+                            for (Debour debour : provision.getDebours())
+                                if (debour.getNonTaxableAmount() != null) {
+                                    Debour currentDebour = debourService.getDebour(debour.getId());
+                                    currentDebour.setNonTaxableAmount(debour.getNonTaxableAmount());
+                                    debourService.addOrUpdateDebour(debour);
+                                }
 
         IVat vatTiers = null;
         if (invoice.getTiers() != null)

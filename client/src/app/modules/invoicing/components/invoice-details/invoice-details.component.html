@@ -342,7 +342,7 @@
   </mat-tab-group>
 </div>
 <button matTooltip="Editer la facture" mat-fab color="accent" class="fab-button" (click)="editInvoice($event)"
-  (auxclick)="editInvoice($event)">
+  *ngIf="false" (auxclick)="editInvoice($event)">
   <mat-icon>edit</mat-icon>
 </button>
 <button *ngIf="canCancelInvoice() && canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code
