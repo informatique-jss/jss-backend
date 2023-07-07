@@ -990,7 +990,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException {
     AccountingAccount accountingAccount;
     invoice = invoiceService.getInvoice(invoice.getId());
-    if (invoice.getIsInvoiceFromProvider() != null && invoice.getIsInvoiceFromProvider())
+    if (invoice.getIsInvoiceFromProvider() != null && invoice.getIsInvoiceFromProvider()
+        || invoice.getIsProviderCreditNote() != null && invoice.getIsProviderCreditNote())
       accountingAccount = getProviderAccountingAccountForInvoice(invoice);
     else
       accountingAccount = getCustomerAccountingAccountForInvoice(invoice);
@@ -1530,7 +1531,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  @Transactional(rollbackFor = Exception.class)
+  @Transactional
   public void sendBillingClosureReceipt()
       throws OsirisException, OsirisClientMessageException, OsirisValidationException {
     List<Tiers> tiers = tiersService.findAllTiersForBillingClosureReceiptSend();
@@ -1596,10 +1597,17 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           tiers.add(tier);
 
         List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers, isOrderingByEventDate);
-        if (values.size() > 0)
-          sendBillingClosureReceiptFile(
-              generatePdfDelegate.getBillingClosureReceiptFile(tier, values),
-              tier);
+        if (values.size() > 0) {
+          try {
+            sendBillingClosureReceiptFile(
+                generatePdfDelegate.getBillingClosureReceiptFile(tier, values),
+                tier);
+          } catch (Exception e) {
+            globalExceptionHandler.persistLog(
+                new OsirisException(e, "Impossible to generate billing closure for Tiers " + tiersId),
+                OsirisLog.UNHANDLED_LOG);
+          }
+        }
 
       } else if (billingClosureDocument.getBillingClosureRecipientType() != null
           && billingClosureDocument.getBillingClosureRecipientType().getId()
@@ -1612,11 +1620,17 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             tiers.add(responsable);
             List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers,
                 isOrderingByEventDate);
-            if (values.size() > 0)
-              sendBillingClosureReceiptFile(
-                  generatePdfDelegate.getBillingClosureReceiptFile(responsable, values),
-                  responsable);
-
+            if (values.size() > 0) {
+              try {
+                sendBillingClosureReceiptFile(
+                    generatePdfDelegate.getBillingClosureReceiptFile(responsable, values),
+                    tier);
+              } catch (Exception e) {
+                globalExceptionHandler.persistLog(
+                    new OsirisException(e, "Impossible to generate billing closure for Tiers " + tiersId),
+                    OsirisLog.UNHANDLED_LOG);
+              }
+            }
           }
       }
     }
@@ -1973,7 +1987,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     try {
       mailHelper.sendBillingClosureToCustomer(attachments, tiers, false);
     } catch (Exception e) {
-      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+      globalExceptionHandler.persistLog(
+          new OsirisException(e, "Impossible to send billing closure mail for Tiers " + tiers.getId()),
+          OsirisLog.UNHANDLED_LOG);
     }
   }
 }

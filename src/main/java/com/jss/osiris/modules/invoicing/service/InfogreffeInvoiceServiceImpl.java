@@ -111,7 +111,6 @@ public class InfogreffeInvoiceServiceImpl implements InfogreffeInvoiceService {
                 }
                 foundInvoice.setDebour(findCorrespondingDebour(invoice));
                 addOrUpdateInfogreffeInvoice(foundInvoice);
-                System.out.println(line);
                 if (foundInvoice.getDebour() != null && foundInvoice.getDebour().getInvoiceItem() == null)
                     generateInvoiceFromDebourAndInfogreffeInvoice(foundInvoice);
             }

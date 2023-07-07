@@ -880,6 +880,9 @@ public class InvoicingController {
                     .round(paymentAssociate.getDeposit().getDepositAmount() * 100f) == Math.round(totalAmount * 100f))
                 commonCustomerOrder = invoiceHelper.getCustomerOrder(paymentAssociate.getInvoices().get(0));
 
+            if (commonCustomerOrder instanceof Responsable)
+                commonCustomerOrder = ((Responsable) commonCustomerOrder).getTiers();
+
             if (paymentAssociate.getInvoices() != null) {
                 for (Invoice invoice : paymentAssociate.getInvoices()) {
                     ITiers invoiceCustomerOrder = invoiceHelper.getCustomerOrder(invoice);
