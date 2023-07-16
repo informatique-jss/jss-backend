@@ -28,5 +28,8 @@ export interface CustomerOrderReporting {
   noticeTypeLabel: string;
   invoiceCreator: string;
   invoiceStatusLabel: string;
+  invoiceId: string;
   customerOrderOriginLabel: string;
+  responsableMail: string;
+  responsablePhone: string;
 }
