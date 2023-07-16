@@ -166,7 +166,7 @@ export class SearchComponent implements OnInit {
 
   getProvisionLabel(entity: any) {
     let out = [];
-    if (entity.text.provisions)
+    if (entity.text.provisions && entity.text.customerOrder) {
       for (let provision of entity.text.provisions)
         out.push((provision.provisionFamilyType ? provision.provisionFamilyType.label : "")
           + " - " + (provision.provisionType ? provision.provisionType.label : "")
@@ -174,7 +174,9 @@ export class SearchComponent implements OnInit {
           + (provision.simpleProvision && provision.simpleProvision.simpleProvisionStatus ? " - " + provision.simpleProvision.simpleProvisionStatus.label : "")
           + (provision.formalite && provision.formalite.formaliteStatus ? " - " + provision.formalite.formaliteStatus.label : "")
         );
-    return out.join(" / ");
+      return out.join(" / ") + " / Commande " + entity.text.customerOrder.id;
+    }
+    return "";
   }
 
   getOrderingCustomerForInvoice(entity: any) {

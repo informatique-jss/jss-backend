@@ -40,6 +40,7 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "assoAffaireOrders", "invoices", "deposits", "payments",
 			"accountingRecords" }, allowSetters = true)
+	@IndexedField
 	private CustomerOrder customerOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
