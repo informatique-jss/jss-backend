@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable, Subscription } from 'rxjs';
@@ -11,6 +11,7 @@ import { SortTableColumn } from '../../model/SortTableColumn';
 
 @Component({
   selector: 'sort-table',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './sort-table.component.html',
   styleUrls: ['./sort-table.component.css']
 })
