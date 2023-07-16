@@ -1,8 +1,9 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { debounceTime, filter, switchMap, tap } from 'rxjs';
 import { GUICHET_UNIQUE_BASE_URL } from 'src/app/libs/Constants';
+import { formatDateFrance } from 'src/app/libs/FormatHelper';
 import { FormaliteGuichetUnique } from 'src/app/modules/quotation/model/guichet-unique/FormaliteGuichetUnique';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { FormaliteGuichetUniqueService } from '../../../services/formalite.guichet.unique.service';
@@ -18,6 +19,7 @@ export class ChipsFormaliteGuichetUniqueComponent extends GenericChipsComponent<
   formaliteGuichetUniques: FormaliteGuichetUnique[] = [] as Array<FormaliteGuichetUnique>;
   filteredFormaliteGuichetUniques: FormaliteGuichetUnique[] | undefined;
   @ViewChild('formaliteGuichetUniqueInput') formaliteGuichetUniqueInput: ElementRef<HTMLInputElement> | undefined;
+  @Input() hint: string = "Utilier le SIREN pour les comptes annuels";
 
   constructor(private formBuild: UntypedFormBuilder,
     private formaliteGuichetUniqueService: FormaliteGuichetUniqueService,
@@ -73,7 +75,24 @@ export class ChipsFormaliteGuichetUniqueComponent extends GenericChipsComponent<
   }
 
   openGuichetUnique(event: any, formalite: FormaliteGuichetUnique) {
-    window.open(GUICHET_UNIQUE_BASE_URL + formalite.id, "_blank");
+    if (formalite.isFormality)
+      window.open(GUICHET_UNIQUE_BASE_URL + formalite.id, "_blank");
+    if (formalite.isAnnualAccounts)
+      window.open(GUICHET_UNIQUE_BASE_URL + "annual-accounts/" + formalite.id, "_blank");
     return;
+  }
+
+  getLabel(formalite: FormaliteGuichetUnique): string {
+    let date = "";
+    if (formalite && formalite.created)
+      date = formatDateFrance(new Date(formalite.created));
+
+    let out = "";
+
+    if (formalite.referenceMandataire)
+      out += formalite.referenceMandataire + " - ";
+
+    out += formalite.liasseNumber + " - " + date;
+    return out;
   }
 }

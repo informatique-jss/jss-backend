@@ -10,7 +10,8 @@ public interface FormaliteGuichetUniqueService {
 
     public FormaliteGuichetUnique getFormaliteGuichetUnique(Integer id);
 
-    public FormaliteGuichetUnique refreshFormaliteGuichetUnique(Integer id, Formalite formalite)
+    public FormaliteGuichetUnique refreshFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique,
+            Formalite formalite)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException;
 
     public FormaliteGuichetUnique addOrUpdateFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique);

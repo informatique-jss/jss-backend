@@ -2,7 +2,7 @@
   <mat-label>{{label}}</mat-label>
   <mat-chip-grid #chipListFormaliteGuichetUnique>
     <mat-chip-row *ngFor="let formaliteGuichetUnique of model" (removed)="removeElement(formaliteGuichetUnique)">
-      {{formaliteGuichetUnique.referenceMandataire}} ({{formaliteGuichetUnique.liasseNumber}})
+      {{getLabel(formaliteGuichetUnique)}}
       <button matChipRemove *ngIf="!isDisabled">
         <mat-icon>cancel</mat-icon>
       </button>
@@ -19,7 +19,7 @@
     (optionSelected)="addFormaliteGuichetUnique($event)">
     <mat-option *ngFor="let formaliteGuichetUnique of filteredFormaliteGuichetUniques "
       [value]="formaliteGuichetUnique">
-      {{formaliteGuichetUnique.referenceMandataire}} ({{formaliteGuichetUnique.liasseNumber}})
+      {{getLabel(formaliteGuichetUnique)}}
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>
