@@ -82,4 +82,5 @@ export const PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED = "PROVISION_GUICHET_UNIQU
 export const REPORTING_DATASET_CUSTOMER_ORDER = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante";
 export const REPORTING_DATASET_QUOTATION = "Donneur d'ordre / Devis / Prestations - année calendaire courante";
 export const REPORTING_DATASET_VAT = "TVA";
+export const REPORTING_DATASET_TIERS = "Tiers / Responsable / CA / Documents";
 export const REPORTING_DATASET_CUSTOMER_ORDER_FOR_TIERS = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante pour un tiers";
