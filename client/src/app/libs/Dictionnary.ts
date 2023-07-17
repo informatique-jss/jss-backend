@@ -41,5 +41,8 @@ export const Dictionnary = {
   "vatCode": "Type de TVA",
   "invoiceStatusLabel": "Statut de la facture",
   "customerOrderOriginLabel": "Origine de la commande/devis",
+  "invoiceId": "Numéro de facture",
+  "responsableMail": "Mail du responsable",
+  "responsablePhone": "Téléphone du responsable"
 };
 

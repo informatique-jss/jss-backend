@@ -329,7 +329,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
     }
     // If responsable, return associate Tiers
     if ((customerOrder as any).tiers)
-      return (customerOrder as any).tiers;
+      customerOrder = ((customerOrder as any).tiers as Tiers);
 
     let refundDocument = getDocument(this.constantService.getDocumentTypeRefund(), customerOrder);
 

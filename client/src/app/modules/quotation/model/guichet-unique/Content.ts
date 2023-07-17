@@ -1,3 +1,4 @@
+import { ComptesAnnuels } from "../ComptesAnnuels";
 import { Declarant } from "./Declarant";
 import { Exploitation } from "./Exploitation";
 import { NatureCreation } from "./NatureCreation";
@@ -25,5 +26,6 @@ export interface Content {
   declarant: Declarant;
   piecesJointes: PiecesJointe[];
   indicateurActive: boolean;
+  comptesAnnuels: ComptesAnnuels;
 }
 
