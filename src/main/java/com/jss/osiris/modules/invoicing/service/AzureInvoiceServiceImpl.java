@@ -216,6 +216,11 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
 
     private Invoice generateDeboursAndInvoiceFromInvoice(AzureInvoice azureInvoice, Provision currentProvision)
             throws OsirisClientMessageException, OsirisException, OsirisValidationException {
+
+        if (azureInvoice.getCompetentAuthority().getDefaultPaymentType() == null)
+            throw new OsirisClientMessageException(
+                    "Type de paiement par défaut non renseigné sur l'autorité compétente");
+
         Debour newDebour = new Debour();
         newDebour.setBillingType(constantService.getBillingTypeEmolumentsDeGreffeDebour());
         newDebour.setComments("Créé depuis la facture " + azureInvoice.getInvoiceId());
