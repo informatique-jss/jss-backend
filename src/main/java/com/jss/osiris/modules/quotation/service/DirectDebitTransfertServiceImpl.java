@@ -48,6 +48,7 @@ import com.jss.osiris.libs.transfer.PrvtOtherBean;
 import com.jss.osiris.libs.transfer.RmtInfBean;
 import com.jss.osiris.libs.transfer.SchmeNmBean;
 import com.jss.osiris.libs.transfer.SvcLvlBean;
+import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -168,7 +169,11 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
         directDebitTransfert.setLabel("Facture " + invoice.getId() + " / Journal Spécial des Sociétés / "
                 + (invoice.getCustomerOrder() != null ? invoice.getCustomerOrder().getId() : ""));
         directDebitTransfert.setIsAlreadyExported(false);
-        directDebitTransfert.setTransfertAmount(invoice.getTotalPrice());
+        Float totalPrice = invoice.getTotalPrice();
+        if (invoice.getDeposits() != null)
+            for (Deposit deposit : invoice.getDeposits())
+                totalPrice -= deposit.getDepositAmount();
+        directDebitTransfert.setTransfertAmount(totalPrice);
         directDebitTransfert.setTransfertDateTime(invoice.getDueDate().atTime(12, 0));
         directDebitTransfert.setTransfertIban(invoiceHelper.getIbanOfOrderingCustomer(invoice));
         directDebitTransfert.setTransfertBic(invoiceHelper.getBicOfOrderingCustomer(invoice));

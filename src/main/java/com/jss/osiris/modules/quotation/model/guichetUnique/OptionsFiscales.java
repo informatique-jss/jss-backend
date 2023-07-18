@@ -15,8 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.jss.osiris.libs.JacksonLocalDateTimeGmtDeserializer;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.ConditionVersementTVA;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DeviseCapital;
@@ -57,7 +55,6 @@ public class OptionsFiscales implements Serializable, IId {
     @JoinColumn(name = "id_condition_versement_tva")
     ConditionVersementTVA conditionVersementTVA;
 
-    @JsonDeserialize(using = JacksonLocalDateTimeGmtDeserializer.class)
     private String dateClotureExerciceComptable;
 
     @Column()
