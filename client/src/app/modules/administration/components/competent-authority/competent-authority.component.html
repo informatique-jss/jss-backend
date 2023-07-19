@@ -263,13 +263,13 @@
             (click)="saveCompetentAuthority()">
             <mat-icon>save</mat-icon>
           </button>
-          <button matTooltip="Modifier le confrère" mat-fab color="accent" class="second-fab-button"
+          <button matTooltip="Modifier une autorité compétente" mat-fab color="accent" class="second-fab-button"
             *ngIf="editMode==false && selectedcompetentAuthority &&  selectedcompetentAuthority.id"
             (click)="editCompetentAuthority()">
             <mat-icon>edit</mat-icon>
           </button>
-          <button matTooltip="Ajouter un confrère" mat-fab color="accent" class="fab-button" *ngIf="editMode==false"
-            (click)="addCompetentAuthority()">
+          <button matTooltip="Ajouter une autorité compétente" mat-fab color="accent" class="fab-button"
+            *ngIf="editMode==false" (click)="addCompetentAuthority()">
             <mat-icon>add</mat-icon>
           </button>
         </mat-tab>

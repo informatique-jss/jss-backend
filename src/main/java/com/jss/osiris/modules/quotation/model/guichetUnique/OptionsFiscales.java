@@ -15,8 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.jss.osiris.libs.JacksonLocalDateTimeGmtDeserializer;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.ConditionVersementTVA;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DeviseCapital;
@@ -57,8 +55,7 @@ public class OptionsFiscales implements Serializable, IId {
     @JoinColumn(name = "id_condition_versement_tva")
     ConditionVersementTVA conditionVersementTVA;
 
-    @JsonDeserialize(using = JacksonLocalDateTimeGmtDeserializer.class)
-    private LocalDate dateClotureExerciceComptable;
+    private String dateClotureExerciceComptable;
 
     @Column()
     private Boolean optionVersementLiberatoire;
@@ -210,14 +207,6 @@ public class OptionsFiscales implements Serializable, IId {
 
     public void setConditionVersementTVA(ConditionVersementTVA conditionVersementTVA) {
         this.conditionVersementTVA = conditionVersementTVA;
-    }
-
-    public LocalDate getDateClotureExerciceComptable() {
-        return dateClotureExerciceComptable;
-    }
-
-    public void setDateClotureExerciceComptable(LocalDate dateClotureExerciceComptable) {
-        this.dateClotureExerciceComptable = dateClotureExerciceComptable;
     }
 
     public Boolean getOptionVersementLiberatoire() {
@@ -451,6 +440,14 @@ public class OptionsFiscales implements Serializable, IId {
 
     public void setImmeubles(List<Immeuble> immeubles) {
         this.immeubles = immeubles;
+    }
+
+    public String getDateClotureExerciceComptable() {
+        return dateClotureExerciceComptable;
+    }
+
+    public void setDateClotureExerciceComptable(String dateClotureExerciceComptable) {
+        this.dateClotureExerciceComptable = dateClotureExerciceComptable;
     }
 
 }
