@@ -28,9 +28,14 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.City;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.miscellaneous.repository.CityRepository;
+import com.jss.osiris.modules.miscellaneous.repository.CompetentAuthorityRepository;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.ActuLegaleAnnouncement;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementListSearch;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearch;
@@ -41,6 +46,7 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.guichetUnique.RneCompany;
 import com.jss.osiris.modules.quotation.repository.AnnouncementRepository;
 
 @Service
@@ -48,6 +54,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Autowired
     AnnouncementRepository announcementRepository;
+
+    @Autowired
+    CityRepository cityRepository;
+
+    @Autowired
+    CompetentAuthorityRepository competentAuthorityRepository;
 
     @Autowired
     ConstantService constantService;
@@ -84,6 +96,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Autowired
     ProvisionService provisionService;
+
+    @Autowired
+    RneDelegateService rneDelegateService;
 
     @Override
     public List<Announcement> getAnnouncements() {
@@ -582,4 +597,52 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return null;
     }
 
+    @Override
+    public String parseAnnouncement(String notice, Affaire affaire)
+            throws OsirisException, OsirisClientMessageException {
+        RneCompany rneCompany = rneDelegateService.getCompanyBySiren(affaire.getSiren());
+
+        String companyAddress = rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise()
+                .getAdresse().getNumVoie() +
+                " "
+                + rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse()
+                        .getTypeVoie().getCode()
+                +
+                " " + rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse()
+                        .getVoie()
+                + " " + rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse()
+                        .getVoie()
+                + " - "
+                + rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse()
+                        .getCommune()
+                +
+                " - " + rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse()
+                        .getCodePostal();
+        Float shareSocial = affaire.getShareCapital();
+        String label = affaire.getDenomination();
+        String legalForm = rneCompany.getFormality().getFormeJuridique();
+        String cityRne = rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse()
+                .getCommune();
+        List<City> city = cityRepository.findByLabelContainingIgnoreCase(cityRne);
+        Integer idCity = city.get(0).getId();
+        List<CompetentAuthority> competentAuthorities = competentAuthorityRepository.findByCities_Id(idCity);
+        String competentAuthorityTypeRcsCode = constantService.getCompetentAuthorityTypeRcs().getCode();
+        CompetentAuthority ca = competentAuthorityRepository.findByCityIdAndByAuthorityType(idCity,
+                competentAuthorityTypeRcsCode);
+
+        if (label != null)
+            notice = notice.replace("{libelle}", label.toString());
+        if (shareSocial != null)
+            notice = notice.replace("{capitalSocial}", shareSocial.toString());
+        if (legalForm != null)
+            notice = notice.replace("{formeJuridique}", legalForm);
+        if (companyAddress != null)
+            notice = notice.replace("{adresseEntreprise}", companyAddress);
+        if (cityRne != null)
+            notice = notice.replace("{villeRne}", cityRne);
+        if (competentAuthorities != null) {
+            notice = notice.replace("{autoriteCompetente}", ca.getLabel());
+        }
+        return notice;
+    }
 }
