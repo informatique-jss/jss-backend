@@ -15,7 +15,7 @@ export interface OptionsFiscales {
   regimeImpositionTVA: RegimeImpositionTVA;
   periodiciteEtOptionsParticulieresTVA: PeriodiciteEtOptionsParticulie;
   conditionVersementTVA: ConditionVersementTVA;
-  dateClotureExerciceComptable: Date;
+  dateClotureExerciceComptable: String;
   optionVersementLiberatoire: boolean;
   lieuImposition: string;
   dateEnregistrementStatuts: Date;

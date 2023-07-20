@@ -97,6 +97,17 @@ public class FormaliteGuichetUnique implements IId {
     @JsonIgnoreProperties(value = { "formalitesGuichetUnique" })
     private Formalite formalite;
 
+    private Integer mandataireId;
+    private String siren;
+    private String numNat;
+    private String statusDate;
+    private String signedDate;
+    private Integer year;
+    private String created;
+
+    private Boolean isFormality;
+    private Boolean isAnnualAccounts;
+
     public Status getStatus() {
         return status;
     }
@@ -295,5 +306,77 @@ public class FormaliteGuichetUnique implements IId {
 
     public void setFormalite(Formalite formalite) {
         this.formalite = formalite;
+    }
+
+    public Integer getMandataireId() {
+        return mandataireId;
+    }
+
+    public void setMandataireId(Integer mandataireId) {
+        this.mandataireId = mandataireId;
+    }
+
+    public String getSiren() {
+        return siren;
+    }
+
+    public void setSiren(String siren) {
+        this.siren = siren;
+    }
+
+    public String getNumNat() {
+        return numNat;
+    }
+
+    public void setNumNat(String numNat) {
+        this.numNat = numNat;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public String getStatusDate() {
+        return statusDate;
+    }
+
+    public void setStatusDate(String statusDate) {
+        this.statusDate = statusDate;
+    }
+
+    public String getSignedDate() {
+        return signedDate;
+    }
+
+    public void setSignedDate(String signedDate) {
+        this.signedDate = signedDate;
+    }
+
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
+    }
+
+    public Boolean getIsFormality() {
+        return isFormality;
+    }
+
+    public void setIsFormality(Boolean isFormality) {
+        this.isFormality = isFormality;
+    }
+
+    public Boolean getIsAnnualAccounts() {
+        return isAnnualAccounts;
+    }
+
+    public void setIsAnnualAccounts(Boolean isAnnualAccounts) {
+        this.isAnnualAccounts = isAnnualAccounts;
     }
 }

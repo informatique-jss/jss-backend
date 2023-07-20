@@ -1120,10 +1120,6 @@ public class MailHelper {
             mail.setPaymentExplainationWarning(
                     "Référence à indiquer absolument dans le libellé de votre virement : " + customerOrder.getId());
 
-        } else if (remainingToPay < 0) {
-            mail.setExplaination3(
-                    "Un remboursement de " + (Math.abs(remainingToPay))
-                            + " € sera bientôt réalisé vers votre compte bancaire.");
         }
 
         mail.setGreetings("En vous remerciant pour votre confiance !");

@@ -97,7 +97,7 @@ public class VatServiceImpl implements VatService {
         if (vat.getId().equals(constantService.getVatTwo().getId()))
             return settings.getReducedVat().getRate() > 0 ? settings.getReducedVat() : null;
 
-        return constantService.getVatTwenty();
+        return vat != null ? vat : constantService.getVatTwenty();
     }
 
     @Override
@@ -129,7 +129,7 @@ public class VatServiceImpl implements VatService {
         if (vat.getId().equals(constantService.getVatDeductibleTwo().getId()))
             return settings.getReducedVatForPurshase().getRate() > 0 ? settings.getReducedVatForPurshase() : null;
 
-        return constantService.getVatDeductible();
+        return (vat != null ? vat : constantService.getVatDeductible());
     }
 
     @Override
@@ -189,7 +189,7 @@ public class VatServiceImpl implements VatService {
         if (vat.getId().equals(constantService.getVatTwo().getId()))
             return settings.getReducedVat().getRate() > 0 ? settings.getReducedVat() : null;
 
-        return constantService.getVatTwenty();
+        return vat != null ? vat : constantService.getVatTwenty();
     }
 
     private Country getCountryForIQuotation(IQuotation quotation) throws OsirisException, OsirisClientMessageException {

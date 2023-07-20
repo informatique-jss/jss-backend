@@ -9,7 +9,7 @@
       </tr>
     </table>
     <sort-table *ngIf="textSearch && textSearch.length>=2" [actions]="tableAction" [columns]="displayedColumns"
-      [values]="affaires" tableName="Affaires">
+      [displayTotalLines]="true" [values]="affaires" tableName="Affaires">
     </sort-table>
   </div>
 </div>

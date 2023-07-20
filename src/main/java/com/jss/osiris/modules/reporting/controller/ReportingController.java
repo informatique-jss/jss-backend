@@ -18,10 +18,12 @@ import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.reporting.model.ICustomerOrderReporting;
 import com.jss.osiris.modules.reporting.model.IQuotationReporting;
+import com.jss.osiris.modules.reporting.model.ITiersReporting;
 import com.jss.osiris.modules.reporting.model.IVatReporting;
 import com.jss.osiris.modules.reporting.model.UserReporting;
 import com.jss.osiris.modules.reporting.service.CustomerOrderReportingService;
 import com.jss.osiris.modules.reporting.service.QuotationReportingService;
+import com.jss.osiris.modules.reporting.service.TiersReportingService;
 import com.jss.osiris.modules.reporting.service.UserReportingService;
 import com.jss.osiris.modules.reporting.service.VatReportingService;
 
@@ -41,6 +43,9 @@ public class ReportingController {
 
 	@Autowired
 	VatReportingService vatReportingService;
+
+	@Autowired
+	TiersReportingService tiersReportingService;
 
 	@Autowired
 	EmployeeService employeeService;
@@ -66,6 +71,14 @@ public class ReportingController {
 			throws OsirisValidationException, OsirisException {
 
 		return new ResponseEntity<List<IVatReporting>>(vatReportingService.getVatReporting(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tiers")
+	public ResponseEntity<List<ITiersReporting>> getTiersReporting()
+			throws OsirisValidationException, OsirisException {
+
+		return new ResponseEntity<List<ITiersReporting>>(tiersReportingService.getTiersReporting(),
 				HttpStatus.OK);
 	}
 

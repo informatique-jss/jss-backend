@@ -1,0 +1,32 @@
+export interface TiersReporting {
+  tiersId: number;
+  responsableId: number;
+  tiersLabel: string;
+  responsableLabel: string;
+  salesEmployeeLabel: string;
+  tiersPostalCode: string;
+  tiersCedexComplement: string;
+  tiersCity: string;
+  tiersCountry: string;
+  tiersIntercommunityVat: string;
+  tiersType: string;
+  responsableType: string;
+  isTiersIndividual: string;
+  nbrCustomerOrder: number;
+  nbrAnnouncement: number;
+  nbrFormalities: number;
+  turnoverAmount: number;
+  turnoverAmountWithoutDebour: number;
+  docTiersPaperRecipient: string;
+  docTiersPaperNumeric: string;
+  docTiersBilling: string;
+  docTiersBillingLabel: string;
+  docResponsablePaperRecipient: string;
+  docResponsablePaperNumeric: string;
+  docResponsableBilling: string;
+  docResponsableBillingLabel: string;
+  tiersPaymentType: string;
+  tiersPaymentIban: string;
+  tiersPaymentBic: string;
+  tiersIsProvisionnalPaymentMandatory: boolean;
+}

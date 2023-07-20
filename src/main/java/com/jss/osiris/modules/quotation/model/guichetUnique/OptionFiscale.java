@@ -54,7 +54,7 @@ public class OptionFiscale implements Serializable, IId {
     @JoinColumn(name = "id_condition_versement_tva")
     ConditionVersementTVA conditionVersementTVA;
 
-    private LocalDate dateClotureExerciceComptable;
+    private String dateClotureExerciceComptable;
 
     private Boolean optionVersementLiberatoire;
 
@@ -189,14 +189,6 @@ public class OptionFiscale implements Serializable, IId {
 
     public void setConditionVersementTVA(ConditionVersementTVA conditionVersementTVA) {
         this.conditionVersementTVA = conditionVersementTVA;
-    }
-
-    public LocalDate getDateClotureExerciceComptable() {
-        return dateClotureExerciceComptable;
-    }
-
-    public void setDateClotureExerciceComptable(LocalDate dateClotureExerciceComptable) {
-        this.dateClotureExerciceComptable = dateClotureExerciceComptable;
     }
 
     public Boolean getOptionVersementLiberatoire() {
@@ -430,6 +422,14 @@ public class OptionFiscale implements Serializable, IId {
 
     public void setImmeubles(List<Immeuble> immeubles) {
         this.immeubles = immeubles;
+    }
+
+    public String getDateClotureExerciceComptable() {
+        return dateClotureExerciceComptable;
+    }
+
+    public void setDateClotureExerciceComptable(String dateClotureExerciceComptable) {
+        this.dateClotureExerciceComptable = dateClotureExerciceComptable;
     }
 
 }

@@ -56,6 +56,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     private String loginRequestUrl = "/login";
     private String ssoRequestUrl = "/sso";
     private String formalitiesRequestUrl = "/formalities";
+    private String annualAccountsRequestUrl = "/annual_accounts";
 
     private String bearerValue = null;
     private LocalDateTime bearerExpireDateTime = LocalDateTime.now().minusYears(100);
@@ -103,7 +104,15 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     }
 
     @Override
-    public List<FormaliteGuichetUnique> getFormalitiesByDate(LocalDateTime createdAfter, LocalDateTime updatedAfter)
+    public List<FormaliteGuichetUnique> getAllFormalitiesByDate(LocalDateTime createdAfter, LocalDateTime updatedAfter)
+            throws OsirisException, OsirisClientMessageException {
+        List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
+        formalites.addAll(getFormalitiesByDate(createdAfter, updatedAfter));
+        formalites.addAll(getAnnualAccountsByDate(createdAfter, updatedAfter));
+        return formalites;
+    }
+
+    private List<FormaliteGuichetUnique> getFormalitiesByDate(LocalDateTime createdAfter, LocalDateTime updatedAfter)
             throws OsirisException, OsirisClientMessageException {
         List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
         int page = 1;
@@ -138,7 +147,16 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     }
 
     @Override
-    public List<FormaliteGuichetUnique> getFormalitiesByRefenceMandataire(String reference)
+    public List<FormaliteGuichetUnique> getAllFormalitiesByRefenceMandataire(String reference)
+            throws OsirisException, OsirisClientMessageException {
+        List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
+        formalites.addAll(getFormalitiesByRefenceMandataire(reference));
+        formalites.addAll(getAnnualAccountsByRefenceMandataire(reference));
+
+        return formalites;
+    }
+
+    private List<FormaliteGuichetUnique> getFormalitiesByRefenceMandataire(String reference)
             throws OsirisException, OsirisClientMessageException {
         List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
         int page = 1;
@@ -158,15 +176,22 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         HttpHeaders headers = createHeaders();
 
         ResponseEntity<List<FormaliteGuichetUnique>> response = new RestTemplate().exchange(
-                guichetUniqueEntryPoint + formalitiesRequestUrl + "?page=" + page + "&search=" + reference,
+                guichetUniqueEntryPoint + formalitiesRequestUrl + "?page=" + page + "&order[created]=desc&search="
+                        + reference,
                 HttpMethod.GET, new HttpEntity<String>(headers),
                 new ParameterizedTypeReference<List<FormaliteGuichetUnique>>() {
                 });
 
-        if (response.getBody() != null) {
+        List<FormaliteGuichetUnique> res = response.getBody();
+        if (res != null) {
+            for (FormaliteGuichetUnique formaliteGuichetUnique : res) {
+                formaliteGuichetUnique.setIsFormality(true);
+                formaliteGuichetUnique.setIsAnnualAccounts(false);
+            }
+
             return response.getBody();
         }
-        return null;
+        return res;
     }
 
     @Override
@@ -182,6 +207,101 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
                 });
 
         if (response.getBody() != null) {
+            response.getBody().setIsAnnualAccounts(false);
+            response.getBody().setIsFormality(true);
+            return response.getBody();
+        } else {
+            throw new OsirisException(null, "Guichet unique formality not found for id " + id);
+        }
+    }
+
+    private List<FormaliteGuichetUnique> getAnnualAccountsByDate(LocalDateTime createdAfter, LocalDateTime updatedAfter)
+            throws OsirisException, OsirisClientMessageException {
+        List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
+        int page = 1;
+        List<FormaliteGuichetUnique> inFormalites = getAnnualAccountsByDatePaginated(page, createdAfter, updatedAfter);
+        while (inFormalites.size() > 0) {
+            formalites.addAll(inFormalites);
+            page++;
+            inFormalites = getFormalitiesByDatePaginated(page, createdAfter, updatedAfter);
+        }
+
+        return formalites;
+    }
+
+    private List<FormaliteGuichetUnique> getAnnualAccountsByDatePaginated(int page, LocalDateTime createdAfter,
+            LocalDateTime updatedAfter)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<List<FormaliteGuichetUnique>> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + annualAccountsRequestUrl + "?page=" + page + "&created[after]="
+                        + (createdAfter != null ? formatter.format(createdAfter) : "")
+                        + (updatedAfter != null ? "&updated[after]=" + formatter.format(updatedAfter) : ""),
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<List<FormaliteGuichetUnique>>() {
+                });
+
+        if (response.getBody() != null) {
+            return response.getBody();
+        }
+        return null;
+    }
+
+    private List<FormaliteGuichetUnique> getAnnualAccountsByRefenceMandataire(String reference)
+            throws OsirisException, OsirisClientMessageException {
+        List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
+        int page = 1;
+        List<FormaliteGuichetUnique> inFormalites = getAnnuaAccountsByRefenceMandatairePaginated(page, reference);
+        while (inFormalites.size() > 0) {
+            formalites.addAll(inFormalites);
+            page++;
+            inFormalites = getAnnuaAccountsByRefenceMandatairePaginated(page, reference);
+        }
+
+        return formalites;
+    }
+
+    private List<FormaliteGuichetUnique> getAnnuaAccountsByRefenceMandatairePaginated(int page, String reference)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<List<FormaliteGuichetUnique>> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + annualAccountsRequestUrl + "?page=" + page + "&order[created]=desc&search="
+                        + reference,
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<List<FormaliteGuichetUnique>>() {
+                });
+
+        List<FormaliteGuichetUnique> res = response.getBody();
+        if (res != null) {
+            for (FormaliteGuichetUnique formaliteGuichetUnique : res) {
+                formaliteGuichetUnique.setIsFormality(false);
+                formaliteGuichetUnique.setIsAnnualAccounts(true);
+            }
+            return response.getBody();
+        }
+        return res;
+    }
+
+    @Override
+    @SuppressWarnings({ "all" })
+    public FormaliteGuichetUnique getAnnualAccountById(Integer id)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<FormaliteGuichetUnique> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + annualAccountsRequestUrl + "/" + id,
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<FormaliteGuichetUnique>() {
+                });
+
+        if (response.getBody() != null) {
+            response.getBody().setIsAnnualAccounts(true);
+            response.getBody().setIsFormality(false);
             return response.getBody();
         } else {
             throw new OsirisException(null, "Guichet unique formality not found for id " + id);
@@ -191,11 +311,11 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     @Override
     public void refreshFormalitiesFromLastHour()
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-        List<FormaliteGuichetUnique> formalites = getFormalitiesByDate(LocalDateTime.now().minusYears(10),
+        List<FormaliteGuichetUnique> formalites = getAllFormalitiesByDate(LocalDateTime.now().minusYears(10),
                 LocalDateTime.now().minusHours(1));
         if (formalites != null && formalites.size() > 0) {
             for (FormaliteGuichetUnique formalite : formalites)
-                formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formalite.getId(), null);
+                formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formalite, null);
         }
     }
 
@@ -210,7 +330,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
                         && formalite.getFormalitesGuichetUnique().size() > 0)
                     for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique())
                         formaliteGuichetUniqueService
-                                .refreshFormaliteGuichetUnique(formaliteGuichetUnique.getId(), formalite);
+                                .refreshFormaliteGuichetUnique(formaliteGuichetUnique, formalite);
         }
     }
 }

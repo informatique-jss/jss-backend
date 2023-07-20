@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -22,7 +23,9 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "id_customer_order", "id_affaire", "id_quotation" }) })
+@Table(uniqueConstraints = {
+		@UniqueConstraint(columnNames = { "id_customer_order", "id_affaire", "id_quotation" }) }, indexes = {
+				@Index(name = "idx_asso_affaire_customer_order", columnList = "id_customer_order") })
 public class AssoAffaireOrder implements Serializable, IId {
 
 	@Id
@@ -40,6 +43,7 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "assoAffaireOrders", "invoices", "deposits", "payments",
 			"accountingRecords" }, allowSetters = true)
+	@IndexedField
 	private CustomerOrder customerOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)

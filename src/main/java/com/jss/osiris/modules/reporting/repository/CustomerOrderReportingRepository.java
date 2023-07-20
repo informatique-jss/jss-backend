@@ -34,6 +34,8 @@ public interface CustomerOrderReportingRepository extends QueryCacheCrudReposito
                         " coalesce(initcap(to_char(customer_order.created_date,'MM - tmmonth')),'N/A') as customerOrderCreatedDateMonth, "
                         +
                         " coalesce(confrere.label, respo.firstname || ' '||respo.lastname, coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname)) as customerOrderLabel, "
+                        + " (select STRING_AGG(DISTINCT mail.mail ,', '  ) from  asso_responsable_mail asso join mail on mail.id = asso.id_mail  where asso.id_tiers = respo.id )  as responsableMail,   "
+                        + " (select STRING_AGG(DISTINCT phone.phone_number ,', '  ) from  asso_responsable_phone asso join phone on phone.id = asso.id_phone  where asso.id_tiers = respo.id )  as responsablePhone,   "
                         +
                         " coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname) as tiersLabel, " +
                         " coalesce(ast.label, sps.label, ds.label, bs.label, fs.label) as provisionStatus, " +
@@ -45,6 +47,7 @@ public interface CustomerOrderReportingRepository extends QueryCacheCrudReposito
                         " e1.firstname || ' ' || e1.lastname as provisionAssignedToLabel, " +
                         " e2.firstname || ' ' || e2.lastname as salesEmployeeLabel, " +
                         " invoice_status.label as invoiceStatusLabel, " +
+                        " invoice.id as invoiceId, " +
                         " max((substring(invoice_item.label,'(\\d+)(?=\\s*caract)'))) as characterNumber, " +
                         " sum(coalesce(invoice_item.pre_tax_price,0)) as preTaxPrice, " +
                         " sum(coalesce(case when billing_type.is_fee=false and billing_type.is_debour = false then invoice_item.pre_tax_price end,0)) as preTaxPriceWithoutDebour, "
@@ -109,9 +112,9 @@ public interface CustomerOrderReportingRepository extends QueryCacheCrudReposito
                         " provision.id  , " +
                         " confrere_a.label , " +
                         " ntf.label , " +
-                        " invoice.created_date  , " +
+                        " invoice.created_date  , invoice.id, " +
                         " provision_t.label  , " +
-                        " provision_ft.label , invoice_status.label, " +
+                        " provision_ft.label , invoice_status.label, respo.id, " +
                         " coalesce(confrere.label, respo.firstname || ' '||respo.lastname, coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname))  , "
                         +
                         " coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname)   " +

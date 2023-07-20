@@ -142,9 +142,6 @@ public class Generate {
                                                                 "insert into " + tableName + "(code,label) values ('"
                                                                                 + codeValue + "','"
                                                                                 + labelValue + "');");
-                                                System.out.println("insert into " + tableName + "(code,label) values ('"
-                                                                + codeValue + "','"
-                                                                + labelValue + "')");
                                                 em.createNativeQuery(
                                                                 "insert into " + tableName + "(code,label) values ('"
                                                                                 + codeValue + "','"

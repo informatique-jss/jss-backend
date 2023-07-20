@@ -31,4 +31,7 @@ export interface FormaliteGuichetUnique {
   regularisation: boolean;
   carts: Cart[];
   formalite: Formalite;
+  created: string;
+  isFormality: boolean;
+  isAnnualAccounts: boolean;
 }

@@ -81,13 +81,20 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public FormaliteGuichetUnique refreshFormaliteGuichetUnique(Integer id, Formalite formalite)
+    public FormaliteGuichetUnique refreshFormaliteGuichetUnique(FormaliteGuichetUnique inFormaliteGuichetUnique,
+            Formalite formalite)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-        if (id == null)
-            throw new OsirisValidationException("id");
+        if (inFormaliteGuichetUnique == null)
+            throw new OsirisValidationException("inFormaliteGuichetUnique");
 
-        FormaliteGuichetUnique formaliteGuichetUnique = guichetUniqueDelegateService.getFormalityById(id);
-        FormaliteGuichetUnique originalFormalite = getFormaliteGuichetUnique(id);
+        FormaliteGuichetUnique formaliteGuichetUnique;
+        if (inFormaliteGuichetUnique.getIsAnnualAccounts() != null && inFormaliteGuichetUnique.getIsAnnualAccounts())
+            formaliteGuichetUnique = guichetUniqueDelegateService
+                    .getAnnualAccountById(inFormaliteGuichetUnique.getId());
+        else
+            formaliteGuichetUnique = guichetUniqueDelegateService.getFormalityById(inFormaliteGuichetUnique.getId());
+
+        FormaliteGuichetUnique originalFormalite = getFormaliteGuichetUnique(inFormaliteGuichetUnique.getId());
         boolean cartChange = false;
 
         if (originalFormalite == null) {
@@ -276,6 +283,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                     if (debour.getCartRate() != null
                                             && debour.getCartRate().getId().equals(cartRate.getId())) {
                                         debour.setNonTaxableAmount(0f);
+                                        debourService.addOrUpdateDebour(debour);
                                     }
                                 }
                             }

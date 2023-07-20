@@ -130,17 +130,17 @@
           </td>
         </tr>
       </table>
-      <table class="full-width" *ngIf="!invoice.isProviderCreditNote">
+      <table class="full-width">
         <tr>
           <td>
             <select-payment-types [(model)]="invoice.manualPaymentType" label="Type de paiement" [form]="invoiceForm"
-              *ngIf="!displayDeboursTable()" propertyName="manualPaymentType" [isMandatory]="true"
-              [isDisabled]="!editMode || invoice.id!=undefined"></select-payment-types>
+              *ngIf="!displayDeboursTable() && !invoice.isProviderCreditNote" propertyName="manualPaymentType"
+              [isMandatory]="true" [isDisabled]="!editMode || invoice.id!=undefined"></select-payment-types>
           </td>
           <td>
             <generic-datepicker [(model)]="invoice.dueDate" label="Date d'échéance" [form]="invoiceForm"
-              *ngIf="!displayDeboursTable()" propertyName="dueDate" [isMandatory]="false"
-              [isDisabled]="!editMode || invoice.id!=undefined"></generic-datepicker>
+              *ngIf="!displayDeboursTable() && !invoice.isProviderCreditNote" propertyName="dueDate"
+              [isMandatory]="false" [isDisabled]="!editMode || invoice.id!=undefined"></generic-datepicker>
           </td>
           <td>
             <generic-datepicker [(model)]="invoice.manualAccountingDocumentDate" label="Date de la pièce comptable"
@@ -148,9 +148,9 @@
               [isDisabled]="!editMode || !isManualInvoice()"></generic-datepicker>
           </td>
           <td>
-            <single-attachment *ngIf="invoice.id" [entity]="invoice" [entityType]="INVOICE_ENTITY_TYPE.entityType"
-              [editMode]="true" [attachmentTypeToDisplay]="attachmentTypeInvoice"
-              (onUploadedFile)="updateAttachments($event)">
+            <single-attachment *ngIf="invoice.id && !invoice.isProviderCreditNote" [entity]="invoice"
+              [entityType]="INVOICE_ENTITY_TYPE.entityType" [editMode]="true"
+              [attachmentTypeToDisplay]="attachmentTypeInvoice" (onUploadedFile)="updateAttachments($event)">
             </single-attachment>
           </td>
         </tr>
