@@ -5,6 +5,7 @@ import java.util.List;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementListSearch;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearch;
@@ -63,5 +64,8 @@ public interface AnnouncementService {
         public void sendRemindersToCustomerForProofReading() throws OsirisException, OsirisClientMessageException;
 
         public Confrere getConfrereForAnnouncement(Integer idAnnouncement);
+
+        public String parseAnnouncement(String notice, Affaire affaire)
+                        throws OsirisException, OsirisClientMessageException;
 
 }

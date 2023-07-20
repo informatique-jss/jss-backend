@@ -5,7 +5,9 @@ import java.util.Optional;
 
 import javax.persistence.QueryHint;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -33,4 +35,9 @@ public interface CompetentAuthorityRepository extends QueryCacheCrudRepository<C
     CompetentAuthority findByAzureCustomReference(String azureCustomReference);
 
     List<CompetentAuthority> findByInpiReference(String inpiReference);
+
+    @Query("SELECT ca FROM CompetentAuthority ca JOIN ca.competentAuthorityType cat WHERE ca.city.id = :cityId AND cat.code = :authorityTypeCode")
+    CompetentAuthority findByCityIdAndByAuthorityType(@Param("cityId") Integer cityId,
+            @Param("authorityTypeCode") String authorityTypeCode);
+
 }
