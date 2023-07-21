@@ -24,7 +24,6 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
-import com.jss.osiris.modules.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
@@ -700,10 +699,6 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_customer_order_origin_osiris")
 	private CustomerOrderOrigin customerOrderOriginOsiris;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_provision_family_type")
-	private ProvisionFamilyType provisionFamilyTypeRegister;
 
 	public Integer getId() {
 		return id;
@@ -2048,14 +2043,6 @@ public class Constant implements Serializable, IId {
 
 	public void setVatDeductibleTwo(Vat vatDeductibleTwo) {
 		this.vatDeductibleTwo = vatDeductibleTwo;
-	}
-
-	public ProvisionFamilyType getProvisionFamilyTypeRegister() {
-		return provisionFamilyTypeRegister;
-	}
-
-	public void setProvisionFamilyTypeRegister(ProvisionFamilyType provisionFamilyTypeRegister) {
-		this.provisionFamilyTypeRegister = provisionFamilyTypeRegister;
 	}
 
 	public PaymentDeadlineType getPaymentDeadLineType30() {
