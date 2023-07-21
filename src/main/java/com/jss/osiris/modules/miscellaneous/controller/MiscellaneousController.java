@@ -447,6 +447,8 @@ public class MiscellaneousController {
         validationHelper.validateReferential(constant.getDepartmentMartinique(), true, "DepartmentMartinique");
         validationHelper.validateReferential(constant.getDepartmentGuadeloupe(), true, "DepartmentGuadeloupe");
         validationHelper.validateReferential(constant.getDepartmentReunion(), true, "DepartmentReunion");
+        validationHelper.validateReferential(constant.getProvisionFamilyTypeRegister(), true,
+                "ProvisionFamilyTypeRegister");
         validationHelper.validateReferential(constant.getTypePersonnePersonnePhysique(), true,
                 "TypePersonnePersonnePhysique");
         validationHelper.validateReferential(constant.getTypePersonneExploitation(), true,

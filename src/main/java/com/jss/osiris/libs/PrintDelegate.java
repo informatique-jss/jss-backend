@@ -26,14 +26,14 @@ import com.jss.osiris.modules.quotation.service.RneDelegateService;
 @Service
 public class PrintDelegate {
 
+  @Autowired
+  RneDelegateService rneDelegateService;
+
   @Value("${printer.label.ip}")
   private String printerIp;
 
   @Value("${printer.label.port}")
   private Integer printerPort;
-
-  @Autowired
-  RneDelegateService rneDelegateService;
 
   @Autowired
   ConstantService constantService;
@@ -249,11 +249,9 @@ public class PrintDelegate {
     } finally {
       if (dOut != null)
         try {
-          if (socket != null)
-
-            socket.close();
+          dOut.close();
         } catch (IOException e) {
-          throw new OsirisException(e, "Error when printing");
+          e.printStackTrace();
         }
     }
 

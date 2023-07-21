@@ -469,6 +469,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public ProvisionFamilyType getProvisionFamilyTypeRegister() throws OsirisException {
+        return getConstants().getProvisionFamilyTypeRegister();
+    }
+
+    @Override
     public String getStringBusinnessNantissementRedactionFormeJuridiqueCode() throws OsirisException {
         return getConstants().getStringNantissementDepositFormeJuridiqueCode();
     }

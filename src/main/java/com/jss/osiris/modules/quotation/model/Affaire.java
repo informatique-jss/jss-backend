@@ -21,6 +21,7 @@ import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 
 @Entity
 public class Affaire implements Serializable, IId {
@@ -47,7 +48,7 @@ public class Affaire implements Serializable, IId {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @IndexedField
-  private String formeJuridique;
+  private FormeJuridique formeJuridique;
 
   @Column(length = 50)
   @IndexedField
@@ -297,11 +298,11 @@ public class Affaire implements Serializable, IId {
     this.intercommunityVat = intercommunityVat;
   }
 
-  public String getFormeJuridique() {
+  public FormeJuridique getFormeJuridique() {
     return formeJuridique;
   }
 
-  public void setFormeJuridique(String formeJuridique) {
+  public void setFormeJuridique(FormeJuridique formeJuridique) {
     this.formeJuridique = formeJuridique;
   }
 
