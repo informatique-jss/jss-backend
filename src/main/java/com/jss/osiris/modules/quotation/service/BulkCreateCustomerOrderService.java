@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,7 +63,7 @@ public class BulkCreateCustomerOrderService {
     @Autowired
     DocumentService documentService;
 
-    @Scheduled(initialDelay = 100, fixedDelay = 10000000)
+    // @Scheduled(initialDelay = 100, fixedDelay = 10000000)
     @Transactional(rollbackFor = Exception.class)
     @SuppressWarnings({ "all" })
     public void bulkCreateCustomerOrder()
