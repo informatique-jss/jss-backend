@@ -57,6 +57,7 @@ export const Dictionnary = {
   "responsableType": "Type du responsable",
   "isTiersIndividual": "Est personne physique ?",
   "nbrCustomerOrder": "Nombre de commandes",
+  "nbrQuotation": "Nombre de devis",
   "nbrAnnouncement": "Nombre d'annonces légales",
   "nbrFormalities": "Nombre de formalités",
   "turnoverAmountWithoutDebour": "Montant du CA (hors débours)",
