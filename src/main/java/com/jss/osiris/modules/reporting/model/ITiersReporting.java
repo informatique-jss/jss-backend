@@ -59,7 +59,7 @@ public interface ITiersReporting {
 
     public String getTiersPaymentBic();
 
-    public boolean getTiersIsProvisionnalPaymentMandatory();
+    public boolean getTiersIsProvisionnalPaymentMandatory(); 
 
     public String getResponsableMail();
 
@@ -67,5 +67,5 @@ public interface ITiersReporting {
 
     public Integer getNbrQuotation();
 
-    public String getInvoiceDateMonth();
+    public String getInvoiceDateMonth(); 
 }

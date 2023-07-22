@@ -345,7 +345,7 @@
   *ngIf="false" (auxclick)="editInvoice($event)">
   <mat-icon>edit</mat-icon>
 </button>
-<button *ngIf="canCancelInvoice() && canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code
+<button *ngIf="false && canCancelInvoice() && canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code
   || invoice.invoiceStatus.code==invoiceStatusSend.code
   || invoice.isInvoiceFromProvider && invoice.invoiceStatus.code == invoiceStatusPayed.code)"
   matTooltip="Annuler la facture" mat-fab color="accent" class="second-fab-button" (click)="cancelInvoice($event)">
