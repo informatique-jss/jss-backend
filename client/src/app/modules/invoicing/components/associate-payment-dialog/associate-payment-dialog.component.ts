@@ -314,9 +314,6 @@ export class AssociatePaymentDialogComponent implements OnInit {
   getCustomerOrderNameForITiers = getCustomerOrderNameForITiers;
 
   getRefundCustomerOrder(): ITiers | null {
-    if (!this.invoice && !this.customerOrder)
-      return null;
-
     let customerOrder: ITiers | undefined = undefined;
     if (this.associationSummaryTable && this.associationSummaryTable.length > 0) {
       if (this.associationSummaryTable[0].invoice) {
@@ -324,12 +321,14 @@ export class AssociatePaymentDialogComponent implements OnInit {
       } else {
         customerOrder = getCustomerOrderForIQuotation(this.associationSummaryTable[0].customerOrder);
       }
-    } else {
+    } else if (this.invoice) {
       customerOrder = getCustomerOrderForInvoice(this.invoice!);
+    } else {
+      return null;
     }
     // If responsable, return associate Tiers
     if ((customerOrder as any).tiers)
-      return (customerOrder as any).tiers;
+      customerOrder = ((customerOrder as any).tiers as Tiers);
 
     let refundDocument = getDocument(this.constantService.getDocumentTypeRefund(), customerOrder);
 

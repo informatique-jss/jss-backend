@@ -1890,7 +1890,7 @@ public class QuotationController {
 
     List<FormaliteGuichetUnique> formalites = null;
     if (value != null && value.length() > 2)
-      formalites = guichetUniqueDelegateService.getFormalitiesByRefenceMandataire(value);
+      formalites = guichetUniqueDelegateService.getAllFormalitiesByRefenceMandataire(value);
 
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
   }
