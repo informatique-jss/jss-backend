@@ -1600,7 +1600,6 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     public void sendNewPasswordMail(Responsable responsable, String password)
             throws OsirisException {
         // To avoid proxy error
