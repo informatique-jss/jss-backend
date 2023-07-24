@@ -448,11 +448,15 @@ public class QuotationServiceImpl implements QuotationService {
                             && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(1))) {
                         toSend = true;
                         quotation.setFirstReminderDateTime(LocalDateTime.now());
-                    } else if (quotation.getSecondReminderDateTime() == null
-                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(2))) {
+                    } else if (quotation.getFirstReminderDateTime() != null
+                            && quotation.getSecondReminderDateTime() == null
+                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(2))
+                            && quotation.getFirstReminderDateTime().isBefore(LocalDateTime.now().minusDays(1))) {
                         toSend = true;
                         quotation.setSecondReminderDateTime(LocalDateTime.now());
-                    } else if (quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(7))) {
+                    } else if (quotation.getSecondReminderDateTime() != null
+                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(7))
+                            && quotation.getSecondReminderDateTime().isBefore(LocalDateTime.now().minusDays(5))) {
                         toSend = true;
                         quotation.setThirdReminderDateTime(LocalDateTime.now());
                     }
@@ -461,11 +465,15 @@ public class QuotationServiceImpl implements QuotationService {
                             && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
                         toSend = true;
                         quotation.setFirstReminderDateTime(LocalDateTime.now());
-                    } else if (quotation.getSecondReminderDateTime() == null
-                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(3 * 7))) {
+                    } else if (quotation.getFirstReminderDateTime() != null
+                            && quotation.getSecondReminderDateTime() == null
+                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(3 * 7))
+                            && quotation.getFirstReminderDateTime().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
                         toSend = true;
                         quotation.setSecondReminderDateTime(LocalDateTime.now());
-                    } else if (quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(6 * 7))) {
+                    } else if (quotation.getSecondReminderDateTime() != null
+                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(6 * 7))
+                            && quotation.getSecondReminderDateTime().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
                         toSend = true;
                         quotation.setThirdReminderDateTime(LocalDateTime.now());
                     }
