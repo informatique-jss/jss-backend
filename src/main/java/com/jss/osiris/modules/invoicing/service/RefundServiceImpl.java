@@ -32,9 +32,6 @@ import com.jss.osiris.libs.transfer.OthrIdBean;
 import com.jss.osiris.libs.transfer.PmtInfBean;
 import com.jss.osiris.libs.transfer.PstlAdrBean;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
-import com.jss.osiris.modules.invoicing.model.Appoint;
-import com.jss.osiris.modules.invoicing.model.Deposit;
-import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.model.RefundSearch;
@@ -76,9 +73,6 @@ public class RefundServiceImpl implements RefundService {
 
     @Autowired
     BankTransfertService bankTransfertService;
-
-    @Autowired
-    AppointService appointService;
 
     @Override
     public List<Refund> getRefunds() {
@@ -124,33 +118,10 @@ public class RefundServiceImpl implements RefundService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Boolean generateRefundForAppoint(Integer idAppoint) throws OsirisException, OsirisClientMessageException {
-        Appoint appoint = appointService.getAppoint(idAppoint);
-        if (appoint.getInvoice() != null) {
-            Invoice invoice = appoint.getInvoice();
-            ITiers tiers = null;
-            if (invoice.getResponsable() != null)
-                tiers = invoice.getResponsable().getTiers();
-            if (invoice.getTiers() != null)
-                tiers = invoice.getTiers();
-            if (invoice.getConfrere() != null)
-                tiers = invoice.getConfrere();
-
-            Affaire affaire = null;
-            if (invoice.getBillingLabelType().getId().equals(constantService.getBillingLabelTypeCodeAffaire().getId()))
-                affaire = invoice.getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
-
-            generateRefund(tiers, affaire, null, null, appoint.getAppointAmount(), " appoint n°" + appoint.getId(),
-                    null, appoint);
-        }
-        return true;
-    }
-
-    @Override
-    public Refund generateRefund(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Deposit deposit,
-            Float amount, String labelSuffix, CustomerOrder customerOrder, Appoint appoint)
+    public Refund generateRefund(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Float amount,
+            String labelSuffix, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException {
+        // TODO : verify if ok for payment refund
         Refund refund = new Refund();
         refund.setCustomerOrder(customerOrder);
         if (tiersRefund instanceof Confrere)
@@ -184,18 +155,9 @@ public class RefundServiceImpl implements RefundService {
         refund.setRefundIBAN(refund.getRefundIBAN().replaceAll(" ", ""));
         refund.setRefundBic(refund.getRefundBic().replaceAll(" ", ""));
 
-        if (payment != null) {
-            refund.setLabel("Remboursement du paiement N " + payment.getId());
-            refund.setPayment(payment);
-        } else if (deposit != null) {
-            refund.setLabel("Remboursement de l'acompte N " + deposit
-                    .getId());
-            refund.setDeposit(deposit);
-        } else if (appoint != null) {
-            refund.setLabel("Remboursement de l'appoint N " + appoint
-                    .getId());
-            refund.setAppoint(appoint);
-        }
+        refund.setLabel("Remboursement du paiement N " + payment.getId());
+        // TODO : changer le libellé suivant le type de paiement : appoint, acompte
+
         if (labelSuffix != null)
             refund.setLabel(refund.getLabel() + " / " + labelSuffix);
 
@@ -286,7 +248,8 @@ public class RefundServiceImpl implements RefundService {
                                         139)));
 
                 completeRefund.setIsAlreadyExported(true);
-                accountingRecordService.generateAccountingRecordsForRefundOnVirement(completeRefund);
+                // TODO :
+                // accountingRecordService.generateAccountingRecordsForRefundOnVirement(completeRefund);
                 addOrUpdateRefund(completeRefund);
 
             }

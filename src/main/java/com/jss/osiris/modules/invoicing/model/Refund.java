@@ -50,20 +50,8 @@ public class Refund implements Serializable, IId {
 	private Affaire affaire;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_payment")
-	private Payment payment;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_deposit")
-	private Deposit deposit;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_refund_type")
 	private RefundType refundType;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_appoint")
-	private Appoint appoint;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order")
@@ -136,14 +124,6 @@ public class Refund implements Serializable, IId {
 		this.affaire = affaire;
 	}
 
-	public Payment getPayment() {
-		return payment;
-	}
-
-	public void setPayment(Payment payment) {
-		this.payment = payment;
-	}
-
 	public RefundType getRefundType() {
 		return refundType;
 	}
@@ -176,14 +156,6 @@ public class Refund implements Serializable, IId {
 		this.isAlreadyExported = isAlreadyExported;
 	}
 
-	public Deposit getDeposit() {
-		return deposit;
-	}
-
-	public void setDeposit(Deposit deposit) {
-		this.deposit = deposit;
-	}
-
 	public String getRefundBic() {
 		return refundBic;
 	}
@@ -199,13 +171,4 @@ public class Refund implements Serializable, IId {
 	public void setCustomerOrder(CustomerOrder customerOrder) {
 		this.customerOrder = customerOrder;
 	}
-
-	public Appoint getAppoint() {
-		return appoint;
-	}
-
-	public void setAppoint(Appoint appoint) {
-		this.appoint = appoint;
-	}
-
 }

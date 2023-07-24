@@ -5,7 +5,6 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
-import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -297,10 +296,6 @@ public interface ConstantService {
     public InvoiceStatus getInvoiceStatusCreditNoteEmited() throws OsirisException;
 
     public InvoiceStatus getInvoiceStatusCreditNoteReceived() throws OsirisException;
-
-    public PaymentWay getPaymentWayInbound() throws OsirisException;
-
-    public PaymentWay getPaymentWayOutboud() throws OsirisException;
 
     public Vat getVatTwenty() throws OsirisException;
 

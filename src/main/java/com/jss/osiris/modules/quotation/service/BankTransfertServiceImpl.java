@@ -57,8 +57,6 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
-import com.jss.osiris.modules.quotation.model.Debour;
-import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.repository.BankTransfertRepository;
 
 @Service
@@ -239,14 +237,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                         StringUtils.substring(completeTransfert.getId() + " - " + completeTransfert.getLabel(), 0,
                                 139)));
 
-                if (completeTransfert.getIsAlreadyExported() == false && completeTransfert.getDebours() != null
-                        && completeTransfert.getDebours().size() > 0) {
-                    for (Debour debour : completeTransfert.getDebours()) {
-                        Provision provision = provisionService.getProvision(debour.getProvision().getId());
-                        accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
-                                provision.getAssoAffaireOrder().getCustomerOrder());
-                    }
-                }
+                // TODO : générer la compta
 
                 completeTransfert.setIsAlreadyExported(true);
                 addOrUpdateBankTransfert(completeTransfert);

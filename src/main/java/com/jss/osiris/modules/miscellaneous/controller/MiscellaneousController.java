@@ -99,7 +99,6 @@ import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
-import com.jss.osiris.modules.quotation.service.DebourService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -234,9 +233,6 @@ public class MiscellaneousController {
 
     @Autowired
     DirectDebitTransfertService directDebitTransfertService;
-
-    @Autowired
-    DebourService debourService;
 
     @Autowired
     CustomerOrderOriginService customerOrderOriginService;
@@ -441,8 +437,6 @@ public class MiscellaneousController {
         validationHelper.validateReferential(constant.getInvoiceStatusReceived(), true, "InvoiceStatusReceived");
         validationHelper.validateReferential(constant.getInvoiceStatusPayed(), true, "InvoiceStatusPayed");
         validationHelper.validateReferential(constant.getInvoiceStatusCancelled(), true, "InvoiceStatusCancelled");
-        validationHelper.validateReferential(constant.getPaymentWayInbound(), true, "PaymentWayInbound");
-        validationHelper.validateReferential(constant.getPaymentWayOutboud(), true, "PaymentWayOutboud");
         validationHelper.validateReferential(constant.getVatTwenty(), true, "VatTwenty");
         validationHelper.validateReferential(constant.getDepartmentMartinique(), true, "DepartmentMartinique");
         validationHelper.validateReferential(constant.getDepartmentGuadeloupe(), true, "DepartmentGuadeloupe");
@@ -1114,7 +1108,6 @@ public class MiscellaneousController {
         assoAffaireOrderService.reindexAffaires();
         affaireService.reindexAffaire();
         bankTransfertService.reindexBankTransfert();
-        debourService.reindexDebours();
         directDebitTransfertService.reindexDirectDebitTransfert();
 
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
@@ -1124,13 +1117,6 @@ public class MiscellaneousController {
     @GetMapping(inputEntryPoint + "/index/reindex/directDebitTransfert")
     public ResponseEntity<Boolean> reindexDirectDebitTransfert() {
         directDebitTransfertService.reindexDirectDebitTransfert();
-        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-    }
-
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-    @GetMapping(inputEntryPoint + "/index/reindex/debour")
-    public ResponseEntity<Boolean> reindexDebours() {
-        debourService.reindexDebours();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 

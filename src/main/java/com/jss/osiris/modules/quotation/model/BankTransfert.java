@@ -44,11 +44,6 @@ public class BankTransfert implements Serializable, IId {
 	private Boolean isAlreadyExported;
 
 	@OneToMany(mappedBy = "bankTransfert")
-	@JsonIgnoreProperties(value = { "bankTransfert", "payment", "accountingRecords", "provision",
-			"invoiceItem" }, allowSetters = true)
-	List<Debour> debours;
-
-	@OneToMany(mappedBy = "bankTransfert")
 	@JsonIgnoreProperties(value = { "bankTransfert", "invoiceItems", "customerOrder", "payments",
 			"deposits", "accountingRecords", "customerOrderForInboundInvoice", "creditNote", "attachments",
 			"azureInvoice", "azureReceipt",
@@ -117,14 +112,6 @@ public class BankTransfert implements Serializable, IId {
 
 	public void setTransfertIban(String transfertIban) {
 		this.transfertIban = transfertIban;
-	}
-
-	public List<Debour> getDebours() {
-		return debours;
-	}
-
-	public void setDebours(List<Debour> debours) {
-		this.debours = debours;
 	}
 
 	public List<Invoice> getInvoices() {

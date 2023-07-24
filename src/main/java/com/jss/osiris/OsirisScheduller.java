@@ -15,7 +15,6 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.service.AzureInvoiceService;
 import com.jss.osiris.modules.invoicing.service.AzureReceiptService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
-import com.jss.osiris.modules.invoicing.service.OwncloudGreffeDelegate;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.service.EtablissementPublicsDelegate;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
@@ -101,9 +100,6 @@ public class OsirisScheduller {
 
 	@Autowired
 	EtablissementPublicsDelegate etablissementPublicsDelegate;
-
-	@Autowired
-	OwncloudGreffeDelegate owncloudGreffeDelegate;
 
 	@Autowired
 	GuichetUniqueDelegateService guichetUniqueDelegateService;
@@ -237,15 +233,6 @@ public class OsirisScheduller {
 	private void updateCompetentAuthorities() {
 		try {
 			etablissementPublicsDelegate.updateCompetentAuthorities();
-		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
-		}
-	}
-
-	@Scheduled(cron = "${schedulling.owncloud.greffe.invoice.update}")
-	private void updateOwncloudGreffeInvoices() {
-		try {
-			owncloudGreffeDelegate.grabAllFiles();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}

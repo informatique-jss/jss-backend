@@ -29,7 +29,6 @@ import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
-import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -240,28 +239,6 @@ public class PricingHelper {
                 invoiceItem.setPreTaxPrice(Math
                         .round(((confrere.getShippingCosts() != null ? confrere.getShippingCosts() : 0f)) * 100f)
                         / 100f);
-        } else if ((billingItem.getBillingType().getIsDebour() || billingItem.getBillingType().getIsFee())
-                && provision.getDebours() != null && provision.getDebours().size() > 0) {
-            // Compute debour prices
-            Float total = 0f;
-            for (Debour debour : provision.getDebours()) {
-                Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
-                        : debour.getDebourAmount();
-
-                Provision completeProvision = provisionService.getProvision(provision.getId());
-                IQuotation quotation = completeProvision.getAssoAffaireOrder().getCustomerOrder() != null
-                        ? completeProvision.getAssoAffaireOrder().getCustomerOrder()
-                        : completeProvision.getAssoAffaireOrder().getQuotation();
-                Vat vat = debour.getInvoiceItem() != null ? debour.getInvoiceItem().getVat()
-                        : vatService.getGeographicalApplicableVatForSales(quotation,
-                                constantService.getVatDeductible());
-
-                if (debour.getBillingType().getIsNonTaxable() || vat == null)
-                    total += debourAmount;
-                else
-                    total += debourAmount / ((100 + vat.getRate()) / 100f);
-            }
-            invoiceItem.setPreTaxPrice(total);
         } else {
             invoiceItem.setPreTaxPrice(billingItem.getPreTaxPrice());
         }
@@ -347,10 +324,7 @@ public class PricingHelper {
                             if (!invoiceItem.getIsOverridePrice() || !billingType.getCanOverridePrice()
                                     || invoiceItem.getPreTaxPrice() == null
                                     || invoiceItem.getPreTaxPrice() <= 0
-                                    || invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()
-                                    || (billingItem.getBillingType().getIsDebour()
-                                            || billingItem.getBillingType().getIsFee())
-                                            && provision.getDebours() != null && provision.getDebours().size() > 0)
+                                    || invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted())
                                 setInvoiceItemPreTaxPriceAndLabel(invoiceItem, billingItem, provision);
                             computeInvoiceItemsVatAndDiscount(invoiceItem, quotation, provision);
 
@@ -532,34 +506,9 @@ public class PricingHelper {
 
         if (vat != null && (invoiceItem.getIsGifted() == null || !invoiceItem.getIsGifted())) {
             Float vatPrice = 0f;
-            if (provision.getDebours() != null && provision.getDebours().size() > 0
-                    && (invoiceItem.getBillingItem().getBillingType().getIsDebour()
-                            || invoiceItem.getBillingItem().getBillingType().getIsFee())) {
-                vatPrice = 0f;
-                for (Debour debour : provision.getDebours()) {
-                    Vat competentAuthorityVat = vatService
-                            .getGeographicalApplicableVatForPurshases(debour.getCompetentAuthority(),
-                                    constantService.getVatDeductible());
-
-                    Vat competentAuthorityVatSales = vatService
-                            .getGeographicalApplicableVatForSales(quotation,
-                                    constantService.getVatDeductible());
-
-                    if (competentAuthorityVatSales.getRate() < competentAuthorityVat.getRate())
-                        competentAuthorityVat = competentAuthorityVatSales;
-
-                    if (!debour.getBillingType().getIsNonTaxable() && competentAuthorityVat != null) {
-                        Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
-                                : debour.getDebourAmount();
-                        vatPrice += (competentAuthorityVat.getRate() / 100f) * debourAmount
-                                / ((100 + competentAuthorityVat.getRate()) / 100f);
-                    }
-                }
-            } else {
-                vatPrice = vat.getRate() / 100
-                        * ((invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0)
-                                - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0));
-            }
+            vatPrice = vat.getRate() / 100
+                    * ((invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0)
+                            - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0));
             invoiceItem.setVatPrice(Math.round(vatPrice * 100f) / 100f);
             invoiceItem.setVat(vat);
         } else {

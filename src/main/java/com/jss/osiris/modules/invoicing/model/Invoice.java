@@ -139,14 +139,6 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder" }, allowSetters = true)
 	private List<Payment> payments;
 
-	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
-	@JsonIgnoreProperties(value = { "invoice", "accountingRecords" }, allowSetters = true)
-	private List<Appoint> appoints;
-
-	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
-	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder" }, allowSetters = true)
-	private List<Deposit> deposits;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice_status")
 	@IndexedField
@@ -383,14 +375,6 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 		this.accountingRecords = accountingRecords;
 	}
 
-	public List<Deposit> getDeposits() {
-		return deposits;
-	}
-
-	public void setDeposits(List<Deposit> deposits) {
-		this.deposits = deposits;
-	}
-
 	public LocalDateTime getFirstReminderDateTime() {
 		return firstReminderDateTime;
 	}
@@ -533,14 +517,6 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	public void setBillingLabelIntercommunityVat(String billingLabelIntercommunityVat) {
 		this.billingLabelIntercommunityVat = billingLabelIntercommunityVat;
-	}
-
-	public List<Appoint> getAppoints() {
-		return appoints;
-	}
-
-	public void setAppoints(List<Appoint> appoints) {
-		this.appoints = appoints;
 	}
 
 	public AzureInvoice getAzureInvoice() {

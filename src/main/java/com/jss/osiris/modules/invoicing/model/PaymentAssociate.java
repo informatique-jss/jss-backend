@@ -9,7 +9,6 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 
 public class PaymentAssociate {
     private Payment payment;
-    private Deposit deposit;
     private List<Invoice> invoices;
     private List<CustomerOrder> customerOrders;
     private Affaire affaire;
@@ -63,14 +62,6 @@ public class PaymentAssociate {
 
     public Tiers getTiersRefund() {
         return tiersRefund;
-    }
-
-    public Deposit getDeposit() {
-        return deposit;
-    }
-
-    public void setDeposit(Deposit deposit) {
-        this.deposit = deposit;
     }
 
     public void setTiersRefund(Tiers tiersRefund) {

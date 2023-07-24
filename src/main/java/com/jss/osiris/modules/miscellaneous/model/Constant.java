@@ -15,7 +15,6 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
-import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.AssignationType;
@@ -528,14 +527,6 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_invoice_status_credit_note_received")
 	private InvoiceStatus invoiceStatusCreditNoteReceived;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_payment_way_inbound")
-	private PaymentWay paymentWayInbound;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_payment_way_outbound")
-	private PaymentWay paymentWayOutboud;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_vat_twenty")
@@ -1109,22 +1100,6 @@ public class Constant implements Serializable, IId {
 
 	public void setInvoiceStatusCancelled(InvoiceStatus invoiceStatusCancelled) {
 		this.invoiceStatusCancelled = invoiceStatusCancelled;
-	}
-
-	public PaymentWay getPaymentWayInbound() {
-		return paymentWayInbound;
-	}
-
-	public void setPaymentWayInbound(PaymentWay paymentWayInbound) {
-		this.paymentWayInbound = paymentWayInbound;
-	}
-
-	public PaymentWay getPaymentWayOutboud() {
-		return paymentWayOutboud;
-	}
-
-	public void setPaymentWayOutboud(PaymentWay paymentWayOutboud) {
-		this.paymentWayOutboud = paymentWayOutboud;
 	}
 
 	public Vat getVatTwenty() {

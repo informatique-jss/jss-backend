@@ -13,7 +13,6 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
-import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -705,16 +704,6 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public InvoiceStatus getInvoiceStatusCreditNoteReceived() throws OsirisException {
         return getConstants().getInvoiceStatusCreditNoteReceived();
-    }
-
-    @Override
-    public PaymentWay getPaymentWayInbound() throws OsirisException {
-        return getConstants().getPaymentWayInbound();
-    }
-
-    @Override
-    public PaymentWay getPaymentWayOutboud() throws OsirisException {
-        return getConstants().getPaymentWayOutboud();
     }
 
     @Override

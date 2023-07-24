@@ -48,10 +48,10 @@ import com.jss.osiris.libs.transfer.PrvtOtherBean;
 import com.jss.osiris.libs.transfer.RmtInfBean;
 import com.jss.osiris.libs.transfer.SchmeNmBean;
 import com.jss.osiris.libs.transfer.SvcLvlBean;
-import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
@@ -170,9 +170,9 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                 + (invoice.getCustomerOrder() != null ? invoice.getCustomerOrder().getId() : ""));
         directDebitTransfert.setIsAlreadyExported(false);
         Float totalPrice = invoice.getTotalPrice();
-        if (invoice.getDeposits() != null)
-            for (Deposit deposit : invoice.getDeposits())
-                totalPrice -= deposit.getDepositAmount();
+        if (invoice.getPayments() != null)
+            for (Payment payment : invoice.getPayments())
+                totalPrice -= payment.getPaymentAmount();
         directDebitTransfert.setTransfertAmount(totalPrice);
         directDebitTransfert.setTransfertDateTime(invoice.getDueDate().atTime(12, 0));
         directDebitTransfert.setTransfertIban(invoiceHelper.getIbanOfOrderingCustomer(invoice));

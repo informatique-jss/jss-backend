@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.invoicing.model;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -11,7 +10,6 @@ public class PaymentSearch {
     private Float minAmount;
     private Float maxAmount;
     private String label;
-    private List<PaymentWay> paymentWays;
     @JsonProperty("isHideAssociatedPayments")
     private boolean isHideAssociatedPayments;
 
@@ -29,14 +27,6 @@ public class PaymentSearch {
 
     public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
-    }
-
-    public List<PaymentWay> getPaymentWays() {
-        return paymentWays;
-    }
-
-    public void setPaymentWays(List<PaymentWay> paymentWays) {
-        this.paymentWays = paymentWays;
     }
 
     public Float getMinAmount() {

@@ -20,7 +20,6 @@ import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
-import com.jss.osiris.modules.invoicing.service.DepositService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -80,9 +79,6 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     CentralPayDelegateService centralPayDelegateService;
-
-    @Autowired
-    DepositService depositService;
 
     @Autowired
     PaymentService paymentService;
@@ -367,7 +363,9 @@ public class QuotationServiceImpl implements QuotationService {
 
                     if (quotation.getQuotationStatus().getCode()
                             .equals(QuotationStatus.SENT_TO_CUSTOMER)) {
-                        unlockQuotationFromDeposit(quotation, centralPayPaymentRequest);
+                        unlockQuotationFromDeposit(quotation);
+                        customerOrderService.generateDepositOnCustomerOrderForCbPayment(
+                                quotation.getCustomerOrders().get(0), centralPayPaymentRequest);
                     }
                 }
                 if (centralPayPaymentRequest.getCreationDate().isBefore(LocalDateTime.now().minusMinutes(5))) {
@@ -383,15 +381,14 @@ public class QuotationServiceImpl implements QuotationService {
         return true;
     }
 
-    private Quotation unlockQuotationFromDeposit(Quotation quotation, CentralPayPaymentRequest centralPayPaymentRequest)
+    @Override
+    public Quotation unlockQuotationFromDeposit(Quotation quotation)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
             // Generate customer order
             quotation = addOrUpdateQuotationStatus(quotation, QuotationStatus.VALIDATED_BY_CUSTOMER);
             notificationService.notifyQuotationValidatedByCustomer(quotation, false);
-            customerOrderService.generateDepositOnCustomerOrderForCbPayment(quotation.getCustomerOrders().get(0),
-                    centralPayPaymentRequest);
         }
         return quotation;
     }

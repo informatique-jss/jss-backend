@@ -5,8 +5,6 @@ import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.invoicing.model.Appoint;
-import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.model.RefundSearch;
@@ -26,11 +24,9 @@ public interface RefundService {
 
     public void reindexRefunds();
 
-    public Refund generateRefund(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Deposit deposit,
-            Float amount, String labelSuffix, CustomerOrder customerOrder, Appoint appoint)
+    public Refund generateRefund(ITiers tiersRefund, Affaire affaireRefund, Payment payment,
+            Float amount, String labelSuffix, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException;
 
     public File getRefundExport(RefundSearch refundSearch) throws OsirisException;
-
-    public Boolean generateRefundForAppoint(Integer idAppoint) throws OsirisException, OsirisClientMessageException;
 }

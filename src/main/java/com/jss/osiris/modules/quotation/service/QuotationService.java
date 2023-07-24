@@ -51,4 +51,7 @@ public interface QuotationService {
         public void validateQuotationFromCustomer(Quotation quotation)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException;
 
+        public Quotation unlockQuotationFromDeposit(Quotation quotation)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
 }
