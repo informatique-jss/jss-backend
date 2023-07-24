@@ -478,7 +478,7 @@ public class QuotationServiceImpl implements QuotationService {
 
                 if (toSend) {
                     mailHelper.sendQuotationToCustomer(quotation, false);
-                    addOrUpdateQuotation(quotation);
+                    quotationRepository.save(quotation);
                 }
             }
 
