@@ -340,7 +340,8 @@ public class MailHelper {
         try {
             renderer.setDocumentFromString(
                     htmlContent.replaceAll("\\p{C}", " ")
-                            .replace("&mail", "mail").replaceAll("&", "<![CDATA[&]]>").replaceAll("&#160;", " "));
+                            .replace("&mail", "mail").replace("&validationToken", "validationToken")
+                            .replaceAll("&", "<![CDATA[&]]>").replaceAll("&#160;", " "));
             renderer.setScaleToFit(true);
             renderer.layout();
             renderer.createPDF(outputStream);
