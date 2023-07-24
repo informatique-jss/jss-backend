@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { debounceTime, filter, switchMap, tap } from 'rxjs';
@@ -19,7 +19,6 @@ export class ChipsFormaliteGuichetUniqueComponent extends GenericChipsComponent<
   formaliteGuichetUniques: FormaliteGuichetUnique[] = [] as Array<FormaliteGuichetUnique>;
   filteredFormaliteGuichetUniques: FormaliteGuichetUnique[] | undefined;
   @ViewChild('formaliteGuichetUniqueInput') formaliteGuichetUniqueInput: ElementRef<HTMLInputElement> | undefined;
-  @Input() hint: string = "Utilier le SIREN pour les comptes annuels";
 
   constructor(private formBuild: UntypedFormBuilder,
     private formaliteGuichetUniqueService: FormaliteGuichetUniqueService,
