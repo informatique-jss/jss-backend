@@ -366,6 +366,10 @@ public class QuotationValidationHelper {
 
                 isCustomerOrder = isCustomerOrder && !isOpen;
 
+                if (!quotation.getCustomerOrderOrigin().getId()
+                                .equals(constantService.getCustomerOrderOriginOsiris().getId()))
+                        provision.setAssignedTo(null);
+
                 if (provision.getDebours() != null && provision.getDebours().size() > 0)
                         for (Debour debour : provision.getDebours()) {
                                 validationHelper.validateReferential(debour.getBillingType(), true, "billingType");
