@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.quotation.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IDocument;
+import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
@@ -354,6 +356,80 @@ public class QuotationValidationHelper {
                 validationHelper.validateReferential(provision.getProvisionType(), true, "Type de prestation");
 
                 isCustomerOrder = isCustomerOrder && !isOpen;
+
+                if (!quotation.getCustomerOrderOrigin().getId()
+                                .equals(constantService.getCustomerOrderOriginOsiris().getId()))
+                        provision.setAssignedTo(null);
+
+                if (provision.getDebours() != null && provision.getDebours().size() > 0)
+                        for (Debour debour : provision.getDebours()) {
+                                validationHelper.validateReferential(debour.getBillingType(), true, "billingType");
+                                validationHelper.validateReferential(debour.getCompetentAuthority(), true,
+                                                "competentAuthority");
+                                validationHelper.validateReferential(debour.getPaymentType(), true, "paymentType");
+                                validationHelper.validateString(debour.getComments(), false, 250, "comments");
+                                validationHelper.validateFloat(debour.getDebourAmount(), true, "debourAmount");
+                                validationHelper.validateFloat(debour.getInvoicedAmount(),
+                                                debour.getBillingType().getIsFee(),
+                                                "invoicedAmount");
+
+                                if (debour.getBillingType().getIsDebour())
+                                        debour.setInvoicedAmount(Math.min(debour.getDebourAmount(),
+                                                        debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
+                                                                        : debour.getDebourAmount()));
+
+                                // check debour payment type
+                                if (debour.getId() == null && debour.getCompetentAuthority().getPaymentTypes() != null
+                                                && debour.getCompetentAuthority().getPaymentTypes().size() > 0) {
+                                        boolean found = false;
+                                        for (PaymentType paymentType : debour.getCompetentAuthority().getPaymentTypes())
+                                                if (paymentType.getId().equals(debour.getPaymentType().getId()))
+                                                        found = true;
+                                        if (!found)
+                                                throw new OsirisClientMessageException(
+                                                                "Type de paiement non autorisé pour l'autorité compétente");
+                                }
+
+                                if (debour.getPaymentDateTime() == null)
+                                        debour.setPaymentDateTime(LocalDateTime.now());
+                                validationHelper.validateDateMax(debour.getPaymentDateTime().toLocalDate(), true,
+                                                LocalDateTime.now().toLocalDate(),
+                                                "paymentDateTime");
+
+                                if (debour.getId() != null) {
+                                        // If already saved, can't change anything except invoicedAmount
+                                        Float invoicedAmount = debour.getInvoicedAmount();
+                                        debour = (Debour) validationHelper.validateReferential(debour, true, "debour");
+                                        debour.setInvoicedAmount(invoicedAmount);
+                                }
+                        }
+
+                // Check deleted debours
+                if (provision.getId() != null) {
+                        Provision currentProvision = provisionService.getProvision(provision.getId());
+                        if (currentProvision.getDebours() != null && currentProvision.getDebours().size() > 0) {
+                                for (Debour debour : currentProvision.getDebours()) {
+                                        boolean isDeleted = true;
+                                        if (provision.getDebours() != null && provision.getDebours().size() > 0)
+                                                for (Debour newDebour : provision.getDebours())
+                                                        if (newDebour.getId() != null
+                                                                        && newDebour.getId().equals(debour.getId()))
+                                                                isDeleted = false;
+
+                                        if (isDeleted && (debour.getPaymentType().getId()
+                                                        .equals(constantService.getPaymentTypeEspeces().getId())
+                                                        || debour.getPaymentType().getId()
+                                                                        .equals(constantService.getPaymentTypeCheques()
+                                                                                        .getId())
+                                                        || debour.getInvoiceItem() != null
+                                                        || debour.getPayment() != null
+                                                        || debour.getIsAssociated() != null
+                                                                        && debour.getIsAssociated() == true))
+                                                throw new OsirisClientMessageException(
+                                                                "Impossible de supprimer ce débours, merci de contacter l'administrateur pour cela");
+                                }
+                        }
+                }
 
                 // Domiciliation
                 if (provision.getDomiciliation() != null) {
