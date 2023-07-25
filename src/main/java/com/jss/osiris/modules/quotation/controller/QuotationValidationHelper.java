@@ -357,7 +357,7 @@ public class QuotationValidationHelper {
 
                 isCustomerOrder = isCustomerOrder && !isOpen;
 
-                if (!quotation.getCustomerOrderOrigin().getId()
+                if (quotation.getId() == null && !quotation.getCustomerOrderOrigin().getId()
                                 .equals(constantService.getCustomerOrderOriginOsiris().getId()))
                         provision.setAssignedTo(null);
 
