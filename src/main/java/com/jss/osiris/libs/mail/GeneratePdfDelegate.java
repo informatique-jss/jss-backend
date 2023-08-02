@@ -189,6 +189,78 @@ public class GeneratePdfDelegate {
         return tempFile;
     }
 
+    public File generateEnregistrementPdf() throws OsirisException {
+
+        String bureau = "BUREAU D’ENREGISTREMENT DE";
+        String sie = "SIE";
+        String envoiDu = "ENVOI DU";
+        String denomination = "DENOMINATION:";
+        String affaireSuivie = "AFFAIRE SUIVI PAR DOSSIR N°:";
+        String responsableEquipe = "RESPONSABLE:";
+        String numeroCheque = "N° DE CHEQUE:";
+        String date = "DATE:";
+        String montant = "MONTANT:";
+        String virement = "VIREMENT:";
+        String merciPhrase = "MERCI DE NOUS RETOURNER CETTE PAGE AVEC LES ACTES ENREGISTRÉS";
+        String square = "style='border: 1px solid black; padding: 10px; margin-bottom: 10px; font-size: 16px; background-color: lightgray;'";
+        String centeredDiv = "<div style='text-align: center;'><h2>" + merciPhrase + "</h2></div>";
+        String cachetBureauEnregistrement = "Cachet du Bureau d'Enregistrement:";
+
+        String cornerSquare = "<div style='border: 2px solid black; border-width: 2px 0 0 2px; width: 25px; height: 25px; position: absolute; top: 100px; left: 70px;'></div>"
+                + "<div style='border: 2px solid black; border-width: 2px 2px 0 0; width: 25px; height: 25px; position: absolute; top: 100px; right: 70px;'></div>"
+                + "<div style='border: 2px solid black; border-width: 0 0 2px 2px; width: 25px; height: 25px; position: absolute; top: 400px; left: 70px;'></div>"
+                + "<div style='border: 2px solid black; border-width: 0 2px 2px 0; width: 25px; height: 25px; position: absolute; top: 400px; right: 70px;'></div>";
+
+        String journalTitle = "JOURNAL SPÉCIAL DES SOCIÉTÉS";
+        String addressLine1 = "8, rue St Augustin - 75080 PARIS Cedex 02";
+        String addressLine2 = "Tél: 0147031010 - Fax: 0147039955";
+
+        String jssLabel = "<div style='text-align: center;'>"
+                + "<div style='border: 1px solid black; width: 380px; margin: 0 auto;padding: 20px;'>"
+                + "<strong>" + journalTitle + "</strong><br><br></br></br>"
+                + addressLine1 + "<br><br></br></br>" + addressLine2
+                + "</div>"
+                + "</div>";
+
+        String htmlContent = "<html><body>" +
+                centeredDiv +
+                "<div style='height: 360px;'></div>" +
+                cornerSquare +
+                jssLabel +
+                "<div style='height: 10px;'></div>" +
+                "<div>" +
+                "<div " + square + ">" + bureau + "   : " + sie + "<br></br>" + envoiDu + "</div>" +
+                "<div " + square + ">" + denomination + "</div>" +
+                "<div " + square + ">" + affaireSuivie + "</div>" +
+                "<div " + square + ">" + responsableEquipe + "</div>" +
+                "<div " + square + ">" + numeroCheque + "</div>" +
+                "<div " + square + ">" + virement + "</div>" +
+                "<div " + square + ">" + date + "</div>" +
+                "<div " + square + ">" + montant + "</div>" +
+                "<div style='position: relative; margin-left: 350px; font-size: 14px;'>"
+                + cachetBureauEnregistrement + "</div>" +
+                "</div></body></html>";
+
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("presta", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        renderer.setDocumentFromString(htmlContent);
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e, "Unable to create PDF file for letters");
+        }
+        return tempFile;
+    }
+
     public File generateLetterPdf(ArrayList<CustomerOrder> customerOrders)
             throws OsirisException, OsirisClientMessageException {
         final Context ctx = new Context();

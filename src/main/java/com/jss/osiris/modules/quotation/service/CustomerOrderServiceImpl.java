@@ -1153,13 +1153,47 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrdersIn, boolean printLabel,
-            boolean printLetters)
+            boolean printLetters, boolean printEnregistrement)
             throws OsirisException, OsirisClientMessageException {
+
         ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
         for (String id : customerOrdersIn) {
             customerOrders.add(getCustomerOrder(Integer.parseInt(id)));
+        }
+
+        if (printEnregistrement) {
+            byte[] data = null;
+            HttpHeaders headers = null;
+            File file = generatePdfDelegate.generateEnregistrementPdf();
+
+            if (file != null) {
+                try {
+                    data = Files.readAllBytes(file.toPath());
+                } catch (IOException e) {
+                    throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+                }
+
+                headers = new HttpHeaders();
+                headers.setContentLength(data.length);
+                headers.add("filename", "enregistrement_"
+                        + DateTimeFormatter.ofPattern("yyyyMMdd HHmm").format(LocalDateTime.now()) + ".pdf");
+                headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+
+                // Compute content type
+                String mimeType = null;
+                try {
+                    mimeType = Files.probeContentType(file.toPath());
+                } catch (IOException e) {
+                    throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+                }
+                if (mimeType == null)
+                    mimeType = "application/pdf";
+                headers.set("content-type", mimeType);
+                file.delete();
+            }
+
+            return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
         }
 
         if (printLabel)

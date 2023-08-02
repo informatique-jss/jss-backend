@@ -34,6 +34,10 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { QuotationComponent } from '../quotation/quotation.component';
 import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
+import { Constant } from 'src/app/modules/miscellaneous/model/Constant';
+import { CustomerOrderService } from '../../services/customer.order.service';
+import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
+import { IQuotation } from '../../model/IQuotation';
 
 @Component({
   selector: 'provision',
@@ -48,22 +52,27 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   @ViewChildren(ProvisionItemComponent) provisionItemComponents: any;
   editMode: boolean = false;
   isStatusOpen: boolean = false;
+  customerOrders: string[] = [];
+  printLabel: boolean = false;
+  printLetters: boolean = false;
+  printEnregistrement: boolean = true;
   inputProvisionId: number = 0;
-
+  constant: Constant = {} as Constant;
   announcementStatus: AnnouncementStatus[] = [] as Array<AnnouncementStatus>;
   formaliteStatus: FormaliteStatus[] = [] as Array<FormaliteStatus>;
   simpleProvisionStatus: SimpleProvisionStatus[] = [] as Array<SimpleProvisionStatus>;
   bodaccStatus: BodaccStatus[] = [] as Array<BodaccStatus>;
   domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
+  enregistrementLabel: string = "";
+  quotation: IQuotation = {} as IQuotation;
 
   confrereJssSpel = this.constantService.getConfrereJssSpel();
   journalTypePaper = this.constantService.getJournalTypePaper();
   journalTypeSpel = this.constantService.getJournalTypeSpel();
   getProvisionLabel = QuotationComponent.computeProvisionLabel;
-
   saveObservableSubscription: Subscription = new Subscription;
-
   currentProvisionWorkflow: Provision | undefined;
+
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -86,6 +95,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private simpleProvisionStatusService: SimpleProvisionStatusService,
     private announcementStatusService: AnnouncementStatusService,
     private confrereService: ConfrereService,
+    private customerOrderService: CustomerOrderService,
   ) { }
 
   affaireForm = this.formBuilder.group({});
@@ -95,6 +105,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.idAffaire = this.activatedRoute.snapshot.params.id != "null" ? this.activatedRoute.snapshot.params.id : null;
     this.inputProvisionId = this.activatedRoute.snapshot.params.idProvision;
     this.refreshAffaire();
+    this.enregistrementLabel = this.constantService.getProvisionServiceFamilyEnregistrement().label;
 
     this.formaliteStatusService.getFormaliteStatus().subscribe(response => this.formaliteStatus = response);
     this.bodaccStatusService.getBodaccStatus().subscribe(response => this.bodaccStatus = response);
@@ -119,6 +130,9 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.changeDetectorRef.detectChanges();
   }
 
+  isEnregistrementActe(): boolean {
+    return this.currentProvisionWorkflow?.provisionFamilyType?.label === this.enregistrementLabel;
+  }
 
   refreshAffaire() {
     let promise: Observable<AssoAffaireOrder> | undefined;
@@ -250,6 +264,15 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
   getActiveWorkflowElementsForProvisionFn(provision: Provision) {
     return ProvisionComponent.getActiveWorkflowElementsForProvision(provision);
+  }
+
+  generateEnregistrementPfd(){
+    this.customerOrders = [this.asso.customerOrder.id.toString()];
+        if (this.customerOrders && this.customerOrders.length > 0) {
+
+        this.customerOrderService.generateMailingLabel(this.customerOrders, this.printLabel, this.printLetters,this.printEnregistrement).subscribe(response => {
+          });
+        }
   }
 
   public static getActiveWorkflowElementsForProvision(provision: Provision): IWorkflowElement {

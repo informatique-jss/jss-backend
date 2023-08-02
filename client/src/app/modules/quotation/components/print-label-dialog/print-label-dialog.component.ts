@@ -14,6 +14,7 @@ export class PrintLabelDialogComponent implements OnInit {
   customerOrders: string[] = [];
   printLabel: boolean = true;
   printLetters: boolean = false;
+  printEnregistrement: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<AddAffaireDialogComponent>,
@@ -36,11 +37,11 @@ export class PrintLabelDialogComponent implements OnInit {
   generateLabel() {
     if (this.customerOrders && this.customerOrders.length > 0) {
       if (this.printLetters) {
-        this.customerOrderService.generateMailingLabelDownload(this.customerOrders, this.printLabel, this.printLetters);
+        this.customerOrderService.generateMailingLabelDownload(this.customerOrders, this.printLabel, this.printLetters, this.printEnregistrement);
         this.dialogRef.close(this.customerOrders);
       }
       else
-        this.customerOrderService.generateMailingLabel(this.customerOrders, this.printLabel, this.printLetters).subscribe(response => {
+        this.customerOrderService.generateMailingLabel(this.customerOrders, this.printLabel, this.printLetters, this.printEnregistrement).subscribe(response => {
           this.dialogRef.close(this.customerOrders);
         });
     }

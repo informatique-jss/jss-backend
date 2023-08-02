@@ -34,6 +34,10 @@ export class ConstantService extends AppRestService<Constant>{
     });
   }
 
+  getProvisionServiceFamilyEnregistrement(){
+    return this.constant.provisionServiceFamilyEnregistrement;
+  }
+
   getBillingLabelTypeCodeAffaire() {
     return this.constant.billingLabelTypeCodeAffaire;
   }

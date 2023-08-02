@@ -1296,6 +1296,13 @@
                 label="Compte comptable - Caisse"></autocomplete-accounting-account>
             </td>
           </tr>
+          <tr>
+            <td>
+              <select-provision-family [(model)]="constant.provisionServiceFamilyEnregistrement" [form]="constantForm"
+                propertyName="provisionServiceFamilyEnregistrement" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Provision famille de service - Enregistrement"></select-provision-family>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>

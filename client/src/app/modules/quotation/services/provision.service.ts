@@ -16,5 +16,4 @@ export class ProvisionService extends AppRestService<Provision>{
   updateAssignedToForProvision(provision: Provision, employee: Employee) {
     return this.getList(new HttpParams().set("provisionId", provision.id).set("employeeId", employee.id), "provision/assignedTo");
   }
-
 }

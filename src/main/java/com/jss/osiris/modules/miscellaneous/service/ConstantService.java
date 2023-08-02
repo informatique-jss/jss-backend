@@ -28,6 +28,7 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
@@ -379,4 +380,7 @@ public interface ConstantService {
     public CustomerOrderOrigin getCustomerOrderOriginOsiris() throws OsirisException;
 
     public PaymentDeadlineType getPaymentDeadLineType30() throws OsirisException;
+
+    public ProvisionFamilyType getProvisionServiceFamilyEnregistrement() throws OsirisException;
+
 }

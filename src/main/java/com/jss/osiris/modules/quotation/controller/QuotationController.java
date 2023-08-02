@@ -104,6 +104,7 @@ import com.jss.osiris.modules.quotation.model.Siren;
 import com.jss.osiris.modules.quotation.model.Siret;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.repository.CustomerOrderRepository;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementNoticeTemplateService;
@@ -307,6 +308,9 @@ public class QuotationController {
 
   @Autowired
   BankTransfertService bankTransfertService;
+
+  @Autowired
+  CustomerOrderRepository customerOrderRepository;
 
   @Autowired
   PaymentService paymentService;
@@ -1830,10 +1834,10 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/customer-order/print/label")
   public ResponseEntity<byte[]> printMailingLabel(@RequestParam List<String> customerOrders,
-      @RequestParam boolean printLabel, @RequestParam boolean printLetters)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+      @RequestParam boolean printLabel, @RequestParam boolean printLetters, @RequestParam boolean printEnregistrement)
+      throws OsirisException, OsirisClientMessageException {
 
-    return customerOrderService.printMailingLabel(customerOrders, printLabel, printLetters);
+    return customerOrderService.printMailingLabel(customerOrders, printLabel, printLetters, printEnregistrement);
   }
 
   @PostMapping(inputEntryPoint + "/dashboard/employee")
