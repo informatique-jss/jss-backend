@@ -60,4 +60,12 @@ public interface ITiersReporting {
     public String getTiersPaymentBic();
 
     public boolean getTiersIsProvisionnalPaymentMandatory();
+
+    public String getResponsableMail();
+
+    public String getResponsablePhone();
+
+    public Integer getNbrQuotation();
+
+    public String getInvoiceDateMonth();
 }

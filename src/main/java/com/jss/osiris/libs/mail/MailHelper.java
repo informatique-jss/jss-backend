@@ -340,7 +340,8 @@ public class MailHelper {
         try {
             renderer.setDocumentFromString(
                     htmlContent.replaceAll("\\p{C}", " ")
-                            .replace("&mail", "mail").replaceAll("&", "<![CDATA[&]]>").replaceAll("&#160;", " "));
+                            .replace("&mail", "mail").replace("&validationToken", "validationToken")
+                            .replaceAll("&", "<![CDATA[&]]>").replaceAll("&#160;", " "));
             renderer.setScaleToFit(true);
             renderer.layout();
             renderer.createPDF(outputStream);
@@ -1600,7 +1601,6 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     public void sendNewPasswordMail(Responsable responsable, String password)
             throws OsirisException {
         // To avoid proxy error

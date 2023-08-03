@@ -47,7 +47,9 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.guichetUnique.RneCompany;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.quotation.repository.AnnouncementRepository;
+import com.jss.osiris.modules.quotation.repository.guichetUnique.FormeJuridiqueRepository;
 
 @Service
 public class AnnouncementServiceImpl implements AnnouncementService {
@@ -57,6 +59,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Autowired
     CityRepository cityRepository;
+
+    @Autowired
+    FormeJuridiqueRepository formeJuridiqueRepository;
 
     @Autowired
     CompetentAuthorityRepository competentAuthorityRepository;
@@ -618,14 +623,19 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 +
                 " - " + rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse()
                         .getCodePostal();
+
         Float shareSocial = affaire.getShareCapital();
+
         String label = affaire.getDenomination();
-        String legalForm = rneCompany.getFormality().getFormeJuridique();
+        String legalFormCode = rneCompany.getFormality().getFormeJuridique();
+        FormeJuridique legalForm = formeJuridiqueRepository.findByCode(legalFormCode);
+        String legalFormLabel = legalForm.getLabel();
+
         String cityRne = rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse()
                 .getCommune();
         List<City> city = cityRepository.findByLabelContainingIgnoreCase(cityRne);
         Integer idCity = city.get(0).getId();
-        List<CompetentAuthority> competentAuthorities = competentAuthorityRepository.findByCities_Id(idCity);
+
         String competentAuthorityTypeRcsCode = constantService.getCompetentAuthorityTypeRcs().getCode();
         CompetentAuthority ca = competentAuthorityRepository.findByCityIdAndByAuthorityType(idCity,
                 competentAuthorityTypeRcsCode);
@@ -635,12 +645,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         if (shareSocial != null)
             notice = notice.replace("{capitalSocial}", shareSocial.toString());
         if (legalForm != null)
-            notice = notice.replace("{formeJuridique}", legalForm);
+            notice = notice.replace("{formeJuridique}", legalFormLabel);
         if (companyAddress != null)
             notice = notice.replace("{adresseEntreprise}", companyAddress);
         if (cityRne != null)
             notice = notice.replace("{villeRne}", cityRne);
-        if (competentAuthorities != null) {
+        if (ca != null) {
             notice = notice.replace("{autoriteCompetente}", ca.getLabel());
         }
         return notice;

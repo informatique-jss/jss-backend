@@ -12,6 +12,8 @@ import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
 import { InvoiceStatus } from '../../model/InvoiceStatus';
 import { InvoiceSearchResultService } from '../../services/invoice.search.result.service';
 import { getColumnLink } from '../invoice-tools';
+import { ITiers } from '../../../tiers/model/ITiers';
+import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 
 @Component({
   selector: 'invoice-list',
@@ -19,6 +21,8 @@ import { getColumnLink } from '../invoice-tools';
   styleUrls: ['./invoice-list.component.css']
 })
 export class InvoiceListComponent implements OnInit, AfterContentChecked {
+
+
 
   @Input() invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   @Input() isForDashboard: boolean = false;
@@ -33,6 +37,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   @Input() overrideIconAction: string = "";
   @Input() overrideTooltipAction: string = "";
   @Input() defaultStatusFilter: InvoiceStatus[] | undefined;
+  searchedTiers: IndexEntity | undefined;
 
   bookmark: InvoiceSearch | undefined;
 
@@ -133,10 +138,14 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
   searchInvoices() {
     if (this.invoiceForm.valid) {
+
+      if (this.searchedTiers) {
+        this.invoiceSearch.customerOrders = [];
+        this.invoiceSearch.customerOrders.push({ id : this.searchedTiers.entityId} as ITiers)
+      }
       if (!this.isForDashboard)
         this.userPreferenceService.setUserSearchBookmark(this.invoiceSearch, "invoices");
-
-      this.invoiceSearchResultService.getInvoicesList(this.invoiceSearch).subscribe(response => {
+        this.invoiceSearchResultService.getInvoicesList(this.invoiceSearch).subscribe(response => {
         this.invoices = response;
       })
     }

@@ -406,7 +406,7 @@ public class GeneratePdfDelegate {
         }
 
         // Compute base for debours
-        ctx.setVariable("vatDebour", null);
+        ctx.setVariable("vatDebour", constantService.getVatZero());
         if (vats == null)
             vats = new ArrayList<VatMail>();
         for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
