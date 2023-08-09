@@ -13,8 +13,7 @@
             <td
               *ngIf="formalite.competentAuthorityServiceProvider && formalite.competentAuthorityServiceProvider.id == competentAuthorityInpi.id">
               <chips-formalite-guichet-unique [(model)]="formalite.formalitesGuichetUnique" [form]="formaliteForm"
-                propertyName="formaliteGuichetUnique" [isMandatory]="false"
-                label="Nom du dossier GU (SIREN pour les comptes annuels)"
+                propertyName="formaliteGuichetUnique" [isMandatory]="false" label="Nom du dossier GU"
                 [isDisabled]="!editMode"></chips-formalite-guichet-unique>
             </td>
             <td

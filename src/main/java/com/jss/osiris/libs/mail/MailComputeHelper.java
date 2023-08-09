@@ -125,15 +125,16 @@ public class MailComputeHelper {
                     "Customer order not found for IQuoation " + quotation.getId());
 
         if (quotationDocument != null) {
+            boolean hasAlreadyAddMails = false;
             if (quotationDocument.getIsRecipientAffaire()) {
                 mailComputeResult.setIsSendToAffaire(true);
                 if (quotationDocument.getMailsAffaire() != null && quotationDocument.getMailsAffaire().size() > 0) {
                     mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsAffaire());
                     mailComputeResult.setMailToAffaireOrigin("mails indiqués dans la commande");
+                    hasAlreadyAddMails = true;
                 }
 
-                if (mailComputeResult.getRecipientsMailTo().size() > 0
-                        && !quotationDocument.getAddToAffaireMailList()) {
+                if (hasAlreadyAddMails && !quotationDocument.getAddToAffaireMailList()) {
                     // do nothing
                 } else if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0
                         && quotation.getAssoAffaireOrders().get(0).getAffaire().getMails() != null
@@ -147,13 +148,14 @@ public class MailComputeHelper {
 
             if (quotationDocument.getIsRecipientClient()
                     || !quotationDocument.getIsRecipientClient() && !quotationDocument.getIsRecipientAffaire()) {
+                hasAlreadyAddMails = false;
                 mailComputeResult.setIsSendToClient(true);
                 if (quotationDocument.getMailsClient() != null
                         && quotationDocument.getMailsClient().size() > 0) {
                     mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsClient());
                     mailComputeResult.setMailToClientOrigin("mails indiqués dans la commande");
                 }
-                if (mailComputeResult.getRecipientsMailTo().size() > 0 && !quotationDocument.getAddToClientMailList()) {
+                if (hasAlreadyAddMails && !quotationDocument.getAddToClientMailList()) {
                     // do nothing
                 } else if (customerOrder instanceof Responsable
                         && ((Responsable) customerOrder).getMails() != null

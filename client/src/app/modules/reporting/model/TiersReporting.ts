@@ -29,4 +29,8 @@ export interface TiersReporting {
   tiersPaymentIban: string;
   tiersPaymentBic: string;
   tiersIsProvisionnalPaymentMandatory: boolean;
+  responsableMail: string;
+  responsablePhone: string;
+  nbrQuotation: number;
+  invoiceDateMonth: string;
 }

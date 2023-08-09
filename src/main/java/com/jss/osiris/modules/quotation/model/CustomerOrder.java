@@ -44,13 +44,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	public CustomerOrder() {
 	}
 
-	public CustomerOrder(Tiers tiers, Responsable responsable, Confrere confrere,
+	public CustomerOrder(Employee assignedTo, Tiers tiers, Responsable responsable, Confrere confrere,
 			List<SpecialOffer> specialOffers, LocalDateTime createdDate, CustomerOrderStatus customerOrderStatus,
 			String observations, String description, List<Attachment> attachments, List<Document> documents,
 			List<AssoAffaireOrder> assoAffaireOrders,
 			List<Quotation> quotations, Boolean overrideSpecialOffer, String quotationLabel, Boolean isQuotation,
 			List<Invoice> invoices, List<Deposit> deposits,
 			List<AccountingRecord> accountingRecords) {
+		this.assignedTo = assignedTo;
 		this.tiers = tiers;
 		this.responsable = responsable;
 		this.confrere = confrere;

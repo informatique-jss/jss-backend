@@ -30,6 +30,11 @@
             propertyName="customerOrderId" [isMandatory]="false"></generic-input>
         </td>
         <td *ngIf="isForPaymentAssocationIntegration">
+          <autocomplete-tiers-individual [(model)]="searchedTiers" label = "Tiers" [form]="invoiceForm"
+            propertyName="tiers" [isMandatory]="false" [authorizeNonIndividualTiers]="true"></autocomplete-tiers-individual>
+        </td>
+
+        <td *ngIf="isForPaymentAssocationIntegration">
           <generic-input [(model)]="invoiceSearch.invoiceId" label="Numéro de facture" [form]="invoiceForm"
             propertyName="invoiceId" [isMandatory]="false"></generic-input>
         </td>

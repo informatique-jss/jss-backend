@@ -598,6 +598,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                                             Vat vatDebour = vatService.getGeographicalApplicableVatForPurshases(
                                                     debour.getCompetentAuthority(), constantService.getVatDeductible());
+                                            if (invoice.getCustomerOrder() != null) {
+                                                Vat vatDebour2 = vatService.getGeographicalApplicableVatForSales(
+                                                        invoice.getCustomerOrder(), constantService.getVatDeductible());
+                                                if (vatDebour2 != null && vatDebour2.getRate() < vatDebour.getRate())
+                                                    vatDebour = vatDebour2;
+                                            }
 
                                             if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable()
                                                     || vatDebour == null) {

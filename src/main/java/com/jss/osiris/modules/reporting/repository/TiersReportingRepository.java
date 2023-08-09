@@ -43,6 +43,10 @@ public interface TiersReportingRepository extends QueryCacheCrudRepository<Tiers
                         " else count(distinct co1.id) " +
                         " end as nbrCustomerOrder, " +
                         " case " +
+                        " when respo.id is not null then count(distinct q2.id) " +
+                        " else count(distinct q1.id) " +
+                        " end as nbrQuotation, " +
+                        " case " +
                         " when respo.id is not null then count(distinct p2.id_announcement) " +
                         " else count(distinct p1.id_announcement) " +
                         " end as nbrAnnouncement, " +
@@ -59,60 +63,65 @@ public interface TiersReportingRepository extends QueryCacheCrudRepository<Tiers
                         +
                         " else sum(case when bt1.is_debour = true then 0 else ii1.pre_tax_price end) " +
                         " end as turnoverAmountWithoutDebour, " +
+                        " coalesce(initcap(to_char(invoice.created_date,'MM - tmmonth')),'N/A') as invoiceDateMonth, " +
                         " case " +
                         " when docTiersPaper.is_recipient_client = true " +
-                        " and docTiersPaper.is_recipient_affaire = true then 'Client / Affaire' " +
+                        " and docTiersPaper.is_recipient_affaire = true then 'C/A' " +
                         " when docTiersPaper.is_recipient_client = true " +
-                        " and docTiersPaper.is_recipient_affaire = false then 'Client' " +
+                        " and docTiersPaper.is_recipient_affaire = false then 'C' " +
                         " when docTiersPaper.is_recipient_client = false " +
-                        " and docTiersPaper.is_recipient_affaire = true then 'Affaire' " +
+                        " and docTiersPaper.is_recipient_affaire = true then 'A' " +
                         " end as docTiersPaperRecipient, " +
                         " case " +
                         " when docTiersNumeric.is_recipient_client = true " +
-                        " and docTiersNumeric.is_recipient_affaire = true then 'Client / Affaire' " +
+                        " and docTiersNumeric.is_recipient_affaire = true then 'C/A' " +
                         " when docTiersNumeric.is_recipient_client = true " +
-                        " and docTiersNumeric.is_recipient_affaire = false then 'Client' " +
+                        " and docTiersNumeric.is_recipient_affaire = false then 'C' " +
                         " when docTiersNumeric.is_recipient_client = false " +
-                        " and docTiersNumeric.is_recipient_affaire = true then 'Affaire' " +
+                        " and docTiersNumeric.is_recipient_affaire = true then 'A' " +
                         " end as docTiersPaperNumeric, " +
                         " case " +
                         " when docTiersBilling.is_recipient_client = true " +
-                        " and docTiersBilling.is_recipient_affaire = true then 'Client / Affaire' " +
+                        " and docTiersBilling.is_recipient_affaire = true then 'C/A' " +
                         " when docTiersBilling.is_recipient_client = true " +
-                        " and docTiersBilling.is_recipient_affaire = false then 'Client' " +
+                        " and docTiersBilling.is_recipient_affaire = false then 'C' " +
                         " when docTiersBilling.is_recipient_client = false " +
-                        " and docTiersBilling.is_recipient_affaire = true then 'Affaire' " +
+                        " and docTiersBilling.is_recipient_affaire = true then 'A' " +
                         " end as docTiersBilling, " +
                         " bltTiers.label as docTiersBillingLabel, " +
                         " case " +
                         " when docResponsablePaper.is_recipient_client = true " +
-                        " and docResponsablePaper.is_recipient_affaire = true then 'Client / Affaire' " +
+                        " and docResponsablePaper.is_recipient_affaire = true then 'C/A' " +
                         " when docResponsablePaper.is_recipient_client = true " +
-                        " and docResponsablePaper.is_recipient_affaire = false then 'Client' " +
+                        " and docResponsablePaper.is_recipient_affaire = false then 'C' " +
                         " when docResponsablePaper.is_recipient_client = false " +
-                        " and docResponsablePaper.is_recipient_affaire = true then 'Affaire' " +
+                        " and docResponsablePaper.is_recipient_affaire = true then 'A' " +
                         " end as docResponsablePaperRecipient, " +
                         " case " +
                         " when docResponsableNumeric.is_recipient_client = true " +
-                        " and docResponsableNumeric.is_recipient_affaire = true then 'Client / Affaire' " +
+                        " and docResponsableNumeric.is_recipient_affaire = true then 'C/A' " +
                         " when docResponsableNumeric.is_recipient_client = true " +
-                        " and docResponsableNumeric.is_recipient_affaire = false then 'Client' " +
+                        " and docResponsableNumeric.is_recipient_affaire = false then 'C' " +
                         " when docResponsableNumeric.is_recipient_client = false " +
-                        " and docResponsableNumeric.is_recipient_affaire = true then 'Affaire' " +
+                        " and docResponsableNumeric.is_recipient_affaire = true then 'A' " +
                         " end as docResponsablePaperNumeric, " +
                         " case " +
                         " when docResponsableBilling.is_recipient_client = true " +
-                        " and docResponsableBilling.is_recipient_affaire = true then 'Client / Affaire' " +
+                        " and docResponsableBilling.is_recipient_affaire = true then 'C/A' " +
                         " when docResponsableBilling.is_recipient_client = true " +
-                        " and docResponsableBilling.is_recipient_affaire = false then 'Client' " +
+                        " and docResponsableBilling.is_recipient_affaire = false then 'C' " +
                         " when docResponsableBilling.is_recipient_client = false " +
-                        " and docResponsableBilling.is_recipient_affaire = true then 'Affaire' " +
+                        " and docResponsableBilling.is_recipient_affaire = true then 'A' " +
                         " end as docResponsableBilling, " +
                         " bltResponsable.label as docResponsableBillingLabel, " +
                         " pt.label as tiersPaymentType, " +
                         " tiers.payment_iban as tiersPaymentIban, " +
                         " tiers.payment_bic as tiersPaymentBic, " +
-                        " tiers.is_provisional_payment_mandatory as tiersIsProvisionnalPaymentMandatory " +
+                        " tiers.is_provisional_payment_mandatory as tiersIsProvisionnalPaymentMandatory, " +
+                        " (select STRING_AGG(DISTINCT mail.mail ,', '  ) from  asso_responsable_mail asso join mail on mail.id = asso.id_mail  where asso.id_tiers = respo.id )  as responsableMail,   "
+                        +
+                        " (select STRING_AGG(DISTINCT phone.phone_number ,', '  ) from  asso_responsable_phone asso join phone on phone.id = asso.id_phone  where asso.id_tiers = respo.id )  as responsablePhone   "
+                        +
                         " from " +
                         " tiers " +
                         " left join payment_type pt on " +
@@ -135,6 +144,10 @@ public interface TiersReportingRepository extends QueryCacheCrudRepository<Tiers
                         " co1.id_tiers = tiers.id " +
                         " left join customer_order co2 on " +
                         " co2.id_responsable = respo.id " +
+                        " left join quotation q1 on " +
+                        " q1.id_tiers = tiers.id " +
+                        " left join quotation q2 on " +
+                        " q2.id_responsable = respo.id " +
                         " left join asso_affaire_order aao1 on " +
                         " aao1.id_customer_order = co1.id " +
                         " left join asso_affaire_order aao2 on " +
@@ -144,9 +157,10 @@ public interface TiersReportingRepository extends QueryCacheCrudRepository<Tiers
                         " left join provision p2 on " +
                         " p2.id_asso_affaire_order = aao2.id " +
                         " left join invoice_item ii1 on " +
-                        " ii1.id_provision = p1.id " +
+                        " ii1.id_provision = p1.id and ii1.id_invoice is not null " +
                         " left join invoice_item ii2 on " +
-                        " ii2.id_provision = p2.id " +
+                        " ii2.id_provision = p2.id and ii2.id_invoice is not null " +
+                        " left join invoice on invoice.id = ii1.id_invoice or invoice.id = ii2.id_invoice " +
                         " left join billing_item bi1 on " +
                         " bi1.id = ii1.id_billing_item " +
                         " left join billing_item bi2 on " +
@@ -177,6 +191,7 @@ public interface TiersReportingRepository extends QueryCacheCrudRepository<Tiers
                         " and docResponsableBilling.id_document_type = :documentTypeBillingId " +
                         " left join billing_label_type bltResponsable on " +
                         " bltResponsable.id = docResponsableBilling.id_billing_label_type  " +
+                        " where (co1.id is not null or co2.id is not null or q1.id is not null or q2.id is not null) " +
                         " group by " +
                         " tiers.id , " +
                         " respo.id , " +
@@ -209,54 +224,55 @@ public interface TiersReportingRepository extends QueryCacheCrudRepository<Tiers
                         " pt.label , " +
                         " tiers.payment_iban, " +
                         " tiers.payment_bic , " +
+                        " invoice.created_date , " +
                         " tiers.is_provisional_payment_mandatory , " +
                         " case " +
                         " when docTiersPaper.is_recipient_client = true " +
-                        " and docTiersPaper.is_recipient_affaire = true then 'Client / Affaire' " +
+                        " and docTiersPaper.is_recipient_affaire = true then 'C/A' " +
                         " when docTiersPaper.is_recipient_client = true " +
-                        " and docTiersPaper.is_recipient_affaire = false then 'Client' " +
+                        " and docTiersPaper.is_recipient_affaire = false then 'C' " +
                         " when docTiersPaper.is_recipient_client = false " +
-                        " and docTiersPaper.is_recipient_affaire = true then 'Affaire' " +
+                        " and docTiersPaper.is_recipient_affaire = true then 'A' " +
                         " end , " +
                         " case " +
                         " when docTiersNumeric.is_recipient_client = true " +
-                        " and docTiersNumeric.is_recipient_affaire = true then 'Client / Affaire' " +
+                        " and docTiersNumeric.is_recipient_affaire = true then 'C/A' " +
                         " when docTiersNumeric.is_recipient_client = true " +
-                        " and docTiersNumeric.is_recipient_affaire = false then 'Client' " +
+                        " and docTiersNumeric.is_recipient_affaire = false then 'C' " +
                         " when docTiersNumeric.is_recipient_client = false " +
-                        " and docTiersNumeric.is_recipient_affaire = true then 'Affaire' " +
+                        " and docTiersNumeric.is_recipient_affaire = true then 'A' " +
                         " end , " +
                         " case " +
                         " when docTiersBilling.is_recipient_client = true " +
-                        " and docTiersBilling.is_recipient_affaire = true then 'Client / Affaire' " +
+                        " and docTiersBilling.is_recipient_affaire = true then 'C/A' " +
                         " when docTiersBilling.is_recipient_client = true " +
-                        " and docTiersBilling.is_recipient_affaire = false then 'Client' " +
+                        " and docTiersBilling.is_recipient_affaire = false then 'C' " +
                         " when docTiersBilling.is_recipient_client = false " +
-                        " and docTiersBilling.is_recipient_affaire = true then 'Affaire' " +
+                        " and docTiersBilling.is_recipient_affaire = true then 'A' " +
                         " end , " +
                         " case " +
                         " when docResponsablePaper.is_recipient_client = true " +
-                        " and docResponsablePaper.is_recipient_affaire = true then 'Client / Affaire' " +
+                        " and docResponsablePaper.is_recipient_affaire = true then 'C/A' " +
                         " when docResponsablePaper.is_recipient_client = true " +
-                        " and docResponsablePaper.is_recipient_affaire = false then 'Client' " +
+                        " and docResponsablePaper.is_recipient_affaire = false then 'C' " +
                         " when docResponsablePaper.is_recipient_client = false " +
-                        " and docResponsablePaper.is_recipient_affaire = true then 'Affaire' " +
+                        " and docResponsablePaper.is_recipient_affaire = true then 'A' " +
                         " end , " +
                         " case " +
                         " when docResponsableNumeric.is_recipient_client = true " +
-                        " and docResponsableNumeric.is_recipient_affaire = true then 'Client / Affaire' " +
+                        " and docResponsableNumeric.is_recipient_affaire = true then 'C/A' " +
                         " when docResponsableNumeric.is_recipient_client = true " +
-                        " and docResponsableNumeric.is_recipient_affaire = false then 'Client' " +
+                        " and docResponsableNumeric.is_recipient_affaire = false then 'C' " +
                         " when docResponsableNumeric.is_recipient_client = false " +
-                        " and docResponsableNumeric.is_recipient_affaire = true then 'Affaire' " +
+                        " and docResponsableNumeric.is_recipient_affaire = true then 'A' " +
                         " end , " +
                         " case " +
                         " when docResponsableBilling.is_recipient_client = true " +
-                        " and docResponsableBilling.is_recipient_affaire = true then 'Client / Affaire' " +
+                        " and docResponsableBilling.is_recipient_affaire = true then 'C/A' " +
                         " when docResponsableBilling.is_recipient_client = true " +
-                        " and docResponsableBilling.is_recipient_affaire = false then 'Client' " +
+                        " and docResponsableBilling.is_recipient_affaire = false then 'C' " +
                         " when docResponsableBilling.is_recipient_client = false " +
-                        " and docResponsableBilling.is_recipient_affaire = true then 'Affaire' " +
+                        " and docResponsableBilling.is_recipient_affaire = true then 'A' " +
                         " end " +
                         "")
         List<ITiersReporting> getTiersReporting(
