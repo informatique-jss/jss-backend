@@ -46,10 +46,6 @@ public class Affaire implements Serializable, IId {
   @IndexedField
   private String firstname;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @IndexedField
-  private FormeJuridique formeJuridique;
-
   @Column(length = 50)
   @IndexedField
   private String lastname;
@@ -297,13 +293,4 @@ public class Affaire implements Serializable, IId {
   public void setIntercommunityVat(String intercommunityVat) {
     this.intercommunityVat = intercommunityVat;
   }
-
-  public FormeJuridique getFormeJuridique() {
-    return formeJuridique;
-  }
-
-  public void setFormeJuridique(FormeJuridique formeJuridique) {
-    this.formeJuridique = formeJuridique;
-  }
-
 }

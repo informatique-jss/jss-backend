@@ -30,5 +30,4 @@ export interface Affaire extends IReferential {
   paymentBic: string;
   isUnregistered: boolean;
   intercommunityVat: string | null;
-  formeJuridique: FormeJuridique;
 }

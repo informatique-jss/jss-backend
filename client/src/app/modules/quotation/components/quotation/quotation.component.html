@@ -282,7 +282,7 @@
     <button mat-menu-item (click)="generateMailingLabel()">
       <span>Imprimer une étiquette/lettre postale</span>
     </button>
-    <button mat-menu-item (click)="generateRegisterMailingLabel()" *ngIf="provisionContainsRegister">
+    <button mat-menu-item (click)="generateRegisterMailingLabel()" *ngIf="checkIfProvisionContainsRegister(this.selectedProvision)">
       <span>Imprimer une Registre</span>
     </button>
   </mat-menu>

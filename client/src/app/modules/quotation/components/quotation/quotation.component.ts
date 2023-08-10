@@ -57,6 +57,7 @@ import { ProvisionFamilyType } from '../../model/ProvisionFamilyType';
 })
 export class QuotationComponent implements OnInit, AfterContentChecked {
 
+  selectedProvision!: string;
   printProvisionRegister = false;
   quotation: IQuotation = {} as IQuotation;
   editMode: boolean = false;
@@ -804,12 +805,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return ProvisionComponent.getActiveWorkflowElementsForProvision(provision);
   }
 
+  checkIfProvisionContainsRegister(getProvisionLabel: string): boolean {
+    return getProvisionLabel.includes(this.provisionFamilyTypeRegister.label);
+  }
 
   getProvisionLabel(provision: Provision): string {
-    if (provision && provision.provisionFamilyType && provision.provisionFamilyType.label == this.provisionFamilyTypeRegister.label) {
-      this.provisionContainsRegister = true;
-    }
-    return QuotationComponent.computeProvisionLabel(provision);
+    this.selectedProvision = QuotationComponent.computeProvisionLabel(provision);
+    return this.selectedProvision;
   }
 
   public static computeProvisionLabel(provision: Provision): string {

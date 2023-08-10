@@ -15,12 +15,13 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
-import com.jss.osiris.modules.miscellaneous.model.LegalForm;
+import com.jss.osiris.modules.miscellaneous.model.City;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.miscellaneous.repository.CityRepository;
+import com.jss.osiris.modules.miscellaneous.repository.CompetentAuthorityRepository;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.Provision;
-import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.RneCompany;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.quotation.repository.guichetUnique.FormeJuridiqueRepository;
@@ -31,6 +32,12 @@ public class PrintDelegate {
 
   @Autowired
   RneDelegateService rneDelegateService;
+
+  @Autowired
+  CityRepository cityRepository;
+
+  @Autowired
+  CompetentAuthorityRepository competentAuthorityRepository;
 
   @Value("${printer.label.ip}")
   private String printerIp;
@@ -53,22 +60,35 @@ public class PrintDelegate {
         && !customerOrder.getAssoAffaireOrders().isEmpty()
         && customerOrder.getAssoAffaireOrders().get(0).getAffaire() != null) {
 
+      provisionType = customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getProvisionFamilyType()
+          .getLabel();
       Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
-      RneCompany rneCompany = rneDelegateService.getCompanyBySiren(affaire.getSiren());
-      String legalFormNumber = rneCompany.getFormality().getFormeJuridique();
-      FormeJuridique legalFormObj = formeJuridiqueRepository.findByCode(legalFormNumber);
-      String legalForm = legalFormObj.getLabel();
+      RneCompany rneCompany = (affaire != null && affaire.getSiren() != null)
+          ? rneDelegateService.getCompanyBySiren(affaire.getSiren())
+          : null;
 
-      if (affaire.getDenomination() != null)
+      String legalFormNumber = (rneCompany != null && rneCompany.getFormality() != null)
+          ? rneCompany.getFormality().getFormeJuridique()
+          : "";
+      FormeJuridique legalForm = (legalFormNumber.isEmpty()) ? new FormeJuridique()
+          : formeJuridiqueRepository.findByCode(legalFormNumber);
+
+      String legalFormLabel = (legalForm != null) ? legalForm.getLabel() : "";
+
+      if (!affaire.getIsIndividual())
         affaireName = affaire.getDenomination();
+      else {
+        if (affaire.getCivility() != null && affaire.getFirstname() != null && affaire.getLastname() != null)
+          affaireName = affaire.getCivility().getLabel() + " " + affaire.getFirstname() + " " + affaire.getLastname();
+      }
 
       if (affaire.getAddress() != null) {
         affaireAddress = affaire.getAddress();
         if (affaire.getCity() != null) {
-          affaireAddress += "-" + affaire.getCity().getLabel();
+          affaireAddress += " - " + affaire.getCity().getLabel();
         }
         if (affaire.getPostalCode() != null) {
-          affaireAddress += "-" + affaire.getPostalCode();
+          affaireAddress += " - " + affaire.getPostalCode();
         }
       }
       if (affaire.getCedexComplement() != null)
@@ -77,8 +97,31 @@ public class PrintDelegate {
       if (affaire.getSiren() != null)
         siren = affaire.getSiren();
 
-      boolean hasProvisionRegister = false;
+      String cityRne = "";
+      if (rneCompany != null &&
+          rneCompany.getFormality() != null &&
+          rneCompany.getFormality().getContent() != null &&
+          rneCompany.getFormality().getContent().getPersonneMorale() != null &&
+          rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise() != null &&
+          rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise()
+              .getAdresse() != null) {
+        cityRne = rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse()
+            .getCommune();
+      }
+      List<City> city = cityRepository.findByLabelContainingIgnoreCase(cityRne);
+      Integer idCity = (city != null && !city.isEmpty()) ? city.get(0).getId() : 0;
 
+      String competentAuthorityTypeRcsCode = (constantService.getCompetentAuthorityTypeRcs() != null)
+          ? constantService.getCompetentAuthorityTypeRcs().getCode()
+          : "";
+      CompetentAuthority ca = competentAuthorityRepository.findByCityIdAndByAuthorityType(idCity,
+          competentAuthorityTypeRcsCode);
+
+      if (ca != null) {
+        registreAC = ca.getLabel();
+      } else {
+        registreAC = "";
+      }
       Socket socket = null;
       DataOutputStream dOut = null;
 
@@ -86,23 +129,7 @@ public class PrintDelegate {
         socket = new Socket(printerIp, printerPort);
         dOut = new DataOutputStream(socket.getOutputStream());
 
-        List<Provision> customerOrders = customerOrder.getAssoAffaireOrders().get(0).getProvisions();
-
-        for (Provision c : customerOrders) {
-          System.out.println("Provision family type: " + c.getProvisionFamilyType().getLabel());
-          if (c.getProvisionFamilyType().getLabel()
-              .equals(constantService.getProvisionFamilyTypeRegister().getLabel())) {
-            hasProvisionRegister = true;
-            if (c.getProvisionType() != null) {
-              provisionType = c.getProvisionType().getLabel();
-            }
-            if (c.getSimpleProvision() != null && c.getSimpleProvision().getWaitedCompetentAuthority() != null) {
-              registreAC = c.getSimpleProvision().getWaitedCompetentAuthority().getLabel();
-            }
-          }
-        }
-
-        if (hasProvisionRegister && printProvisionRegister) {
+        if (printProvisionRegister) {
 
           dOut.writeUTF("\r\n");
           dOut.flush();
@@ -116,7 +143,7 @@ public class PrintDelegate {
           dOut.writeUTF("\r\n");
           dOut.flush();
           dOut.writeUTF(
-              "             " + StringUtils
+              "            " + StringUtils
                   .stripAccents((affaireName != null ? affaireName
                       : ""))
                   .toUpperCase());
@@ -157,7 +184,13 @@ public class PrintDelegate {
           dOut.writeUTF("\r\n");
           dOut.flush();
           dOut.writeUTF(
-              "            " + StringUtils.stripAccents((legalForm != null ? legalForm
+              "            " + StringUtils.stripAccents((legalFormLabel != null ? legalFormLabel
+                  : ""))
+                  .toUpperCase());
+          dOut.writeUTF("\r\n");
+          dOut.flush();
+          dOut.writeUTF(
+              "            " + StringUtils.stripAccents((registreAC != null ? registreAC
                   : ""))
                   .toUpperCase());
         } else {
