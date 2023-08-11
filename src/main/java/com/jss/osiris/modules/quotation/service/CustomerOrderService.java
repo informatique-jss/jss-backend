@@ -3,6 +3,7 @@ package com.jss.osiris.modules.quotation.service;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -79,7 +80,7 @@ public interface CustomerOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrders, boolean printLabel,
-                        boolean printLetters, boolean printEnregistrement)
+                        boolean printLetters)
                         throws OsirisException, OsirisClientMessageException;
 
         public void updateAssignedToForCustomerOrder(CustomerOrder customerOrder, Employee employee)
@@ -87,4 +88,6 @@ public interface CustomerOrderService {
 
         public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation);
 
+        public ResponseEntity<byte[]> printEnregistrement()
+                        throws OsirisException, OsirisClientMessageException;
 }

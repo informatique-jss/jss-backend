@@ -20,10 +20,6 @@ export class ProvisionFamilyTypeService extends AppRestService<ProvisionFamilyTy
   addOrUpdateProvisionFamilyType(provisionFamilyType: ProvisionFamilyType) {
     this.clearListCache(new HttpParams(), "provision-family-types");
     return this.addOrUpdate(new HttpParams(), "provision-family-type", provisionFamilyType, "Enregistré", "Erreur lors de l'enregistrement");
-  }
-  generateEnregistrementPfd(){
-    console.log('passei')
-    return this.getListCached(new HttpParams(), "provision-family-type-enregistrement/enregistrementPdf");
 
   }
 }

@@ -53,9 +53,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   editMode: boolean = false;
   isStatusOpen: boolean = false;
   customerOrders: string[] = [];
-  printLabel: boolean = false;
-  printLetters: boolean = false;
-  printEnregistrement: boolean = true;
   inputProvisionId: number = 0;
   constant: Constant = {} as Constant;
   announcementStatus: AnnouncementStatus[] = [] as Array<AnnouncementStatus>;
@@ -270,8 +267,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.customerOrders = [this.asso.customerOrder.id.toString()];
         if (this.customerOrders && this.customerOrders.length > 0) {
 
-        this.customerOrderService.generateMailingLabel(this.customerOrders, this.printLabel, this.printLetters,this.printEnregistrement).subscribe(response => {
-          });
+          this.customerOrderService.generatePdfEnregistrement();
         }
   }
 
