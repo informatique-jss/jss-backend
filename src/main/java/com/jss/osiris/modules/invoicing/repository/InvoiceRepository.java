@@ -45,6 +45,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + " t.id as tiersId, "
                         + " r1.firstname || ' '||r1.lastname  as responsableLabel,"
                         + " coalesce( t.denomination,t.firstname || ' '||t.lastname )  as tiersLabel,"
+                        + " i.id_payment_type as idPaymentType,"
                         + " STRING_AGG( case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end || ' ('||city.label ||')',', ' order by 1) as affaireLabel,"
                         + "  i.billing_label as billingLabel,"
                         + "  i.created_date as createdDate,"

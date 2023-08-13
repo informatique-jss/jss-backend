@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
 import { validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
-import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
+import { formatEurosForSortTable } from 'src/app/libs/FormatHelper';
+import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { CompetentAuthority } from 'src/app/modules/miscellaneous/model/CompetentAuthority';
@@ -26,12 +26,9 @@ import { IndexEntityService } from '../../../../routing/search/index.entity.serv
 import { BillingItem } from '../../../miscellaneous/model/BillingItem';
 import { CompetentAuthorityService } from '../../../miscellaneous/services/competent.authority.service';
 import { CustomerOrder } from '../../../quotation/model/CustomerOrder';
-import { Debour } from '../../../quotation/model/Debour';
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
 import { ResponsableService } from '../../../tiers/services/responsable.service';
 import { InvoiceService } from '../../services/invoice.service';
-import { DeboursAmountInvoicedDialogComponent } from '../debours-amount-invoiced-dialog/debours-amount-invoiced-dialog.component';
-import { DeboursAmountTaxableDialogComponent } from '../debours-amount-taxable-dialog/debours-amount-taxable-dialog.component';
 
 @Component({
   selector: 'add-invoice',
@@ -70,13 +67,8 @@ export class AddInvoiceComponent implements OnInit {
   invoiceForm = this.formBuilder.group({});
   displayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
   tableAction: SortTableAction[] = [] as Array<SortTableAction>;
-  displayedColumnsDebours: SortTableColumn[] = [] as Array<SortTableColumn>;
-  displayedColumnsSelectedDebours: SortTableColumn[] = [] as Array<SortTableColumn>;
-  tableActionSelectedDebours: SortTableAction[] = [] as Array<SortTableAction>;
   attachmentTypeInvoice = this.contantService.getAttachmentTypeInvoice();
   indexedCustomerOrder: IndexEntity | undefined;
-  debours: Debour[] | undefined;
-  selectedDebours: Debour[] | undefined;
   idInvoiceForCreditNote: string | undefined;
 
   refreshTable: Subject<void> = new Subject<void>();
@@ -85,12 +77,32 @@ export class AddInvoiceComponent implements OnInit {
 
   ngOnInit() {
     let idInvoice = this.activatedRoute.snapshot.params.id;
+    let idProvision = this.activatedRoute.snapshot.params.idProvision;
     this.idInvoiceForCreditNote = this.activatedRoute.snapshot.params.idInvoice;
 
     let idCustomerOrder = this.activatedRoute.snapshot.params.idCustomerOrder;
     let idCompetentAuhority = this.activatedRoute.snapshot.params.idCompetentAuhority;
 
-    if (idInvoice != null && idInvoice != "null") {
+    let url: UrlSegment[] = this.activatedRoute.snapshot.url;
+
+    if (url != undefined && url != null && url[2] != undefined && url[2].path == "azure") {
+      this.invoiceService.createInvoiceFromAzureInvoice(idInvoice, idProvision).subscribe(generatedInvoice => {
+        this.invoice = generatedInvoice;
+
+        this.customerOrderService.getCustomerOrder(this.invoice.customerOrderForInboundInvoice.id).subscribe(customerOrder => {
+          if (customerOrder && instanceOfCustomerOrder(customerOrder)) {
+            this.invoice.customerOrderForInboundInvoice = customerOrder;
+            if (customerOrder.assoAffaireOrders)
+              for (let asso of customerOrder.assoAffaireOrders)
+                if (asso.provisions)
+                  for (let provision of asso.provisions)
+                    if (provision.id == idProvision)
+                      this.invoice.provision = provision;
+          }
+        })
+        this.invoice.provision
+      })
+    } else if (idInvoice != null && idInvoice != "null") {
       this.invoiceService.getInvoiceById(idInvoice).subscribe(response => {
         this.invoice = response;
         this.invoiceItems = this.invoice.invoiceItems;
@@ -142,35 +154,6 @@ export class AddInvoiceComponent implements OnInit {
         element.nonTaxableAmount = null;
         this.invoiceItems.splice(this.invoiceItems.indexOf(element), 1);
         this.refreshTable.next();
-      }, display: true,
-    } as SortTableAction);
-
-    // Debours
-    this.displayedColumnsDebours = [];
-    this.displayedColumnsDebours.push({ id: "billingType", fieldName: "billingType.label", label: "Débours" } as SortTableColumn);
-    this.displayedColumnsDebours.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
-    this.displayedColumnsDebours.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumnsDebours.push({ id: "invoicedAmount", fieldName: "invoicedAmount", label: "Montant facturé TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumnsDebours.push({ id: "paymentType", fieldName: "paymentType.label", label: "Type de paiement" } as SortTableColumn);
-    this.displayedColumnsDebours.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
-    this.displayedColumnsDebours.push({ id: "comments", fieldName: "comments", label: "Commentaires", isShrinkColumn: true } as SortTableColumn);
-
-    // Debours
-    this.displayedColumnsSelectedDebours = [];
-    this.displayedColumnsSelectedDebours.push({ id: "billingType", fieldName: "billingType.label", label: "Débours" } as SortTableColumn);
-    this.displayedColumnsSelectedDebours.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
-    this.displayedColumnsSelectedDebours.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumnsSelectedDebours.push({ id: "invoicedAmount", fieldName: "invoicedAmount", label: "Montant facturé TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumnsSelectedDebours.push({ id: "nonTaxableAmount", fieldName: "nonTaxableAmount", label: "Dont montant non taxable", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumnsSelectedDebours.push({ id: "paymentType", fieldName: "paymentType.label", label: "Type de paiement" } as SortTableColumn);
-    this.displayedColumnsSelectedDebours.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
-    this.displayedColumnsSelectedDebours.push({ id: "comments", fieldName: "comments", label: "Commentaires", isShrinkColumn: true } as SortTableColumn);
-
-    this.tableActionSelectedDebours.push({
-      actionIcon: "delete", actionName: "Supprimer le débour de cette facture", actionClick: (action: SortTableAction, element: any) => {
-        if (this.selectedDebours && this.debours) {
-          this.selectedDebours.splice(this.selectedDebours.indexOf(element), 1);
-        }
       }, display: true,
     } as SortTableAction);
 
@@ -285,7 +268,6 @@ export class AddInvoiceComponent implements OnInit {
     this.invoice.confrere = undefined;
     this.invoice.tiers = undefined;
     this.invoice.responsable = undefined;
-    this.fillDebours();
   }
 
   fillResponsable(responsable: IndexEntity) {
@@ -301,112 +283,10 @@ export class AddInvoiceComponent implements OnInit {
   fillCustomerOrder(customerOrderIndexed: IndexEntity) {
     this.customerOrderService.getCustomerOrder(customerOrderIndexed.entityId).subscribe(response => {
       if (response) {
-        this.debours = [];
-        this.selectedDebours = [];
         this.invoice.customerOrderForInboundInvoice = response as CustomerOrder;
-        this.fillDebours();
       } else
         this.indexedCustomerOrder = undefined;
     })
-  }
-
-  fillDebours() {
-    if (this.invoice.customerOrderForInboundInvoice && this.invoice.competentAuthority && this.invoice.customerOrderForInboundInvoice.assoAffaireOrders) {
-      this.debours = [];
-      this.invoice.invoiceItems = [];
-      for (let asso of this.invoice.customerOrderForInboundInvoice.assoAffaireOrders)
-        if (asso.provisions)
-          for (let provision of asso.provisions)
-            if (provision.debours)
-              for (let debour of provision.debours)
-                if (debour.competentAuthority.id == this.invoice.competentAuthority.id && debour.competentAuthority.competentAuthorityType.isDirectCharge == false && !debour.invoiceItem)
-                  this.debours.push(debour);
-    }
-  }
-
-  selectDebour(debour: Debour) {
-    if (debour.invoiceItem) {
-      this.appService.displaySnackBar("Ce débours/frais a déjà été attaché à la facture n°" + debour.invoiceItem.invoice.id, false, 10);
-      return;
-    }
-    if (!this.selectedDebours || this.getIndexOfDebours(debour, this.selectedDebours) < 0) {
-      if (debour && !debour.billingType.isFee && debour.billingType.isNonTaxable) {
-        if (!this.selectedDebours)
-          this.selectedDebours = [];
-        debour.nonTaxableAmount = debour.debourAmount;
-        this.selectedDebours.push(debour);
-        this.refreshTable.next();
-        return;
-      }
-
-      if (debour && debour.billingType.isFee) {
-        if (!this.selectedDebours)
-          this.selectedDebours = [];
-        debour.nonTaxableAmount = 0;
-
-        if (this.invoice.customerOrderForInboundInvoice.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_BILLED) {
-          const dialogRef = this.deboursAmontTaxableDialog.open(DeboursAmountInvoicedDialogComponent, {
-            maxWidth: "300px",
-          });
-
-          dialogRef.componentInstance.invoicedAmount = debour.invoicedAmount;
-
-          dialogRef.afterClosed().subscribe(dialogResult => {
-            if (dialogResult != null && this.debours) {
-              if (!this.selectedDebours)
-                this.selectedDebours = [];
-              debour.invoicedAmount = parseFloat(dialogResult);
-              this.selectedDebours.push(debour);
-              this.refreshTable.next();
-            }
-          });
-        } else {
-          if (!this.selectedDebours)
-            this.selectedDebours = [];
-          this.selectedDebours.push(debour);
-          this.refreshTable.next();
-        }
-        return;
-      }
-
-      const dialogRef = this.deboursAmontTaxableDialog.open(DeboursAmountTaxableDialogComponent, {
-        maxWidth: "300px",
-      });
-
-      dialogRef.componentInstance.maxAmount = debour.debourAmount;
-
-      dialogRef.afterClosed().subscribe(dialogResult => {
-        if (dialogResult != null && this.debours) {
-          if (!this.selectedDebours)
-            this.selectedDebours = [];
-          debour.nonTaxableAmount = parseFloat(dialogResult);
-          this.selectedDebours.push(debour);
-          this.refreshTable.next();
-        }
-      });
-    } else {
-      this.appService.displaySnackBar("Ce débours/frais a déjà été sélectionné", false, 10);
-    }
-  }
-
-  getIndexOfDebours(debour: Debour, debourList: Debour[]) {
-    if (debour && debourList)
-      for (let i = 0; i < debourList.length; i++)
-        if (debourList[i].id == debour.id)
-          return i;
-    return -1;
-  }
-
-  displayDeboursTable() {
-    return this.invoice.customerOrderForInboundInvoice && this.debours && this.invoice.competentAuthority;
-  }
-
-  getDeboursTotal(): number {
-    let total = 0;
-    if (this.selectedDebours)
-      for (let debour of this.selectedDebours)
-        total += debour.debourAmount;
-    return Math.round(total * 100) / 100;
   }
 
   fillPostalCode(city: City) {

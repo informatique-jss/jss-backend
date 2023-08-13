@@ -153,7 +153,7 @@ public class QuotationServiceImpl implements QuotationService {
 
         quotation = getQuotation(quotation.getId());
 
-        indexEntityService.indexEntity(quotation, quotation.getId());
+        indexEntityService.indexEntity(quotation);
 
         if (isNewQuotation) {
             notificationService.notifyNewQuotation(quotation);
@@ -293,7 +293,7 @@ public class QuotationServiceImpl implements QuotationService {
         List<Quotation> quotations = IterableUtils.toList(quotationRepository.findAll());
         if (quotations != null)
             for (Quotation quotation : quotations)
-                indexEntityService.indexEntity(quotation, quotation.getId());
+                indexEntityService.indexEntity(quotation);
     }
 
     @Override
@@ -364,7 +364,7 @@ public class QuotationServiceImpl implements QuotationService {
                     if (quotation.getQuotationStatus().getCode()
                             .equals(QuotationStatus.SENT_TO_CUSTOMER)) {
                         unlockQuotationFromDeposit(quotation);
-                        customerOrderService.generateDepositOnCustomerOrderForCbPayment(
+                        paymentService.generateDepositOnCustomerOrderForCbPayment(
                                 quotation.getCustomerOrders().get(0), centralPayPaymentRequest);
                     }
                 }

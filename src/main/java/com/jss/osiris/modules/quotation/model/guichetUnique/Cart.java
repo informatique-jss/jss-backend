@@ -29,7 +29,7 @@ public class Cart {
     private FormaliteGuichetUnique formaliteGuichetUnique;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "cart", "debours" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "cart" }, allowSetters = true)
     private List<CartRate> cartRates;
     private long total;
     private long mipOrderNum;

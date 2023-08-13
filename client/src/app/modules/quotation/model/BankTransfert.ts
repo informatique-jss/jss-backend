@@ -1,4 +1,3 @@
-import { Debour } from './Debour';
 import { Invoice } from './Invoice';
 export interface BankTransfert {
   id: number;
@@ -8,6 +7,5 @@ export interface BankTransfert {
   transfertIban: string;
   transfertBic: string;
   isAlreadyExported: boolean;
-  debours: Debour[];
   invoices: Invoice[];
 }

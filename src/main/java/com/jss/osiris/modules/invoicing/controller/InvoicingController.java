@@ -180,12 +180,6 @@ public class InvoicingController {
                 HttpStatus.OK);
     }
 
-    @GetMapping(inputEntryPoint + "/azure-invoices")
-    public ResponseEntity<List<AzureInvoice>> getAzureInvoices(@RequestParam Boolean displayOnlyToCheck) {
-        return new ResponseEntity<List<AzureInvoice>>(azureInvoiceService.getAzureInvoices(displayOnlyToCheck),
-                HttpStatus.OK);
-    }
-
     @GetMapping(inputEntryPoint + "/azure-invoices/search")
     public ResponseEntity<List<AzureInvoice>> searchAzureInvoices(@RequestParam String invoiceId) {
         return new ResponseEntity<List<AzureInvoice>>(azureInvoiceService.searchAzureInvoicesByInvoiceId(invoiceId),
@@ -206,7 +200,7 @@ public class InvoicingController {
             throw new OsirisValidationException("azureInvoice");
 
         return new ResponseEntity<Invoice>(
-                azureInvoiceService.generateDeboursAndInvoiceFromInvoiceFromUser(azureInvoice, provision),
+                azureInvoiceService.generateInvoiceFromAzureInvoice(azureInvoice, provision),
                 HttpStatus.OK);
     }
 
@@ -672,9 +666,45 @@ public class InvoicingController {
         checkPayment.setIsDeposit(false);
         checkPayment.setIsAppoint(false);
 
-        this.paymentService.addCheckPayment(checkPayment);
+        this.paymentService.addInboundCheckPayment(checkPayment);
 
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/payment/provision/add")
+    public ResponseEntity<Payment> addProvisionPayment(@RequestBody Payment provisonPayment,
+            @RequestParam Integer idProvision)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        if (provisonPayment == null)
+            throw new OsirisValidationException("payment");
+
+        validationHelper.validateReferential(provisonPayment.getPaymentType(), true, "provisionType");
+
+        if (!provisonPayment.getPaymentType().getId().equals(constantService.getPaymentTypeCheques().getId())
+                && provisonPayment.getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId()))
+            throw new OsirisClientMessageException("Type de paiement non autorisé");
+
+        provisonPayment.setPaymentAmount(-Math.abs(provisonPayment.getPaymentAmount()));
+        validationHelper.validateString(provisonPayment.getLabel(), true, 250, "paymentType");
+        validationHelper.validateDateTimeMax(provisonPayment.getPaymentDate(), true, LocalDateTime.now(),
+                "paymentType");
+        provisonPayment.setIsDeposit(false);
+        provisonPayment.setIsAppoint(false);
+
+        if (provisonPayment.getPaymentType().getId().equals(constantService.getPaymentTypeCheques().getId())) {
+            validationHelper.validateString(provisonPayment.getCheckNumber(), true, 50, "checkNumber");
+        }
+
+        if (idProvision == null)
+            throw new OsirisValidationException("idProvision");
+
+        Provision provision = provisionService.getProvision(idProvision);
+        if (provision == null)
+            throw new OsirisValidationException("provision");
+
+        Payment newPayment = this.paymentService.addOutboundPaymentForProvision(provisonPayment, provision);
+
+        return new ResponseEntity<Payment>(newPayment, HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/payments/advise")
@@ -733,7 +763,7 @@ public class InvoicingController {
 
     @PostMapping(inputEntryPoint + "/invoice/credit-note")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
-    public ResponseEntity<Invoice> generateInvoiceCreditNote(@RequestBody Invoice newInvoice,
+    public ResponseEntity<Invoice> generateProviderInvoiceCreditNote(@RequestBody Invoice newInvoice,
             @RequestParam Integer idOriginInvoiceForCreditNote)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (newInvoice.getId() != null && newInvoice.getCustomerOrder() != null)
@@ -751,7 +781,7 @@ public class InvoicingController {
             throw new OsirisValidationException("isProviderCreditNote");
         validateInvoice(newInvoice);
         return new ResponseEntity<Invoice>(
-                invoiceService.generateInvoiceCreditNote(newInvoice, idOriginInvoiceForCreditNote),
+                invoiceService.generateProviderInvoiceCreditNote(newInvoice, idOriginInvoiceForCreditNote),
                 HttpStatus.OK);
     }
 
@@ -828,6 +858,7 @@ public class InvoicingController {
             throw new OsirisValidationException("InvoiceItems");
         } else {
             for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+                validationHelper.validateReferential(invoiceItem.getVat(), true, "vat of invoice item");
                 if (invoiceItem.getId() != null)
                     validationHelper.validateReferential(invoiceItem, true, "invoiceItem");
                 if (invoiceItem.getDiscountAmount() == null)
@@ -836,6 +867,8 @@ public class InvoicingController {
                     invoiceItem.setPreTaxPrice(0f);
                 if (invoiceItem.getVatPrice() == null)
                     invoiceItem.setVatPrice(0f);
+                if (invoiceItem.getPreTaxPriceReinvoiced() == null)
+                    invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
 
             }
         }

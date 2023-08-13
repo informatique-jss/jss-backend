@@ -33,6 +33,7 @@ import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.invoicing.service.RefundService;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -185,6 +186,9 @@ public class MiscellaneousController {
 
     @Autowired
     AccountingAccountService accountingAccountService;
+
+    @Autowired
+    PaymentService paymentService;
 
     @Autowired
     RegieService regieService;
@@ -1108,6 +1112,7 @@ public class MiscellaneousController {
         assoAffaireOrderService.reindexAffaires();
         affaireService.reindexAffaire();
         bankTransfertService.reindexBankTransfert();
+        paymentService.reindexPayments();
         directDebitTransfertService.reindexDirectDebitTransfert();
 
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
@@ -1138,6 +1143,13 @@ public class MiscellaneousController {
     @GetMapping(inputEntryPoint + "/index/reindex/assoAffaireOrder")
     public ResponseEntity<Boolean> reindexAffaires() {
         assoAffaireOrderService.reindexAffaires();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/payment")
+    public ResponseEntity<Boolean> reindexPayments() {
+        paymentService.reindexPayments();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 

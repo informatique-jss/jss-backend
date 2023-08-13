@@ -37,6 +37,7 @@ import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -70,6 +71,11 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoices" }, allowSetters = true)
 	private CustomerOrder customerOrder;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_provision")
+	@JsonIgnoreProperties(value = { "assoAffaireOrder" }, allowSetters = true)
+	private Provision provision;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
@@ -138,6 +144,10 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder" }, allowSetters = true)
 	private List<Payment> payments;
+
+	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = { "invoice", "customerOrder" }, allowSetters = true)
+	private List<Refund> refunds;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice_status")
@@ -541,6 +551,22 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	public void setIsProviderCreditNote(Boolean isProviderCreditNote) {
 		this.isProviderCreditNote = isProviderCreditNote;
+	}
+
+	public List<Refund> getRefunds() {
+		return refunds;
+	}
+
+	public void setRefunds(List<Refund> refunds) {
+		this.refunds = refunds;
+	}
+
+	public Provision getProvision() {
+		return provision;
+	}
+
+	public void setProvision(Provision provision) {
+		this.provision = provision;
 	}
 
 }

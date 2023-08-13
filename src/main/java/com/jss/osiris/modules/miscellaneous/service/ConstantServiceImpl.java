@@ -26,6 +26,7 @@ import com.jss.osiris.modules.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.repository.ConstantRepository;
 import com.jss.osiris.modules.profile.model.Employee;
@@ -899,5 +900,10 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public PaymentDeadlineType getPaymentDeadLineType30() throws OsirisException {
         return getConstants().getPaymentDeadLineType30();
+    }
+
+    @Override
+    public Provider getProviderCentralPay() throws OsirisException {
+        return getConstants().getProviderCentralPay();
     }
 }

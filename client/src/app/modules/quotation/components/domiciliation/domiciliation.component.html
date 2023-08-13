@@ -99,10 +99,6 @@
       <provision-options [editMode]="editMode" (provisionChange)="provisionChangeFunction()" [provision]="provision">
       </provision-options>
     </mat-tab>
-    <mat-tab label="Débours/frais" *ngIf="instanceOfCustomerOrder && !isStatusOpen">
-      <add-debour [editMode]="editMode" [(provision)]="provision" [customerOrder]="quotation">
-      </add-debour>
-    </mat-tab>
     <mat-tab label="Activité">
       <div class=" form-div">
         <table class="full-width">

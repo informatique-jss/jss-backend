@@ -63,6 +63,12 @@ public class InvoiceItem implements Serializable, IId {
 			"azureInvoice", "azureReceipt", "provision", "customerOrderForInboundInvoice" }, allowSetters = true)
 	Invoice invoice;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_origin_provider_invoice")
+	@JsonIgnoreProperties(value = { "invoiceItems", "accountingRecords", "customerOrder", "attachments",
+			"azureInvoice", "azureReceipt", "provision", "customerOrderForInboundInvoice" }, allowSetters = true)
+	Invoice originProviderInvoice;
+
 	public Integer getId() {
 		return id;
 	}
@@ -157,5 +163,13 @@ public class InvoiceItem implements Serializable, IId {
 
 	public void setPreTaxPriceReinvoiced(Float preTaxPriceReinvoiced) {
 		this.preTaxPriceReinvoiced = preTaxPriceReinvoiced;
+	}
+
+	public Invoice getOriginProviderInvoice() {
+		return originProviderInvoice;
+	}
+
+	public void setOriginProviderInvoice(Invoice originProviderInvoice) {
+		this.originProviderInvoice = originProviderInvoice;
 	}
 }

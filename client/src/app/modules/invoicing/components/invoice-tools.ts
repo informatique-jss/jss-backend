@@ -149,13 +149,8 @@ export function getAmountPayed(invoice: Invoice) {
   let payed = 0;
   if (invoice.payments && invoice.payments.length)
     for (let payment of invoice.payments)
-      payed += payment.paymentAmount;
-  if (invoice.deposits && invoice.deposits.length)
-    for (let deposit of invoice.deposits)
-      payed += deposit.depositAmount;
-  if (invoice.appoints && invoice.appoints.length)
-    for (let appoint of invoice.appoints)
-      payed -= appoint.appointAmount;
+      if (!payment.isCancelled)
+        payed += payment.paymentAmount;
 
   return Math.round(payed * 100) / 100;
 }

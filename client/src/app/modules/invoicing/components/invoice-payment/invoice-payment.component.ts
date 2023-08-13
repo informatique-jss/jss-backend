@@ -47,7 +47,6 @@ export class InvoicePaymentComponent implements OnInit {
   ngOnInit() {
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du paiement" } as SortTableColumn);
-    this.displayedColumns.push({ id: "paymentWay", fieldName: "paymentWay.label", label: "Sens" } as SortTableColumn);
     this.displayedColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "payemntAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
@@ -88,7 +87,6 @@ export class InvoicePaymentComponent implements OnInit {
   addCashPayment() {
     if (this.newPayment && this.invoicePaymentForm.valid) {
       this.onModifyAmount();
-      this.newPayment.paymentWay = this.constantService.getPaymentWayInbound();
       this.newPayment.paymentType = this.constantService.getPaymentTypeEspeces();
       this.newPayment.isCancelled = false;
       this.newPayment.isExternallyAssociated = false;

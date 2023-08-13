@@ -24,6 +24,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.transfer.AmtBean;
 import com.jss.osiris.libs.transfer.CdtTrfTxInfBean;
@@ -50,11 +51,15 @@ import com.jss.osiris.libs.transfer.PmtTpInfBean;
 import com.jss.osiris.libs.transfer.PstlAdrBean;
 import com.jss.osiris.libs.transfer.RmtInfBean;
 import com.jss.osiris.libs.transfer.SvcLvlBean;
+import com.jss.osiris.modules.accounting.service.AccountingRecordGenerationService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
+import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.repository.BankTransfertRepository;
@@ -83,6 +88,12 @@ public class BankTransfertServiceImpl implements BankTransfertService {
     @Autowired
     ProvisionService provisionService;
 
+    @Autowired
+    PaymentService paymentService;
+
+    @Autowired
+    AccountingRecordGenerationService accountingRecordGenerationService;
+
     @Override
     public List<BankTransfert> getBankTransfers() {
         return IterableUtils.toList(bankTransfertRepository.findAll());
@@ -100,8 +111,10 @@ public class BankTransfertServiceImpl implements BankTransfertService {
     @Transactional(rollbackFor = Exception.class)
     public BankTransfert addOrUpdateBankTransfert(
             BankTransfert bankTransfert) {
+        if (bankTransfert.getIsMatched() == null)
+            bankTransfert.setIsMatched(false);
         bankTransfert = bankTransfertRepository.save(bankTransfert);
-        indexEntityService.indexEntity(bankTransfert, bankTransfert.getId());
+        indexEntityService.indexEntity(bankTransfert);
         return bankTransfert;
     }
 
@@ -123,7 +136,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
         List<BankTransfert> bankTransferts = getBankTransfers();
         if (bankTransferts != null)
             for (BankTransfert bankTransfert : bankTransferts)
-                indexEntityService.indexEntity(bankTransfert, bankTransfert.getId());
+                indexEntityService.indexEntity(bankTransfert);
     }
 
     @Override
@@ -172,12 +185,22 @@ public class BankTransfertServiceImpl implements BankTransfertService {
         bankTransfert.setTransfertBic(bankTransfert.getTransfertBic().replaceAll(" ", ""));
         bankTransfert.setIsCancelled(false);
 
+        if (bankTransfert.getInvoices() == null || bankTransfert.getInvoices().size() != 1)
+            throw new OsirisException(null, "Impossible to find invoice of bank transfert " + bankTransfert.getId());
+
+        IGenericTiers tiers = invoiceHelper.getCustomerOrder(bankTransfert.getInvoices().get(0));
+
+        Payment bankTransfertPayment = paymentService.generateNewBankTransfertPayment(bankTransfert,
+                bankTransfert.getTransfertAmount(), tiers);
+        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(bankTransfertPayment);
+
         return this.addOrUpdateBankTransfert(bankTransfert);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public File getBankTransfertExport(BankTransfertSearch transfertSearch) throws OsirisException {
+    public File getBankTransfertExport(BankTransfertSearch transfertSearch)
+            throws OsirisException, OsirisValidationException {
         transfertSearch.setDisplaySelectedForExportBankTransfert(true);
         List<BankTransfertSearchResult> bankTransferts = searchBankTransfert(transfertSearch);
         String xml = "";
@@ -237,7 +260,11 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                         StringUtils.substring(completeTransfert.getId() + " - " + completeTransfert.getLabel(), 0,
                                 139)));
 
-                // TODO : générer la compta
+                if (!completeTransfert.getIsAlreadyExported()) {
+                    accountingRecordGenerationService
+                            .generateAccountingRecordsForBankTransfertExport(completeTransfert);
+                    addOrUpdateBankTransfert(completeTransfert);
+                }
 
                 completeTransfert.setIsAlreadyExported(true);
                 addOrUpdateBankTransfert(completeTransfert);

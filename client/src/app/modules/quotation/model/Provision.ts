@@ -1,11 +1,12 @@
+import { Payment } from "../../invoicing/model/Payment";
 import { IAttachment } from "../../miscellaneous/model/IAttachment";
 import { Employee } from "../../profile/model/Employee";
 import { Announcement } from "./Announcement";
 import { AssoAffaireOrder } from "./AssoAffaireOrder";
 import { Bodacc } from "./Bodacc";
-import { Debour } from './Debour';
 import { Domiciliation } from "./Domiciliation";
 import { Formalite } from './Formalite';
+import { Invoice } from "./Invoice";
 import { InvoiceItem } from "./InvoiceItem";
 import { ProvisionFamilyType } from "./ProvisionFamilyType";
 import { ProvisionType } from "./ProvisionType";
@@ -21,7 +22,6 @@ export interface Provision extends IAttachment {
   provisionFamilyType: ProvisionFamilyType;
   provisionType: ProvisionType;
   invoiceItems: InvoiceItem[]
-  debours: Debour[]
   assoAffaireOrder: AssoAffaireOrder;
   assignedTo: Employee;
   isLogo: boolean;
@@ -57,4 +57,6 @@ export interface Provision extends IAttachment {
   isVacationUpdateBeneficialOwners: boolean;
   isFormalityAdditionalDeclaration: boolean;
   isCorrespondenceFees: boolean;
+  providerInvoices: Invoice[];
+  payments: Payment[];
 }

@@ -17,11 +17,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
+import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Provision;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_bank_id", columnList = "bankId", unique = true) })
@@ -61,6 +64,10 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@JsonIgnoreProperties(value = { "accountingRecords" }, allowSetters = true)
 	private Refund refund;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_bank_transfert")
+	private BankTransfert bankTransfert;
+
 	@Column(nullable = false)
 	private Boolean isExternallyAssociated;
 
@@ -81,6 +88,13 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	private Boolean isAppoint;
 
 	private Boolean isDeposit;
+
+	@IndexedField
+	private String checkNumber;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_provision")
+	private Provision provision;
 
 	public Integer getId() {
 		return id;
@@ -212,6 +226,30 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	public void setRefund(Refund refund) {
 		this.refund = refund;
+	}
+
+	public String getCheckNumber() {
+		return checkNumber;
+	}
+
+	public void setCheckNumber(String checkNumber) {
+		this.checkNumber = checkNumber;
+	}
+
+	public BankTransfert getBankTransfert() {
+		return bankTransfert;
+	}
+
+	public void setBankTransfert(BankTransfert bankTransfert) {
+		this.bankTransfert = bankTransfert;
+	}
+
+	public Provision getProvision() {
+		return provision;
+	}
+
+	public void setProvision(Provision provision) {
+		this.provision = provision;
 	}
 
 }

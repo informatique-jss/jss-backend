@@ -17,50 +17,30 @@ import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
-import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
+import com.jss.osiris.modules.quotation.model.BankTransfert;
 
 public interface AccountingRecordService {
         public AccountingRecord getAccountingRecord(Integer id);
 
         public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords);
 
-        public void generateAccountingRecordsOnInvoiceEmission(Invoice invoice)
-                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
-
-        public void generateAccountingRecordsOnCreditNoteReception(Invoice invoice)
-                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
-
-        public void generateAccountingRecordsOnInvoiceReception(Invoice invoice)
-                        throws OsirisException, OsirisValidationException;
-
-        public void generateAccountingRecordOnIncomingPaymentCreation(Payment payment) throws OsirisException;
-
-        public void generateAccountingRecordOnOutgoingPaymentCreation(Payment payment, Invoice invoice, Refund refund)
-                        throws OsirisException;
-
-        public void generateAccountingRecordsForSaleOnInvoicePayment(Invoice invoice, Payment payment)
-                        throws OsirisException, OsirisValidationException;
-
-        public void generateAccountingRecordsForProviderInvoiceRefund(Invoice invoice, Payment payment)
-                        throws OsirisException, OsirisValidationException;
-
-        public void unletterInvoiceEmitted(Invoice invoice) throws OsirisException;
-
-        public void unletterInvoiceReceived(Invoice invoice) throws OsirisException;
-
-        public void letterCreditNoteAndInvoice(Invoice invoice, Invoice creditNote) throws OsirisException;
+        public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord);
 
         public void dailyAccountClosing();
 
-        public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer temporaryOperationId);
+        public void deleteAccountingRecord(AccountingRecord accountingRecord);
 
-        public List<AccountingRecord> getAccountingRecordsByOperationId(Integer operationId);
+        public Integer findMaxLetteringNumberForMinLetteringDateTime(LocalDateTime minLetteringDateTime);
 
-        public List<AccountingRecord> deleteRecordsByTemporaryOperationId(Integer temporaryOperationId)
-                        throws OsirisException, OsirisValidationException;
+        public List<AccountingRecord> findByAccountingAccountAndInvoice(AccountingAccount accountingAccountCustomer,
+                        Invoice invoice);
 
-        public List<AccountingRecord> doCounterPartByOperationId(Integer operationId) throws OsirisException;
+        public List<AccountingRecord> findByAccountingAccountAndRefund(AccountingAccount accountingAccount,
+                        Refund refund);
+
+        public List<AccountingRecord> findByAccountingAccountAndBankTransfert(AccountingAccount accountingAccount,
+                        BankTransfert bankTransfert);
 
         // Billing closure generation
         public void sendBillingClosureReceipt()

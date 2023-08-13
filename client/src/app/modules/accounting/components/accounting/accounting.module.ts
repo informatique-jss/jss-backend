@@ -2,22 +2,21 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
 import { MAT_DATE_LOCALE } from "@angular/material/core";
+import { MatDialogModule } from "@angular/material/dialog";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatIconModule } from "@angular/material/icon";
-import { MatButtonModule } from "@angular/material/button";
-import { MatDialogModule } from "@angular/material/dialog";
 import { MatInputModule } from "@angular/material/input";
 import { MatListModule } from "@angular/material/list";
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSortModule } from "@angular/material/sort";
 import { MatTableModule } from "@angular/material/table";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatSortModule } from "@angular/material/sort";
 import { RouterModule, Routes } from "@angular/router";
 import { MiscellaneousModule } from "../../../miscellaneous/components/miscellaneous/miscellaneous.module";
 import { AddAccountingRecordComponent } from "../add-accounting-record/add-accounting-record.component";
-import { DeleteAccountingRecordDialogComponent } from "../delete-accounting-record-dialog/delete-accounting-record-dialog.component";
 import { AccountingBalanceGeneraleComponent } from "./../accounting-balance-generale/accounting-balance-generale.component";
 import { AccountingBalanceComponent } from "./../accounting-balance/accounting-balance.component";
 import { AccountingBilanComponent } from "./../accounting-bilan/accounting-bilan.component";
@@ -56,7 +55,6 @@ const routes: Routes = [
     AccountingBalanceComponent,
     AccountingProfitLostComponent,
     AccountingBalanceGeneraleComponent,
-    DeleteAccountingRecordDialogComponent,
     AddAccountingRecordComponent,
   ],
   providers: [

@@ -1,7 +1,7 @@
 import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED,CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, FORMALITE_STATUS_WAITING_DOCUMENT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, FORMALITE_STATUS_WAITING_DOCUMENT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { PaymentSearch } from 'src/app/modules/invoicing/model/PaymentSearch';
 import { RefundSearch } from 'src/app/modules/invoicing/model/RefundSearch';
@@ -109,7 +109,7 @@ export class DashboardComponent implements OnInit {
   PROVISION_BOARD = "Suivi d'équipe";
 
   allItems: Array<string> = [this.QUOTATION_REFUSED, this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY,
-  this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED,this.ORDERS_AWAITING_DEPOSIT, this.ORDER_OPEN,
+  this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDERS_AWAITING_DEPOSIT, this.ORDER_OPEN,
   this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY,
   this.AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO, this.QUOTATION_SENT,
   this.PROVISION_BOARD].sort((a, b) => a.localeCompare(b));
@@ -212,7 +212,7 @@ export class DashboardComponent implements OnInit {
         this.invoiceSearchToAssociate.invoiceStatus = [this.constantService.getInvoiceStatusSend()];
 
         this.paymentSearchToAssociate.isHideAssociatedPayments = true;
-        this.paymentSearchToAssociate.paymentWays = [this.constantService.getPaymentWayInbound()];
+        this.paymentSearchToAssociate.minAmount = 0;
 
         this.refundSearchToEmit.isHideExportedRefunds = true;
         this.refundSearchToEmit.isHideMatchedRefunds = true;

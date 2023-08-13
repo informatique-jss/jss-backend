@@ -2,6 +2,7 @@ package com.jss.osiris.modules.invoicing.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -67,6 +69,15 @@ public class Refund implements Serializable, IId {
 	private Boolean isMatched;
 
 	private Boolean isAlreadyExported;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_invoice")
+	@JsonIgnoreProperties(value = { "payments", "accountingRecords", "refunds" }, allowSetters = true)
+	private Invoice invoice;
+
+	@OneToMany(mappedBy = "refund", fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = { "refund" }, allowSetters = true)
+	private List<Payment> payments;
 
 	public Integer getId() {
 		return id;
@@ -170,5 +181,21 @@ public class Refund implements Serializable, IId {
 
 	public void setCustomerOrder(CustomerOrder customerOrder) {
 		this.customerOrder = customerOrder;
+	}
+
+	public Invoice getInvoice() {
+		return invoice;
+	}
+
+	public void setInvoice(Invoice invoice) {
+		this.invoice = invoice;
+	}
+
+	public List<Payment> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<Payment> payments) {
+		this.payments = payments;
 	}
 }

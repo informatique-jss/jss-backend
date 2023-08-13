@@ -26,7 +26,6 @@ import { DirectDebitTransfertListComponent } from 'src/app/modules/invoicing/com
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
-import { AddDebourComponent } from '../add-debour/add-debour.component';
 import { AffaireListComponent } from '../affaire-list/affaire-list.component';
 import { AffaireComponent } from '../affaire/affaire.component';
 import { AnnouncementListComponent } from '../announcement-list/announcement-list.component';
@@ -38,7 +37,6 @@ import { BodaccSplitComponent } from '../bodacc-split/bodacc-split.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
 import { CustomerOrderPaymentComponent } from '../customer-order-payment/customer-order-payment.component';
-import { DebourListComponent } from '../debour-list/debour-list.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { FormaliteComponent } from '../formalite/formalite.component';
 import { ContentComponent } from '../guichet-unique/content/content.component';
@@ -55,6 +53,7 @@ import { PrintLabelDialogComponent } from '../print-label-dialog/print-label-dia
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { ProvisionListComponent } from '../provision-list/provision-list.component';
 import { ProvisionOptionsComponent } from '../provision-options/provision-options.component';
+import { ProvisionPaymentComponent } from '../provision-payment/provision-payment.component';
 import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
@@ -135,12 +134,11 @@ const routes: Routes = [
     AnnouncementListComponent,
     SelectAttachmentsDialogComponent,
     PrintLabelDialogComponent,
-    AddDebourComponent,
     DirectDebitTransfertListComponent,
     ChooseCompetentAuthorityDialogComponent,
-    DebourListComponent,
     SelectAccountingAccountDialogComponent,
     RefundPaymentDialogComponent,
+    ProvisionPaymentComponent,
     // Guichet unique
     ContentComponent,
     NatureCreationComponent,
@@ -156,7 +154,6 @@ const routes: Routes = [
     PaymentListComponent,
     AnnouncementListComponent,
     DirectDebitTransfertListComponent,
-    DebourListComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

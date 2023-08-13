@@ -2,32 +2,25 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { MatDividerModule } from '@angular/material/divider';
-import { MatExpansionModule } from "@angular/material/expansion";
-import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from "@angular/material/dialog";
+import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatRadioModule } from '@angular/material/radio';
+import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatStepperModule } from '@angular/material/stepper';
 import { RouterModule, Routes } from "@angular/router";
 import { QuotationModule } from "src/app/modules/quotation/components/quotation/quotation.module";
 import { MiscellaneousModule } from "../../../miscellaneous/components/miscellaneous/miscellaneous.module";
 import { AddInvoiceComponent } from "../add-invoice/add-invoice.component";
 import { AddPaymentComponent } from "../add-payment/add-payment.component";
 import { AmountDialogComponent } from "../amount-dialog/amount-dialog.component";
-import { AppointListComponent } from "../appoint-list/appoint-list.component";
-import { AssociateDepositDialogComponent } from '../associate-deposit-dialog/associate-deposit-dialog.component';
 import { AssociatePaymentDialogComponent } from "../associate-payment-dialog/associate-payment-dialog.component";
-import { AzureInvoiceEditComponent } from "../azure-invoice-edit/azure-invoice-edit.component";
-import { AzureInvoiceListComponent } from "../azure-invoice-list/azure-invoice-list.component";
 import { BankTransfertListComponent } from '../bank-transfert-list/bank-transfert-list.component';
-import { DeboursAmountInvoicedDialogComponent } from '../debours-amount-invoiced-dialog/debours-amount-invoiced-dialog.component';
-import { DeboursAmountTaxableDialogComponent } from "../debours-amount-taxable-dialog/debours-amount-taxable-dialog.component";
-import { InfogreffeInvoiceListComponent } from "../infogreffe-invoice-list/infogreffe-invoice-list.component";
 import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.component";
 import { InvoiceListComponent } from "../invoice-list/invoice-list.component";
 import { InvoicePaymentTableComponent } from "../invoice-payment-table/invoice-payment-table.component";
@@ -41,10 +34,9 @@ const routes: Routes = [
   { path: 'invoicing', component: InvoiceComponent },
   { path: 'invoicing/view/:id', component: InvoiceDetailsComponent },
   { path: 'invoicing/add/:id', component: AddInvoiceComponent },
+  { path: 'invoicing/add/azure/:id/:idProvision', component: AddInvoiceComponent },
   { path: 'invoicing/credit-note/:idInvoice', component: AddInvoiceComponent },
   { path: 'invoicing/payment/add', component: AddPaymentComponent },
-  { path: 'invoicing/add/debour/:idCompetentAuhority/:idCustomerOrder', component: AddInvoiceComponent },
-  { path: 'invoicing/azure/edit/:idAzureInvoice', component: AzureInvoiceEditComponent },
 ];
 
 @NgModule({
@@ -74,17 +66,10 @@ const routes: Routes = [
     InvoicePaymentComponent,
     RefundListComponent,
     AssociatePaymentDialogComponent,
-    AssociateDepositDialogComponent,
     AddInvoiceComponent,
     AmountDialogComponent,
     BankTransfertListComponent,
-    DeboursAmountTaxableDialogComponent,
-    DeboursAmountInvoicedDialogComponent,
     AddPaymentComponent,
-    InfogreffeInvoiceListComponent,
-    AppointListComponent,
-    AzureInvoiceListComponent,
-    AzureInvoiceEditComponent,
     ReceiptReconciliationComponent,
     ReceiptReconciliationEditDialogComponent,
   ], exports: [

@@ -18,6 +18,7 @@ import com.jss.osiris.modules.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.ActType;
@@ -374,4 +375,6 @@ public interface ConstantService {
     public CustomerOrderOrigin getCustomerOrderOriginOsiris() throws OsirisException;
 
     public PaymentDeadlineType getPaymentDeadLineType30() throws OsirisException;
+
+    public Provider getProviderCentralPay() throws OsirisException;
 }

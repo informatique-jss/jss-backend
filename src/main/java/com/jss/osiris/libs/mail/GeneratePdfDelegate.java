@@ -370,8 +370,7 @@ public class GeneratePdfDelegate {
         Float vatTotal = 0f;
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
             if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
-                    && invoiceItem.getVatPrice() > 0 && !invoiceItem.getBillingItem().getBillingType().getIsDebour()
-                    && !invoiceItem.getBillingItem().getBillingType().getIsFee()) {
+                    && invoiceItem.getVatPrice() > 0) {
                 vatTotal += invoiceItem.getVatPrice();
                 if (vats == null)
                     vats = new ArrayList<VatMail>();
@@ -401,11 +400,6 @@ public class GeneratePdfDelegate {
                 }
             }
         }
-
-        // Compute base for debours
-        ctx.setVariable("vatDebour", constantService.getVatZero());
-        if (vats == null)
-            vats = new ArrayList<VatMail>();
 
         ctx.setVariable("vats", vats);
         ctx.setVariable("priceTotal", Math.round(invoiceHelper.getPriceTotal(invoice) * 100f) / 100f);
@@ -443,23 +437,7 @@ public class GeneratePdfDelegate {
                         ? customerOrder.getQuotations().get(0)
                         : null);
 
-        // TODO :
-        /*
-         * ctx.setVariable("deposits", deposits);
-         * ctx.setVariable("remainingToPay",
-         * Math.round((invoiceHelper.getPriceTotal(invoice) - depositTotal) * 100f) /
-         * 100f);
-         * ctx.setVariable("hasAppoint",
-         * Math.abs(Math.round((invoiceHelper.getPriceTotal(invoice) - payementTotal) *
-         * 100f) / 100f) <= Float
-         * .parseFloat(payementLimitRefundInEuros));
-         * ctx.setVariable("tooMuchPerceived", null);
-         * Float amountPerceived = payementTotal -
-         * Math.round((invoiceHelper.getPriceTotal(invoice)) * 100f) / 100f;
-         * if (Math.round(amountPerceived * 100f) / 100f > 0
-         * && (invoice.getAppoints() == null || invoice.getAppoints().size() == 0))
-         * ctx.setVariable("tooMuchPerceived", amountPerceived);
-         */
+        ctx.setVariable("payments", invoice.getPayments());
 
         LocalDateTime localDate = invoice.getCreatedDate();
         DateTimeFormatter formatter = DateTimeFormatter

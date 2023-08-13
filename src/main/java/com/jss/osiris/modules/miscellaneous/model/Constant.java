@@ -691,6 +691,10 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_customer_order_origin_osiris")
 	private CustomerOrderOrigin customerOrderOriginOsiris;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_provider_central_pay")
+	private Provider providerCentralPay;
+
 	public Integer getId() {
 		return id;
 	}
@@ -2026,5 +2030,13 @@ public class Constant implements Serializable, IId {
 
 	public void setPaymentDeadLineType30(PaymentDeadlineType paymentDeadLineType30) {
 		this.paymentDeadLineType30 = paymentDeadLineType30;
+	}
+
+	public Provider getProviderCentralPay() {
+		return providerCentralPay;
+	}
+
+	public void setProviderCentralPay(Provider providerCentralPay) {
+		this.providerCentralPay = providerCentralPay;
 	}
 }

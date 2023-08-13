@@ -15,7 +15,6 @@ export interface Responsable extends ITiers {
   subscriptionPeriodType: SubscriptionPeriodType;
   tiersType: TiersType;
   tiersCategory: TiersCategory;
-  firstBilling: Date;
   civility: Civility;
   firstname: string | null;
   lastname: string | null;

@@ -17,7 +17,6 @@ import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
-import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
@@ -108,9 +107,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     AccountingRecordService accountingRecordService;
 
     @Autowired
-    PaymentService paymentService;
-
-    @Autowired
     ProvisionService provisionService;
 
     @Autowired
@@ -155,7 +151,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         assoAffaireOrder.setCustomerOrder(assoAffaireOrder.getCustomerOrder());
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
         if (affaireSaved.getCustomerOrder() != null)
-            indexEntityService.indexEntity(affaireSaved, affaireSaved.getId());
+            indexEntityService.indexEntity(affaireSaved);
         customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
         return affaireSaved;
     }
@@ -174,7 +170,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (affaires != null)
             for (AssoAffaireOrder affaire : affaires)
                 if (affaire.getCustomerOrder() != null)
-                    indexEntityService.indexEntity(affaire, affaire.getId());
+                    indexEntityService.indexEntity(affaire);
     }
 
     @Override

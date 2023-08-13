@@ -137,42 +137,6 @@
                             €</td>
                     </tr>
                 </th:block>
-                <th:block th:each="debour : ${provision.debours}" th:if="${provision.debours!=null}">
-                    <tr th:if="${debour.billingType.isFee==false}">
-                        <td>
-                            <span th:text="${debour.competentAuthority.label}"></span> : <span
-                                th:text="${debour.billingType.label}"></span>
-                        </td>
-                        <td class="td-with-price" style="text-align: right;white-space: nowrap;"
-                            th:if="${debour.billingType.isNonTaxable==false}">
-                            <span
-                                th:text="${#numbers.formatDecimal(debour.invoicedAmount-(debour.invoicedAmount/(1f+(vatDebour.rate/100f)))*vatDebour.rate/100f,1,2)}"></span>
-                            €
-                        </td>
-                        <td class="td-with-price" style="text-align: right;white-space: nowrap;"
-                            th:if="${debour.billingType.isNonTaxable==true}">
-                            <span th:text="${#numbers.formatDecimal(debour.invoicedAmount,1,2)}"></span>
-                            €
-                        </td>
-                    </tr>
-                    <tr th:if="${debour.billingType.isFee==true}">
-                        <td>
-                            <span th:text="${debour.competentAuthority.label}"></span> : <span
-                                th:text="${debour.billingType.label}"></span>
-                        </td>
-                        <td class="td-with-price" style="text-align: right;white-space: nowrap;"
-                            th:if="${debour.billingType.isNonTaxable==false}">
-                            <span
-                                th:text="${#numbers.formatDecimal(debour.invoicedAmount-(debour.invoicedAmount/(1f+(vatDebour.rate/100f)))*vatDebour.rate/100f,1,2)}"></span>
-                            €
-                        </td>
-                        <td class="td-with-price" style="text-align: right;white-space: nowrap;"
-                            th:if="${debour.billingType.isNonTaxable==true}">
-                            <span th:text="${#numbers.formatDecimal(debour.invoicedAmount,1,2)}"></span>
-                            €
-                        </td>
-                    </tr>
-                </th:block>
             </th:block>
         </th:block>
         <th:block th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">
@@ -208,46 +172,6 @@
                         - <span th:text="${#numbers.formatDecimal(invoiceItem.discountAmount,1,2)}"></span>
                         €</td>
                 </tr>
-            </th:block>
-            <th:block th:each="asso : ${assos}">
-                <th:block th:each="provision : ${asso.provisions}">
-                    <th:block th:each="debour : ${provision.debours}" th:if="${provision.debours!=null}">
-                        <tr th:if="${debour.billingType.isFee==false}">
-                            <td>
-                                <span th:text="${debour.competentAuthority.label}"></span> : <span
-                                    th:text="${debour.billingType.label}"></span>
-                            </td>
-                            <td class="td-with-price" style="text-align: right;white-space: nowrap;"
-                                th:if="${debour.billingType.isNonTaxable==false}">
-                                <span
-                                    th:text="${#numbers.formatDecimal(debour.invoicedAmount-(debour.invoicedAmount/(1f+(vatDebour.rate/100f)))*vatDebour.rate/100f,1,2)}"></span>
-                                €
-                            </td>
-                            <td class="td-with-price" style="text-align: right;white-space: nowrap;"
-                                th:if="${debour.billingType.isNonTaxable==true}">
-                                <span th:text="${#numbers.formatDecimal(debour.invoicedAmount,1,2)}"></span>
-                                €
-                            </td>
-                        </tr>
-                        <tr th:if="${debour.billingType.isFee==true}">
-                            <td>
-                                <span th:text="${debour.competentAuthority.label}"></span> : <span
-                                    th:text="${debour.billingType.label}"></span>
-                            </td>
-                            <td class="td-with-price" style="text-align: right;white-space: nowrap;"
-                                th:if="${debour.billingType.isNonTaxable==false}">
-                                <span
-                                    th:text="${#numbers.formatDecimal(debour.invoicedAmount-(debour.invoicedAmount/(1f+(vatDebour.rate/100f)))*vatDebour.rate/100f,1,2)}"></span>
-                                €
-                            </td>
-                            <td class="td-with-price" style="text-align: right;white-space: nowrap;"
-                                th:if="${debour.billingType.isNonTaxable==true}">
-                                <span th:text="${#numbers.formatDecimal(debour.invoicedAmount,1,2)}"></span>
-                                €
-                            </td>
-                        </tr>
-                    </th:block>
-                </th:block>
             </th:block>
         </th:block>
     </table>
@@ -303,62 +227,12 @@
                 €
             </td>
         </tr>
-        <tr th:each="deposit : ${deposits}" th:if="${deposits.size()>0}">
+        <tr th:each="payment : ${payments}" th:if="${payments.size()>0}" th:if="${payment.isCancelled==false}">
             <td>
-                Acompte n°<span th:text="${deposit.id}"></span>
+                <span th:text="${payment.label}"></span>
             </td>
             <td class="td-with-price" style="text-align: right;white-space: nowrap;">
-                - <span th:text="${#numbers.formatDecimal(deposit.originPayment.paymentAmount,1,2)}"></span>
-                €
-            </td>
-        </tr>
-
-        <tr
-            th:if="${remainingToPay>0} and ${hasAppoint==false}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
-            <td>
-                Restant dû
-            </td>
-            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
-                    th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span>
-                €
-            </td>
-        </tr>
-        <tr
-            th:if="${tooMuchPerceived!=null} and ${hasAppoint==false}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
-            <td>
-                Solde en votre faveur
-            </td>
-            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
-                    th:text="${#numbers.formatDecimal(tooMuchPerceived,1,2)}"></span>
-                €
-            </td>
-        </tr>
-        <tr
-            th:if="${remainingToPay>0} and ${hasAppoint==true}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
-            <td>
-                Appoint en votre faveur
-            </td>
-            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
-                    th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span>
-                €
-            </td>
-        </tr>
-        <tr
-            th:if="${tooMuchPerceived!=null} and ${hasAppoint==true}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
-            <td>
-                Appoint
-            </td>
-            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
-                    th:text="${#numbers.formatDecimal(tooMuchPerceived,1,2)}"></span>
-                €
-            </td>
-        </tr>
-        <tr th:if=" ${invoice.isCreditNote==true}">
-            <td>
-                Net à créditer
-            </td>
-            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
-                    th:text="${#numbers.formatDecimal(priceTotal-remainingToPay,1,2)}"></span>
+                <span th:text="${#numbers.formatDecimal(payment.paymentAmount,1,2)}"></span>
                 €
             </td>
         </tr>

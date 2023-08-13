@@ -11,9 +11,14 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
+import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -22,12 +27,11 @@ public interface PaymentService {
 
         public Payment addOrUpdatePayment(Payment payment);
 
+        public void reindexPayments();
+
         public List<PaymentSearchResult> searchPayments(PaymentSearch payemntSearch);
 
         public void paymentGrab() throws OsirisException, OsirisClientMessageException, OsirisValidationException;
-
-        public void automatchPaymentInvoicesAndGeneratePaymentAccountingRecords(Payment payment)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public List<Payment> getAdvisedPaymentForInvoice(Invoice invoice);
 
@@ -39,22 +43,26 @@ public interface PaymentService {
                         ITiers tiersRefund, List<Float> byPassAmount)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public List<Attachment> uploadOfxFile(InputStream file, Integer targetAccountingAccountId)
+        public List<Attachment> uploadOfxFile(InputStream file)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public void addCashPaymentForInvoice(Payment cashPayment, Invoice invoice) throws OsirisException;
+        public void addCashPaymentForInvoice(Payment cashPayment, Invoice invoice)
+                        throws OsirisException, OsirisValidationException;
 
-        public void addCheckPayment(Payment cashPayment)
+        public void addInboundCheckPayment(Payment cashPayment)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void addCashPaymentForCustomerOrder(Payment cashPayment, CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void movePaymentFromInvoiceToCustomerOrder(Payment payment, Invoice invoice,
-                        CustomerOrder customerOrder);
+                        CustomerOrder customerOrder)
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
+
+        public Payment addOutboundPaymentForProvision(Payment payment, Provision provision) throws OsirisException;
 
         public void movePaymentFromCustomerOrderToInvoice(Payment payment, CustomerOrder customerOrder,
-                        Invoice invoice);
+                        Invoice invoice) throws OsirisException, OsirisValidationException;
 
         public Payment generateNewAccountPayment(Float paymentAmount, AccountingAccount targetAccountingAccount)
                         throws OsirisException;
@@ -62,4 +70,23 @@ public interface PaymentService {
         public void refundPayment(Payment payment, Tiers tiers, Affaire affaire)
                         throws OsirisException, OsirisClientMessageException;
 
+        public Payment generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
+                        CentralPayPaymentRequest centralPayPaymentRequest)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
+        public void generatePaymentOnInvoiceForCbPayment(Invoice invoice,
+                        CentralPayPaymentRequest centralPayPaymentRequest)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
+        public void unassociateInboundPaymentFromInvoice(Payment payment, Invoice invoice)
+                        throws OsirisException, OsirisValidationException;
+
+        public void cancelAppoint(Payment payment) throws OsirisException, OsirisValidationException;
+
+        public Payment generateNewRefundPayment(Refund refund, Float paymentAmount, ITiers tiersToRefund)
+                        throws OsirisException;
+
+        public Payment generateNewBankTransfertPayment(BankTransfert bankTransfert, Float paymentAmount,
+                        IGenericTiers tiersToPay)
+                        throws OsirisException;
 }

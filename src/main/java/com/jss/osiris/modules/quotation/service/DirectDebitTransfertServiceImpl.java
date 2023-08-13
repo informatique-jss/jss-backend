@@ -51,12 +51,12 @@ import com.jss.osiris.libs.transfer.SvcLvlBean;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
-import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
+import com.jss.osiris.modules.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.repository.DirectDebitTransfertRepository;
-import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -71,6 +71,9 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
     @Autowired
     InvoiceHelper invoiceHelper;
+
+    @Autowired
+    InvoiceService invoiceService;
 
     @Value("${jss.iban}")
     private String ibanJss;
@@ -107,7 +110,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
         List<DirectDebitTransfert> directDebitTransferts = getDirectDebitTransferts();
         if (directDebitTransferts != null)
             for (DirectDebitTransfert directDebitTransfert : directDebitTransferts)
-                indexEntityService.indexEntity(directDebitTransfert, directDebitTransfert.getId());
+                indexEntityService.indexEntity(directDebitTransfert);
     }
 
     @Override
@@ -135,7 +138,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
     public DirectDebitTransfert generateDirectDebitTransfertForOutboundInvoice(Invoice invoice)
             throws OsirisException, OsirisClientMessageException {
 
-        ITiers tiers = invoiceHelper.getCustomerOrder(invoice);
+        IGenericTiers tiers = invoiceHelper.getCustomerOrder(invoice);
         Integer sepaReference = null;
         LocalDate sepaDate = null;
         String customerOrderLabel = "";
@@ -169,10 +172,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
         directDebitTransfert.setLabel("Facture " + invoice.getId() + " / Journal Spécial des Sociétés / "
                 + (invoice.getCustomerOrder() != null ? invoice.getCustomerOrder().getId() : ""));
         directDebitTransfert.setIsAlreadyExported(false);
-        Float totalPrice = invoice.getTotalPrice();
-        if (invoice.getPayments() != null)
-            for (Payment payment : invoice.getPayments())
-                totalPrice -= payment.getPaymentAmount();
+        Float totalPrice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
         directDebitTransfert.setTransfertAmount(totalPrice);
         directDebitTransfert.setTransfertDateTime(invoice.getDueDate().atTime(12, 0));
         directDebitTransfert.setTransfertIban(invoiceHelper.getIbanOfOrderingCustomer(invoice));

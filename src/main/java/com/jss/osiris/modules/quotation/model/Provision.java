@@ -17,7 +17,9 @@ import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -174,6 +176,15 @@ public class Provision implements IId, IAttachment {
 	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
 	private List<Attachment> attachments;
+
+	@OneToMany(targetEntity = Invoice.class, mappedBy = "provision")
+	@JsonIgnoreProperties(value = { "provision", "customerOrder",
+			"customerOrderForInboundInvoice" }, allowSetters = true)
+	private List<Invoice> providerInvoices;
+
+	@OneToMany(targetEntity = Payment.class, mappedBy = "provision")
+	@JsonIgnoreProperties(value = { "provision", "assoAffaireOrder" }, allowSetters = true)
+	private List<Payment> payments;
 
 	public Integer getId() {
 		return id;
@@ -533,6 +544,22 @@ public class Provision implements IId, IAttachment {
 
 	public void setIsBaloNormalization(Boolean isBaloNormalization) {
 		this.isBaloNormalization = isBaloNormalization;
+	}
+
+	public List<Invoice> getProviderInvoices() {
+		return providerInvoices;
+	}
+
+	public void setProviderInvoices(List<Invoice> providerInvoices) {
+		this.providerInvoices = providerInvoices;
+	}
+
+	public List<Payment> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<Payment> payments) {
+		this.payments = payments;
 	}
 
 }

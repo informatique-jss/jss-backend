@@ -532,14 +532,6 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.invoiceStatusCreditNoteReceived;
   }
 
-  getPaymentWayInbound() {
-    return this.constant.paymentWayInbound;
-  }
-
-  getPaymentWayOutbound() {
-    return this.constant.paymentWayOutboud;
-  }
-
   getInvoiceStatusPayed() {
     return this.constant.invoiceStatusPayed;
   }
@@ -698,5 +690,9 @@ export class ConstantService extends AppRestService<Constant>{
 
   getCustomerOrderOriginOsiris() {
     return this.constant.customerOrderOriginOsiris;
+  }
+
+  getCentralPayProvider() {
+    return this.constant.providerCentralPay;
   }
 }

@@ -1019,20 +1019,6 @@
           </tr>
           <tr>
             <td>
-              <select-payment-way-one [(model)]="constant.paymentWayInbound" label="Sens de paiement - entrant"
-                [form]="constantForm" propertyName="paymentWayInbound" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-payment-way-one>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-payment-way-one [(model)]="constant.paymentWayOutboud" label="Sens de paiement - sortant"
-                [form]="constantForm" propertyName="paymentWayOutboud" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-payment-way-one>
-            </td>
-          </tr>
-          <tr>
-            <td>
               <select-vat [(model)]="constant.vatTwenty" label="Taux de TVA - 20% à la vente" [form]="constantForm"
                 propertyName="vatTwenty" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
             </td>
@@ -1294,6 +1280,13 @@
               <autocomplete-accounting-account [(model)]="constant.accountingAccountCaisse" [form]="constantForm"
                 propertyName="accountingAccountCaisse" [isMandatory]="true" [isDisabled]="!editMode"
                 label="Compte comptable - Caisse"></autocomplete-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-provider [(model)]="constant.providerCentralPay" [form]="constantForm"
+                propertyName="providerCentralPay" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Fournisseur - Central Pat"></autocomplete-provider>
             </td>
           </tr>
         </table>

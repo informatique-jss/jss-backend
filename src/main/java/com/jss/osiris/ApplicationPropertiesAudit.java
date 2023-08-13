@@ -77,10 +77,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("guichet.unique.entry.point");
         isOk = isOk && checkProperty("guichet.unique.login");
         isOk = isOk && checkProperty("guichet.unique.password");
-        isOk = isOk && checkProperty("owncloud.greffe.login");
-        isOk = isOk && checkProperty("owncloud.greffe.password");
-        isOk = isOk && checkProperty("owncloud.greffe.webdav.url");
-        isOk = isOk && checkProperty("owncloud.greffe.webdav.folder.root");
+        isOk = isOk && checkProperty("schedulling.payment.automatch");
         isOk = isOk && checkProperty("azure.form.recognizer.endpoint");
         isOk = isOk && checkProperty("azure.form.recognizer.api.key");
         isOk = isOk && checkProperty("azure.form.recognizer.model.invoices.name");

@@ -15,4 +15,5 @@ export interface InvoiceItem {
   provision: Provision;
   isOverridePrice: boolean;
   isGifted: boolean;
+  originProviderInvoice: Invoice;
 }

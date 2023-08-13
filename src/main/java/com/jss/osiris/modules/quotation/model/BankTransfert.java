@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
@@ -57,6 +58,12 @@ public class BankTransfert implements Serializable, IId {
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "deposits" }, allowSetters = true)
 	private CustomerOrder customerOrder;
+
+	private Boolean isMatched;
+
+	@OneToMany(mappedBy = "bankTransfert", fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = { "bankTransfert" }, allowSetters = true)
+	private List<Payment> payments;
 
 	public Integer getId() {
 		return id;
@@ -144,6 +151,22 @@ public class BankTransfert implements Serializable, IId {
 
 	public void setCustomerOrder(CustomerOrder customerOrder) {
 		this.customerOrder = customerOrder;
+	}
+
+	public Boolean getIsMatched() {
+		return isMatched;
+	}
+
+	public void setIsMatched(Boolean isMatched) {
+		this.isMatched = isMatched;
+	}
+
+	public List<Payment> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<Payment> payments) {
+		this.payments = payments;
 	}
 
 }

@@ -19,7 +19,7 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
-public class Provider implements IId, IAttachment, IVat {
+public class Provider implements IAttachment, IGenericTiers {
 
 	@Id
 	@SequenceGenerator(name = "provider_sequence", sequenceName = "provider_sequence", allocationSize = 1)

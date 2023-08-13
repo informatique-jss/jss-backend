@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.invoicing.service;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,15 +16,19 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.AzureInvoice;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.repository.AzureInvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
+import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
-import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
+import com.jss.osiris.modules.quotation.service.PricingHelper;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 
 @Service
@@ -57,6 +61,15 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
     @Autowired
     CustomerOrderStatusService customerOrderStatusService;
 
+    @Autowired
+    BillingItemService billingItemService;
+
+    @Autowired
+    PricingHelper pricingHelper;
+
+    @Autowired
+    VatService vatService;
+
     @Override
     public AzureInvoice getAzureInvoice(Integer id) {
         Optional<AzureInvoice> azureInvoice = azureInvoiceRepository.findById(id);
@@ -72,7 +85,7 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
 
     @Override
     public List<AzureInvoice> searchAzureInvoicesByInvoiceId(String invoiceId) {
-        return azureInvoiceRepository.findByInvoiceIdContainingAndToChekAndInvoice(invoiceId.trim());
+        return azureInvoiceRepository.findByInvoiceIdContainingAndAndInvoice(invoiceId.trim());
     }
 
     @Override
@@ -95,68 +108,14 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
                             "Erreur while recongnize invoice with Azure for attachment " + attachment.getId());
                 }
         }
-        matchAzureInvoiceAndDebours();
-    }
-
-    @Override
-    public List<AzureInvoice> getAzureInvoices(Boolean displayOnlyToCheck) {
-        if (displayOnlyToCheck)
-            return azureInvoiceRepository.findTop100ByToCheckAndIsDisabled(displayOnlyToCheck, false);
-        return azureInvoiceRepository.findByIsDisabled(false);
-    }
-
-    private void matchAzureInvoiceAndDebours()
-            throws OsirisClientMessageException, OsirisException, OsirisValidationException {
-        List<AzureInvoice> invoices = azureInvoiceRepository
-                .findInvoicesToMatch(
-                        Arrays.asList(
-                                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED)
-                                        .getId(),
-                                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BILLED)
-                                        .getId()));
-
-        if (invoices != null && invoices.size() > 0) {
-            for (AzureInvoice invoice : invoices) {
-                if (invoice.getToCheck() == true) {
-                    invoice = formRecognizerService.checkInvoiceAmountConfidence(invoice);
-                    if (invoice.getToCheck() == true)
-                        continue; // We not use if we don't have confidence
-                    else
-                        addOrUpdateAzureInvoice(invoice); // status changed, save it
-                }
-
-                // If find in multiple provision, or if we don't have default payment for AC do
-                // nothing...
-                if (invoice.getAttachments() != null && invoice.getAttachments().size() == 1
-                        && invoice.getCompetentAuthority().getDefaultPaymentType() != null) {
-                    Provision provision = invoice.getAttachments().get(0).getProvision();
-
-                    if (invoice.getReference() == null) {
-                        // Cannot cross verify customer order, stop here
-                        continue;
-                    }
-                    if (!invoice.getReference()
-                            .contains(provision.getAssoAffaireOrder().getCustomerOrder().getId() + "")) {
-                        // Cannot cross verify customer order, stop here
-                        continue;
-                    }
-
-                }
-            }
-        }
     }
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public Invoice generateDeboursAndInvoiceFromInvoiceFromUser(AzureInvoice azureInvoice, Provision currentProvision)
+    public Invoice generateInvoiceFromAzureInvoice(AzureInvoice azureInvoice, Provision currentProvision)
             throws OsirisClientMessageException, OsirisException, OsirisValidationException {
         azureInvoice = getAzureInvoice(azureInvoice.getId());
         currentProvision = provisionService.getProvision(currentProvision.getId());
-        return generateInvoiceFromInvoice(azureInvoice, currentProvision);
-    }
-
-    private Invoice generateInvoiceFromInvoice(AzureInvoice azureInvoice, Provision currentProvision)
-            throws OsirisClientMessageException, OsirisException, OsirisValidationException {
 
         if (azureInvoice.getCompetentAuthority().getDefaultPaymentType() == null)
             throw new OsirisClientMessageException(
@@ -169,10 +128,46 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         invoice.setIsInvoiceFromProvider(true);
         invoice.setAzureInvoice(azureInvoice);
         invoice.setManualAccountingDocumentDate(azureInvoice.getInvoiceDate());
-        // TODO : setter le montant refacturé
-        invoiceService.addOrUpdateInvoiceFromUser(invoice);
-        azureInvoice.getAttachments().get(0).setInvoice(invoice);
-        attachmentService.addOrUpdateAttachment(azureInvoice.getAttachments().get(0));
+
+        invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
+
+        // Taxable item
+        List<BillingItem> taxableBillingItem = billingItemService
+                .getBillingItemByBillingType(constantService.getBillingTypeEmolumentsDeGreffeDebour());
+
+        InvoiceItem invoiceItem = new InvoiceItem();
+        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(taxableBillingItem));
+        invoiceItem.setDiscountAmount(0f);
+        invoiceItem.setIsGifted(false);
+        invoiceItem.setIsOverridePrice(false);
+
+        invoiceItem.setLabel(invoiceItem.getBillingItem().getBillingType().getLabel()
+                + (invoice.getCompetentAuthority() != null ? (" - " + invoice.getCompetentAuthority().getLabel())
+                        : ""));
+        invoiceItem.setPreTaxPrice(Math.round(azureInvoice.getInvoicePreTaxTotal() * 100f) / 100f);
+        invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
+        vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
+
+        invoice.getInvoiceItems().add(invoiceItem);
+
+        // Non taxable item
+        List<BillingItem> nonTaxableBillingItem = billingItemService
+                .getBillingItemByBillingType(constantService.getBillingTypeDeboursNonTaxable());
+
+        InvoiceItem invoiceItem2 = new InvoiceItem();
+        invoiceItem2.setBillingItem(pricingHelper.getAppliableBillingItem(nonTaxableBillingItem));
+        invoiceItem2.setDiscountAmount(0f);
+        invoiceItem2.setIsGifted(false);
+        invoiceItem2.setIsOverridePrice(false);
+
+        invoiceItem2.setLabel(invoiceItem2.getBillingItem().getBillingType().getLabel()
+                + (invoice.getCompetentAuthority() != null ? (" - " + invoice.getCompetentAuthority().getLabel())
+                        : ""));
+        invoiceItem2.setPreTaxPrice(Math.round(azureInvoice.getInvoicePreTaxTotal() * 100f) / 100f);
+        invoiceItem2.setPreTaxPriceReinvoiced(invoiceItem2.getPreTaxPrice());
+        vatService.completeVatOnInvoiceItem(invoiceItem2, invoice);
+
+        invoice.getInvoiceItems().add(invoiceItem2);
 
         return invoice;
     }

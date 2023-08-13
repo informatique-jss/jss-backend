@@ -7,6 +7,7 @@ import { Subject, Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
+import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
@@ -19,7 +20,6 @@ import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN } from '../
 import { replaceDocument } from '../../../../libs/DocumentHelper';
 import { formatDateFrance } from '../../../../libs/FormatHelper';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
-import { AssociateDepositDialogComponent } from '../../../invoicing/components/associate-deposit-dialog/associate-deposit-dialog.component';
 import { getCustomerOrderForIQuotation } from '../../../invoicing/components/invoice-tools';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
 import { InvoiceSearchResultService } from '../../../invoicing/services/invoice.search.result.service';
@@ -112,6 +112,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private provisionService: ProvisionService,
     private orderingSearchResultService: OrderingSearchResultService,
     private invoiceSearchResultService: InvoiceSearchResultService,
+    public associatePaymentDialog: MatDialog,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   quotationForm = this.formBuilder.group({});
@@ -462,12 +463,19 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       this.displaySnakBarLockProvision();
       return;
     }
-    if (provision.debours && provision.debours.length > 0) {
-      this.appService.displaySnackBar("Impossible de supprimer cette prestation : des débours/frais ont déjà été saisis", true, 15);
+
+    if (provision && provision.payments) {
+      for (let payment of provision.payments)
+        if (!payment.isCancelled) {
+          this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : des paiements ont déjà été déclarés.", false, 15);
+          return;
+        }
+    }
+
+    if (provision.announcement && provision.announcement.actuLegaleId) {
+      this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : elle a déjà été publiée sur ActuLégale.", false, 15);
       return;
     }
-    if (provision.announcement && provision.announcement.actuLegaleId)
-      this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : elle a déjà été publiée sur ActuLégale.", false, 15);
 
     asso.provisions.splice(asso.provisions.indexOf(provision), 1);
   }
@@ -485,12 +493,17 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           })
         } else {
           if (this.getRemainingToPay() < 0 && (targetStatus.code == CUSTOMER_ORDER_STATUS_BILLED || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED)) {
-            let dialogDepositDialogRef = this.associateDepositDialog.open(AssociateDepositDialogComponent, {
+            // TODO : reassociate payment / deposit
+            let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
               width: '100%'
             });
-            dialogDepositDialogRef.componentInstance.deposit = (this.quotation as CustomerOrder).deposits[0];
-            dialogDepositDialogRef.componentInstance.customerOrder = (this.quotation as CustomerOrder);
-            dialogDepositDialogRef.afterClosed().subscribe(response => {
+            for (let payment of (this.quotation as CustomerOrder).payments)
+              if (!payment.isCancelled)
+                dialogPaymentDialogRef.componentInstance.payment = payment;
+            dialogPaymentDialogRef.componentInstance.doNotInitializeAsso = true;
+            dialogPaymentDialogRef.componentInstance.customerOrder = this.quotation as CustomerOrder;
+
+            dialogPaymentDialogRef.afterClosed().subscribe(response => {
               if (response)
                 this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code).subscribe(response => {
                   this.quotation = response;
@@ -640,38 +653,16 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             if (provision.invoiceItems) {
               for (let invoiceItem of provision.invoiceItems) {
                 if (invoiceItem.vat && invoiceItem.vatPrice && invoiceItem.vatPrice > 0) {
-
-                  if (!invoiceItem.billingItem.billingType.isDebour && !invoiceItem.billingItem.billingType.isFee || !provision.debours || provision.debours.length == 0) {
-                    let vatFound = false;
-                    for (let vatBase of vatBases) {
-                      if (vatBase.label == invoiceItem.vat.label) {
-                        vatFound = true;
-                        vatBase.base += invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0);
-                        vatBase.total += invoiceItem.vatPrice;
-                      }
+                  let vatFound = false;
+                  for (let vatBase of vatBases) {
+                    if (vatBase.label == invoiceItem.vat.label) {
+                      vatFound = true;
+                      vatBase.base += invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0);
+                      vatBase.total += invoiceItem.vatPrice;
                     }
-                    if (!vatFound) {
-                      vatBases.push({ label: invoiceItem.vat.label, base: (invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0)), total: invoiceItem.vatPrice });
-                    }
-                  } else if (provision.debours) {
-                    for (let debour of provision.debours) {
-                      if (!debour.billingType.isNonTaxable) {
-                        let vatFound = false;
-                        let debourAmount = debour.invoicedAmount ? debour.invoicedAmount : debour.debourAmount;
-                        let applicableDebourVat = debour.invoiceItem ? debour.invoiceItem.vat : debourVat;
-
-                        for (let vatBase of vatBases) {
-                          if (vatBase.label == applicableDebourVat.label) {
-                            vatFound = true;
-                            vatBase.base += debourAmount / (1 + (applicableDebourVat.rate / 100));
-                            vatBase.total += (debourAmount / (1 + (applicableDebourVat.rate / 100))) * applicableDebourVat.rate / 100;
-                          }
-                        }
-                        if (!vatFound) {
-                          vatBases.push({ label: applicableDebourVat.label, base: debourAmount / (1 + (applicableDebourVat.rate / 100)), total: (debourAmount / (1 + (applicableDebourVat.rate / 100))) * applicableDebourVat.rate / 100 });
-                        }
-                      }
-                    }
+                  }
+                  if (!vatFound) {
+                    vatBases.push({ label: invoiceItem.vat.label, base: (invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0)), total: invoiceItem.vatPrice });
                   }
                 }
               }
@@ -695,8 +686,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         if (asso.affaire && asso.affaire.id == affaire.id) {
           if (asso.provisions) {
             for (let provision of asso.provisions)
-              if (provision.debours && provision.debours.length > 0) {
-                this.appService.displaySnackBar("Impossible de supprimer cette affaire : des débours/frais ont déjà été saisis sur une prestation", true, 15);
+              if (provision && provision.payments) {
+                this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : des paiements ont déjà été déclarés.", false, 15);
                 return;
               }
           }
@@ -722,9 +713,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   public static computePayed(quotation: CustomerOrder) {
     let total = 0;
-    if (quotation && quotation.deposits)
-      for (let deposit of quotation.deposits)
-        total += deposit.depositAmount;
+    if (quotation && quotation.payments)
+      for (let deposit of quotation.payments)
+        if (!deposit.isCancelled)
+          total += deposit.paymentAmount;
     return total;
   }
 

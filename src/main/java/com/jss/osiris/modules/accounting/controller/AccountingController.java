@@ -16,7 +16,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -160,47 +159,6 @@ public class AccountingController {
 
         return new ResponseEntity<AccountingJournal>(
                 accountingJournalService.addOrUpdateAccountingJournal(accountingJournals), HttpStatus.OK);
-    }
-
-    @GetMapping(inputEntryPoint + "/accounting-records/search/temporary")
-    public ResponseEntity<List<AccountingRecord>> getAccountingRecordsByTemporaryOperationId(
-            @RequestParam Integer temporaryOperationId) throws OsirisValidationException {
-        if (temporaryOperationId == null)
-            throw new OsirisValidationException("temporaryOperationId");
-
-        return new ResponseEntity<List<AccountingRecord>>(
-                accountingRecordService.getAccountingRecordsByTemporaryOperationId(temporaryOperationId),
-                HttpStatus.OK);
-    }
-
-    @DeleteMapping(inputEntryPoint + "/accounting-records/delete/temporary")
-    public ResponseEntity<List<AccountingRecord>> deleteRecordsByTemporaryOperationId(
-            @RequestParam Integer temporaryOperationId) throws OsirisValidationException, OsirisException {
-        if (temporaryOperationId == null)
-            throw new OsirisValidationException("temporaryOperationId");
-
-        return new ResponseEntity<List<AccountingRecord>>(
-                accountingRecordService.deleteRecordsByTemporaryOperationId(temporaryOperationId), HttpStatus.OK);
-    }
-
-    @GetMapping(inputEntryPoint + "/accounting-records/search")
-    public ResponseEntity<List<AccountingRecord>> getAccountingRecordsByOperationId(@RequestParam Integer operationId)
-            throws OsirisValidationException {
-        if (operationId == null)
-            throw new OsirisValidationException("operationId");
-
-        return new ResponseEntity<List<AccountingRecord>>(
-                accountingRecordService.getAccountingRecordsByOperationId(operationId), HttpStatus.OK);
-    }
-
-    @GetMapping(inputEntryPoint + "/accounting-records/counter-part")
-    public ResponseEntity<List<AccountingRecord>> doCounterPartByOperationId(@RequestParam Integer operationId)
-            throws OsirisValidationException, OsirisException {
-        if (operationId == null)
-            throw new OsirisValidationException("operationId");
-
-        return new ResponseEntity<List<AccountingRecord>>(
-                accountingRecordService.doCounterPartByOperationId(operationId), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/accounting-account-classes")

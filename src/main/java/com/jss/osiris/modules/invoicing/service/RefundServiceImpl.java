@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.transfer.CstmrCdtTrfInitnBean;
 import com.jss.osiris.libs.transfer.DocumentBean;
@@ -31,6 +32,7 @@ import com.jss.osiris.libs.transfer.OthrBean;
 import com.jss.osiris.libs.transfer.OthrIdBean;
 import com.jss.osiris.libs.transfer.PmtInfBean;
 import com.jss.osiris.libs.transfer.PstlAdrBean;
+import com.jss.osiris.modules.accounting.service.AccountingRecordGenerationService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
@@ -74,6 +76,12 @@ public class RefundServiceImpl implements RefundService {
     @Autowired
     BankTransfertService bankTransfertService;
 
+    @Autowired
+    AccountingRecordGenerationService accountingRecordGenerationService;
+
+    @Autowired
+    PaymentService paymentService;
+
     @Override
     public List<Refund> getRefunds() {
         return IterableUtils.toList(refundRepository.findAll());
@@ -91,7 +99,7 @@ public class RefundServiceImpl implements RefundService {
     public Refund addOrUpdateRefund(
             Refund refund) {
         refundRepository.save(refund);
-        indexEntityService.indexEntity(refund, refund.getId());
+        indexEntityService.indexEntity(refund);
         return refund;
     }
 
@@ -101,7 +109,7 @@ public class RefundServiceImpl implements RefundService {
         List<Refund> refunds = getRefunds();
         if (refunds != null)
             for (Refund refund : refunds)
-                indexEntityService.indexEntity(refund, refund.getId());
+                indexEntityService.indexEntity(refund);
     }
 
     @Override
@@ -118,10 +126,12 @@ public class RefundServiceImpl implements RefundService {
     }
 
     @Override
-    public Refund generateRefund(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Float amount,
-            String labelSuffix, CustomerOrder customerOrder)
+    public Refund refundPayment(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Float amount,
+            CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException {
-        // TODO : verify if ok for payment refund
+        if (payment.getIsCancelled())
+            throw new OsirisClientMessageException("Impossible de rembourser un paiement annulé");
+
         Refund refund = new Refund();
         refund.setCustomerOrder(customerOrder);
         if (tiersRefund instanceof Confrere)
@@ -155,11 +165,16 @@ public class RefundServiceImpl implements RefundService {
         refund.setRefundIBAN(refund.getRefundIBAN().replaceAll(" ", ""));
         refund.setRefundBic(refund.getRefundBic().replaceAll(" ", ""));
 
-        refund.setLabel("Remboursement du paiement N " + payment.getId());
-        // TODO : changer le libellé suivant le type de paiement : appoint, acompte
-
-        if (labelSuffix != null)
-            refund.setLabel(refund.getLabel() + " / " + labelSuffix);
+        String paymentType = "";
+        if (customerOrder != null)
+            paymentType = "de la commande N " + customerOrder.getId();
+        if (payment != null) {
+            if (payment.getIsAppoint())
+                paymentType = "de l'appoint N " + payment.getId();
+            else
+                paymentType = "du paiement N " + payment.getId();
+        }
+        refund.setLabel("Remboursement " + paymentType);
 
         if (refund.getCustomerOrder() != null && refund.getCustomerOrder().getAssoAffaireOrders() != null) {
             Affaire affaire = refund.getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
@@ -171,12 +186,16 @@ public class RefundServiceImpl implements RefundService {
         refund.setIsMatched(false);
         refund.setIsAlreadyExported(false);
         refund.setRefundDateTime(LocalDateTime.now());
+
+        Payment refundPayment = paymentService.generateNewRefundPayment(refund, -amount, tiersRefund);
+        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(refundPayment);
+
         return this.addOrUpdateRefund(refund);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public File getRefundExport(RefundSearch refundSearch) throws OsirisException {
+    public File getRefundExport(RefundSearch refundSearch) throws OsirisException, OsirisValidationException {
 
         List<RefundSearchResult> refunds = searchRefunds(refundSearch);
         String xml = "";
@@ -247,11 +266,12 @@ public class RefundServiceImpl implements RefundService {
                                 StringUtils.substring((refund.getId() + " - " + refund.getRefundLabel()), 0,
                                         139)));
 
-                completeRefund.setIsAlreadyExported(true);
-                // TODO :
-                // accountingRecordService.generateAccountingRecordsForRefundOnVirement(completeRefund);
-                addOrUpdateRefund(completeRefund);
+                if (!completeRefund.getIsAlreadyExported()) {
+                    accountingRecordGenerationService.generateAccountingRecordsForRefundExport(completeRefund);
+                    addOrUpdateRefund(completeRefund);
+                }
 
+                completeRefund.setIsAlreadyExported(true);
             }
 
             xml = xmlMapper.writeValueAsString(document);

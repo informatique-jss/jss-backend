@@ -22,7 +22,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
-import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.accounting.service.AccountingRecordGenerationService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
@@ -30,21 +30,22 @@ import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Document;
-import com.jss.osiris.modules.miscellaneous.model.IVat;
-import com.jss.osiris.modules.miscellaneous.model.Vat;
+import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
+import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
-import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -70,7 +71,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     IndexEntityService indexEntityService;
 
     @Autowired
-    AccountingRecordService accountingRecordService;
+    AccountingRecordGenerationService accountingRecordGenerationService;
 
     @Autowired
     InvoiceHelper invoiceHelper;
@@ -114,6 +115,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Autowired
     VatService vatService;
 
+    @Autowired
+    DirectDebitTransfertService DirectDebitTransfertService;
+
     @Override
     public List<Invoice> getAllInvoices() {
         return IterableUtils.toList(invoiceRepository.findAll());
@@ -132,18 +136,146 @@ public class InvoiceServiceImpl implements InvoiceService {
         return null;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<Invoice> findByCompetentAuthorityAndManualDocumentNumber(CompetentAuthority competentAuthority,
-            String manualDocumentNumber) {
-        return invoiceRepository.findByCompetentAuthorityAndManualAccountingDocumentNumber(competentAuthority,
-                manualDocumentNumber);
+    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        if (!hasAtLeastOneInvoiceItemNotNull(invoice))
+            throw new OsirisException(null, "No invoice item found on invoice");
+
+        if (invoice.getId() != null)
+            throw new OsirisClientMessageException("Impossible de modifier une facture");
+
+        IGenericTiers invoiceTiers = invoiceHelper.getCustomerOrder(invoice);
+
+        // Define due date
+        if (invoice.getDueDate() == null)
+            invoice.setDueDate(getDueDateForInvoice(invoiceTiers, invoice));
+
+        invoice.setCreatedDate(LocalDateTime.now());
+
+        // Defined billing label
+        if (!invoice.getIsInvoiceFromProvider() && !invoice.getIsProviderCreditNote()
+                && !constantService.getBillingLabelTypeOther().getId().equals(invoice.getBillingLabelType().getId())) {
+            Document billingDocument = null;
+            ITiers customerOrder = invoice.getTiers();
+            if (invoice.getResponsable() != null)
+                customerOrder = invoice.getResponsable();
+            if (invoice.getConfrere() != null)
+                customerOrder = invoice.getConfrere();
+
+            if (invoice.getCustomerOrder() != null)
+                billingDocument = documentService.getBillingDocument(invoice.getCustomerOrder().getDocuments());
+            else
+                billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
+
+            if (billingDocument == null)
+                throw new OsirisException(null, "Billing document not found for ordering customer provided");
+
+            invoiceHelper.setInvoiceLabel(invoice, billingDocument, null, customerOrder);
+        }
+
+        // Define status
+        if (invoice.getIsInvoiceFromProvider())
+            invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
+        else if (invoice.getIsProviderCreditNote())
+            invoice.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
+        else
+            invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
+
+        // Save before to have an ID on invoice
+        addOrUpdateInvoice(invoice);
+
+        // Associate invoice to invoice item
+        for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+            invoiceItem.setInvoice(invoice);
+            vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
+        }
+
+        invoiceHelper.setPriceTotal(invoice);
+
+        // Generate accounting records
+        if (invoice.getIsInvoiceFromProvider())
+            accountingRecordGenerationService.generateAccountingRecordsOnInvoiceReception(invoice);
+        else if (invoice.getIsProviderCreditNote())
+            accountingRecordGenerationService.generateAccountingRecordsOnCreditNoteReception(invoice);
+        else
+            accountingRecordGenerationService.generateAccountingRecordsOnInvoiceEmission(invoice);
+
+        // Define payment type
+        if (invoice.getManualPaymentType() == null) {
+            PaymentType paymentType = null;
+            if (invoice.getIsInvoiceFromProvider()) {
+                if (invoice.getProvider() != null)
+                    paymentType = invoice.getProvider().getPaymentType();
+                if (invoice.getConfrere() != null)
+                    paymentType = invoice.getConfrere().getPaymentType();
+                if (invoice.getCompetentAuthority() != null)
+                    paymentType = invoice.getCompetentAuthority().getDefaultPaymentType();
+            } else {
+                paymentType = constantService.getPaymentTypeVirement();
+                if (invoice.getResponsable() != null && invoice.getResponsable().getTiers().getPaymentType() != null)
+                    paymentType = invoice.getResponsable().getTiers().getPaymentType();
+                if (invoice.getTiers() != null && invoice.getTiers().getPaymentType() != null)
+                    paymentType = invoice.getTiers().getPaymentType();
+                if (invoice.getConfrere() != null && invoice.getConfrere().getPaymentType() != null)
+                    paymentType = invoice.getConfrere().getPaymentType();
+            }
+            invoice.setManualPaymentType(paymentType);
+        }
+
+        // Handle provider and customer payment
+        if (invoice.getIsInvoiceFromProvider()) {
+            if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId()))
+                invoice.setBankTransfert(bankTransfertService.generateBankTransfertForManualInvoice(invoice));
+
+            if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId())) {
+                Payment payment = paymentService.generateNewAccountPayment(invoice.getTotalPrice(),
+                        invoiceTiers.getAccountingAccountProvider());
+                paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment, Arrays.asList(invoice), null, null,
+                        null, null);
+            }
+        } else {
+            if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())) {
+                invoice.setDirectDebitTransfert(
+                        DirectDebitTransfertService.generateDirectDebitTransfertForOutboundInvoice(invoice));
+            }
+        }
+
+        addOrUpdateInvoice(invoice);
+
+        // Associate attachment for azure invoice
+        if (invoice.getAzureInvoice() != null) {
+            Attachment attachment = invoice.getAzureInvoice().getAttachments().get(0);
+            attachment.setInvoice(invoice);
+            attachmentService.addOrUpdateAttachment(attachment);
+        }
+        return invoice;
     }
 
-    @Override
-    public List<Invoice> findByCompetentAuthorityAndManualDocumentNumberContains(CompetentAuthority competentAuthority,
-            String manualDocumentNumber) {
-        return invoiceRepository.findByCompetentAuthorityAndManualAccountingDocumentNumberContainingIgnoreCase(
-                competentAuthority, manualDocumentNumber);
+    private LocalDate getDueDateForInvoice(IGenericTiers customerOrder, Invoice invoice)
+            throws OsirisException, OsirisClientMessageException {
+        Integer nbrOfDayFromDueDate = 30;
+        ITiers masterOrderingCustomer = null;
+
+        if (customerOrder instanceof ITiers)
+            masterOrderingCustomer = (ITiers) customerOrder;
+
+        if (customerOrder instanceof Responsable)
+            masterOrderingCustomer = ((Responsable) customerOrder).getTiers();
+
+        if (masterOrderingCustomer != null) {
+            Document dunningDocument = documentService.getDocumentByDocumentType(masterOrderingCustomer.getDocuments(),
+                    constantService.getDocumentTypeDunning());
+
+            if (dunningDocument == null)
+                throw new OsirisClientMessageException("Merci de remplir la partie réglement pour le donneur d'ordre");
+
+            if (dunningDocument.getPaymentDeadlineType() != null)
+                nbrOfDayFromDueDate = dunningDocument.getPaymentDeadlineType().getNumberOfDay();
+        }
+
+        return LocalDate.now().plusDays(nbrOfDayFromDueDate);
     }
 
     @Override
@@ -160,14 +292,22 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoice;
     }
 
-    @Override
-    public Invoice cancelInvoiceEmitted(Invoice invoice, CustomerOrder customerOrder)
+    private Invoice cancelInvoiceEmitted(Invoice invoice, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        // Remove accounting records and unletter invoice
-        // TODO
-
         // Refresh invoice
         invoice = getInvoice(invoice.getId());
+
+        if (invoice.getPayments() != null) {
+            for (Payment payment : invoice.getPayments())
+                if (!payment.getIsCancelled()) {
+                    if (payment.getIsAppoint())
+                        paymentService.cancelAppoint(payment);
+                    else if (customerOrder != null)
+                        paymentService.movePaymentFromInvoiceToCustomerOrder(payment, invoice, customerOrder);
+                    else
+                        paymentService.unassociateInboundPaymentFromInvoice(payment, invoice);
+                }
+        }
 
         // Unlink invoice item from customer order
         if (invoice.getInvoiceItems() != null) {
@@ -199,7 +339,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice = addOrUpdateInvoice(invoice);
         creditNote = addOrUpdateInvoice(creditNote);
 
-        accountingRecordService.letterCreditNoteAndInvoice(invoice, creditNote);
+        // Remove accounting records and unletter invoice
+        accountingRecordGenerationService.generateAccountingRecordsOnInvoiceEmissionCancellation(invoice, creditNote);
 
         if (customerOrder != null) {
             // Generate PDF and attached it to customer order
@@ -222,20 +363,14 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setInvoiceStatus(constantService.getInvoiceStatusCancelled());
         addOrUpdateInvoice(invoice);
 
-        if (customerOrder != null) {
+        if (customerOrder != null)
             mailHelper.sendCreditNoteToCustomer(customerOrder, false, creditNote, invoice);
-        }
 
         return invoice;
     }
 
     private Invoice cancelInvoiceReceived(Invoice invoice)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        // Unletter
-        accountingRecordService.unletterInvoiceReceived(invoice);
-
-        // Remove accounting records
-        // TODO
 
         // Refresh invoice
         invoice = getInvoice(invoice.getId());
@@ -247,7 +382,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         // Unassociate payment
         if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
-            throw new OsirisValidationException("Il reste des paiements sur la facture, impossible d'annuler !");
+            for (Payment payment : invoice.getPayments())
+                if (!payment.getIsCancelled())
+                    throw new OsirisValidationException(
+                            "Il reste des paiements sur la facture, impossible d'annuler !");
+
+        // Remove accounting records
+        accountingRecordGenerationService.generateAccountingRecordsOnInvoiceReceptionCancellation(invoice);
 
         // Cancel invoice
         invoice.setInvoiceStatus(constantService.getInvoiceStatusCancelled());
@@ -255,11 +396,12 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Invoice generateInvoiceCreditNote(Invoice newInvoice, Integer idOriginInvoiceForCreditNote)
+    public Invoice generateProviderInvoiceCreditNote(Invoice newInvoice, Integer idOriginInvoiceForCreditNote)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         newInvoice.setIsInvoiceFromProvider(false);
         newInvoice.setIsProviderCreditNote(true);
+
         // Create credit note
         Invoice creditNote = addOrUpdateInvoiceFromUser(newInvoice);
         if (newInvoice.getInvoiceItems() != null) {
@@ -289,56 +431,8 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoice.setIsProviderCreditNote(false);
 
         invoiceRepository.save(invoice);
-        indexEntityService.indexEntity(invoice, invoice.getId());
+        indexEntityService.indexEntity(invoice);
         return invoice;
-    }
-
-    @Override
-    public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer)
-            throws OsirisException, OsirisClientMessageException {
-        Invoice invoice = new Invoice();
-        invoice.setCreatedDate(LocalDateTime.now());
-
-        if (orderingCustomer instanceof Tiers)
-            invoice.setTiers((Tiers) orderingCustomer);
-
-        if (orderingCustomer instanceof Responsable)
-            invoice.setResponsable((Responsable) orderingCustomer);
-
-        if (orderingCustomer instanceof Confrere)
-            invoice.setConfrere((Confrere) orderingCustomer);
-
-        ITiers masterOrderingCustomer = orderingCustomer;
-        if (orderingCustomer instanceof Responsable)
-            masterOrderingCustomer = ((Responsable) orderingCustomer).getTiers();
-
-        Document dunningDocument = documentService.getDocumentByDocumentType(masterOrderingCustomer.getDocuments(),
-                constantService.getDocumentTypeDunning());
-
-        if (dunningDocument == null)
-            throw new OsirisClientMessageException("Merci de remplir la partie réglement pour le donneur d'ordre");
-
-        if (dunningDocument.getPaymentDeadlineType() == null)
-            throw new OsirisClientMessageException("Merci de remplir la partie réglement pour le donneur d'ordre");
-
-        Integer nbrOfDayFromDueDate = 30;
-        if (dunningDocument.getPaymentDeadlineType() != null)
-            nbrOfDayFromDueDate = dunningDocument.getPaymentDeadlineType().getNumberOfDay();
-        invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
-
-        Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
-
-        if (billingDocument == null)
-            throw new OsirisException(null, "Billing document not found for ordering customer provided");
-
-        invoiceHelper.setInvoiceLabel(invoice, billingDocument, customerOrder, orderingCustomer);
-        invoice.setIsCreditNote(false);
-        invoice.setIsProviderCreditNote(false);
-
-        InvoiceStatus statusSent = constantService.getInvoiceStatusSend();
-
-        invoice.setInvoiceStatus(statusSent);
-        return this.addOrUpdateInvoice(invoice);
     }
 
     @Override
@@ -404,153 +498,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         List<Invoice> invoices = getAllInvoices();
         if (invoices != null)
             for (Invoice invoice : invoices)
-                indexEntityService.indexEntity(invoice, invoice.getId());
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        if (!hasAtLeastOneInvoiceItemNotNull(invoice))
-            throw new OsirisException(null, "No invoice item found on manual invoice");
-
-        IVat vatTiers = null;
-        if (invoice.getTiers() != null)
-            vatTiers = invoice.getTiers();
-        if (invoice.getResponsable() != null)
-            vatTiers = invoice.getResponsable().getTiers();
-        if (invoice.getProvider() != null)
-            vatTiers = invoice.getProvider();
-        if (invoice.getConfrere() != null)
-            vatTiers = invoice.getConfrere();
-        if (invoice.getCompetentAuthority() != null)
-            vatTiers = invoice.getCompetentAuthority();
-
-        if (vatTiers == null)
-            throw new OsirisValidationException("vatTiers");
-
-        if (invoice.getId() != null)
-            throw new OsirisClientMessageException("Impossible d'éditer une facture émise.");
-
-        ITiers masterOrderingCustomer = null;
-        Integer nbrOfDayFromDueDate = 30;
-
-        if (invoice.getResponsable() != null)
-            masterOrderingCustomer = invoice.getResponsable().getTiers();
-        if (invoice.getConfrere() != null)
-            masterOrderingCustomer = invoice.getConfrere();
-        if (invoice.getTiers() != null)
-            masterOrderingCustomer = invoice.getTiers();
-
-        if (masterOrderingCustomer != null) {
-            Document dunningDocument = documentService.getDocumentByDocumentType(
-                    masterOrderingCustomer.getDocuments(),
-                    constantService.getDocumentTypeDunning());
-
-            if (dunningDocument.getPaymentDeadlineType() != null)
-                nbrOfDayFromDueDate = dunningDocument.getPaymentDeadlineType().getNumberOfDay();
-        }
-
-        if (invoice.getDueDate() == null)
-            invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
-
-        invoice.setCreatedDate(LocalDateTime.now());
-
-        // TODO : if customerOrder, grab provider invoices and autogenerate invoice item
-        // reinvoiced
-        if (invoice.getInvoiceItems() != null && invoice.getInvoiceItems().size() > 0)
-            for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-                Vat invoiceItemVat = invoiceItem.getVat();
-
-                if (invoiceItemVat == null || invoiceItemVat.getRate() > 0) {
-                    Vat salesVat = null;
-                    Vat purschaseVat = null;
-                    if (invoice.getCustomerOrder() != null)
-                        salesVat = vatService.getGeographicalApplicableVatForSales(invoice.getCustomerOrder(),
-                                invoiceItemVat);
-                    if (invoice.getCustomerOrderForInboundInvoice() != null)
-                        salesVat = vatService.getGeographicalApplicableVatForSales(
-                                invoice.getCustomerOrderForInboundInvoice(), invoiceItemVat);
-                    if (invoice.getIsInvoiceFromProvider() || invoice.getIsProviderCreditNote())
-                        purschaseVat = vatService.getGeographicalApplicableVatForPurshases(vatTiers, invoiceItemVat);
-
-                    if (invoiceItemVat == null) {
-                        if (salesVat != null)
-                            invoiceItemVat = salesVat;
-                        else if (purschaseVat != null)
-                            invoiceItemVat = purschaseVat;
-                        else
-                            invoiceItemVat = invoice.getIsInvoiceFromProvider() ? constantService.getVatDeductible()
-                                    : constantService.getVatTwenty();
-                    }
-
-                    if (salesVat != null && salesVat.getRate() < invoiceItemVat.getRate())
-                        invoiceItemVat = salesVat;
-
-                    if (purschaseVat != null && purschaseVat.getRate() < invoiceItemVat.getRate())
-                        invoiceItemVat = purschaseVat;
-                }
-
-                invoiceItem.setVat(invoiceItemVat);
-
-                if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable() || invoiceItemVat == null
-                        || invoiceItemVat.getRate() == 0)
-                    invoiceItem.setVatPrice(0f);
-                else
-                    invoiceItem.setVatPrice(invoiceItem.getVat().getRate() * invoiceItem.getPreTaxPrice() / 100f);
-            }
-
-        // Defined billing label
-        if (!invoice.getIsInvoiceFromProvider() && !invoice.getIsProviderCreditNote()
-                && !constantService.getBillingLabelTypeOther().getId().equals(invoice.getBillingLabelType().getId())) {
-
-            ITiers customerOrder = invoice.getTiers();
-            if (invoice.getResponsable() != null)
-                customerOrder = invoice.getResponsable();
-            if (invoice.getConfrere() != null)
-                customerOrder = invoice.getConfrere();
-            Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
-
-            invoiceHelper.setInvoiceLabel(invoice, billingDocument, null, customerOrder);
-        }
-
-        if (invoice.getIsInvoiceFromProvider())
-            invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
-        else if (invoice.getIsProviderCreditNote())
-            invoice.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
-        else
-            invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
-
-        // Save before to have an ID on invoice
-        addOrUpdateInvoice(invoice);
-
-        // Associate invoice to invoice item
-        for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-            invoiceItem.setInvoice(invoice);
-        }
-
-        invoiceHelper.setPriceTotal(invoice);
-
-        if (invoice.getIsInvoiceFromProvider())
-            accountingRecordService.generateAccountingRecordsOnInvoiceReception(invoice);
-        else if (invoice.getIsProviderCreditNote())
-            accountingRecordService.generateAccountingRecordsOnCreditNoteReception(invoice);
-        else
-            accountingRecordService.generateAccountingRecordsOnInvoiceEmission(invoice);
-
-        // Generate bank transfert if invoice from Provider
-        if (invoice.getIsInvoiceFromProvider()) {
-            if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())) {
-                invoice.setBankTransfert(bankTransfertService.generateBankTransfertForManualInvoice(invoice));
-            }
-            if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId())) {
-                paymentService.generateNewAccountPayment(invoice.getTotalPrice(),
-                        vatTiers.getAccountingAccountProvider());
-            }
-        }
-
-        addOrUpdateInvoice(invoice);
-        return invoice;
+                indexEntityService.indexEntity(invoice);
     }
 
     private boolean hasAtLeastOneInvoiceItemNotNull(Invoice invoice) {
@@ -569,7 +517,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
                 for (Payment payment : invoice.getPayments())
-                    total -= Math.abs(payment.getPaymentAmount());
+                    if (!payment.getIsCancelled())
+                        total -= Math.abs(payment.getPaymentAmount());
 
             return Math.round(total * 100f) / 100f;
         }
@@ -635,7 +584,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         toSend = true;
                         invoice.setFirstReminderDateTime(LocalDateTime.now());
 
-                        ITiers customerOrderToSetProvision = invoiceHelper.getCustomerOrder(invoice);
+                        IGenericTiers customerOrderToSetProvision = invoiceHelper.getCustomerOrder(invoice);
                         if (customerOrderToSetProvision instanceof Tiers)
                             notificationService.notifyTiersDepositMandatory((Tiers) customerOrderToSetProvision, null,
                                     invoice);
@@ -662,5 +611,19 @@ public class InvoiceServiceImpl implements InvoiceService {
                     }
                 }
             }
+    }
+
+    @Override
+    public List<Invoice> findByCompetentAuthorityAndManualDocumentNumber(CompetentAuthority competentAuthority,
+            String manualDocumentNumber) {
+        return invoiceRepository.findByCompetentAuthorityAndManualAccountingDocumentNumber(competentAuthority,
+                manualDocumentNumber);
+    }
+
+    @Override
+    public List<Invoice> findByCompetentAuthorityAndManualDocumentNumberContains(CompetentAuthority competentAuthority,
+            String manualDocumentNumber) {
+        return invoiceRepository.findByCompetentAuthorityAndManualAccountingDocumentNumberContainingIgnoreCase(
+                competentAuthority, manualDocumentNumber);
     }
 }

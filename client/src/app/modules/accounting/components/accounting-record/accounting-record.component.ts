@@ -16,7 +16,6 @@ import { AccountingRecordSearch } from '../../model/AccountingRecordSearch';
 import { AccountingRecordSearchResult } from '../../model/AccountingRecordSearchResult';
 import { AccountingRecordSearchResultService } from '../../services/accounting.record.search.result.service';
 import { AccountingRecordService } from '../../services/accounting.record.service';
-import { DeleteAccountingRecordDialogComponent } from '../delete-accounting-record-dialog/delete-accounting-record-dialog.component';
 
 @Component({
   selector: 'accounting-record',
@@ -74,29 +73,6 @@ export class AccountingRecordComponent implements OnInit {
     this.displayedColumns.push({ id: "balance", fieldName: "balance", label: "Solde", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "payment", fieldName: "paymentId", label: "Paiement", actionIcon: "visibility", actionTooltip: "Voir le paiement associé" } as SortTableColumn);
     this.displayedColumns.push({ id: "deposit", fieldName: "depositId", label: "Acompte", actionIcon: "visibility", actionTooltip: "Voir l'acompte associé" } as SortTableColumn);
-
-    if (this.tiersToDisplay == undefined) {
-      this.accountingRecordSearch.startDate = new Date();
-      this.accountingRecordSearch.endDate = new Date();
-      this.tableAction.push({
-        actionIcon: "block", actionName: "Supprimer / contre-passer l'opération", actionClick: (action: SortTableAction, element: AccountingRecordSearchResult) => {
-          if (element) {
-            let dialogRef = this.deleteAccountingRecordDialog.open(DeleteAccountingRecordDialogComponent, {
-              width: '100%'
-            });
-            if (element.isTemporary && element.temporaryOperationId)
-              dialogRef.componentInstance.temporaryOperationId = element.temporaryOperationId;
-            else if (!element.isTemporary && element.operationId)
-              dialogRef.componentInstance.operationId = element.operationId;
-            dialogRef.afterClosed().subscribe(response => {
-              this.searchRecords();
-            })
-          }
-
-          return undefined;
-        }, display: true,
-      } as SortTableAction);
-    }
 
     if (this.tiersToDisplay && this.tiersToDisplay.id) {
       if (instanceOfConfrere(this.tiersToDisplay))

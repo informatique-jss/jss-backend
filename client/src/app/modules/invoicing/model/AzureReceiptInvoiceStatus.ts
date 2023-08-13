@@ -7,6 +7,5 @@ export interface AzureReceiptInvoiceStatus {
   azureInvoices: AzureInvoice[];
   azureInvoicesStatus: boolean;
   paymentStatus: boolean;
-  debourStatus: boolean;
   customerInvoicedStatus: boolean;
 }

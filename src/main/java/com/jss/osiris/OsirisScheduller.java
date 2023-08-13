@@ -229,6 +229,15 @@ public class OsirisScheduller {
 		}
 	}
 
+	@Scheduled(cron = "${schedulling.payment.automatch}")
+	private void automatchPayments() {
+		try {
+			paymentService.paymentGrab();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
+		}
+	}
+
 	@Scheduled(cron = "${schedulling.competant.authorities.update}")
 	private void updateCompetentAuthorities() {
 		try {

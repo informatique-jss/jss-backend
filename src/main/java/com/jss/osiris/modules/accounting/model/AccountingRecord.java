@@ -24,6 +24,7 @@ import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
 @Entity
@@ -91,6 +92,12 @@ public class AccountingRecord implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "accountingRecords", "tiers", "confrere", "affaire", "payment", "customerOrder",
 			"deposit" }, allowSetters = true)
 	private Refund refund;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_bank_transfert")
+	@JsonIgnoreProperties(value = { "accountingRecords", "tiers", "confrere", "affaire", "payment", "customerOrder",
+			"deposit" }, allowSetters = true)
+	private BankTransfert bankTransfert;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_journal")
@@ -309,6 +316,14 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setRefund(Refund refund) {
 		this.refund = refund;
+	}
+
+	public BankTransfert getBankTransfert() {
+		return bankTransfert;
+	}
+
+	public void setBankTransfert(BankTransfert bankTransfert) {
+		this.bankTransfert = bankTransfert;
 	}
 
 }

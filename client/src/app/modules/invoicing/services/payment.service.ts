@@ -4,6 +4,7 @@ import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { CustomerOrder } from '../../quotation/model/CustomerOrder';
 import { Invoice } from '../../quotation/model/Invoice';
+import { Provision } from '../../quotation/model/Provision';
 import { Payment } from '../model/Payment';
 import { PaymentAssociate } from '../model/PaymentAssociate';
 
@@ -41,6 +42,10 @@ export class PaymentService extends AppRestService<Payment>{
 
   addCheckPayment(payment: Payment) {
     return this.postItem(new HttpParams(), "payment/check/add", payment);
+  }
+
+  addProvisionPayment(payment: Payment, provision: Provision) {
+    return this.postItem(new HttpParams().set("idProvision", provision.id), "payment/provision/add", payment);
   }
 
   refundPayment(payment: Payment, tiers: IndexEntity, affaire: IndexEntity) {

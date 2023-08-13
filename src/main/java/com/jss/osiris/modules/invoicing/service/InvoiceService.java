@@ -10,7 +10,6 @@ import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.tiers.model.ITiers;
 
 public interface InvoiceService {
         public List<Invoice> getAllInvoices();
@@ -25,22 +24,6 @@ public interface InvoiceService {
 
         public Invoice addOrUpdateInvoice(Invoice invoice);
 
-        /**
-         * Generate an invoice for a ording order
-         * Warning ! This method DOES NOT associate invoice items and DOES NOT compute
-         * total price of the invoice (do it with setPriceTotal of same service)
-         * Do not forget to do it afterward
-         * 
-         * @param orderingCustomer Ordering customer of the invoice
-         * @param affaire          : affaire of the invoice, defined it only if there is
-         *                         only one affaire in the invoice (it's to define
-         *                         payer)
-         * @throws OsirisException
-         * @throws OsirisClientMessageException
-         */
-        public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer)
-                        throws OsirisException, OsirisClientMessageException;
-
         public List<InvoiceSearchResult> getInvoiceForCustomerOrder(Integer customerOrderId) throws OsirisException;
 
         public List<InvoiceSearchResult> searchInvoices(InvoiceSearch invoiceSearch) throws OsirisException;
@@ -48,9 +31,6 @@ public interface InvoiceService {
         public void reindexInvoices();
 
         public Invoice addOrUpdateInvoiceFromUser(Invoice invoice)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
-
-        public Invoice cancelInvoiceEmitted(Invoice invoice, CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void sendRemindersForInvoices()
@@ -63,7 +43,7 @@ public interface InvoiceService {
 
         public CustomerOrder getCustomerOrderByIdInvoice(Integer idInvoice);
 
-        public Invoice generateInvoiceCreditNote(Invoice newInvoice, Integer idOriginInvoiceForCreditNote)
+        public Invoice generateProviderInvoiceCreditNote(Invoice newInvoice, Integer idOriginInvoiceForCreditNote)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public Invoice searchInvoicesByIdDirectDebitTransfert(Integer idToFind);
