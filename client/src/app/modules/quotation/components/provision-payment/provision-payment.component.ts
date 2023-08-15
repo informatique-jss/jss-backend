@@ -56,7 +56,7 @@ export class ProvisionPaymentComponent implements OnInit {
     this.invoiceDisplayedColumns.push({ id: "manualAccountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N°" } as SortTableColumn);
     this.invoiceDisplayedColumns.push({ id: "invoiceDate", fieldName: "createdDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.invoiceDisplayedColumns.push({ id: "invoiceAmount", fieldName: "totalPrice", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.invoiceDisplayedColumns.push({ id: "invoiceStatus", fieldName: "invoiceStatus.label", label: "Statut", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.invoiceDisplayedColumns.push({ id: "invoiceStatus", fieldName: "invoiceStatus.label", label: "Statut" } as SortTableColumn);
     this.invoiceDisplayedColumns.push({ id: "confrere", fieldName: "confrere.label", label: "Confrere" } as SortTableColumn);
     this.invoiceDisplayedColumns.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
     this.invoiceDisplayedColumns.push({ id: "provider", fieldName: "provider.label", label: "Fournisseur" } as SortTableColumn);
@@ -93,6 +93,24 @@ export class ProvisionPaymentComponent implements OnInit {
           width: '100%'
         });
         dialogPaymentDialogRef.componentInstance.payment = element;
+
+        // Try to match with current invoices
+        let nbr = 0;
+        let invoiceFound = undefined;
+        if (this.provision && this.provision.providerInvoices)
+          for (let invoice of this.provision.providerInvoices)
+            if (invoice.invoiceStatus.id == this.constantService.getInvoiceStatusReceived().id)
+              if (Math.round(invoice.totalPrice) == Math.round(Math.abs(elementIn.paymentAmount))) {
+                nbr++;
+                invoiceFound = invoice;
+              }
+
+        if (nbr == 1) {
+          dialogPaymentDialogRef.componentInstance.invoice = invoiceFound;
+        } else {
+          dialogPaymentDialogRef.componentInstance.doNotInitializeAsso = true;
+        }
+
         dialogPaymentDialogRef.afterClosed().subscribe(response => {
           this.appService.openRoute(null, '/order/' + this.quotation!.id, null);
         });
@@ -117,10 +135,19 @@ export class ProvisionPaymentComponent implements OnInit {
     return this.habilitationsService.canAddNewInvoice();
   }
 
+  canAddNewAzureInvoice() {
+    return this.habilitationsService.canAddNewAzureInvoice();
+  }
+
   addNewPayment() {
     if (this.newPayment && this.provisionPaymentForm.valid && this.provision && this.quotation)
       this.paymentService.addProvisionPayment(this.newPayment, this.provision).subscribe(payment => {
         this.appService.openRoute(null, '/order/' + this.quotation!.id, null);
       })
+  }
+
+  createNewInvoice(event: any) {
+    if (this.provision)
+      this.appService.openRoute(event, '/invoicing/add/null/' + this.provision.id + '/' + this.quotation!.id, null);
   }
 }

@@ -178,7 +178,15 @@ export class AssociatePaymentDialogComponent implements OnInit {
         return;
       }
       if (!this.isPaymentWayInbound(this.payment) && invoice.invoiceStatus.id != this.invoiceStatusReceived.id) {
-        this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusSend.label, true, 15);
+        this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusReceived.label, true, 15);
+        return;
+      }
+      if (!this.isPaymentWayInbound(this.payment) && this.payment && Math.round(invoice.totalPrice * 100) != Math.round(this.payment.paymentAmount)) {
+        this.appService.displaySnackBar("Veuillez choisir une facture avec un total de " + this.payment.paymentAmount + " €", true, 15);
+        return;
+      }
+      if (!this.isPaymentWayInbound(this.payment) && this.payment && invoice.manualPaymentType.id != this.payment.paymentType.id) {
+        this.appService.displaySnackBar("Le type de réglement de la facture et le type de paiement doivent être identiques", true, 15);
         return;
       }
       if (!this.isSameCustomerOrder(getCustomerOrderForInvoice(invoice))) {
@@ -329,7 +337,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
     }
     if (this.customerOrder && this.payment) {
       let remainingToPay = Math.round((QuotationComponent.computePriceTotal(this.customerOrder) - QuotationComponent.computePayed(this.customerOrder)) * 100) / 100;
-      amount = remainingToPay - Math.round(this.payment.paymentAmount * 100) / 100;
+      amount = Math.round(remainingToPay * 100) / 100 - Math.round(this.payment.paymentAmount * 100) / 100;
     }
     return amount;
   }
@@ -350,7 +358,10 @@ export class AssociatePaymentDialogComponent implements OnInit {
     let total = 0;
     if (element) {
       if (element.invoice)
-        total = Math.round(element.invoice.totalPrice * 100) / 100;
+        if (element.invoice.isInvoiceFromProvider)
+          total = -Math.round(element.invoice.totalPrice * 100) / 100;
+        else
+          total = Math.round(element.invoice.totalPrice * 100) / 100;
       if (element.customerOrder)
         total = QuotationComponent.computePriceTotal(element.customerOrder);
     }

@@ -24,12 +24,12 @@
       </tr>
     </table>
   </div>
-  <div *ngIf="amountToPayCompletely()>=0" class="top">
+  <div *ngIf="amountToPayCompletely()==0" class="top">
     <div>
       <p>Validez-vous l'association présentée ci-dessus ?</p>
     </div>
   </div>
-  <div mat-dialog-actions align="end" *ngIf="amountToPayCompletely()>=0">
+  <div mat-dialog-actions align="end">
     <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
     <button mat-raised-button color="warn" (click)="onConfirm()">Ok</button>
   </div>
@@ -114,10 +114,10 @@
       </mat-step>
     </mat-vertical-stepper>
   </div>
-  <div class="big-chip" *ngIf="amountToPayCompletely()<0 && !isPaymentWayInbound(payment)">
+  <div class="big-chip" *ngIf="amountToPayCompletely()>0 && !isPaymentWayInbound(payment)">
     <chips-status [value]="'Solde '+amountRemaining()+' €'"></chips-status>
   </div>
-  <div *ngIf="amountToPayCompletely()<0 && !isPaymentWayInbound(payment)">
+  <div *ngIf="amountToPayCompletely()>0 && !isPaymentWayInbound(payment)">
     <mat-vertical-stepper [linear]="false" #stepper animationDuration="500">
       <mat-step *ngIf="invoice">
         <ng-template matStepLabel>Validation de l'association</ng-template>

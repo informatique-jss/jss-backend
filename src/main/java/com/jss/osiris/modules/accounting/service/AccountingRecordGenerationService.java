@@ -6,7 +6,6 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
-import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
 public interface AccountingRecordGenerationService {
@@ -49,6 +48,4 @@ public interface AccountingRecordGenerationService {
         public void generateAccountingRecordsForRefundExport(Refund refund)
                         throws OsirisException, OsirisValidationException;
 
-        public void generateAccountingRecordsForBankTransfertExport(BankTransfert bankTransfert)
-                        throws OsirisException, OsirisValidationException;
 }

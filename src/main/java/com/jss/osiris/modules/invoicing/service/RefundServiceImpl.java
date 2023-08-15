@@ -169,7 +169,7 @@ public class RefundServiceImpl implements RefundService {
         if (customerOrder != null)
             paymentType = "de la commande N " + customerOrder.getId();
         else {
-            if (payment.getIsAppoint())
+            if (payment.getIsAppoint() != null && payment.getIsAppoint())
                 paymentType = "de l'appoint N " + payment.getId();
             else
                 paymentType = "du paiement N " + payment.getId();
@@ -188,8 +188,9 @@ public class RefundServiceImpl implements RefundService {
         refund.setRefundDateTime(LocalDateTime.now());
         this.addOrUpdateRefund(refund);
 
-        Payment refundPayment = paymentService.generateNewRefundPayment(refund, -amount, tiersRefund, payment);
-        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(refundPayment);
+        paymentService.generateNewRefundPayment(refund, -amount, tiersRefund, payment);
+        if (customerOrder == null) // If it's a payment / appoint refund
+            paymentService.cancelAppoint(payment);
 
         return this.addOrUpdateRefund(refund);
     }

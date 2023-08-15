@@ -388,7 +388,8 @@ public class PricingHelper {
             // Reinvoiced provider invoices
             if (provision.getProviderInvoices() != null) {
                 for (Invoice invoice : provision.getProviderInvoices()) {
-                    if (!idInvoiceAlreadyDone.contains(invoice.getId()) && invoice.getInvoiceItems() != null) {
+                    if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusCancelled().getId())
+                            && !idInvoiceAlreadyDone.contains(invoice.getId()) && invoice.getInvoiceItems() != null) {
                         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
                             InvoiceItem newInvoiceItem = invoiceItemService.cloneInvoiceItem(invoiceItem);
                             newInvoiceItem.setProvision(provision);

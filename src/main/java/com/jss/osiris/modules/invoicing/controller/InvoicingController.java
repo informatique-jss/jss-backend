@@ -361,7 +361,7 @@ public class InvoicingController {
 
     @PostMapping(inputEntryPoint + "/transfert/export")
     public ResponseEntity<byte[]> downloadTransferts(@RequestBody BankTransfertSearch transfertSearch)
-            throws OsirisValidationException, OsirisException {
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         byte[] data = null;
         HttpHeaders headers = null;
 
@@ -695,7 +695,7 @@ public class InvoicingController {
         validationHelper.validateReferential(provisonPayment.getPaymentType(), true, "provisionType");
 
         if (!provisonPayment.getPaymentType().getId().equals(constantService.getPaymentTypeCheques().getId())
-                && provisonPayment.getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId()))
+                && !provisonPayment.getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId()))
             throw new OsirisClientMessageException("Type de paiement non autorisé");
 
         provisonPayment.setPaymentAmount(-Math.abs(provisonPayment.getPaymentAmount()));

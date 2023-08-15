@@ -28,7 +28,7 @@ public interface BankTransfertService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public File getBankTransfertExport(BankTransfertSearch transfertSearch)
-                        throws OsirisException, OsirisValidationException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public BankTransfert cancelBankTransfert(BankTransfert bankTransfert);
 

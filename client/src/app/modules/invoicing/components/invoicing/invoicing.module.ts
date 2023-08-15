@@ -33,6 +33,7 @@ import { InvoiceComponent } from "./invoicing.component";
 const routes: Routes = [
   { path: 'invoicing', component: InvoiceComponent },
   { path: 'invoicing/view/:id', component: InvoiceDetailsComponent },
+  { path: 'invoicing/add/:id/:idProvision/:idCustomerOrder', component: AddInvoiceComponent },
   { path: 'invoicing/add/:id', component: AddInvoiceComponent },
   { path: 'invoicing/add/azure/:id/:idProvision', component: AddInvoiceComponent },
   { path: 'invoicing/credit-note/:idInvoice', component: AddInvoiceComponent },

@@ -7,6 +7,8 @@ import { ITiers } from "../../tiers/model/ITiers";
 import { Tiers } from "../../tiers/model/Tiers";
 
 export function getRemainingToPay(invoice: Invoice) {
+  if (invoice.isInvoiceFromProvider)
+    return Math.round((invoice.totalPrice - (-getAmountPayed(invoice))) * 100) / 100;
   return Math.round((invoice.totalPrice - getAmountPayed(invoice)) * 100) / 100;
 }
 

@@ -62,7 +62,8 @@ public class BankTransfert implements Serializable, IId {
 	private Boolean isMatched;
 
 	@OneToMany(mappedBy = "bankTransfert", fetch = FetchType.LAZY)
-	@JsonIgnoreProperties(value = { "bankTransfert" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "bankTransfert", "accountingRecords", "invoice",
+			"customerOrder" }, allowSetters = true)
 	private List<Payment> payments;
 
 	public Integer getId() {

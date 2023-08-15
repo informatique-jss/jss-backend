@@ -25,6 +25,11 @@
       <provision-options [editMode]="editMode" [provision]="provision" (provisionChange)="provisionChangeFunction()">
       </provision-options>
     </mat-tab>
+    <mat-tab label="Paiements & factures"
+      *ngIf="simpleProvision.id && provision && quotation &&  instanceOfCustomerOrderFn(quotation)">
+      <provision-payment [editMode]="editMode" [provision]="provision" [quotation]="quotation">
+      </provision-payment>
+    </mat-tab>
     <mat-tab label="Documents" *ngIf="simpleProvision.id && provision ">
       <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
       </attachments>

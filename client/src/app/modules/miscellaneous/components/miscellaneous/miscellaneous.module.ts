@@ -222,6 +222,7 @@ import { SelectProvisionFamilyComponent } from '../forms/select-provision-family
 import { SelectProvisionScreenTypeComponent } from '../forms/select-provision-screen-type/select-provision-screen-type.component';
 import { SelectProvisionStautsComponent } from '../forms/select-provision-stauts/select-provision-stauts.component';
 import { SelectProvisionTypeComponent } from '../forms/select-provision-type/select-provision-type.component';
+import { SelectProvisionComponent } from '../forms/select-provision/select-provision.component';
 import { SelectQuotationStatusComponent } from '../forms/select-quotation-status/select-quotation-status.component';
 import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-refund-type.component';
 import { SelectRegionsComponent } from '../forms/select-regions/select-regions.component';
@@ -395,6 +396,7 @@ const routes: Routes = [
     ChipsPaymentTypeComponent,
     AutocompleteAzureInvoiceComponent,
     SelectCustomerOrderOriginComponent,
+    SelectProvisionComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     ChipsTypeDocumentComponent,
@@ -604,6 +606,7 @@ const routes: Routes = [
     SelectReportingDatasetComponent,
     ChipsPaymentTypeComponent,
     AutocompleteAzureInvoiceComponent,
+    SelectProvisionComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     RadioGroupMotifRejetCmaComponent,

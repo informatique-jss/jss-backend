@@ -51,7 +51,8 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice")
-	@JsonIgnoreProperties(value = { "payments", "accountingRecords" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "payments", "accountingRecords",
+			"customerOrderForInboundInvoice" }, allowSetters = true)
 	private Invoice invoice;
 
 	@ManyToOne(fetch = FetchType.LAZY)

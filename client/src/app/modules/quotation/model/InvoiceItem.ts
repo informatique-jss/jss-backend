@@ -8,6 +8,7 @@ export interface InvoiceItem {
   label: string;
   billingItem: BillingItem;
   preTaxPrice: number;
+  preTaxPriceReinvoiced: number;
   vatPrice: number;
   vat: Vat;
   discountAmount: number;

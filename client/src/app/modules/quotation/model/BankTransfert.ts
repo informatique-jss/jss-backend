@@ -7,5 +7,6 @@ export interface BankTransfert {
   transfertIban: string;
   transfertBic: string;
   isAlreadyExported: boolean;
+  isSelectedForExport: boolean;
   invoices: Invoice[];
 }

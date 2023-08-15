@@ -229,7 +229,8 @@
                 {{invoiceItem.label}}
               </td>
               <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-                {{invoiceItem.preTaxPrice|number}} €
+                {{invoiceItem.preTaxPrice|number}} € <span *ngIf="invoice.isInvoiceFromProvider">(refacturé :
+                  {{invoiceItem.preTaxPriceReinvoiced}} €)</span>
               </td>
             </tr>
             <tr class="mat-mdc-row mdc-data-table__row "
@@ -348,11 +349,13 @@
 <button
   *ngIf="canCancelInvoice() && canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code
   || invoice.invoiceStatus.code==invoiceStatusSend.code
-  || !invoice.isCreditNote && !invoice.isProviderCreditNote &&  invoice.invoiceStatus.code == invoiceStatusPayed.code) && !invoice.customerOrder"
+  || invoice.invoiceStatus.code==invoiceStatusCreditNoteReceived.code
+  || !invoice.isCreditNote && !invoice.isProviderCreditNote && !invoice.isInvoiceFromProvider &&   invoice.invoiceStatus.code == invoiceStatusPayed.code) && !invoice.customerOrder"
   matTooltip="Annuler la facture" mat-fab color="accent" class="second-fab-button" (click)="cancelInvoice($event)">
   <mat-icon>close</mat-icon>
 </button>
-<button *ngIf="canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code )"
+<button
+  *ngIf="canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code || invoice.isInvoiceFromProvider && invoice.invoiceStatus.code==invoiceStatusPayed.code )"
   matTooltip="Saisir un avoir" mat-fab color="accent" class="third-fab-button" (click)="addCreditNote($event)">
   <mat-icon>payments</mat-icon>
 </button>

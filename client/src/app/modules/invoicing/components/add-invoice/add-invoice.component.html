@@ -128,6 +128,11 @@
               propertyName="indexedCustomerOrder" [isMandatory]="false" label="Numéro de commande Osiris"
               (onOptionSelected)="fillCustomerOrder($event)"></autocomplete-customer-order>
           </td>
+          <td *ngIf="invoice.customerOrderForInboundInvoice">
+            <select-provision [(model)]="invoice.provision" [form]="invoiceForm" propertyName="provision"
+              [isMandatory]="false" label="Prestation" [isMandatory]="true"
+              [types]="getProvisionForCustomerOrder()"></select-provision>
+          </td>
         </tr>
       </table>
       <table class="full-width">
@@ -202,6 +207,11 @@
         <td>
           <generic-input [(model)]="invoiceItem.preTaxPrice" label="Prix HT" [form]="invoiceForm"
             propertyName="preTaxPrice" [isMandatory]="true" [isDisabled]="!editMode || invoice.id!=undefined"
+            type="number" (onFormChange)="fillPreTaxPricedReinvoiced(invoiceItem,invoice)"></generic-input>
+        </td>
+        <td *ngIf="invoice.isInvoiceFromProvider">
+          <generic-input [(model)]="invoiceItem.preTaxPriceReinvoiced" label="Prix HT refacturé" [form]="invoiceForm"
+            propertyName="preTaxPriceReinvoiced" [isMandatory]="true" [isDisabled]="!editMode || invoice.id!=undefined"
             type="number"></generic-input>
         </td>
         <td>

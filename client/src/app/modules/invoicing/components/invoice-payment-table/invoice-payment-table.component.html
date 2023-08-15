@@ -12,7 +12,8 @@
             (click)="movePayment(payment)">déplacer</span>) - {{payment.label}}
         </td>
         <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-          {{payment.isAppoint ? -payment.paymentAmount : payment.paymentAmount}} €
+          {{payment.isAppoint ? -payment.paymentAmount : payment.paymentAmount}} € <span class="pointer"
+            *ngIf="payment.isAppoint && payment.paymentAmount>0" (click)="refundAppoint(payment)">(rembourser)</span>
         </td>
       </ng-container>
     </tr>

@@ -209,54 +209,6 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         }
     }
 
-    private void checkBankTransfertForLettrage(BankTransfert bankTransfert) throws OsirisException {
-        bankTransfert = bankTransfertService.getBankTransfert(bankTransfert.getId());
-
-        if (bankTransfert.getInvoices() == null || bankTransfert.getInvoices().size() != 1)
-            throw new OsirisException(null, "Impossible to find invoice of bank transfert " + bankTransfert.getId());
-
-        IGenericTiers tiers = invoiceHelper.getCustomerOrder(bankTransfert.getInvoices().get(0));
-
-        AccountingAccount account = tiers.getAccountingAccountProvider();
-
-        if (account == null)
-            throw new OsirisException(null, "Accounting account not found for refund");
-
-        List<AccountingRecord> accountingRecords = accountingRecordService
-                .findByAccountingAccountAndBankTransfert(account, bankTransfert);
-
-        Float balance = 0f;
-
-        if (accountingRecords != null && accountingRecords.size() > 0) {
-            for (AccountingRecord accountingRecord : accountingRecords) {
-                if (accountingRecord.getDebitAmount() != null)
-                    balance += accountingRecord.getDebitAmount();
-                if (accountingRecord.getCreditAmount() != null)
-                    balance -= accountingRecord.getCreditAmount();
-            }
-
-            if (Math.round(Math.abs(balance) * 100f) / 100f <= 0.01) {
-
-                Integer maxLetteringNumber = accountingRecordService
-                        .findMaxLetteringNumberForMinLetteringDateTime(
-                                LocalDateTime.now().with(ChronoField.DAY_OF_YEAR, 1)
-                                        .with(ChronoField.HOUR_OF_DAY, 0)
-                                        .with(ChronoField.MINUTE_OF_DAY, 0).with(ChronoField.SECOND_OF_DAY, 0));
-
-                if (maxLetteringNumber == null)
-                    maxLetteringNumber = 0;
-                maxLetteringNumber++;
-
-                for (AccountingRecord accountingRecord : accountingRecords) {
-                    accountingRecord.setLetteringDateTime(LocalDateTime.now());
-                    accountingRecord.setLetteringNumber(maxLetteringNumber);
-                    this.accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
-                }
-
-            }
-        }
-    }
-
     private boolean letterInvoice(Invoice invoice) throws OsirisException {
         AccountingAccount accountingAccount;
         invoice = invoiceService.getInvoice(invoice.getId());
@@ -632,9 +584,13 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         if (invoice == null)
             throw new OsirisException(null, "No invoice provided");
 
-        String labelPrefix = invoice.getCustomerOrder() != null
-                ? ("Annulation - Commande n°" + invoice.getCustomerOrder().getId())
-                : ("Annulation - Facture libre n°" + invoice.getId());
+        String labelPrefix = "";
+        if (invoice.getCustomerOrder() != null)
+            labelPrefix = "Annulation - Commande n°" + invoice.getCustomerOrder().getId();
+        else if (invoice.getIsProviderCreditNote())
+            labelPrefix = "Annulation - Avoir n°" + invoice.getId();
+        else
+            labelPrefix = "Annulation - Facture libre n°" + invoice.getId();
 
         Float balance = 0f;
         Integer operationId = getNewTemporaryOperationId();
@@ -691,12 +647,17 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     @Override
     public void generateAccountingRecordOnOutgoingPaymentCreation(Payment payment)
             throws OsirisException, OsirisValidationException {
-        AccountingJournal bankJournal = constantService.getAccountingJournalBank();
+        AccountingJournal bankJournal = payment.getPaymentType().getId()
+                .equals(constantService.getPaymentTypeEspeces().getId()) ? constantService.getAccountingJournalCash()
+                        : constantService.getAccountingJournalBank();
 
-        // If target is waiting account (case of refund after cancellation of payment),
+        // If target is waiting account and source not bank (case of refund after
+        // cancellation of payment),
         // put it on OD journal
         if (payment.getTargetAccountingAccount().getId()
-                .equals(accountingAccountService.getWaitingAccountingAccount().getId()))
+                .equals(accountingAccountService.getWaitingAccountingAccount().getId())
+                && !payment.getSourceAccountingAccount().getId()
+                        .equals(constantService.getAccountingJournalBank().getId()))
             bankJournal = constantService.getAccountingJournalMiscellaneousOperations();
 
         if (payment.getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId()))
@@ -736,6 +697,16 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
         if (payment.getAccountingRecords() == null || payment.getAccountingRecords().size() == 0)
             throw new OsirisException(null, "No accounting record for payment n°" + payment.getId());
+
+        if (payment.getInvoice() != null && payment.getInvoice().getInvoiceStatus().getId()
+                .equals(constantService.getInvoiceStatusPayed().getId())) {
+            if (payment.getInvoice().getIsInvoiceFromProvider())
+                unletterInvoiceReceived(payment.getInvoice());
+            if (!payment.getInvoice().getIsInvoiceFromProvider() && !payment.getInvoice().getIsCreditNote())
+                unletterInvoiceEmitted(payment.getInvoice());
+            if (!payment.getInvoice().getIsProviderCreditNote())
+                unletterInvoiceEmitted(payment.getInvoice());
+        }
 
         Integer operationId = getNewTemporaryOperationId();
         Float balance = 0f;
@@ -879,13 +850,13 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
                 "Paiement n°" + payment.getId() + " - Remboursement de la facture n°" + invoice.getId() + " - "
                         + payment.getLabel(),
-                null, payment.getPaymentAmount(),
-                payment.getTargetAccountingAccount(), null, null, null, journal, payment, null, null));
+                payment.getPaymentAmount(), null,
+                payment.getTargetAccountingAccount(), null, invoice, null, journal, payment, null, null));
 
         // One write on provider account to equilibrate
         payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
                 "Paiement n°" + payment.getId() + " - Remboursement de la facture n°" + invoice.getId(),
-                payment.getPaymentAmount(), null,
+                null, payment.getPaymentAmount(),
                 payment.getSourceAccountingAccount(), null, invoice, null, journal, payment, null, null));
 
         checkInvoiceForLettrage(invoice);
@@ -919,13 +890,13 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 "Paiement n°" + payment.getId() + " - Paiement pour la facture n°" + invoice.getId()
                         + " - "
                         + payment.getLabel(),
-                payment.getPaymentAmount(), null,
+                null, -payment.getPaymentAmount(),
                 payment.getSourceAccountingAccount(), null, invoice, null, journal, payment, null, null));
 
         // One write on customer order deposit account to equilibrate
         payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
-                "Paiement n°" + payment.getId() + " - Paiement pour la facture n°" + invoice.getId(), null,
-                payment.getPaymentAmount(),
+                "Paiement n°" + payment.getId() + " - Paiement pour la facture n°" + invoice.getId(),
+                -payment.getPaymentAmount(), null,
                 payment.getTargetAccountingAccount(), null, invoice, null, journal, payment, null, null));
 
         checkInvoiceForLettrage(invoice);
@@ -1012,45 +983,16 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
         generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
                 "Paiement n°" + payment.getId() + " - " + payment.getLabel(),
-                null, Math.abs(payment.getPaymentAmount()), payment.getSourceAccountingAccount(), null, null,
+                null, Math.abs(payment.getPaymentAmount()), payment.getTargetAccountingAccount(), null, null,
                 null,
                 bankJournal, payment, refund, null);
 
         generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
                 "Paiement n°" + payment.getId() + " - " + payment.getLabel(),
                 Math.abs(payment.getPaymentAmount()), null,
-                constantService.getAccountingAccountBankJss(), null, null, null, bankJournal, payment, refund, null);
+                payment.getSourceAccountingAccount(), null, null, null, bankJournal, payment, refund, null);
 
         checkRefundForLettrage(refund);
     }
 
-    @Override
-    public void generateAccountingRecordsForBankTransfertExport(BankTransfert bankTransfert)
-            throws OsirisException, OsirisValidationException {
-
-        if (bankTransfert.getPayments() == null || bankTransfert.getPayments().size() != 1)
-            throw new OsirisException(null, "Impossible to find refund payment");
-        Payment payment = bankTransfert.getPayments().get(0);
-        AccountingJournal bankJournal = constantService.getAccountingJournalBank();
-        Integer operationId = getNewTemporaryOperationId();
-
-        if (payment.getTargetAccountingAccount() == null)
-            throw new OsirisException(null, "No target accounting account for payment n°" + payment.getId());
-
-        if (payment.getSourceAccountingAccount() == null)
-            throw new OsirisException(null, "No source accounting account for payment n°" + payment.getId());
-
-        generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
-                "Paiement n°" + payment.getId() + " - " + payment.getLabel(),
-                null, Math.abs(payment.getPaymentAmount()), payment.getSourceAccountingAccount(), null, null,
-                null,
-                bankJournal, payment, null, bankTransfert);
-
-        generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
-                "Paiement n°" + payment.getId() + " - " + payment.getLabel(),
-                Math.abs(payment.getPaymentAmount()), null,
-                payment.getTargetAccountingAccount(), null, null, null, bankJournal, payment, null, bankTransfert);
-
-        checkBankTransfertForLettrage(bankTransfert);
-    }
 }

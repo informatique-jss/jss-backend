@@ -233,8 +233,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         // Handle provider and customer payment
         if (invoice.getIsInvoiceFromProvider()) {
-            if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId()))
+            if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())) {
                 invoice.setBankTransfert(bankTransfertService.generateBankTransfertForManualInvoice(invoice));
+            }
 
             if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId())) {
                 Payment payment = paymentService.generateNewAccountPayment(invoice.getTotalPrice(),
@@ -295,6 +296,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                         && !invoice.getIsProviderCreditNote())
             return cancelInvoiceEmitted(invoice, invoice.getCustomerOrder());
         if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusReceived().getId())
+                || invoice.getInvoiceStatus().getId()
+                        .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())
                 || invoice.getIsInvoiceFromProvider()
                         && invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusPayed().getId()))
             return cancelInvoiceReceived(invoice);
@@ -386,10 +389,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         // Refresh invoice
         invoice = getInvoice(invoice.getId());
 
-        if (invoice.getBankTransfert() != null && invoice.getBankTransfert().getIsAlreadyExported() == false)
-            bankTransfertService.cancelBankTransfert(invoice.getBankTransfert());
-        else
-            throw new OsirisValidationException("Virement bancaire déjà exporté, impossible d'annuler !");
+        if (invoice.getBankTransfert() != null)
+            if (invoice.getBankTransfert().getIsAlreadyExported() == false)
+                bankTransfertService.cancelBankTransfert(invoice.getBankTransfert());
+            else
+                throw new OsirisClientMessageException("Virement bancaire déjà exporté, impossible d'annuler !");
 
         // Unassociate payment
         if (invoice.getPayments() != null && invoice.getPayments().size() > 0)

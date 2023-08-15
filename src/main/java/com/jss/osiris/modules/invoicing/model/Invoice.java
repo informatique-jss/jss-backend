@@ -74,7 +74,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision")
-	@JsonIgnoreProperties(value = { "assoAffaireOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "assoAffaireOrder", "payments", "providerInvoices" }, allowSetters = true)
 	private Provision provision;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -197,7 +197,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_bank_transfert")
-	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "customerOrder", "invoices" }, allowSetters = true)
 	private BankTransfert bankTransfert;
 
 	@ManyToOne(fetch = FetchType.LAZY)

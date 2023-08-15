@@ -152,6 +152,8 @@ public class PaymentServiceImpl implements PaymentService {
             payment.setIsAppoint(false);
         if (payment.getIsDeposit() == null)
             payment.setIsDeposit(false);
+        if (payment.getIsExternallyAssociated() == null)
+            payment.setIsExternallyAssociated(false);
         paymentRepository.save(payment);
         indexEntityService.indexEntity(payment);
         return payment;
@@ -568,12 +570,14 @@ public class PaymentServiceImpl implements PaymentService {
 
                 } else if (correspondingInvoices.get(i).getInvoiceStatus().getId()
                         .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())) {
-                    if (invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoices.get(i)) <= payment
-                            .getPaymentAmount())
+                    if (Math.round(
+                            invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoices.get(i))
+                                    * 100f) != (Math.round(payment
+                                            .getPaymentAmount() * 100f)))
                         throw new OsirisException(null,
                                 "Wrong amount to pay on invoice " + correspondingInvoices.get(i).getId()
                                         + " and payment bank id " + payment.getBankId() + " " + payment.getId());
-                    // It's a refund
+                    // It's a provider refund
                     cancelPayment(payment);
                     IGenericTiers tiers = invoiceHelper.getCustomerOrder(correspondingInvoices.get(i));
                     Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
@@ -595,12 +599,8 @@ public class PaymentServiceImpl implements PaymentService {
         Float invoiceAmount = Math
                 .round(Math.abs(invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoice)) * 100f) / 100f;
 
-        if (paymentAmount == invoiceAmount) {
-            cancelPayment(payment);
-            IGenericTiers tiers = invoiceHelper.getCustomerOrder(correspondingInvoice);
-            Payment newPayment = generateNewPaymentFromPayment(payment, paymentAmount, false,
-                    tiers.getAccountingAccountProvider());
-            associatePaymentAndInvoice(newPayment, correspondingInvoice, false);
+        if (paymentAmount.equals(invoiceAmount)) {
+            associatePaymentAndInvoice(payment, correspondingInvoice, false);
         }
 
         return Math.round(paymentAmount * 100f) / 100f;
@@ -625,7 +625,7 @@ public class PaymentServiceImpl implements PaymentService {
         Float bankTransfertAmount = Math.round(bankTransfert.getTransfertAmount() * 100f) / 100f;
         Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
 
-        if (bankTransfertAmount.equals(paymentAmount)) {
+        if (bankTransfertAmount.equals(-paymentAmount)) {
             bankTransfert.setIsMatched(true);
             bankTransfertService.addOrUpdateBankTransfert(bankTransfert);
             payment.setBankTransfert(bankTransfert);
@@ -684,6 +684,8 @@ public class PaymentServiceImpl implements PaymentService {
     public Payment addOutboundPaymentForProvision(Payment payment, Provision provision)
             throws OsirisException, OsirisValidationException {
         payment.setProvision(provision);
+        payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
+        payment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
         addOrUpdatePayment(payment);
         accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
         return payment;
@@ -728,16 +730,29 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setPaymentDate(LocalDateTime.now());
         newPayment.setPaymentType(payment.getPaymentType());
         newPayment.setLabel(payment.getLabel());
-        newPayment.setSourceAccountingAccount(payment.getSourceAccountingAccount());
-
-        // If original source, use wainting account as pivot account
-        if (newPayment.getSourceAccountingAccount().getId()
-                .equals(constantService.getAccountingAccountBankJss().getId()))
-            newPayment.setSourceAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
 
         if (targetAccountingAccount == null)
             throw new OsirisException(null, "No target accounting account defined for payment n°" + payment.getId());
-        newPayment.setTargetAccountingAccount(targetAccountingAccount);
+
+        if (newPayment.getPaymentAmount() > 0) {
+            newPayment.setSourceAccountingAccount(payment.getSourceAccountingAccount());
+
+            // If original source, use wainting account as pivot account
+            if (newPayment.getSourceAccountingAccount().getId()
+                    .equals(constantService.getAccountingAccountBankJss().getId()))
+                newPayment.setSourceAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
+
+            newPayment.setTargetAccountingAccount(targetAccountingAccount);
+        } else {
+            newPayment.setTargetAccountingAccount(payment.getTargetAccountingAccount());
+
+            // If original source, use wainting account as pivot account
+            if (newPayment.getTargetAccountingAccount().getId()
+                    .equals(constantService.getAccountingAccountBankJss().getId()))
+                newPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
+
+            newPayment.setSourceAccountingAccount(targetAccountingAccount);
+        }
 
         return addOrUpdatePayment(newPayment);
     }
@@ -807,8 +822,8 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setLabel(bankTransfert.getLabel());
         newPayment.setBankTransfert(bankTransfert);
         newPayment.setPaymentType(constantService.getPaymentTypeVirement());
-        newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
-        newPayment.setTargetAccountingAccount(tiersToPay.getAccountingAccountProvider());
+        newPayment.setSourceAccountingAccount(tiersToPay.getAccountingAccountProvider());
+        newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
 
         return addOrUpdatePayment(newPayment);
     }
@@ -858,6 +873,8 @@ public class PaymentServiceImpl implements PaymentService {
                 }
             }
         } else {
+            IGenericTiers tiers = invoiceHelper.getCustomerOrder(invoice);
+            payment.setSourceAccountingAccount(tiers.getAccountingAccountProvider());
             accountingRecordGenerationService.generateAccountingRecordsForPurschaseOnInvoicePayment(invoice, payment);
         }
     }
@@ -1137,9 +1154,12 @@ public class PaymentServiceImpl implements PaymentService {
                 Float totalRound = Math.round(invoice.getTotalPrice() * 100f) / 100f;
                 for (Payment payment : payments) {
                     Float paymentRound = Math.round(payment.getPaymentAmount() * 100f) / 100f;
-                    if (paymentRound.equals(totalRound)) {
+                    if (invoice.getIsInvoiceFromProvider() && paymentRound.equals(-totalRound))
                         advisedPayments.add(payment);
-                    }
+                    else if (invoice.getIsCreditNote() && paymentRound.equals(-totalRound))
+                        advisedPayments.add(payment);
+                    else if (paymentRound.equals(-totalRound))
+                        advisedPayments.add(payment);
                 }
             }
         }

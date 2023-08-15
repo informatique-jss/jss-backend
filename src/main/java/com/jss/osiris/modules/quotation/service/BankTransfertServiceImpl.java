@@ -56,7 +56,6 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
-import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
@@ -186,10 +185,9 @@ public class BankTransfertServiceImpl implements BankTransfertService {
         bankTransfert.setIsCancelled(false);
 
         IGenericTiers tiers = invoiceHelper.getCustomerOrder(invoice);
+        this.addOrUpdateBankTransfert(bankTransfert);
 
-        Payment bankTransfertPayment = paymentService.generateNewBankTransfertPayment(bankTransfert,
-                bankTransfert.getTransfertAmount(), tiers);
-        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(bankTransfertPayment);
+        paymentService.generateNewBankTransfertPayment(bankTransfert, -bankTransfert.getTransfertAmount(), tiers);
 
         return this.addOrUpdateBankTransfert(bankTransfert);
     }
@@ -197,7 +195,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public File getBankTransfertExport(BankTransfertSearch transfertSearch)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         transfertSearch.setDisplaySelectedForExportBankTransfert(true);
         List<BankTransfertSearchResult> bankTransferts = searchBankTransfert(transfertSearch);
         String xml = "";
@@ -258,9 +256,13 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                                 139)));
 
                 if (!completeTransfert.getIsAlreadyExported()) {
-                    accountingRecordGenerationService
-                            .generateAccountingRecordsForBankTransfertExport(completeTransfert);
                     addOrUpdateBankTransfert(completeTransfert);
+                    if (completeTransfert.getInvoices() != null && completeTransfert.getInvoices().size() == 1
+                            && completeTransfert.getPayments() != null && completeTransfert.getPayments().size() == 1)
+                        paymentService.manualMatchPaymentInvoicesAndCustomerOrders(
+                                completeTransfert.getPayments().get(0),
+                                Arrays.asList(completeTransfert.getInvoices().get(0)), null, null,
+                                null, null);
                 }
 
                 completeTransfert.setIsAlreadyExported(true);

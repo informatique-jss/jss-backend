@@ -18,6 +18,7 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { InvoiceItem } from 'src/app/modules/quotation/model/InvoiceItem';
+import { Provision } from 'src/app/modules/quotation/model/Provision';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
@@ -75,9 +76,11 @@ export class AddInvoiceComponent implements OnInit {
 
   INVOICE_ENTITY_TYPE = INVOICE_ENTITY_TYPE;
 
+  inIdProvision: number | undefined;
+
   ngOnInit() {
     let idInvoice = this.activatedRoute.snapshot.params.id;
-    let idProvision = this.activatedRoute.snapshot.params.idProvision;
+    this.inIdProvision = this.activatedRoute.snapshot.params.idProvision;
     this.idInvoiceForCreditNote = this.activatedRoute.snapshot.params.idInvoice;
 
     let idCustomerOrder = this.activatedRoute.snapshot.params.idCustomerOrder;
@@ -85,8 +88,8 @@ export class AddInvoiceComponent implements OnInit {
 
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
 
-    if (url != undefined && url != null && url[2] != undefined && url[2].path == "azure") {
-      this.invoiceService.createInvoiceFromAzureInvoice(idInvoice, idProvision).subscribe(generatedInvoice => {
+    if (url != undefined && url != null && url[2] != undefined && url[2].path == "azure" && this.inIdProvision) {
+      this.invoiceService.createInvoiceFromAzureInvoice(idInvoice, this.inIdProvision).subscribe(generatedInvoice => {
         this.invoice = generatedInvoice;
 
         this.customerOrderService.getCustomerOrder(this.invoice.customerOrderForInboundInvoice.id).subscribe(customerOrder => {
@@ -96,7 +99,7 @@ export class AddInvoiceComponent implements OnInit {
               for (let asso of customerOrder.assoAffaireOrders)
                 if (asso.provisions)
                   for (let provision of asso.provisions)
-                    if (provision.id == idProvision)
+                    if (provision.id == this.inIdProvision)
                       this.invoice.provision = provision;
           }
         })
@@ -284,6 +287,11 @@ export class AddInvoiceComponent implements OnInit {
     this.customerOrderService.getCustomerOrder(customerOrderIndexed.entityId).subscribe(response => {
       if (response) {
         this.invoice.customerOrderForInboundInvoice = response as CustomerOrder;
+        if (this.inIdProvision)
+          for (let asso of response.assoAffaireOrders)
+            for (let provision of asso.provisions)
+              if (provision.id == this.inIdProvision)
+                this.invoice.provision = provision;
       } else
         this.indexedCustomerOrder = undefined;
     })
@@ -342,5 +350,21 @@ export class AddInvoiceComponent implements OnInit {
         };
       return null;
     };
+  }
+
+  fillPreTaxPricedReinvoiced(invoiceItem: InvoiceItem, invoice: Invoice) {
+    if (invoice.isInvoiceFromProvider)
+      invoiceItem.preTaxPriceReinvoiced = invoiceItem.preTaxPrice;
+  }
+
+  getProvisionForCustomerOrder(): Provision[] {
+    let outProvisions = [];
+    if (this.invoice && this.invoice.customerOrderForInboundInvoice && this.invoice.customerOrderForInboundInvoice.assoAffaireOrders) {
+      for (let asso of this.invoice.customerOrderForInboundInvoice.assoAffaireOrders) {
+        for (let provision of asso.provisions)
+          outProvisions.push(provision)
+      }
+    }
+    return outProvisions;
   }
 }
