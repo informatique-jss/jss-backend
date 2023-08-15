@@ -14,6 +14,8 @@ export interface Payment {
   customerOrder: CustomerOrder;
   isExternallyAssociated: boolean;
   isCancelled: boolean;
+  isAppoint: boolean;
+  isDeposit: boolean;
   paymentType: PaymentType;
   checkNumber: string;
 }

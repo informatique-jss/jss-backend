@@ -194,8 +194,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
             if (provision.getId() != null && provision.getInvoiceItems() != null)
                 for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                    invoiceItem.setProvision(provision);
-                    invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                    invoiceItem = invoiceItemService.getInvoiceItem(invoiceItem.getId());
                 }
 
             if (provision.getDomiciliation() != null) {

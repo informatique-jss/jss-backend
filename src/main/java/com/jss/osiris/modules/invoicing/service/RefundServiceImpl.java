@@ -128,9 +128,9 @@ public class RefundServiceImpl implements RefundService {
     @Override
     public Refund refundPayment(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Float amount,
             CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
-        if (payment.getIsCancelled())
-            throw new OsirisClientMessageException("Impossible de rembourser un paiement annulé");
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        if (payment == null)
+            throw new OsirisClientMessageException("Paiment annulé");
 
         Refund refund = new Refund();
         refund.setCustomerOrder(customerOrder);
@@ -168,7 +168,7 @@ public class RefundServiceImpl implements RefundService {
         String paymentType = "";
         if (customerOrder != null)
             paymentType = "de la commande N " + customerOrder.getId();
-        if (payment != null) {
+        else {
             if (payment.getIsAppoint())
                 paymentType = "de l'appoint N " + payment.getId();
             else
@@ -186,8 +186,9 @@ public class RefundServiceImpl implements RefundService {
         refund.setIsMatched(false);
         refund.setIsAlreadyExported(false);
         refund.setRefundDateTime(LocalDateTime.now());
+        this.addOrUpdateRefund(refund);
 
-        Payment refundPayment = paymentService.generateNewRefundPayment(refund, -amount, tiersRefund);
+        Payment refundPayment = paymentService.generateNewRefundPayment(refund, -amount, tiersRefund, payment);
         accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(refundPayment);
 
         return this.addOrUpdateRefund(refund);

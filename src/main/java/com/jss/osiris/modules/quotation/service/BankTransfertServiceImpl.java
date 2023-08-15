@@ -155,7 +155,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
     @Override
     public BankTransfert generateBankTransfertForManualInvoice(Invoice invoice)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         BankTransfert bankTransfert = new BankTransfert();
         bankTransfert.setLabel("Facture " + invoice.getId() + " / JSS / "
                 + (invoice.getCommandNumber() != null ? invoice.getCommandNumber() : "") + " / "
@@ -185,10 +185,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
         bankTransfert.setTransfertBic(bankTransfert.getTransfertBic().replaceAll(" ", ""));
         bankTransfert.setIsCancelled(false);
 
-        if (bankTransfert.getInvoices() == null || bankTransfert.getInvoices().size() != 1)
-            throw new OsirisException(null, "Impossible to find invoice of bank transfert " + bankTransfert.getId());
-
-        IGenericTiers tiers = invoiceHelper.getCustomerOrder(bankTransfert.getInvoices().get(0));
+        IGenericTiers tiers = invoiceHelper.getCustomerOrder(invoice);
 
         Payment bankTransfertPayment = paymentService.generateNewBankTransfertPayment(bankTransfert,
                 bankTransfert.getTransfertAmount(), tiers);

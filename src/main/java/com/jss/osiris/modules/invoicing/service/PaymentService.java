@@ -33,6 +33,9 @@ public interface PaymentService {
 
         public void paymentGrab() throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
+        public void automatchPayment(Payment payment)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
         public List<Payment> getAdvisedPaymentForInvoice(Invoice invoice);
 
         public List<Payment> getAdvisedPaymentForCustomerOrder(CustomerOrder customerOrder);
@@ -46,7 +49,7 @@ public interface PaymentService {
         public List<Attachment> uploadOfxFile(InputStream file)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public void addCashPaymentForInvoice(Payment cashPayment, Invoice invoice)
+        public void addCashPaymentForCustomerInvoice(Payment cashPayment, Invoice invoice)
                         throws OsirisException, OsirisValidationException;
 
         public void addInboundCheckPayment(Payment cashPayment)
@@ -59,7 +62,8 @@ public interface PaymentService {
                         CustomerOrder customerOrder)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
-        public Payment addOutboundPaymentForProvision(Payment payment, Provision provision) throws OsirisException;
+        public Payment addOutboundPaymentForProvision(Payment payment, Provision provision)
+                        throws OsirisException, OsirisValidationException;
 
         public void movePaymentFromCustomerOrderToInvoice(Payment payment, CustomerOrder customerOrder,
                         Invoice invoice) throws OsirisException, OsirisValidationException;
@@ -68,7 +72,7 @@ public interface PaymentService {
                         throws OsirisException;
 
         public void refundPayment(Payment payment, Tiers tiers, Affaire affaire)
-                        throws OsirisException, OsirisClientMessageException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public Payment generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
                         CentralPayPaymentRequest centralPayPaymentRequest)
@@ -83,7 +87,8 @@ public interface PaymentService {
 
         public void cancelAppoint(Payment payment) throws OsirisException, OsirisValidationException;
 
-        public Payment generateNewRefundPayment(Refund refund, Float paymentAmount, ITiers tiersToRefund)
+        public Payment generateNewRefundPayment(Refund refund, Float paymentAmount, ITiers tiersToRefund,
+                        Payment paymentToRefund)
                         throws OsirisException;
 
         public Payment generateNewBankTransfertPayment(BankTransfert bankTransfert, Float paymentAmount,

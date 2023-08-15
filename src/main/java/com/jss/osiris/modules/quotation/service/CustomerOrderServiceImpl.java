@@ -334,7 +334,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             boolean isDepositMandatory = false;
             if (tiers instanceof Responsable)
                 tiers = ((Responsable) tiers).getTiers();
-            isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
+            isDepositMandatory = tiers.getIsProvisionalPaymentMandatory();
 
             if (!isDepositMandatory || remainingToPay <= 0)
                 targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
@@ -416,7 +416,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             Float remainingToPayForCurrentCustomerOrder = Math
                     .round(getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
 
-            if (remainingToPayForCurrentCustomerOrder < 0)
+            if (remainingToPayForCurrentCustomerOrder < 0
+                    && Math.abs(remainingToPayForCurrentCustomerOrder) > Float.parseFloat(payementLimitRefundInEuros))
                 throw new OsirisException(null, "Impossible to billed, too much money on customerOrder !");
 
             Invoice invoice = generateInvoice(customerOrder);
@@ -434,7 +435,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     false);
         }
 
-        // Target : going back to TO BILLED => cancel invoice
+        // Target : going back to TO BILLED
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)
                 && targetStatusCode.equals(CustomerOrderStatus.TO_BILLED))
             if (customerOrder.getInvoices() != null)
@@ -546,7 +547,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             for (Provision provision : assoAffaireOrder.getProvisions()) {
                 if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
                     for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                        invoiceItem.setInvoice(invoice);
                         invoice.getInvoiceItems().add(invoiceItem);
                     }
             }

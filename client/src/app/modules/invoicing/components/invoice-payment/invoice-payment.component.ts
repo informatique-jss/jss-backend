@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
@@ -19,7 +19,7 @@ import { getRemainingToPay } from '../invoice-tools';
   templateUrl: './invoice-payment.component.html',
   styleUrls: ['./invoice-payment.component.css']
 })
-export class InvoicePaymentComponent implements OnInit {
+export class InvoicePaymentComponent implements OnInit, AfterContentChecked {
 
   advisedPayment: Payment[] = [] as Array<Payment>;
   @Input() invoice: Invoice = {} as Invoice;
@@ -39,10 +39,15 @@ export class InvoicePaymentComponent implements OnInit {
     private constantService: ConstantService,
     public associatePaymentDialog: MatDialog,
     private formBuilder: FormBuilder,
-    private habilitationsService: HabilitationsService
+    private habilitationsService: HabilitationsService,
+    private changeDetectorRef: ChangeDetectorRef,
   ) { }
 
   invoicePaymentForm = this.formBuilder.group({});
+
+  ngAfterContentChecked(): void {
+    this.changeDetectorRef.detectChanges();
+  }
 
   ngOnInit() {
     this.displayedColumns = [];

@@ -27,7 +27,7 @@ public interface RefundService {
 
     public Refund refundPayment(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Float amount,
             CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException;
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
     public File getRefundExport(RefundSearch refundSearch) throws OsirisException, OsirisValidationException;
 }

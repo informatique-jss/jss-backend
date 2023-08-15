@@ -108,7 +108,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private constantService: ConstantService,
     private assoAffaireOrderService: AssoAffaireOrderService,
     protected searchService: SearchService,
-    public associateDepositDialog: MatDialog,
     private provisionService: ProvisionService,
     private orderingSearchResultService: OrderingSearchResultService,
     private invoiceSearchResultService: InvoiceSearchResultService,
@@ -493,14 +492,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           })
         } else {
           if (this.getRemainingToPay() < 0 && (targetStatus.code == CUSTOMER_ORDER_STATUS_BILLED || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED)) {
-            // TODO : reassociate payment / deposit
             let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
               width: '100%'
             });
             for (let payment of (this.quotation as CustomerOrder).payments)
               if (!payment.isCancelled)
                 dialogPaymentDialogRef.componentInstance.payment = payment;
-            dialogPaymentDialogRef.componentInstance.doNotInitializeAsso = true;
+            dialogPaymentDialogRef.componentInstance.doNotInitializeAsso = targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED;
             dialogPaymentDialogRef.componentInstance.customerOrder = this.quotation as CustomerOrder;
 
             dialogPaymentDialogRef.afterClosed().subscribe(response => {

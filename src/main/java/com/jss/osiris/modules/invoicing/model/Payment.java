@@ -77,11 +77,16 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_origin_payment")
+	@JsonIgnoreProperties(value = { "invoice", "customerOrder", "provision", "accountingRecords" }, allowSetters = true)
 	private Payment originPayment;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_target_accounting_account")
 	private AccountingAccount targetAccountingAccount;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_source_accounting_account")
+	private AccountingAccount sourceAccountingAccount;
 
 	private Boolean isCancelled;
 
@@ -250,6 +255,14 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	public void setProvision(Provision provision) {
 		this.provision = provision;
+	}
+
+	public AccountingAccount getSourceAccountingAccount() {
+		return sourceAccountingAccount;
+	}
+
+	public void setSourceAccountingAccount(AccountingAccount sourceAccountingAccount) {
+		this.sourceAccountingAccount = sourceAccountingAccount;
 	}
 
 }

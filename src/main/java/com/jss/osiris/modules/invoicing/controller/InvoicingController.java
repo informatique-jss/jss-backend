@@ -26,6 +26,8 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailComputeHelper;
+import com.jss.osiris.modules.accounting.service.AccountingAccountService;
+import com.jss.osiris.modules.accounting.service.AccountingRecordGenerationService;
 import com.jss.osiris.modules.invoicing.model.AzureInvoice;
 import com.jss.osiris.modules.invoicing.model.AzureReceipt;
 import com.jss.osiris.modules.invoicing.model.AzureReceiptInvoice;
@@ -136,6 +138,9 @@ public class InvoicingController {
     @Autowired
     AzureReceiptService azureReceiptService;
 
+    @Autowired
+    AccountingAccountService accountingAccountService;
+
     @PostMapping(inputEntryPoint + "/azure-receipt/invoice")
     public ResponseEntity<AzureReceiptInvoice> updateAzureReceiptInvoice(
             @RequestBody AzureReceiptInvoice azureReceiptInvoice)
@@ -231,6 +236,9 @@ public class InvoicingController {
         return new ResponseEntity<Payment>(paymentService.getPayment(id), HttpStatus.OK);
     }
 
+    @Autowired
+    AccountingRecordGenerationService accountingRecordGenerationService;
+
     // TODO remove !
     @GetMapping(inputEntryPoint + "/payment/add")
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
@@ -244,8 +252,14 @@ public class InvoicingController {
         payment.setPaymentAmount(amount);
         payment.setPaymentDate(LocalDateTime.now());
         payment.setPaymentType(constantService.getPaymentTypeVirement());
+        payment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+        payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         paymentService.addOrUpdatePayment(payment);
-        paymentService.paymentGrab();
+        paymentService.automatchPayment(payment);
+        if (payment.getPaymentAmount() > 0)
+            accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment, false);
+        else
+            accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
         return new ResponseEntity<Payment>(payment, HttpStatus.OK);
     }
 
@@ -621,7 +635,7 @@ public class InvoicingController {
         if (remainingToPay == null || remainingToPay < cashPayment.getPaymentAmount())
             throw new OsirisValidationException("paymentAmount");
 
-        this.paymentService.addCashPaymentForInvoice(cashPayment, invoice);
+        this.paymentService.addCashPaymentForCustomerInvoice(cashPayment, invoice);
 
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
@@ -757,6 +771,10 @@ public class InvoicingController {
         if (invoice == null)
             throw new OsirisValidationException("Invoice");
 
+        if (invoice.getCustomerOrder() != null)
+            throw new OsirisClientMessageException(
+                    "Pour annuler cette facture, repassez la commande correspondante à A facturer");
+
         return new ResponseEntity<Invoice>(invoiceService.cancelInvoice(invoice),
                 HttpStatus.OK);
     }
@@ -792,6 +810,9 @@ public class InvoicingController {
 
         if (invoice.getIsProviderCreditNote() == null)
             invoice.setIsProviderCreditNote(false);
+
+        if (invoice.getIsCreditNote() == null)
+            invoice.setIsCreditNote(false);
 
         int doFound = 0;
 

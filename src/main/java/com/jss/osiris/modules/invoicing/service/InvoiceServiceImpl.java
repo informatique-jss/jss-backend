@@ -155,8 +155,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setCreatedDate(LocalDateTime.now());
 
         // Defined billing label
-        if (!invoice.getIsInvoiceFromProvider() && !invoice.getIsProviderCreditNote()
-                && !constantService.getBillingLabelTypeOther().getId().equals(invoice.getBillingLabelType().getId())) {
+        // If it's a credit note, no need, label is taken from invoice clone
+        if (!invoice.getIsInvoiceFromProvider() && !invoice.getIsProviderCreditNote() && !invoice.getIsCreditNote()
+                && (invoice.getBillingLabelType() == null || !constantService.getBillingLabelTypeOther().getId()
+                        .equals(invoice.getBillingLabelType().getId()))) {
             Document billingDocument = null;
             ITiers customerOrder = invoice.getTiers();
             if (invoice.getResponsable() != null)
@@ -172,7 +174,8 @@ public class InvoiceServiceImpl implements InvoiceService {
             if (billingDocument == null)
                 throw new OsirisException(null, "Billing document not found for ordering customer provided");
 
-            invoiceHelper.setInvoiceLabel(invoice, billingDocument, null, customerOrder);
+            invoice.setBillingLabelType(billingDocument.getBillingLabelType());
+            invoiceHelper.setInvoiceLabel(invoice, billingDocument, invoice.getCustomerOrder(), customerOrder);
         }
 
         // Define status
@@ -188,8 +191,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         // Associate invoice to invoice item
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-            invoiceItem.setInvoice(invoice);
             vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
+            invoiceItem.setInvoice(invoice);
+            invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
         }
 
         invoiceHelper.setPriceTotal(invoice);
@@ -199,6 +203,9 @@ public class InvoiceServiceImpl implements InvoiceService {
             accountingRecordGenerationService.generateAccountingRecordsOnInvoiceReception(invoice);
         else if (invoice.getIsProviderCreditNote())
             accountingRecordGenerationService.generateAccountingRecordsOnCreditNoteReception(invoice);
+        else if (invoice.getIsCreditNote())
+            accountingRecordGenerationService
+                    .generateAccountingRecordsOnInvoiceEmissionCancellation(invoice.getReverseCreditNote(), invoice);
         else
             accountingRecordGenerationService.generateAccountingRecordsOnInvoiceEmission(invoice);
 
@@ -283,7 +290,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Invoice cancelInvoice(Invoice invoice)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         invoice = getInvoice(invoice.getId());
-        if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId()))
+        if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
+                || !invoice.getIsCreditNote() && !invoice.getIsInvoiceFromProvider()
+                        && !invoice.getIsProviderCreditNote())
             return cancelInvoiceEmitted(invoice, invoice.getCustomerOrder());
         if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusReceived().getId())
                 || invoice.getIsInvoiceFromProvider()
@@ -321,37 +330,39 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         // Create credit note
         Invoice creditNote = cloneInvoice(invoice);
-        creditNote = addOrUpdateInvoice(creditNote);
         if (invoice.getInvoiceItems() != null) {
             ArrayList<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
             for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
                 InvoiceItem newInvoiceItem = invoiceItemService.cloneInvoiceItem(invoiceItem);
-                newInvoiceItem.setInvoice(creditNote);
-                invoiceItemService.addOrUpdateInvoiceItem(newInvoiceItem);
                 invoiceItems.add(newInvoiceItem);
             }
             creditNote.setInvoiceItems(invoiceItems);
             creditNote.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteEmited());
             creditNote.setIsCreditNote(true);
+            creditNote.setReverseCreditNote(invoice);
         }
+        creditNote = addOrUpdateInvoiceFromUser(creditNote);
 
         invoice.setCreditNote(creditNote);
         invoice = addOrUpdateInvoice(invoice);
-        creditNote = addOrUpdateInvoice(creditNote);
-
-        // Remove accounting records and unletter invoice
-        accountingRecordGenerationService.generateAccountingRecordsOnInvoiceEmissionCancellation(invoice, creditNote);
 
         if (customerOrder != null) {
             // Generate PDF and attached it to customer order
             File creditNotePdf = generatePdfDelegate.generateInvoicePdf(customerOrder, creditNote, invoice);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
-                attachmentService.addAttachment(new FileInputStream(creditNotePdf), customerOrder.getId(),
+                List<Attachment> attachments = attachmentService.addAttachment(new FileInputStream(creditNotePdf),
+                        customerOrder.getId(),
                         CustomerOrder.class.getSimpleName(),
                         constantService.getAttachmentTypeCreditNote(),
                         "Credit_note_" + creditNote.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
                         false, "Avoir n°" + creditNote.getId());
+
+                for (Attachment attachment : attachments)
+                    if (attachment.getDescription().contains(creditNote.getId() + "")) {
+                        attachment.setInvoice(creditNote);
+                        attachmentService.addOrUpdateAttachment(attachment);
+                    }
             } catch (FileNotFoundException e) {
                 throw new OsirisException(e, "Impossible to read invoice PDF temp file");
             } finally {
@@ -396,6 +407,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Invoice generateProviderInvoiceCreditNote(Invoice newInvoice, Integer idOriginInvoiceForCreditNote)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
@@ -511,14 +523,16 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException {
-        invoice = getInvoice(invoice.getId());
         if (invoice != null) {
             Float total = invoice.getTotalPrice();
 
             if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
                 for (Payment payment : invoice.getPayments())
                     if (!payment.getIsCancelled())
-                        total -= Math.abs(payment.getPaymentAmount());
+                        if (invoice.getIsInvoiceFromProvider())
+                            total -= Math.abs(payment.getPaymentAmount());
+                        else
+                            total -= payment.getPaymentAmount();
 
             return Math.round(total * 100f) / 100f;
         }

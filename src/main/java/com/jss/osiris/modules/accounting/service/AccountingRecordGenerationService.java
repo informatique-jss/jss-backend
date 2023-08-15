@@ -26,10 +26,10 @@ public interface AccountingRecordGenerationService {
                         throws OsirisException, OsirisValidationException;
 
         public void generateAccountingRecordOnIncomingPaymentCreation(Payment payment, boolean isOdJournal)
-                        throws OsirisException;
+                        throws OsirisException, OsirisValidationException;
 
         public void generateAccountingRecordOnOutgoingPaymentCreation(Payment payment)
-                        throws OsirisException;
+                        throws OsirisException, OsirisValidationException;
 
         public void generateAccountingRecordOnPaymentCancellation(Payment payment)
                         throws OsirisException, OsirisValidationException;

@@ -150,7 +150,10 @@ export function getAmountPayed(invoice: Invoice) {
   if (invoice.payments && invoice.payments.length)
     for (let payment of invoice.payments)
       if (!payment.isCancelled)
-        payed += payment.paymentAmount;
+        if (payment.isAppoint)
+          payed += Math.abs(payment.paymentAmount)
+        else
+          payed += payment.paymentAmount;
 
   return Math.round(payed * 100) / 100;
 }

@@ -25,7 +25,7 @@ public interface BankTransfertService {
         public BankTransfert addOrUpdateBankTransfert(BankTransfert bankTransfert);
 
         public BankTransfert generateBankTransfertForManualInvoice(Invoice invoice)
-                        throws OsirisException, OsirisClientMessageException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public File getBankTransfertExport(BankTransfertSearch transfertSearch)
                         throws OsirisException, OsirisValidationException;

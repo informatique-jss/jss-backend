@@ -43,6 +43,7 @@ export class InvoiceDetailsComponent implements OnInit {
   invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
   invoiceStatusCreditNoteReceived = this.constantService.getInvoiceStatusCreditNoteReceived();
   attachmentTypeInvoice = this.constantService.getAttachmentTypeInvoice();
+  attachmentTypeCreditNote = this.constantService.getAttachmentTypeCreditNote();
 
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
 
@@ -173,7 +174,10 @@ export class InvoiceDetailsComponent implements OnInit {
   }
 
   getPriceTotal(): number {
-    return this.getPreTaxPriceTotal() - this.getDiscountTotal() + this.getVatTotal();
+    if (!this.invoice || this.invoice.invoiceItems && this.invoice.invoiceItems.length > 0)
+      return this.getPreTaxPriceTotal() - this.getDiscountTotal() + this.getVatTotal();
+    else
+      return this.invoice.totalPrice;
   }
 
 

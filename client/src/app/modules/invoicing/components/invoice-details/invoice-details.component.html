@@ -42,9 +42,9 @@
             (auxclick)="openRoute($event,'/order/'+invoice.customerOrderForInboundInvoice.id)">visibility
           </mat-icon>
         </p>
-        <p *ngIf="invoice.attachments && !invoice.isCreditNote"> <single-attachment [entity]="invoice"
+        <p *ngIf="invoice.attachments "> <single-attachment [entity]="invoice"
             [entityType]="INVOICE_ENTITY_TYPE.entityType" [editMode]="false"
-            [attachmentTypeToDisplay]="attachmentTypeInvoice">
+            [attachmentTypeToDisplay]="!invoice.isCreditNote?attachmentTypeInvoice:attachmentTypeCreditNote">
           </single-attachment>
         </p>
         <table class="mat-table mat-mdc-table mdc-data-table__table full-width  description-table ">
@@ -345,9 +345,10 @@
   *ngIf="false" (auxclick)="editInvoice($event)">
   <mat-icon>edit</mat-icon>
 </button>
-<button *ngIf="canCancelInvoice() && canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code
+<button
+  *ngIf="canCancelInvoice() && canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code
   || invoice.invoiceStatus.code==invoiceStatusSend.code
-  || invoice.isInvoiceFromProvider && invoice.invoiceStatus.code == invoiceStatusPayed.code)"
+  || !invoice.isCreditNote && !invoice.isProviderCreditNote &&  invoice.invoiceStatus.code == invoiceStatusPayed.code) && !invoice.customerOrder"
   matTooltip="Annuler la facture" mat-fab color="accent" class="second-fab-button" (click)="cancelInvoice($event)">
   <mat-icon>close</mat-icon>
 </button>

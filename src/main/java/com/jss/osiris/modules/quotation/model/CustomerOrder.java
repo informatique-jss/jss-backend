@@ -143,7 +143,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonIgnore // For client-side performance purpose
 	private List<Invoice> invoices;
 
-	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "customerOrder", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder" }, allowSetters = true)
 	private List<Payment> payments;
 

@@ -103,7 +103,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
 
     if (this.payment && this.customerOrder && !this.doNotInitializeAsso)
       this.associationSummaryTable.push({
-        payment: this.payment, customerOrder: this.customerOrder, amountUsed: this.payment.paymentAmount
+        payment: this.payment, customerOrder: this.customerOrder, amountUsed: Math.min(this.getInitialAmount({ customerOrder: this.customerOrder }) - this.getInitialPayedAmount({ customerOrder: this.customerOrder }), this.payment.paymentAmount)
       } as AssociationSummaryTable);
 
 
@@ -128,6 +128,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
       paymentAssociate.confrereRefund = ((!this.getRefundCustomerOrder() || this.getRefundCustomerOrder() as any).label) ? this.getRefundCustomerOrder() as Confrere : null;
       paymentAssociate.payment = this.payment;
 
+      let appointAmount = Math.abs(this.amountRemaining()) < INVOICING_PAYMENT_LIMIT_REFUND_EUROS ? this.amountRemaining() : 0;
+
       if (this.associationSummaryTable) {
         for (let asso of this.associationSummaryTable) {
           if (asso.invoice) {
@@ -136,17 +138,16 @@ export class AssociatePaymentDialogComponent implements OnInit {
             if (!paymentAssociate.byPassAmount)
               paymentAssociate.byPassAmount = [] as Array<number>;
             paymentAssociate.invoices.push(asso.invoice);
-            paymentAssociate.byPassAmount.push(asso.amountUsed);
+            // Add appoint on last element
+            paymentAssociate.byPassAmount.push(asso.amountUsed + (this.associationSummaryTable.indexOf(asso) == this.associationSummaryTable.length - 1 ? appointAmount : 0));
           }
-        }
-        for (let asso of this.associationSummaryTable) {
           if (asso.customerOrder) {
             if (!paymentAssociate.customerOrders)
               paymentAssociate.customerOrders = [] as Array<CustomerOrder>;
             if (!paymentAssociate.byPassAmount)
               paymentAssociate.byPassAmount = [] as Array<number>;
             paymentAssociate.customerOrders.push(asso.customerOrder);
-            paymentAssociate.byPassAmount.push(asso.amountUsed);
+            paymentAssociate.byPassAmount.push(asso.amountUsed + (this.associationSummaryTable.indexOf(asso) == this.associationSummaryTable.length - 1 ? appointAmount : 0));
           }
         }
         this.paymentService.associatePaymentAndInvoiceAndCustomerOrder(paymentAssociate).subscribe(response => {
@@ -339,7 +340,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
       let amountRemaining = this.payment.paymentAmount;
       if (this.associationSummaryTable)
         for (let asso of this.associationSummaryTable)
-          amountRemaining -= this.getAmountPayed(asso);
+          amountRemaining -= this.getAmountPayed(asso) + this.getInitialPayedAmount(asso);
       total = Math.round(amountRemaining * 100) / 100;
     }
     return total;
@@ -358,11 +359,16 @@ export class AssociatePaymentDialogComponent implements OnInit {
 
   getInitialPayedAmount(element: any): number {
     let total = 0;
-    if (element) {
+    if (element && this.payment) {
       if (element.invoice)
         total = getAmountPayed(element.invoice);
-      if (element.customerOrder)
+      if (element.customerOrder) {
         total = QuotationComponent.computePayed(element.customerOrder);
+        if (element.customerOrder.payments)
+          for (let payment of element.customerOrder.payments)
+            if (payment.id == this.payment.id)
+              total -= payment.paymentAmount;
+      }
     }
     return total;
   }

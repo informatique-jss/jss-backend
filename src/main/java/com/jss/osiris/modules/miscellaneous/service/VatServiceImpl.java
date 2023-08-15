@@ -235,7 +235,9 @@ public class VatServiceImpl implements VatService {
     private Country getCountryForInvoice(Invoice invoice) throws OsirisException, OsirisClientMessageException {
         ITiers customerOrder = null;
 
-        if (invoice.getProvider() != null)
+        if (invoice.getBillingLabelCountry() != null)
+            return invoice.getBillingLabelCountry();
+        else if (invoice.getProvider() != null)
             return invoice.getProvider().getCountry();
         else if (invoice.getCompetentAuthority() != null)
             return invoice.getCompetentAuthority().getCountry();
@@ -269,7 +271,9 @@ public class VatServiceImpl implements VatService {
     private City getCityForInvoice(Invoice invoice) throws OsirisException, OsirisClientMessageException {
         ITiers customerOrder = null;
 
-        if (invoice.getProvider() != null)
+        if (invoice.getBillingLabelCity() != null)
+            return invoice.getBillingLabelCity();
+        else if (invoice.getProvider() != null)
             return cityService.getCity(invoice.getProvider().getCity().getId());
         else if (invoice.getCompetentAuthority() != null)
             return cityService.getCity(invoice.getCompetentAuthority().getCity().getId());
@@ -305,7 +309,7 @@ public class VatServiceImpl implements VatService {
     @Override
     public void completeVatOnInvoiceItem(InvoiceItem invoiceItem, Invoice invoice)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-        if (invoice.getIsInvoiceFromProvider() == false && invoice.getIsCreditNote() == false) {
+        if (invoice.getIsInvoiceFromProvider() == false && invoice.getIsProviderCreditNote() == false) {
             Vat applicableVat = getGeographicalApplicableVatForSales(invoice, invoiceItem.getVat());
 
             if (invoiceItem.getVat() != null) {
@@ -332,7 +336,7 @@ public class VatServiceImpl implements VatService {
         }
 
         if (invoiceItem.getPreTaxPrice() != null)
-            invoiceItem.setVatPrice(invoiceItem.getPreTaxPrice() * invoiceItem.getVat().getRate());
+            invoiceItem.setVatPrice(invoiceItem.getPreTaxPrice() * invoiceItem.getVat().getRate() / 100f);
         else
             invoiceItem.setVatPrice(0f);
     }
@@ -353,7 +357,7 @@ public class VatServiceImpl implements VatService {
             invoiceItem.setVat(constantService.getVatTwenty());
 
         if (invoiceItem.getPreTaxPrice() != null)
-            invoiceItem.setVatPrice(invoiceItem.getPreTaxPrice() * invoiceItem.getVat().getRate());
+            invoiceItem.setVatPrice(invoiceItem.getPreTaxPrice() * invoiceItem.getVat().getRate() / 100f);
         else
             invoiceItem.setVatPrice(0f);
     }
