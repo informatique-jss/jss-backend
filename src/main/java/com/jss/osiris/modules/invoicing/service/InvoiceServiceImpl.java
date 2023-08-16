@@ -790,22 +790,16 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.getManualPaymentType() == constantService.getPaymentTypePrelevement()
                 && directDebitTransfert.getIsAlreadyExported()) {
 
-            Float remainingMoney = invoice.getAccountingRecords().get(0).getDebitAmount();
+            Float remainingMoney = directDebitTransfert.getTransfertAmount();
             ITiers tiersRefund = tiersRepository.findByDenomination(invoice.getBillingLabel());
-            Affaire affaireRefund = (invoice.getCustomerOrder() != null &&
-                    !invoice.getCustomerOrder().getAssoAffaireOrders().isEmpty() &&
-                    invoice.getCustomerOrder().getAssoAffaireOrders().get(0) != null)
-                            ? invoice.getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire()
-                            : null;
+            Payment payment = (invoice.getPayments().size() > 0) ? invoice.getPayments().get(0) : null;
             CustomerOrder customerOrder = invoice.getCustomerOrder();
             String refundLabelSuffix = (invoice.getAccountingRecords().get(0).getLabel() != null)
                     ? invoice.getAccountingRecords().get(0).getLabel()
                     : null;
 
-            Deposit deposit = (customerOrder.getDeposits().size() > 0) ? customerOrder.getDeposits().get(0) : null;
-
             try {
-                Refund refund = refundService.generateRefund(tiersRefund, affaireRefund, null, deposit, remainingMoney,
+                Refund refund = refundService.generateRefund(tiersRefund, null, payment, null, remainingMoney,
                         refundLabelSuffix, customerOrder, null);
             } catch (OsirisClientMessageException e) {
                 e.printStackTrace();

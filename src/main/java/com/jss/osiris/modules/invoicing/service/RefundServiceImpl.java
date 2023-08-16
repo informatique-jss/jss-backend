@@ -197,7 +197,7 @@ public class RefundServiceImpl implements RefundService {
             refund.setAppoint(appoint);
         }
         if (labelSuffix != null)
-            refund.setLabel(refund.getLabel() + " / " + labelSuffix);
+            refund.setLabel((refund.getLabel() != null ? refund.getLabel() + " / " + labelSuffix : labelSuffix));
 
         if (refund.getCustomerOrder() != null && refund.getCustomerOrder().getAssoAffaireOrders() != null) {
             Affaire affaire = refund.getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
