@@ -36,6 +36,7 @@ import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.Payment;
+import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -48,19 +49,24 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Debour;
+import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.repository.DirectDebitTransfertRepository;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DebourService;
+import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.repository.TiersRepository;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
 @Service
@@ -74,6 +80,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     InvoiceStatusService invoiceStatusService;
+
+    @Autowired
+    DirectDebitTransfertService directDebitTransfertService;
 
     @Autowired
     ConstantService constantService;
@@ -131,6 +140,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     VatService vatService;
+
+    @Autowired
+    RefundService refundService;
+
+    @Autowired
+    TiersRepository tiersRepository;
 
     @Override
     public List<Invoice> getAllInvoices() {
@@ -765,6 +780,37 @@ public class InvoiceServiceImpl implements InvoiceService {
                 accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
             }
         invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
+
+        DirectDebitTransfert directDebitTransfert = invoice.getDirectDebitTransfert();
+        if (invoice.getManualPaymentType() == constantService.getPaymentTypePrelevement()
+                && !directDebitTransfert.getIsAlreadyExported()) {
+            directDebitTransfert.setIsCancelled(true);
+            directDebitTransfertService.addOrUpdateDirectDebitTransfert(directDebitTransfert);
+        }
+        if (invoice.getManualPaymentType() == constantService.getPaymentTypePrelevement()
+                && directDebitTransfert.getIsAlreadyExported()) {
+
+            Float remainingMoney = invoice.getAccountingRecords().get(0).getDebitAmount();
+            ITiers tiersRefund = tiersRepository.findByDenomination(invoice.getBillingLabel());
+            Affaire affaireRefund = (invoice.getCustomerOrder() != null &&
+                    !invoice.getCustomerOrder().getAssoAffaireOrders().isEmpty() &&
+                    invoice.getCustomerOrder().getAssoAffaireOrders().get(0) != null)
+                            ? invoice.getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire()
+                            : null;
+            CustomerOrder customerOrder = invoice.getCustomerOrder();
+            String refundLabelSuffix = (invoice.getAccountingRecords().get(0).getLabel() != null)
+                    ? invoice.getAccountingRecords().get(0).getLabel()
+                    : null;
+
+            Deposit deposit = (customerOrder.getDeposits().size() > 0) ? customerOrder.getDeposits().get(0) : null;
+
+            try {
+                Refund refund = refundService.generateRefund(tiersRefund, affaireRefund, null, deposit, remainingMoney,
+                        refundLabelSuffix, customerOrder, null);
+            } catch (OsirisClientMessageException e) {
+                e.printStackTrace();
+            }
+        }
         addOrUpdateInvoice(invoice);
     }
 

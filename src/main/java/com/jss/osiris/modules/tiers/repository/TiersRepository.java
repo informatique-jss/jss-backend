@@ -20,6 +20,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
 
         List<Tiers> findByTiersType(TiersType tiersTypeClient);
 
+        Tiers findByDenomination(String tiersLabel);
+
         @Query(nativeQuery = true, value = "select distinct t.* " +
                         " from tiers t " +
                         " left join responsable r on r.id_tiers = t.id " +
