@@ -8,6 +8,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.SSLHelper;
@@ -140,6 +141,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean renewResponsablePassword(Responsable responsable) throws OsirisException {
         String salt = SSLHelper.randomPassword(20);
         String password = SSLHelper.randomPassword(12);

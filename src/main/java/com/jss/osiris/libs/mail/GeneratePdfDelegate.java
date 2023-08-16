@@ -406,7 +406,7 @@ public class GeneratePdfDelegate {
         }
 
         // Compute base for debours
-        ctx.setVariable("vatDebour", null);
+        ctx.setVariable("vatDebour", constantService.getVatZero());
         if (vats == null)
             vats = new ArrayList<VatMail>();
         for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
@@ -515,7 +515,7 @@ public class GeneratePdfDelegate {
         ctx.setVariable("remainingToPay",
                 Math.round((invoiceHelper.getPriceTotal(invoice) - depositTotal) * 100f) / 100f);
         ctx.setVariable("hasAppoint",
-                Math.abs(Math.round((invoiceHelper.getPriceTotal(invoice) - depositTotal) * 100f) / 100f) <= Float
+                Math.abs(Math.round((invoiceHelper.getPriceTotal(invoice) - payementTotal) * 100f) / 100f) <= Float
                         .parseFloat(payementLimitRefundInEuros));
         ctx.setVariable("tooMuchPerceived", null);
         Float amountPerceived = payementTotal - Math.round((invoiceHelper.getPriceTotal(invoice)) * 100f) / 100f;

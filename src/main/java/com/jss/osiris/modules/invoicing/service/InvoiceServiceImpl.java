@@ -192,7 +192,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                     // Do not touch deposit records, they are already handled before
                     if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                            .equals(constantService.getPrincipalAccountingAccountDeposit().getId()))
+                            .equals(constantService.getPrincipalAccountingAccountDeposit().getId())
+                            && accountingRecord.getContrePasse() == null)
                         accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart,
                                 constantService.getAccountingJournalSales());
             }
@@ -272,7 +273,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                     // Do not touch deposit records, they are already handled before
                     if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                            .equals(constantService.getPrincipalAccountingAccountDeposit().getId()))
+                            .equals(constantService.getPrincipalAccountingAccountDeposit().getId())
+                            && accountingRecord.getContrePasse() == null)
                         accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart,
                                 constantService.getAccountingJournalPurchases());
             }
@@ -303,19 +305,25 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Invoice generateInvoiceCreditNote(Invoice newInvoice, Integer idOriginInvoiceForCreditNote)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        Invoice invoice = getInvoice(idOriginInvoiceForCreditNote);
+
         newInvoice.setIsInvoiceFromProvider(false);
         newInvoice.setIsProviderCreditNote(true);
         // Create credit note
         Invoice creditNote = addOrUpdateInvoiceFromUser(newInvoice);
-        if (invoice.getInvoiceItems() != null) {
+        if (newInvoice.getInvoiceItems() != null) {
             creditNote.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
             creditNote.setIsProviderCreditNote(true);
         }
 
-        invoice.setCreditNote(creditNote);
-        invoice = addOrUpdateInvoice(invoice);
+        if (idOriginInvoiceForCreditNote != null) {
+            Invoice invoice = getInvoice(idOriginInvoiceForCreditNote);
+            invoice.setCreditNote(creditNote);
+            invoice = addOrUpdateInvoice(invoice);
+            creditNote.setReverseCreditNote(invoice);
+        }
+
         creditNote = addOrUpdateInvoice(creditNote);
+        accountingRecordService.checkInvoiceForLettrage(creditNote);
 
         return creditNote;
     }
@@ -459,6 +467,20 @@ public class InvoiceServiceImpl implements InvoiceService {
                 && !hasAtLeastOneInvoiceItemNotNull(invoice))
             throw new OsirisException(null, "No invoice item found on manual invoice");
 
+        // TODO : get rid of this disgusting block ...
+        if (invoice.getCustomerOrderForInboundInvoice() != null
+                && invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getDebours() != null)
+                            for (Debour debour : provision.getDebours())
+                                if (debour.getNonTaxableAmount() != null) {
+                                    Debour currentDebour = debourService.getDebour(debour.getId());
+                                    currentDebour.setNonTaxableAmount(debour.getNonTaxableAmount());
+                                    debourService.addOrUpdateDebour(currentDebour);
+                                }
+
         IVat vatTiers = null;
         if (invoice.getTiers() != null)
             vatTiers = invoice.getTiers();
@@ -527,9 +549,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                     invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
                     for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
                         if (asso.getProvisions() != null)
-                            for (Provision provision : asso.getProvisions())
-                                if (provision.getDebours() != null)
-                                    for (Debour debour : provision.getDebours()) {
+                            for (Provision provision : asso.getProvisions()) {
+                                List<Debour> debours = debourService.getDeboursForProvision(provision);
+                                if (debours != null)
+                                    for (Debour debour : debours) {
                                         if (debour.getNonTaxableAmount() != null && debour.getInvoiceItem() == null) {
 
                                             if (debour.getPaymentType().getId()
@@ -575,6 +598,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                                             Vat vatDebour = vatService.getGeographicalApplicableVatForPurshases(
                                                     debour.getCompetentAuthority(), constantService.getVatDeductible());
+                                            if (invoice.getCustomerOrder() != null) {
+                                                Vat vatDebour2 = vatService.getGeographicalApplicableVatForSales(
+                                                        invoice.getCustomerOrder(), constantService.getVatDeductible());
+                                                if (vatDebour2 != null && vatDebour2.getRate() < vatDebour.getRate())
+                                                    vatDebour = vatDebour2;
+                                            }
 
                                             if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable()
                                                     || vatDebour == null) {
@@ -597,6 +626,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                                             usedDebours.add(debourService.addOrUpdateDebour(debour));
                                         }
                                     }
+                            }
                 }
             }
         }
@@ -656,7 +686,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         // Associate accounting record of debours with invoice
-        if (invoice.getIsInvoiceFromProvider()
+        if ((invoice.getIsInvoiceFromProvider() || invoice.getIsProviderCreditNote())
                 && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId())) {
             if (usedDebours.size() > 0)
                 for (Debour debour : usedDebours) {
@@ -704,10 +734,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceItem.setIsOverridePrice(false);
         invoiceItem.setLabel(debour.getBillingType().getLabel());
         if (isNonTaxable || vatDebour == null) {
-            invoiceItem.setPreTaxPrice(debour.getDebourAmount());
+            invoiceItem.setPreTaxPrice(Math.abs(debour.getDebourAmount()));
         } else {
             invoiceItem.setPreTaxPrice(
-                    debour.getDebourAmount() / ((100 + vatDebour.getRate()) / 100f));
+                    Math.abs(debour.getDebourAmount()) / ((100 + vatDebour.getRate()) / 100f));
         }
         return invoiceItem;
     }

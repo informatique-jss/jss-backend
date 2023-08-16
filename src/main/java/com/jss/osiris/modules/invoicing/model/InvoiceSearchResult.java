@@ -54,4 +54,8 @@ public interface InvoiceSearchResult {
     public Float getRemainingToPay();
 
     public String getInvoiceRecipient();
+
+    public Boolean getIsInvoiceFromProvider();
+
+    public Boolean getIsProviderCreditNote();
 }

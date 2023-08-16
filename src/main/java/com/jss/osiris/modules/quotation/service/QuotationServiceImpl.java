@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,6 +147,7 @@ public class QuotationServiceImpl implements QuotationService {
         boolean isNewQuotation = quotation.getId() == null;
         if (isNewQuotation) {
             quotation.setCreatedDate(LocalDateTime.now());
+            quotation.setValidationToken(UUID.randomUUID().toString());
             quotation = quotationRepository.save(quotation);
         }
 
@@ -446,11 +448,15 @@ public class QuotationServiceImpl implements QuotationService {
                             && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(1))) {
                         toSend = true;
                         quotation.setFirstReminderDateTime(LocalDateTime.now());
-                    } else if (quotation.getSecondReminderDateTime() == null
-                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(2))) {
+                    } else if (quotation.getFirstReminderDateTime() != null
+                            && quotation.getSecondReminderDateTime() == null
+                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(2))
+                            && quotation.getFirstReminderDateTime().isBefore(LocalDateTime.now().minusDays(1))) {
                         toSend = true;
                         quotation.setSecondReminderDateTime(LocalDateTime.now());
-                    } else if (quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(7))) {
+                    } else if (quotation.getSecondReminderDateTime() != null
+                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(7))
+                            && quotation.getSecondReminderDateTime().isBefore(LocalDateTime.now().minusDays(5))) {
                         toSend = true;
                         quotation.setThirdReminderDateTime(LocalDateTime.now());
                     }
@@ -459,11 +465,15 @@ public class QuotationServiceImpl implements QuotationService {
                             && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
                         toSend = true;
                         quotation.setFirstReminderDateTime(LocalDateTime.now());
-                    } else if (quotation.getSecondReminderDateTime() == null
-                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(3 * 7))) {
+                    } else if (quotation.getFirstReminderDateTime() != null
+                            && quotation.getSecondReminderDateTime() == null
+                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(3 * 7))
+                            && quotation.getFirstReminderDateTime().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
                         toSend = true;
                         quotation.setSecondReminderDateTime(LocalDateTime.now());
-                    } else if (quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(6 * 7))) {
+                    } else if (quotation.getSecondReminderDateTime() != null
+                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(6 * 7))
+                            && quotation.getSecondReminderDateTime().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
                         toSend = true;
                         quotation.setThirdReminderDateTime(LocalDateTime.now());
                     }
@@ -471,7 +481,7 @@ public class QuotationServiceImpl implements QuotationService {
 
                 if (toSend) {
                     mailHelper.sendQuotationToCustomer(quotation, false);
-                    addOrUpdateQuotation(quotation);
+                    quotationRepository.save(quotation);
                 }
             }
 

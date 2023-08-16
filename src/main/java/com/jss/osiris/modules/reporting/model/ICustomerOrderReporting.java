@@ -59,5 +59,11 @@ public interface ICustomerOrderReporting {
 
     public String getInvoiceStatusLabel();
 
+    public String getInvoiceId();
+
     public String getCustomerOrderOriginLabel();
+
+    public String getResponsableMail();
+
+    public String getResponsablePhone();
 }

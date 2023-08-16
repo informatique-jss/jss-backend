@@ -322,6 +322,27 @@ public class PaymentServiceImpl implements PaymentService {
             List<IndexEntity> correspondingEntities = getCorrespondingEntityForOutboundPayment(payment);
             List<Invoice> correspondingInvoices = new ArrayList<Invoice>();
 
+            Refund refundFound = null;
+            // Try to match refunds
+            if (correspondingEntities != null && correspondingEntities.size() > 0) {
+                for (IndexEntity foundEntity : correspondingEntities) {
+                    if (foundEntity.getEntityType().equals(Refund.class.getSimpleName())) {
+                        Refund refund = refundService.getRefund(foundEntity.getEntityId());
+                        if (refund != null && refund.getIsMatched() == false)
+                            refundFound = refund;
+                    }
+                }
+            }
+
+            if (refundFound != null) {
+                associateOutboundPaymentAndRefund(payment, refundFound);
+                // remove bank accounting account
+                if (payment.getAccountingRecords() != null)
+                    for (AccountingRecord accountingRecord : payment.getAccountingRecords())
+                        accountingRecordService.deleteAccountingRecord(accountingRecord);
+                return;
+            }
+
             MutableBoolean generateWaitingAccountAccountingRecords = new MutableBoolean(true);
             if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0) {
                 generateWaitingAccountAccountingRecords = new MutableBoolean(false);
@@ -342,28 +363,12 @@ public class PaymentServiceImpl implements PaymentService {
                 }
             }
 
-            Refund refundFound = null;
-
             // Invoices to payed found
             if (correspondingInvoices.size() > 0) {
                 associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0),
                         generateWaitingAccountAccountingRecords,
                         null);
             }
-
-            // If not found, try to match refunds
-            if (correspondingEntities != null && correspondingEntities.size() > 0) {
-                for (IndexEntity foundEntity : correspondingEntities) {
-                    if (foundEntity.getEntityType().equals(Refund.class.getSimpleName())) {
-                        Refund refund = refundService.getRefund(foundEntity.getEntityId());
-                        if (refund != null && refund.getIsMatched() == false)
-                            refundFound = refund;
-                    }
-                }
-            }
-
-            if (refundFound != null)
-                associateOutboundPaymentAndRefund(payment, refundFound, generateWaitingAccountAccountingRecords);
 
             // If not found, try to match debour
             if (correspondingEntities != null && correspondingEntities.size() > 0) {
@@ -488,6 +493,10 @@ public class PaymentServiceImpl implements PaymentService {
                         refundLabelSuffix, customerOrder, null);
                 accountingRecordService.generateAccountingRecordsForRefundOnGeneration(refund);
             }
+        } else {
+            if (correspondingInvoices != null && correspondingInvoices.size() == 1)
+                associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0), new MutableBoolean(true),
+                        byPassAmount);
         }
     }
 
@@ -746,15 +755,12 @@ public class PaymentServiceImpl implements PaymentService {
         return remainingMoney;
     }
 
-    private Float associateOutboundPaymentAndRefund(Payment payment, Refund refund,
-            MutableBoolean generateWaitingAccountAccountingRecords) throws OsirisException {
+    private Float associateOutboundPaymentAndRefund(Payment payment, Refund refund) throws OsirisException {
 
         Float refundAmount = Math.round(refund.getRefundAmount() * 100f) / 100f;
         Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
 
         if (refundAmount.equals(paymentAmount)) {
-            generateWaitingAccountAccountingRecords.setFalse();
-
             refund.setIsMatched(true);
             refund.setPayment(payment);
             refundService.addOrUpdateRefund(refund);

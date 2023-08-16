@@ -29,6 +29,13 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Totalit
 @Entity
 public class Activite implements Serializable, IId {
 
+    public Activite(String activite) {
+        this.precisionAutre = activite;
+    }
+
+    public Activite() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;

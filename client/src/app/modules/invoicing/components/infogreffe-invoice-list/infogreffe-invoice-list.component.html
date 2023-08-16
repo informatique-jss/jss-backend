@@ -1,7 +1,7 @@
 <div class="mat-elevation-z2 form-div">
   <div class=" full-width">
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="infogreffeInvoices"
-      tableName="Virements">
+      [displayTotalLines]="true" tableName="Virements">
     </sort-table>
   </div>
   <div *ngIf="canImportInfogreffeInvoice()">
