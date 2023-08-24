@@ -310,7 +310,10 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 accountingRecord.setLetteringNumber(null);
                 accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
             }
-        invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
+        if (invoice.getIsProviderCreditNote())
+            invoice.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
+        else
+            invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
         invoiceService.addOrUpdateInvoice(invoice);
     }
 

@@ -392,6 +392,7 @@ public class PricingHelper {
                             && !idInvoiceAlreadyDone.contains(invoice.getId()) && invoice.getInvoiceItems() != null) {
                         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
                             InvoiceItem newInvoiceItem = invoiceItemService.cloneInvoiceItem(invoiceItem);
+                            // TODO : changer le label pour prendre le poste de factu + le nom de l'ac
                             newInvoiceItem.setProvision(provision);
                             newInvoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPriceReinvoiced());
                             newInvoiceItem.setVat(null);

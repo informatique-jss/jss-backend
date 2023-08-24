@@ -775,8 +775,18 @@ public class InvoicingController {
             throw new OsirisClientMessageException(
                     "Pour annuler cette facture, repassez la commande correspondante à A facturer");
 
-        return new ResponseEntity<Invoice>(invoiceService.cancelInvoice(invoice),
-                HttpStatus.OK);
+        if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusReceived().getId())
+                || !invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
+                || !invoice.getInvoiceStatus().getId()
+                        .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())
+                || !invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusPayed().getId())
+                        && !invoice.getIsCreditNote() && invoice.getIsProviderCreditNote()
+                        && invoice.getIsInvoiceFromProvider() && !invoice.getInvoiceStatus().getId()
+                                .equals(constantService.getInvoiceStatusReceived().getId()))
+            return new ResponseEntity<Invoice>(invoiceService.cancelInvoice(invoice),
+                    HttpStatus.OK);
+        else
+            throw new OsirisClientMessageException("Annulation interdite pour ce statut");
     }
 
     @PostMapping(inputEntryPoint + "/invoice/credit-note")

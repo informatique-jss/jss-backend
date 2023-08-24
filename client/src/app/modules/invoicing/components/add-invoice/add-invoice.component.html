@@ -222,7 +222,7 @@
         <td>
           <generic-input [(model)]="invoiceItem.discountAmount" label="Remise totale" [form]="invoiceForm"
             propertyName="discountAmount" [isMandatory]="false" [isDisabled]="!editMode || invoice.id!=undefined"
-            type="number"></generic-input>
+            type="number" *ngIf="invoice.isInvoiceFromProvider"></generic-input>
         </td>
       </tr>
     </table>
