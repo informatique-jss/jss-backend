@@ -7,26 +7,20 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DocumentExtension;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TaciteReconduction;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
 
 @Entity
-public class PiecesJointe implements Serializable, IId {
+public class PiecesJointe implements Serializable {
 
     @Id
-    @SequenceGenerator(name = "guichet_unique_piece_jointe_sequence", sequenceName = "guichet_unique_piece_jointe_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "guichet_unique_piece_jointe_sequence")
-    private Integer id;
+    private String id;
 
     @Column(length = 255)
     private String nomDocument;
@@ -81,8 +75,7 @@ public class PiecesJointe implements Serializable, IId {
     @Column(length = 255)
     private String path;
 
-    @Column()
-    private Integer attachmentId;
+    private String attachmentId;
 
     @Column(length = 255)
     private String codeInseeCommuneLieuDelivrance;
@@ -90,11 +83,11 @@ public class PiecesJointe implements Serializable, IId {
     @Column(length = 255)
     private String codePostalLieuDelivrance;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -218,11 +211,11 @@ public class PiecesJointe implements Serializable, IId {
         this.path = path;
     }
 
-    public Integer getAttachmentId() {
+    public String getAttachmentId() {
         return attachmentId;
     }
 
-    public void setAttachmentId(Integer attachmentId) {
+    public void setAttachmentId(String attachmentId) {
         this.attachmentId = attachmentId;
     }
 
