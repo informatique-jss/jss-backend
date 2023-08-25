@@ -75,8 +75,7 @@ public class PiecesJointe implements Serializable {
     @Column(length = 255)
     private String path;
 
-    @Column()
-    private Integer attachmentId;
+    private String attachmentId;
 
     @Column(length = 255)
     private String codeInseeCommuneLieuDelivrance;
@@ -212,11 +211,11 @@ public class PiecesJointe implements Serializable {
         this.path = path;
     }
 
-    public Integer getAttachmentId() {
+    public String getAttachmentId() {
         return attachmentId;
     }
 
-    public void setAttachmentId(Integer attachmentId) {
+    public void setAttachmentId(String attachmentId) {
         this.attachmentId = attachmentId;
     }
 
