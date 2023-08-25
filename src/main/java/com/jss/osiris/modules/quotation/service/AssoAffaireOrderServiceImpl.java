@@ -474,12 +474,11 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (nbrAssignation == 1)
             assoAffaireOrder.setAssignedTo(currentEmployee);
 
-        if (maxWeightEmployee != null)
-
-        {
+        if (maxWeightEmployee != null) {
             assoAffaireOrder.setAssignedTo(maxWeightEmployee);
             for (Provision provision : assoAffaireOrder.getProvisions())
-                provision.setAssignedTo(maxWeightEmployee);
+                if (provision.getAssignedTo() == null)
+                    provision.setAssignedTo(maxWeightEmployee);
         }
 
         return assoAffaireOrder;
