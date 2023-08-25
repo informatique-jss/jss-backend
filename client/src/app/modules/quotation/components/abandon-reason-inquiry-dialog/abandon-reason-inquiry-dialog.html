@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>Enquête sur la raison de l'abandon</h1>
+<div mat-dialog-content>
+  <p>Veuillez indiquer ci-dessous la raison de l'abandon de la commande :</p>
+    <div>
+        <tr>
+          <td>
+            <select-abandon-reason [(model)]="reason.label"></select-abandon-reason>
+          </td>
+        </tr>
+    </div>
+
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">Valider</button>
+</div>

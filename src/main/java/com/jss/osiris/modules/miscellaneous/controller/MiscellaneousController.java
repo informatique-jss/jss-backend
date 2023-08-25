@@ -34,6 +34,7 @@ import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.RefundService;
+import com.jss.osiris.modules.miscellaneous.model.AbandonReason;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
@@ -106,6 +107,7 @@ import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
+import com.jss.osiris.modules.miscellaneous.service.AbandonReasonService;
 
 @RestController
 public class MiscellaneousController {
@@ -243,6 +245,9 @@ public class MiscellaneousController {
 
     @Autowired
     DepartmentVatSettingService departmentVatSettingService;
+
+    @Autowired
+    AbandonReasonService abandonReasonService;
 
     @GetMapping(inputEntryPoint + "/department-vat-settings")
     public ResponseEntity<List<DepartmentVatSetting>> getDepartmentVatSettings() {
@@ -617,6 +622,11 @@ public class MiscellaneousController {
         validationHelper.validateString(departments.getLabel(), true, 100, "label");
 
         return new ResponseEntity<Department>(departmentService.addOrUpdateDepartment(departments), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/abandon-reason")
+    public ResponseEntity<List<AbandonReason>> getAbandonReasons() {
+        return new ResponseEntity<List<AbandonReason>>(abandonReasonService.getAbandonReasons(), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/cities")

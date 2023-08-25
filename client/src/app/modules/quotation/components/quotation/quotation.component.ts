@@ -49,6 +49,8 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { IQuotation } from './../../model/IQuotation';
+import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
+import { AbandonReasonInquiryDialog } from '../abandon-reason-inquiry-dialog/abandon-reason-inquiry-dialog';
 @Component({
   selector: 'quotation',
   templateUrl: './quotation.component.html',
@@ -100,6 +102,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private activatedRoute: ActivatedRoute,
     public chooseUserDialog: MatDialog,
     public mailLabelDialog: MatDialog,
+    public abandonReasonInquiryDialog: MatDialog,
     public addAffaireDialog: MatDialog,
     public quotationWorkflowDialog: MatDialog,
     public orderSimilaritiesDialog: MatDialog,
@@ -478,6 +481,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.editMode = true;
     setTimeout(() => {
       if (this.getFormsStatus() || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
+        if(targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED){
+        const dialogRef = this.abandonReasonInquiryDialog.open(AbandonReasonInquiryDialog, {
+          maxWidth: "600px",
+        });}
         if (!this.instanceOfCustomerOrder) {
           this.quotationService.updateQuotationStatus(this.quotation, targetStatus.code).subscribe(response => {
             this.quotation = response;

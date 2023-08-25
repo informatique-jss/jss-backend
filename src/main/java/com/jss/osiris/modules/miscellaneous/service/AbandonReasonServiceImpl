@@ -1,0 +1,36 @@
+
+import org.apache.commons.collections4.IterableUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.jss.osiris.modules.miscellaneous.model.DocumentType;
+import com.jss.osiris.modules.miscellaneous.repository.DocumentTypeRepository;
+
+@Service
+public class AbandonReasonServiceImpl implements AbandonReasonService {
+
+@Autowired
+AbandonReasonRepository abandonReasonRepository;
+
+@Override
+    public List<AbandonReason> getAbandonReasons() {
+        return IterableUtils.toList(abandonReasonRepository.findAll());
+    }
+
+
+@Override
+    public AbandonReason getAbandonReason(Integer id) {
+        Optional<AbandonReason> abandonReason = abandonReasonRepository.findById(id);
+        if (abandonReason.isPresent())
+            return abandonReason.get();
+        return null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public AbandonReason addOrUpdateAbandonReason(
+        AbandonReason abandonReason) {
+        return abandonReasonRepository.save(abandonReason);
+    }
+}
