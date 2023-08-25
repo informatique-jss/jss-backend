@@ -9,7 +9,7 @@ import { IAbandonReason } from '../../miscellaneous/model/AbandonReason';
 export class AbandonReasonService extends AppRestService<IAbandonReason>{
 
   constructor(http: HttpClient) {
-    super(http, "miscellaneous");
+    super(http, "quotation");
   }
 
   getAbandonReasons() {

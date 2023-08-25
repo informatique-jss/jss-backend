@@ -1,4 +1,4 @@
-package com.jss.osiris.modules.miscellaneous.model;
+package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
 
@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
 @Table(name = "abandon_reason")

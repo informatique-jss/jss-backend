@@ -64,6 +64,8 @@ import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-d
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
+import { SelectAbandonReasonComponent } from '../select-abandon-reason/select-abandon-reason';
+import { AbandonReasonInquiryDialog } from '../abandon-reason-inquiry-dialog/abandon-reason-inquiry-dialog';
 
 const routes: Routes = [
   { path: 'quotation', component: QuotationComponent },
@@ -106,6 +108,8 @@ const routes: Routes = [
     MatDatepickerModule,
   ],
   declarations: [QuotationComponent,
+    SelectAbandonReasonComponent,
+    AbandonReasonInquiryDialog,
     OrderingCustomerComponent,
     QuotationManagementComponent,
     DomiciliationComponent,

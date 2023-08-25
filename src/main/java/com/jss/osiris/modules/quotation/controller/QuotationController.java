@@ -53,6 +53,7 @@ import com.jss.osiris.modules.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.model.AbandonReason;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AffaireSearch;
@@ -104,6 +105,7 @@ import com.jss.osiris.modules.quotation.model.Siren;
 import com.jss.osiris.modules.quotation.model.Siret;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.service.AbandonReasonService;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementNoticeTemplateService;
@@ -277,6 +279,9 @@ public class QuotationController {
 
   @Autowired
   MailHelper mailHelper;
+
+  @Autowired
+  AbandonReasonService abandonReasonService;
 
   @Autowired
   BodaccStatusService bodaccStatusService;
@@ -1289,6 +1294,11 @@ public class QuotationController {
 
     return new ResponseEntity<List<QuotationSearchResult>>(quotationService.searchQuotations(quotationSearch),
         HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/abandon-reason")
+  public ResponseEntity<List<AbandonReason>> getAbandonReasons() {
+    return new ResponseEntity<List<AbandonReason>>(abandonReasonService.getAbandonReasons(), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/customer-order")

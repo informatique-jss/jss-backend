@@ -50,7 +50,10 @@ import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { IQuotation } from './../../model/IQuotation';
 import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
-import { AbandonReasonInquiryDialog } from '../abandon-reason-inquiry-dialog/abandon-reason-inquiry-dialog';
+import { AbandonReasonService } from 'src/app/modules/miscellaneous/services/abandon.reason.service';
+import { UserNoteService } from 'src/app/services/user.notes.service';
+import { SelectAbandonReasonComponent } from 'src/app/modules/quotation/components/select-abandon-reason/select-abandon-reason';
+import { AbandonReasonInquiryDialog } from 'src/app/modules/quotation/components/abandon-reason-inquiry-dialog/abandon-reason-inquiry-dialog';
 @Component({
   selector: 'quotation',
   templateUrl: './quotation.component.html',
@@ -90,6 +93,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   updateDocumentsEvent: Subject<IQuotation> = new Subject<IQuotation>();
 
   idQuotation: number | undefined;
+  abandonReasons:any;
 
   saveObservableSubscription: Subscription = new Subscription;
   customerOrderInvoices: InvoiceSearchResult[] | undefined;
@@ -115,7 +119,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private provisionService: ProvisionService,
     private orderingSearchResultService: OrderingSearchResultService,
     private invoiceSearchResultService: InvoiceSearchResultService,
-    private changeDetectorRef: ChangeDetectorRef) { }
+    private changeDetectorRef: ChangeDetectorRef,
+    private abandonReasonService: AbandonReasonService,
+    private userNoteService2: UserNoteService,) { }
 
   quotationForm = this.formBuilder.group({});
 
@@ -482,6 +488,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     setTimeout(() => {
       if (this.getFormsStatus() || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
         if(targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED){
+          const selectComponent = new SelectAbandonReasonComponent(
+            this.formBuilder,
+            this.abandonReasonService,
+            this.userNoteService2,
+          );
+          this.abandonReasons = selectComponent?.initTypes() ;
+
         const dialogRef = this.abandonReasonInquiryDialog.open(AbandonReasonInquiryDialog, {
           maxWidth: "600px",
         });}
