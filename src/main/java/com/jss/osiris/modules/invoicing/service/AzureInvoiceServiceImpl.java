@@ -128,6 +128,7 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         invoice.setIsInvoiceFromProvider(true);
         invoice.setAzureInvoice(azureInvoice);
         invoice.setManualAccountingDocumentDate(azureInvoice.getInvoiceDate());
+        invoice.setManualPaymentType(azureInvoice.getCompetentAuthority().getDefaultPaymentType());
 
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
 
@@ -159,11 +160,12 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         invoiceItem2.setDiscountAmount(0f);
         invoiceItem2.setIsGifted(false);
         invoiceItem2.setIsOverridePrice(false);
+        invoiceItem2.setVat(constantService.getVatZero());
 
         invoiceItem2.setLabel(invoiceItem2.getBillingItem().getBillingType().getLabel()
                 + (invoice.getCompetentAuthority() != null ? (" - " + invoice.getCompetentAuthority().getLabel())
                         : ""));
-        invoiceItem2.setPreTaxPrice(Math.round(azureInvoice.getInvoicePreTaxTotal() * 100f) / 100f);
+        invoiceItem2.setPreTaxPrice(Math.round(azureInvoice.getInvoiceNonTaxableTotal() * 100f) / 100f);
         invoiceItem2.setPreTaxPriceReinvoiced(invoiceItem2.getPreTaxPrice());
         vatService.completeVatOnInvoiceItem(invoiceItem2, invoice);
 

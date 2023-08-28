@@ -88,9 +88,10 @@ export class AddInvoiceComponent implements OnInit {
 
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
 
-    if (url != undefined && url != null && url[2] != undefined && url[2].path == "azure" && this.inIdProvision) {
+    if (url != undefined && url != null && url[2] != undefined && url[1].path == "azure" && this.inIdProvision) {
       this.invoiceService.createInvoiceFromAzureInvoice(idInvoice, this.inIdProvision).subscribe(generatedInvoice => {
         this.invoice = generatedInvoice;
+        this.invoiceItems = generatedInvoice.invoiceItems;
 
         this.customerOrderService.getCustomerOrder(this.invoice.customerOrderForInboundInvoice.id).subscribe(customerOrder => {
           if (customerOrder && instanceOfCustomerOrder(customerOrder)) {

@@ -128,7 +128,7 @@ export class ProvisionPaymentComponent implements OnInit {
 
   createInvoiceFromAzureInvoice(azureInvoice: AzureInvoice, event: any) {
     if (this.provision)
-      this.appService.openRoute(event, 'invoicing/add/azure/' + azureInvoice.id + "/" + this.provision.id, null);
+      this.appService.openRoute(event, 'invoicing/azure/add/' + azureInvoice.id + "/" + this.provision.id, null);
   }
 
   canAddNewInvoice() {
