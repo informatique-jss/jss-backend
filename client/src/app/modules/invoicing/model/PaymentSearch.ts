@@ -6,4 +6,5 @@ export interface PaymentSearch {
   maxAmount: number;
   label: string;
   isHideAssociatedPayments: boolean;
+  isHideCancelledPayments: boolean;
 }

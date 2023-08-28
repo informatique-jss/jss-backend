@@ -12,6 +12,8 @@ public class PaymentSearch {
     private String label;
     @JsonProperty("isHideAssociatedPayments")
     private boolean isHideAssociatedPayments;
+    @JsonProperty("isHideCancelledPayments")
+    private boolean isHideCancelledPayments;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -59,6 +61,14 @@ public class PaymentSearch {
 
     public void setHideAssociatedPayments(boolean isHideAssociatedPayments) {
         this.isHideAssociatedPayments = isHideAssociatedPayments;
+    }
+
+    public boolean isHideCancelledPayments() {
+        return isHideCancelledPayments;
+    }
+
+    public void setHideCancelledPayments(boolean isHideCancelledPayments) {
+        this.isHideCancelledPayments = isHideCancelledPayments;
     }
 
 }

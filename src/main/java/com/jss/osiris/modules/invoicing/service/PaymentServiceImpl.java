@@ -179,7 +179,8 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentRepository.findPayments(paymentSearch.getStartDate().withHour(0).withMinute(0),
                 paymentSearch.getEndDate().withHour(23).withMinute(59), paymentSearch.getMinAmount(),
                 paymentSearch.getMaxAmount(),
-                paymentSearch.getLabel(), paymentSearch.isHideAssociatedPayments());
+                paymentSearch.getLabel(), paymentSearch.isHideAssociatedPayments(),
+                paymentSearch.isHideCancelledPayments());
     }
 
     @Override

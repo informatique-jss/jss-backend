@@ -23,11 +23,13 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
                         + " p.is_externally_associated  as isExternallyAssociated ,"
                         + " p.is_cancelled  as isCancelled ,"
                         + " case when p.id_invoice is null and p.id_customer_order is null and p.id_refund is null and p.id_bank_transfert is null and p.is_externally_associated=false and p.is_cancelled=false then false else true end as isAssociated ,"
-                        + " p.id_invoice as invoiceId"
+                        + " p.id_invoice as invoiceId,"
+                        + " p.id_origin_payment as originPaymentId"
                         + " from payment p "
                         + " join payment_type on payment_type.id = p.id_payment_type"
                         + "  left join refund on refund.id_payment = p.id "
                         + " where (:isHideAssociatedPayments=false OR ( p.id_invoice is null and p.id_customer_order is null and p.id_refund is null and p.id_bank_transfert is null and p.is_externally_associated=false and p.is_cancelled=false )) "
+                        + " and (:isHideCancelledPayments=false or p.is_cancelled = false) "
                         + " and p.payment_date>=:startDate and p.payment_date<=:endDate "
                         + "  and (:minAmount is null or p.payment_amount>=CAST(CAST(:minAmount as text) as real) ) "
                         + "  and (:maxAmount is null or p.payment_amount<=CAST(CAST(:maxAmount as text) as real) )"
@@ -36,7 +38,8 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
                         @Param("endDate") LocalDateTime endDate,
                         @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount,
                         @Param("label") String label,
-                        @Param("isHideAssociatedPayments") boolean isHideAssociatedPayments);
+                        @Param("isHideAssociatedPayments") boolean isHideAssociatedPayments,
+                        @Param("isHideCancelledPayments") boolean isHideCancelledPayments);
 
         Payment findByBankId(String id);
 }
