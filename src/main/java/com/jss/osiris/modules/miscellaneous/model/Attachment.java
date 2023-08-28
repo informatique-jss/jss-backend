@@ -89,7 +89,8 @@ public class Attachment implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice")
 	@JsonIgnoreProperties(value = { "attachments", "provider", "customerOrder", "accountingRecords",
-			"customerOrderForInboundInvoice", "competentAuthority", "invoiceItems" }, allowSetters = true)
+			"customerOrderForInboundInvoice", "competentAuthority", "invoiceItems",
+			"azureInvoice" }, allowSetters = true)
 	private Invoice invoice;
 
 	@ManyToOne(fetch = FetchType.LAZY)

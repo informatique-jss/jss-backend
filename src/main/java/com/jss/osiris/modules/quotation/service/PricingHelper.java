@@ -392,7 +392,13 @@ public class PricingHelper {
                             && !idInvoiceAlreadyDone.contains(invoice.getId()) && invoice.getInvoiceItems() != null) {
                         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
                             InvoiceItem newInvoiceItem = invoiceItemService.cloneInvoiceItem(invoiceItem);
-                            // TODO : changer le label pour prendre le poste de factu + le nom de l'ac
+                            if (invoice.getCompetentAuthority() != null) {
+                                newInvoiceItem.setLabel(invoice.getCompetentAuthority().getLabel() + " - "
+                                        + invoiceItem.getBillingItem().getBillingType().getLabel());
+                            } else if (invoice.getProvider() != null) {
+                                newInvoiceItem.setLabel(invoice.getProvider().getLabel() + " - "
+                                        + invoiceItem.getBillingItem().getBillingType().getLabel());
+                            }
                             newInvoiceItem.setProvision(provision);
                             newInvoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPriceReinvoiced());
                             newInvoiceItem.setVat(null);

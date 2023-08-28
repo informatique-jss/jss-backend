@@ -64,7 +64,7 @@ export class ProvisionPaymentComponent implements OnInit {
     this.invoiceTableActions.push({
       actionIcon: "point_of_sale", actionName: "Voir le détail de la facture / associer", actionLinkFunction: (action: SortTableAction, element: any) => {
         if (element)
-          return ['/invoicing/view', element.invoiceId];
+          return ['/invoicing/view', element.id];
         return undefined;
       }, display: true,
     } as SortTableAction);
