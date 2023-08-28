@@ -805,6 +805,18 @@ public class InvoicingController {
         if (originInvoice == null)
             throw new OsirisValidationException("originInvoice");
 
+        if (originInvoice.getCompetentAuthority() != null
+                && !newInvoice.getCompetentAuthority().getId().equals(originInvoice.getCompetentAuthority().getId()))
+            throw new OsirisValidationException("Must be same Competent authority");
+
+        if (originInvoice.getProvider() != null
+                && !newInvoice.getCompetentAuthority().getId().equals(originInvoice.getProvider().getId()))
+            throw new OsirisValidationException("Must be same provider");
+
+        if (originInvoice.getConfrere() != null
+                && !newInvoice.getConfrere().getId().equals(originInvoice.getProvider().getId()))
+            throw new OsirisValidationException("Must be same Confrere");
+
         if (newInvoice.getIsProviderCreditNote() == null || newInvoice.getIsProviderCreditNote() == false)
             throw new OsirisValidationException("isProviderCreditNote");
         validateInvoice(newInvoice);

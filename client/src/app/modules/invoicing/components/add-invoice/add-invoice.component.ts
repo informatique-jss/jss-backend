@@ -120,6 +120,10 @@ export class AddInvoiceComponent implements OnInit {
         this.invoice.isInvoiceFromProvider = false;
         this.invoice.isProviderCreditNote = true;
         this.invoice.manualPaymentType = this.contantService.getPaymentTypeVirement();
+        if (response.competentAuthority)
+          this.invoice.competentAuthority = response.competentAuthority;
+        if (response.provider)
+          this.invoice.provider = response.provider;
         if (response && response.competentAuthority)
           this.invoice.competentAuthority = response.competentAuthority;
         this.appService.changeHeaderTitle("Saisir un avoir sur la facture n°" + this.idInvoiceForCreditNote);
