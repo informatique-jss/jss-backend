@@ -401,7 +401,12 @@ public class PricingHelper {
                             }
                             newInvoiceItem.setProvision(provision);
                             newInvoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPriceReinvoiced());
-                            newInvoiceItem.setVat(null);
+                            if (invoiceItem.getVat().getRate() > 0)
+                                newInvoiceItem.setVat(null);
+
+                            if (invoiceItem.getVat().getRate() <= 0
+                                    || invoiceItem.getBillingItem().getBillingType().getIsNonTaxable())
+                                newInvoiceItem.setVat(constantService.getVatZero());
                             vatService.completeVatOnInvoiceItem(newInvoiceItem, quotation);
                             if (persistInvoiceItem)
                                 invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
