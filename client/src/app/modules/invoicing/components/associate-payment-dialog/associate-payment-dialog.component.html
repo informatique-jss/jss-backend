@@ -55,8 +55,8 @@
         <mat-tab-group animationDuration="0ms">
           <mat-tab label="Factures" bodyClass="tab-height-limit">
             <invoice-list (actionBypass)="associateInvoice($event)" [overrideIconAction]="'merge_type'"
-              [overrideTooltipAction]="'Associer cette facture au paiement'" [isForPaymentAssocationIntegration]="true"
-              [defaultStatusFilter]="[invoiceStatusSend]"></invoice-list>
+              [invoiceSearch]="invoiceSearch" [overrideTooltipAction]="'Associer cette facture au paiement'"
+              [isForPaymentAssocationIntegration]="true" [defaultStatusFilter]="[invoiceStatusSend]"></invoice-list>
           </mat-tab>
           <mat-tab label="Commandes" bodyClass="tab-height-limit">
             <ordering-list (actionBypass)="associateOrder($event)" [overrideIconAction]="'merge_type'"

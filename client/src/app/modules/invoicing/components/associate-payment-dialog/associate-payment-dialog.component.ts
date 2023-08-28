@@ -20,6 +20,7 @@ import { OrderingSearchResult } from '../../../quotation/model/OrderingSearchRes
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
 import { Responsable } from '../../../tiers/model/Responsable';
 import { AssociationSummaryTable } from '../../model/AssociationSummaryTable';
+import { InvoiceSearch } from '../../model/InvoiceSearch';
 import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
 import { Payment } from '../../model/Payment';
 import { PaymentAssociate } from '../../model/PaymentAssociate';
@@ -55,6 +56,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
   getAmountRemaining = getRemainingToPay;
 
   doNotInitializeAsso: boolean = false;
+  invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
 
   constructor(public dialogRef: MatDialogRef<AssociatePaymentDialogComponent>,
     private appService: AppService,
@@ -113,7 +115,17 @@ export class AssociatePaymentDialogComponent implements OnInit {
         this.selectedRefundTiers = newValue as any;
       }
     )
+
+    if (this.payment) {
+      if (this.payment.paymentAmount > 0) {
+        this.invoiceSearch.minAmount = 0;
+      } else {
+        this.invoiceSearch.maxAmount = 0;
+      }
+    }
   }
+
+
 
   onConfirm(): void {
     if (this.payment) {
@@ -173,7 +185,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
             this.appService.displaySnackBar("Cette facture est déjà associée à ce paiement", true, 15);
             return;
           }
-      if (this.isPaymentWayInbound(this.payment) && invoice.invoiceStatus.id != this.invoiceStatusSend.id && invoice.invoiceStatus.id != this.constantService.getInvoiceStatusReceived().id) {
+      if (this.isPaymentWayInbound(this.payment) && invoice.invoiceStatus.id != this.invoiceStatusSend.id && invoice.invoiceStatus.id != this.constantService.getInvoiceStatusCreditNoteReceived().id) {
         this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusSend.label, true, 15);
         return;
       }
