@@ -33,6 +33,9 @@ public interface PaymentService {
 
         public void paymentGrab() throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
+        public void automatchPaymentFromUser(Payment payment)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
         public void automatchPayment(Payment payment)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 

@@ -255,7 +255,7 @@ public class InvoicingController {
         payment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
         payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         paymentService.addOrUpdatePayment(payment);
-        paymentService.automatchPayment(payment);
+        paymentService.automatchPaymentFromUser(payment);
         if (payment.getPaymentAmount() > 0)
             accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment, false);
         else

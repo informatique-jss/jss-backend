@@ -236,9 +236,17 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void automatchPaymentFromUser(Payment payment)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        automatchPayment(payment);
+    }
+
+    @Override
     public void automatchPayment(Payment payment)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Match inbound payment
+        payment = getPayment(payment.getId());
         if (payment.getPaymentAmount() >= 0) {
             // Get corresponding entities
             List<IndexEntity> correspondingEntities = getCorrespondingEntityForInboudPayment(payment);
@@ -282,9 +290,10 @@ public class PaymentServiceImpl implements PaymentService {
                 for (Invoice invoice : correspondingInvoices)
                     totalItemsAmount += invoiceService.getRemainingAmountToPayForInvoice(invoice);
 
-            if (totalItemsAmount < (remainingMoney - Integer.parseInt(payementLimitRefundInEuros))
+            if (correspondingInvoices.size() > 0
+                    && totalItemsAmount < (remainingMoney - Integer.parseInt(payementLimitRefundInEuros))
                     || correspondingCustomerOrder.size() == 0
-                    || correspondingQuotation.size() == 0)
+                            && correspondingQuotation.size() == 0)
                 return;
 
             // Invoices to payed found
