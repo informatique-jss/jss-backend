@@ -58,7 +58,7 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
             String[] propertyNames,
             Type[] types) {
         if (!entity.getClass().getName().equals(IndexEntity.class.getName())
-                && !entity.getClass().getName().equals(Audit.class.getName())) {
+                && !entity.getClass().getName().equals(Audit.class.getName()) && id instanceof Integer) {
             Audit audit = new Audit();
             audit.setUsername(activeDirectoryHelper.getCurrentUsername());
             audit.setDatetime(LocalDateTime.now());
