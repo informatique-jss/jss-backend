@@ -662,7 +662,7 @@ public class PaymentServiceImpl implements PaymentService {
     public void addCashPaymentForCustomerInvoice(Payment cashPayment, Invoice invoice)
             throws OsirisException, OsirisValidationException {
         cashPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
-        cashPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+        cashPayment.setSourceAccountingAccount(constantService.getAccountingAccountCaisse());
         addOrUpdatePayment(cashPayment);
         accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(cashPayment, false);
         associateInboundPaymentAndInvoices(getPayment(cashPayment.getId()), Arrays.asList(invoice), null);
@@ -695,7 +695,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional(rollbackFor = Exception.class)
     public void addCashPaymentForCustomerOrder(Payment cashPayment, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        cashPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+        cashPayment.setSourceAccountingAccount(constantService.getAccountingAccountCaisse());
         cashPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         addOrUpdatePayment(cashPayment);
         accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(cashPayment, false);
