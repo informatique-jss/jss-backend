@@ -29,7 +29,6 @@ public class BankTransfert implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false)
-	@IndexedField
 	private String label;
 
 	private Float transfertAmount;
