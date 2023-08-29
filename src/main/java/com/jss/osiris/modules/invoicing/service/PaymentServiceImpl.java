@@ -666,7 +666,7 @@ public class PaymentServiceImpl implements PaymentService {
         if (paymentToCancel.getIsCancelled())
             return paymentToCancel;
         paymentToCancel.setIsCancelled(true);
-        // accountingRecordGenerationService.generateAccountingRecordOnPaymentCancellation(paymentToCancel);
+        accountingRecordGenerationService.generateAccountingRecordOnPaymentCancellation(paymentToCancel);
         return addOrUpdatePayment(paymentToCancel);
     }
 
