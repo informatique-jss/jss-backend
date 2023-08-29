@@ -229,6 +229,9 @@ export class AddInvoiceComponent implements OnInit {
 
   saveInvoice() {
     if (this.invoiceForm.valid && (this.invoiceItems && this.invoiceItems.length > 0 || this.invoice.competentAuthority != null && this.invoice.customerOrderForInboundInvoice != null) || this.invoice.id) {
+      if (this.invoice.dueDate)
+        this.invoice.dueDate = new Date(this.invoice.dueDate.setHours(12));
+
       if (this.idInvoiceForCreditNote) {
         this.invoiceService.saveCreditNote(this.invoice, this.idInvoiceForCreditNote).subscribe(response => {
           if (response)
