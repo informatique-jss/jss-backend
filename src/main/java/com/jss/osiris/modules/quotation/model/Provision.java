@@ -72,7 +72,7 @@ public class Provision implements IId, IAttachment {
 	private Formalite formalite;
 
 	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
-	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "provision", "originProviderInvoice" }, allowSetters = true)
 	private List<InvoiceItem> invoiceItems;
 
 	@ManyToOne(fetch = FetchType.LAZY)

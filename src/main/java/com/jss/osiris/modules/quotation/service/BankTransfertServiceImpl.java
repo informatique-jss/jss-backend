@@ -56,6 +56,7 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
@@ -184,11 +185,6 @@ public class BankTransfertServiceImpl implements BankTransfertService {
         bankTransfert.setTransfertBic(bankTransfert.getTransfertBic().replaceAll(" ", ""));
         bankTransfert.setIsCancelled(false);
 
-        IGenericTiers tiers = invoiceHelper.getCustomerOrder(invoice);
-        this.addOrUpdateBankTransfert(bankTransfert);
-
-        paymentService.generateNewBankTransfertPayment(bankTransfert, -bankTransfert.getTransfertAmount(), tiers);
-
         return this.addOrUpdateBankTransfert(bankTransfert);
     }
 
@@ -257,12 +253,18 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
                 if (!completeTransfert.getIsAlreadyExported()) {
                     addOrUpdateBankTransfert(completeTransfert);
-                    if (completeTransfert.getInvoices() != null && completeTransfert.getInvoices().size() == 1
-                            && completeTransfert.getPayments() != null && completeTransfert.getPayments().size() == 1)
+                    if (completeTransfert.getInvoices() != null && completeTransfert.getInvoices().size() == 1) {
+                        IGenericTiers tiers = invoiceHelper.getCustomerOrder(completeTransfert.getInvoices().get(0));
+                        completeTransfert.setPayments(new ArrayList<Payment>());
+
+                        completeTransfert.getPayments().add(paymentService.generateNewBankTransfertPayment(
+                                completeTransfert, -completeTransfert.getTransfertAmount(), tiers));
+
                         paymentService.manualMatchPaymentInvoicesAndCustomerOrders(
                                 completeTransfert.getPayments().get(0),
                                 Arrays.asList(completeTransfert.getInvoices().get(0)), null, null,
                                 null, null);
+                    }
                 }
 
                 completeTransfert.setIsAlreadyExported(true);

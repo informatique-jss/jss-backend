@@ -392,6 +392,9 @@ public class PricingHelper {
                             && !idInvoiceAlreadyDone.contains(invoice.getId()) && invoice.getInvoiceItems() != null) {
                         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
                             InvoiceItem newInvoiceItem = invoiceItemService.cloneInvoiceItem(invoiceItem);
+                            newInvoiceItem.setOriginProviderInvoice(invoice);
+                            newInvoiceItem.setInvoice(null);
+                            newInvoiceItem.setIsOverridePrice(false);
                             if (invoice.getCompetentAuthority() != null) {
                                 newInvoiceItem.setLabel(invoice.getCompetentAuthority().getLabel() + " - "
                                         + invoiceItem.getBillingItem().getBillingType().getLabel());
@@ -409,7 +412,7 @@ public class PricingHelper {
                                 newInvoiceItem.setVat(constantService.getVatZero());
                             vatService.completeVatOnInvoiceItem(newInvoiceItem, quotation);
                             if (persistInvoiceItem)
-                                invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                                invoiceItemService.addOrUpdateInvoiceItem(newInvoiceItem);
                             provision.getInvoiceItems().add(newInvoiceItem);
                         }
                     }

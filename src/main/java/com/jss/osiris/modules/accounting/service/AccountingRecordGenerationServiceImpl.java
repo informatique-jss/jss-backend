@@ -600,16 +600,21 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
         if (invoice.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : invoice.getAccountingRecords()) {
-                AccountingRecord counterPart = getCounterPart(accountingRecord, operationId, pushasingJournal,
-                        labelPrefix);
-                accountingRecord.setContrePasse(counterPart);
-                accountingRecordService.addOrUpdateAccountingRecord(counterPart);
-                letterCounterPartRecords(accountingRecord, counterPart);
-
-                if (counterPart.getCreditAmount() != null)
-                    balance += counterPart.getCreditAmount();
+                if (accountingRecord.getCreditAmount() != null)
+                    balance -= accountingRecord.getCreditAmount();
                 else
-                    balance -= counterPart.getDebitAmount();
+                    balance += accountingRecord.getDebitAmount();
+
+                // if temporary, delete without counter part
+                if (accountingRecord.getIsTemporary()) {
+                    accountingRecordService.deleteAccountingRecord(accountingRecord);
+                } else {
+                    AccountingRecord counterPart = getCounterPart(accountingRecord, operationId, pushasingJournal,
+                            labelPrefix);
+                    accountingRecord.setContrePasse(counterPart);
+                    accountingRecordService.addOrUpdateAccountingRecord(counterPart);
+                    letterCounterPartRecords(accountingRecord, counterPart);
+                }
             }
 
         checkBalance(balance);
@@ -720,22 +725,27 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         ArrayList<AccountingRecord> newAccountingRecords = new ArrayList<AccountingRecord>();
         for (AccountingRecord accountingRecord : payment.getAccountingRecords()) {
             if (accountingRecord.getCreditAmount() != null)
-                balance += accountingRecord.getCreditAmount();
+                balance -= accountingRecord.getCreditAmount();
             else
-                balance -= accountingRecord.getDebitAmount();
+                balance += accountingRecord.getDebitAmount();
 
-            AccountingRecord counterPart = getCounterPart(accountingRecord, operationId, bankJournal,
-                    "Annulation du paiement " + payment.getId());
+            // if temporary, delete without counter part
+            if (accountingRecord.getIsTemporary()) {
+                accountingRecordService.deleteAccountingRecord(accountingRecord);
+            } else {
+                AccountingRecord counterPart = getCounterPart(accountingRecord, operationId, bankJournal,
+                        "Annulation du paiement " + payment.getId());
 
-            // If original source, use wainting account as pivot account
-            if (counterPart.getAccountingAccount().getId()
-                    .equals(constantService.getAccountingAccountBankJss().getId()))
-                counterPart.setAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
+                // If original source, use wainting account as pivot account
+                if (counterPart.getAccountingAccount().getId()
+                        .equals(constantService.getAccountingAccountBankJss().getId()))
+                    counterPart.setAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
 
-            newAccountingRecords.add(counterPart);
-            accountingRecord.setContrePasse(counterPart);
-            accountingRecordService.addOrUpdateAccountingRecord(counterPart);
-            letterCounterPartRecords(accountingRecord, counterPart);
+                newAccountingRecords.add(counterPart);
+                accountingRecord.setContrePasse(counterPart);
+                accountingRecordService.addOrUpdateAccountingRecord(counterPart);
+                letterCounterPartRecords(accountingRecord, counterPart);
+            }
         }
 
         if (newAccountingRecords.size() > 0)

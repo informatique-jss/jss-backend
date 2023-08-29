@@ -74,6 +74,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
   ngOnInit() {
     this.availableColumns = [];
     this.availableColumns.push({ id: "id", fieldName: "id", label: "N° du paiement" } as SortTableColumn);
+    this.availableColumns.push({ id: "originPaymentId", fieldName: "originPaymentId", label: "Paiement d'origine" } as SortTableColumn);
     this.availableColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.availableColumns.push({ id: "payemntAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.availableColumns.push({ id: "paymentTypeLabel", fieldName: "paymentTypeLabel", label: "Type" } as SortTableColumn);
@@ -82,7 +83,6 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "isExternallyAssociated", fieldName: "isExternallyAssociated", label: "Associé hors Osiris", valueFonction: (element: any) => { return element.isExternallyAssociated ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé", valueFonction: (element: any) => { return element.isCancelled ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture associée", actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
-    this.availableColumns.push({ id: "originPaymentId", fieldName: "originPaymentId", label: "Paiement d'origine" } as SortTableColumn);
 
     if (this.overrideIconAction == "") {
       if (this.habilitationService.canModifyPaymentAssociation()) {

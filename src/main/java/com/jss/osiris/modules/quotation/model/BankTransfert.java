@@ -46,7 +46,7 @@ public class BankTransfert implements Serializable, IId {
 	@OneToMany(mappedBy = "bankTransfert")
 	@JsonIgnoreProperties(value = { "bankTransfert", "invoiceItems", "customerOrder", "payments",
 			"deposits", "accountingRecords", "customerOrderForInboundInvoice", "creditNote", "attachments",
-			"azureInvoice", "azureReceipt",
+			"azureInvoice", "azureReceipt", "invoices",
 			"reverseCreditNote" }, allowSetters = true)
 	List<Invoice> invoices;
 

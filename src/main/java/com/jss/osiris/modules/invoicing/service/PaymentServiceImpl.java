@@ -502,19 +502,21 @@ public class PaymentServiceImpl implements PaymentService {
         if (correspondingInvoice != null)
             amountIndex = correspondingInvoice.size() - 1 + 1;
 
-        // if no by pass, put all on first customer order even if there is too much
+        // if no by pass, put all on last customer order even if there is too much
         // money
         for (int i = 0; i < correspondingCustomerOrder.size(); i++) {
-            Float remainingToPayForCustomerOrder = Math.round(
+            Float remainingToPayForCustomerOrder = Math.max(Math.round(
                     customerOrderService.getRemainingAmountToPayForCustomerOrder(correspondingCustomerOrder.get(i))
                             * 100f)
-                    / 100f;
+                    / 100f, 0);
             Float effectivePayment;
             if (byPassAmount != null) {
                 effectivePayment = byPassAmount.get(amountIndex);
                 amountIndex++;
+            } else if (i == correspondingCustomerOrder.size() - 1) { // if last, put all on last customer order
+                effectivePayment = remainingMoney;
             } else {
-                effectivePayment = payment.getPaymentAmount();
+                effectivePayment = Math.min(remainingToPayForCustomerOrder, remainingMoney);
             }
 
             // Generate one deposit per customer order
@@ -630,7 +632,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private void associateOutboundPaymentAndBankTransfert(Payment payment, BankTransfert bankTransfert)
-            throws OsirisException {
+            throws OsirisException, OsirisValidationException {
 
         Float bankTransfertAmount = Math.round(bankTransfert.getTransfertAmount() * 100f) / 100f;
         Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
@@ -640,6 +642,7 @@ public class PaymentServiceImpl implements PaymentService {
             bankTransfertService.addOrUpdateBankTransfert(bankTransfert);
             payment.setBankTransfert(bankTransfert);
             addOrUpdatePayment(payment);
+            cancelPayment(payment);
         }
     }
 
@@ -663,7 +666,7 @@ public class PaymentServiceImpl implements PaymentService {
         if (paymentToCancel.getIsCancelled())
             return paymentToCancel;
         paymentToCancel.setIsCancelled(true);
-        accountingRecordGenerationService.generateAccountingRecordOnPaymentCancellation(paymentToCancel);
+        // accountingRecordGenerationService.generateAccountingRecordOnPaymentCancellation(paymentToCancel);
         return addOrUpdatePayment(paymentToCancel);
     }
 
