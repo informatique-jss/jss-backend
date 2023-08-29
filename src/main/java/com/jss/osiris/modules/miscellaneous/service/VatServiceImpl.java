@@ -197,6 +197,10 @@ public class VatServiceImpl implements VatService {
                         "Pays non trouvé dans l'adresse indiquée dans la configuration de facturation de la commande");
             country = billingDocument.getBillingLabelCountry();
         }
+
+        if (country == null)
+            throw new OsirisClientMessageException(
+                    "Pays non trouvé sur l'affaire ou le tiers pour le calcul de la TVA");
         return country;
     }
 
@@ -215,12 +219,18 @@ public class VatServiceImpl implements VatService {
         if (billingDocument == null || billingDocument.getBillingLabelType() == null
                 || billingDocument.getBillingLabelType().getId()
                         .equals(constantService.getBillingLabelTypeCustomer().getId())) {
+            if (customerOrder.getCity() == null)
+                throw new OsirisClientMessageException(
+                        "Ville non trouvée dans l'adresse du donneur d'ordre de la commande");
             city = cityService.getCity(customerOrder.getCity().getId());
         } else if (billingDocument.getBillingLabelType().getId()
                 .equals(constantService.getBillingLabelTypeCodeAffaire().getId())
                 && quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0) {
             Affaire affaire = quotation.getAssoAffaireOrders().get(0).getAffaire();
             city = affaire.getCity();
+            if (affaire.getCity() == null)
+                throw new OsirisClientMessageException(
+                        "Ville non trouvée dans l'adresse de l'affaire " + affaire.getDenomination());
         } else {
             if (billingDocument.getBillingLabelCity() == null)
                 throw new OsirisClientMessageException(
@@ -229,6 +239,7 @@ public class VatServiceImpl implements VatService {
             if (city != null && city.getId() != null)
                 city = cityService.getCity(city.getId());
         }
+
         return city;
     }
 
