@@ -326,7 +326,7 @@ public class PaymentServiceImpl implements PaymentService {
             // Customer order waiting for deposit found
             if (correspondingCustomerOrder.size() > 0 && remainingMoney > 0) {
                 associateInboundPaymentAndCustomerOrders(payment, correspondingCustomerOrder, correspondingInvoices,
-                        null, payment.getPaymentAmount());
+                        null, remainingMoney);
             }
         } else {
             // Get corresponding entities
@@ -535,6 +535,9 @@ public class PaymentServiceImpl implements PaymentService {
             // Unlocked customer order if necessary
             if (remainingToPayForCustomerOrder <= effectivePayment)
                 customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
+
+            if (Math.round(remainingMoney * 100f) / 100f == 0f)
+                return 0f;
         }
         return Math.round(remainingMoney * 100f) / 100f;
     }
@@ -749,21 +752,9 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (newPayment.getPaymentAmount() > 0) {
             newPayment.setSourceAccountingAccount(payment.getSourceAccountingAccount());
-
-            // If original source, use wainting account as pivot account
-            if (newPayment.getSourceAccountingAccount().getId()
-                    .equals(constantService.getAccountingAccountBankJss().getId()))
-                newPayment.setSourceAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
-
             newPayment.setTargetAccountingAccount(targetAccountingAccount);
         } else {
             newPayment.setTargetAccountingAccount(payment.getTargetAccountingAccount());
-
-            // If original source, use wainting account as pivot account
-            if (newPayment.getTargetAccountingAccount().getId()
-                    .equals(constantService.getAccountingAccountBankJss().getId()))
-                newPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
-
             newPayment.setSourceAccountingAccount(targetAccountingAccount);
         }
 
@@ -809,12 +800,6 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setRefund(refund);
         newPayment.setPaymentType(constantService.getPaymentTypeVirement());
         newPayment.setTargetAccountingAccount(paymentToRefund.getTargetAccountingAccount());
-
-        // If original source, use wainting account as pivot account
-        if (newPayment.getTargetAccountingAccount().getId()
-                .equals(constantService.getAccountingAccountBankJss().getId()))
-            newPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
-
         newPayment.setSourceAccountingAccount(tiersToRefund.getAccountingAccountCustomer());
 
         return addOrUpdatePayment(newPayment);
@@ -895,7 +880,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void movePaymentFromInvoiceToCustomerOrder(Payment payment, Invoice invoice, CustomerOrder customerOrder)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
-        associateInboundPaymentAndCustomerOrders(payment, Arrays.asList(customerOrder), null, null, 0);
+        associateInboundPaymentAndCustomerOrders(payment, Arrays.asList(customerOrder), null,
+                Arrays.asList(payment.getPaymentAmount()), payment.getPaymentAmount());
     }
 
     @Override
@@ -956,7 +942,8 @@ public class PaymentServiceImpl implements PaymentService {
         // Generate payment to materialize CB payment
         Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, null);
         generateInvoiceForCentralPayPayment(centralPayPaymentRequest, payment, null, customerOrder);
-        associateInboundPaymentAndCustomerOrders(payment, Arrays.asList(customerOrder), null, null, 0);
+        associateInboundPaymentAndCustomerOrders(payment, Arrays.asList(customerOrder), null, null,
+                payment.getPaymentAmount());
         return payment;
     }
 

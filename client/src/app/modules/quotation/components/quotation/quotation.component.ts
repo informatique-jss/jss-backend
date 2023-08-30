@@ -685,7 +685,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           if (asso.provisions) {
             for (let provision of asso.provisions)
               if (provision && provision.payments) {
-                this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : des paiements ont déjà été déclarés.", false, 15);
+                for (let payment of provision.payments)
+                  if (!payment.isCancelled)
+                    this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : des paiements ont déjà été déclarés.", false, 15);
                 return;
               }
           }
