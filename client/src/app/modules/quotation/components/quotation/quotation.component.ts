@@ -488,16 +488,14 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     setTimeout(() => {
       if (this.getFormsStatus() || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
         if(targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED){
-          const selectComponent = new SelectAbandonReasonComponent(
-            this.formBuilder,
-            this.abandonReasonService,
-            this.userNoteService2,
-          );
-          this.abandonReasons = selectComponent?.initTypes() ;
 
         const dialogRef = this.abandonReasonInquiryDialog.open(AbandonReasonInquiryDialog, {
           maxWidth: "600px",
+          data:{
+            id_quotation:this.idQuotation
+          }
         });}
+
         if (!this.instanceOfCustomerOrder) {
           this.quotationService.updateQuotationStatus(this.quotation, targetStatus.code).subscribe(response => {
             this.quotation = response;

@@ -38,7 +38,8 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 @Entity
 @Table(indexes = { @Index(name = "idx_customer_order_status", columnList = "id_customer_order_status"),
 		@Index(name = "idx_customer_order_responsable", columnList = "id_responsable"),
-		@Index(name = "idx_customer_order_tiers", columnList = "id_tiers") })
+		@Index(name = "idx_customer_order_tiers", columnList = "id_tiers"),
+		@Index(name = "idx_abandon_reason", columnList = "id_abandon_reason") })
 public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public CustomerOrder() {
@@ -107,6 +108,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_status")
 	private CustomerOrderStatus customerOrderStatus;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_abandon_reason")
+	private AbandonReason abandonReason;
 
 	private LocalDateTime lastStatusUpdate;
 
@@ -376,6 +381,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setCustomerOrderOrigin(CustomerOrderOrigin customerOrderOrigin) {
 		this.customerOrderOrigin = customerOrderOrigin;
+	}
+
+	public AbandonReason getAbandonReason() {
+		return abandonReason;
+	}
+
+	public void setAbandonReason(AbandonReason abandonReason) {
+		this.abandonReason = abandonReason;
 	}
 
 }

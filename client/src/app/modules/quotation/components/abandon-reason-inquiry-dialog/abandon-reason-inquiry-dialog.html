@@ -1,13 +1,14 @@
 <form [formGroup]="reasonTypeForm">
 <h1 mat-dialog-title>Enquête sur la raison de l'abandon</h1>
-<div mat-dialog-content>
+<div mat-dialog-content  *ngIf="reason">
   <p>Veuillez indiquer ci-dessous la raison de l'abandon de la commande :</p>
         <tr>
           <td>
-
-            <select-abandon-reason></select-abandon-reason>
+            <select-abandon-reason [(model)]="reason.label" label="Raison Abandon"
+            [form]="reasonTypeForm" propertyName="label" [isMandatory]="true" [isDisabled]="false"></select-abandon-reason>
           </td>
         </tr>
+
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>

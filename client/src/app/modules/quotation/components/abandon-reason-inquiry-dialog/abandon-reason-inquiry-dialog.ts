@@ -1,10 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
-import { AbandonReasonService } from '../../../miscellaneous/services/abandon.reason.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
-import { IAbandonReason } from 'src/app/modules/miscellaneous/model/AbandonReason';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
+import { AbandonReason } from 'src/app/modules/miscellaneous/model/AbandonReason';
+import { AbandonReasonService } from 'src/app/modules/miscellaneous/services/abandon.reason.service';
 @Component({
   selector: 'app-abandon-reason-inquiry-dialog',
   templateUrl: './abandon-reason-inquiry-dialog.html',
@@ -12,26 +11,37 @@ import { IAbandonReason } from 'src/app/modules/miscellaneous/model/AbandonReaso
 })
 
 export class AbandonReasonInquiryDialog implements OnInit {
-  @Input() reason: IAbandonReason = {} as IAbandonReason;
+  @Input() reason: AbandonReason = {} as AbandonReason;
 
-  reasonTypeForm!: FormGroup;
+  reasonTypeForm = this.formBuilder.group({
+    id: ['', Validators.required],
+    label: ['', [Validators.required]],
+  });
+
 
   constructor(
     public dialogRef: MatDialogRef<AbandonReasonInquiryDialog>,
     private formBuilder: FormBuilder,
+    private abandonReasonService: AbandonReasonService,
+    @Inject(MAT_DIALOG_DATA) public data: any,
 
     ) {}
 
   ngOnInit() {
-
   }
 
 
   onConfirm(): void {
-    this.dialogRef.close(this.reason);
+    const selectedReasonControl = this.reasonTypeForm.value.label;
+    Object.assign(this.reason, selectedReasonControl);
+        this.abandonReasonService.addOrUpdateCustomerOrderAbandonReason(this.reason, this.data.id_quotation).subscribe(response => {
+        this.dialogRef.close(true);
+      });
+
   }
 
+
   onClose(): void {
-    this.dialogRef.close(this.reason);
+    this.dialogRef.close();
   }
 }

@@ -10,6 +10,7 @@ public interface AbandonReasonService {
 
     public AbandonReason getAbandonReason(Integer id);
 
-    public AbandonReason addOrUpdateAbandonReason(AbandonReason abandonReason);
+    public AbandonReason addOrUpdateCustomerOrderAbandonReason(AbandonReason abandonReason, String id_commande);
 
+    public AbandonReason addOrUpdateAbandonReason(AbandonReason abandonReason);
 }

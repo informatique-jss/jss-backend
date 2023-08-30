@@ -1296,9 +1296,26 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/abandon-reason")
+  @GetMapping(inputEntryPoint + "/abandon-reasons")
   public ResponseEntity<List<AbandonReason>> getAbandonReasons() {
     return new ResponseEntity<List<AbandonReason>>(abandonReasonService.getAbandonReasons(), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/abandon-reason-customer-order")
+  public ResponseEntity<AbandonReason> addOrUpdateCustomerOrderAbandonReason(
+      @RequestBody AbandonReason abandonReason, @RequestParam(name = "id_commande") String id_commande)
+      throws OsirisValidationException, OsirisException {
+    return new ResponseEntity<AbandonReason>(
+        abandonReasonService.addOrUpdateCustomerOrderAbandonReason(abandonReason, id_commande),
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/abandon-reason")
+  public ResponseEntity<AbandonReason> addOrUpdateAbandonReason(@RequestBody AbandonReason abandonReason)
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+
+    return new ResponseEntity<AbandonReason>(abandonReasonService.addOrUpdateAbandonReason(abandonReason),
+        HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/customer-order")
