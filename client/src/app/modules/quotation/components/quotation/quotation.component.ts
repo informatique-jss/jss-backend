@@ -151,7 +151,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           this.quotation = response;
           if (instanceOfCustomerOrder(this.quotation))
             this.appService.changeHeaderTitle("Commande " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
-              (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : ""));
+              (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : "") + (this.quotation.abandonReason != null && this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED ? "  ("+ this.quotation.abandonReason.label+")" : ""));
           this.toggleTabs();
           this.setOpenStatus();
           this.checkAffaireAssignation();
