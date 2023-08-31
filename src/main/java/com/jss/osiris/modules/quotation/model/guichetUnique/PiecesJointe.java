@@ -19,9 +19,6 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDoc
 @Entity
 public class PiecesJointe implements Serializable {
 
-    @Id
-    private String id;
-
     @Column(length = 255)
     private String nomDocument;
 
@@ -75,6 +72,7 @@ public class PiecesJointe implements Serializable {
     @Column(length = 255)
     private String path;
 
+    @Id
     private String attachmentId;
 
     @Column(length = 255)
@@ -82,14 +80,6 @@ public class PiecesJointe implements Serializable {
 
     @Column(length = 255)
     private String codePostalLieuDelivrance;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getNomDocument() {
         return nomDocument;
