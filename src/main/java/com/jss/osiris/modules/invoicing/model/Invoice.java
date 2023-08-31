@@ -65,7 +65,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	private LocalDate dueDate;
 
 	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "invoice", cascade = CascadeType.ALL)
-	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "invoice", "originProviderInvoice" }, allowSetters = true)
 	private List<InvoiceItem> invoiceItems;
 
 	@OneToOne(fetch = FetchType.LAZY)

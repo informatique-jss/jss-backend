@@ -69,6 +69,7 @@ public class AccountingRecord implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice_item")
+	@JsonIgnoreProperties(value = { "originProviderInvoice" }, allowSetters = true)
 	private InvoiceItem invoiceItem;
 
 	@ManyToOne(fetch = FetchType.LAZY)

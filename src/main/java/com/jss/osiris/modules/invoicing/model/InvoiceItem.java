@@ -66,7 +66,8 @@ public class InvoiceItem implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_origin_provider_invoice")
 	@JsonIgnoreProperties(value = { "invoiceItems", "accountingRecords", "customerOrder", "attachments",
-			"azureInvoice", "azureReceipt", "provision", "customerOrderForInboundInvoice" }, allowSetters = true)
+			"azureInvoice", "azureReceipt", "provision", "customerOrderForInboundInvoice",
+			"invoiceItems" }, allowSetters = true)
 	Invoice originProviderInvoice;
 
 	public Integer getId() {
