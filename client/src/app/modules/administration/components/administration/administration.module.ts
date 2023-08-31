@@ -83,6 +83,7 @@ import { ReferentialProvisionFamilyTypeComponent } from '../referentials/referen
 import { ReferentialRecordTypeComponent } from '../referentials/referentiel-record-type/referential-record-type.component';
 import { ViewLogComponent } from '../view-log/view-log.component';
 import { AdministrationComponent } from './administration.component';
+import { ReferentialAbandonReasonComponent } from '../referentials/referential-abandon-reason/referential-abandon-reason';
 
 const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
@@ -151,6 +152,7 @@ const routes: Routes = [
     ReferentialDocumentTypeComponent,
     ReferentialLanguageComponent,
     ReferentialGiftComponent,
+    ReferentialAbandonReasonComponent,
     ReferentialLegalFormComponent,
     ReferentialPaymentTypeComponent,
     ReferentialAccountingAccountClassComponent,

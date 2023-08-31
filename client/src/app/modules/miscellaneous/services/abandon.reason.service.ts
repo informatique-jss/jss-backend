@@ -22,7 +22,6 @@ export class AbandonReasonService extends AppRestService<AbandonReason>{
   }
 
   addOrUpdateAbandonReason(abandonReason: AbandonReason) {
-    this.clearListCache(new HttpParams(), "abandon-reason");
-    return this.addOrUpdate(new HttpParams(), "abandonReason", abandonReason, "Enregistré", "Erreur lors de l'enregistrement");
+    return this.addOrUpdate(new HttpParams(), "abandon-reason", abandonReason, "Enregistré", "Erreur lors de l'enregistrement");
   }
 }
