@@ -174,7 +174,7 @@ public class Provision implements IId, IAttachment {
 	private Boolean isCorrespondenceFees;
 
 	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
-	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "provision", "invoice" }, allowSetters = true)
 	private List<Attachment> attachments;
 
 	@OneToMany(targetEntity = Invoice.class, mappedBy = "provision")

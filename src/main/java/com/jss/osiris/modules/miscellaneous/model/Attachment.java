@@ -77,7 +77,7 @@ public class Attachment implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision")
-	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "attachments", "providerInvoices" }, allowSetters = true)
 	private Provision provision;
 
 	@ManyToOne(fetch = FetchType.LAZY)
