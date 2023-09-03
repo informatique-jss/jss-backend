@@ -92,10 +92,13 @@ export class AddInvoiceComponent implements OnInit {
       this.invoiceService.createInvoiceFromAzureInvoice(idInvoice, this.inIdProvision).subscribe(generatedInvoice => {
         this.invoice = generatedInvoice;
         this.invoiceItems = generatedInvoice.invoiceItems;
+        if (this.invoiceItems && this.invoiceItems.length > 0)
+          this.invoiceItem = this.invoiceItems[0];
 
         this.customerOrderService.getCustomerOrder(this.invoice.customerOrderForInboundInvoice.id).subscribe(customerOrder => {
           if (customerOrder && instanceOfCustomerOrder(customerOrder)) {
             this.invoice.customerOrderForInboundInvoice = customerOrder;
+            this.indexedCustomerOrder = customerOrder as any;
             if (customerOrder.assoAffaireOrders)
               for (let asso of customerOrder.assoAffaireOrders)
                 if (asso.provisions)
@@ -104,7 +107,7 @@ export class AddInvoiceComponent implements OnInit {
                       this.invoice.provision = provision;
           }
         })
-        this.invoice.provision
+
       })
     } else if (idInvoice != null && idInvoice != "null") {
       this.invoiceService.getInvoiceById(idInvoice).subscribe(response => {
