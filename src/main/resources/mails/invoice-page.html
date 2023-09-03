@@ -95,7 +95,8 @@
         <p>Avoir n°<span th:text="${invoice.id}"></span> annulant la facture n°<span
                 th:text="${reverseCreditNote.id}">th:text="${invoice.id}"</span></p>
     </div>
-    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
+    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;"
+        th:if="${reverseCreditNote==null}">
         <th:block th:each="asso : ${assos}">
             <tr>
                 <td style="padding-top: 20px; text-align : center" th:if="${asso.affaire.denomination!=null} "
@@ -139,6 +140,29 @@
                     </tr>
                 </th:block>
             </th:block>
+        </th:block>
+    </table>
+    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;"
+        th:if="${reverseCreditNote!=null}">
+        <th:block th:each="invoiceItem : ${invoice.invoiceItems}"
+            th:if="${invoiceItem.preTaxPrice!=0} or ${invoiceItem.isGifted}">
+            <tr>
+                <td>
+                    <span style="padding-left: 10px" th:text="${invoiceItem.label}"></span>
+                </td>
+                <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                    <span th:text="${#numbers.formatDecimal(invoiceItem.preTaxPrice,1,2)}"></span>
+                    €
+                </td>
+            </tr>
+            <tr th:if="${invoiceItem.discountAmount!=null} and ${invoiceItem.discountAmount>0}">
+                <td>
+                    <span style="padding-left: 10px">Remise</span>
+                </td>
+                <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                    - <span th:text="${#numbers.formatDecimal(invoiceItem.discountAmount,1,2)}"></span>
+                    €</td>
+            </tr>
         </th:block>
     </table>
     <p style="margin-top: 10px;">&#160;</p>
