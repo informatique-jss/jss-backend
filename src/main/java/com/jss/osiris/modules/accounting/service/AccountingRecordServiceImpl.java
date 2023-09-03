@@ -1624,7 +1624,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
               try {
                 sendBillingClosureReceiptFile(
                     generatePdfDelegate.getBillingClosureReceiptFile(responsable, values),
-                    tier);
+                    responsable);
               } catch (Exception e) {
                 globalExceptionHandler.persistLog(
                     new OsirisException(e, "Impossible to generate billing closure for Tiers " + tiersId),
