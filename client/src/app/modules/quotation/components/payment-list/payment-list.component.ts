@@ -168,6 +168,12 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
         this.uploadAttachementDialogRef.componentInstance.forcedAttachmentType = this.constantService.getAttachmentTypeBillingClosure();
         this.uploadAttachementDialogRef.componentInstance.replaceExistingAttachementType = true;
         this.uploadAttachementDialogRef.afterClosed().subscribe(response => {
+          this.paymentSearch = {} as PaymentSearch;
+          this.paymentSearch.isHideCancelledPayments = true;
+          this.paymentSearch.startDate = new Date();
+          this.paymentSearch.startDate.setHours(0);
+          this.paymentSearch.endDate = new Date();
+          this.paymentSearch.endDate.setHours(23);
           this.searchPayments();
         });
       }
