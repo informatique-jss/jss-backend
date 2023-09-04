@@ -21,7 +21,8 @@ import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.quotation.model.Provision;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_invoice_item_invoice", columnList = "id_invoice"), })
+@Table(indexes = { @Index(name = "idx_invoice_item_invoice", columnList = "id_invoice"),
+		@Index(name = "idx_invoice_item_id_provision", columnList = "id_provision"), })
 public class InvoiceItem implements Serializable, IId {
 
 	@Id

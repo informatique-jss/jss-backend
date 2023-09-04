@@ -27,7 +27,8 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_bank_id", columnList = "bankId", unique = true) })
+@Table(indexes = { @Index(name = "idx_bank_id", columnList = "bankId", unique = true),
+		@Index(name = "idx_payment_id_invoice", columnList = "id_invoice") })
 public class Payment implements Serializable, IId, ICreatedDate {
 
 	@Id
