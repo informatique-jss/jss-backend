@@ -374,13 +374,25 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (tiers != null && tiers.size() > 0)
       for (Tiers tier : tiers) {
         System.out.println(tiers.indexOf(tier) + "/" + tiers.size());
-        getBillingClosureReceiptFile(tier.getId(), false);
+        try {
+          getBillingClosureReceiptFile(tier.getId(), false);
+        } catch (Exception e) {
+          if (e instanceof OsirisException || e instanceof OsirisClientMessageException
+              || e instanceof OsirisValidationException)
+            throw e;
+          else
+            throw new OsirisException(e, "Error when sending receipt for tiers " + tier.getId());
+        } finally {
+          tier.setIsReceipSent(true);
+          tiersService.addOrUpdateTiers(tier);
+        }
       }
 
     List<Confrere> confreres = confrereService.getConfreres();
     if (confreres != null && confreres.size() > 0)
       for (Confrere confrere : confreres) {
-        getBillingClosureReceiptFile(confrere.getId(), false);
+        System.out.println(confreres.indexOf(confrere) + "/" + confreres.size());
+        // getBillingClosureReceiptFile(confrere.getId(), false); TODO : remettre
       }
   }
 

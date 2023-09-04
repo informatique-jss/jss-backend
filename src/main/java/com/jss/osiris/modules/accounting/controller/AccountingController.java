@@ -208,6 +208,15 @@ public class AccountingController {
                 accountingAccountService.getAccountingAccountByLabelOrCode(label), HttpStatus.OK);
     }
 
+    // TODO delete
+    @GetMapping(inputEntryPoint + "/billing-closure-receipt/trigger")
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    public ResponseEntity<Boolean> triggerBillingClosureReceipt()
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        accountingRecordService.sendBillingClosureReceipt();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/accounting/close/daily")
     public ResponseEntity<Boolean> dailyAccountClosing() {
