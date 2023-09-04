@@ -17,6 +17,7 @@ import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
@@ -62,6 +63,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   BillingClosureReceiptDelegate billingClosureReceiptDelegate;
+
+  @Autowired
+  CustomerMailService customerMailService;
 
   @Override
   public AccountingRecord getAccountingRecord(Integer id) {
@@ -369,6 +373,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     List<Tiers> tiers = tiersService.findAllTiersForBillingClosureReceiptSend();
     if (tiers != null && tiers.size() > 0)
       for (Tiers tier : tiers) {
+        System.out.println(tiers.indexOf(tier) + "/" + tiers.size());
         getBillingClosureReceiptFile(tier.getId(), false);
       }
 

@@ -20,9 +20,11 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.invoicing.model.ICreatedDate;
@@ -98,6 +100,9 @@ public class BillingClosureReceiptDelegate {
     @Autowired
     MailHelper mailHelper;
 
+    @Autowired
+    CustomerMailService customerMailService;
+
     public File getBillingClosureReceiptFile(Integer tiersId, boolean downloadFile)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
@@ -141,6 +146,12 @@ public class BillingClosureReceiptDelegate {
                             || billingClosureDocument.getBillingClosureRecipientType().getId()
                                     .equals(constantService.getBillingClosureRecipientTypeOther().getId()))) {
 
+                if (tier instanceof Tiers) {
+                    List<CustomerMail> mails = customerMailService.getReceiptMailsForTiers((Tiers) tier);
+                    if (mails != null && mails.size() > 0)
+                        return null;
+                }
+
                 ArrayList<ITiers> tiers = new ArrayList<ITiers>();
                 if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
                     tiers.addAll(((Tiers) tier).getResponsables());
@@ -156,7 +167,8 @@ public class BillingClosureReceiptDelegate {
                                 tier);
                     } catch (Exception e) {
                         globalExceptionHandler.persistLog(
-                                new OsirisException(e, "Impossible to generate billing closure for Tiers " + tiersId),
+                                new OsirisException(e, "Impossible to generate billing closure for Tiers " +
+                                        tiersId),
                                 OsirisLog.UNHANDLED_LOG);
                     }
                 }
@@ -168,6 +180,10 @@ public class BillingClosureReceiptDelegate {
                 if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
                     for (Responsable responsable : ((Tiers) tier).getResponsables()) {
 
+                        List<CustomerMail> mails = customerMailService.getReceiptMailsForResponsable(responsable);
+                        if (mails != null && mails.size() > 0)
+                            continue;
+
                         ArrayList<ITiers> tiers = new ArrayList<ITiers>();
                         tiers.add(responsable);
                         List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tiers,
@@ -176,7 +192,7 @@ public class BillingClosureReceiptDelegate {
                             try {
                                 sendBillingClosureReceiptFile(
                                         generatePdfDelegate.getBillingClosureReceiptFile(responsable, values),
-                                        tier);
+                                        responsable);
                             } catch (Exception e) {
                                 globalExceptionHandler.persistLog(
                                         new OsirisException(e,
