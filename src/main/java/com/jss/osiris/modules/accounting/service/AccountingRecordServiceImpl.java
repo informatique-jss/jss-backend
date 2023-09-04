@@ -27,9 +27,11 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
@@ -166,6 +168,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   GeneratePdfDelegate generatePdfDelegate;
+
+  @Autowired
+  CustomerMailService customerMailService;
 
   @Override
   public AccountingRecord getAccountingRecord(Integer id) {
@@ -1537,6 +1542,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     List<Tiers> tiers = tiersService.findAllTiersForBillingClosureReceiptSend();
     if (tiers != null && tiers.size() > 0)
       for (Tiers tier : tiers) {
+        System.out.println(tiers.indexOf(tier) + "/" + tiers.size());
         getBillingClosureReceiptFile(tier.getId(), false);
       }
 
@@ -1551,7 +1557,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Transactional(rollbackFor = Exception.class)
   public File getBillingClosureReceiptFile(Integer tiersId, boolean downloadFile)
       throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-
     ITiers tier = null;
     tier = tiersService.getTiers(tiersId);
 
@@ -1590,6 +1595,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
               || billingClosureDocument.getBillingClosureRecipientType().getId()
                   .equals(constantService.getBillingClosureRecipientTypeOther().getId()))) {
 
+        if (tier instanceof Tiers) {
+          List<CustomerMail> mails = customerMailService.getReceiptMailsForTiers((Tiers) tier);
+          if (mails != null && mails.size() > 0)
+            return null;
+        }
+
         ArrayList<ITiers> tiers = new ArrayList<ITiers>();
         if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
           tiers.addAll(((Tiers) tier).getResponsables());
@@ -1604,7 +1615,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
                 tier);
           } catch (Exception e) {
             globalExceptionHandler.persistLog(
-                new OsirisException(e, "Impossible to generate billing closure for Tiers " + tiersId),
+                new OsirisException(e, "Impossible to generate billing closure for Tiers " +
+                    tiersId),
                 OsirisLog.UNHANDLED_LOG);
           }
         }
@@ -1615,6 +1627,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         // Send to each responsable
         if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
           for (Responsable responsable : ((Tiers) tier).getResponsables()) {
+
+            List<CustomerMail> mails = customerMailService.getReceiptMailsForResponsable(responsable);
+            if (mails != null && mails.size() > 0)
+              continue;
 
             ArrayList<ITiers> tiers = new ArrayList<ITiers>();
             tiers.add(responsable);
