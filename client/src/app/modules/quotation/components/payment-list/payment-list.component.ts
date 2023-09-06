@@ -172,8 +172,10 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
           this.paymentSearch.isHideCancelledPayments = true;
           this.paymentSearch.startDate = new Date();
           this.paymentSearch.startDate.setHours(0);
+          this.paymentSearch.startDate.setMinutes(0);
           this.paymentSearch.endDate = new Date();
           this.paymentSearch.endDate.setHours(23);
+          this.paymentSearch.endDate.setMinutes(59);
           this.searchPayments();
         });
       }
