@@ -226,6 +226,15 @@
                 €
             </td>
         </tr>
+        <tr th:if="${remainingToPay!=null}">
+            <td>
+                Reste à payer
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span>
+                €
+            </td>
+        </tr>
     </table>
     <p style="font-size: 12px;">Echéance de paiement : <span th:text="${invoiceDueDate}"></span></p>
     <p style="font-size: 12px;">Retard de paiement. Maj de 3 fois le taux d’intérêt légal (Application du CC - Article

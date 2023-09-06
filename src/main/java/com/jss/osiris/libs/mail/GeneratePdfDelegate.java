@@ -46,7 +46,10 @@ import com.jss.osiris.libs.mail.model.VatMail;
 import com.jss.osiris.modules.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
+import com.jss.osiris.modules.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -101,6 +104,12 @@ public class GeneratePdfDelegate {
 
     @Autowired
     ProvisionService provisionService;
+
+    @Autowired
+    PaymentService paymentService;
+
+    @Autowired
+    InvoiceService invoiceService;
 
     @Transactional(rollbackFor = Exception.class)
     public File generatePublicationForAnnouncement(Announcement announcement, Provision provision,
@@ -437,7 +446,18 @@ public class GeneratePdfDelegate {
                         ? customerOrder.getQuotations().get(0)
                         : null);
 
-        ctx.setVariable("payments", invoice.getPayments());
+        ArrayList<Payment> invoicePayment = new ArrayList<Payment>();
+        if (invoice.getPayments() != null)
+            for (Payment payment : invoice.getPayments()) {
+                invoicePayment.add(paymentService.getOriginalPaymentOfPayment(payment));
+            }
+
+        if (invoicePayment.size() > 0)
+            ctx.setVariable("payments", invoice.getPayments());
+
+        Float remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+        if (remainingToPay != null && remainingToPay > 0)
+            ctx.setVariable("remainingToPay", remainingToPay);
 
         LocalDateTime localDate = invoice.getCreatedDate();
         DateTimeFormatter formatter = DateTimeFormatter

@@ -1201,4 +1201,12 @@ public class PaymentServiceImpl implements PaymentService {
         return advisedPayments;
     }
 
+    @Override
+    public Payment getOriginalPaymentOfPayment(Payment payment) {
+        if (payment.getOriginPayment() == null)
+            return payment;
+
+        payment = payment.getOriginPayment();
+        return getOriginalPaymentOfPayment(payment);
+    }
 }

@@ -97,4 +97,6 @@ public interface PaymentService {
         public Payment generateNewBankTransfertPayment(BankTransfert bankTransfert, Float paymentAmount,
                         IGenericTiers tiersToPay)
                         throws OsirisException;
+
+        public Payment getOriginalPaymentOfPayment(Payment payment);
 }
