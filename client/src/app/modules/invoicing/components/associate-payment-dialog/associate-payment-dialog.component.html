@@ -77,7 +77,7 @@
           <mat-radio-group class="radio-group-column" formControlName="refundTiers">
             <span *ngIf="getRefundCustomerOrder()==null">Impossible de rembourser le donneur d'ordre, l'IBAN de
               remboursement n'a pas été renseigné dans la fiche Tiers</span>
-            <mat-radio-button [value]="getRefundCustomerOrder()" checked="true" *ngIf="getRefundCustomerOrder()!=null">
+            <mat-radio-button [value]="getRefundCustomerOrder()" *ngIf="getRefundCustomerOrder()!=null">
               Donneur d'ordre {{getCustomerOrderNameForITiers(getRefundCustomerOrder()!)}}
             </mat-radio-button>
             <mat-radio-button *ngFor="let affaire of getAllAffaireRefundable()" [value]="affaire">
