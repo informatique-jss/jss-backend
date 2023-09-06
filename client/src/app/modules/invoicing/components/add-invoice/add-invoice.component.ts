@@ -267,6 +267,8 @@ export class AddInvoiceComponent implements OnInit {
     this.invoice.tiers = undefined;
     this.invoice.responsable = undefined;
     this.invoice.competentAuthority = undefined;
+    if (this.invoice.isInvoiceFromProvider && confrere.paymentType)
+      this.invoice.manualPaymentType = confrere.paymentType;
   }
 
   fillProvider(provider: Provider) {
@@ -275,6 +277,8 @@ export class AddInvoiceComponent implements OnInit {
     this.invoice.tiers = undefined;
     this.invoice.responsable = undefined;
     this.invoice.competentAuthority = undefined;
+    if (this.invoice.isInvoiceFromProvider && provider.paymentType)
+      this.invoice.manualPaymentType = provider.paymentType;
   }
 
   fillCompetentAuthority(competentAuthority: CompetentAuthority) {
@@ -283,6 +287,8 @@ export class AddInvoiceComponent implements OnInit {
     this.invoice.confrere = undefined;
     this.invoice.tiers = undefined;
     this.invoice.responsable = undefined;
+    if (this.invoice.isInvoiceFromProvider && competentAuthority.defaultPaymentType)
+      this.invoice.manualPaymentType = competentAuthority.defaultPaymentType;
   }
 
   fillResponsable(responsable: IndexEntity) {
