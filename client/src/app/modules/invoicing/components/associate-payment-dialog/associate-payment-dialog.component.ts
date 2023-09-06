@@ -185,6 +185,10 @@ export class AssociatePaymentDialogComponent implements OnInit {
             this.appService.displaySnackBar("Cette facture est déjà associée à ce paiement", true, 15);
             return;
           }
+      if (this.invoice && invoice.invoiceStatus && invoice.invoiceStatus.id == this.constantService.getInvoiceStatusCreditNoteEmited().id) {
+        this.appService.displaySnackBar("Impossible d'associer un paiement avec une facture au status " + this.invoice.invoiceStatus.label, true, 15);
+        return;
+      }
       if (this.isPaymentWayInbound(this.payment) && invoice.invoiceStatus.id != this.invoiceStatusSend.id && invoice.invoiceStatus.id != this.constantService.getInvoiceStatusCreditNoteReceived().id) {
         this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusSend.label, true, 15);
         return;
