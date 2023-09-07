@@ -97,6 +97,14 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         FormaliteGuichetUnique originalFormalite = getFormaliteGuichetUnique(inFormaliteGuichetUnique.getId());
 
         if (originalFormalite == null) {
+            // Save only if cart > €
+            ArrayList<Cart> carts = new ArrayList<Cart>();
+            if (formaliteGuichetUnique.getCarts() != null)
+                for (Cart cart : formaliteGuichetUnique.getCarts())
+                    if (cart.getTotal() > 0)
+                        carts.add(cart);
+
+            formaliteGuichetUnique.setCarts(carts);
             originalFormalite = addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
         } else {
             // update only wanted field
@@ -111,11 +119,14 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 if (originalFormalite.getCarts() == null || originalFormalite.getCarts().size() == 0) {
                     originalFormalite.setCarts(new ArrayList<Cart>());
                     for (Cart currentCart : formaliteGuichetUnique.getCarts()) {
-                        currentCart.setFormaliteGuichetUnique(originalFormalite);
-                        if (currentCart.getCartRates() != null)
-                            for (CartRate cartRate : currentCart.getCartRates())
-                                cartRate.setCart(currentCart);
-                        originalFormalite.getCarts().add(currentCart);
+                        // Save only if cart > €
+                        if (currentCart.getTotal() > 0) {
+                            currentCart.setFormaliteGuichetUnique(originalFormalite);
+                            if (currentCart.getCartRates() != null)
+                                for (CartRate cartRate : currentCart.getCartRates())
+                                    cartRate.setCart(currentCart);
+                            originalFormalite.getCarts().add(currentCart);
+                        }
                     }
                 } else {
                     for (Cart currentCart : formaliteGuichetUnique.getCarts()) {
