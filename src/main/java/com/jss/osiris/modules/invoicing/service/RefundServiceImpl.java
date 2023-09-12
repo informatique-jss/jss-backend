@@ -192,6 +192,8 @@ public class RefundServiceImpl implements RefundService {
         if (customerOrder == null) // If it's a payment / appoint refund
             paymentService.cancelAppoint(payment);
 
+        accountingRecordGenerationService.generateAccountingRecordsForRefundExport(refund);
+
         return this.addOrUpdateRefund(refund);
     }
 
@@ -269,7 +271,6 @@ public class RefundServiceImpl implements RefundService {
                                         139)));
 
                 if (!completeRefund.getIsAlreadyExported()) {
-                    accountingRecordGenerationService.generateAccountingRecordsForRefundExport(completeRefund);
                     addOrUpdateRefund(completeRefund);
                 }
 
