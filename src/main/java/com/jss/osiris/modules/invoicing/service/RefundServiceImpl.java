@@ -188,7 +188,8 @@ public class RefundServiceImpl implements RefundService {
         refund.setRefundDateTime(LocalDateTime.now());
         this.addOrUpdateRefund(refund);
 
-        paymentService.generateNewRefundPayment(refund, -amount, tiersRefund, payment);
+        refund.setPayments(new ArrayList<Payment>());
+        refund.getPayments().add(paymentService.generateNewRefundPayment(refund, -amount, tiersRefund, payment));
         if (customerOrder == null) // If it's a payment / appoint refund
             paymentService.cancelAppoint(payment);
 
