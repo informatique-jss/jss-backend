@@ -217,12 +217,12 @@
                 €
             </td>
         </tr>
-        <tr th:each="payment : ${payments}" th:if="${payments.size()>0} AND ${payment.isCancelled==false}">
+        <tr th:if="${payments.size()>0}" th:each="payment : ${payments}">
             <td>
-                <span th:text="${payment.label}"></span>
+                Acompte <span th:text="${payment.label}"></span>
             </td>
             <td class="td-with-price" style="text-align: right;white-space: nowrap;">
-                <span th:text="${#numbers.formatDecimal(payment.paymentAmount,1,2)}"></span>
+                - <span th:text="${#numbers.formatDecimal(payment.paymentAmount,1,2)}"></span>
                 €
             </td>
         </tr>

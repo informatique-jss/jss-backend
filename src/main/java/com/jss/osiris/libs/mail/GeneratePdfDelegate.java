@@ -446,17 +446,25 @@ public class GeneratePdfDelegate {
                         ? customerOrder.getQuotations().get(0)
                         : null);
 
+        Float remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
         ArrayList<Payment> invoicePayment = new ArrayList<Payment>();
         if (invoice.getPayments() != null)
             for (Payment payment : invoice.getPayments()) {
-                invoicePayment.add(paymentService.getOriginalPaymentOfPayment(payment));
+                if (!payment.getIsCancelled())
+                    invoicePayment.add(paymentService.getOriginalPaymentOfPayment(payment));
             }
 
-        if (invoicePayment.size() > 0)
-            ctx.setVariable("payments", invoice.getPayments());
+        if (customerOrder.getPayments() != null)
+            for (Payment payment : customerOrder.getPayments())
+                if (!payment.getIsCancelled()) {
+                    invoicePayment.add(paymentService.getOriginalPaymentOfPayment(payment));
+                    remainingToPay -= payment.getPaymentAmount();
+                }
 
-        Float remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
-        if (remainingToPay != null && remainingToPay > 0)
+        if (invoicePayment.size() > 0)
+            ctx.setVariable("payments", invoicePayment);
+
+        if (remainingToPay != null && remainingToPay >= 0)
             ctx.setVariable("remainingToPay", remainingToPay);
 
         LocalDateTime localDate = invoice.getCreatedDate();
