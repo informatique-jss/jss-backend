@@ -477,6 +477,10 @@ public class InvoicingController {
                     throw new OsirisValidationException("invoice not send or received");
 
                 if (invoice.getInvoiceStatus().getId()
+                        .equals(constantService.getInvoiceStatusCreditNoteEmited().getId()))
+                    throw new OsirisValidationException("can't associate payment to customer credit note");
+
+                if (invoice.getInvoiceStatus().getId()
                         .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())) {
                     if (Math.round(invoice.getTotalPrice() * 100f) != Math
                             .round(paymentAssociate.getPayment().getPaymentAmount() * 100f))

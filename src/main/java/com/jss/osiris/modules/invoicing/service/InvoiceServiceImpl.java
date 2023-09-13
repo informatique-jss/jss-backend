@@ -183,7 +183,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
         else if (invoice.getIsProviderCreditNote())
             invoice.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
-        else
+        else if (invoice.getInvoiceStatus() == null)
             invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
 
         // Save before to have an ID on invoice
