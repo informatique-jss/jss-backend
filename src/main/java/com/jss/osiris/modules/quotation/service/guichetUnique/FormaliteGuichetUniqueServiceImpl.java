@@ -261,10 +261,18 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     }
 
     private InvoiceItem getInvoiceItemForCartRate(CartRate cartRate, Cart cart) throws OsirisException {
-        List<BillingItem> deboursBillingItem = billingItemService
-                .getBillingItemByBillingType(constantService.getBillingTypeEmolumentsDeGreffeDebour());
+        List<BillingItem> deboursBillingItem;
 
         InvoiceItem invoiceItem = new InvoiceItem();
+
+        if (cartRate.getAmount() == cartRate.getHtAmount()) {
+            deboursBillingItem = billingItemService
+                    .getBillingItemByBillingType(constantService.getBillingTypeDeboursNonTaxable());
+            invoiceItem.setVat(constantService.getVatZero());
+        } else
+            deboursBillingItem = billingItemService
+                    .getBillingItemByBillingType(constantService.getBillingTypeEmolumentsDeGreffeDebour());
+
         invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(deboursBillingItem));
         invoiceItem.setDiscountAmount(0f);
         invoiceItem.setIsGifted(false);
