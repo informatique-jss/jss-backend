@@ -282,7 +282,10 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 for (CartRate cartRate : cart.getCartRates()) {
                                     if (debour.getCartRate() != null
                                             && debour.getCartRate().getId().equals(cartRate.getId())) {
-                                        debour.setNonTaxableAmount(0f);
+                                        if (cartRate.getAmount() == cartRate.getHtAmount())
+                                            debour.setNonTaxableAmount(cartRate.getAmount() / 100f);
+                                        else
+                                            debour.setNonTaxableAmount(0f);
                                         debourService.addOrUpdateDebour(debour);
                                     }
                                 }
