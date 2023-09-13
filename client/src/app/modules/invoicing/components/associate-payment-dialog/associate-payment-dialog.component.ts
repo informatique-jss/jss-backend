@@ -197,7 +197,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
         this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusReceived.label, true, 15);
         return;
       }
-      if (!this.isPaymentWayInbound(this.payment) && this.payment && Math.round(invoice.totalPrice * 100) != Math.round(this.payment.paymentAmount)) {
+      if (!this.isPaymentWayInbound(this.payment) && this.payment && Math.round(invoice.totalPrice * 100) != Math.abs(Math.round(this.payment.paymentAmount * 100))) {
         this.appService.displaySnackBar("Veuillez choisir une facture avec un total de " + this.payment.paymentAmount + " €", true, 15);
         return;
       }
