@@ -214,25 +214,18 @@ export class AssociatePaymentDialogComponent implements OnInit {
       });
 
       let asso = { payment: this.payment, invoice: invoice } as AssociationSummaryTable;
-      if (this.isPaymentWayInbound(this.payment)) {
-        let maxAmount = Math.round((Math.min(this.getLeftMaxAmountPayed(asso), this.getInitialAmount(asso) - this.getInitialPayedAmount(asso))) * 100) / 100;
-        amountDialogRef.componentInstance.label = "Indiquer le montant à utiliser (max : " + maxAmount + " €) :";
-        amountDialogRef.componentInstance.maxAmount = maxAmount;
-        amountDialogRef.afterClosed().subscribe(response => {
-          if (response != null) {
-            asso.amountUsed = Math.min(parseFloat(response), maxAmount);
-            this.associationSummaryTable.push(asso);
-            this.refreshSummaryTables();
-          } else {
-            return;
-          }
-        });
-      } else {
-        // refund case
-        asso.amountUsed = this.payment!.paymentAmount;
-        this.associationSummaryTable.push(asso);
-        this.refreshSummaryTables();
-      }
+      let maxAmount = Math.round((Math.min(this.getLeftMaxAmountPayed(asso), this.getInitialAmount(asso) - this.getInitialPayedAmount(asso))) * 100) / 100;
+      amountDialogRef.componentInstance.label = "Indiquer le montant à utiliser (max : " + Math.round(maxAmount) + " €) :";
+      amountDialogRef.componentInstance.maxAmount = Math.round(maxAmount);
+      amountDialogRef.afterClosed().subscribe(response => {
+        if (response != null) {
+          asso.amountUsed = Math.min(parseFloat(response), maxAmount);
+          this.associationSummaryTable.push(asso);
+          this.refreshSummaryTables();
+        } else {
+          return;
+        }
+      });
     })
   }
 
