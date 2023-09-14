@@ -272,6 +272,7 @@ public class RefundServiceImpl implements RefundService {
                                         139)));
 
                 if (!completeRefund.getIsAlreadyExported()) {
+                    accountingRecordGenerationService.generateAccountingRecordsForRefundExport(completeRefund);
                     addOrUpdateRefund(completeRefund);
                 }
 

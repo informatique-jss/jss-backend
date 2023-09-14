@@ -801,8 +801,9 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setPaymentDate(LocalDateTime.now());
         newPayment.setLabel(refund.getLabel());
         newPayment.setRefund(refund);
+        newPayment.setOriginPayment(paymentToRefund);
         newPayment.setPaymentType(constantService.getPaymentTypeVirement());
-        newPayment.setTargetAccountingAccount(paymentToRefund.getTargetAccountingAccount());
+        newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
         newPayment.setSourceAccountingAccount(tiersToRefund.getAccountingAccountCustomer());
 
         return addOrUpdatePayment(newPayment);

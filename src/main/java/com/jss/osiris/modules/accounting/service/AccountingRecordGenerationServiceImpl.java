@@ -917,7 +917,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     }
 
     @Override
-    public void generateAccountingRecordsForRefundExport(Refund refund)
+    public void generateAccountingRecordsForRefundGeneration(Refund refund)
             throws OsirisException, OsirisValidationException {
 
         if (refund.getPayments() == null || refund.getPayments().size() != 1)
@@ -942,6 +942,36 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
                 Math.abs(payment.getPaymentAmount()), null,
                 payment.getSourceAccountingAccount(), null, null, null, bankJournal, payment, refund, null);
+
+        checkRefundForLettrage(refund);
+    }
+
+    @Override
+    public void generateAccountingRecordsForRefundExport(Refund refund)
+            throws OsirisException, OsirisValidationException {
+
+        if (refund.getPayments() == null || refund.getPayments().size() != 1)
+            throw new OsirisException(null, "Impossible to find refund payment");
+        Payment payment = refund.getPayments().get(0);
+        AccountingJournal bankJournal = constantService.getAccountingJournalBank();
+        Integer operationId = getNewTemporaryOperationId();
+
+        if (payment.getTargetAccountingAccount() == null)
+            throw new OsirisException(null, "No target accounting account for payment n°" + payment.getId());
+
+        if (payment.getSourceAccountingAccount() == null)
+            throw new OsirisException(null, "No source accounting account for payment n°" + payment.getId());
+
+        generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+                "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
+                null, Math.abs(payment.getPaymentAmount()), payment.getSourceAccountingAccount(), null, null,
+                null,
+                bankJournal, payment, refund, null);
+
+        generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+                "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
+                Math.abs(payment.getPaymentAmount()), null,
+                payment.getTargetAccountingAccount(), null, null, null, bankJournal, payment, refund, null);
 
         checkRefundForLettrage(refund);
     }

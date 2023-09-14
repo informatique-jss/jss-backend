@@ -45,6 +45,9 @@ public interface AccountingRecordGenerationService {
         public void generateAccountingRecordsForPurschaseOnInvoicePayment(Invoice invoice, Payment payment)
                         throws OsirisException, OsirisValidationException;
 
+        public void generateAccountingRecordsForRefundGeneration(Refund refund)
+                        throws OsirisException, OsirisValidationException;
+
         public void generateAccountingRecordsForRefundExport(Refund refund)
                         throws OsirisException, OsirisValidationException;
 
