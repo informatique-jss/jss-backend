@@ -566,7 +566,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                                                 debourPayments.put(debour.getPayment().getId(), debour);
 
                                             if (debour.getNonTaxableAmount() > 0
-                                                    && debour.getNonTaxableAmount() < debour.getDebourAmount()) {
+                                                    && debour.getNonTaxableAmount() <= debour.getDebourAmount()) {
                                                 nonTaxableDebour = new Debour();
                                                 nonTaxableDebour
                                                         .setBillingType(
@@ -593,33 +593,37 @@ public class InvoiceServiceImpl implements InvoiceService {
                                                 usedDebours.add(debourService.addOrUpdateDebour(nonTaxableDebour));
                                             }
 
-                                            InvoiceItem invoiceItem = getInvoiceItemFromDebour(debour,
-                                                    debour.getBillingType().getIsNonTaxable());
+                                            if (debour.getDebourAmount() > 0f) {
+                                                InvoiceItem invoiceItem = getInvoiceItemFromDebour(debour,
+                                                        debour.getBillingType().getIsNonTaxable());
 
-                                            Vat vatDebour = vatService.getGeographicalApplicableVatForPurshases(
-                                                    debour.getCompetentAuthority(), constantService.getVatDeductible());
-                                            if (invoice.getCustomerOrder() != null) {
-                                                Vat vatDebour2 = vatService.getGeographicalApplicableVatForSales(
-                                                        invoice.getCustomerOrder(), constantService.getVatDeductible());
-                                                if (vatDebour2 != null && vatDebour2.getRate() < vatDebour.getRate())
-                                                    vatDebour = vatDebour2;
+                                                Vat vatDebour = vatService.getGeographicalApplicableVatForPurshases(
+                                                        debour.getCompetentAuthority(),
+                                                        constantService.getVatDeductible());
+                                                if (invoice.getCustomerOrder() != null) {
+                                                    Vat vatDebour2 = vatService.getGeographicalApplicableVatForSales(
+                                                            invoice.getCustomerOrder(),
+                                                            constantService.getVatDeductible());
+                                                    if (vatDebour2 != null
+                                                            && vatDebour2.getRate() < vatDebour.getRate())
+                                                        vatDebour = vatDebour2;
+                                                }
+
+                                                if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable()
+                                                        || vatDebour == null) {
+                                                    invoiceItem.setVatPrice(0f);
+                                                    invoiceItem.setVat(constantService.getVatZero());
+                                                } else {
+                                                    invoiceItem.setVat(vatDebour);
+                                                    invoiceItem.setVatPrice(invoiceItem.getVat().getRate()
+                                                            * invoiceItem.getPreTaxPrice() / 100f);
+                                                }
+                                                invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                                                invoice.getInvoiceItems().add(invoiceItem);
+                                                debour.setInvoiceItem(invoiceItem);
+                                                debour.setProvision(provision);
+                                                debourService.addOrUpdateDebour(debour);
                                             }
-
-                                            if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable()
-                                                    || vatDebour == null) {
-                                                invoiceItem.setVatPrice(0f);
-                                                invoiceItem.setVat(constantService.getVatZero());
-                                            } else {
-                                                invoiceItem.setVat(vatDebour);
-                                                invoiceItem.setVatPrice(invoiceItem.getVat().getRate()
-                                                        * invoiceItem.getPreTaxPrice() / 100f);
-                                            }
-                                            invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
-                                            invoice.getInvoiceItems().add(invoiceItem);
-                                            debour.setInvoiceItem(invoiceItem);
-                                            debour.setProvision(provision);
-                                            debourService.addOrUpdateDebour(debour);
-
                                             invoice.setManualPaymentType(debour.getPaymentType());
 
                                             debour.setNonTaxableAmount(null);
