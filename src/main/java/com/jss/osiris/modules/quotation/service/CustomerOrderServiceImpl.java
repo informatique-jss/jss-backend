@@ -834,7 +834,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     customerOrder.getId() + "", subject);
 
             centralPayPaymentRequestService.declareNewCentralPayPaymentRequest(paymentRequest.getPaymentRequestId(),
-                    customerOrder, null, true);
+                    customerOrder, null);
             return paymentRequest.getBreakdowns().get(0).getEndpoint();
         } else {
             throw new OsirisException(null, "Nothing to pay on customer order n°" + customerOrder.getId());
@@ -935,9 +935,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder = getCustomerOrder(customerOrder.getId());
         if (customerOrder != null) {
             Float total = getTotalForCustomerOrder(customerOrder);
-            for (Payment payment : customerOrder.getPayments())
-                if (!payment.getIsCancelled())
-                    total -= payment.getPaymentAmount();
+            if (customerOrder.getPayments() != null)
+                for (Payment payment : customerOrder.getPayments())
+                    if (!payment.getIsCancelled())
+                        total -= payment.getPaymentAmount();
 
             return Math.round(total * 100f) / 100f;
         }

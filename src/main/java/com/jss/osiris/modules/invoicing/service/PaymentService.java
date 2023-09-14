@@ -71,7 +71,8 @@ public interface PaymentService {
         public void movePaymentFromCustomerOrderToInvoice(Payment payment, CustomerOrder customerOrder,
                         Invoice invoice) throws OsirisException, OsirisValidationException;
 
-        public Payment generateNewAccountPayment(Float paymentAmount, AccountingAccount targetAccountingAccount)
+        public Payment generateNewAccountPayment(Float paymentAmount, AccountingAccount targetAccountingAccount,
+                        String label)
                         throws OsirisException;
 
         public void refundPayment(Payment payment, Tiers tiers, Affaire affaire)

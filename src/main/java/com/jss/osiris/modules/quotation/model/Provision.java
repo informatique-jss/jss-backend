@@ -42,6 +42,7 @@ public class Provision implements IId, IAttachment {
 	private AssoAffaireOrder assoAffaireOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = { "defaultCompetentAuthorityServiceProvider" }, allowSetters = true)
 	@JoinColumn(name = "id_provision_type")
 	@IndexedField
 	private ProvisionType provisionType;

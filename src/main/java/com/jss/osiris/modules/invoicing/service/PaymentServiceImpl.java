@@ -831,11 +831,13 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment generateNewAccountPayment(Float paymentAmount, AccountingAccount targetAccountingAccount)
+    public Payment generateNewAccountPayment(Float paymentAmount, AccountingAccount targetAccountingAccount,
+            String label)
             throws OsirisException {
         Payment newPayment = new Payment();
         newPayment.setIsAppoint(false);
         newPayment.setIsDeposit(false);
+        newPayment.setLabel(label);
         newPayment.setIsCancelled(false);
         newPayment.setIsExternallyAssociated(false);
         newPayment.setOriginPayment(null);
@@ -919,21 +921,26 @@ public class PaymentServiceImpl implements PaymentService {
             throw new OsirisException(null,
                     "No target invoice and customer order set for central pay invoice generation");
 
-        if (targetCustomerOrder != null)
+        String invoiceLabel = "";
+        if (targetCustomerOrder != null) {
+            invoiceLabel = "Commission CentralPay - Commande n°" + targetCustomerOrder.getId();
             invoiceItem.setLabel(
                     "Commission CentralPay - Paiement d'acompte pour la commande n°" + targetCustomerOrder.getId());
-        else
+        } else {
+            invoiceLabel = "Commission CentralPay - Facture n°" + targetInvoice.getId();
             invoiceItem.setLabel("Commission CentralPay - Paiement pour la facture " + targetInvoice.getId());
+        }
 
         CentralPayTransaction transaction = centralPayDelegateService.getTransaction(centralPayPaymentRequest);
         Float commission = (transaction.getCommission() != null ? transaction.getCommission() : 0f) / 100f;
 
         invoiceItem.setPreTaxPrice(Math.round(commission * 100f) / 100f);
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
+        invoice.getInvoiceItems().add(invoiceItem);
 
         Invoice centralPayInvoice = invoiceService.addOrUpdateInvoiceFromUser(invoice);
         Payment centralPayPayment = generateNewAccountPayment(commission,
-                constantService.getProviderCentralPay().getAccountingAccountProvider());
+                constantService.getProviderCentralPay().getAccountingAccountProvider(), invoiceLabel);
 
         associateOutboundPaymentAndInvoice(centralPayPayment, centralPayInvoice);
     }
@@ -984,6 +991,8 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPaymentType(constantService.getPaymentTypeCB());
         payment.setIsCancelled(isForDepostit);
         payment.setInvoice(invoice);
+        payment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+        payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         addOrUpdatePayment(payment);
         return payment;
     }

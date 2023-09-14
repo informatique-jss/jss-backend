@@ -341,7 +341,7 @@ public class QuotationServiceImpl implements QuotationService {
                     quotation.getId() + "", subject);
 
             centralPayPaymentRequestService.declareNewCentralPayPaymentRequest(paymentRequest.getPaymentRequestId(),
-                    null, quotation, false);
+                    null, quotation);
             return paymentRequest.getBreakdowns().get(0).getEndpoint();
         }
         return "ok";
