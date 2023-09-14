@@ -153,7 +153,7 @@ export function getAmountPayed(invoice: Invoice) {
     for (let payment of invoice.payments)
       if (!payment.isCancelled)
         if (payment.isAppoint)
-          payed += Math.abs(payment.paymentAmount)
+          payed += -payment.paymentAmount; // Appoint is on the opposite side in customer point of view (because it's a gain / lost for us when it's a lost / gain for him)
         else
           payed += payment.paymentAmount;
 
