@@ -464,7 +464,7 @@ public class GeneratePdfDelegate {
         if (invoicePayment.size() > 0)
             ctx.setVariable("payments", invoicePayment);
 
-        if (remainingToPay != null && remainingToPay >= 0)
+        if (remainingToPay != null && remainingToPay > 0)
             ctx.setVariable("remainingToPay", remainingToPay);
 
         LocalDateTime localDate = invoice.getCreatedDate();
