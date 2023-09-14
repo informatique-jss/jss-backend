@@ -143,6 +143,12 @@ export class AssociatePaymentDialogComponent implements OnInit {
       let appointAmount = Math.abs(this.amountRemaining()) < INVOICING_PAYMENT_LIMIT_REFUND_EUROS ? this.amountRemaining() : 0;
 
       if (this.associationSummaryTable) {
+        // sort to put invoice first, they will be associated first in the backend
+        this.associationSummaryTable.sort((a: AssociationSummaryTable, b: AssociationSummaryTable) => {
+          if (a.invoice && !b.invoice) return 1;
+          if (!a.invoice && b.invoice) return -1;
+          return a.amountUsed - b.amountUsed;
+        })
         for (let asso of this.associationSummaryTable) {
           if (asso.invoice) {
             if (!paymentAssociate.invoices)
