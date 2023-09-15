@@ -616,9 +616,9 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (paymentAmount.equals(invoiceAmount)) {
             cancelPayment(payment);
-            generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
+            Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                     payment.getTargetAccountingAccount());
-            associatePaymentAndInvoice(payment, correspondingInvoice, false);
+            associatePaymentAndInvoice(newPayment, correspondingInvoice, false);
         }
 
         return Math.round(paymentAmount * 100f) / 100f;
