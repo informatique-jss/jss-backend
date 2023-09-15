@@ -105,7 +105,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
 
     if (this.payment && this.customerOrder && !this.doNotInitializeAsso)
       this.associationSummaryTable.push({
-        payment: this.payment, customerOrder: this.customerOrder, amountUsed: Math.min(this.getInitialAmount({ customerOrder: this.customerOrder }) - this.getInitialPayedAmount({ customerOrder: this.customerOrder }), this.payment.paymentAmount)
+        payment: this.payment, customerOrder: this.customerOrder, amountUsed: this.payment.paymentAmount
       } as AssociationSummaryTable);
 
 
@@ -145,8 +145,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
       if (this.associationSummaryTable) {
         // sort to put invoice first, they will be associated first in the backend
         this.associationSummaryTable.sort((a: AssociationSummaryTable, b: AssociationSummaryTable) => {
-          if (a.invoice && !b.invoice) return 1;
-          if (!a.invoice && b.invoice) return -1;
+          if (a.invoice && !b.invoice) return -1;
+          if (!a.invoice && b.invoice) return 1;
           return a.amountUsed - b.amountUsed;
         })
         for (let asso of this.associationSummaryTable) {
@@ -222,7 +222,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
       let asso = { payment: this.payment, invoice: invoice } as AssociationSummaryTable;
       let maxAmount = Math.round((Math.min(this.getLeftMaxAmountPayed(asso), this.getInitialAmount(asso) - this.getInitialPayedAmount(asso))) * 100) / 100;
       amountDialogRef.componentInstance.label = "Indiquer le montant à utiliser (max : " + Math.round(maxAmount) + " €) :";
-      amountDialogRef.componentInstance.maxAmount = Math.round(maxAmount);
+      amountDialogRef.componentInstance.maxAmount = Math.round(maxAmount * 100) / 100;
       amountDialogRef.afterClosed().subscribe(response => {
         if (response != null) {
           asso.amountUsed = Math.min(parseFloat(response), maxAmount);
@@ -363,7 +363,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
       let amountRemaining = this.payment.paymentAmount;
       if (this.associationSummaryTable)
         for (let asso of this.associationSummaryTable)
-          amountRemaining -= this.getAmountPayed(asso) + this.getInitialPayedAmount(asso);
+          amountRemaining -= this.getAmountPayed(asso);
       total = Math.round(amountRemaining * 100) / 100;
     }
     return total;

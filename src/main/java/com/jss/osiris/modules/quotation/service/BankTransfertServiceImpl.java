@@ -257,9 +257,10 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                         IGenericTiers tiers = invoiceHelper.getCustomerOrder(completeTransfert.getInvoices().get(0));
                         completeTransfert.setPayments(new ArrayList<Payment>());
 
-                        completeTransfert.getPayments().add(paymentService.generateNewBankTransfertPayment(
-                                completeTransfert, -completeTransfert.getTransfertAmount(), tiers));
-
+                        Payment payment = paymentService.generateNewBankTransfertPayment(
+                                completeTransfert, -completeTransfert.getTransfertAmount(), tiers);
+                        completeTransfert.getPayments().add(payment);
+                        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
                         paymentService.manualMatchPaymentInvoicesAndCustomerOrders(
                                 completeTransfert.getPayments().get(0),
                                 Arrays.asList(completeTransfert.getInvoices().get(0)), null, null,

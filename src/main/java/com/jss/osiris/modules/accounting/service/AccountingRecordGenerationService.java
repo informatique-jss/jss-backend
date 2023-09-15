@@ -15,7 +15,7 @@ public interface AccountingRecordGenerationService {
         public void generateAccountingRecordsOnInvoiceEmissionCancellation(Invoice invoice, Invoice creditNote)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
-        public void generateAccountingRecordsOnCreditNoteReception(Invoice invoice)
+        public void generateAccountingRecordsOnCreditNoteReception(Invoice invoice, Invoice originalInvoice)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void generateAccountingRecordsOnInvoiceReception(Invoice invoice)

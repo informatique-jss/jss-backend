@@ -207,7 +207,7 @@ export class InvoiceDetailsComponent implements OnInit {
   }
 
   canAddCreditNote() {
-    if (this.invoice && !this.invoice.isCreditNote && !this.invoice.creditNote) {
+    if (this.invoice && !this.invoice.isCreditNote) {
       return this.habilitationService.canAddNewInvoice();
     }
     return false;

@@ -202,7 +202,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.getIsInvoiceFromProvider())
             accountingRecordGenerationService.generateAccountingRecordsOnInvoiceReception(invoice);
         else if (invoice.getIsProviderCreditNote())
-            accountingRecordGenerationService.generateAccountingRecordsOnCreditNoteReception(invoice);
+            accountingRecordGenerationService.generateAccountingRecordsOnCreditNoteReception(invoice,
+                    invoice.getReverseCreditNote());
         else if (invoice.getIsCreditNote())
             accountingRecordGenerationService
                     .generateAccountingRecordsOnInvoiceEmissionCancellation(invoice.getReverseCreditNote(), invoice);
@@ -238,11 +239,12 @@ public class InvoiceServiceImpl implements InvoiceService {
             }
 
             if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId())) {
-                Payment payment = paymentService.generateNewAccountPayment(invoice.getTotalPrice(),
+                Payment payment = paymentService.generateNewAccountPayment(-invoice.getTotalPrice(),
                         invoiceTiers.getAccountingAccountProvider(),
                         "Paiement pour la facture " + invoice.getId() + " / Fournisseur : "
                                 + (invoice.getProvider() != null ? invoice.getProvider().getLabel()
                                         : invoice.getCompetentAuthority().getLabel()));
+                accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
                 paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment, Arrays.asList(invoice), null, null,
                         null, null);
             }
@@ -313,7 +315,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice = getInvoice(invoice.getId());
 
         if (invoice.getPayments() != null) {
-            for (Payment payment : invoice.getPayments())
+            ArrayList<Payment> payments = new ArrayList<Payment>();
+            payments.addAll(invoice.getPayments());
+            for (Payment payment : payments)
                 if (!payment.getIsCancelled()) {
                     if (payment.getIsAppoint())
                         paymentService.cancelAppoint(payment);
@@ -418,9 +422,10 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Invoice generateProviderInvoiceCreditNote(Invoice newInvoice, Integer idOriginInvoiceForCreditNote)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
+        Invoice invoice = getInvoice(idOriginInvoiceForCreditNote);
         newInvoice.setIsInvoiceFromProvider(false);
         newInvoice.setIsProviderCreditNote(true);
-
+        newInvoice.setReverseCreditNote(invoice);
         // Create credit note
         Invoice creditNote = addOrUpdateInvoiceFromUser(newInvoice);
         if (newInvoice.getInvoiceItems() != null) {
@@ -430,7 +435,6 @@ public class InvoiceServiceImpl implements InvoiceService {
             throw new OsirisValidationException("Aucune ligne de facturation générée");
         }
 
-        Invoice invoice = getInvoice(idOriginInvoiceForCreditNote);
         invoice.setCreditNote(creditNote);
         invoice = addOrUpdateInvoice(invoice);
         creditNote.setReverseCreditNote(invoice);

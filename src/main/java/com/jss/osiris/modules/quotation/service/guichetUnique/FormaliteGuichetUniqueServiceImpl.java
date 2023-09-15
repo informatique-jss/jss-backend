@@ -180,6 +180,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         invoice.setManualAccountingDocumentNumber(cart.getMipOrderNum() + "/" +
                 cart.getId());
         invoice.setIsInvoiceFromProvider(true);
+        invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
 
         PaymentType paymentType = null;
 
@@ -208,6 +209,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         for (CartRate cartRate : cart.getCartRates()) {
                             InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
                             invoiceItem.setProvision(provision);
+                            invoice.getInvoiceItems().add(invoiceItem);
                             provision.getInvoiceItems().add(invoiceItem);
                         }
                     }
@@ -224,6 +226,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         invoice.setCustomerOrderForInboundInvoice(provision.getAssoAffaireOrder().getCustomerOrder());
         invoice.setManualAccountingDocumentNumber(cart.getMipOrderNum() + "/" +
                 cart.getId());
+        invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
 
         PaymentType paymentType = null;
         if (cart.getPaymentType() == null &&
@@ -250,6 +253,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         for (CartRate cartRate : cart.getCartRates()) {
                             InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
                             invoiceItem.setProvision(provision);
+                            invoice.getInvoiceItems().add(invoiceItem);
                             provision.getInvoiceItems().add(invoiceItem);
                         }
                     }
@@ -288,7 +292,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             competentAuthority = competentAuthorities.get(0);
 
         invoiceItem.setLabel(competentAuthority.getLabel() + " - " + cartRate.getRate().getLabel());
-        invoiceItem.setPreTaxPrice(Float.parseFloat(cartRate.getAmount() + "") / 100f);
+        invoiceItem.setPreTaxPrice(Float.parseFloat(cartRate.getHtAmount() + "") / 100f);
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
 
         return invoiceItem;

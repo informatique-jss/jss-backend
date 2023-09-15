@@ -43,6 +43,7 @@ import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
+import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -128,6 +129,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     CentralPayDelegateService centralPayDelegateService;
+
+    @Autowired
+    VatService vatService;
 
     @Value("${invoicing.payment.limit.refund.euros}")
     private String payementLimitRefundInEuros;
@@ -291,9 +295,9 @@ public class PaymentServiceImpl implements PaymentService {
                     totalItemsAmount += invoiceService.getRemainingAmountToPayForInvoice(invoice);
 
             if (correspondingInvoices.size() > 0
-                    && totalItemsAmount < (remainingMoney - Integer.parseInt(payementLimitRefundInEuros))
-                    || correspondingCustomerOrder.size() == 0
-                            && correspondingQuotation.size() == 0)
+                    && totalItemsAmount > (remainingMoney + Integer.parseInt(payementLimitRefundInEuros))
+                    && (correspondingCustomerOrder.size() == 0
+                            || correspondingQuotation.size() == 0))
                 return;
 
             // Invoices to payed found
@@ -618,6 +622,9 @@ public class PaymentServiceImpl implements PaymentService {
             cancelPayment(payment);
             Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                     payment.getTargetAccountingAccount());
+            IGenericTiers tiers = invoiceHelper.getCustomerOrder(correspondingInvoice);
+            newPayment.setSourceAccountingAccount(tiers.getAccountingAccountProvider());
+            newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
             associatePaymentAndInvoice(newPayment, correspondingInvoice, false);
         }
 
@@ -803,8 +810,8 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setRefund(refund);
         newPayment.setOriginPayment(paymentToRefund);
         newPayment.setPaymentType(constantService.getPaymentTypeVirement());
-        newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
-        newPayment.setSourceAccountingAccount(tiersToRefund.getAccountingAccountCustomer());
+        newPayment.setTargetAccountingAccount(tiersToRefund.getAccountingAccountCustomer());
+        newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
 
         return addOrUpdatePayment(newPayment);
     }
@@ -824,8 +831,8 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setLabel(bankTransfert.getLabel());
         newPayment.setBankTransfert(bankTransfert);
         newPayment.setPaymentType(constantService.getPaymentTypeVirement());
-        newPayment.setSourceAccountingAccount(tiersToPay.getAccountingAccountProvider());
-        newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
+        newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+        newPayment.setTargetAccountingAccount(tiersToPay.getAccountingAccountProvider());
 
         return addOrUpdatePayment(newPayment);
     }
@@ -877,8 +884,6 @@ public class PaymentServiceImpl implements PaymentService {
                 }
             }
         } else {
-            IGenericTiers tiers = invoiceHelper.getCustomerOrder(invoice);
-            payment.setSourceAccountingAccount(tiers.getAccountingAccountProvider());
             accountingRecordGenerationService.generateAccountingRecordsForPurschaseOnInvoicePayment(invoice, payment);
         }
     }
@@ -937,10 +942,13 @@ public class PaymentServiceImpl implements PaymentService {
         invoiceItem.setPreTaxPrice(Math.round(commission * 100f) / 100f);
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
         invoice.getInvoiceItems().add(invoiceItem);
+        vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
 
         Invoice centralPayInvoice = invoiceService.addOrUpdateInvoiceFromUser(invoice);
-        Payment centralPayPayment = generateNewAccountPayment(commission,
+        Payment centralPayPayment = generateNewAccountPayment(
+                -(invoiceItem.getPreTaxPrice() + invoiceItem.getVatPrice()),
                 constantService.getProviderCentralPay().getAccountingAccountProvider(), invoiceLabel);
+        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(centralPayPayment);
 
         associateOutboundPaymentAndInvoice(centralPayPayment, centralPayInvoice);
     }

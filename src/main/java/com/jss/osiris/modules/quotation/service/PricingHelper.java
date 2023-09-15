@@ -411,6 +411,13 @@ public class PricingHelper {
                                     || invoiceItem.getBillingItem().getBillingType().getIsNonTaxable())
                                 newInvoiceItem.setVat(constantService.getVatZero());
                             vatService.completeVatOnInvoiceItem(newInvoiceItem, quotation);
+
+                            // Keep less rate of both and recompute price
+                            if (invoiceItem.getVat() != null
+                                    && invoiceItem.getVat().getRate() < newInvoiceItem.getVat().getRate()) {
+                                newInvoiceItem.setVat(invoiceItem.getVat());
+                                vatService.completeVatOnInvoiceItem(newInvoiceItem, quotation);
+                            }
                             if (persistInvoiceItem)
                                 invoiceItemService.addOrUpdateInvoiceItem(newInvoiceItem);
                             provision.getInvoiceItems().add(newInvoiceItem);
