@@ -711,7 +711,10 @@ public class PaymentServiceImpl implements PaymentService {
             throws OsirisException, OsirisValidationException {
         payment.setProvision(provision);
         payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
-        payment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+        payment.setSourceAccountingAccount(
+                payment.getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId())
+                        ? constantService.getAccountingAccountCaisse()
+                        : constantService.getAccountingAccountBankJss());
         addOrUpdatePayment(payment);
         accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
         return payment;
@@ -999,7 +1002,7 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPaymentType(constantService.getPaymentTypeCB());
         payment.setIsCancelled(isForDepostit);
         payment.setInvoice(invoice);
-        payment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+        payment.setSourceAccountingAccount(constantService.getAccountingAccountBankCentralPay());
         payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         addOrUpdatePayment(payment);
         return payment;

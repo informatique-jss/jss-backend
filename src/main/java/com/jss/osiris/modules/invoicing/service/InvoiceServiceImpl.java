@@ -148,6 +148,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         IGenericTiers invoiceTiers = invoiceHelper.getCustomerOrder(invoice);
 
+        // Define booleans
+        if (invoice.getIsCreditNote() == null)
+            invoice.setIsCreditNote(false);
+        if (invoice.getIsInvoiceFromProvider())
+            invoice.setIsInvoiceFromProvider(false);
+        if (invoice.getIsProviderCreditNote())
+            invoice.setIsProviderCreditNote(false);
+
         // Define due date
         if (invoice.getDueDate() == null)
             invoice.setDueDate(getDueDateForInvoice(invoiceTiers, invoice));

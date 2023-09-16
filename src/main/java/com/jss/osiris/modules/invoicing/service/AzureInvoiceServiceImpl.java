@@ -126,6 +126,7 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         invoice.setCustomerOrderForInboundInvoice(currentProvision.getAssoAffaireOrder().getCustomerOrder());
         invoice.setManualAccountingDocumentNumber(azureInvoice.getInvoiceId());
         invoice.setIsInvoiceFromProvider(true);
+        invoice.setIsProviderCreditNote(false);
         invoice.setAzureInvoice(azureInvoice);
         invoice.setManualAccountingDocumentDate(azureInvoice.getInvoiceDate());
         invoice.setManualPaymentType(azureInvoice.getCompetentAuthority().getDefaultPaymentType());
