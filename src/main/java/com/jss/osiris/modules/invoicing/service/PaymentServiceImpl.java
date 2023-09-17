@@ -46,6 +46,7 @@ import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
+import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -457,7 +458,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void manualMatchPaymentInvoicesAndCustomerOrders(Payment payment, List<Invoice> correspondingInvoices,
-            List<CustomerOrder> correspondingCustomerOrder, Affaire affaireRefund, ITiers tiersRefund,
+            List<CustomerOrder> correspondingCustomerOrder, Affaire affaireRefund, Tiers tiersRefund,
+            Confrere confrereRefund, ITiers tiersOrder,
             List<Float> byPassAmount) throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         payment = getPayment(payment.getId());
@@ -489,7 +491,9 @@ public class PaymentServiceImpl implements PaymentService {
                         else if (invoice.getCustomerOrderForInboundInvoice() != null)
                             customerOrder = invoice.getCustomerOrderForInboundInvoice();
 
-                refundService.refundPayment(tiersRefund, affaireRefund, payment, remainingMoney, customerOrder);
+                refundService.refundPayment(tiersRefund, affaireRefund, confrereRefund, tiersOrder, payment,
+                        remainingMoney,
+                        customerOrder);
             }
         } else {
             if (correspondingInvoices != null && correspondingInvoices.size() == 1)
@@ -740,7 +744,7 @@ public class PaymentServiceImpl implements PaymentService {
         if (affaire != null)
             affaire = affaireService.getAffaire(affaire.getId());
         payment = getPayment(payment.getId());
-        refundService.refundPayment(tiers, affaire, payment, payment.getPaymentAmount(), null);
+        refundService.refundPayment(tiers, affaire, null, tiers, payment, payment.getPaymentAmount(), null);
     }
 
     private Payment generateNewPaymentFromPayment(Payment payment, Float paymentAmount, Boolean isDeposit,

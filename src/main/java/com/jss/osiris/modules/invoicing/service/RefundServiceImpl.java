@@ -126,35 +126,38 @@ public class RefundServiceImpl implements RefundService {
     }
 
     @Override
-    public Refund refundPayment(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Float amount,
-            CustomerOrder customerOrder)
+    public Refund refundPayment(Tiers tiersRefund, Affaire affaireRefund, Confrere confrereRefund, ITiers tiersOrder,
+            Payment payment,
+            Float amount, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (payment == null)
             throw new OsirisClientMessageException("Paiment annulé");
 
         Refund refund = new Refund();
+        Document refundDocument = null;
         refund.setCustomerOrder(customerOrder);
-        if (tiersRefund instanceof Confrere)
-            refund.setConfrere((Confrere) tiersRefund);
-        if (tiersRefund instanceof Tiers)
-            refund.setTiers((Tiers) tiersRefund);
+        refund.setRefundType(constantService.getRefundTypeVirement());
+
+        if (confrereRefund != null) {
+            refund.setConfrere(confrereRefund);
+            refundDocument = documentService.getRefundDocument(confrereRefund.getDocuments());
+        } else if (tiersRefund != null) {
+            refund.setTiers(tiersRefund);
+            refundDocument = documentService.getRefundDocument(tiersRefund.getDocuments());
+        }
         if (affaireRefund != null) {
             refund.setAffaire(affaireRefund);
             refund.setRefundIBAN(affaireRefund.getPaymentIban());
             refund.setRefundBic(affaireRefund.getPaymentBic());
-            refund.setRefundType(constantService.getRefundTypeVirement());
-        } else {
-            Document refundDocument = documentService.getRefundDocument(tiersRefund.getDocuments());
-            if (refundDocument != null) {
-                refund.setRefundType(refundDocument.getRefundType());
-                if (refundDocument.getRegie() != null && refundDocument.getRegie().getIban() != null
-                        && !refundDocument.getRegie().getIban().equals("")) {
-                    refund.setRefundIBAN(refundDocument.getRegie().getIban());
-                    refund.setRefundBic(refundDocument.getRegie().getBic());
-                } else {
-                    refund.setRefundIBAN(refundDocument.getRefundIBAN());
-                    refund.setRefundBic(refundDocument.getRefundBic());
-                }
+        } else if (refundDocument != null) {
+            refund.setRefundType(refundDocument.getRefundType());
+            if (refundDocument.getRegie() != null && refundDocument.getRegie().getIban() != null
+                    && !refundDocument.getRegie().getIban().equals("")) {
+                refund.setRefundIBAN(refundDocument.getRegie().getIban());
+                refund.setRefundBic(refundDocument.getRegie().getBic());
+            } else {
+                refund.setRefundIBAN(refundDocument.getRefundIBAN());
+                refund.setRefundBic(refundDocument.getRefundBic());
             }
         }
 
@@ -189,7 +192,7 @@ public class RefundServiceImpl implements RefundService {
         this.addOrUpdateRefund(refund);
 
         refund.setPayments(new ArrayList<Payment>());
-        refund.getPayments().add(paymentService.generateNewRefundPayment(refund, -amount, tiersRefund, payment));
+        refund.getPayments().add(paymentService.generateNewRefundPayment(refund, -amount, tiersOrder, payment));
         if (customerOrder == null) // If it's a payment / appoint refund
             paymentService.cancelAppoint(payment);
 

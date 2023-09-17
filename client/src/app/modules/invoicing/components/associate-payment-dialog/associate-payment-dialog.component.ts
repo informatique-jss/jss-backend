@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN, INVOICING_PAYMENT_LIMIT_REFUND_EUROS } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
+import { instanceOfConfrere } from 'src/app/libs/TypeHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -12,11 +13,11 @@ import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { CustomerOrder } from 'src/app/modules/quotation/model/CustomerOrder';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
+import { OrderingSearchResult } from 'src/app/modules/quotation/model/OrderingSearchResult';
 import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { AppService } from 'src/app/services/app.service';
 import { CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
-import { OrderingSearchResult } from '../../../quotation/model/OrderingSearchResult';
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
 import { Responsable } from '../../../tiers/model/Responsable';
 import { AssociationSummaryTable } from '../../model/AssociationSummaryTable';
@@ -27,7 +28,7 @@ import { PaymentAssociate } from '../../model/PaymentAssociate';
 import { InvoiceService } from '../../services/invoice.service';
 import { PaymentService } from '../../services/payment.service';
 import { AmountDialogComponent } from '../amount-dialog/amount-dialog.component';
-import { getAmountPayed, getCustomerOrderForIQuotation, getCustomerOrderForInvoice, getCustomerOrderNameForITiers, getRemainingToPay } from '../invoice-tools';
+import { getCustomerOrderForIQuotation, getCustomerOrderForInvoice, getCustomerOrderNameForITiers, getRemainingToPay } from '../invoice-tools';
 
 @Component({
   selector: 'associate-payment-dialog',
@@ -39,10 +40,13 @@ export class AssociatePaymentDialogComponent implements OnInit {
   customerOrder: CustomerOrder | undefined;
   invoice: Invoice | undefined;
   payment: Payment | undefined;
-  associationSummaryTable: AssociationSummaryTable[] = [] as Array<AssociationSummaryTable>;
+  associations: AssociationSummaryTable[] = [] as Array<AssociationSummaryTable>;
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
-  selectedRefundTiers: any | undefined;
+  selectedRefundTiers: Tiers | undefined;
+  selectedRefundConfrere: Confrere | undefined;
+  selectedRefundAffaire: Affaire | undefined;
+  tiersOrder: ITiers | undefined | null;
 
   refreshTable: Subject<void> = new Subject<void>();
 
@@ -51,6 +55,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
   INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = INVOICING_PAYMENT_LIMIT_REFUND_EUROS;
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
+  invoiceStatusCreditNoteReceived = this.constantService.getInvoiceStatusCreditNoteReceived();
+  invoiceStatusCreditNoteEmited = this.constantService.getInvoiceStatusCreditNoteEmited();
   invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
 
   getAmountRemaining = getRemainingToPay;
@@ -79,42 +85,28 @@ export class AssociatePaymentDialogComponent implements OnInit {
     this.displayedColumns.push({ id: "customerOrder", fieldName: "customerOrder.id", label: "Commande" } as SortTableColumn);
     this.displayedColumns.push({ id: "invoice", fieldName: "invoice.id", label: "Facture" } as SortTableColumn);
     this.displayedColumns.push({ id: "initialAmount", fieldName: "invoice", label: "Montant TTC", valueFonction: (element: any): string => { return this.getInitialAmount(element) + " €"; } } as SortTableColumn);
-    this.displayedColumns.push({ id: "initialPayed", fieldName: "invoice", label: "Montant déjà réglé", valueFonction: (element: any): string => { return this.getInitialPayedAmount(element) + " €"; } } as SortTableColumn);
-    this.displayedColumns.push({ id: "amountPayed", fieldName: "invoice", label: "Montant associé", valueFonction: (element: any): string => { return this.getAmountPayed(element) + " €"; } } as SortTableColumn);
-    this.displayedColumns.push({ id: "finalPayed", fieldName: "invoice", label: "Montant final réglé", valueFonction: (element: any): string => { return this.getFinalPayed(element) + " €"; } } as SortTableColumn);
-    this.displayedColumns.push({ id: "remainingToPay", fieldName: "invoice", label: "Montant restant à payer", valueFonction: (element: any): string => { return this.getRemainingToPay(element) + " €"; } } as SortTableColumn);
-    this.displayedColumns.push({ id: "isLettreeValidated", fieldName: "invoice", label: "Facture lettrée", valueFonction: (element: any): any => { if (element.invoice) { return (this.getRemainingToPay(element) <= 0 ? "Oui" : "Non"); } } } as SortTableColumn);
-    this.displayedColumns.push({ id: "isDepositValidated", fieldName: "invoice", label: "Acompte validé", valueFonction: (element: any): any => { if (element.customerOrder) { return (this.getRemainingToPay(element) <= 0 && element.customerOrder ? "Oui" : "Non"); } } } as SortTableColumn);
+    this.displayedColumns.push({ id: "amountPayed", fieldName: "invoice", label: "Montant associé", valueFonction: (element: any): string => { return this.getAmountAssociated(element) + " €"; } } as SortTableColumn);
 
     this.tableAction.push({
       actionIcon: "delete", actionName: "Supprimer l'association", actionClick: (action: SortTableAction, element: any): void => {
-        if (element && this.associationSummaryTable)
-          for (let asso of this.associationSummaryTable)
+        if (element && this.associations)
+          for (let asso of this.associations)
             if (asso.customerOrder && element.customerOrder && asso.customerOrder.id == element.customerOrder.id || asso.invoice && element.invoice && asso.invoice.id == element.invoice.id) {
-              this.associationSummaryTable.splice(this.associationSummaryTable.indexOf(asso), 1);
+              this.associations.splice(this.associations.indexOf(asso), 1);
               this.refreshSummaryTables();
               return;
             }
       }, display: true,
     } as SortTableAction);
 
-    if (this.payment && this.invoice && !this.doNotInitializeAsso)
-      this.associationSummaryTable.push({
-        payment: this.payment, invoice: this.invoice, amountUsed: Math.min(this.getInitialAmount({ invoice: this.invoice }) - this.getInitialPayedAmount({ invoice: this.invoice }), this.payment.paymentAmount)
-      } as AssociationSummaryTable);
+    if (this.payment && this.invoice && !this.doNotInitializeAsso) {
+      this.associateInvoice(this.invoice);
+    }
 
     if (this.payment && this.customerOrder && !this.doNotInitializeAsso)
-      this.associationSummaryTable.push({
-        payment: this.payment, customerOrder: this.customerOrder, amountUsed: this.payment.paymentAmount
-      } as AssociationSummaryTable);
+      this.associateOrder(this.customerOrder);
 
-
-    this.selectedRefundTiers = this.getRefundCustomerOrder();
-    this.refundForm.get("refundTiers")!.valueChanges.subscribe(
-      (newValue) => {
-        this.selectedRefundTiers = newValue as any;
-      }
-    )
+    this.tiersOrder = this.getTiersOrder();
 
     if (this.payment) {
       if (this.payment.paymentAmount > 0) {
@@ -125,48 +117,42 @@ export class AssociatePaymentDialogComponent implements OnInit {
     }
   }
 
-
-
   onConfirm(): void {
-    if (this.payment) {
+    if (this.payment && this.tiersOrder) {
       let paymentAssociate = {} as PaymentAssociate;
 
-      if (this.selectedRefundTiers == null && this.amountRemaining() > 0 && this.amountRemaining() > INVOICING_PAYMENT_LIMIT_REFUND_EUROS) {
+      if (this.selectedRefundTiers == null && this.getBalance() > INVOICING_PAYMENT_LIMIT_REFUND_EUROS) {
         this.appService.displaySnackBar("Veuillez choisir un tiers à rembourser", true, 30);
         return;
       }
-      paymentAssociate.affaire = (this.selectedRefundTiers && 'rna' in this.selectedRefundTiers) ? this.selectedRefundTiers : null;
-      paymentAssociate.tiersRefund = (!this.getRefundCustomerOrder() || (this.getRefundCustomerOrder() as any).label) ? null : this.getRefundCustomerOrder() as Tiers;
-      paymentAssociate.confrereRefund = ((!this.getRefundCustomerOrder() || this.getRefundCustomerOrder() as any).label) ? this.getRefundCustomerOrder() as Confrere : null;
+      paymentAssociate.affaireRefund = this.selectedRefundAffaire;
+      paymentAssociate.tiersRefund = this.selectedRefundTiers;
+      paymentAssociate.confrereRefund = this.selectedRefundConfrere;
+      paymentAssociate.tiersOrder = this.tiersOrder as Tiers;
       paymentAssociate.payment = this.payment;
 
-      let appointAmount = Math.abs(this.amountRemaining()) < INVOICING_PAYMENT_LIMIT_REFUND_EUROS ? this.amountRemaining() : 0;
-
-      if (this.associationSummaryTable) {
+      if (this.associations) {
         // sort to put invoice first, they will be associated first in the backend
-        this.associationSummaryTable.sort((a: AssociationSummaryTable, b: AssociationSummaryTable) => {
+        this.associations.sort((a: AssociationSummaryTable, b: AssociationSummaryTable) => {
           if (a.invoice && !b.invoice) return -1;
           if (!a.invoice && b.invoice) return 1;
           return a.amountUsed - b.amountUsed;
         })
-        for (let asso of this.associationSummaryTable) {
+        for (let asso of this.associations) {
+          if (!paymentAssociate.byPassAmount)
+            paymentAssociate.byPassAmount = [] as Array<number>;
+
           if (asso.invoice) {
             if (!paymentAssociate.invoices)
               paymentAssociate.invoices = [] as Array<Invoice>;
-            if (!paymentAssociate.byPassAmount)
-              paymentAssociate.byPassAmount = [] as Array<number>;
             paymentAssociate.invoices.push(asso.invoice);
-            // Add appoint on last element
-            paymentAssociate.byPassAmount.push(asso.amountUsed + (this.associationSummaryTable.indexOf(asso) == this.associationSummaryTable.length - 1 ? appointAmount : 0));
           }
           if (asso.customerOrder) {
             if (!paymentAssociate.customerOrders)
               paymentAssociate.customerOrders = [] as Array<CustomerOrder>;
-            if (!paymentAssociate.byPassAmount)
-              paymentAssociate.byPassAmount = [] as Array<number>;
             paymentAssociate.customerOrders.push(asso.customerOrder);
-            paymentAssociate.byPassAmount.push(asso.amountUsed + (this.associationSummaryTable.indexOf(asso) == this.associationSummaryTable.length - 1 ? appointAmount : 0));
           }
+          paymentAssociate.byPassAmount.push(this.getAmountAssociated(asso));
         }
         this.paymentService.associatePaymentAndInvoiceAndCustomerOrder(paymentAssociate).subscribe(response => {
           this.dialogRef.close(true);
@@ -183,94 +169,115 @@ export class AssociatePaymentDialogComponent implements OnInit {
     this.refreshTable.next();
   }
 
-  associateInvoice(invoiceIn: InvoiceSearchResult) {
-    this.invoiceService.getInvoiceById(invoiceIn.invoiceId).subscribe(invoice => {
-      if (this.associationSummaryTable)
-        for (let asso of this.associationSummaryTable)
-          if (asso.invoice && asso.invoice.id == invoice.id) {
-            this.appService.displaySnackBar("Cette facture est déjà associée à ce paiement", true, 15);
-            return;
-          }
-      if (this.invoice && invoice.invoiceStatus && invoice.invoiceStatus.id == this.constantService.getInvoiceStatusCreditNoteEmited().id) {
-        this.appService.displaySnackBar("Impossible d'associer un paiement avec une facture au status " + this.invoice.invoiceStatus.label, true, 15);
-        return;
-      }
-      if (this.isPaymentWayInbound(this.payment) && invoice.invoiceStatus.id != this.invoiceStatusSend.id && invoice.invoiceStatus.id != this.constantService.getInvoiceStatusCreditNoteReceived().id) {
-        this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusSend.label, true, 15);
-        return;
-      }
-      if (!this.isPaymentWayInbound(this.payment) && invoice.invoiceStatus.id != this.invoiceStatusReceived.id) {
-        this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusReceived.label, true, 15);
-        return;
-      }
-      if (!this.isPaymentWayInbound(this.payment) && this.payment && Math.round(invoice.totalPrice * 100) != Math.abs(Math.round(this.payment.paymentAmount * 100))) {
-        this.appService.displaySnackBar("Veuillez choisir une facture avec un total de " + this.payment.paymentAmount + " €", true, 15);
-        return;
-      }
-      if (!this.isPaymentWayInbound(this.payment) && this.payment && invoice.manualPaymentType.id != this.payment.paymentType.id) {
-        this.appService.displaySnackBar("Le type de réglement de la facture et le type de paiement doivent être identiques", true, 15);
-        return;
-      }
-      if (!this.isSameCustomerOrder(getCustomerOrderForInvoice(invoice))) {
-        this.appService.displaySnackBar("Veuillez choisir une facture du même donneur d'ordre que les autres éléments associés au paiement", true, 15);
-        return;
-      }
-      let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
-        width: '100%'
-      });
-
-      let asso = { payment: this.payment, invoice: invoice } as AssociationSummaryTable;
-      let maxAmount = Math.round((Math.min(this.getLeftMaxAmountPayed(asso), this.getInitialAmount(asso) - this.getInitialPayedAmount(asso))) * 100) / 100;
-      amountDialogRef.componentInstance.label = "Indiquer le montant à utiliser (max : " + Math.round(maxAmount) + " €) :";
-      amountDialogRef.componentInstance.maxAmount = Math.round(maxAmount * 100) / 100;
-      amountDialogRef.afterClosed().subscribe(response => {
-        if (response != null) {
-          asso.amountUsed = Math.min(parseFloat(response), maxAmount);
-          this.associationSummaryTable.push(asso);
-          this.refreshSummaryTables();
-        } else {
-          return;
-        }
-      });
-    })
+  associateInvoiceFromSearch(invoiceIn: InvoiceSearchResult) {
+    this.invoiceService.getInvoiceById(invoiceIn.invoiceId).subscribe(invoice => this.associateInvoice(invoice));
   }
 
-  associateOrder(orderIn: OrderingSearchResult) {
-    this.customerOrderService.getCustomerOrder(orderIn.customerOrderId).subscribe(order => {
-      if (this.associationSummaryTable)
-        for (let asso of this.associationSummaryTable)
-          if (asso.customerOrder && asso.customerOrder.id == order.id) {
-            this.appService.displaySnackBar("Cette commande est déjà associée à ce paiement", true, 15);
-            return;
-          }
-      if (!this.isSameCustomerOrder(getCustomerOrderForIQuotation(order))) {
-        this.appService.displaySnackBar("Veuillez choisir une commande du même donneur d'ordre que les autres éléments associés au paiement", true, 15);
-        return;
-      }
-
-      let orderAs = order as CustomerOrder;
-      if (orderAs && orderAs.customerOrderStatus && orderAs.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
-        this.appService.displaySnackBar("Il est impossible de choisir une commande abandonnée", true, 15);
-        return;
-      }
-
-      let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
-        width: '35%'
-      });
-      let asso = { payment: this.payment, customerOrder: order, } as AssociationSummaryTable;
-      let maxAmount = Math.round((this.getLeftMaxAmountPayed(asso)) * 100) / 100;
-      amountDialogRef.componentInstance.label = "Indiquer le montant à utiliser (max : " + maxAmount + " €) :";
-      amountDialogRef.componentInstance.maxAmount = maxAmount;
-      amountDialogRef.afterClosed().subscribe(response => {
-        if (response != null) {
-          asso.amountUsed = Math.min(parseFloat(response), maxAmount);
-          this.associationSummaryTable.push(asso);
-          this.refreshSummaryTables();
-        } else {
+  associateInvoice(invoice: Invoice) {
+    if (this.associations)
+      for (let asso of this.associations)
+        if (asso.invoice && asso.invoice.id == invoice.id) {
+          this.appService.displaySnackBar("Cette facture est déjà associée à ce paiement", true, 15);
           return;
         }
-      });
-    })
+
+    if (this.invoice && invoice.invoiceStatus && invoice.invoiceStatus.id == this.invoiceStatusCreditNoteEmited.id) {
+      this.appService.displaySnackBar("Impossible d'associer un paiement avec une facture au status " + this.invoice.invoiceStatus.label, true, 15);
+      return;
+    }
+
+    if (this.payment) {
+      if (this.payment.paymentAmount > 0) {
+        if (invoice.invoiceStatus.id != this.invoiceStatusSend.id && invoice.invoiceStatus.id != this.invoiceStatusCreditNoteReceived.id) {
+          this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusSend.label, true, 15);
+          return;
+        }
+      } else {
+        if (invoice.invoiceStatus.id != this.invoiceStatusReceived.id) {
+          this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusReceived.label, true, 15);
+          return;
+        }
+        if (this.payment && Math.round(invoice.totalPrice * 100) != Math.abs(Math.round(this.payment.paymentAmount * 100))) {
+          this.appService.displaySnackBar("Veuillez choisir une facture avec un total de " + this.payment.paymentAmount + " €", true, 15);
+          return;
+        }
+        if (this.payment && invoice.manualPaymentType.id != this.payment.paymentType.id) {
+          this.appService.displaySnackBar("Le type de réglement de la facture et le type de paiement doivent être identiques", true, 15);
+          return;
+        }
+      }
+    }
+
+    if (!this.isSameCustomerOrder(getCustomerOrderForInvoice(invoice))) {
+      this.appService.displaySnackBar("Veuillez choisir une facture du même donneur d'ordre que les autres éléments associés au paiement", true, 15);
+      return;
+    }
+    let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
+      width: '100%'
+    });
+
+    let maxAmount = this.getBalance();
+    if (invoice.totalPrice > 0 && getRemainingToPay(invoice) < maxAmount)
+      maxAmount = getRemainingToPay(invoice);
+    else if (invoice.totalPrice < 0 && -getRemainingToPay(invoice) > maxAmount)
+      maxAmount = - getRemainingToPay(invoice);
+
+    amountDialogRef.componentInstance.label = "Indiquer le montant à utiliser (max : " + Math.round(maxAmount) + " €) :";
+    amountDialogRef.componentInstance.maxAmount = Math.round(maxAmount * 100) / 100;
+    amountDialogRef.afterClosed().subscribe(response => {
+      if (response != null) {
+        let asso = { payment: this.payment, invoice: invoice } as AssociationSummaryTable;
+        asso.amountUsed = parseFloat(response);
+        this.associations.push(asso);
+        if (!this.tiersOrder)
+          this.tiersOrder = this.getTiersOrder();
+        this.refreshSummaryTables();
+      } else {
+        return;
+      }
+    });
+  }
+
+  associateOrderFromSearch(orderIn: OrderingSearchResult) {
+    this.customerOrderService.getCustomerOrder(orderIn.customerOrderId).subscribe(order => this.associateOrder(order as CustomerOrder));
+  }
+
+  associateOrder(order: CustomerOrder) {
+    if (this.associations)
+      for (let asso of this.associations)
+        if (asso.customerOrder && asso.customerOrder.id == order.id) {
+          this.appService.displaySnackBar("Cette commande est déjà associée à ce paiement", true, 15);
+          return;
+        }
+
+    if (!this.isSameCustomerOrder(getCustomerOrderForIQuotation(order))) {
+      this.appService.displaySnackBar("Veuillez choisir une commande du même donneur d'ordre que les autres éléments associés au paiement", true, 15);
+      return;
+    }
+
+    if (order.customerOrderStatus && order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
+      this.appService.displaySnackBar("Il est impossible de choisir une commande abandonnée", true, 15);
+      return;
+    }
+
+    let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
+      width: '35%'
+    });
+    let maxAmount = this.getBalance();
+    amountDialogRef.componentInstance.label = "Indiquer le montant à utiliser (max : " + maxAmount + " €) :";
+    amountDialogRef.componentInstance.maxAmount = Math.round(maxAmount * 100) / 100;
+    amountDialogRef.afterClosed().subscribe(response => {
+      if (response != null) {
+        let asso = { payment: this.payment, customerOrder: order, } as AssociationSummaryTable;
+        asso.amountUsed = parseFloat(response);
+        this.associations.push(asso);
+        this.refreshSummaryTables();
+        if (!this.tiersOrder)
+          this.tiersOrder = this.getTiersOrder();
+      } else {
+        return;
+      }
+    });
   }
 
   isSameCustomerOrder(newCustomerOrder: ITiers): boolean {
@@ -280,8 +287,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
     if ((newCustomerOrder as Responsable).tiers)
       newCustomerOrder = (newCustomerOrder as Responsable).tiers;
 
-    if (this.associationSummaryTable)
-      for (let asso of this.associationSummaryTable) {
+    if (this.associations)
+      for (let asso of this.associations) {
         let customerOrder;
         if (asso.invoice)
           customerOrder = getCustomerOrderForInvoice(asso.invoice);
@@ -301,22 +308,33 @@ export class AssociatePaymentDialogComponent implements OnInit {
 
   getCustomerOrderNameForITiers = getCustomerOrderNameForITiers;
 
-  getRefundCustomerOrder(): ITiers | null {
+  getTiersOrder(): ITiers | null {
     let customerOrder: ITiers | undefined = undefined;
-    if (this.associationSummaryTable && this.associationSummaryTable.length > 0) {
-      if (this.associationSummaryTable[0].invoice) {
-        customerOrder = getCustomerOrderForInvoice(this.associationSummaryTable[0].invoice);
+    if (this.associations && this.associations.length > 0) {
+      if (this.associations[0].invoice) {
+        customerOrder = getCustomerOrderForInvoice(this.associations[0].invoice);
       } else {
-        customerOrder = getCustomerOrderForIQuotation(this.associationSummaryTable[0].customerOrder);
+        customerOrder = getCustomerOrderForIQuotation(this.associations[0].customerOrder);
       }
     } else if (this.invoice) {
       customerOrder = getCustomerOrderForInvoice(this.invoice!);
+    } else if (this.customerOrder) {
+      customerOrder = getCustomerOrderForIQuotation(this.customerOrder);
     } else {
       return null;
     }
     // If responsable, return associate Tiers
     if ((customerOrder as any).tiers)
       customerOrder = ((customerOrder as any).tiers as Tiers);
+
+    return customerOrder;
+  }
+
+  getRefundCustomerOrder(): ITiers | null {
+    let customerOrder = this.getTiersOrder();
+
+    if (!customerOrder)
+      return null;
 
     let refundDocument = getDocument(this.constantService.getDocumentTypeRefund(), customerOrder);
 
@@ -331,8 +349,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
 
   getAllAffaireRefundable(): Affaire[] {
     let affaires: Affaire[] = [] as Array<Affaire>;
-    if (this.associationSummaryTable && this.associationSummaryTable.length > 0) {
-      for (let asso of this.associationSummaryTable) {
+    if (this.associations && this.associations.length > 0) {
+      for (let asso of this.associations) {
         if (asso.invoice && asso.invoice.customerOrder) {
           affaires.push(...asso.invoice.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban && asso.affaire.paymentIban != "").map(asso => asso.affaire));
         } else {
@@ -345,89 +363,58 @@ export class AssociatePaymentDialogComponent implements OnInit {
     return affaires;
   }
 
-  amountToPayCompletely() {
-    let amount = -(this.payment ? this.payment?.paymentAmount : 0);
-    if (this.invoice && this.payment) {
-      amount = Math.round(this.getAmountRemaining(this.invoice) * 100) / 100 - Math.round(this.payment.paymentAmount * 100) / 100;
-    }
-    if (this.customerOrder && this.payment) {
-      let remainingToPay = Math.round((QuotationComponent.computePriceTotal(this.customerOrder) - QuotationComponent.computePayed(this.customerOrder)) * 100) / 100;
-      amount = Math.round(remainingToPay * 100) / 100 - Math.round(this.payment.paymentAmount * 100) / 100;
-    }
-    return amount;
-  }
-
-  amountRemaining(): number {
-    let total = 0;
-    if (this.payment) {
-      let amountRemaining = this.payment.paymentAmount;
-      if (this.associationSummaryTable)
-        for (let asso of this.associationSummaryTable)
-          amountRemaining -= this.getAmountPayed(asso);
-      total = Math.round(amountRemaining * 100) / 100;
-    }
-    return total;
-  }
-
   getInitialAmount(element: any): number {
     let total = 0;
     if (element) {
       if (element.invoice)
-        if (element.invoice.isInvoiceFromProvider)
-          total = -Math.round(element.invoice.totalPrice * 100) / 100;
-        else
-          total = Math.round(element.invoice.totalPrice * 100) / 100;
+        return getRemainingToPay(element.invoice);
       if (element.customerOrder)
         total = QuotationComponent.computePriceTotal(element.customerOrder);
     }
     return total;
   }
 
-  getInitialPayedAmount(element: any): number {
-    let total = 0;
-    if (element && this.payment) {
-      if (element.invoice)
-        total = getAmountPayed(element.invoice);
-      if (element.customerOrder) {
-        total = QuotationComponent.computePayed(element.customerOrder);
-        if (element.customerOrder.payments)
-          for (let payment of element.customerOrder.payments)
-            if (payment.id == this.payment.id)
-              total -= payment.paymentAmount;
-      }
-    }
-    return total;
-  }
-
-  getAmountPayed(element: any): number {
+  getAmountAssociated(element: any): number {
     return element.amountUsed;
   }
 
-  getLeftMaxAmountPayed(element: any): number {
-    let amountRemaining = 0;
+  getBalance() {
+    let balance = 0;
     if (this.payment) {
-      amountRemaining = this.payment.paymentAmount;
-      if (element && this.associationSummaryTable)
-        for (let asso of this.associationSummaryTable)
-          if (asso.invoice && (!element.invoice || element.invoice.id != asso.invoice.id) || asso.customerOrder && (!element.customerOrder || asso.customerOrder.id != element.customerOrder.id)) {
-            amountRemaining -= asso.amountUsed;
-          } else {
-            return Math.min(amountRemaining, this.getInitialAmount(element) - this.getInitialPayedAmount(element))
-          }
-      return amountRemaining;
+      balance = this.payment.paymentAmount;
+      for (let asso of this.associations) {
+        balance -= this.getAmountAssociated(asso);
+      }
     }
-    return amountRemaining;
+    return Math.round(balance * 100) / 100;
   }
 
-  getFinalPayed(element: any): number {
-    return this.getInitialPayedAmount(element) + this.getAmountPayed(element);
+  selectRefundTiers() {
+    let refundTiers = this.getRefundCustomerOrder();
+    if (refundTiers) {
+      if (instanceOfConfrere(refundTiers)) {
+        this.selectedRefundConfrere = refundTiers;
+        this.selectedRefundAffaire = undefined;
+        this.selectedRefundTiers = undefined;
+      } else {
+        this.selectedRefundTiers = refundTiers as Tiers;
+        this.selectedRefundAffaire = undefined;
+        this.selectedRefundConfrere = undefined;
+      }
+    }
   }
 
-  getRemainingToPay(element: any): number {
-    return Math.round(Math.max(0, this.getInitialAmount(element) - this.getFinalPayed(element)) * 100) / 100;
+  selectRefundAffaire(affaire: Affaire) {
+    if (affaire) {
+      this.selectedRefundAffaire = affaire;
+      this.selectedRefundConfrere = undefined;
+      this.selectedRefundTiers = undefined;
+    }
   }
 
-  isPaymentWayInbound(payment: any) {
-    return payment.paymentAmount >= 0;
+  cancelRefundChoice() {
+    this.selectedRefundAffaire = undefined;
+    this.selectedRefundConfrere = undefined;
+    this.selectedRefundTiers = undefined;
   }
 }

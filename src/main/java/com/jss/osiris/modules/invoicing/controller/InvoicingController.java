@@ -59,17 +59,18 @@ import com.jss.osiris.modules.invoicing.service.RefundService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
+import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
-import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
@@ -125,6 +126,9 @@ public class InvoicingController {
 
     @Autowired
     TiersService tiersService;
+
+    @Autowired
+    ConfrereService confrereService;
 
     @Value("${invoicing.payment.limit.refund.euros}")
     private Integer payementLimitRefundInEuros;
@@ -449,168 +453,139 @@ public class InvoicingController {
         if (paymentAssociate == null)
             throw new OsirisValidationException("paymentAssociate");
 
-        paymentAssociate
-                .setPayment(
-                        (Payment) validationHelper.validateReferential(paymentAssociate.getPayment(), true, "Payment"));
+        // Check referentials
+
+        paymentAssociate.setPayment(
+                (Payment) validationHelper.validateReferential(paymentAssociate.getPayment(), true, "Payment"));
 
         if (paymentAssociate.getPayment().getIsCancelled())
             throw new OsirisValidationException("Payment already cancelled !");
 
-        if (paymentAssociate.getInvoices() != null) {
-            if (paymentAssociate.getInvoices().size() == 0)
-                paymentAssociate.setInvoices(null);
-
-            for (Invoice invoice : paymentAssociate.getInvoices()) {
-                invoice = (Invoice) validationHelper.validateReferential(invoice, true, "invoice");
-                if (paymentAssociate.getPayment().getIsCancelled() != null
-                        && paymentAssociate.getPayment().getIsCancelled() == true)
-                    throw new OsirisValidationException("payment cancelled");
-                if (paymentAssociate.getPayment().getInvoice() != null
-                        && invoice.getId().equals(paymentAssociate.getPayment().getInvoice().getId()))
-                    throw new OsirisValidationException("payment already associate");
-
-                if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
-                        && !invoice.getInvoiceStatus().getId()
-                                .equals(constantService.getInvoiceStatusReceived().getId())
-                        && !invoice.getInvoiceStatus().getId()
-                                .equals(constantService.getInvoiceStatusCreditNoteReceived().getId()))
-                    throw new OsirisValidationException("invoice not send or received");
-
-                if (invoice.getInvoiceStatus().getId()
-                        .equals(constantService.getInvoiceStatusCreditNoteEmited().getId()))
-                    throw new OsirisValidationException("can't associate payment to customer credit note");
-
-                if (invoice.getInvoiceStatus().getId()
-                        .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())) {
-                    if (Math.round(invoice.getTotalPrice() * 100f) != Math
-                            .round(paymentAssociate.getPayment().getPaymentAmount() * 100f))
-                        throw new OsirisValidationException("Wrong payment amount");
-                }
-            }
-        }
-
-        if (paymentAssociate.getCustomerOrders() != null) {
-            if (paymentAssociate.getCustomerOrders().size() == 0)
-                paymentAssociate.setCustomerOrders(null);
-
-            for (CustomerOrder customerOrder : paymentAssociate.getCustomerOrders()) {
-                customerOrder = (CustomerOrder) validationHelper.validateReferential(customerOrder, true,
-                        "customerOrder");
-            }
-        }
-
-        paymentAssociate
-                .setAffaire((Affaire) validationHelper.validateReferential(paymentAssociate.getAffaire(), false,
-                        "Affaire"));
-
+        // Must have same number of association, except when customer payment and refund
+        // ITiers / Affaire set
         if (paymentAssociate.getByPassAmount() == null || paymentAssociate.getByPassAmount()
                 .size() != (paymentAssociate.getInvoices() == null ? 0 : paymentAssociate.getInvoices().size())
                         + (paymentAssociate.getCustomerOrders() == null ? 0
                                 : paymentAssociate.getCustomerOrders().size()))
-            throw new OsirisValidationException("wrong associate number");
+            if (paymentAssociate.getPayment().getPaymentAmount() < 0 || paymentAssociate.getAffaireRefund() == null
+                    && paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null)
+                throw new OsirisValidationException("wrong associate number");
+
+        paymentAssociate.setAffaireRefund(
+                (Affaire) validationHelper.validateReferential(paymentAssociate.getAffaireRefund(), false, "Affaire"));
+        paymentAssociate.setConfrereRefund((Confrere) validationHelper
+                .validateReferential(paymentAssociate.getConfrereRefund(), false, "Confrere"));
+        paymentAssociate.setTiersRefund(
+                (Tiers) validationHelper.validateReferential(paymentAssociate.getTiersRefund(), false, "Tiers"));
+
+        if (paymentAssociate.getTiersOrder().getId() == null && paymentAssociate.getTiersOrder().getId() == null)
+            throw new OsirisValidationException("no tiers order set");
+
+        Tiers tiersOrder = tiersService.getTiers(paymentAssociate.getTiersOrder().getId());
+        Confrere confrereOrder = confrereService.getConfrere(paymentAssociate.getTiersOrder().getId());
+
+        if (tiersOrder == null && confrereOrder == null)
+            throw new OsirisValidationException("no tiers order set");
+
+        if (paymentAssociate.getCustomerOrders() != null) {
+            if (paymentAssociate.getCustomerOrders().size() == 0)
+                paymentAssociate.setCustomerOrders(null);
+            else
+                for (CustomerOrder customerOrder : paymentAssociate.getCustomerOrders()) {
+                    customerOrder = (CustomerOrder) validationHelper.validateReferential(customerOrder, true,
+                            "customerOrder");
+                }
+        }
+
+        // Check invoices status
+
+        if (paymentAssociate.getInvoices() != null) {
+            if (paymentAssociate.getInvoices().size() == 0)
+                paymentAssociate.setInvoices(null);
+            else
+                for (Invoice invoice : paymentAssociate.getInvoices()) {
+                    invoice = (Invoice) validationHelper.validateReferential(invoice, true, "invoice");
+                    if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
+                            && !invoice.getInvoiceStatus().getId()
+                                    .equals(constantService.getInvoiceStatusReceived().getId())
+                            && !invoice.getInvoiceStatus().getId()
+                                    .equals(constantService.getInvoiceStatusCreditNoteReceived().getId()))
+                        throw new OsirisValidationException("invoice not send nor received nor credit note received");
+
+                    if (invoice.getInvoiceStatus().getId()
+                            .equals(constantService.getInvoiceStatusCreditNoteEmited().getId()))
+                        throw new OsirisValidationException("can't associate payment to customer credit note");
+
+                    if (invoice.getInvoiceStatus().getId()
+                            .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())
+                            || invoice.getInvoiceStatus().getId()
+                                    .equals(constantService.getInvoiceStatusReceived().getId())) {
+                        if (Math.round(invoice.getTotalPrice() * 100f) != Math
+                                .round(paymentAssociate.getPayment().getPaymentAmount() * 100f))
+                            throw new OsirisValidationException("Wrong payment amount");
+                    }
+                }
+        }
+
+        // Check all money used
 
         Float totalAmount = 0f;
-        for (Float amount : paymentAssociate.getByPassAmount()) {
-            totalAmount += amount;
-        }
+        if (paymentAssociate.getByPassAmount() != null)
+            for (Float amount : paymentAssociate.getByPassAmount()) {
+                totalAmount += amount;
+            }
         totalAmount = Math.round(totalAmount * 100f) / 100f;
 
-        if (paymentAssociate.getPayment().getPaymentAmount() >= 0) {
-            if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null
-                    && paymentAssociate.getPayment().getPaymentAmount() > totalAmount
-                    && Math.abs(paymentAssociate.getPayment().getPaymentAmount()
-                            - totalAmount) > payementLimitRefundInEuros)
-                throw new OsirisValidationException("TiersRefund or ConfrereRefund");
-            validationHelper.validateReferential(paymentAssociate.getTiersRefund(), false, "TiersRefund");
-            validationHelper.validateReferential(paymentAssociate.getConfrereRefund(), false, "ConfrereRefund");
+        // If incoming, appoint or refund needed, if outgoing, must match
+        if (totalAmount != 0) {
+            if (paymentAssociate.getPayment().getPaymentAmount() >= 0
+                    && Math.abs(totalAmount) > payementLimitRefundInEuros) {
+                if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null
+                        && paymentAssociate.getAffaireRefund() == null)
+                    throw new OsirisValidationException("not all payment used and no refund tiers set");
+            } else if (totalAmount != Math.round(paymentAssociate.getPayment().getPaymentAmount()))
+                throw new OsirisValidationException("not all payment used");
         }
 
-        if (paymentAssociate.getPayment().getPaymentAmount() < totalAmount)
-            throw new OsirisValidationException("not all payment used");
-
-        ITiers commonCustomerOrder = null;
+        // Check same customer order for incoming payment
+        Tiers commonCustomerOrder = paymentAssociate.getTiersOrder();
         if (paymentAssociate.getPayment().getPaymentAmount() >= 0) {
-            commonCustomerOrder = null;
-
             if (paymentAssociate.getInvoices() != null) {
-                if (paymentAssociate.getInvoices().get(0).getResponsable() != null)
-                    commonCustomerOrder = paymentAssociate.getInvoices().get(0).getResponsable().getTiers();
-                if (paymentAssociate.getInvoices().get(0).getConfrere() != null)
-                    commonCustomerOrder = paymentAssociate.getInvoices().get(0).getConfrere();
-                if (paymentAssociate.getInvoices().get(0).getTiers() != null)
-                    commonCustomerOrder = paymentAssociate.getInvoices().get(0).getTiers();
-
-                if (commonCustomerOrder != null) {
-                    for (Invoice invoice : paymentAssociate.getInvoices()) {
-                        if (invoice.getResponsable() != null
-                                && !invoice.getResponsable().getTiers().getId().equals(commonCustomerOrder.getId()))
-                            throw new OsirisValidationException("not same customer order chosed");
-                        if (invoice.getConfrere() != null
-                                && !invoice.getConfrere().getId().equals(commonCustomerOrder.getId()))
-                            throw new OsirisValidationException("not same customer order chosed");
-                        if (invoice.getTiers() != null
-                                && !invoice.getTiers().getId().equals(commonCustomerOrder.getId()))
-                            throw new OsirisValidationException("not same customer order chosed");
-                    }
+                for (Invoice invoice : paymentAssociate.getInvoices()) {
+                    if (invoice.getResponsable() != null
+                            && !invoice.getResponsable().getTiers().getId().equals(commonCustomerOrder.getId()))
+                        throw new OsirisValidationException("not same customer order chosed");
+                    if (invoice.getConfrere() != null
+                            && !invoice.getConfrere().getId().equals(commonCustomerOrder.getId()))
+                        throw new OsirisValidationException("not same customer order chosed");
+                    if (invoice.getTiers() != null
+                            && !invoice.getTiers().getId().equals(commonCustomerOrder.getId()))
+                        throw new OsirisValidationException("not same customer order chosed");
                 }
             }
 
             if (paymentAssociate.getCustomerOrders() != null) {
-                if (commonCustomerOrder == null) {
-                    if (paymentAssociate.getCustomerOrders().get(0).getResponsable() != null)
-                        commonCustomerOrder = paymentAssociate.getCustomerOrders().get(0).getResponsable().getTiers();
-                    if (paymentAssociate.getCustomerOrders().get(0).getConfrere() != null)
-                        commonCustomerOrder = paymentAssociate.getCustomerOrders().get(0).getConfrere();
-                    if (paymentAssociate.getCustomerOrders().get(0).getTiers() != null)
-                        commonCustomerOrder = paymentAssociate.getCustomerOrders().get(0).getTiers();
+                for (CustomerOrder customerOrder : paymentAssociate.getCustomerOrders()) {
+                    if (customerOrder.getResponsable() != null
+                            && !customerOrder.getResponsable().getTiers().getId()
+                                    .equals(commonCustomerOrder.getId()))
+                        throw new OsirisValidationException("not same customer order chosed");
+                    if (customerOrder.getConfrere() != null
+                            && !customerOrder.getConfrere().getId().equals(commonCustomerOrder.getId()))
+                        throw new OsirisValidationException("not same customer order chosed");
+                    if (customerOrder.getTiers() != null
+                            && !customerOrder.getTiers().getId().equals(commonCustomerOrder.getId()))
+                        throw new OsirisValidationException("not same customer order chosed");
                 }
-
-                if (commonCustomerOrder != null) {
-                    for (CustomerOrder customerOrder : paymentAssociate.getCustomerOrders()) {
-                        if (customerOrder.getResponsable() != null
-                                && !customerOrder.getResponsable().getTiers().getId()
-                                        .equals(commonCustomerOrder.getId()))
-                            throw new OsirisValidationException("not same customer order chosed");
-                        if (customerOrder.getConfrere() != null
-                                && !customerOrder.getConfrere().getId().equals(commonCustomerOrder.getId()))
-                            throw new OsirisValidationException("not same customer order chosed");
-                        if (customerOrder.getTiers() != null
-                                && !customerOrder.getTiers().getId().equals(commonCustomerOrder.getId()))
-                            throw new OsirisValidationException("not same customer order chosed");
-                    }
-                }
-            }
-        } else {
-            // All invoice same provider / AC
-            if (paymentAssociate.getInvoices() != null && paymentAssociate.getInvoices().size() > 1) {
-                Integer providerId = null;
-                if (paymentAssociate.getInvoices().get(0).getProvider() != null)
-                    providerId = paymentAssociate.getInvoices().get(0).getProvider().getId();
-                if (paymentAssociate.getInvoices().get(0).getCompetentAuthority() != null)
-                    providerId = paymentAssociate.getInvoices().get(0).getCompetentAuthority().getId();
-                if (paymentAssociate.getInvoices().get(0).getConfrere() != null)
-                    providerId = paymentAssociate.getInvoices().get(0).getConfrere().getId();
-
-                if (providerId != null)
-                    for (Invoice invoice : paymentAssociate.getInvoices()) {
-                        if (invoice.getProvider() != null
-                                && !providerId.equals(invoice.getProvider().getId()))
-                            throw new OsirisValidationException("not same customer order chosed");
-                        if (invoice.getCompetentAuthority() != null
-                                && !providerId.equals(invoice.getCompetentAuthority().getId()))
-                            throw new OsirisValidationException("not same customer order chosed");
-                        if (invoice.getConfrere() != null
-                                && !providerId.equals(invoice.getConfrere().getId()))
-                            throw new OsirisValidationException("not same customer order chosed");
-                    }
             }
         }
 
         paymentService.manualMatchPaymentInvoicesAndCustomerOrders(
                 paymentAssociate.getPayment(),
                 paymentAssociate.getInvoices(), paymentAssociate.getCustomerOrders(),
-                paymentAssociate.getAffaire(),
-                commonCustomerOrder, paymentAssociate.getByPassAmount());
+                paymentAssociate.getAffaireRefund(), paymentAssociate.getTiersRefund(),
+                paymentAssociate.getConfrereRefund(),
+                confrereOrder != null ? confrereOrder : tiersOrder, paymentAssociate.getByPassAmount());
 
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }

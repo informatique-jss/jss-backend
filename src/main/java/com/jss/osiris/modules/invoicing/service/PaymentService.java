@@ -16,6 +16,7 @@ import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
+import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
@@ -45,8 +46,8 @@ public interface PaymentService {
 
         public void manualMatchPaymentInvoicesAndCustomerOrders(Payment payment,
                         List<Invoice> correspondingInvoices, List<CustomerOrder> correspondingCustomerOrder,
-                        Affaire affaireRefund,
-                        ITiers tiersRefund, List<Float> byPassAmount)
+                        Affaire affaireRefund, Tiers tiersRefund,
+                        Confrere confrereRefund, ITiers tiersOrder, List<Float> byPassAmount)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public List<Attachment> uploadOfxFile(InputStream file)

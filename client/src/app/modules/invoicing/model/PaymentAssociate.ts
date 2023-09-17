@@ -9,8 +9,9 @@ export interface PaymentAssociate {
   payment: Payment;
   invoices: Invoice[];
   customerOrders: CustomerOrder[];
-  affaire: Affaire;
-  tiersRefund: Tiers | null;
-  confrereRefund: Confrere | null;
+  affaireRefund: Affaire | undefined;
+  tiersRefund: Tiers | undefined;
+  confrereRefund: Confrere | undefined;
+  tiersOrder: Tiers;
   byPassAmount: number[];
 }

@@ -30,7 +30,9 @@ export class AmountDialogComponent implements OnInit {
   }
 
   valueModified() {
-    if (this.amount > this.maxAmount)
+    if (this.maxAmount > 0 && (this.amount > this.maxAmount || this.amount < 0))
+      this.amount = this.maxAmount;
+    if (this.maxAmount < 0 && (this.amount > 0 || this.amount < this.maxAmount))
       this.amount = this.maxAmount;
   }
 }

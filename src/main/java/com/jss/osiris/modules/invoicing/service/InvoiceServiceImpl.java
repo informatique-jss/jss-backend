@@ -254,7 +254,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                                         : invoice.getCompetentAuthority().getLabel()));
                 accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
                 paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment, Arrays.asList(invoice), null, null,
-                        null, null);
+                        null, null, null, null);
             }
         } else {
             if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())) {

@@ -11,8 +11,9 @@ public class PaymentAssociate {
     private Payment payment;
     private List<Invoice> invoices;
     private List<CustomerOrder> customerOrders;
-    private Affaire affaire;
+    private Affaire affaireRefund;
     private Tiers tiersRefund;
+    private Tiers tiersOrder;
     private Confrere confrereRefund;
     private List<Float> byPassAmount;
 
@@ -40,12 +41,12 @@ public class PaymentAssociate {
         this.customerOrders = customerOrders;
     }
 
-    public Affaire getAffaire() {
-        return affaire;
+    public Affaire getAffaireRefund() {
+        return affaireRefund;
     }
 
-    public void setAffaire(Affaire affaire) {
-        this.affaire = affaire;
+    public void setAffaireRefund(Affaire affaire) {
+        this.affaireRefund = affaire;
     }
 
     public List<Float> getByPassAmount() {
@@ -70,6 +71,14 @@ public class PaymentAssociate {
 
     public void setConfrereRefund(Confrere confrereRefund) {
         this.confrereRefund = confrereRefund;
+    }
+
+    public Tiers getTiersOrder() {
+        return tiersOrder;
+    }
+
+    public void setTiersOrder(Tiers tiersOrder) {
+        this.tiersOrder = tiersOrder;
     }
 
 }

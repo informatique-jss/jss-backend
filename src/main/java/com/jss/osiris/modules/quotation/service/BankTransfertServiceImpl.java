@@ -263,8 +263,8 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                         accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
                         paymentService.manualMatchPaymentInvoicesAndCustomerOrders(
                                 completeTransfert.getPayments().get(0),
-                                Arrays.asList(completeTransfert.getInvoices().get(0)), null, null,
-                                null, null);
+                                Arrays.asList(completeTransfert.getInvoices().get(0)), null, null, null, null, null,
+                                null);
                     }
                 }
 
