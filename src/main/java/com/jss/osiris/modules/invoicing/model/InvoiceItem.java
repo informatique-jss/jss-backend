@@ -55,7 +55,7 @@ public class InvoiceItem implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision")
-	@JsonIgnoreProperties(value = { "invoiceItems", "assoAffaireOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "invoiceItems", "assoAffaireOrder", "providerInvoices" }, allowSetters = true)
 	Provision provision;
 
 	@ManyToOne(fetch = FetchType.LAZY)

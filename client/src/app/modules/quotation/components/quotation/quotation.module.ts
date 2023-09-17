@@ -17,6 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
+import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -24,6 +25,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { EditorModule } from '@tinymce/tinymce-angular';
 import { DirectDebitTransfertListComponent } from 'src/app/modules/invoicing/components/direct-debit-transfert-list/direct-debit-transfert-list.component';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
+import { GuichetUniqueStatusComponent } from '../../guichet-unique-status/guichet-unique-status.component';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
 import { AffaireListComponent } from '../affaire-list/affaire-list.component';
@@ -84,6 +86,7 @@ const routes: Routes = [
     EditorModule,
     FormsModule,
     ReactiveFormsModule,
+    MatStepperModule,
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
@@ -145,6 +148,7 @@ const routes: Routes = [
     PersonnePhysiqueComponent,
     IdentiteComponent,
     EntrepriseComponent,
+    GuichetUniqueStatusComponent,
   ],
   exports: [
     OrderingListComponent,

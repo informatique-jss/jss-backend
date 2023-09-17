@@ -125,7 +125,7 @@ public class OsirisScheduller {
 		try {
 			accountingRecordService.dailyAccountClosing();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -134,7 +134,7 @@ public class OsirisScheduller {
 		try {
 			employeeService.updateUserFromActiveDirectory();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -143,7 +143,7 @@ public class OsirisScheduller {
 		try {
 			customerMailService.sendNextMail();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -152,7 +152,7 @@ public class OsirisScheduller {
 		try {
 			notificationService.purgeNotification();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -161,7 +161,7 @@ public class OsirisScheduller {
 		try {
 			quotationService.sendRemindersForQuotation();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -170,7 +170,7 @@ public class OsirisScheduller {
 		try {
 			customerOrderService.sendRemindersForCustomerOrderDeposit();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -179,7 +179,7 @@ public class OsirisScheduller {
 		try {
 			invoiceService.sendRemindersForInvoices();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -188,7 +188,7 @@ public class OsirisScheduller {
 		try {
 			announcementService.sendRemindersToConfrereForAnnouncement();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -198,7 +198,7 @@ public class OsirisScheduller {
 			announcementService.sendRemindersToCustomerForProofReading();
 
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -207,7 +207,7 @@ public class OsirisScheduller {
 		try {
 			accountingRecordService.sendBillingClosureReceipt();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -216,7 +216,7 @@ public class OsirisScheduller {
 		try {
 			announcementService.publishAnnouncementsToActuLegale();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -225,7 +225,7 @@ public class OsirisScheduller {
 		try {
 			announcementService.sendPublicationFlagNotSent();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -234,7 +234,7 @@ public class OsirisScheduller {
 		try {
 			paymentService.paymentGrab();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -243,7 +243,7 @@ public class OsirisScheduller {
 		try {
 			etablissementPublicsDelegate.updateCompetentAuthorities();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -252,7 +252,7 @@ public class OsirisScheduller {
 		try {
 			guichetUniqueDelegateService.refreshAllOpenFormalities();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -261,7 +261,7 @@ public class OsirisScheduller {
 		try {
 			guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -270,7 +270,7 @@ public class OsirisScheduller {
 		try {
 			centralPayPaymentRequestService.checkAllPaymentRequests();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -280,7 +280,7 @@ public class OsirisScheduller {
 			azureInvoiceService.checkInvoiceToAnalyse();
 			azureReceiptService.checkReceiptToAnalyse();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -297,7 +297,7 @@ public class OsirisScheduller {
 			assignationTypeService.updateAssignationTypes();
 			provisionScreenTypeService.updateScreenTypes();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 

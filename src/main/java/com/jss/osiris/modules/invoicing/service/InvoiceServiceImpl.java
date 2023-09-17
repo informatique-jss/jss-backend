@@ -151,9 +151,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         // Define booleans
         if (invoice.getIsCreditNote() == null)
             invoice.setIsCreditNote(false);
-        if (invoice.getIsInvoiceFromProvider())
+        if (invoice.getIsInvoiceFromProvider() == null)
             invoice.setIsInvoiceFromProvider(false);
-        if (invoice.getIsProviderCreditNote())
+        if (invoice.getIsProviderCreditNote() == null)
             invoice.setIsProviderCreditNote(false);
 
         // Define due date

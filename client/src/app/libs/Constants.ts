@@ -84,3 +84,6 @@ export const REPORTING_DATASET_QUOTATION = "Donneur d'ordre / Devis / Prestation
 export const REPORTING_DATASET_VAT = "TVA";
 export const REPORTING_DATASET_TIERS = "Tiers / Responsable / CA / Documents";
 export const REPORTING_DATASET_CUSTOMER_ORDER_FOR_TIERS = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante pour un tiers";
+
+// INPI Status
+export const GUICHET_UNIQUE_STATUS_VALIDATION_PENDING = "VALIDATION_PENDING";

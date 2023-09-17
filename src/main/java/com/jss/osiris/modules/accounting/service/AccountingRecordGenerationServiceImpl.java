@@ -439,7 +439,9 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         if (invoice == null)
             throw new OsirisException(null, "No invoice provided");
 
-        String labelPrefix = "Avoir n°" + invoice.getId() + " pour la facture " + originalInvoice.getId();
+        String labelPrefix = "Avoir n°" + invoice.getId();
+        if (originalInvoice != null)
+            labelPrefix += " pour la facture " + originalInvoice.getId();
 
         AccountingAccount accountingAccountProvider = getProviderAccountingAccountForInvoice(invoice);
 

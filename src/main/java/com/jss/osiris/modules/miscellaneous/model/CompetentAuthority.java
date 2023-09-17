@@ -118,6 +118,7 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 	private String observations;
 
 	@OneToMany(mappedBy = "competentAuthority")
+	@JsonIgnoreProperties(value = { "invoice", "customerOrder" }, allowSetters = true)
 	private List<Attachment> attachments;
 
 	@ManyToMany(cascade = CascadeType.ALL)

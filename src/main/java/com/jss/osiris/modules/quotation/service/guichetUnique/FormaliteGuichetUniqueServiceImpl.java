@@ -30,7 +30,10 @@ import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.guichetUnique.Cart;
 import com.jss.osiris.modules.quotation.model.guichetUnique.CartRate;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.guichetUnique.ValidationRequest;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
 import com.jss.osiris.modules.quotation.repository.guichetUnique.FormaliteGuichetUniqueRepository;
+import com.jss.osiris.modules.quotation.service.FormaliteService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
 
 @Service
@@ -63,6 +66,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     @Autowired
     BillingItemService billingItemService;
 
+    @Autowired
+    FormaliteService formaliteService;
+
     private String cartStatusPayed = "PAID";
     private String cartStatusRefund = "REFUNDED";
 
@@ -87,12 +93,20 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         if (inFormaliteGuichetUnique == null)
             throw new OsirisValidationException("inFormaliteGuichetUnique");
 
+        formalite = formaliteService.getFormalite(formalite.getId());
         FormaliteGuichetUnique formaliteGuichetUnique;
-        if (inFormaliteGuichetUnique.getIsAnnualAccounts() != null && inFormaliteGuichetUnique.getIsAnnualAccounts())
+        List<FormaliteStatusHistoryItem> formaliteStatusHistoryItems = new ArrayList<FormaliteStatusHistoryItem>();
+
+        if (inFormaliteGuichetUnique.getIsAnnualAccounts() != null && inFormaliteGuichetUnique.getIsAnnualAccounts()) {
             formaliteGuichetUnique = guichetUniqueDelegateService
                     .getAnnualAccountById(inFormaliteGuichetUnique.getId());
-        else
+            formaliteStatusHistoryItems = guichetUniqueDelegateService
+                    .getAnnualAccountStatusHistoriesById(inFormaliteGuichetUnique.getId());
+        } else {
             formaliteGuichetUnique = guichetUniqueDelegateService.getFormalityById(inFormaliteGuichetUnique.getId());
+            formaliteStatusHistoryItems = guichetUniqueDelegateService
+                    .getFormalityStatusHistoriesById(inFormaliteGuichetUnique.getId());
+        }
 
         FormaliteGuichetUnique originalFormalite = getFormaliteGuichetUnique(inFormaliteGuichetUnique.getId());
 
@@ -101,13 +115,23 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             ArrayList<Cart> carts = new ArrayList<Cart>();
             if (formaliteGuichetUnique.getCarts() != null)
                 for (Cart cart : formaliteGuichetUnique.getCarts())
-                    if (cart.getTotal() > 0)
+                    if (cart.getTotal() > 0) {
                         carts.add(cart);
+                    }
 
             formaliteGuichetUnique.setCarts(carts);
             originalFormalite = addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+            if (formaliteGuichetUnique.getCarts() != null)
+                for (Cart cart : formaliteGuichetUnique.getCarts()) {
+                    if (cart.getStatus().equals(cartStatusPayed)) {
+                        cart.setInvoice(generateInvoiceFromCart(cart, formalite.getProvision().get(0)));
+                    } else if (cart.getStatus().equals(cartStatusRefund)) {
+                        cart.setInvoice((generateCreditNoteFromCart(cart, formalite.getProvision().get(0))));
+                    }
+                }
         } else {
             // update only wanted field
+            // Status field
             if (!originalFormalite.getStatus().getCode().equals(formaliteGuichetUnique.getStatus().getCode())) {
                 originalFormalite.setStatus(formaliteGuichetUnique.getStatus());
 
@@ -115,6 +139,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     notificationService.notifyGuichetUniqueFormaliteStatus(
                             originalFormalite.getFormalite().getProvision().get(0), originalFormalite);
             }
+            // Cart field
             if (formaliteGuichetUnique.getCarts() != null && formaliteGuichetUnique.getCarts().size() > 0) {
                 if (originalFormalite.getCarts() == null || originalFormalite.getCarts().size() == 0) {
                     originalFormalite.setCarts(new ArrayList<Cart>());
@@ -145,7 +170,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     }
                 }
             }
-            addOrUpdateFormaliteGuichetUnique(originalFormalite);
+
+            originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);
 
             if (originalFormalite != null && originalFormalite.getCarts() != null
                     && originalFormalite.getCarts().size() > 0)
@@ -163,6 +189,20 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     }
                 }
         }
+
+        originalFormalite = getFormaliteGuichetUnique(inFormaliteGuichetUnique.getId());
+        // validationsRequests field
+        originalFormalite.setValidationsRequests(formaliteGuichetUnique.getValidationsRequests());
+        if (originalFormalite.getValidationsRequests() != null)
+            for (ValidationRequest validationRequest : originalFormalite.getValidationsRequests())
+                validationRequest.setFormaliteGuichetUnique(originalFormalite);
+
+        // update status history items
+        originalFormalite.setFormaliteStatusHistoryItems(formaliteStatusHistoryItems);
+        for (FormaliteStatusHistoryItem formaliteStatusHistoryItem : originalFormalite.getFormaliteStatusHistoryItems())
+            formaliteStatusHistoryItem.setFormaliteGuichetUnique(originalFormalite);
+
+        addOrUpdateFormaliteGuichetUnique(originalFormalite);
 
         if (formalite != null) {
             originalFormalite.setFormalite(formalite);
@@ -215,6 +255,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     }
                 }
 
+        invoice.setProvision(provision);
         return invoiceService.addOrUpdateInvoiceFromUser(invoice);
     }
 
@@ -261,6 +302,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
         invoice.setIsInvoiceFromProvider(false);
         invoice.setIsProviderCreditNote(true);
+        invoice.setProvision(provision);
         return invoiceService.addOrUpdateInvoiceFromUser(invoice);
     }
 
@@ -292,7 +334,10 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             competentAuthority = competentAuthorities.get(0);
 
         invoiceItem.setLabel(competentAuthority.getLabel() + " - " + cartRate.getRate().getLabel());
-        invoiceItem.setPreTaxPrice(Float.parseFloat(cartRate.getHtAmount() + "") / 100f);
+        long amount = cartRate.getHtAmount();
+        if (amount == 0)
+            amount = cartRate.getAmount();
+        invoiceItem.setPreTaxPrice(Math.abs(Float.parseFloat(amount + "") / 100f));
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
 
         return invoiceItem;
