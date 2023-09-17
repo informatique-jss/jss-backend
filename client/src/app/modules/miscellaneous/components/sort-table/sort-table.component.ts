@@ -102,8 +102,7 @@ export class SortTableComponent implements OnInit {
           if (column) {
             if (column.valueFonction) {
               computedValue = column.valueFonction(element, this.values, column, this.columns);
-            }
-            if (column.fieldName) {
+            } else if (column.fieldName) {
               if (column.fieldName.indexOf(".") >= 0)
                 try {
                   computedValue = this.getObjectPropertybyString(element, column.fieldName);

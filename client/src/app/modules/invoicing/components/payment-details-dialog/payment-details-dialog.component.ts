@@ -53,7 +53,7 @@ export class PaymentDetailsDialogComponent implements OnInit, AfterContentChecke
   currentCompetentAuthority: CompetentAuthority | undefined;
   currentProvider: Provider | undefined;
 
-  searchAccountingRecord: AccountingRecordSearch = {} as AccountingRecordSearch;
+  searchAccountingRecord: AccountingRecordSearch | undefined;
 
 
   ngOnInit() {
@@ -119,104 +119,109 @@ export class PaymentDetailsDialogComponent implements OnInit, AfterContentChecke
     this.currentCompetentAuthority = undefined;
     this.currentProvider = undefined;
 
-    this.searchAccountingRecord = {} as AccountingRecordSearch;
+    this.searchAccountingRecord = undefined;
 
-    if (this.selectedPayment.customerOrder) {
-      this.currentCustomerOrder = this.selectedPayment.customerOrder;
-      if (this.selectedPayment.customerOrder.tiers)
-        this.currentTiers = this.selectedPayment.customerOrder.tiers;
-      if (this.selectedPayment.customerOrder.responsable)
-        this.currentResponsable = this.selectedPayment.customerOrder.responsable;
-      if (this.selectedPayment.customerOrder.confrere)
-        this.currentConfrere = this.selectedPayment.customerOrder.confrere;
-      if (this.selectedPayment.customerOrder.assoAffaireOrders && this.selectedPayment.customerOrder.assoAffaireOrders.length == 1)
-        this.currentAffaire = this.selectedPayment.customerOrder.assoAffaireOrders[0].affaire;
-    }
+    setTimeout(() => {
+      if (this.selectedPayment) {
+        if (this.selectedPayment.customerOrder) {
+          this.currentCustomerOrder = this.selectedPayment.customerOrder;
+          if (this.selectedPayment.customerOrder.tiers)
+            this.currentTiers = this.selectedPayment.customerOrder.tiers;
+          if (this.selectedPayment.customerOrder.responsable)
+            this.currentResponsable = this.selectedPayment.customerOrder.responsable;
+          if (this.selectedPayment.customerOrder.confrere)
+            this.currentConfrere = this.selectedPayment.customerOrder.confrere;
+          if (this.selectedPayment.customerOrder.assoAffaireOrders && this.selectedPayment.customerOrder.assoAffaireOrders.length == 1)
+            this.currentAffaire = this.selectedPayment.customerOrder.assoAffaireOrders[0].affaire;
+        }
 
-    if (this.selectedPayment.invoice) {
-      this.currentInvoice = this.selectedPayment.invoice;
-      if (this.selectedPayment.invoice.customerOrder)
-        this.currentCustomerOrder = this.selectedPayment.invoice.customerOrder;
-      if (this.selectedPayment.invoice.tiers)
-        this.currentTiers = this.selectedPayment.invoice.tiers;
-      if (this.selectedPayment.invoice.responsable)
-        this.currentResponsable = this.selectedPayment.invoice.responsable;
-      if (this.selectedPayment.invoice.confrere)
-        this.currentConfrere = this.selectedPayment.invoice.confrere;
-      if (this.selectedPayment.invoice.provider)
-        this.currentProvider = this.selectedPayment.invoice.provider;
-      if (this.selectedPayment.invoice.competentAuthority)
-        this.currentCompetentAuthority = this.selectedPayment.invoice.competentAuthority;
-      if (this.selectedPayment.invoice.customerOrder && this.selectedPayment.invoice.customerOrder.assoAffaireOrders && this.selectedPayment.invoice.customerOrder.assoAffaireOrders.length == 1)
-        this.currentAffaire = this.selectedPayment.invoice.customerOrder.assoAffaireOrders[0].affaire;
-    }
-    if (this.selectedPayment.refund) {
-      this.currentRefund = this.selectedPayment.refund;
-      if (this.selectedPayment.refund.invoice)
-        this.currentInvoice = this.selectedPayment.refund.invoice;
-      if (this.selectedPayment.refund.customerOrder)
-        this.currentCustomerOrder = this.selectedPayment.refund.customerOrder;
-      if (this.selectedPayment.refund.affaire)
-        this.currentAffaire = this.selectedPayment.refund.affaire;
-      if (this.selectedPayment.refund.tiers)
-        this.currentTiers = this.selectedPayment.refund.tiers;
-      if (this.selectedPayment.refund.confrere)
-        this.currentConfrere = this.selectedPayment.refund.confrere;
-    }
-    if (this.selectedPayment.bankTransfert) {
-      this.currentBankTransfert = this.selectedPayment.bankTransfert;
-      if (this.selectedPayment.bankTransfert.invoices)
-        this.currentInvoice = this.selectedPayment.bankTransfert.invoices[0];
-      if (this.selectedPayment.bankTransfert.customerOrder)
-        this.currentCustomerOrder = this.selectedPayment.bankTransfert.customerOrder;
+        if (this.selectedPayment.invoice) {
+          this.currentInvoice = this.selectedPayment.invoice;
+          if (this.selectedPayment.invoice.customerOrder)
+            this.currentCustomerOrder = this.selectedPayment.invoice.customerOrder;
+          if (this.selectedPayment.invoice.tiers)
+            this.currentTiers = this.selectedPayment.invoice.tiers;
+          if (this.selectedPayment.invoice.responsable)
+            this.currentResponsable = this.selectedPayment.invoice.responsable;
+          if (this.selectedPayment.invoice.confrere)
+            this.currentConfrere = this.selectedPayment.invoice.confrere;
+          if (this.selectedPayment.invoice.provider)
+            this.currentProvider = this.selectedPayment.invoice.provider;
+          if (this.selectedPayment.invoice.competentAuthority)
+            this.currentCompetentAuthority = this.selectedPayment.invoice.competentAuthority;
+          if (this.selectedPayment.invoice.customerOrder && this.selectedPayment.invoice.customerOrder.assoAffaireOrders && this.selectedPayment.invoice.customerOrder.assoAffaireOrders.length == 1)
+            this.currentAffaire = this.selectedPayment.invoice.customerOrder.assoAffaireOrders[0].affaire;
+        }
+        if (this.selectedPayment.refund) {
+          this.currentRefund = this.selectedPayment.refund;
+          if (this.selectedPayment.refund.invoice)
+            this.currentInvoice = this.selectedPayment.refund.invoice;
+          if (this.selectedPayment.refund.customerOrder)
+            this.currentCustomerOrder = this.selectedPayment.refund.customerOrder;
+          if (this.selectedPayment.refund.affaire)
+            this.currentAffaire = this.selectedPayment.refund.affaire;
+          if (this.selectedPayment.refund.tiers)
+            this.currentTiers = this.selectedPayment.refund.tiers;
+          if (this.selectedPayment.refund.confrere)
+            this.currentConfrere = this.selectedPayment.refund.confrere;
+        }
+        if (this.selectedPayment.bankTransfert) {
+          this.currentBankTransfert = this.selectedPayment.bankTransfert;
+          if (this.selectedPayment.bankTransfert.invoices)
+            this.currentInvoice = this.selectedPayment.bankTransfert.invoices[0];
+          if (this.selectedPayment.bankTransfert.customerOrder)
+            this.currentCustomerOrder = this.selectedPayment.bankTransfert.customerOrder;
 
-      if (this.selectedPayment.bankTransfert.customerOrder.tiers)
-        this.currentTiers = this.selectedPayment.invoice.tiers;
-      if (this.selectedPayment.bankTransfert.customerOrder.responsable)
-        this.currentResponsable = this.selectedPayment.bankTransfert.customerOrder.responsable;
-      if (this.selectedPayment.bankTransfert.customerOrder.confrere)
-        this.currentConfrere = this.selectedPayment.bankTransfert.customerOrder.confrere;
-      if (this.selectedPayment.bankTransfert.customerOrder.assoAffaireOrders && this.selectedPayment.bankTransfert.customerOrder.assoAffaireOrders.length == 1)
-        this.currentAffaire = this.selectedPayment.bankTransfert.customerOrder.assoAffaireOrders[0].affaire;
+          if (this.selectedPayment.bankTransfert.customerOrder.tiers)
+            this.currentTiers = this.selectedPayment.invoice.tiers;
+          if (this.selectedPayment.bankTransfert.customerOrder.responsable)
+            this.currentResponsable = this.selectedPayment.bankTransfert.customerOrder.responsable;
+          if (this.selectedPayment.bankTransfert.customerOrder.confrere)
+            this.currentConfrere = this.selectedPayment.bankTransfert.customerOrder.confrere;
+          if (this.selectedPayment.bankTransfert.customerOrder.assoAffaireOrders && this.selectedPayment.bankTransfert.customerOrder.assoAffaireOrders.length == 1)
+            this.currentAffaire = this.selectedPayment.bankTransfert.customerOrder.assoAffaireOrders[0].affaire;
 
-      if (this.selectedPayment.bankTransfert.invoices[0]) {
-        if (this.selectedPayment.bankTransfert.invoices[0].tiers)
-          this.currentTiers = this.selectedPayment.bankTransfert.invoices[0].tiers;
-        if (this.selectedPayment.bankTransfert.invoices[0].responsable)
-          this.currentResponsable = this.selectedPayment.bankTransfert.invoices[0].responsable;
-        if (this.selectedPayment.bankTransfert.invoices[0].confrere)
-          this.currentConfrere = this.selectedPayment.bankTransfert.invoices[0].confrere;
-        if (this.selectedPayment.bankTransfert.invoices[0].provider)
-          this.currentProvider = this.selectedPayment.bankTransfert.invoices[0].provider;
-        if (this.selectedPayment.bankTransfert.invoices[0].competentAuthority)
-          this.currentCompetentAuthority = this.selectedPayment.bankTransfert.invoices[0].competentAuthority;
+          if (this.selectedPayment.bankTransfert.invoices[0]) {
+            if (this.selectedPayment.bankTransfert.invoices[0].tiers)
+              this.currentTiers = this.selectedPayment.bankTransfert.invoices[0].tiers;
+            if (this.selectedPayment.bankTransfert.invoices[0].responsable)
+              this.currentResponsable = this.selectedPayment.bankTransfert.invoices[0].responsable;
+            if (this.selectedPayment.bankTransfert.invoices[0].confrere)
+              this.currentConfrere = this.selectedPayment.bankTransfert.invoices[0].confrere;
+            if (this.selectedPayment.bankTransfert.invoices[0].provider)
+              this.currentProvider = this.selectedPayment.bankTransfert.invoices[0].provider;
+            if (this.selectedPayment.bankTransfert.invoices[0].competentAuthority)
+              this.currentCompetentAuthority = this.selectedPayment.bankTransfert.invoices[0].competentAuthority;
+          }
+        }
+
+        if (this.selectedPayment.provision) {
+          this.currentProvision = this.selectedPayment.provision;
+          if (this.selectedPayment.provision.assoAffaireOrder)
+            this.currentCustomerOrder = this.selectedPayment.provision.assoAffaireOrder.customerOrder;
+
+          this.currentAffaire = this.selectedPayment.provision.assoAffaireOrder.affaire;
+
+          if (this.selectedPayment.provision.assoAffaireOrder.customerOrder.tiers)
+            this.currentTiers = this.selectedPayment.provision.assoAffaireOrder.customerOrder.tiers;
+          if (this.selectedPayment.provision.assoAffaireOrder.customerOrder.responsable)
+            this.currentResponsable = this.selectedPayment.provision.assoAffaireOrder.customerOrder.responsable;
+          if (this.selectedPayment.provision.assoAffaireOrder.customerOrder.confrere)
+            this.currentConfrere = this.selectedPayment.provision.assoAffaireOrder.customerOrder.confrere;
+        }
+
+        this.searchAccountingRecord = {} as AccountingRecordSearch;
+        this.searchAccountingRecord.idPayment = this.selectedPayment.id;
+        if (this.currentBankTransfert)
+          this.searchAccountingRecord.idBankTransfert = this.currentBankTransfert.id;
+        if (this.currentCustomerOrder)
+          this.searchAccountingRecord.idCustomerOrder = this.currentCustomerOrder.id;
+        if (this.currentInvoice)
+          this.searchAccountingRecord.idInvoice = this.currentInvoice.id;
+        if (this.currentRefund)
+          this.searchAccountingRecord.idRefund = this.currentRefund.id;
       }
-    }
-
-    if (this.selectedPayment.provision) {
-      this.currentProvision = this.selectedPayment.provision;
-      if (this.selectedPayment.provision.assoAffaireOrder)
-        this.currentCustomerOrder = this.selectedPayment.provision.assoAffaireOrder.customerOrder;
-
-      this.currentAffaire = this.selectedPayment.provision.assoAffaireOrder.affaire;
-
-      if (this.selectedPayment.provision.assoAffaireOrder.customerOrder.tiers)
-        this.currentTiers = this.selectedPayment.provision.assoAffaireOrder.customerOrder.tiers;
-      if (this.selectedPayment.provision.assoAffaireOrder.customerOrder.responsable)
-        this.currentResponsable = this.selectedPayment.provision.assoAffaireOrder.customerOrder.responsable;
-      if (this.selectedPayment.provision.assoAffaireOrder.customerOrder.confrere)
-        this.currentConfrere = this.selectedPayment.provision.assoAffaireOrder.customerOrder.confrere;
-    }
-
-    this.searchAccountingRecord.idPayment = this.selectedPayment.id;
-    if (this.currentBankTransfert)
-      this.searchAccountingRecord.idBankTransfert = this.currentBankTransfert.id;
-    if (this.currentCustomerOrder)
-      this.searchAccountingRecord.idCustomerOrder = this.currentCustomerOrder.id;
-    if (this.currentInvoice)
-      this.searchAccountingRecord.idInvoice = this.currentInvoice.id;
-    if (this.currentRefund)
-      this.searchAccountingRecord.idRefund = this.currentRefund.id;
+    }, 0);
   }
 
   toggleBankTransfertExport(selected: any) {
