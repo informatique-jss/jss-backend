@@ -76,7 +76,8 @@ public class Refund implements Serializable, IId {
 	private Invoice invoice;
 
 	@OneToMany(mappedBy = "refund", fetch = FetchType.LAZY)
-	@JsonIgnoreProperties(value = { "refund" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "refund", "originPayment", "childrenPayments",
+			"accountingRecords" }, allowSetters = true)
 	private List<Payment> payments;
 
 	public Integer getId() {

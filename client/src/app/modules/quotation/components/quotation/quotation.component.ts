@@ -1,4 +1,4 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
@@ -75,6 +75,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   round = Math.round;
 
   selectedTabIndex = 0;
+  selectedTabIndexAsso = 0;
 
   @ViewChild('tabs', { static: false }) tabs: any;
   @ViewChild(OrderingCustomerComponent) orderingCustomerComponent: OrderingCustomerComponent | undefined;
@@ -87,7 +88,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   updateDocumentsEvent: Subject<IQuotation> = new Subject<IQuotation>();
 
-  idQuotation: number | undefined;
+  @Input() idQuotation: number | undefined;
+  @Input() inputProvision: Provision | undefined;
+  @Input() isForIntegration: boolean = false;
+
 
   saveObservableSubscription: Subscription = new Subscription;
   customerOrderInvoices: InvoiceSearchResult[] | undefined;
@@ -121,7 +125,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnInit() {
-    this.idQuotation = this.activatedRoute.snapshot.params.id;
+    if (!this.idQuotation)
+      this.idQuotation = this.activatedRoute.snapshot.params.id;
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
 
     this.quotationStatusService.getQuotationStatus().subscribe(response => {
@@ -133,20 +138,32 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     })
 
     // Load by order
-    if (url != undefined && url != null && url[0] != undefined && url[0].path == "order") {
+    if (this.isForIntegration && this.idQuotation || url != undefined && url != null && url[0] != undefined && url[0].path == "order") {
       this.isQuotationUrl = false;
-      this.appService.changeHeaderTitle("Commande");
+
+      if (!this.isForIntegration)
+        this.appService.changeHeaderTitle("Commande");
       this.instanceOfCustomerOrder = true;
       if (this.idQuotation != null && this.idQuotation != undefined) {
         this.customerOrderService.getCustomerOrder(this.idQuotation).subscribe(response => {
           this.quotation = response;
-          if (instanceOfCustomerOrder(this.quotation))
+          if (instanceOfCustomerOrder(this.quotation) && !this.isForIntegration)
             this.appService.changeHeaderTitle("Commande " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
               (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : ""));
           this.toggleTabs();
           this.setOpenStatus();
           this.checkAffaireAssignation();
           this.updateDocumentsEvent.next(this.quotation);
+
+          // In case of integration, put screen on right provision
+          if (this.inputProvision) {
+            this.selectedTabIndex = 1;
+            if (this.quotation.assoAffaireOrders)
+              for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
+                if (this.quotation.assoAffaireOrders[i].id == this.inputProvision.assoAffaireOrder.id)
+                  this.selectedTabIndexAsso = i;
+              }
+          }
         })
         this.getInvoices();
       }

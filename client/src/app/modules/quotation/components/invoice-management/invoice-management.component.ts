@@ -8,6 +8,7 @@ import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/compo
 import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
 import { Payment } from 'src/app/modules/invoicing/model/Payment';
 import { InvoiceSearchResultService } from 'src/app/modules/invoicing/services/invoice.search.result.service';
+import { PaymentDetailsDialogService } from 'src/app/modules/invoicing/services/payment.details.dialog.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from '../../../../services/app.service';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
@@ -52,6 +53,7 @@ export class InvoiceManagementComponent implements OnInit {
     private appService: AppService,
     private invoiceLabelResultService: InvoiceLabelResultService,
     public associatePaymentDialog: MatDialog,
+    private paymentDetailsDialogService: PaymentDetailsDialogService,
     protected invoiceSearchResultService: InvoiceSearchResultService,) { }
 
   ngOnInit() {
@@ -156,5 +158,9 @@ export class InvoiceManagementComponent implements OnInit {
     dialogPaymentDialogRef.afterClosed().subscribe(response => {
       this.appService.openRoute(null, '/order/' + this.quotation.id, null);
     });
+  }
+
+  openPaymentDialog(payment: Payment) {
+    this.paymentDetailsDialogService.displayPaymentDetailsDialog(payment);
   }
 }

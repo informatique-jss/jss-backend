@@ -116,7 +116,7 @@
         <fieldset [disabled]="editMode==false" class="fieldset-no-border">
           <mat-tab label="Prestations" *ngIf="(quotation.tiers || quotation.responsable  || quotation.confrere)  ">
             <div class="mat-elevation-z2 form-div" *ngIf="quotation.assoAffaireOrders">
-              <mat-tab-group animationDuration="0ms" #tabs>
+              <mat-tab-group animationDuration="0ms" #tabs [(selectedIndex)]="selectedTabIndexAsso">
                 <mat-tab *ngFor="let asso of quotation.assoAffaireOrders">
                   <ng-template mat-tab-label>
                     {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' ' +
@@ -157,7 +157,8 @@
                   </div>
                   <div class="mat-accordion-container full-width">
                     <mat-accordion multi class="mat-accordion-container">
-                      <mat-expansion-panel *ngFor="let provision of asso.provisions" [expanded]="!provision.id">
+                      <mat-expansion-panel *ngFor="let provision of asso.provisions"
+                        [expanded]="!provision.id || inputProvision && provision.id==inputProvision.id">
                         <mat-expansion-panel-header>
                           <mat-panel-title>
                             {{getProvisionLabel(provision)}}

@@ -52,8 +52,7 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice")
-	@JsonIgnoreProperties(value = { "payments", "accountingRecords",
-			"customerOrderForInboundInvoice" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "payments", "accountingRecords" }, allowSetters = true)
 	private Invoice invoice;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -63,11 +62,12 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_refund")
-	@JsonIgnoreProperties(value = { "accountingRecords" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "accountingRecords", "payments" }, allowSetters = true)
 	private Refund refund;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_bank_transfert")
+	@JsonIgnoreProperties(value = { "accountingRecords", "payments" }, allowSetters = true)
 	private BankTransfert bankTransfert;
 
 	@Column(nullable = false)
@@ -79,8 +79,13 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_origin_payment")
-	@JsonIgnoreProperties(value = { "invoice", "customerOrder", "provision", "accountingRecords" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "invoice", "customerOrder", "provision", "accountingRecords",
+			"childrenPayments" }, allowSetters = true)
 	private Payment originPayment;
+
+	@OneToMany(targetEntity = Payment.class, mappedBy = "originPayment")
+	@JsonIgnoreProperties(value = { "originPayment", "accountingRecords" })
+	private List<Payment> childrenPayments;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_target_accounting_account")
@@ -265,6 +270,14 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	public void setSourceAccountingAccount(AccountingAccount sourceAccountingAccount) {
 		this.sourceAccountingAccount = sourceAccountingAccount;
+	}
+
+	public List<Payment> getChildrenPayments() {
+		return childrenPayments;
+	}
+
+	public void setChildrenPayments(List<Payment> childrenPayments) {
+		this.childrenPayments = childrenPayments;
 	}
 
 }

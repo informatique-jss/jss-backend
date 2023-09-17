@@ -78,6 +78,7 @@ const routes: Routes = [
     InvoicePaymentTableComponent,
     RefundListComponent,
     ReceiptReconciliationComponent,
+    InvoiceDetailsComponent,
   ]
 })
 export class InvoicingModule { }

@@ -93,7 +93,14 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " and coalesce(r.manual_accounting_document_date,r.operation_date_time)>=:startDate and coalesce(r.manual_accounting_document_date,r.operation_date_time)<=:endDate  "
                         +
                         " and (:canViewRestricted=true or a.is_view_restricted=false)  " +
-                        " and (:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId) ")
+                        " and (:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId) " +
+                        " " +
+                        " and (:idPayment = 0 or (r.id_payment  = :idPayment or r.id_customer_order = :idCustomerOrder or r.id_invoice = :idInvoice "
+                        +
+                        " or r.id_refund = :idRefund or r.id_bank_transfert = :idBankTransfert ))" +
+                        " order by  r.operation_date_time desc " +
+                        " " +
+                        " ")
         List<AccountingRecordSearchResult> searchAccountingRecords(
                         @Param("accountingAccountIds") List<Integer> accountingAccountIds,
                         @Param("accountingClassId") Integer accountingClassId,
@@ -103,7 +110,12 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("hideLettered") Boolean hideLettered,
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate,
-                        @Param("canViewRestricted") boolean canViewRestricted);
+                        @Param("canViewRestricted") boolean canViewRestricted,
+                        @Param("idPayment") Integer idPayment,
+                        @Param("idCustomerOrder") Integer idCustomerOrder,
+                        @Param("idInvoice") Integer idInvoice,
+                        @Param("idRefund") Integer idRefund,
+                        @Param("idBankTransfert") Integer idBankTransfert);
 
         @Query(nativeQuery = true, value = "" +
                         "select  sum(case "

@@ -214,13 +214,29 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingRecordSearch.getEndDate() == null)
       accountingRecordSearch.setEndDate(LocalDateTime.now().plusYears(100));
 
+    if (accountingRecordSearch.getIdPayment() == null)
+      accountingRecordSearch.setIdPayment(0);
+    if (accountingRecordSearch.getIdBankTransfert() == null)
+      accountingRecordSearch.setIdBankTransfert(0);
+    if (accountingRecordSearch.getIdCustomerOrder() == null)
+      accountingRecordSearch.setIdCustomerOrder(0);
+    if (accountingRecordSearch.getIdInvoice() == null)
+      accountingRecordSearch.setIdInvoice(0);
+    if (accountingRecordSearch.getIdRefund() == null)
+      accountingRecordSearch.setIdRefund(0);
+
     return accountingRecordRepository.searchAccountingRecords(accountingAccountId, accountingClass, journalId,
         accountingRecordSearch.getTiersId(),
         accountingRecordSearch.getConfrereId(),
         accountingRecordSearch.getHideLettered(),
         accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
         accountingRecordSearch.getEndDate().withHour(23).withMinute(59),
-        activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
+        activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+        accountingRecordSearch.getIdPayment(),
+        accountingRecordSearch.getIdCustomerOrder(),
+        accountingRecordSearch.getIdInvoice(),
+        accountingRecordSearch.getIdRefund(),
+        accountingRecordSearch.getIdBankTransfert());
   }
 
   @Override

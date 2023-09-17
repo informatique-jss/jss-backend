@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -35,7 +35,6 @@ export class CompetentAuthorityComponent implements OnInit {
   searchText: string = "";
   selectedcompetentAuthority: CompetentAuthority | undefined;
   selectedCompetentAuthorityType: CompetentAuthorityType | undefined;
-  selectedcompetentAuthorityId: number | undefined;
   displayedColumns: SortTableColumn[] = [];
   editMode: boolean = false;
   selectedCompetentAuthorityId: number | undefined;
@@ -43,11 +42,15 @@ export class CompetentAuthorityComponent implements OnInit {
   saveObservableSubscription: Subscription = new Subscription;
   COMPETENT_AUTHORITY_ENTITY_TYPE = COMPETENT_AUTHORITY_ENTITY_TYPE;
 
+  @Input() idCompetentAuthority: number | undefined;
 
   ngOnInit(): void {
-    this.appService.changeHeaderTitle("Autorités compétentes");
+    if (!this.idCompetentAuthority)
+      this.appService.changeHeaderTitle("Autorités compétentes");
 
     this.selectedCompetentAuthorityId = this.activatedRoute.snapshot.params.id;
+    if (this.idCompetentAuthority)
+      this.selectedCompetentAuthorityId = this.idCompetentAuthority;
 
     if (this.selectedCompetentAuthorityId) {
       this.competentAuthorityService.getCompetentAuthorityById(this.selectedCompetentAuthorityId).subscribe(response => {
@@ -84,9 +87,10 @@ export class CompetentAuthorityComponent implements OnInit {
 
   selectCompetentAuthority(element: CompetentAuthority) {
     this.selectedcompetentAuthority = element;
-    this.selectedcompetentAuthorityId = element.id;
+    this.selectedCompetentAuthorityId = element.id;
     this.getCitiesForCurrentCompetentAuthority();
-    this.appService.changeHeaderTitle(element.label);
+    if (!this.idCompetentAuthority)
+      this.appService.changeHeaderTitle(element.label);
   }
 
   limitTextareaSize(numberOfLine: number) {

@@ -5,6 +5,7 @@ import { formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/lib
 import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
 import { AzureInvoice } from 'src/app/modules/invoicing/model/AzureInvoice';
 import { Payment } from 'src/app/modules/invoicing/model/Payment';
+import { PaymentDetailsDialogService } from 'src/app/modules/invoicing/services/payment.details.dialog.service';
 import { PaymentService } from 'src/app/modules/invoicing/services/payment.service';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -45,6 +46,7 @@ export class ProvisionPaymentComponent implements OnInit {
     private habilitationsService: HabilitationsService,
     public associatePaymentDialog: MatDialog,
     private paymentService: PaymentService,
+    private paymentDetailsDialogService: PaymentDetailsDialogService,
     private constantService: ConstantService,
   ) { }
 
@@ -70,7 +72,7 @@ export class ProvisionPaymentComponent implements OnInit {
     } as SortTableAction);
 
     this.paymentsDisplayedColumns = [];
-    this.paymentsDisplayedColumns.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn);
+    this.paymentsDisplayedColumns.push({ id: "id", fieldName: "id", label: "N°", actionFunction: (element: any) => this.paymentDetailsDialogService.displayPaymentDetailsDialog(element), actionIcon: "visibility", actionTooltip: "Voir le détail du paiement" } as SortTableColumn);
     this.paymentsDisplayedColumns.push({ id: "paymentDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.paymentsDisplayedColumns.push({ id: "paymentAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.paymentsDisplayedColumns.push({ id: "paymentTypeLabel", fieldName: "paymentType.label", label: "Type" } as SortTableColumn);

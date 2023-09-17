@@ -10,6 +10,7 @@ import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { Payment } from '../../model/Payment';
 import { PaymentSearchResult } from '../../model/PaymentSearchResult';
+import { PaymentDetailsDialogService } from '../../services/payment.details.dialog.service';
 import { PaymentService } from '../../services/payment.service';
 import { AssociatePaymentDialogComponent } from '../associate-payment-dialog/associate-payment-dialog.component';
 import { getRemainingToPay } from '../invoice-tools';
@@ -41,6 +42,7 @@ export class InvoicePaymentComponent implements OnInit, AfterContentChecked {
     private formBuilder: FormBuilder,
     private habilitationsService: HabilitationsService,
     private changeDetectorRef: ChangeDetectorRef,
+    private paymentDetailsDialogService: PaymentDetailsDialogService,
   ) { }
 
   invoicePaymentForm = this.formBuilder.group({});
@@ -51,7 +53,7 @@ export class InvoicePaymentComponent implements OnInit, AfterContentChecked {
 
   ngOnInit() {
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du paiement" } as SortTableColumn);
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du paiement", actionFunction: (element: any) => this.paymentDetailsDialogService.displayPaymentDetailsDialog(element), actionIcon: "visibility", actionTooltip: "Voir le détail du paiement" } as SortTableColumn);
     this.displayedColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "payemntAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);

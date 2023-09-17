@@ -179,6 +179,9 @@ const routes: Routes = [
     ProviderComponent,
     ReferentialCustomerOrderOriginComponent,
     ReferentialDepartmentVatSettingComponent,
-  ], exports: [LogComponent]
+  ], exports: [LogComponent,
+    CompetentAuthorityComponent,
+    ProviderComponent
+  ]
 })
 export class AdministrationModule { }

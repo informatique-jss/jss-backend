@@ -9,11 +9,16 @@
       <ng-container *ngIf="!payment.isCancelled">
         <td class="mat-mdc-cell mdc-data-table__cell ">
           N°{{payment.id}} du {{formatDate(payment.paymentDate)}} (<span class="pointer"
-            (click)="movePayment(payment)">déplacer</span>) - {{payment.label}}
+            (click)="movePayment(payment)">déplacer</span>) - {{payment.label}} <mat-icon color="accent"
+            (click)="openPaymentDialog(payment)" matTooltip="Voir le détail du paiement" color="accent"
+            class="pointer ">visibility</mat-icon>
         </td>
         <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
           {{payment.isAppoint ? -payment.paymentAmount : payment.paymentAmount}} € <span class="pointer"
-            *ngIf="payment.isAppoint && payment.paymentAmount>0" (click)="refundAppoint(payment)">(rembourser)</span>
+            *ngIf="payment.isAppoint && payment.paymentAmount>0"
+            (click)="refundAppoint(payment)">(rembourser)</span><mat-icon color="accent"
+            (click)="openPaymentDialog(payment)" matTooltip="Voir le détail du paiement" color="accent"
+            class="pointer ">visibility</mat-icon>
         </td>
       </ng-container>
     </tr>

@@ -231,6 +231,10 @@ public class AccountingController {
         if (accountingRecordSearch == null)
             throw new OsirisValidationException("accountingRecordSearch");
 
+        if (accountingRecordSearch.getIdPayment() != null)
+            return new ResponseEntity<List<AccountingRecordSearchResult>>(
+                    accountingRecordService.searchAccountingRecords(accountingRecordSearch), HttpStatus.OK);
+
         if (accountingRecordSearch.getAccountingAccount() == null
                 && accountingRecordSearch.getAccountingClass() == null
                 && accountingRecordSearch.getAccountingJournal() == null

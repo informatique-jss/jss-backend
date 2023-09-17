@@ -93,6 +93,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   ngOnInit() {
     this.appService.changeHeaderTitle("Prestation");
     this.idAffaire = this.activatedRoute.snapshot.params.id != "null" ? this.activatedRoute.snapshot.params.id : null;
+
     this.inputProvisionId = this.activatedRoute.snapshot.params.idProvision;
     this.refreshAffaire();
 

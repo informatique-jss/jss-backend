@@ -62,7 +62,6 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnChanges(change: SimpleChanges) {
-    console.log(change);
   }
 
   ngOnInit() {

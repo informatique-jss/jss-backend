@@ -38,6 +38,8 @@ export class SortTableComponent implements OnInit {
 
   internalActions: SortTableAction[] | undefined = [] as Array<SortTableAction>;
 
+  cachedValues: any;
+
   constructor(protected userPreferenceService: UserPreferenceService,
     private appService: AppService
 
@@ -47,13 +49,13 @@ export class SortTableComponent implements OnInit {
     if (this.refreshTable)
       this.refreshTableSubscription = this.refreshTable.subscribe(() => {
         if (this.values) {
-          this.dataSource.data = this.values;
+          this.setSourceDataInCache();
           this.internalActions = this.actions;
         }
       });
     this.internalActions = this.actions;
     if (this.values)
-      this.dataSource.data = this.values;
+      this.setSourceDataInCache();
 
     // Restore displayed columns
     let prefColumns = this.userPreferenceService.getUserDisplayColumnsForTable(this.tableName);
@@ -79,8 +81,56 @@ export class SortTableComponent implements OnInit {
         if (action == internalAction) {
           internalAction.actionClick(action, element, event);
           if (this.values)
-            this.dataSource.data = this.values;
+            this.setSourceDataInCache();
         }
+    }
+  }
+
+  setSourceDataInCache() {
+    this.cachedValues = [];
+    if (this.values && this.columns) {
+      for (let i = 0; i < this.values.length; i++) {
+        for (let j = 0; j < this.columns.length; j++) {
+          if (!this.cachedValues[i])
+            this.cachedValues[i] = [];
+
+          let column = this.columns[j];
+          let element = this.values[i];
+          let computedValue = "";
+
+
+          if (column) {
+            if (column.valueFonction) {
+              computedValue = column.valueFonction(element, this.values, column, this.columns);
+            }
+            if (column.fieldName) {
+              if (column.fieldName.indexOf(".") >= 0)
+                try {
+                  computedValue = this.getObjectPropertybyString(element, column.fieldName);
+                } catch {
+                }
+              computedValue = element[column.fieldName];
+            }
+          }
+          this.cachedValues[i][j] = computedValue;
+        }
+      }
+      this.dataSource.data = this.values;
+      this.setSorter();
+    }
+  }
+
+  getCachedValue(element: any, column: SortTableColumn) {
+    if (element && column && this.values && this.columns) {
+      return this.cachedValues[this.values.indexOf(element)][this.columns.indexOf(column)];
+    }
+    return "not found";
+  }
+
+  columnActionTrigger(column: SortTableColumn, element: any) {
+    // find in internal
+    if (column && column.actionFunction) {
+      column.actionFunction(element);
     }
   }
 
@@ -94,8 +144,7 @@ export class SortTableComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.values != undefined && this.values) {
-      this.dataSource.data = this.values;
-      this.setSorter();
+      this.setSourceDataInCache();
     }
     if (changes.filterText != undefined && this.values) {
       this.applyFilter();
@@ -177,20 +226,7 @@ export class SortTableComponent implements OnInit {
   }
 
   getColumnValue(column: SortTableColumn, element: any): any {
-    if (column) {
-      if (column.valueFonction) {
-        return column.valueFonction(element, this.values, column, this.columns);
-      }
-      if (column.fieldName) {
-        if (column.fieldName.indexOf(".") >= 0)
-          try {
-            return this.getObjectPropertybyString(element, column.fieldName);
-          } catch {
-          }
-        return element[column.fieldName];
-      }
-    }
-    return "Not found";
+    return this.getCachedValue(element, column);
   }
 
   getIsElementWarnColor(column: SortTableColumn, element: any): any {

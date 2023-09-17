@@ -16,6 +16,7 @@ import { OFX_ENTITY_TYPE } from "src/app/routing/search/search.component";
 import { AppService } from "src/app/services/app.service";
 import { HabilitationsService } from "src/app/services/habilitations.service";
 import { AccountingAccount } from '../../../accounting/model/AccountingAccount';
+import { PaymentDetailsDialogService } from '../../../invoicing/services/payment.details.dialog.service';
 import { RefundPaymentDialogComponent } from "../refund-payment-dialog/refund-payment-dialog.component";
 import { SelectAccountingAccountDialogComponent } from "../select-accounting-account-dialog/select-accounting-account-dialog.component";
 
@@ -53,6 +54,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     public refundPaymentDialog: MatDialog,
     private formBuilder: FormBuilder,
     private habilitationService: HabilitationsService,
+    private paymentDetailsDialogService: PaymentDetailsDialogService,
   ) { }
 
   ngAfterContentChecked(): void {
@@ -96,6 +98,11 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
           actionIcon: "savings", actionName: "Rembourser le paiement", actionClick: (action: SortTableAction, element: PaymentSearchResult) => {
             if ((!element.invoiceId && !element.isExternallyAssociated && !element.isCancelled && !element.isAssociated && element.paymentAmount > 0))
               this.openRefundPaymentDialog(element);
+          }, display: true,
+        } as SortTableAction);
+        this.tableAction.push({
+          actionIcon: "visibility", actionName: "Voir le détail du paiement", actionClick: (action: SortTableAction, element: PaymentSearchResult) => {
+            this.paymentDetailsDialogService.displayPaymentDetailsDialog(element as any);
           }, display: true,
         } as SortTableAction);
       }

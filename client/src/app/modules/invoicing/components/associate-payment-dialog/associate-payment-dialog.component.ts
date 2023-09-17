@@ -68,7 +68,6 @@ export class AssociatePaymentDialogComponent implements OnInit {
     private appService: AppService,
     private invoiceService: InvoiceService,
     public amountDialog: MatDialog,
-    public confirmationDialog: MatDialog,
     private paymentService: PaymentService,
     private customerOrderService: CustomerOrderService,
     private constantService: ConstantService,

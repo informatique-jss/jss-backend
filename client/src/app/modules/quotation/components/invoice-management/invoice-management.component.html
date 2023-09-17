@@ -196,10 +196,9 @@
           <ng-container *ngIf="!deposit.isCancelled">
             <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="deposit.label">
               Acompte n°{{deposit.id}} - {{deposit.label}} (<span class="pointer"
-                (click)="movePayment(deposit)">déplacer</span>) -
-              montant du paiement :
-              {{deposit.paymentAmount}}
-              € - {{deposit.label}}
+                (click)="movePayment(deposit)">déplacer</span>) - <mat-icon color="accent"
+                (click)="openPaymentDialog(deposit)" matTooltip="Voir le détail du paiement" color="accent"
+                class="pointer ">visibility</mat-icon> - {{deposit.label}}
             </td>
             <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
               - {{deposit.paymentAmount|number}} €

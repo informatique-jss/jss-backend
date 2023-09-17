@@ -13,6 +13,9 @@
           <span *ngIf="invoice.manualAccountingDocumentDate">,<br> Date de la
             pièce comptable : {{invoice.manualAccountingDocumentDate|date:'dd/MM/yyyy'}}</span>
         </p>
+        <p>
+          Echéance de paiement : {{invoice.dueDate | date:'dd/MM/yyyy'}}
+        </p>
         <div class="invoice-title" *ngIf="invoice.creditNote">
           <span>Avoir n°{{invoice.creditNote.id}} émis à Paris, le
             {{invoice.creditNote.createdDate|date:'dd/MM/yyyy à HH:mm'}}</span>

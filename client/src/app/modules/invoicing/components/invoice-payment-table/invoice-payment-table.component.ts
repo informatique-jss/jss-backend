@@ -7,6 +7,7 @@ import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { AppService } from 'src/app/services/app.service';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { Payment } from '../../model/Payment';
+import { PaymentDetailsDialogService } from '../../services/payment.details.dialog.service';
 import { PaymentService } from '../../services/payment.service';
 import { AssociatePaymentDialogComponent } from '../associate-payment-dialog/associate-payment-dialog.component';
 import { getAmountPayed, getCustomerOrderForInvoice, getRemainingToPay } from '../invoice-tools';
@@ -29,9 +30,14 @@ export class InvoicePaymentTableComponent implements OnInit {
     public appService: AppService,
     public associatePaymentDialog: MatDialog,
     private paymentService: PaymentService,
+    private paymentDetailsDialogService: PaymentDetailsDialogService,
   ) { }
 
   ngOnInit() {
+  }
+
+  openPaymentDialog(payment: Payment) {
+    this.paymentDetailsDialogService.displayPaymentDetailsDialog(payment);
   }
 
   movePayment(payment: Payment) {

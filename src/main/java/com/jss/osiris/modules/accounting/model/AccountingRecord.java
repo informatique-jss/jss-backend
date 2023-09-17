@@ -85,7 +85,8 @@ public class AccountingRecord implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment")
-	@JsonIgnoreProperties(value = { "accountingRecords", "invoice", "customerOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "accountingRecords", "invoice", "customerOrder", "originPayment",
+			"childrenPayments" }, allowSetters = true)
 	private Payment payment;
 
 	@ManyToOne(fetch = FetchType.LAZY)

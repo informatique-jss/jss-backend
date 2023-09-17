@@ -143,7 +143,8 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	private Float totalPrice;
 
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
-	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder", "originPayment",
+			"childrenPayments" }, allowSetters = true)
 	private List<Payment> payments;
 
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
@@ -180,7 +181,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	private List<TiersFollowup> tiersFollowups;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonIgnoreProperties(value = { "invoices", "providerInvoices" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "invoices", "providerInvoices", "payments" }, allowSetters = true)
 	@JoinColumn(name = "id_customer_order_for_inbound_invoice")
 	private CustomerOrder customerOrderForInboundInvoice;
 

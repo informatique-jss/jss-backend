@@ -4,7 +4,8 @@
     <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let deposit of customerOrder.payments">
       <ng-container *ngIf="!deposit.isCancelled">
         <td class="mat-mdc-cell mdc-data-table__cell ">
-          Acompte n°{{deposit.id}}
+          Acompte n°{{deposit.id}} <mat-icon color="accent" (click)="openPaymentDialog(deposit)"
+            matTooltip="Voir le détail du paiement" color="accent" class="pointer ">visibility</mat-icon>
         </td>
         <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
           {{deposit.paymentAmount|number}} €

@@ -158,6 +158,7 @@ const routes: Routes = [
     PaymentListComponent,
     AnnouncementListComponent,
     DirectDebitTransfertListComponent,
+    QuotationComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
