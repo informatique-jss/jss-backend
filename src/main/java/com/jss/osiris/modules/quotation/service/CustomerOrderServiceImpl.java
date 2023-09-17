@@ -433,6 +433,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
             mailHelper.sendCustomerOrderFinalisationToCustomer(getCustomerOrder(customerOrder.getId()), false, false,
                     false);
+            mailHelper.sendCustomerOrderAttachmentOnFinalisationToCustomer(getCustomerOrder(customerOrder.getId()),
+                    false);
         }
 
         // Target : going back to TO BILLED

@@ -979,23 +979,11 @@ public class MailHelper {
 
         if (customerOrder.getAttachments() != null) {
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(customerOrder.getAttachments())) {
-                if (attachment.getAttachmentType().getIsToSentOnFinalizationMail()
-                        && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())) {
+                if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeInvoice().getId())) {
                     attachments.add(attachment);
                     attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
                 }
             }
-            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
-                        if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
-                            for (Attachment attachment : attachmentService
-                                    .sortAttachmentByDateDesc(provision.getAttachments()))
-                                if (attachment.getAttachmentType().getIsToSentOnFinalizationMail()
-                                        && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())) {
-                                    attachments.add(attachment);
-                                    attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
-                                }
         }
 
         mail.setAttachments(attachments);
@@ -1134,6 +1122,37 @@ public class MailHelper {
         mail.setMailComputeResult(mailComputeResult);
 
         mailService.addMailToQueue(mail);
+    }
+
+    public void sendCustomerOrderAttachmentOnFinalisationToCustomer(CustomerOrder customerOrder, boolean sendToMe)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        List<Attachment> attachments = new ArrayList<Attachment>();
+        List<Integer> attachmentTypeIdsDone = new ArrayList<Integer>();
+
+        if (customerOrder.getAttachments() != null) {
+            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(customerOrder.getAttachments())) {
+                if (attachment.getAttachmentType().getIsToSentOnFinalizationMail()
+                        && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())) {
+                    attachments.add(attachment);
+                    attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
+                }
+            }
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+                            for (Attachment attachment : attachmentService
+                                    .sortAttachmentByDateDesc(provision.getAttachments()))
+                                if (attachment.getAttachmentType().getIsToSentOnFinalizationMail()
+                                        && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())
+                                        && !attachment.getAttachmentType().getId()
+                                                .equals(constantService.getAttachmentTypeInvoice().getId())) {
+                                    attachments.add(attachment);
+                                    attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
+                                }
+        }
+        sendCustomerOrderAttachmentsToCustomer(customerOrder, customerOrder.getAssoAffaireOrders().get(0), sendToMe,
+                attachments);
     }
 
     @Transactional
