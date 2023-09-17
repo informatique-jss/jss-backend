@@ -497,6 +497,14 @@ public class Constant implements Serializable, IId {
 	private CompetentAuthorityType competentAuthorityTypeChambreMetier;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_competent_authority_type_chambre_agriculturemetier")
+	private CompetentAuthorityType competentAuthorityTypeChambreAgriculture;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_competent_authority_type_urssaf")
+	private CompetentAuthorityType competentAuthorityTypeUrssaf;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_competent_authority_type_direccte")
 	private CompetentAuthorityType competentAuthorityTypeDireccte;
 
@@ -2038,5 +2046,22 @@ public class Constant implements Serializable, IId {
 
 	public void setProviderCentralPay(Provider providerCentralPay) {
 		this.providerCentralPay = providerCentralPay;
+	}
+
+	public CompetentAuthorityType getCompetentAuthorityTypeChambreAgriculture() {
+		return competentAuthorityTypeChambreAgriculture;
+	}
+
+	public void setCompetentAuthorityTypeChambreAgriculture(
+			CompetentAuthorityType competentAuthorityTypeChambreAgriculture) {
+		this.competentAuthorityTypeChambreAgriculture = competentAuthorityTypeChambreAgriculture;
+	}
+
+	public CompetentAuthorityType getCompetentAuthorityTypeUrssaf() {
+		return competentAuthorityTypeUrssaf;
+	}
+
+	public void setCompetentAuthorityTypeUrssaf(CompetentAuthorityType competentAuthorityTypeUrssaf) {
+		this.competentAuthorityTypeUrssaf = competentAuthorityTypeUrssaf;
 	}
 }

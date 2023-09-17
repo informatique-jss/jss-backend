@@ -508,6 +508,14 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.competentAuthorityTypeChambreMetier;
   }
 
+  getCompetentAuthorityTypeChambreAgriculture() {
+    return this.constant.competentAuthorityTypeChambreAgriculture;
+  }
+
+  getCompetentAuthorityTypeUrssaf() {
+    return this.constant.competentAuthorityTypeUrssaf;
+  }
+
   getCompetentAuthorityTypeDireccte() {
     return this.constant.competentAuthorityTypeDireccte;
   }

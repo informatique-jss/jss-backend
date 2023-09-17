@@ -957,6 +957,22 @@
           </tr>
           <tr>
             <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypeChambreAgriculture"
+                label="Type d'authorité compétente - Chambre d'agriculture" [form]="constantForm"
+                propertyName="competentAuthorityTypeChambreAgriculture" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypeUrssaf"
+                label="Type d'authorité compétente - URSSAF" [form]="constantForm"
+                propertyName="competentAuthorityTypeUrssaf" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-competent-authority-type [(model)]="constant.competentAuthorityTypeDireccte"
                 label="Type d'authorité compétente - DIRECCTE" [form]="constantForm"
                 propertyName="competentAuthorityTypeDireccte" [isMandatory]="true"

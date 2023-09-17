@@ -282,6 +282,10 @@ public interface ConstantService {
 
     public CompetentAuthorityType getCompetentAuthorityTypeChambreMetier() throws OsirisException;
 
+    public CompetentAuthorityType getCompetentAuthorityTypeChambreAgriculture() throws OsirisException;
+
+    public CompetentAuthorityType getCompetentAuthorityTypeUrssaf() throws OsirisException;
+
     public CompetentAuthorityType getCompetentAuthorityTypeDireccte() throws OsirisException;
 
     public CompetentAuthorityType getCompetentAuthorityTypePrefecture() throws OsirisException;

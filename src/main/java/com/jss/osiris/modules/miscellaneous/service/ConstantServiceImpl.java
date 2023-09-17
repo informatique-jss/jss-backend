@@ -663,6 +663,16 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeChambreAgriculture() throws OsirisException {
+        return getConstants().getCompetentAuthorityTypeChambreAgriculture();
+    }
+
+    @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeUrssaf() throws OsirisException {
+        return getConstants().getCompetentAuthorityTypeUrssaf();
+    }
+
+    @Override
     public CompetentAuthorityType getCompetentAuthorityTypeDireccte() throws OsirisException {
         return getConstants().getCompetentAuthorityTypeDireccte();
     }
