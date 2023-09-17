@@ -325,10 +325,10 @@ public class GeneratePdfDelegate {
 
         if (billingClosureValues != null && billingClosureValues.size() > 0)
             for (BillingClosureReceiptValue billingClosureValue : billingClosureValues) {
-                balance -= billingClosureValue.getCreditAmount() != null ? billingClosureValue.getCreditAmount() : 0;
+                balance += billingClosureValue.getCreditAmount() != null ? billingClosureValue.getCreditAmount() : 0;
                 creditBalance += billingClosureValue.getCreditAmount() != null ? billingClosureValue.getCreditAmount()
                         : 0;
-                balance += billingClosureValue.getDebitAmount() != null ? billingClosureValue.getDebitAmount() : 0;
+                balance -= billingClosureValue.getDebitAmount() != null ? billingClosureValue.getDebitAmount() : 0;
                 debitBalance += billingClosureValue.getDebitAmount() != null ? billingClosureValue.getDebitAmount() : 0;
             }
         ctx.setVariable("balance", balance);
