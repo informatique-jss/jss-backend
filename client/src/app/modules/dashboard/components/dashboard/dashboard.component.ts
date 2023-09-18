@@ -119,8 +119,9 @@ export class DashboardComponent implements OnInit {
   BOX_SIZE_MEDIUM = "Zoom moyen";
   BOX_SIZE_LARGE = "Zoom grand";
   BOX_SIZE_X_LARGE = "Zoom très grand";
+  BOX_SIZE_FULL_WIDTH = "Pleine largeur";
 
-  allBoxSizes: Array<string> = [this.BOX_SIZE_X_SMALL, this.BOX_SIZE_SMALL, this.BOX_SIZE_MEDIUM, this.BOX_SIZE_LARGE, this.BOX_SIZE_X_LARGE];
+  allBoxSizes: Array<string> = [this.BOX_SIZE_X_SMALL, this.BOX_SIZE_SMALL, this.BOX_SIZE_MEDIUM, this.BOX_SIZE_LARGE, this.BOX_SIZE_X_LARGE, this.BOX_SIZE_FULL_WIDTH];
 
   constructor(private appService: AppService,
     private employeeService: EmployeeService,
@@ -316,8 +317,8 @@ export class DashboardComponent implements OnInit {
     } else if (currentSize == this.BOX_SIZE_LARGE) {
       this.boxWidth = '650px';
       this.boxHeight = '500px';
-    } else if (currentSize == this.BOX_SIZE_X_LARGE) {
-      this.boxWidth = '700px';
+    } else if (currentSize == this.BOX_SIZE_FULL_WIDTH) {
+      this.boxWidth = 'calc(95vw - 220px)';
       this.boxHeight = '600px';
     }
   }

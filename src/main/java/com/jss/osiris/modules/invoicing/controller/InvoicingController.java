@@ -131,7 +131,7 @@ public class InvoicingController {
     ConfrereService confrereService;
 
     @Value("${invoicing.payment.limit.refund.euros}")
-    private Integer payementLimitRefundInEuros;
+    private Integer paymentLimitRefundInEuros;
 
     @Autowired
     AzureInvoiceService azureInvoiceService;
@@ -478,14 +478,19 @@ public class InvoicingController {
         paymentAssociate.setTiersRefund(
                 (Tiers) validationHelper.validateReferential(paymentAssociate.getTiersRefund(), false, "Tiers"));
 
-        if (paymentAssociate.getTiersOrder().getId() == null && paymentAssociate.getTiersOrder().getId() == null)
-            throw new OsirisValidationException("no tiers order set");
+        Tiers tiersOrder = null;
+        Confrere confrereOrder = null;
+        if (paymentAssociate.getPayment().getPaymentAmount() > 0 && (paymentAssociate.getInvoices() == null
+                || paymentAssociate.getInvoices().get(0).getIsProviderCreditNote() == false)) {
+            if (paymentAssociate.getTiersOrder() == null && paymentAssociate.getTiersOrder().getId() == null)
+                throw new OsirisValidationException("no tiers order set");
 
-        Tiers tiersOrder = tiersService.getTiers(paymentAssociate.getTiersOrder().getId());
-        Confrere confrereOrder = confrereService.getConfrere(paymentAssociate.getTiersOrder().getId());
+            tiersOrder = tiersService.getTiers(paymentAssociate.getTiersOrder().getId());
+            confrereOrder = confrereService.getConfrere(paymentAssociate.getTiersOrder().getId());
 
-        if (tiersOrder == null && confrereOrder == null)
-            throw new OsirisValidationException("no tiers order set");
+            if (tiersOrder == null && confrereOrder == null)
+                throw new OsirisValidationException("no tiers order set");
+        }
 
         if (paymentAssociate.getCustomerOrders() != null) {
             if (paymentAssociate.getCustomerOrders().size() == 0)
@@ -517,10 +522,14 @@ public class InvoicingController {
                         throw new OsirisValidationException("can't associate payment to customer credit note");
 
                     if (invoice.getInvoiceStatus().getId()
-                            .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())
-                            || invoice.getInvoiceStatus().getId()
-                                    .equals(constantService.getInvoiceStatusReceived().getId())) {
+                            .equals(constantService.getInvoiceStatusCreditNoteReceived().getId()))
                         if (Math.round(invoice.getTotalPrice() * 100f) != Math
+                                .round(paymentAssociate.getPayment().getPaymentAmount() * 100f))
+                            throw new OsirisValidationException("Wrong payment amount");
+
+                    if (invoice.getInvoiceStatus().getId()
+                            .equals(constantService.getInvoiceStatusReceived().getId())) {
+                        if (-Math.round(invoice.getTotalPrice() * 100f) != Math
                                 .round(paymentAssociate.getPayment().getPaymentAmount() * 100f))
                             throw new OsirisValidationException("Wrong payment amount");
                     }
@@ -538,13 +547,17 @@ public class InvoicingController {
 
         // If incoming, appoint or refund needed, if outgoing, must match
         if (totalAmount != 0) {
-            if (paymentAssociate.getPayment().getPaymentAmount() >= 0
-                    && Math.abs(totalAmount) > payementLimitRefundInEuros) {
-                if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null
-                        && paymentAssociate.getAffaireRefund() == null)
-                    throw new OsirisValidationException("not all payment used and no refund tiers set");
-            } else if (totalAmount != Math.round(paymentAssociate.getPayment().getPaymentAmount()))
-                throw new OsirisValidationException("not all payment used");
+            if (totalAmount != Math.round(paymentAssociate.getPayment().getPaymentAmount())) {
+                if (paymentAssociate.getPayment().getPaymentAmount() >= 0) {
+                    if (paymentAssociate.getPayment().getPaymentAmount() > totalAmount
+                            && (Math.abs(totalAmount)
+                                    - paymentAssociate.getPayment().getPaymentAmount()) > paymentLimitRefundInEuros)
+                        if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null
+                                && paymentAssociate.getAffaireRefund() == null)
+                            throw new OsirisValidationException("not all payment used and no refund tiers set");
+                } else
+                    throw new OsirisValidationException("not all payment used");
+            }
         }
 
         // Check same customer order for incoming payment
@@ -578,6 +591,18 @@ public class InvoicingController {
                         throw new OsirisValidationException("not same customer order chosed");
                 }
             }
+        }
+
+        // Check customer status
+        if (paymentAssociate.getCustomerOrders() != null) {
+            for (CustomerOrder order : paymentAssociate.getCustomerOrders()) {
+                CustomerOrder customerOrder = customerOrderService.getCustomerOrder(order.getId());
+                if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)
+                        || customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED))
+                    throw new OsirisValidationException(
+                            "Impossible de put payment on customer order billed or abandonned");
+            }
+
         }
 
         paymentService.manualMatchPaymentInvoicesAndCustomerOrders(

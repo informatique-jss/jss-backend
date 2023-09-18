@@ -77,7 +77,7 @@
         </div>
       </mat-step>
       <mat-step
-        *ngIf="payment.paymentAmount>0 && getBalance()<=INVOICING_PAYMENT_LIMIT_REFUND_EUROS  && getBalance()>=-INVOICING_PAYMENT_LIMIT_REFUND_EUROS">
+        *ngIf="payment.paymentAmount>0 &&  getBalance()!=0 &&  getBalance()<=INVOICING_PAYMENT_LIMIT_REFUND_EUROS  && getBalance()>=-INVOICING_PAYMENT_LIMIT_REFUND_EUROS">
         <ng-template matStepLabel>Appoint</ng-template>
         <p>Le solde n'est pas nul.
         </p>

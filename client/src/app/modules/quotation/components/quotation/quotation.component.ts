@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
@@ -508,7 +508,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
           })
         } else {
-          if ((this.getRemainingToPay() < 0 && targetStatus.code == CUSTOMER_ORDER_STATUS_BILLED) || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
+          if ((this.getRemainingToPay() < -INVOICING_PAYMENT_LIMIT_REFUND_EUROS && targetStatus.code == CUSTOMER_ORDER_STATUS_BILLED) || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
             let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
               width: '100%'
             });

@@ -56,7 +56,7 @@ public class AssoAffaireOrder implements Serializable, IId {
 	private Employee assignedTo;
 
 	@OneToMany(targetEntity = Provision.class, mappedBy = "assoAffaireOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	@JsonIgnoreProperties(value = { "assoAffaireOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "assoAffaireOrder", "payments" }, allowSetters = true)
 	@IndexedField
 	private List<Provision> provisions;
 

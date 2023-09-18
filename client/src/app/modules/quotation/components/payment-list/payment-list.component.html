@@ -41,12 +41,13 @@
     </sort-table>
   </div>
 </div>
-<button *ngIf="!isForDashboard && canImportOfxFile()" matTooltip="Importer un relevé de compte (format OFX)" mat-fab
-  color="accent" class="fab-button" (click)="importOfxFile()">
+<button *ngIf="!isForDashboard && canImportOfxFile() && overrideIconAction==''"
+  matTooltip="Importer un relevé de compte (format OFX)" mat-fab color="accent" class="fab-button"
+  (click)="importOfxFile()">
   <mat-icon>upload</mat-icon>
 </button>
-<button *ngIf="!isForDashboard && canAddCheckPayment()" matTooltip="Ajouter un paiement par chèque" mat-fab
-  color="accent" class="second-fab-button" (click)="openRoute($event,'/invoicing/payment/add/')"
-  (auxclick)="openRoute($event,'/invoicing/payment/add/')">
+<button *ngIf="!isForDashboard && canAddCheckPayment() && overrideIconAction==''"
+  matTooltip="Ajouter un paiement par chèque" mat-fab color="accent" class="second-fab-button"
+  (click)="openRoute($event,'/invoicing/payment/add/')" (auxclick)="openRoute($event,'/invoicing/payment/add/')">
   <mat-icon>attach_money</mat-icon>
 </button>

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN, INVOICING_PAYMENT_LIMIT_REFUND_EUROS } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, INVOICING_PAYMENT_LIMIT_REFUND_EUROS } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfConfrere } from 'src/app/libs/TypeHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -228,7 +228,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
         let asso = { payment: this.payment, invoice: invoice } as AssociationSummaryTable;
         asso.amountUsed = parseFloat(response);
         this.associations.push(asso);
-        if (!this.tiersOrder)
+        if (!this.tiersOrder || !this.tiersOrder.id)
           this.tiersOrder = this.getTiersOrder();
         this.refreshSummaryTables();
       } else {
@@ -259,6 +259,11 @@ export class AssociatePaymentDialogComponent implements OnInit {
       return;
     }
 
+    if (order.customerOrderStatus && order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED) {
+      this.appService.displaySnackBar("Il est impossible de choisir une commande facturée", true, 15);
+      return;
+    }
+
     let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
       width: '35%'
     });
@@ -271,7 +276,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
         asso.amountUsed = parseFloat(response);
         this.associations.push(asso);
         this.refreshSummaryTables();
-        if (!this.tiersOrder)
+        if (!this.tiersOrder || !this.tiersOrder.id)
           this.tiersOrder = this.getTiersOrder();
       } else {
         return;

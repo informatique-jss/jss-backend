@@ -84,7 +84,7 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	private Payment originPayment;
 
 	@OneToMany(targetEntity = Payment.class, mappedBy = "originPayment")
-	@JsonIgnoreProperties(value = { "originPayment", "accountingRecords" })
+	@JsonIgnoreProperties(value = { "originPayment", "accountingRecords" }, allowSetters = true)
 	private List<Payment> childrenPayments;
 
 	@ManyToOne(fetch = FetchType.LAZY)

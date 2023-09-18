@@ -982,6 +982,7 @@ public class MailHelper {
                 if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeInvoice().getId())) {
                     attachments.add(attachment);
                     attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
+                    break;
                 }
             }
         }

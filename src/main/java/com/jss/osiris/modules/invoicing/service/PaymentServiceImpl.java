@@ -556,7 +556,7 @@ public class PaymentServiceImpl implements PaymentService {
         Float remainingMoney = payment.getPaymentAmount();
 
         // If payment is not over total of remaining to pay on all invoices
-        if (byPassAmount != null || remainingMoney >= 0f) {
+        if (remainingMoney >= 0f) {
             for (int i = 0; i < correspondingInvoices.size(); i++) {
                 if (correspondingInvoices.get(i).getInvoiceStatus().getId()
                         .equals(constantService.getInvoiceStatusSend().getId())) {
@@ -569,7 +569,7 @@ public class PaymentServiceImpl implements PaymentService {
                         effectivePayment = byPassAmount.get(amountIndex);
                         amountIndex++;
                     } else {
-                        effectivePayment = Math.min(remainingToPayForCurrentInvoice, remainingMoney);
+                        effectivePayment = remainingMoney;
                     }
 
                     // If there is an appoint, use all remaining money, it's handled in
