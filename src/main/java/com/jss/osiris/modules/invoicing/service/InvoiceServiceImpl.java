@@ -199,6 +199,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         // Associate invoice to invoice item
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+            // If we got an AC with direct charge, force no VAT
+            if (invoice.getIsInvoiceFromProvider() && invoice.getCompetentAuthority() != null
+                    && invoice.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
+                invoiceItem.setVat(constantService.getVatZero());
+
             vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
             invoiceItem.setInvoice(invoice);
             invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
