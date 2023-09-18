@@ -540,4 +540,19 @@ public class QuotationServiceImpl implements QuotationService {
         addOrUpdateQuotationStatus(quotation, QuotationStatus.VALIDATED_BY_CUSTOMER);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Quotation associateCustomerOrderToQuotation(Quotation quotation, CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
+
+        quotation = getQuotation(quotation.getId());
+        if (quotation.getCustomerOrders() == null)
+            quotation.setCustomerOrders(new ArrayList<CustomerOrder>());
+        quotation.getCustomerOrders().add(customerOrder);
+        quotation.setQuotationStatus(
+                quotationStatusService.getQuotationStatusByCode(QuotationStatus.VALIDATED_BY_CUSTOMER));
+        return addOrUpdateQuotation(quotation);
+    }
+
 }

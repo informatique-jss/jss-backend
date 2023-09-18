@@ -6,6 +6,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationSearch;
@@ -52,6 +53,9 @@ public interface QuotationService {
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException;
 
         public Quotation unlockQuotationFromDeposit(Quotation quotation)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
+        public Quotation associateCustomerOrderToQuotation(Quotation quotation, CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
 }

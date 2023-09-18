@@ -321,6 +321,30 @@ public class QuotationController {
   @Autowired
   GuichetUniqueDelegateService guichetUniqueDelegateService;
 
+  @GetMapping(inputEntryPoint + "/customer-order/associate")
+  public ResponseEntity<Quotation> associateCustomerOrderToQuotation(@RequestParam Integer idQuotation,
+      @RequestParam Integer idCustomerOrder)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+    Quotation quotation = quotationService.getQuotation(idQuotation);
+    if (quotation == null)
+      throw new OsirisValidationException("idQuotation");
+
+    if (!quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER))
+      throw new OsirisClientMessageException("Le devis doit être au statut Envoyé au client");
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+    if (customerOrder == null)
+      throw new OsirisValidationException("idCustomerOrder");
+
+    if (quotation.getCustomerOrders() != null && quotation.getCustomerOrders().size() > 0)
+      throw new OsirisValidationException("Devis déjà associé à une commande");
+    if (customerOrder.getQuotations() != null && customerOrder.getQuotations().size() > 0)
+      throw new OsirisValidationException("Commande déjà associée à un devis");
+
+    return new ResponseEntity<Quotation>(quotationService.associateCustomerOrderToQuotation(quotation, customerOrder),
+        HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/bank-transferts")
   public ResponseEntity<List<BankTransfert>> getBankTransfers() {
     return new ResponseEntity<List<BankTransfert>>(bankTransfertService.getBankTransfers(), HttpStatus.OK);

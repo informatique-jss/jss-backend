@@ -122,8 +122,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
             formaliteGuichetUnique.setCarts(carts);
             originalFormalite = addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
-            if (formaliteGuichetUnique.getCarts() != null)
-                for (Cart cart : formaliteGuichetUnique.getCarts()) {
+            if (originalFormalite.getCarts() != null)
+                for (Cart cart : originalFormalite.getCarts()) {
                     if (cart.getStatus().equals(cartStatusPayed)) {
                         cart.setInvoice(generateInvoiceFromCart(cart, formalite.getProvision().get(0)));
                     } else if (cart.getStatus().equals(cartStatusRefund)) {
@@ -167,31 +167,27 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 for (CartRate cartRate : currentCart.getCartRates())
                                     cartRate.setCart(currentCart);
                             originalFormalite.getCarts().add(currentCart);
+
+                            if (currentCart.getInvoice() == null
+                                    && currentCart.getFormaliteGuichetUnique().getFormalite() != null
+                                    && currentCart.getFormaliteGuichetUnique().getFormalite().getProvision() != null) {
+                                if (currentCart.getStatus().equals(cartStatusPayed)) {
+                                    currentCart.setInvoice(generateInvoiceFromCart(currentCart,
+                                            currentCart.getFormaliteGuichetUnique().getFormalite().getProvision()
+                                                    .get(0)));
+                                } else if (currentCart.getStatus().equals(cartStatusRefund)) {
+                                    currentCart.setInvoice((generateCreditNoteFromCart(currentCart,
+                                            currentCart.getFormaliteGuichetUnique().getFormalite().getProvision()
+                                                    .get(0))));
+                                }
+                            }
                         }
                     }
                 }
             }
-
-            originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);
-
-            if (originalFormalite != null && originalFormalite.getCarts() != null
-                    && originalFormalite.getCarts().size() > 0)
-                for (Cart cart : originalFormalite.getCarts()) {
-                    if (cart.getInvoice() == null
-                            && cart.getFormaliteGuichetUnique().getFormalite() != null
-                            && cart.getFormaliteGuichetUnique().getFormalite().getProvision() != null) {
-                        if (cart.getStatus().equals(cartStatusPayed)) {
-                            cart.setInvoice(generateInvoiceFromCart(cart,
-                                    cart.getFormaliteGuichetUnique().getFormalite().getProvision().get(0)));
-                        } else if (cart.getStatus().equals(cartStatusRefund)) {
-                            cart.setInvoice((generateCreditNoteFromCart(cart,
-                                    cart.getFormaliteGuichetUnique().getFormalite().getProvision().get(0))));
-                        }
-                    }
-                }
         }
 
-        originalFormalite = getFormaliteGuichetUnique(inFormaliteGuichetUnique.getId());
+        originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);
         // validationsRequests field
         originalFormalite.setValidationsRequests(formaliteGuichetUnique.getValidationsRequests());
         if (originalFormalite.getValidationsRequests() != null)
