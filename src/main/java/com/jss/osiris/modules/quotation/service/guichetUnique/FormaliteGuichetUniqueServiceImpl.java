@@ -93,7 +93,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         if (inFormaliteGuichetUnique == null)
             throw new OsirisValidationException("inFormaliteGuichetUnique");
 
-        formalite = formaliteService.getFormalite(formalite.getId());
+        if (formalite != null)
+            formalite = formaliteService.getFormalite(formalite.getId());
         FormaliteGuichetUnique formaliteGuichetUnique;
         List<FormaliteStatusHistoryItem> formaliteStatusHistoryItems = new ArrayList<FormaliteStatusHistoryItem>();
 
