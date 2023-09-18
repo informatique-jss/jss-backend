@@ -443,6 +443,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public BillingType getBillingTypeRneUpdate() throws OsirisException {
+        return getConstants().getBillingTypeRneUpdate();
+    }
+
+    @Override
     public BillingType getBillingtypeVacationUpdateBeneficialOwners() throws OsirisException {
         return getConstants().getBillingTypeVacationUpdateBeneficialOwners();
     }

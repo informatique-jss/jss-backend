@@ -330,6 +330,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.billingTypeEmergency;
   }
 
+  getBillingTypeRneUpdate() {
+    return this.constant.billingTypeRneUpdate;
+  }
+
   getBillingTypeVacationUpdateBeneficialOwners() {
     return this.constant.billingTypeVacationUpdateBeneficialOwners;
   }

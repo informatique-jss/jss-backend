@@ -192,6 +192,8 @@ public interface ConstantService {
 
     public BillingType getBillingTypeEmergency() throws OsirisException;
 
+    public BillingType getBillingTypeRneUpdate() throws OsirisException;
+
     public BillingType getBillingtypeVacationUpdateBeneficialOwners() throws OsirisException;
 
     public BillingType getBillingtypeFormalityAdditionalDeclaration() throws OsirisException;

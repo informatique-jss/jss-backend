@@ -54,6 +54,7 @@ export interface Provision extends IAttachment {
   isBilan: boolean;
   isDocumentScanning: boolean;
   isEmergency: boolean;
+  isRneUpdate: boolean;
   isVacationUpdateBeneficialOwners: boolean;
   isFormalityAdditionalDeclaration: boolean;
   isCorrespondenceFees: boolean;

@@ -169,6 +169,9 @@ public class Provision implements IId, IAttachment {
 	private Boolean isEmergency;
 
 	@Column(nullable = false)
+	private Boolean isRneUpdate;
+
+	@Column(nullable = false)
 	private Boolean isVacationUpdateBeneficialOwners;
 
 	@Column(nullable = false)
@@ -566,6 +569,14 @@ public class Provision implements IId, IAttachment {
 
 	public void setPayments(List<Payment> payments) {
 		this.payments = payments;
+	}
+
+	public Boolean getIsRneUpdate() {
+		return isRneUpdate;
+	}
+
+	public void setIsRneUpdate(Boolean isRneUpdate) {
+		this.isRneUpdate = isRneUpdate;
 	}
 
 }

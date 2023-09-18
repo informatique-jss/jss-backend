@@ -517,8 +517,8 @@ public class PricingHelper {
         if (billingType.getId().equals(constantService.getBillingTypeDocumentScanning().getId())
                 && provision.getIsDocumentScanning() != null && provision.getIsDocumentScanning())
             return true;
-        if (billingType.getId().equals(constantService.getBillingTypeEmergency().getId())
-                && provision.getIsEmergency() != null && provision.getIsEmergency())
+        if (billingType.getId().equals(constantService.getBillingTypeRneUpdate().getId())
+                && provision.getIsRneUpdate() != null && provision.getIsRneUpdate())
             return true;
         if (billingType.getId().equals(constantService.getBillingtypeVacationUpdateBeneficialOwners().getId())
                 && provision.getIsVacationUpdateBeneficialOwners() != null

@@ -93,7 +93,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         if (inFormaliteGuichetUnique == null)
             throw new OsirisValidationException("inFormaliteGuichetUnique");
 
-        if (formalite != null)
+        if (formalite != null && formalite.getId() != null)
             formalite = formaliteService.getFormalite(formalite.getId());
         FormaliteGuichetUnique formaliteGuichetUnique;
         List<FormaliteStatusHistoryItem> formaliteStatusHistoryItems = new ArrayList<FormaliteStatusHistoryItem>();
@@ -111,7 +111,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
         FormaliteGuichetUnique originalFormalite = getFormaliteGuichetUnique(inFormaliteGuichetUnique.getId());
 
-        if (originalFormalite == null) {
+        if (originalFormalite == null && formalite != null && formalite.getId() != null) {
             // Save only if cart > €
             ArrayList<Cart> carts = new ArrayList<Cart>();
             if (formaliteGuichetUnique.getCarts() != null)
@@ -130,7 +130,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         cart.setInvoice((generateCreditNoteFromCart(cart, formalite.getProvision().get(0))));
                     }
                 }
-        } else {
+        } else if (originalFormalite != null && formalite != null && formalite.getId() != null) {
             // update only wanted field
             // Status field
             if (!originalFormalite.getStatus().getCode().equals(formaliteGuichetUnique.getStatus().getCode())) {

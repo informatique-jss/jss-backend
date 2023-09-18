@@ -599,6 +599,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeRneUpdate"
+                label="Type de poste de facturation - Mise à jour de la fiche RNE" [form]="constantForm"
+                propertyName="billingTypeRneUpdate" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeVacationUpdateBeneficialOwners"
                 label="Type de poste de facturation - Vacation - Mise à jour - Bénéficiaires Effectifs"
                 [form]="constantForm" propertyName="billingTypeVacationUpdateBeneficialOwners" [isMandatory]="true"

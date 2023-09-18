@@ -337,6 +337,10 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_billing_type_emergency")
 	private BillingType billingTypeEmergency;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_rne_update")
+	private BillingType billingTypeRneUpdate;
+
 	@Column(length = 1000)
 	private String stringNantissementDepositFormeJuridiqueCode;
 	@Column(length = 1000)
@@ -2063,5 +2067,13 @@ public class Constant implements Serializable, IId {
 
 	public void setCompetentAuthorityTypeUrssaf(CompetentAuthorityType competentAuthorityTypeUrssaf) {
 		this.competentAuthorityTypeUrssaf = competentAuthorityTypeUrssaf;
+	}
+
+	public BillingType getBillingTypeRneUpdate() {
+		return billingTypeRneUpdate;
+	}
+
+	public void setBillingTypeRneUpdate(BillingType billingTypeRneUpdate) {
+		this.billingTypeRneUpdate = billingTypeRneUpdate;
 	}
 }
