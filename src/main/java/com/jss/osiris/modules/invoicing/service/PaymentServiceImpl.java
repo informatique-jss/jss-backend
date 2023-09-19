@@ -39,6 +39,7 @@ import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.repository.PaymentRepository;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -1248,5 +1249,18 @@ public class PaymentServiceImpl implements PaymentService {
 
         payment = payment.getOriginPayment();
         return getOriginalPaymentOfPayment(payment);
+    }
+
+    @Override
+    public void putPaymentInAccount(Payment payment, CompetentAuthority competentAuthority)
+            throws OsirisException, OsirisValidationException {
+        cancelPayment(payment);
+        Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
+                competentAuthority.getAccountingAccountDeposit());
+        payment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
+        accountingRecordGenerationService
+                .generateAccountingRecordOnPaymentOnDepositCompetentAuthorityAccount(newPayment);
+        newPayment.setCompetentAuthority(competentAuthority);
+        addOrUpdatePayment(newPayment);
     }
 }

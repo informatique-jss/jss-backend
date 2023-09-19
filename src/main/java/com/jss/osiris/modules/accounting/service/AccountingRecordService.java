@@ -83,4 +83,5 @@ public interface AccountingRecordService {
         public File getAccountingBalanceGeneraleExport(Integer accountingClassId, Integer principalAccountingAccountId,
                         Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate)
                         throws OsirisException;
+
 }

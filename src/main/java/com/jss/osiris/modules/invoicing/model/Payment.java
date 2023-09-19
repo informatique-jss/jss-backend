@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
@@ -94,6 +95,10 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_source_accounting_account")
 	private AccountingAccount sourceAccountingAccount;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_competent_authority")
+	private CompetentAuthority competentAuthority;
 
 	private Boolean isCancelled;
 
@@ -278,6 +283,14 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	public void setChildrenPayments(List<Payment> childrenPayments) {
 		this.childrenPayments = childrenPayments;
+	}
+
+	public CompetentAuthority getCompetentAuthority() {
+		return competentAuthority;
+	}
+
+	public void setCompetentAuthority(CompetentAuthority competentAuthority) {
+		this.competentAuthority = competentAuthority;
 	}
 
 }

@@ -63,6 +63,7 @@ import { RefundPaymentDialogComponent } from '../refund-payment-dialog/refund-pa
 import { SelectAccountingAccountDialogComponent } from '../select-accounting-account-dialog/select-accounting-account-dialog.component';
 import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
+import { SelectCompetentAuthorityDialogComponent } from '../select-competent-authority-dialog/select-competent-authority-dialog.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
 
@@ -149,6 +150,7 @@ const routes: Routes = [
     IdentiteComponent,
     EntrepriseComponent,
     GuichetUniqueStatusComponent,
+    SelectCompetentAuthorityDialogComponent,
   ],
   exports: [
     OrderingListComponent,

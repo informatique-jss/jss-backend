@@ -56,6 +56,8 @@ import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceStatusService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.invoicing.service.RefundService;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
@@ -144,6 +146,9 @@ public class InvoicingController {
 
     @Autowired
     AccountingAccountService accountingAccountService;
+
+    @Autowired
+    CompetentAuthorityService competentAuthorityService;
 
     @PostMapping(inputEntryPoint + "/azure-receipt/invoice")
     public ResponseEntity<AzureReceiptInvoice> updateAzureReceiptInvoice(
@@ -312,6 +317,30 @@ public class InvoicingController {
             throw new OsirisValidationException("tiers");
 
         paymentService.refundPayment(payment, tiers, affaire);
+
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/payment/account")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    public ResponseEntity<Boolean> putPaymentInAccount(@RequestParam Integer paymentId,
+            @RequestParam Integer competentAuthorityId)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        Payment payment = paymentService.getPayment(paymentId);
+        CompetentAuthority competentAuthority = competentAuthorityService.getCompetentAuthority(competentAuthorityId);
+
+        if (payment == null)
+            throw new OsirisValidationException("payment");
+
+        if (payment.getIsCancelled() == true || payment.getBankTransfert() != null || payment.getCustomerOrder() != null
+                || payment.getInvoice() != null
+                || payment.getRefund() != null || payment.getCompetentAuthority() != null)
+            throw new OsirisValidationException("Paiement déjà associé");
+
+        if (competentAuthority == null)
+            throw new OsirisValidationException("competentAuthority");
+
+        paymentService.putPaymentInAccount(payment, competentAuthority);
 
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
