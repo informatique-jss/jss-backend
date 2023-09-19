@@ -898,6 +898,9 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             payment.setAccountingRecords(new ArrayList<AccountingRecord>());
 
         AccountingJournal journal = constantService.getAccountingJournalBank();
+        // if accounting payment, use OD journal
+        if (payment.getPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId()))
+            journal = constantService.getAccountingJournalMiscellaneousOperations();
         Integer operationId = getNewTemporaryOperationId();
 
         payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,

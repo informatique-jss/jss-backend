@@ -628,7 +628,12 @@ public class PaymentServiceImpl implements PaymentService {
                     payment.getTargetAccountingAccount());
             IGenericTiers tiers = invoiceHelper.getCustomerOrder(correspondingInvoice);
             newPayment.setSourceAccountingAccount(tiers.getAccountingAccountProvider());
-            newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
+
+            // If account payment, keep deposit account as target account
+            if (newPayment.getPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId()))
+                newPayment.setTargetAccountingAccount(tiers.getAccountingAccountDeposit());
+            else
+                newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
             associatePaymentAndInvoice(newPayment, correspondingInvoice, false);
         }
 
