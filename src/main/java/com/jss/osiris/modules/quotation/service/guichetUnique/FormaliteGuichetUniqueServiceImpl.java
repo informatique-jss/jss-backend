@@ -338,6 +338,12 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         long amount = cartRate.getHtAmount();
         if (amount == 0)
             amount = cartRate.getAmount();
+
+        if (cartRate.getAmount() < 0 && amount > 0)
+            amount = -amount;
+        if (cartRate.getAmount() > 0 && amount < 0)
+            amount = -amount;
+
         invoiceItem.setPreTaxPrice(Math.abs(Float.parseFloat(amount + "") / 100f));
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
 

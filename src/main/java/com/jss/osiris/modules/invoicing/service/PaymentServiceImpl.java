@@ -845,7 +845,8 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment generateNewAccountPayment(Float paymentAmount, AccountingAccount targetAccountingAccount,
+    public Payment generateNewAccountPayment(Float paymentAmount, AccountingAccount sourceDepositAccountingAccount,
+            AccountingAccount targetAccountingAccount,
             String label)
             throws OsirisException {
         Payment newPayment = new Payment();
@@ -858,7 +859,7 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setPaymentAmount(paymentAmount);
         newPayment.setPaymentDate(LocalDateTime.now());
         newPayment.setPaymentType(constantService.getPaymentTypeAccount());
-        newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+        newPayment.setSourceAccountingAccount(sourceDepositAccountingAccount);
         newPayment.setTargetAccountingAccount(targetAccountingAccount);
 
         return addOrUpdatePayment(newPayment);
@@ -954,6 +955,7 @@ public class PaymentServiceImpl implements PaymentService {
         Invoice centralPayInvoice = invoiceService.addOrUpdateInvoiceFromUser(invoice);
         Payment centralPayPayment = generateNewAccountPayment(
                 -(invoiceItem.getPreTaxPrice() + invoiceItem.getVatPrice()),
+                constantService.getProviderCentralPay().getAccountingAccountDeposit(),
                 constantService.getProviderCentralPay().getAccountingAccountProvider(), invoiceLabel);
         accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(centralPayPayment);
 

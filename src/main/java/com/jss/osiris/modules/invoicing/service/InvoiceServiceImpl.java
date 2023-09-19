@@ -253,7 +253,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId())) {
                 Payment payment = paymentService.generateNewAccountPayment(-invoice.getTotalPrice(),
-                        invoiceTiers.getAccountingAccountProvider(),
+                        invoiceTiers.getAccountingAccountDeposit(), invoiceTiers.getAccountingAccountProvider(),
                         "Paiement pour la facture " + invoice.getId() + " / Fournisseur : "
                                 + (invoice.getProvider() != null ? invoice.getProvider().getLabel()
                                         : invoice.getCompetentAuthority().getLabel()));
