@@ -1133,7 +1133,9 @@ public class MailHelper {
         if (customerOrder.getAttachments() != null) {
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(customerOrder.getAttachments())) {
                 if (attachment.getAttachmentType().getIsToSentOnFinalizationMail()
-                        && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())) {
+                        && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())
+                        && !attachment.getAttachmentType().getId()
+                                .equals(constantService.getAttachmentTypeInvoice().getId())) {
                     attachments.add(attachment);
                     attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
                 }
