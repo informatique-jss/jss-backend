@@ -149,7 +149,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     }
 
     private void checkBalance(Float balance) throws OsirisValidationException {
-        if (Math.round(balance * 100f) != 0)
+        if (Math.abs(Math.round(balance * 100f)) > 0.02)
             throw new OsirisValidationException("Balance not null");
     }
 

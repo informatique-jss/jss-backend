@@ -1014,7 +1014,7 @@ public class PaymentServiceImpl implements PaymentService {
         return payment;
     }
 
-    private List<IndexEntity> getCorrespondingEntityForOutboundPayment(Payment payment) {
+    private List<IndexEntity> getCorrespondingEntityForOutboundPayment(Payment payment) throws OsirisException {
         ArrayList<String> entityTypesToSearch = new ArrayList<String>();
         entityTypesToSearch.add(Invoice.class.getSimpleName());
         entityTypesToSearch.add(Refund.class.getSimpleName());
@@ -1024,7 +1024,7 @@ public class PaymentServiceImpl implements PaymentService {
         return getCorrespondingEntityForPayment(payment, entityTypesToSearch);
     }
 
-    private List<IndexEntity> getCorrespondingEntityForInboudPayment(Payment payment) {
+    private List<IndexEntity> getCorrespondingEntityForInboudPayment(Payment payment) throws OsirisException {
         ArrayList<String> entityTypesToSearch = new ArrayList<String>();
         entityTypesToSearch.add(Invoice.class.getSimpleName());
         entityTypesToSearch.add(CustomerOrder.class.getSimpleName());
@@ -1033,7 +1033,8 @@ public class PaymentServiceImpl implements PaymentService {
         return getCorrespondingEntityForPayment(payment, entityTypesToSearch);
     }
 
-    private List<IndexEntity> getCorrespondingEntityForPayment(Payment payment, ArrayList<String> entityTypesToSearch) {
+    private List<IndexEntity> getCorrespondingEntityForPayment(Payment payment, ArrayList<String> entityTypesToSearch)
+            throws OsirisException {
         Pattern p = Pattern.compile("\\d+");
         List<IndexEntity> entitiesFound = new ArrayList<IndexEntity>();
 
@@ -1053,9 +1054,12 @@ public class PaymentServiceImpl implements PaymentService {
 
                     Invoice directDebitTransfertInvoice = invoiceService
                             .searchInvoicesByIdDirectDebitTransfert(idToFind);
-                    if (directDebitTransfertInvoice != null)
+                    if (directDebitTransfertInvoice != null) {
                         tmpEntitiesFound.addAll(searchService.searchForEntitiesById(directDebitTransfertInvoice.getId(),
                                 Arrays.asList(Invoice.class.getSimpleName())));
+                        payment.setPaymentType(constantService.getPaymentTypePrelevement());
+                        payment = addOrUpdatePayment(payment);
+                    }
                 }
                 if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                     for (IndexEntity newEntity : tmpEntitiesFound) {

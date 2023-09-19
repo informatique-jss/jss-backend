@@ -116,7 +116,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     VatService vatService;
 
     @Autowired
-    DirectDebitTransfertService DirectDebitTransfertService;
+    DirectDebitTransfertService directDebitTransfertService;
 
     @Override
     public List<Invoice> getAllInvoices() {
@@ -264,7 +264,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         } else {
             if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())) {
                 invoice.setDirectDebitTransfert(
-                        DirectDebitTransfertService.generateDirectDebitTransfertForOutboundInvoice(invoice));
+                        directDebitTransfertService.generateDirectDebitTransfertForOutboundInvoice(invoice));
             }
         }
 
@@ -339,6 +339,22 @@ public class InvoiceServiceImpl implements InvoiceService {
                     else
                         paymentService.unassociateInboundPaymentFromInvoice(payment, invoice);
                 }
+        }
+
+        if (invoice.getDirectDebitTransfert() != null) {
+            if (invoice.getDirectDebitTransfert().getIsAlreadyExported() == true)
+                directDebitTransfertService.cancelDirectDebitTransfert(invoice.getDirectDebitTransfert());
+            else {
+                if (invoice.getPayments() != null) {
+                    for (Payment payment : invoice.getPayments())
+                        if (!payment.getIsCancelled() && payment.getPaymentType().getId()
+                                .equals(constantService.getPaymentTypePrelevement().getId())) {
+                            Tiers tiersInvoice = invoice.getResponsable() != null ? invoice.getResponsable().getTiers()
+                                    : invoice.getTiers();
+                            paymentService.refundPayment(payment, tiersInvoice, null);
+                        }
+                }
+            }
         }
 
         // Unlink invoice item from customer order
