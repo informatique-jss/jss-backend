@@ -4,8 +4,16 @@
 }
 
 .affaire {
-  font-weight: 600;
+  font-weight: 900;
   padding-top: 15px;
+}
+
+.affaire-align {
+  text-align: center;
+}
+
+.invoice-item {
+  padding-left: 20px;
 }
 
 table {

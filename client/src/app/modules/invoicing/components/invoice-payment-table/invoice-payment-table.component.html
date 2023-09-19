@@ -15,10 +15,7 @@
         </td>
         <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
           {{payment.isAppoint ? -payment.paymentAmount : payment.paymentAmount}} € <span class="pointer"
-            *ngIf="payment.isAppoint && payment.paymentAmount>0"
-            (click)="refundAppoint(payment)">(rembourser)</span><mat-icon color="accent"
-            (click)="openPaymentDialog(payment)" matTooltip="Voir le détail du paiement" color="accent"
-            class="pointer ">visibility</mat-icon>
+            *ngIf="payment.isAppoint && payment.paymentAmount>0" (click)="refundAppoint(payment)">(rembourser)</span>
         </td>
       </ng-container>
     </tr>

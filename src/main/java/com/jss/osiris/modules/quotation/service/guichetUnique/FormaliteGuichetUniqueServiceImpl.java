@@ -124,11 +124,12 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             originalFormalite = addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
             if (originalFormalite.getCarts() != null)
                 for (Cart cart : originalFormalite.getCarts()) {
-                    if (cart.getStatus().equals(cartStatusPayed)) {
-                        cart.setInvoice(generateInvoiceFromCart(cart, formalite.getProvision().get(0)));
-                    } else if (cart.getStatus().equals(cartStatusRefund)) {
-                        cart.setInvoice((generateCreditNoteFromCart(cart, formalite.getProvision().get(0))));
-                    }
+                    if (cart.getInvoice() == null)
+                        if (cart.getStatus().equals(cartStatusPayed)) {
+                            cart.setInvoice(generateInvoiceFromCart(cart, formalite.getProvision().get(0)));
+                        } else if (cart.getStatus().equals(cartStatusRefund)) {
+                            cart.setInvoice((generateCreditNoteFromCart(cart, formalite.getProvision().get(0))));
+                        }
                 }
         } else if (originalFormalite != null && formalite != null && formalite.getId() != null) {
             // update only wanted field

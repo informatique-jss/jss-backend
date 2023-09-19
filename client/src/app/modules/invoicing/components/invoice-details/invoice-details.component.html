@@ -174,11 +174,11 @@
           </thead>
           <ng-container *ngFor="let asso of invoice.customerOrder.assoAffaireOrders;let indexAsso = index">
             <tr class="mat-mdc-row mdc-data-table__row ">
-              <td class="mat-mdc-cell mdc-data-table__cell  affaire" colspan="2"
+              <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align" colspan="2"
                 *ngIf="asso.affaire && asso.affaire.denomination">
                 {{asso.affaire.denomination}}
               </td>
-              <td class="mat-mdc-cell mdc-data-table__cell  affaire" colspan="2"
+              <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align" colspan="2"
                 *ngIf="asso.affaire && asso.affaire.firstname">
                 {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
               </td>
@@ -191,8 +191,8 @@
               </tr>
               <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
                 <tr class="mat-mdc-row mdc-data-table__row ">
-                  <td class="mat-mdc-cell mdc-data-table__cell ">
-                    {{invoiceItem.label}}
+                  <td class="mat-mdc-cell mdc-data-table__cell  ">
+                    <span class="invoice-item">{{invoiceItem.label}}</span>
                   </td>
                   <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
                     {{invoiceItem.preTaxPrice|number}} €
@@ -201,7 +201,7 @@
                 <tr class="mat-mdc-row mdc-data-table__row "
                   *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
                   <td class="mat-mdc-cell mdc-data-table__cell ">
-                    Remise
+                    <span class="invoice-item">Remise</span>
                   </td>
                   <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
                     - {{invoiceItem.discountAmount|number}} €
@@ -209,7 +209,7 @@
                 </tr>
                 <tr class="mat-mdc-row mdc-data-table__row " *ngIf="invoiceItem.vat">
                   <td class="mat-mdc-cell mdc-data-table__cell ">
-                    {{invoiceItem.vat.label}}
+                    <span class="invoice-item">{{invoiceItem.vat.label}}</span>
                   </td>
                   <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
                     {{invoiceItem.vatPrice|number}} €

@@ -413,6 +413,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             // save once customer order to recompute invoice item before set it in stone...
             this.addOrUpdateCustomerOrder(customerOrder, true, checkAllProvisionEnded);
 
+            // Protection : if we already have an invoice not cancelled, abord...
+            if (customerOrder.getInvoices() != null) {
+                for (Invoice invoice : customerOrder.getInvoices())
+                    if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
+                            || invoice.getInvoiceStatus().getId()
+                                    .equals(constantService.getInvoiceStatusPayed().getId()))
+                        throw new OsirisClientMessageException("Une facture existe déjà pour cette commande !");
+            }
+
             Float remainingToPayForCurrentCustomerOrder = Math
                     .round(getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
 
