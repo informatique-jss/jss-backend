@@ -248,6 +248,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void automatchPayment(Payment payment)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Match inbound payment
@@ -569,7 +570,7 @@ public class PaymentServiceImpl implements PaymentService {
                         effectivePayment = byPassAmount.get(amountIndex);
                         amountIndex++;
                     } else {
-                        effectivePayment = remainingMoney;
+                        effectivePayment = Math.min(remainingToPayForCurrentInvoice, remainingMoney);
                     }
 
                     // If there is an appoint, use all remaining money, it's handled in
