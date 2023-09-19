@@ -1154,8 +1154,10 @@ public class MailHelper {
                                     attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
                                 }
         }
-        sendCustomerOrderAttachmentsToCustomer(customerOrder, customerOrder.getAssoAffaireOrders().get(0), sendToMe,
-                attachments);
+
+        if (attachments.size() > 0)
+            sendCustomerOrderAttachmentsToCustomer(customerOrder, customerOrder.getAssoAffaireOrders().get(0), sendToMe,
+                    attachments);
     }
 
     @Transactional
