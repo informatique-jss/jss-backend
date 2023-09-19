@@ -84,19 +84,19 @@ export class PaymentDetailsDialogComponent implements OnInit, AfterContentChecke
 
         if (this.selectedPayment) {
           this.payment = payment;
-          this.selectNode({ name: this.getNodeName(this.selectedPayment) } as PaymentTreeNode);
+          this.selectNode({ name: this.getNodeName(this.selectedPayment, this.selectedPayment.id == originPayment.id) } as PaymentTreeNode);
           this.setTreeData();
         }
 
         if (originPayment.id == payment.id) {
           this.payment = payment;
-          this.selectNode({ name: this.getNodeName(payment) } as PaymentTreeNode);
+          this.selectNode({ name: this.getNodeName(payment, true) } as PaymentTreeNode);
           this.setTreeData();
         }
         else {
           this.paymentService.getPaymentById(originPayment.id).subscribe(lastPayment => {
             this.payment = lastPayment;
-            this.selectNode({ name: this.getNodeName(payment) } as PaymentTreeNode);
+            this.selectNode({ name: this.getNodeName(payment, false) } as PaymentTreeNode);
             this.setTreeData();
           })
         }
@@ -243,7 +243,7 @@ export class PaymentDetailsDialogComponent implements OnInit, AfterContentChecke
 
   selectPayment(node: PaymentTreeNode, payment: Payment) {
     if (payment)
-      if (node.name == this.getNodeName(payment)) {
+      if (node.name == this.getNodeName(payment, node.level == 0)) {
         this.setSelectedPayment(payment);
         return;
       }
@@ -269,13 +269,26 @@ export class PaymentDetailsDialogComponent implements OnInit, AfterContentChecke
   private _transformer = (node: Payment, level: number) => {
     return {
       expandable: !!node.childrenPayments && node.childrenPayments.length > 0,
-      name: this.getNodeName(node),
+      name: this.getNodeName(node, level == 0),
       level: level,
     };
   };
 
-  getNodeName(payment: Payment) {
-    return (payment.id + " : " + payment.label).substring(0, 35);
+  getNodeName(payment: Payment, isTopLevel: boolean) {
+    if (isTopLevel)
+      return (payment.id + " : " + payment.label).substring(0, 35);
+    else {
+      let label = payment.id + "";
+      if (payment.bankTransfert)
+        label += " / virement n°" + payment.bankTransfert.id;
+      if (payment.invoice)
+        label += " / facture n°" + payment.invoice.id;
+      if (payment.customerOrder)
+        label += " / commande n°" + payment.customerOrder.id;
+      if (payment.refund)
+        label += " / remboursement n°" + payment.refund.id;
+      return label;
+    }
   }
 
   treeControl = new FlatTreeControl<PaymentTreeNode>(
