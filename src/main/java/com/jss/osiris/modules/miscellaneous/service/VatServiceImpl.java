@@ -323,6 +323,8 @@ public class VatServiceImpl implements VatService {
         if (invoice.getIsInvoiceFromProvider() == false && invoice.getIsProviderCreditNote() == false) {
             chooseCorrectVatDeductibleCollected(invoiceItem, false);
             Vat applicableVat = getGeographicalApplicableVatForSales(invoice, invoiceItem.getVat());
+            if (applicableVat == null)
+                applicableVat = constantService.getVatZero();
 
             if (invoiceItem.getVat() != null) {
                 if (applicableVat.getRate() < invoiceItem.getVat().getRate())
@@ -336,6 +338,8 @@ public class VatServiceImpl implements VatService {
         } else {
             chooseCorrectVatDeductibleCollected(invoiceItem, true);
             Vat applicableVat = getGeographicalApplicableVatForPurshase(invoice, invoiceItem.getVat());
+            if (applicableVat == null)
+                applicableVat = constantService.getVatZero();
 
             if (invoiceItem.getVat() != null) {
                 if (applicableVat.getRate() < invoiceItem.getVat().getRate())
