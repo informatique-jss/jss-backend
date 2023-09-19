@@ -167,19 +167,23 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 for (CartRate cartRate : currentCart.getCartRates())
                                     cartRate.setCart(currentCart);
                             originalFormalite.getCarts().add(currentCart);
+                        }
+                    }
 
-                            if (currentCart.getInvoice() == null
-                                    && currentCart.getFormaliteGuichetUnique().getFormalite() != null
-                                    && currentCart.getFormaliteGuichetUnique().getFormalite().getProvision() != null) {
-                                if (currentCart.getStatus().equals(cartStatusPayed)) {
-                                    currentCart.setInvoice(generateInvoiceFromCart(currentCart,
-                                            currentCart.getFormaliteGuichetUnique().getFormalite().getProvision()
-                                                    .get(0)));
-                                } else if (currentCart.getStatus().equals(cartStatusRefund)) {
-                                    currentCart.setInvoice((generateCreditNoteFromCart(currentCart,
-                                            currentCart.getFormaliteGuichetUnique().getFormalite().getProvision()
-                                                    .get(0))));
-                                }
+                    originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);
+
+                    for (Cart currentCart : originalFormalite.getCarts()) {
+                        if (currentCart.getInvoice() == null
+                                && currentCart.getFormaliteGuichetUnique().getFormalite() != null
+                                && currentCart.getFormaliteGuichetUnique().getFormalite().getProvision() != null) {
+                            if (currentCart.getStatus().equals(cartStatusPayed)) {
+                                currentCart.setInvoice(generateInvoiceFromCart(currentCart,
+                                        currentCart.getFormaliteGuichetUnique().getFormalite().getProvision()
+                                                .get(0)));
+                            } else if (currentCart.getStatus().equals(cartStatusRefund)) {
+                                currentCart.setInvoice((generateCreditNoteFromCart(currentCart,
+                                        currentCart.getFormaliteGuichetUnique().getFormalite().getProvision()
+                                                .get(0))));
                             }
                         }
                     }
