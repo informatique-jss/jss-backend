@@ -89,11 +89,14 @@ public class VatServiceImpl implements VatService {
         if (settings == null)
             return vat != null ? vat : constantService.getVatTwenty();
 
-        if (vat == null || vat.getId().equals(constantService.getVatTwenty().getId()))
-            return settings.getIntermediateVat().getRate() > 0 ? settings.getIntermediateVat() : null;
+        if (vat == null)
+            vat = constantService.getVatTwenty();
+
+        if (vat.getId().equals(constantService.getVatTwenty().getId()))
+            return settings.getIntermediateVat().getRate() >= 0 ? settings.getIntermediateVat() : null;
 
         if (vat.getId().equals(constantService.getVatTwo().getId()))
-            return settings.getReducedVat().getRate() > 0 ? settings.getReducedVat() : null;
+            return settings.getReducedVat().getRate() >= 0 ? settings.getReducedVat() : null;
 
         return vat != null ? vat : constantService.getVatTwenty();
     }
@@ -122,12 +125,15 @@ public class VatServiceImpl implements VatService {
         if (settings == null)
             return vat != null ? vat : constantService.getVatDeductible();
 
-        if (vat == null || vat.getId().equals(constantService.getVatDeductible().getId()))
-            return settings.getIntermediateVatForPurshase().getRate() > 0 ? settings.getIntermediateVatForPurshase()
+        if (vat == null)
+            vat = constantService.getVatDeductible();
+
+        if (vat.getId().equals(constantService.getVatDeductible().getId()))
+            return settings.getIntermediateVatForPurshase().getRate() >= 0 ? settings.getIntermediateVatForPurshase()
                     : null;
 
         if (vat.getId().equals(constantService.getVatDeductibleTwo().getId()))
-            return settings.getReducedVatForPurshase().getRate() > 0 ? settings.getReducedVatForPurshase() : null;
+            return settings.getReducedVatForPurshase().getRate() >= 0 ? settings.getReducedVatForPurshase() : null;
 
         return (vat != null ? vat : constantService.getVatDeductible());
     }
@@ -160,11 +166,14 @@ public class VatServiceImpl implements VatService {
         if (settings == null)
             return vat != null ? vat : constantService.getVatTwenty();
 
-        if (vat == null || vat.getId().equals(constantService.getVatTwenty().getId()))
-            return settings.getIntermediateVat().getRate() > 0 ? settings.getIntermediateVat() : null;
+        if (vat == null)
+            vat = settings.getIntermediateVat();
+
+        if (vat.getId().equals(constantService.getVatTwenty().getId()))
+            return settings.getIntermediateVat().getRate() >= 0 ? settings.getIntermediateVat() : null;
 
         if (vat.getId().equals(constantService.getVatTwo().getId()))
-            return settings.getReducedVat().getRate() > 0 ? settings.getReducedVat() : null;
+            return settings.getReducedVat().getRate() >= 0 ? settings.getReducedVat() : null;
 
         return vat != null ? vat : constantService.getVatTwenty();
     }
