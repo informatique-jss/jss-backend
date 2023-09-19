@@ -110,7 +110,7 @@ public class VatServiceImpl implements VatService {
             return null;
 
         if (country.getId().equals(constantService.getCountryMonaco().getId()))
-            return vat != null ? vat : constantService.getVatTwenty();
+            return vat != null ? vat : constantService.getVatDeductible();
 
         City city = getCityForInvoice(invoice);
         if (city == null || city.getDepartment() == null)
@@ -120,7 +120,7 @@ public class VatServiceImpl implements VatService {
                 .getDepartmentVatSettingByDepartment(city.getDepartment());
 
         if (settings == null)
-            return vat != null ? vat : constantService.getVatTwenty();
+            return vat != null ? vat : constantService.getVatDeductible();
 
         if (vat == null || vat.getId().equals(constantService.getVatDeductible().getId()))
             return settings.getIntermediateVatForPurshase().getRate() > 0 ? settings.getIntermediateVatForPurshase()
@@ -321,6 +321,7 @@ public class VatServiceImpl implements VatService {
     public void completeVatOnInvoiceItem(InvoiceItem invoiceItem, Invoice invoice)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (invoice.getIsInvoiceFromProvider() == false && invoice.getIsProviderCreditNote() == false) {
+            chooseCorrectVatDeductibleCollected(invoiceItem, false);
             Vat applicableVat = getGeographicalApplicableVatForSales(invoice, invoiceItem.getVat());
 
             if (invoiceItem.getVat() != null) {
@@ -333,6 +334,7 @@ public class VatServiceImpl implements VatService {
             if (invoiceItem.getVat() == null)
                 invoiceItem.setVat(constantService.getVatTwenty());
         } else {
+            chooseCorrectVatDeductibleCollected(invoiceItem, true);
             Vat applicableVat = getGeographicalApplicableVatForPurshase(invoice, invoiceItem.getVat());
 
             if (invoiceItem.getVat() != null) {
@@ -355,6 +357,7 @@ public class VatServiceImpl implements VatService {
     @Override
     public void completeVatOnInvoiceItem(InvoiceItem invoiceItem, IQuotation customerOrder)
             throws OsirisException, OsirisClientMessageException {
+        chooseCorrectVatDeductibleCollected(invoiceItem, false);
         Vat applicableVat = getGeographicalApplicableVatForSales(customerOrder, invoiceItem.getVat());
 
         if (invoiceItem.getVat() != null) {
@@ -373,5 +376,22 @@ public class VatServiceImpl implements VatService {
             invoiceItem.setVatPrice(0f);
     }
 
-    // TODO : revoir, notamment pour les facturations depuis des AC DOM / TOM
+    private void chooseCorrectVatDeductibleCollected(InvoiceItem invoiceItem, boolean isPurschases)
+            throws OsirisException {
+        if (invoiceItem.getVat() != null)
+            if (isPurschases) {
+                // Deductible
+                if (invoiceItem.getVat().getRate().equals(constantService.getVatDeductible().getRate()))
+                    invoiceItem.setVat(constantService.getVatDeductible());
+                if (invoiceItem.getVat().getRate().equals(constantService.getVatDeductibleTwo().getRate()))
+                    invoiceItem.setVat(constantService.getVatDeductibleTwo());
+            } else {
+                // Collected
+                if (invoiceItem.getVat().getRate().equals(constantService.getVatTwenty().getRate()))
+                    invoiceItem.setVat(constantService.getVatTwenty());
+                if (invoiceItem.getVat().getRate().equals(constantService.getVatTwo().getRate()))
+                    invoiceItem.setVat(constantService.getVatTwo());
+            }
+    }
+
 }
