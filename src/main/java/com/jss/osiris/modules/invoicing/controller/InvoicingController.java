@@ -268,7 +268,7 @@ public class InvoicingController {
         if (payment.getPaymentAmount() > 0)
             accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment, false);
         else
-            accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
+            accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment, false);
         return new ResponseEntity<Payment>(payment, HttpStatus.OK);
     }
 
@@ -441,7 +441,7 @@ public class InvoicingController {
 
     @PostMapping(inputEntryPoint + "/direct/transfert/export")
     public ResponseEntity<byte[]> downloadTransferts(@RequestBody DirectDebitTransfertSearch transfertSearch)
-            throws OsirisValidationException, OsirisException {
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         byte[] data = null;
         HttpHeaders headers = null;
 

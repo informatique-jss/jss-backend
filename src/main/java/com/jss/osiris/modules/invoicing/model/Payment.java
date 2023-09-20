@@ -25,6 +25,7 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.Provision;
 
 @Entity
@@ -70,6 +71,11 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@JoinColumn(name = "id_bank_transfert")
 	@JsonIgnoreProperties(value = { "accountingRecords", "payments" }, allowSetters = true)
 	private BankTransfert bankTransfert;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_direct_debit_transfert")
+	@JsonIgnoreProperties(value = { "accountingRecords", "payments" }, allowSetters = true)
+	private DirectDebitTransfert directDebitTransfert;
 
 	@Column(nullable = false)
 	private Boolean isExternallyAssociated;
@@ -291,6 +297,14 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	public void setCompetentAuthority(CompetentAuthority competentAuthority) {
 		this.competentAuthority = competentAuthority;
+	}
+
+	public DirectDebitTransfert getDirectDebitTransfert() {
+		return directDebitTransfert;
+	}
+
+	public void setDirectDebitTransfert(DirectDebitTransfert directDebitTransfert) {
+		this.directDebitTransfert = directDebitTransfert;
 	}
 
 }

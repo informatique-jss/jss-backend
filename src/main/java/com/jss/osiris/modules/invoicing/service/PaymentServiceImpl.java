@@ -50,6 +50,7 @@ import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
@@ -59,6 +60,7 @@ import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CentralPayDelegateService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
@@ -140,6 +142,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     IndexEntityService indexEntityService;
+
+    @Autowired
+    DirectDebitTransfertService debitTransfertService;
 
     @Override
     public Payment getPayment(Integer id) {
@@ -232,7 +237,8 @@ public class PaymentServiceImpl implements PaymentService {
                         accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment,
                                 false);
                     else
-                        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
+                        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment,
+                                false);
                 }
                 automatchPayment(
                         paymentRepository.findByBankId(transaction.id()));
@@ -354,6 +360,24 @@ public class PaymentServiceImpl implements PaymentService {
 
             if (refundFound != null) {
                 associateOutboundPaymentAndRefund(payment, refundFound);
+                return;
+            }
+
+            DirectDebitTransfert directDebitFound = null;
+            // Try to match direct debit transfert
+            if (correspondingEntities != null && correspondingEntities.size() > 0) {
+                for (IndexEntity foundEntity : correspondingEntities) {
+                    if (foundEntity.getEntityType().equals(DirectDebitTransfert.class.getSimpleName())) {
+                        DirectDebitTransfert directDebitTransfert = debitTransfertService
+                                .getDirectDebitTransfert(foundEntity.getEntityId());
+                        if (directDebitTransfert != null && directDebitTransfert.getIsMatched() == false)
+                            directDebitFound = directDebitTransfert;
+                    }
+                }
+            }
+
+            if (directDebitFound != null) {
+                associateOutboundPaymentAndDirectDebitTransfert(payment, directDebitFound);
                 return;
             }
 
@@ -655,6 +679,20 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    private void associateOutboundPaymentAndDirectDebitTransfert(Payment payment,
+            DirectDebitTransfert directDebitTransfert) throws OsirisException {
+
+        Float directDebitAmount = Math.round(directDebitTransfert.getTransfertAmount() * 100f) / 100f;
+        Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
+
+        if (directDebitAmount.equals(paymentAmount)) {
+            directDebitTransfert.setIsMatched(true);
+            debitTransfertService.addOrUpdateDirectDebitTransfert(directDebitTransfert);
+            payment.setDirectDebitTransfert(directDebitTransfert);
+            addOrUpdatePayment(payment);
+        }
+    }
+
     private void associateOutboundPaymentAndBankTransfert(Payment payment, BankTransfert bankTransfert)
             throws OsirisException, OsirisValidationException {
 
@@ -727,7 +765,7 @@ public class PaymentServiceImpl implements PaymentService {
                         ? constantService.getAccountingAccountCaisse()
                         : constantService.getAccountingAccountBankJss());
         addOrUpdatePayment(payment);
-        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
+        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment, false);
         return payment;
     }
 
@@ -872,6 +910,23 @@ public class PaymentServiceImpl implements PaymentService {
         return addOrUpdatePayment(newPayment);
     }
 
+    @Override
+    public Payment generateNewDirectDebitPayment(Float paymentAmount, String label) throws OsirisException {
+
+        Payment payment = new Payment();
+        payment.setIsExternallyAssociated(false);
+        payment.setLabel(label);
+        payment.setPaymentAmount(paymentAmount);
+        payment.setPaymentDate(LocalDateTime.now());
+        payment.setPaymentType(constantService.getPaymentTypePrelevement());
+        payment.setIsAppoint(false);
+        payment.setIsDeposit(false);
+        payment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+        payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
+
+        return addOrUpdatePayment(payment);
+    }
+
     private void associatePaymentAndInvoice(Payment payment, Invoice invoice, boolean checkForAppoint)
             throws OsirisException, OsirisValidationException {
         invoice = invoiceService.getInvoice(invoice.getId());
@@ -964,7 +1019,7 @@ public class PaymentServiceImpl implements PaymentService {
                 -(invoiceItem.getPreTaxPrice() + invoiceItem.getVatPrice()),
                 constantService.getProviderCentralPay().getAccountingAccountDeposit(),
                 constantService.getProviderCentralPay().getAccountingAccountProvider(), invoiceLabel);
-        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(centralPayPayment);
+        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(centralPayPayment, false);
 
         associateOutboundPaymentAndInvoice(centralPayPayment, centralPayInvoice);
     }
@@ -1058,15 +1113,6 @@ public class PaymentServiceImpl implements PaymentService {
 
                 if (idToFind != null) {
                     tmpEntitiesFound = searchService.searchForEntitiesById(idToFind, entityTypesToSearch);
-
-                    Invoice directDebitTransfertInvoice = invoiceService
-                            .searchInvoicesByIdDirectDebitTransfert(idToFind);
-                    if (directDebitTransfertInvoice != null) {
-                        tmpEntitiesFound.addAll(searchService.searchForEntitiesById(directDebitTransfertInvoice.getId(),
-                                Arrays.asList(Invoice.class.getSimpleName())));
-                        payment.setPaymentType(constantService.getPaymentTypePrelevement());
-                        payment = addOrUpdatePayment(payment);
-                    }
                 }
                 if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                     for (IndexEntity newEntity : tmpEntitiesFound) {
@@ -1257,7 +1303,7 @@ public class PaymentServiceImpl implements PaymentService {
         cancelPayment(payment);
         Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                 competentAuthority.getAccountingAccountDeposit());
-        payment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
+        newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
         accountingRecordGenerationService
                 .generateAccountingRecordOnPaymentOnDepositCompetentAuthorityAccount(newPayment);
         newPayment.setCompetentAuthority(competentAuthority);

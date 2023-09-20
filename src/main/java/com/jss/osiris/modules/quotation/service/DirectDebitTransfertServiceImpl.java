@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.transfer.CdtrSchmeIdBean;
 import com.jss.osiris.libs.transfer.CdtrSchmeIdBeanIdBean;
@@ -48,11 +50,14 @@ import com.jss.osiris.libs.transfer.PrvtOtherBean;
 import com.jss.osiris.libs.transfer.RmtInfBean;
 import com.jss.osiris.libs.transfer.SchmeNmBean;
 import com.jss.osiris.libs.transfer.SvcLvlBean;
+import com.jss.osiris.modules.accounting.service.AccountingRecordGenerationService;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
@@ -84,6 +89,12 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
     @Value("${jss.sepa.identification}")
     private String jssSepaIdentification;
 
+    @Autowired
+    PaymentService paymentService;
+
+    @Autowired
+    AccountingRecordGenerationService accountingRecordGenerationService;
+
     @Override
     public List<DirectDebitTransfert> getDirectDebitTransferts() {
         return IterableUtils.toList(directDebitTransfertRepository.findAll());
@@ -101,6 +112,8 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
     @Transactional(rollbackFor = Exception.class)
     public DirectDebitTransfert addOrUpdateDirectDebitTransfert(
             DirectDebitTransfert directDebitTransfert) {
+        if (directDebitTransfert.getIsMatched() == null)
+            directDebitTransfert.setIsMatched(false);
         return directDebitTransfertRepository.save(directDebitTransfert);
     }
 
@@ -193,7 +206,8 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public File getDirectDebitTransfertExport(DirectDebitTransfertSearch transfertSearch) throws OsirisException {
+    public File getDirectDebitTransfertExport(DirectDebitTransfertSearch transfertSearch)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         List<DirectDebitTransfertSearchResult> bankTransferts = searchDirectDebitTransfert(transfertSearch);
         String xml = "";
@@ -339,7 +353,19 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
                 body.getDrctDbtTxInfBeanList().add(prelevement);
 
-                completeTransfert.setIsAlreadyExported(true);
+                if (completeTransfert.getIsAlreadyExported() == null
+                        || completeTransfert.getIsAlreadyExported() == false) {
+                    completeTransfert.setIsAlreadyExported(true);
+                    addOrUpdateDirectDebitTransfert(completeTransfert);
+
+                    Payment payment = paymentService.generateNewDirectDebitPayment(
+                            completeTransfert.getTransfertAmount(), completeTransfert.getLabel());
+                    accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment, false);
+
+                    paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment,
+                            Arrays.asList(completeTransfert.getInvoices().get(0)), null, null, null, null, null,
+                            null);
+                }
                 addOrUpdateDirectDebitTransfert(completeTransfert);
             }
 

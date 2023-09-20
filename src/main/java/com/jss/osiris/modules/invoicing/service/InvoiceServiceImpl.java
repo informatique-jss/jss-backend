@@ -263,12 +263,13 @@ public class InvoiceServiceImpl implements InvoiceService {
                         "Paiement pour la facture " + invoice.getId() + " / Fournisseur : "
                                 + (invoice.getProvider() != null ? invoice.getProvider().getLabel()
                                         : invoice.getCompetentAuthority().getLabel()));
-                accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
+                accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment, false);
                 paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment, Arrays.asList(invoice), null, null,
                         null, null, null, null);
             }
         } else {
-            if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())) {
+            if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())
+                    && !invoice.getIsCreditNote()) {
                 invoice.setDirectDebitTransfert(
                         directDebitTransfertService.generateDirectDebitTransfertForOutboundInvoice(invoice));
             }
@@ -348,7 +349,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         if (invoice.getDirectDebitTransfert() != null) {
-            if (invoice.getDirectDebitTransfert().getIsAlreadyExported() == true)
+            if (invoice.getDirectDebitTransfert().getIsAlreadyExported() == false)
                 directDebitTransfertService.cancelDirectDebitTransfert(invoice.getDirectDebitTransfert());
             else {
                 if (invoice.getPayments() != null) {

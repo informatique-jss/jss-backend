@@ -658,7 +658,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     }
 
     @Override
-    public void generateAccountingRecordOnOutgoingPaymentCreation(Payment payment)
+    public void generateAccountingRecordOnOutgoingPaymentCreation(Payment payment, boolean isForRefund)
             throws OsirisException, OsirisValidationException {
         AccountingJournal bankJournal = payment.getPaymentType().getId()
                 .equals(constantService.getPaymentTypeEspeces().getId()) ? constantService.getAccountingJournalCash()
@@ -667,10 +667,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         // If target is waiting account and source not bank (case of refund after
         // cancellation of payment),
         // put it on OD journal
-        if (payment.getTargetAccountingAccount().getId()
-                .equals(accountingAccountService.getWaitingAccountingAccount().getId())
-                && !payment.getSourceAccountingAccount().getId()
-                        .equals(constantService.getAccountingJournalBank().getId()))
+        if (isForRefund)
             bankJournal = constantService.getAccountingJournalMiscellaneousOperations();
 
         if (payment.getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId()))

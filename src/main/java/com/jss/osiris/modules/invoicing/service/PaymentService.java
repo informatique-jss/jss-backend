@@ -78,6 +78,8 @@ public interface PaymentService {
                         String label)
                         throws OsirisException;
 
+        public Payment generateNewDirectDebitPayment(Float paymentAmount, String label) throws OsirisException;
+
         public void refundPayment(Payment payment, Tiers tiers, Affaire affaire)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
