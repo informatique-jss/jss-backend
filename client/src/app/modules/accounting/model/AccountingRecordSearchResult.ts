@@ -19,7 +19,6 @@ export interface AccountingRecordSearchResult {
   invoiceId: number;
   customerId: number;
   paymentId: number;
-  depositId: number;
   /**
  * only used in fronted
  */

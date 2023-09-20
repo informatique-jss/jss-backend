@@ -2,10 +2,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { CompetentAuthority } from '../../miscellaneous/model/CompetentAuthority';
 import { CustomerOrder } from '../../quotation/model/CustomerOrder';
 import { Invoice } from '../../quotation/model/Invoice';
+import { Provision } from '../../quotation/model/Provision';
 import { Payment } from '../model/Payment';
 import { PaymentAssociate } from '../model/PaymentAssociate';
+import { PaymentSearchResult } from '../model/PaymentSearchResult';
 
 @Injectable({
   providedIn: 'root'
@@ -31,14 +34,6 @@ export class PaymentService extends AppRestService<Payment>{
     return this.postList(new HttpParams(), "payments/associate", paymentAssociate, "Association réalisée avec succès", "Erreur lors de l'association");
   }
 
-  setExternallyAssociated(payment: Payment) {
-    return this.postList(new HttpParams(), "payments/associate/externally", payment);
-  }
-
-  unsetExternallyAssociated(payment: Payment) {
-    return this.postList(new HttpParams(), "payments/unassociate/externally", payment);
-  }
-
   addCashPaymentForInvoice(payment: Payment, invoice: Invoice) {
     return this.postItem(new HttpParams().set("idInvoice", invoice.id), "payment/cash/add/invoice", payment);
   }
@@ -51,10 +46,18 @@ export class PaymentService extends AppRestService<Payment>{
     return this.postItem(new HttpParams(), "payment/check/add", payment);
   }
 
+  addProvisionPayment(payment: Payment, provision: Provision) {
+    return this.postItem(new HttpParams().set("idProvision", provision.id), "payment/provision/add", payment);
+  }
+
   refundPayment(payment: Payment, tiers: IndexEntity, affaire: IndexEntity) {
     if (affaire)
       return this.get(new HttpParams().set("paymentId", payment.id).set("tiersId", tiers.entityId).set("affaireId", affaire.entityId), "refund/payment", "Paiement remboursé", "Erreur lors du remboursement du paiement");
     else
       return this.get(new HttpParams().set("paymentId", payment.id).set("tiersId", tiers.entityId).set("affaireId", 1), "refund/payment", "Paiement remboursé", "Erreur lors du remboursement du paiement");
+  }
+
+  putInAccount(payment: PaymentSearchResult, competentAuthority: CompetentAuthority) {
+    return this.get(new HttpParams().set("paymentId", payment.id).set("competentAuthorityId", competentAuthority.id!), "payment/account", "Paiement mis en compte", "Erreur lors de la mise en compte du paiement");
   }
 }

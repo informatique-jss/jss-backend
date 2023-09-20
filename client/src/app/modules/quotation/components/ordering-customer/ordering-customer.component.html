@@ -90,6 +90,13 @@
             </sort-table>
           </div>
           <div class="div-customer-order"
+            *ngIf="quotation && instanceOfQuotation(quotation) && (!quotationCustomerOrders || quotationCustomerOrders.length==0) && quotation.quotationStatus.code==QUOTATION_STATUS_SENT_TO_CUSTOMER">
+            <autocomplete-customer-order [(model)]="selectedCustomerOrder" [form]="orderingCustomerForm"
+              propertyName="selectedCustomerOrder" [isMandatory]="false" label="Associer ce devis à une commande"
+              (onOptionSelected)="selectCustomerOrderOnQuotation($event)" [isDisabled]="!editMode">
+            </autocomplete-customer-order>
+          </div>
+          <div class="div-customer-order"
             *ngIf="quotation && instanceOfCustomerOrder(quotation) && customerOrderQuotations && customerOrderQuotations.length>0">
             <p>Devis issus de cette commande</p>
             <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
@@ -168,6 +175,13 @@
             <sort-table [actions]="customerOrderTableActions" [columns]="customerOrderDisplayedColumns"
               [values]="quotationCustomerOrders" tableName="Liste commandes">
             </sort-table>
+          </div>
+          <div class="div-customer-order"
+            *ngIf="quotation && instanceOfQuotation(quotation) && (!quotationCustomerOrders || quotationCustomerOrders.length==0) && quotation.quotationStatus.code==QUOTATION_STATUS_SENT_TO_CUSTOMER">
+            <autocomplete-customer-order [(model)]="selectedCustomerOrder" [form]="orderingCustomerForm"
+              propertyName="selectedCustomerOrder" [isMandatory]="false" label="Associer ce devis à une commande"
+              (onOptionSelected)="selectCustomerOrderOnQuotation($event)" [isDisabled]="!editMode">
+            </autocomplete-customer-order>
           </div>
           <div class="div-customer-order"
             *ngIf="quotation && instanceOfCustomerOrder(quotation) && customerOrderQuotations && customerOrderQuotations.length>0">

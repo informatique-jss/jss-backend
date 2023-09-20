@@ -20,7 +20,6 @@ import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
-import com.jss.osiris.modules.invoicing.service.DepositService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -80,9 +79,6 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     CentralPayDelegateService centralPayDelegateService;
-
-    @Autowired
-    DepositService depositService;
 
     @Autowired
     PaymentService paymentService;
@@ -157,7 +153,7 @@ public class QuotationServiceImpl implements QuotationService {
 
         quotation = getQuotation(quotation.getId());
 
-        indexEntityService.indexEntity(quotation, quotation.getId());
+        indexEntityService.indexEntity(quotation);
 
         if (isNewQuotation) {
             notificationService.notifyNewQuotation(quotation);
@@ -297,7 +293,7 @@ public class QuotationServiceImpl implements QuotationService {
         List<Quotation> quotations = IterableUtils.toList(quotationRepository.findAll());
         if (quotations != null)
             for (Quotation quotation : quotations)
-                indexEntityService.indexEntity(quotation, quotation.getId());
+                indexEntityService.indexEntity(quotation);
     }
 
     @Override
@@ -345,7 +341,7 @@ public class QuotationServiceImpl implements QuotationService {
                     quotation.getId() + "", subject);
 
             centralPayPaymentRequestService.declareNewCentralPayPaymentRequest(paymentRequest.getPaymentRequestId(),
-                    null, quotation, false);
+                    null, quotation);
             return paymentRequest.getBreakdowns().get(0).getEndpoint();
         }
         return "ok";
@@ -367,7 +363,9 @@ public class QuotationServiceImpl implements QuotationService {
 
                     if (quotation.getQuotationStatus().getCode()
                             .equals(QuotationStatus.SENT_TO_CUSTOMER)) {
-                        unlockQuotationFromDeposit(quotation, centralPayPaymentRequest);
+                        unlockQuotationFromDeposit(quotation);
+                        paymentService.generateDepositOnCustomerOrderForCbPayment(
+                                quotation.getCustomerOrders().get(0), centralPayPaymentRequest);
                     }
                 }
                 if (centralPayPaymentRequest.getCreationDate().isBefore(LocalDateTime.now().minusMinutes(5))) {
@@ -383,15 +381,14 @@ public class QuotationServiceImpl implements QuotationService {
         return true;
     }
 
-    private Quotation unlockQuotationFromDeposit(Quotation quotation, CentralPayPaymentRequest centralPayPaymentRequest)
+    @Override
+    public Quotation unlockQuotationFromDeposit(Quotation quotation)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
             // Generate customer order
             quotation = addOrUpdateQuotationStatus(quotation, QuotationStatus.VALIDATED_BY_CUSTOMER);
             notificationService.notifyQuotationValidatedByCustomer(quotation, false);
-            customerOrderService.generateDepositOnCustomerOrderForCbPayment(quotation.getCustomerOrders().get(0),
-                    centralPayPaymentRequest);
         }
         return quotation;
     }
@@ -541,6 +538,21 @@ public class QuotationServiceImpl implements QuotationService {
             throw new OsirisValidationException("Deposit mandatory");
 
         addOrUpdateQuotationStatus(quotation, QuotationStatus.VALIDATED_BY_CUSTOMER);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Quotation associateCustomerOrderToQuotation(Quotation quotation, CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
+
+        quotation = getQuotation(quotation.getId());
+        if (quotation.getCustomerOrders() == null)
+            quotation.setCustomerOrders(new ArrayList<CustomerOrder>());
+        quotation.getCustomerOrders().add(customerOrder);
+        quotation.setQuotationStatus(
+                quotationStatusService.getQuotationStatusByCode(QuotationStatus.VALIDATED_BY_CUSTOMER));
+        return addOrUpdateQuotation(quotation);
     }
 
 }

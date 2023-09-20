@@ -2,6 +2,7 @@ package com.jss.osiris.modules.invoicing.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -50,20 +52,8 @@ public class Refund implements Serializable, IId {
 	private Affaire affaire;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_payment")
-	private Payment payment;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_deposit")
-	private Deposit deposit;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_refund_type")
 	private RefundType refundType;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_appoint")
-	private Appoint appoint;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order")
@@ -79,6 +69,16 @@ public class Refund implements Serializable, IId {
 	private Boolean isMatched;
 
 	private Boolean isAlreadyExported;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_invoice")
+	@JsonIgnoreProperties(value = { "payments", "accountingRecords", "refunds" }, allowSetters = true)
+	private Invoice invoice;
+
+	@OneToMany(mappedBy = "refund", fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = { "refund", "originPayment", "childrenPayments",
+			"accountingRecords" }, allowSetters = true)
+	private List<Payment> payments;
 
 	public Integer getId() {
 		return id;
@@ -136,14 +136,6 @@ public class Refund implements Serializable, IId {
 		this.affaire = affaire;
 	}
 
-	public Payment getPayment() {
-		return payment;
-	}
-
-	public void setPayment(Payment payment) {
-		this.payment = payment;
-	}
-
 	public RefundType getRefundType() {
 		return refundType;
 	}
@@ -176,14 +168,6 @@ public class Refund implements Serializable, IId {
 		this.isAlreadyExported = isAlreadyExported;
 	}
 
-	public Deposit getDeposit() {
-		return deposit;
-	}
-
-	public void setDeposit(Deposit deposit) {
-		this.deposit = deposit;
-	}
-
 	public String getRefundBic() {
 		return refundBic;
 	}
@@ -200,12 +184,19 @@ public class Refund implements Serializable, IId {
 		this.customerOrder = customerOrder;
 	}
 
-	public Appoint getAppoint() {
-		return appoint;
+	public Invoice getInvoice() {
+		return invoice;
 	}
 
-	public void setAppoint(Appoint appoint) {
-		this.appoint = appoint;
+	public void setInvoice(Invoice invoice) {
+		this.invoice = invoice;
 	}
 
+	public List<Payment> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<Payment> payments) {
+		this.payments = payments;
+	}
 }

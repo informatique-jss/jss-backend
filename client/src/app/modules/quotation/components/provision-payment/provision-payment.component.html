@@ -1,0 +1,80 @@
+<form [formGroup]="provisionPaymentForm" *ngIf=" provision && provision.id && quotation">
+  <div class="form-div">
+    <div>
+      <p>
+        Déclarer un paiement :
+      </p>
+      <table class="full-width">
+        <tr>
+          <td>
+            <generic-datepicker [(model)]="newPayment.paymentDate" label="Date du paiement"
+              [form]="provisionPaymentForm" propertyName="paymentDate" [isMandatory]="true"
+              [isDisabled]="!editMode"></generic-datepicker>
+          </td>
+          <td>
+            <generic-input [(model)]="newPayment.paymentAmount" label="Montant" [form]="provisionPaymentForm"
+              propertyName="paymentAmount" [isMandatory]="true" [isDisabled]="!editMode" type="number"></generic-input>
+          </td>
+          <td>
+            <select-payment-types [(model)]="newPayment.paymentType" label="Type de paiement"
+              [form]="provisionPaymentForm" propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
+              [filteredPaymentType]="[paymentTypeCheck, paymentTypeCash]"></select-payment-types>
+          </td>
+          <td>
+            <generic-input [(model)]="newPayment.label" label="Libellé" [form]="provisionPaymentForm"
+              propertyName="label" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="250"></generic-input>
+          </td>
+          <td *ngIf="newPayment.paymentType && newPayment.paymentType.id == paymentTypeCheck.id">
+            <generic-input [(model)]="newPayment.checkNumber" label="N° de chèque" [form]="provisionPaymentForm"
+              propertyName="checkNumber" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="50"></generic-input>
+          </td>
+          <td class="fab-td-button">
+            <button mat-mini-fab color="warn" matTooltip="Ajouter le paiement" (click)="addNewPayment()"
+              class="add-button fab-td-button-top">
+              <mat-icon>add</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div *ngIf="provision.payments">
+      <p>
+        Paiements associés :
+      </p>
+      <sort-table [actions]="paymentsTableActions" [columns]="paymentsDisplayedColumns" [values]="provision.payments"
+        tableName="Paiements fournisseur " *ngIf="paymentsDisplayedColumns && paymentsDisplayedColumns.length>0 "
+        [displayTotalLines]="true">
+      </sort-table>
+    </div>
+    <div *ngIf="provision.providerInvoices" class="padding-top">
+      <p>
+        Factures associées :
+      </p>
+      <sort-table [actions]="invoiceTableActions" [columns]="invoiceDisplayedColumns"
+        [values]="provision.providerInvoices" tableName="Factures fournisseur "
+        *ngIf="invoiceDisplayedColumns && invoiceDisplayedColumns.length>0 " [displayTotalLines]="true">
+      </sort-table>
+    </div>
+    <div *ngIf="getAvailableAzureInvoices() && canAddNewAzureInvoice()" class="padding-top">
+      <p>
+        Associer une facture automatique :
+      </p>
+      <ul>
+        <li *ngFor="let attachment of getAvailableAzureInvoices()">N°{{attachment.id}} -
+          {{attachment.azureInvoice.invoiceId}} - {{attachment.azureInvoice.invoiceTotal}} € <span class="pointer"
+            (click)="createInvoiceFromAzureInvoice(attachment.azureInvoice, $event)">(créer la facture libre)</span>
+        </li>
+      </ul>
+    </div>
+    <div *ngIf="canAddNewInvoice()">
+      <autocomplete-azure-invoice [(model)]="azureInvoiceSelected" [form]="provisionPaymentForm"
+        propertyName="azureInvoiceSelected" [isMandatory]="false"
+        label="Rechercher une facture automatique"></autocomplete-azure-invoice>
+    </div>
+    <div *ngIf="canAddNewInvoice()" class="padding-top">
+      <p (click)="createNewInvoice($event)" class="pointer">
+        Créer une facture libre
+      </p>
+    </div>
+  </div>
+</form>

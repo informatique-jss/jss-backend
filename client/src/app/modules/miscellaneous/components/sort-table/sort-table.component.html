@@ -13,7 +13,12 @@
             <mat-icon color="accent" [matTooltip]="column.actionTooltip" color="accent"
               class="pointer column-content-icon" (click)="openColumnLink($event, column, element)"
               (auxclick)="openColumnLink($event, column, element)" *ngIf=" column.actionLinkFunction && getColumnLink(column,
-              element)">
+              element)  && getColumnValue(column, element) ">
+              {{column.actionIcon}}
+            </mat-icon>
+            <mat-icon color="accent" [matTooltip]="column.actionTooltip" color="accent"
+              class="pointer column-content-icon" (click)="columnActionTrigger( column, element)"
+              *ngIf=" column.actionFunction && getColumnValue(column, element) ">
               {{column.actionIcon}}
             </mat-icon>
           </span>

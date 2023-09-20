@@ -1,4 +1,4 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { REPORTING_DATASET_CUSTOMER_ORDER_FOR_TIERS } from 'src/app/libs/Constants';
@@ -19,7 +19,7 @@ import { SettlementBillingComponent } from '../settlement-billing/settlement-bil
 import { PrincipalComponent } from '../tiers-main/tiers-main.component';
 
 @Component({
-  selector: 'app-tiers',
+  selector: 'tiers',
   templateUrl: './tiers.component.html',
   styleUrls: ['./tiers.component.css'],
   encapsulation: ViewEncapsulation.None,
@@ -51,6 +51,9 @@ export class TiersComponent implements OnInit, AfterContentChecked {
   @ViewChild(SettlementBillingComponent) documentSettlementBillingComponent: SettlementBillingComponent | undefined;
   @ViewChild(ResponsableMainComponent) responsableMainComponent: ResponsableMainComponent | undefined;
 
+  @Input() idTiers: number | undefined;
+  @Input() idResponsable: number | undefined;
+
   constructor(private appService: AppService,
     private tiersService: TiersService,
     private activatedRoute: ActivatedRoute,
@@ -60,20 +63,26 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit() {
-    this.appService.changeHeaderTitle("Tiers / Responsables");
+    if (!this.idTiers && !this.idResponsable)
+      this.appService.changeHeaderTitle("Tiers / Responsables");
 
     let idTiers: number = this.activatedRoute.snapshot.params.id;
+    if (this.idTiers)
+      idTiers = this.idTiers;
+
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
 
     // Load by responsable
-    if (url != undefined && url != null && url[0] != undefined && url[1] != undefined && url[0].path == "tiers" && url[1].path == "responsable") {
-      this.tiersService.getTiersByResponsable(idTiers).subscribe(response => {
+    if (this.idResponsable || url != undefined && url != null && url[0] != undefined && url[1] != undefined && url[0].path == "tiers" && url[1].path == "responsable") {
+      this.tiersService.getTiersByResponsable(this.idResponsable ? this.idResponsable : idTiers).subscribe(response => {
         this.tiers = response;
         this.tiersService.setCurrentViewedTiers(this.tiers);
-        this.appService.changeHeaderTitle(this.tiers.denomination != null ? this.tiers.denomination : this.tiers.firstname + " " + this.tiers.lastname);
+
+        if (!this.idTiers && !this.idResponsable)
+          this.appService.changeHeaderTitle(this.tiers.denomination != null ? this.tiers.denomination : this.tiers.firstname + " " + this.tiers.lastname);
         this.toggleTabs();
         this.selectedTabIndex = 2;
-        this.responsableMainComponent?.setSelectedResponsableId(idTiers);
+        this.responsableMainComponent?.setSelectedResponsableId(this.idResponsable ? this.idResponsable : idTiers);
 
         this.loadQuotationFilter();
         this.loadReporting();
@@ -91,7 +100,8 @@ export class TiersComponent implements OnInit, AfterContentChecked {
       })
     } else if (this.createMode == false) {
       // Blank page
-      this.appService.changeHeaderTitle("Tiers / Responsables");
+      if (!this.idTiers && !this.idResponsable)
+        this.appService.changeHeaderTitle("Tiers / Responsables");
     }
 
     this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
@@ -135,9 +145,11 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
   changeHeader() {
     if (this.tiers.denomination != null) {
-      this.appService.changeHeaderTitle(this.tiers.denomination);
+      if (!this.idTiers && !this.idResponsable)
+        this.appService.changeHeaderTitle(this.tiers.denomination);
     } else if (this.tiers.firstname != null) {
-      this.appService.changeHeaderTitle(this.tiers.firstname + " " + this.tiers.lastname);
+      if (!this.idTiers && !this.idResponsable)
+        this.appService.changeHeaderTitle(this.tiers.firstname + " " + this.tiers.lastname);
     }
   }
   changePageHeader($event: any) {
@@ -196,7 +208,8 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     this.tiers.isProvisionalPaymentMandatory = true;
     this.tiers.responsables = [] as Array<Responsable>;
     this.tiersService.setCurrentViewedTiers(this.tiers);
-    this.appService.changeHeaderTitle("Nouveau Tiers / Responsable");
+    if (!this.idTiers && !this.idResponsable)
+      this.appService.changeHeaderTitle("Nouveau Tiers / Responsable");
     this.toggleTabs();
   }
 

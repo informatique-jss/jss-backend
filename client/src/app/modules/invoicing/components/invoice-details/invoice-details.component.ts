@@ -17,7 +17,7 @@ import { InvoiceService } from '../../services/invoice.service';
 import { getAffaireList, getAffaireListArray, getCustomerOrderForInvoice, getCustomerOrderNameForInvoice, getLetteringDate, getProviderLabelForInvoice, getRemainingToPay, getResponsableName } from '../invoice-tools';
 
 @Component({
-  selector: 'app-invoice-details',
+  selector: 'invoice-details',
   templateUrl: './invoice-details.component.html',
   styleUrls: ['./invoice-details.component.css']
 })
@@ -43,8 +43,12 @@ export class InvoiceDetailsComponent implements OnInit {
   invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
   invoiceStatusCreditNoteReceived = this.constantService.getInvoiceStatusCreditNoteReceived();
   attachmentTypeInvoice = this.constantService.getAttachmentTypeInvoice();
+  attachmentTypeCreditNote = this.constantService.getAttachmentTypeCreditNote();
 
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
+
+  @Input() idInvoice: number | undefined;
+  @Input() isForIntegration: boolean = false;
 
   ngOnInit() {
     this.refreshData();
@@ -56,12 +60,16 @@ export class InvoiceDetailsComponent implements OnInit {
 
   refreshData() {
     let idInvoice: number = this.activatedRoute.snapshot.params.id;
+    if (this.idInvoice)
+      idInvoice = this.idInvoice;
 
     if (idInvoice) {
-      this.appService.changeHeaderTitle("Facture/avoir n°" + idInvoice);
+      if (!this.isForIntegration)
+        this.appService.changeHeaderTitle("Facture/avoir n°" + idInvoice);
       this.invoiceService.getInvoiceById(idInvoice).subscribe(response => {
         this.invoice = response;
-        this.appService.changeHeaderTitle((this.invoice.isCreditNote || this.invoice.isProviderCreditNote ? "Avoir" : "Facture") + " n°" + idInvoice + " - " + this.invoice.invoiceStatus.label);
+        if (!this.isForIntegration)
+          this.appService.changeHeaderTitle((this.invoice.isCreditNote || this.invoice.isProviderCreditNote ? "Avoir" : "Facture") + " n°" + idInvoice + " - " + this.invoice.invoiceStatus.label);
       })
     }
   }
@@ -173,7 +181,10 @@ export class InvoiceDetailsComponent implements OnInit {
   }
 
   getPriceTotal(): number {
-    return this.getPreTaxPriceTotal() - this.getDiscountTotal() + this.getVatTotal();
+    if (!this.invoice || this.invoice.invoiceItems && this.invoice.invoiceItems.length > 0)
+      return this.getPreTaxPriceTotal() - this.getDiscountTotal() + this.getVatTotal();
+    else
+      return this.invoice.totalPrice;
   }
 
 
@@ -203,7 +214,7 @@ export class InvoiceDetailsComponent implements OnInit {
   }
 
   canAddCreditNote() {
-    if (this.invoice && !this.invoice.isCreditNote && !this.invoice.creditNote) {
+    if (this.invoice && !this.invoice.isCreditNote) {
       return this.habilitationService.canAddNewInvoice();
     }
     return false;

@@ -8,6 +8,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
@@ -22,17 +23,38 @@ public class InvoiceHelper {
     @Autowired
     ConstantService constantService;
 
-    public ITiers getCustomerOrder(Invoice invoice) throws OsirisException {
-        if (invoice.getConfrere() != null)
-            return invoice.getConfrere();
-
-        if (invoice.getResponsable() != null)
-            return invoice.getResponsable();
-
+    public IGenericTiers getCustomerOrder(Invoice invoice) throws OsirisException {
+        IGenericTiers customerOrder = null;
         if (invoice.getTiers() != null)
-            return invoice.getTiers();
+            customerOrder = invoice.getTiers();
+        if (invoice.getResponsable() != null)
+            customerOrder = invoice.getResponsable().getTiers();
+        if (invoice.getProvider() != null)
+            customerOrder = invoice.getProvider();
+        if (invoice.getConfrere() != null)
+            customerOrder = invoice.getConfrere();
+        if (invoice.getCompetentAuthority() != null)
+            customerOrder = invoice.getCompetentAuthority();
 
-        throw new OsirisException(null, "No customer order declared on Invoice " + invoice.getId());
+        if (customerOrder == null)
+            throw new OsirisException(null, "No customer order declared on Invoice " + invoice.getId());
+
+        return customerOrder;
+    }
+
+    public IGenericTiers getCustomerOrder(CustomerOrder inCustomerOrder) throws OsirisException {
+        IGenericTiers customerOrder = null;
+        if (inCustomerOrder.getTiers() != null)
+            customerOrder = inCustomerOrder.getTiers();
+        if (inCustomerOrder.getResponsable() != null)
+            customerOrder = inCustomerOrder.getResponsable().getTiers();
+        if (inCustomerOrder.getConfrere() != null)
+            customerOrder = inCustomerOrder.getConfrere();
+
+        if (customerOrder == null)
+            throw new OsirisException(null, "No customer order declared on CustomerOrder " + inCustomerOrder.getId());
+
+        return customerOrder;
     }
 
     public Invoice setPriceTotal(Invoice invoice) {
@@ -56,6 +78,13 @@ public class InvoiceHelper {
             }
         }
         return discountTotal;
+    }
+
+    public Float getTotalForInvoiceItem(InvoiceItem invoiceItem) {
+        return (invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f)
+                + (invoiceItem.getVatPrice() != null ? invoiceItem.getVatPrice() : 0f)
+                - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
+                        : 0f);
     }
 
     public Float getPreTaxPriceTotal(Invoice invoice) {

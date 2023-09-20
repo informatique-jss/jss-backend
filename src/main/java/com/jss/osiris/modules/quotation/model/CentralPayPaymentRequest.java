@@ -24,8 +24,6 @@ public class CentralPayPaymentRequest {
     @JoinColumn(name = "id_quotation")
     private Quotation quotation;
 
-    private Boolean isForInvoice;
-
     public Integer getId() {
         return id;
     }
@@ -56,14 +54,6 @@ public class CentralPayPaymentRequest {
 
     public void setQuotation(Quotation quotation) {
         this.quotation = quotation;
-    }
-
-    public Boolean getIsForInvoice() {
-        return isForInvoice;
-    }
-
-    public void setIsForInvoice(Boolean isForInvoice) {
-        this.isForInvoice = isForInvoice;
     }
 
 }

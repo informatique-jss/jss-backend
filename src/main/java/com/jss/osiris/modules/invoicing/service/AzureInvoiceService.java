@@ -13,8 +13,6 @@ import com.jss.osiris.modules.quotation.model.Provision;
 public interface AzureInvoiceService {
         public AzureInvoice getAzureInvoice(Integer id);
 
-        public List<AzureInvoice> getAzureInvoices(Boolean displayOnlyToCheck);
-
         public AzureInvoice addOrUpdateAzureInvoice(AzureInvoice azureInvoice) throws OsirisException;
 
         public List<AzureInvoice> searchAzureInvoicesByInvoiceId(String invoiceId);
@@ -24,7 +22,7 @@ public interface AzureInvoiceService {
 
         public AzureInvoice getAzureInvoiceByInvoiceId(String invoiceId);
 
-        public Invoice generateDeboursAndInvoiceFromInvoiceFromUser(AzureInvoice azureInvoice,
+        public Invoice generateInvoiceFromAzureInvoice(AzureInvoice azureInvoice,
                         Provision currentProvision)
                         throws OsirisClientMessageException, OsirisException, OsirisValidationException;
 
