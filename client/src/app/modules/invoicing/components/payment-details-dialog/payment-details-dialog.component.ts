@@ -243,7 +243,7 @@ export class PaymentDetailsDialogComponent implements OnInit, AfterContentChecke
 
   selectPayment(node: PaymentTreeNode, payment: Payment) {
     if (payment)
-      if (node.name == this.getNodeName(payment, node.level == 0)) {
+      if (node.name.indexOf(this.getNodeName(payment, node.level == 0)) >= 0) {
         this.setSelectedPayment(payment);
         return;
       }
