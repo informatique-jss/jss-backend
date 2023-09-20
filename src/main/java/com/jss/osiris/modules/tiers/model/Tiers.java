@@ -29,7 +29,7 @@ import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
-import com.jss.osiris.modules.miscellaneous.model.IVat;
+import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
@@ -39,7 +39,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Tiers implements ITiers, IAttachment, IVat {
+public class Tiers implements ITiers, IAttachment, IGenericTiers {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

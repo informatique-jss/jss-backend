@@ -19,6 +19,8 @@ public interface InvoiceSearchResult {
 
     public String getProviderLabel();
 
+    public Integer getIdPaymentType();
+
     public String getTiersLabel();
 
     public Integer getConfrereId();

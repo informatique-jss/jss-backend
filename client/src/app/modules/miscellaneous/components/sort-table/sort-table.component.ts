@@ -84,6 +84,13 @@ export class SortTableComponent implements OnInit {
     }
   }
 
+  columnActionTrigger(column: SortTableColumn, element: any) {
+    // find in internal
+    if (column && column.actionFunction) {
+      column.actionFunction(element);
+    }
+  }
+
   applyFilter() {
     if (this.filterText && this.filterText.length > 0) {
       let filterValue = this.filterText.trim();

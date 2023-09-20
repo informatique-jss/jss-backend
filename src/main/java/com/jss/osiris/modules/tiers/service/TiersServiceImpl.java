@@ -64,11 +64,6 @@ public class TiersServiceImpl implements TiersService {
         Optional<Tiers> tiers = tiersRepository.findById(id);
         if (tiers.isPresent()) {
             Tiers tiersInstance = tiers.get();
-            tiersInstance.setFirstBilling(invoiceService.getFirstBillingDateForTiers(tiersInstance));
-            if (tiersInstance.getResponsables() != null) {
-                for (Responsable responsable : tiersInstance.getResponsables())
-                    responsable.setFirstBilling(invoiceService.getFirstBillingDateForResponsable(responsable));
-            }
             return tiersInstance;
         }
         return null;
@@ -159,12 +154,12 @@ public class TiersServiceImpl implements TiersService {
 
         tiers = tiersRepository.save(tiers);
 
-        indexEntityService.indexEntity(tiers, tiers.getId());
+        indexEntityService.indexEntity(tiers);
         if (tiers.getResponsables() != null)
             for (Responsable responsable : tiers.getResponsables()) {
                 if (responsable.getLoginWeb() == null)
                     responsable.setLoginWeb(responsable.getId() + "");
-                indexEntityService.indexEntity(responsable, responsable.getId());
+                indexEntityService.indexEntity(responsable);
             }
 
         // Set default customer order assignation to sales employee if not set
@@ -191,7 +186,7 @@ public class TiersServiceImpl implements TiersService {
         List<Tiers> tiers = IterableUtils.toList(tiersRepository.findAll());
         if (tiers != null)
             for (Tiers tier : tiers)
-                indexEntityService.indexEntity(tier, tier.getId());
+                indexEntityService.indexEntity(tier);
     }
 
     @Override

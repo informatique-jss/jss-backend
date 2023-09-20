@@ -9,21 +9,26 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
+@Table(indexes = { @Index(name = "idx_provision_asso_affaire_order", columnList = "id_asso_affaire_order") })
 public class Provision implements IId, IAttachment {
 
 	@Id
@@ -37,6 +42,7 @@ public class Provision implements IId, IAttachment {
 	private AssoAffaireOrder assoAffaireOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = { "defaultCompetentAuthorityServiceProvider" }, allowSetters = true)
 	@JoinColumn(name = "id_provision_type")
 	@IndexedField
 	private ProvisionType provisionType;
@@ -71,12 +77,8 @@ public class Provision implements IId, IAttachment {
 	private Formalite formalite;
 
 	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
-	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "provision", "originProviderInvoice" }, allowSetters = true)
 	private List<InvoiceItem> invoiceItems;
-
-	@OneToMany(targetEntity = Debour.class, mappedBy = "provision", cascade = CascadeType.ALL)
-	@JsonIgnoreProperties(value = { "provision", "accountingRecords" }, allowSetters = true)
-	private List<Debour> debours;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_employee")
@@ -91,9 +93,9 @@ public class Provision implements IId, IAttachment {
 
 	@Column(nullable = false)
 	private Boolean isBaloPackage;
- 
-	private Boolean isBaloPublicationFlag; 
-  
+
+	private Boolean isBaloPublicationFlag;
+
 	private Boolean isBaloNormalization;
 
 	@Column(nullable = false)
@@ -169,6 +171,9 @@ public class Provision implements IId, IAttachment {
 	private Boolean isEmergency;
 
 	@Column(nullable = false)
+	private Boolean isRneUpdate;
+
+	@Column(nullable = false)
 	private Boolean isVacationUpdateBeneficialOwners;
 
 	@Column(nullable = false)
@@ -178,8 +183,19 @@ public class Provision implements IId, IAttachment {
 	private Boolean isCorrespondenceFees;
 
 	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
-	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "provision", "invoice" }, allowSetters = true)
 	private List<Attachment> attachments;
+
+	@OneToMany(targetEntity = Invoice.class, mappedBy = "provision")
+	@JsonIgnoreProperties(value = { "provision", "customerOrder", "accountingRecords", "payments", "invoice",
+			"originPayment",
+			"childrenPayments", "customerOrderForInboundInvoice" }, allowSetters = true)
+	private List<Invoice> providerInvoices;
+
+	@OneToMany(targetEntity = Payment.class, mappedBy = "provision")
+	@JsonIgnoreProperties(value = { "provision", "accountingRecords", "assoAffaireOrder",
+			"invoice" }, allowSetters = true)
+	private List<Payment> payments;
 
 	public Integer getId() {
 		return id;
@@ -525,14 +541,6 @@ public class Provision implements IId, IAttachment {
 		this.isApplicationFees = isApplicationFees;
 	}
 
-	public List<Debour> getDebours() {
-		return debours;
-	}
-
-	public void setDebours(List<Debour> debours) {
-		this.debours = debours;
-	}
- 
 	public Boolean getIsBaloPublicationFlag() {
 		return isBaloPublicationFlag;
 	}
@@ -540,13 +548,37 @@ public class Provision implements IId, IAttachment {
 	public void setIsBaloPublicationFlag(Boolean isBaloPublicationFlag) {
 		this.isBaloPublicationFlag = isBaloPublicationFlag;
 	}
- 
+
 	public Boolean getIsBaloNormalization() {
 		return isBaloNormalization;
 	}
 
 	public void setIsBaloNormalization(Boolean isBaloNormalization) {
 		this.isBaloNormalization = isBaloNormalization;
+	}
+
+	public List<Invoice> getProviderInvoices() {
+		return providerInvoices;
+	}
+
+	public void setProviderInvoices(List<Invoice> providerInvoices) {
+		this.providerInvoices = providerInvoices;
+	}
+
+	public List<Payment> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<Payment> payments) {
+		this.payments = payments;
+	}
+
+	public Boolean getIsRneUpdate() {
+		return isRneUpdate;
+	}
+
+	public void setIsRneUpdate(Boolean isRneUpdate) {
+		this.isRneUpdate = isRneUpdate;
 	}
 
 }

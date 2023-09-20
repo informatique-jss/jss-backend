@@ -48,4 +48,8 @@ export class QuotationService extends AppRestService<IQuotation>{
   sendCustomerOrderFinalisationToCustomer(customerOrder: CustomerOrder) {
     return this.get(new HttpParams().set("customerOrderId", customerOrder.id), "mail/send/invoice", "Mail envoyé !", "Erreur lors de l'envoi du mail");
   }
+
+  associateCustomerOrderToQuotation(customerOrderId: number, quotationId: number) {
+    return this.get(new HttpParams().set("idQuotation", quotationId).set("idCustomerOrder", customerOrderId), "customer-order/associate");
+  }
 }

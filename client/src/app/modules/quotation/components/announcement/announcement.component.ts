@@ -7,6 +7,7 @@ import { MatAccordion } from '@angular/material/expansion';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
+import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -53,6 +54,7 @@ export class AnnouncementComponent implements OnInit {
   SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
   ANNOUNCEMENT_ENTITY_TYPE = ANNOUNCEMENT_ENTITY_TYPE;
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
+  instanceOfCustomerOrderFn = instanceOfCustomerOrder;
 
   journalTypes: JournalType[] = [] as Array<JournalType>;
   journalTypeSpel: JournalType = this.constantService.getJournalTypeSpel();

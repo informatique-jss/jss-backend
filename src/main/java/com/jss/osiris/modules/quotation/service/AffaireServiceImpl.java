@@ -72,7 +72,7 @@ public class AffaireServiceImpl implements AffaireService {
         }
 
         Affaire affaireSaved = affaireRepository.save(affaire);
-        indexEntityService.indexEntity(affaire, affaire.getId());
+        indexEntityService.indexEntity(affaire);
         return affaireSaved;
     }
 
@@ -82,7 +82,7 @@ public class AffaireServiceImpl implements AffaireService {
         List<Affaire> affaires = IterableUtils.toList(affaireRepository.findAll());
         if (affaires != null)
             for (Affaire affaire : affaires)
-                indexEntityService.indexEntity(affaire, affaire.getId());
+                indexEntityService.indexEntity(affaire);
     }
 
 }

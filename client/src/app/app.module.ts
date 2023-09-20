@@ -6,6 +6,7 @@ import { LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from "@angular/material/dialog";
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -14,7 +15,9 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from "@angular/material/tabs";
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTreeModule } from '@angular/material/tree';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgProgressModule } from 'ngx-progressbar';
@@ -25,6 +28,7 @@ import { AccountingModule } from './modules/accounting/components/accounting/acc
 import { AdministrationModule } from './modules/administration/components/administration/administration.module';
 import { DashboardModule } from "./modules/dashboard/components/dashboard/dashboard.module";
 import { InvoicingModule } from "./modules/invoicing/components/invoicing/invoicing.module";
+import { PaymentDetailsDialogComponent } from "./modules/invoicing/components/payment-details-dialog/payment-details-dialog.component";
 import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { MyProfilComponent } from './modules/profile/components/my-profil/my-profil.component';
 import { QuotationModule } from './modules/quotation/components/quotation/quotation.module';
@@ -42,12 +46,15 @@ registerLocaleData(localeFr, 'fr');
     SidenavListComponent,
     HeaderComponent,
     MyProfilComponent,
+    PaymentDetailsDialogComponent
   ],
   imports: [
     // Core modules
     BrowserModule,
     RoutingModule,
     DragDropModule,
+    MatTreeModule,
+    MatDialogModule,
     BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
@@ -66,6 +73,7 @@ registerLocaleData(localeFr, 'fr');
     MatSnackBarModule,
     MatTooltipModule,
     MatSortModule,
+    MatTabsModule,
     MatTooltipModule,
     MatTableModule,
     ReactiveFormsModule,

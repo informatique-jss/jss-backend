@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Formalite } from '../../model/Formalite';
@@ -24,6 +25,7 @@ export class FormaliteComponent implements OnInit {
 
   FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY = FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY;
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
+  instanceOfCustomerOrderFn = instanceOfCustomerOrder;
 
   competentAuthorityInpi = this.constantService.getCompetentAuthorityInpi();
   competentAuthorityInfogreffe = this.constantService.getCompetentAuthorityInfogreffe();

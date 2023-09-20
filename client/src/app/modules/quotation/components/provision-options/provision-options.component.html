@@ -210,6 +210,13 @@
             </generic-toggle>
           </td>
         </tr>
+        <tr *ngIf="displayOption(billingTypeRneUpdate)">
+          <td>
+            <generic-toggle [(model)]="provision.isRneUpdate" label="Mise à jour de la fiche RNE ?" [form]="optionForm"
+              (onToggleChange)="provisionChangeFunction()" propertyName="isRneUpdate">
+            </generic-toggle>
+          </td>
+        </tr>
         <tr *ngIf="displayOption(billingTypeVacationUpdateBeneficialOwners)">
           <td>
             <generic-toggle [(model)]="provision.isVacationUpdateBeneficialOwners"

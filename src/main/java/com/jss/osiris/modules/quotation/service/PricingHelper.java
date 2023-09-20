@@ -13,13 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
-import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.CityService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -29,7 +29,6 @@ import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
-import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -126,9 +125,9 @@ public class PricingHelper {
         return null;
     }
 
-    public BillingItem getAppliableBillingItem(List<BillingItem> billingItems) {
+    public BillingItem getAppliableBillingItem(List<BillingItem> billingItems) throws OsirisException {
         if (billingItems == null)
-            return null;
+            throw new OsirisException(null, "No billing items provided");
 
         if (billingItems != null && billingItems.size() > 0)
             billingItems.sort(new Comparator<BillingItem>() {
@@ -141,7 +140,7 @@ public class PricingHelper {
             if (billingItem.getStartDate().isBefore(LocalDate.now()))
                 return billingItem;
         }
-        return null;
+        throw new OsirisException(null, "No billing items appliable found");
     }
 
     private void setInvoiceItemPreTaxPriceAndLabel(InvoiceItem invoiceItem, BillingItem billingItem,
@@ -240,28 +239,6 @@ public class PricingHelper {
                 invoiceItem.setPreTaxPrice(Math
                         .round(((confrere.getShippingCosts() != null ? confrere.getShippingCosts() : 0f)) * 100f)
                         / 100f);
-        } else if ((billingItem.getBillingType().getIsDebour() || billingItem.getBillingType().getIsFee())
-                && provision.getDebours() != null && provision.getDebours().size() > 0) {
-            // Compute debour prices
-            Float total = 0f;
-            for (Debour debour : provision.getDebours()) {
-                Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
-                        : debour.getDebourAmount();
-
-                Provision completeProvision = provisionService.getProvision(provision.getId());
-                IQuotation quotation = completeProvision.getAssoAffaireOrder().getCustomerOrder() != null
-                        ? completeProvision.getAssoAffaireOrder().getCustomerOrder()
-                        : completeProvision.getAssoAffaireOrder().getQuotation();
-                Vat vat = debour.getInvoiceItem() != null ? debour.getInvoiceItem().getVat()
-                        : vatService.getGeographicalApplicableVatForSales(quotation,
-                                constantService.getVatDeductible());
-
-                if (debour.getBillingType().getIsNonTaxable() || vat == null)
-                    total += debourAmount;
-                else
-                    total += debourAmount / ((100 + vat.getRate()) / 100f);
-            }
-            invoiceItem.setPreTaxPrice(total);
         } else {
             invoiceItem.setPreTaxPrice(billingItem.getPreTaxPrice());
         }
@@ -347,10 +324,7 @@ public class PricingHelper {
                             if (!invoiceItem.getIsOverridePrice() || !billingType.getCanOverridePrice()
                                     || invoiceItem.getPreTaxPrice() == null
                                     || invoiceItem.getPreTaxPrice() <= 0
-                                    || invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()
-                                    || (billingItem.getBillingType().getIsDebour()
-                                            || billingItem.getBillingType().getIsFee())
-                                            && provision.getDebours() != null && provision.getDebours().size() > 0)
+                                    || invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted())
                                 setInvoiceItemPreTaxPriceAndLabel(invoiceItem, billingItem, provision);
                             computeInvoiceItemsVatAndDiscount(invoiceItem, quotation, provision);
 
@@ -367,29 +341,89 @@ public class PricingHelper {
                 ArrayList<InvoiceItem> invoiceItemsDeleted = new ArrayList<InvoiceItem>();
                 ArrayList<Integer> billingTypeAlreadyFound = new ArrayList<Integer>();
                 for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                    boolean found = false;
-                    for (BillingType billingType : provisionType.getBillingTypes()) {
-                        if (invoiceItem.getBillingItem() != null
-                                && billingType.getId().equals(invoiceItem.getBillingItem().getBillingType().getId())
-                                && (!billingType.getIsOptionnal()
-                                        || hasOption(billingType, provision))
-                                && !billingTypeAlreadyFound
-                                        .contains(invoiceItem.getBillingItem().getBillingType().getId())) {
-                            found = true;
-                            billingTypeAlreadyFound.add(invoiceItem.getBillingItem().getBillingType().getId());
+                    // Invoice item generated from provider invoices are handled after
+                    if (invoiceItem.getInvoice() == null) {
+                        boolean found = false;
+                        for (BillingType billingType : provisionType.getBillingTypes()) {
+                            if (invoiceItem.getBillingItem() != null
+                                    && billingType.getId().equals(invoiceItem.getBillingItem().getBillingType().getId())
+                                    && (!billingType.getIsOptionnal()
+                                            || hasOption(billingType, provision))
+                                    && !billingTypeAlreadyFound
+                                            .contains(invoiceItem.getBillingItem().getBillingType().getId())) {
+                                found = true;
+                                billingTypeAlreadyFound.add(invoiceItem.getBillingItem().getBillingType().getId());
+                            }
                         }
-                    }
 
-                    if (!found) {
-                        invoiceItemsDeleted.add(invoiceItem);
-                        invoiceItem.setProvision(null);
-                        if (persistInvoiceItem && invoiceItem.getId() != null) {
-                            invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
-                            invoiceItemService.deleteInvoiceItem(invoiceItem);
+                        if (!found) {
+                            invoiceItemsDeleted.add(invoiceItem);
+                            invoiceItem.setProvision(null);
+                            if (persistInvoiceItem && invoiceItem.getId() != null) {
+                                invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                                invoiceItemService.deleteInvoiceItem(invoiceItem);
+                            }
                         }
                     }
                 }
                 provision.getInvoiceItems().removeAll(invoiceItemsDeleted);
+            }
+
+            // Delete cancelled invoice
+            ArrayList<InvoiceItem> invoiceItemsDeleted = new ArrayList<InvoiceItem>();
+            ArrayList<Integer> idInvoiceAlreadyDone = new ArrayList<Integer>();
+            if (provision.getInvoiceItems() != null) {
+                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                    if (invoiceItem.getOriginProviderInvoice() != null) {
+                        if (invoiceItem.getInvoice().getInvoiceStatus()
+                                .getId().equals(constantService.getInvoiceStatusCancelled().getId())) {
+                            invoiceItemsDeleted.add(invoiceItem);
+                        }
+                        idInvoiceAlreadyDone.add(invoiceItem.getOriginProviderInvoice().getId());
+                    }
+                }
+                provision.getInvoiceItems().removeAll(invoiceItemsDeleted);
+            }
+
+            // Reinvoiced provider invoices
+            if (provision.getProviderInvoices() != null) {
+                for (Invoice invoice : provision.getProviderInvoices()) {
+                    if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusCancelled().getId())
+                            && !idInvoiceAlreadyDone.contains(invoice.getId()) && invoice.getInvoiceItems() != null) {
+                        for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+                            InvoiceItem newInvoiceItem = invoiceItemService.cloneInvoiceItem(invoiceItem);
+                            newInvoiceItem.setOriginProviderInvoice(invoice);
+                            newInvoiceItem.setInvoice(null);
+                            newInvoiceItem.setIsOverridePrice(false);
+                            if (invoice.getCompetentAuthority() != null) {
+                                newInvoiceItem.setLabel(invoice.getCompetentAuthority().getLabel() + " - "
+                                        + invoiceItem.getBillingItem().getBillingType().getLabel());
+                            } else if (invoice.getProvider() != null) {
+                                newInvoiceItem.setLabel(invoice.getProvider().getLabel() + " - "
+                                        + invoiceItem.getBillingItem().getBillingType().getLabel());
+                            }
+                            newInvoiceItem.setProvision(provision);
+                            newInvoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPriceReinvoiced());
+                            if (invoiceItem.getVat().getRate() > 0)
+                                newInvoiceItem.setVat(null);
+
+                            if (invoiceItem.getVat().getRate() <= 0
+                                    || invoiceItem.getBillingItem().getBillingType().getIsNonTaxable())
+                                newInvoiceItem.setVat(constantService.getVatZero());
+                            vatService.completeVatOnInvoiceItem(newInvoiceItem, quotation);
+
+                            // Keep less rate of both and recompute price
+                            if (invoiceItem.getVat() != null
+                                    && invoiceItem.getVat().getRate() < newInvoiceItem.getVat().getRate()) {
+                                newInvoiceItem.setVat(invoiceItem.getVat());
+                                vatService.completeVatOnInvoiceItem(newInvoiceItem, quotation);
+                            }
+                            if (persistInvoiceItem)
+                                invoiceItemService.addOrUpdateInvoiceItem(newInvoiceItem);
+                            provision.getInvoiceItems().add(newInvoiceItem);
+                        }
+                    }
+                }
             }
         }
     }
@@ -484,8 +518,8 @@ public class PricingHelper {
         if (billingType.getId().equals(constantService.getBillingTypeDocumentScanning().getId())
                 && provision.getIsDocumentScanning() != null && provision.getIsDocumentScanning())
             return true;
-        if (billingType.getId().equals(constantService.getBillingTypeEmergency().getId())
-                && provision.getIsEmergency() != null && provision.getIsEmergency())
+        if (billingType.getId().equals(constantService.getBillingTypeRneUpdate().getId())
+                && provision.getIsRneUpdate() != null && provision.getIsRneUpdate())
             return true;
         if (billingType.getId().equals(constantService.getBillingtypeVacationUpdateBeneficialOwners().getId())
                 && provision.getIsVacationUpdateBeneficialOwners() != null
@@ -528,44 +562,7 @@ public class PricingHelper {
                         / 100f);
         }
 
-        Vat vat = vatService.getGeographicalApplicableVatForSales(quotation,
-                invoiceItem.getBillingItem().getBillingType().getVat());
-
-        if (vat != null && (invoiceItem.getIsGifted() == null || !invoiceItem.getIsGifted())) {
-            Float vatPrice = 0f;
-            if (provision.getDebours() != null && provision.getDebours().size() > 0
-                    && (invoiceItem.getBillingItem().getBillingType().getIsDebour()
-                            || invoiceItem.getBillingItem().getBillingType().getIsFee())) {
-                vatPrice = 0f;
-                for (Debour debour : provision.getDebours()) {
-                    Vat competentAuthorityVat = vatService
-                            .getGeographicalApplicableVatForPurshases(debour.getCompetentAuthority(),
-                                    constantService.getVatDeductible());
-
-                    Vat competentAuthorityVatSales = vatService
-                            .getGeographicalApplicableVatForSales(quotation,
-                                    constantService.getVatDeductible());
-
-                    if (competentAuthorityVatSales.getRate() < competentAuthorityVat.getRate())
-                        competentAuthorityVat = competentAuthorityVatSales;
-
-                    if (!debour.getBillingType().getIsNonTaxable() && competentAuthorityVat != null) {
-                        Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
-                                : debour.getDebourAmount();
-                        vatPrice += (competentAuthorityVat.getRate() / 100f) * debourAmount
-                                / ((100 + competentAuthorityVat.getRate()) / 100f);
-                    }
-                }
-            } else {
-                vatPrice = vat.getRate() / 100
-                        * ((invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0)
-                                - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0));
-            }
-            invoiceItem.setVatPrice(Math.round(vatPrice * 100f) / 100f);
-            invoiceItem.setVat(vat);
-        } else {
-            invoiceItem.setVatPrice(0f);
-        }
-
+        invoiceItem.setVat(invoiceItem.getBillingItem().getBillingType().getVat());
+        vatService.completeVatOnInvoiceItem(invoiceItem, quotation);
     }
 }

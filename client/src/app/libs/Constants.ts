@@ -5,7 +5,7 @@ export const SEARCH_KEY_CODE: string = "F8";
 export const NOTIFICATION_KEY_CODE: string = "F9";
 export const SAVE_KEY_CODE: string = "F2";
 export const NOTIFICATION_REFRESH_INTERVAL: number = 30 * 1000;
-export const MAX_SIZE_UPLOAD_FILES = 5242880;
+export const MAX_SIZE_UPLOAD_FILES = 10485760;
 export const AZURE_CONFIDENT_THRESHOLD: number = 0.95;
 export const INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = 2;
 export const GUICHET_UNIQUE_BASE_URL = "https://guichet-unique.inpi.fr/";
@@ -84,3 +84,6 @@ export const REPORTING_DATASET_QUOTATION = "Donneur d'ordre / Devis / Prestation
 export const REPORTING_DATASET_VAT = "TVA";
 export const REPORTING_DATASET_TIERS = "Tiers / Responsable / CA / Documents";
 export const REPORTING_DATASET_CUSTOMER_ORDER_FOR_TIERS = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante pour un tiers";
+
+// INPI Status
+export const GUICHET_UNIQUE_STATUS_VALIDATION_PENDING = "VALIDATION_PENDING";

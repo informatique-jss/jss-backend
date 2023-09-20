@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DiffusionINSEE;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Status;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
@@ -75,6 +76,14 @@ public class FormaliteGuichetUnique implements IId {
     private Boolean optionEIRL;
 
     private Boolean optionME;
+
+    @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
+    private List<ValidationRequest> validationsRequests;
+
+    @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
+    private List<FormaliteStatusHistoryItem> formaliteStatusHistoryItems;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_forme_juridique")
@@ -378,5 +387,21 @@ public class FormaliteGuichetUnique implements IId {
 
     public void setIsAnnualAccounts(Boolean isAnnualAccounts) {
         this.isAnnualAccounts = isAnnualAccounts;
+    }
+
+    public List<ValidationRequest> getValidationsRequests() {
+        return validationsRequests;
+    }
+
+    public void setValidationsRequests(List<ValidationRequest> validationsRequests) {
+        this.validationsRequests = validationsRequests;
+    }
+
+    public List<FormaliteStatusHistoryItem> getFormaliteStatusHistoryItems() {
+        return formaliteStatusHistoryItems;
+    }
+
+    public void setFormaliteStatusHistoryItems(List<FormaliteStatusHistoryItem> formaliteStatusHistoryItems) {
+        this.formaliteStatusHistoryItems = formaliteStatusHistoryItems;
     }
 }
