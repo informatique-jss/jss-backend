@@ -237,8 +237,7 @@ public class PaymentServiceImpl implements PaymentService {
                         accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment,
                                 false);
                     else
-                        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment,
-                                false);
+                        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
                 }
                 automatchPayment(
                         paymentRepository.findByBankId(transaction.id()));
@@ -765,7 +764,7 @@ public class PaymentServiceImpl implements PaymentService {
                         ? constantService.getAccountingAccountCaisse()
                         : constantService.getAccountingAccountBankJss());
         addOrUpdatePayment(payment);
-        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment, false);
+        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
         return payment;
     }
 
@@ -1019,7 +1018,7 @@ public class PaymentServiceImpl implements PaymentService {
                 -(invoiceItem.getPreTaxPrice() + invoiceItem.getVatPrice()),
                 constantService.getProviderCentralPay().getAccountingAccountDeposit(),
                 constantService.getProviderCentralPay().getAccountingAccountProvider(), invoiceLabel);
-        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(centralPayPayment, false);
+        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(centralPayPayment);
 
         associateOutboundPaymentAndInvoice(centralPayPayment, centralPayInvoice);
     }

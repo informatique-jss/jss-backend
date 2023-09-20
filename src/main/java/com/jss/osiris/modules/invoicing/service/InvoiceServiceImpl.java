@@ -263,7 +263,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         "Paiement pour la facture " + invoice.getId() + " / Fournisseur : "
                                 + (invoice.getProvider() != null ? invoice.getProvider().getLabel()
                                         : invoice.getCompetentAuthority().getLabel()));
-                accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment, false);
+                accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
                 paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment, Arrays.asList(invoice), null, null,
                         null, null, null, null);
             }
@@ -334,6 +334,22 @@ public class InvoiceServiceImpl implements InvoiceService {
         // Refresh invoice
         invoice = getInvoice(invoice.getId());
 
+        if (invoice.getDirectDebitTransfert() != null) {
+            if (invoice.getDirectDebitTransfert().getIsAlreadyExported() == false)
+                directDebitTransfertService.cancelDirectDebitTransfert(invoice.getDirectDebitTransfert());
+            else {
+                if (invoice.getPayments() != null) {
+                    for (Payment payment : invoice.getPayments())
+                        if (payment.getPaymentType().getId()
+                                .equals(constantService.getPaymentTypePrelevement().getId())) {
+                            Tiers tiersInvoice = invoice.getResponsable() != null ? invoice.getResponsable().getTiers()
+                                    : invoice.getTiers();
+                            paymentService.refundPayment(payment, tiersInvoice, null);
+                        }
+                }
+            }
+        }
+
         if (invoice.getPayments() != null) {
             ArrayList<Payment> payments = new ArrayList<Payment>();
             payments.addAll(invoice.getPayments());
@@ -346,22 +362,6 @@ public class InvoiceServiceImpl implements InvoiceService {
                     else
                         paymentService.unassociateInboundPaymentFromInvoice(payment, invoice);
                 }
-        }
-
-        if (invoice.getDirectDebitTransfert() != null) {
-            if (invoice.getDirectDebitTransfert().getIsAlreadyExported() == false)
-                directDebitTransfertService.cancelDirectDebitTransfert(invoice.getDirectDebitTransfert());
-            else {
-                if (invoice.getPayments() != null) {
-                    for (Payment payment : invoice.getPayments())
-                        if (!payment.getIsCancelled() && payment.getPaymentType().getId()
-                                .equals(constantService.getPaymentTypePrelevement().getId())) {
-                            Tiers tiersInvoice = invoice.getResponsable() != null ? invoice.getResponsable().getTiers()
-                                    : invoice.getTiers();
-                            paymentService.refundPayment(payment, tiersInvoice, null);
-                        }
-                }
-            }
         }
 
         // Unlink invoice item from customer order

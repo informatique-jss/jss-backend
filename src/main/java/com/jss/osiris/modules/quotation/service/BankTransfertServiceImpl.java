@@ -260,8 +260,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                         Payment payment = paymentService.generateNewBankTransfertPayment(
                                 completeTransfert, -completeTransfert.getTransfertAmount(), tiers);
                         completeTransfert.getPayments().add(payment);
-                        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment,
-                                false);
+                        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
                         paymentService.manualMatchPaymentInvoicesAndCustomerOrders(
                                 completeTransfert.getPayments().get(0),
                                 Arrays.asList(completeTransfert.getInvoices().get(0)), null, null, null, null, null,

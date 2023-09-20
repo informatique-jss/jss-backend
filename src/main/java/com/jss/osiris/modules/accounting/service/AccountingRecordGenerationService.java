@@ -27,7 +27,7 @@ public interface AccountingRecordGenerationService {
         public void generateAccountingRecordOnIncomingPaymentCreation(Payment payment, boolean isOdJournal)
                         throws OsirisException, OsirisValidationException;
 
-        public void generateAccountingRecordOnOutgoingPaymentCreation(Payment payment, boolean isForRefund)
+        public void generateAccountingRecordOnOutgoingPaymentCreation(Payment payment)
                         throws OsirisException, OsirisValidationException;
 
         public void generateAccountingRecordOnPaymentCancellation(Payment payment)

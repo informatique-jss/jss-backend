@@ -268,7 +268,7 @@ public class InvoicingController {
         if (payment.getPaymentAmount() > 0)
             accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment, false);
         else
-            accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment, false);
+            accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
         return new ResponseEntity<Payment>(payment, HttpStatus.OK);
     }
 

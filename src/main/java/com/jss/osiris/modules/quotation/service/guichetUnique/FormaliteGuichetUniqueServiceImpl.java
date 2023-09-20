@@ -116,7 +116,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             ArrayList<Cart> carts = new ArrayList<Cart>();
             if (formaliteGuichetUnique.getCarts() != null)
                 for (Cart cart : formaliteGuichetUnique.getCarts())
-                    if (cart.getTotal() > 0) {
+                    if (cart.getTotal() != 0) {
                         carts.add(cart);
                     }
 
@@ -130,6 +130,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         } else if (cart.getStatus().equals(cartStatusRefund)) {
                             cart.setInvoice((generateCreditNoteFromCart(cart, formalite.getProvision().get(0))));
                         }
+                    cart.setFormaliteGuichetUnique(originalFormalite);
                 }
         } else if (originalFormalite != null && formalite != null && formalite.getId() != null) {
             // update only wanted field
@@ -147,7 +148,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     originalFormalite.setCarts(new ArrayList<Cart>());
                     for (Cart currentCart : formaliteGuichetUnique.getCarts()) {
                         // Save only if cart > €
-                        if (currentCart.getTotal() > 0) {
+                        if (currentCart.getTotal() != 0) {
                             currentCart.setFormaliteGuichetUnique(originalFormalite);
                             if (currentCart.getCartRates() != null)
                                 for (CartRate cartRate : currentCart.getCartRates())
@@ -168,6 +169,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 for (CartRate cartRate : currentCart.getCartRates())
                                     cartRate.setCart(currentCart);
                             originalFormalite.getCarts().add(currentCart);
+                            currentCart.setFormaliteGuichetUnique(originalFormalite);
                         }
                     }
 
