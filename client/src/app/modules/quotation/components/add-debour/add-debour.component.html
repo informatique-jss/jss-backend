@@ -1,0 +1,138 @@
+<div class="mat-elevation-z2 form-div" *ngIf="provision && newDebour ">
+  <form [formGroup]="debourForm">
+    <div class="full-width" *ngIf="editMode">
+      <table class="full-width">
+        <tr>
+          <td>
+            <select-billing-type-debour [(model)]="newDebour.billingType" label="Type de débours/frais"
+              [form]="debourForm" propertyName="billingType" [isMandatory]="true"
+              [isDisabled]="!editMode"></select-billing-type-debour>
+          </td>
+          <td>
+            <autocomplete-competent-authority [(model)]="newDebour.competentAuthority" [form]="debourForm"
+              propertyName="competentAuthority" [isMandatory]="true" [isDisabled]="!editMode"
+              label="Autorité compétente"></autocomplete-competent-authority>
+          </td>
+          <td>
+            <generic-input [(model)]="newDebour.debourAmount" label="Montant TTC" [form]="debourForm"
+              propertyName="debourAmount" [isMandatory]="true" [isDisabled]="!editMode" type="number" step="0,01"
+              (onFormChange)="fillInvoicedAmount()"></generic-input>
+          </td>
+          <td *ngIf="newDebour.billingType  ">
+            <generic-input [(model)]="newDebour.invoicedAmount" label="Montant facturé TTC" [form]="debourForm"
+              propertyName="invoicedAmount" [isMandatory]="false" [isDisabled]="!editMode" type="number"
+              step="0,01"></generic-input>
+          </td>
+          <td *ngIf="newDebour.competentAuthority">
+            <select-payment-types [(model)]="newDebour.paymentType" label="Mode de paiement" [form]="debourForm"
+              [filteredPaymentType]="newDebour.competentAuthority.paymentTypes" propertyName="paymentType"
+              [isMandatory]="true" [isDisabled]="!editMode"></select-payment-types>
+          </td>
+          <td *ngIf="newDebour.paymentType && newDebour.paymentType.id ==paymentTypeCb.id">
+            <generic-datepicker [(model)]="newDebour.paymentDateTime" label="Date de paiement" [form]="debourForm"
+              propertyName="paymentDateTime" [isMandatory]="true" [isDisabled]="!editMode"></generic-datepicker>
+          </td>
+          <td *ngIf="newDebour.paymentType && newDebour.paymentType.id ==paymentTypeCheques.id">
+            <generic-input [(model)]="newDebour.checkNumber" label="Numéro du chèque" [form]="debourForm"
+              propertyName="checkNumber" [isMandatory]="true" [isDisabled]="false" [maxLength]="100"></generic-input>
+          </td>
+          <td>
+            <generic-input [(model)]="newDebour.comments" label="Commentaire" [form]="debourForm"
+              propertyName="comments" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="250"></generic-input>
+          </td>
+          <td class="button-td" *ngIf="editMode">
+            <button (click)="addDebour()" mat-mini-fab color="warn" class="mini-fab-add add-button">
+              <mat-icon>add</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </form>
+  <sort-table [refreshTable]="refreshTable" [columns]="displayedColumns" [values]="provision.debours"
+    tableName="Débours" [actions]="tableAction"></sort-table>
+  <div *ngIf="provision.debours && provision.debours.length>0" class="margin-top">
+    <p>Total par authorité compétente</p>
+    <ul *ngFor="let competentAuthority of getCompetentAuthorities()">
+      <li>{{competentAuthority.label}} : {{getTotalForCompetentAuthority(competentAuthority)}} € <span class="pointer"
+          *ngIf="canAddNewInvoice()" (click)="createInvoice($event, competentAuthority)"
+          (auxclick)="createInvoice($event, competentAuthority)">(créer une facture libre)</span></li>
+    </ul>
+  </div>
+  <div *ngIf="greffeInvoices &&  greffeInvoices.length>0 && isNotInpi()" class="margin-top">
+    <p>Factures de greffe trouvées pour cette commande : </p>
+    <ul *ngFor="let greffeInvoice of greffeInvoices">
+      <li>Facture n°{{greffeInvoice.numero}} - {{greffeInvoice.owncloudGreffeFile.competentAuthority.label }} - Total
+        TTC : {{greffeInvoice.totalPrice}} € <span class="pointer" *ngIf="canAddNewInvoice()"
+          (click)="createInvoiceFromGreffeInvoice( greffeInvoice)">(créer le débours et la facture libre)</span></li>
+    </ul>
+  </div>
+  <div *ngIf="infogreffeInvoices &&  infogreffeInvoices.length>0  && isNotInpi()" class="margin-top">
+    <p>Factures Infogreffe trouvées pour cette commande : </p>
+    <ul *ngFor="let greffeInvoice of infogreffeInvoices">
+      <li>Facture n°{{greffeInvoice.customerReference}} - {{greffeInvoice.competentAuthority.label }} - Total
+        TTC : {{ (greffeInvoice.preTaxPrice + greffeInvoice.vatPrice) | number}} € <span class="pointer"
+          *ngIf="canAddNewInvoice()" (click)="createInvoiceFromInfogreffeInvoice( greffeInvoice)">(créer le débours et
+          la facture libre)</span></li>
+    </ul>
+  </div>
+  <div>
+    <table class="full-width  " *ngIf="  isNotInpi() && canAddNewInvoice()">
+      <tr>
+        <td>
+          Rechercher une facture automatique :
+        </td>
+        <td style="width: 80%;">
+          <autocomplete-azure-invoice [(model)]="selectedAzureInvoice" [form]="debourForm"
+            propertyName="selectedAzureInvoice" [isMandatory]="false"></autocomplete-azure-invoice>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Créer le débours et la facture libre"
+            (click)="createInvoiceFromAzureInvoice(selectedAzureInvoice)" class="add-button">
+            <mat-icon>add</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <table class="full-width  " *ngIf=" false && isNotInpi() && canAddNewInvoice()">
+      <tr>
+        <td>
+          Rechercher une facture de greffe :
+        </td>
+        <td style="width: 80%;">
+          <autocomplete-greffe-invoice [(model)]="selectedGreffeInvoice" [form]="debourForm"
+            propertyName="selectedGreffeInvoice" [isMandatory]="false"></autocomplete-greffe-invoice>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Créer le débours et la facture libre"
+            (click)="createInvoiceFromGreffeInvoice(selectedGreffeInvoice)" class="add-button">
+            <mat-icon>add</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <table class="full-width  " *ngIf="   canAddNewInvoice()">
+      <tr>
+        <td>
+          Rechercher une facture Infogreffe :
+        </td>
+        <td style="width: 80%;">
+          <autocomplete-infogreffe-invoice [(model)]="selectedInfogreffeInvoice" [form]="debourForm"
+            propertyName="selectedInfogreffeInvoice" [isMandatory]="false"></autocomplete-infogreffe-invoice>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Créer le débours et la facture libre"
+            (click)="createInvoiceFromInfogreffeInvoice(selectedInfogreffeInvoice)" class="add-button">
+            <mat-icon>add</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <div>
+      <div class="row-field-container" *ngIf="editMode">
+        <button mat-raised-button (click)="filledForInfogreffeKbis()" color="primary" class="mini-fab-add">
+          Pré-remplir pour un KBis
+        </button>
+      </div>
+    </div>
+  </div>

@@ -42,11 +42,11 @@ public interface TiersReportingRepository extends QueryCacheCrudRepository<Tiers
                         " when respo.id is not null then count(distinct co2.id) " +
                         " else count(distinct co1.id) " +
                         " end as nbrCustomerOrder, " +
-                        " case " +
+                        " case " + 
                         " when respo.id is not null then count(distinct q2.id) " +
                         " else count(distinct q1.id) " +
                         " end as nbrQuotation, " +
-                        " case " +
+                        " case " + 
                         " when respo.id is not null then count(distinct p2.id_announcement) " +
                         " else count(distinct p1.id_announcement) " +
                         " end as nbrAnnouncement, " +
@@ -62,7 +62,7 @@ public interface TiersReportingRepository extends QueryCacheCrudRepository<Tiers
                         " when respo.id is not null then sum(case when bt2.is_debour = true then 0 else ii2.pre_tax_price end) "
                         +
                         " else sum(case when bt1.is_debour = true then 0 else ii1.pre_tax_price end) " +
-                        " end as turnoverAmountWithoutDebour, " +
+                        " end as turnoverAmountWithoutDebour, " + 
                         " coalesce(initcap(to_char(invoice.created_date,'MM - tmmonth')),'N/A') as invoiceDateMonth, " +
                         " case " +
                         " when docTiersPaper.is_recipient_client = true " +
@@ -90,7 +90,7 @@ public interface TiersReportingRepository extends QueryCacheCrudRepository<Tiers
                         " end as docTiersBilling, " +
                         " bltTiers.label as docTiersBillingLabel, " +
                         " case " +
-                        " when docResponsablePaper.is_recipient_client = true " +
+                        " when docResponsablePaper.is_recipient_client = true " + 
                         " and docResponsablePaper.is_recipient_affaire = true then 'C/A' " +
                         " when docResponsablePaper.is_recipient_client = true " +
                         " and docResponsablePaper.is_recipient_affaire = false then 'C' " +
@@ -116,7 +116,7 @@ public interface TiersReportingRepository extends QueryCacheCrudRepository<Tiers
                         " bltResponsable.label as docResponsableBillingLabel, " +
                         " pt.label as tiersPaymentType, " +
                         " tiers.payment_iban as tiersPaymentIban, " +
-                        " tiers.payment_bic as tiersPaymentBic, " +
+                        " tiers.payment_bic as tiersPaymentBic, " + 
                         " tiers.is_provisional_payment_mandatory as tiersIsProvisionnalPaymentMandatory, " +
                         " (select STRING_AGG(DISTINCT mail.mail ,', '  ) from  asso_responsable_mail asso join mail on mail.id = asso.id_mail  where asso.id_tiers = respo.id )  as responsableMail,   "
                         +
@@ -143,11 +143,11 @@ public interface TiersReportingRepository extends QueryCacheCrudRepository<Tiers
                         " left join customer_order co1 on " +
                         " co1.id_tiers = tiers.id " +
                         " left join customer_order co2 on " +
-                        " co2.id_responsable = respo.id " +
+                        " co2.id_responsable = respo.id " + 
                         " left join quotation q1 on " +
                         " q1.id_tiers = tiers.id " +
                         " left join quotation q2 on " +
-                        " q2.id_responsable = respo.id " +
+                        " q2.id_responsable = respo.id " + 
                         " left join asso_affaire_order aao1 on " +
                         " aao1.id_customer_order = co1.id " +
                         " left join asso_affaire_order aao2 on " +
@@ -156,11 +156,11 @@ public interface TiersReportingRepository extends QueryCacheCrudRepository<Tiers
                         " p1.id_asso_affaire_order = aao1.id " +
                         " left join provision p2 on " +
                         " p2.id_asso_affaire_order = aao2.id " +
-                        " left join invoice_item ii1 on " +
+                        " left join invoice_item ii1 on " + 
                         " ii1.id_provision = p1.id and ii1.id_invoice is not null " +
                         " left join invoice_item ii2 on " +
                         " ii2.id_provision = p2.id and ii2.id_invoice is not null " +
-                        " left join invoice on invoice.id = ii1.id_invoice or invoice.id = ii2.id_invoice " +
+                        " left join invoice on invoice.id = ii1.id_invoice or invoice.id = ii2.id_invoice " + 
                         " left join billing_item bi1 on " +
                         " bi1.id = ii1.id_billing_item " +
                         " left join billing_item bi2 on " +
@@ -190,8 +190,8 @@ public interface TiersReportingRepository extends QueryCacheCrudRepository<Tiers
                         " docResponsableBilling.id_responsable = respo.id " +
                         " and docResponsableBilling.id_document_type = :documentTypeBillingId " +
                         " left join billing_label_type bltResponsable on " +
-                        " bltResponsable.id = docResponsableBilling.id_billing_label_type  " +
-                        " where (co1.id is not null or co2.id is not null or q1.id is not null or q2.id is not null) " +
+                        " bltResponsable.id = docResponsableBilling.id_billing_label_type  " + 
+                        " where (co1.id is not null or co2.id is not null or q1.id is not null or q2.id is not null) " + 
                         " group by " +
                         " tiers.id , " +
                         " respo.id , " +
@@ -223,7 +223,7 @@ public interface TiersReportingRepository extends QueryCacheCrudRepository<Tiers
                         " bltTiers.label , " +
                         " pt.label , " +
                         " tiers.payment_iban, " +
-                        " tiers.payment_bic , " +
+                        " tiers.payment_bic , " + 
                         " invoice.created_date , " +
                         " tiers.is_provisional_payment_mandatory , " +
                         " case " +

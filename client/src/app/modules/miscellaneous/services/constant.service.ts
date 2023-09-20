@@ -217,11 +217,11 @@ export class ConstantService extends AppRestService<Constant>{
   getBillingTypeBaloNormalization() {
     return this.constant.billingTypeBaloNormalization;
   }
-
+ 
   getBillingTypeBaloPublicationFlag() {
     return this.constant.billingTypeBaloPublicationFlag;
   }
-
+ 
   getBillingTypePublicationPaper() {
     return this.constant.billingTypePublicationPaper;
   }
