@@ -147,9 +147,8 @@ public class QuotationServiceImpl implements QuotationService {
             quotation = quotationRepository.save(quotation);
         }
 
-        quotation = quotationRepository.save(quotation);
-
         pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
+        quotation = quotationRepository.save(quotation);
 
         quotation = getQuotation(quotation.getId());
 
