@@ -399,7 +399,9 @@ public class PricingHelper {
                                 newInvoiceItem.setLabel(invoice.getCompetentAuthority().getLabel() + " - "
                                         + invoiceItem.getBillingItem().getBillingType().getLabel());
                             } else if (invoice.getProvider() != null) {
-                                newInvoiceItem.setLabel(invoice.getProvider().getLabel() + " - "
+                                newInvoiceItem.setLabel(invoiceItem.getBillingItem().getBillingType().getLabel());
+                            } else if (invoice.getConfrere() != null) {
+                                newInvoiceItem.setLabel(confrere.getLabel() + " -  "
                                         + invoiceItem.getBillingItem().getBillingType().getLabel());
                             }
                             newInvoiceItem.setProvision(provision);
