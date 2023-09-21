@@ -68,8 +68,8 @@
     </div>
     <div *ngIf="canAddNewInvoice()">
       <autocomplete-azure-invoice [(model)]="azureInvoiceSelected" [form]="provisionPaymentForm"
-        propertyName="azureInvoiceSelected" [isMandatory]="false"
-        label="Rechercher une facture automatique"></autocomplete-azure-invoice>
+        propertyName="azureInvoiceSelected" [isMandatory]="false" label="Rechercher une facture automatique"
+        (onOptionSelected)="createInvoiceFromAzureInvoice(azureInvoiceSelected!,$event)"></autocomplete-azure-invoice>
     </div>
     <div *ngIf="canAddNewInvoice()" class="padding-top">
       <p (click)="createNewInvoice($event)" class="pointer">
