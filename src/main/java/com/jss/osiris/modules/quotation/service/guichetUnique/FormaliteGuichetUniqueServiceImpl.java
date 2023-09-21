@@ -33,6 +33,7 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUniq
 import com.jss.osiris.modules.quotation.model.guichetUnique.ValidationRequest;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
 import com.jss.osiris.modules.quotation.repository.guichetUnique.FormaliteGuichetUniqueRepository;
+import com.jss.osiris.modules.quotation.repository.guichetUnique.PartnerCenterRepository;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
 
@@ -68,6 +69,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Autowired
     FormaliteService formaliteService;
+
+    @Autowired
+    PartnerCenterRepository partnerCenterRepository;
 
     private String cartStatusPayed = "PAID";
     private String cartStatusRefund = "REFUNDED";
@@ -108,6 +112,12 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             formaliteStatusHistoryItems = guichetUniqueDelegateService
                     .getFormalityStatusHistoriesById(inFormaliteGuichetUnique.getId());
         }
+
+        if (formaliteGuichetUnique.getValidationsRequests() != null)
+            for (ValidationRequest validationRequest : formaliteGuichetUnique.getValidationsRequests()) {
+                if (validationRequest.getPartnerCenter() != null)
+                    partnerCenterRepository.save(validationRequest.getPartnerCenter());
+            }
 
         FormaliteGuichetUnique originalFormalite = getFormaliteGuichetUnique(inFormaliteGuichetUnique.getId());
 

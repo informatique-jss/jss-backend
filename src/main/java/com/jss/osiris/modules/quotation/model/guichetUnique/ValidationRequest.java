@@ -41,7 +41,7 @@ public class ValidationRequest {
     @JoinColumn(name = "id_partenaire")
     private Partenaire partner;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH })
     @JoinColumn(name = "id_partner_center")
     private PartnerCenter partnerCenter;
 
