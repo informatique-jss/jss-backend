@@ -2,8 +2,8 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
-import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
+import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
 import { AFFAIRE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
@@ -27,8 +27,11 @@ export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<I
   displayLabel(entity: IndexEntity): string {
     if (entity && entity.text) {
       let obj = JSON.parse((entity.text as string));
-      return (obj.firstname ? obj.firstname + " " : " ") + (obj.lastname ? obj.lastname + " " : "") + (obj.denomination ? obj.denomination : "")+" - "+ (obj.address ? obj.address : "")+" - "+
-      (obj.postalCode ? obj.postalCode : "")+" - "+(obj.city && obj.city.label ? obj.city.label : "")+" - "+(obj.siren ? "SIREN : "+obj.siren : "")+" - "+(obj.siret ? "SIRET : "+obj.siret : "");
+      return (obj.firstname ? obj.firstname + " " : " ") + (obj.lastname ? obj.lastname + " " : "") + (obj.denomination ? obj.denomination : "") + " - " + (obj.address ? obj.address : "") + " - " +
+        (obj.postalCode ? obj.postalCode : "") + " - " + (obj.city && obj.city.label ? obj.city.label : "") + " - " + (obj.siren ? "SIREN : " + obj.siren : "") + " - " + (obj.siret ? "SIRET : " + obj.siret : "");
+    }
+    if ((entity as any).denomination || (entity as any).firstname) {
+      return (entity as any).denomination ? (entity as any).denomination : ((entity as any).firstname + ' ' + (entity as any).lastname);
     }
     return "";
   }

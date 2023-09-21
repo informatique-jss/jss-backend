@@ -4,10 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
-import { AssociateDepositDialogComponent } from 'src/app/modules/invoicing/components/associate-deposit-dialog/associate-deposit-dialog.component';
+import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
 import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
-import { Deposit } from 'src/app/modules/invoicing/model/Deposit';
+import { Payment } from 'src/app/modules/invoicing/model/Payment';
 import { InvoiceSearchResultService } from 'src/app/modules/invoicing/services/invoice.search.result.service';
+import { PaymentDetailsDialogService } from 'src/app/modules/invoicing/services/payment.details.dialog.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from '../../../../services/app.service';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
@@ -51,7 +52,8 @@ export class InvoiceManagementComponent implements OnInit {
     private constantService: ConstantService,
     private appService: AppService,
     private invoiceLabelResultService: InvoiceLabelResultService,
-    public associateDepositDialog: MatDialog,
+    public associatePaymentDialog: MatDialog,
+    private paymentDetailsDialogService: PaymentDetailsDialogService,
     protected invoiceSearchResultService: InvoiceSearchResultService,) { }
 
   ngOnInit() {
@@ -145,15 +147,20 @@ export class InvoiceManagementComponent implements OnInit {
     return undefined;
   }
 
-  moveDeposit(deposit: Deposit) {
-    let dialogDepositDialogRef = this.associateDepositDialog.open(AssociateDepositDialogComponent, {
+  movePayment(payment: Payment) {
+    let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
       width: '100%'
     });
-    dialogDepositDialogRef.componentInstance.deposit = deposit;
-    dialogDepositDialogRef.componentInstance.customerOrder = (this.quotation as CustomerOrder);
-    dialogDepositDialogRef.componentInstance.doNotInitializeAsso = true;
-    dialogDepositDialogRef.afterClosed().subscribe(response => {
+    dialogPaymentDialogRef.componentInstance.payment = payment;
+    dialogPaymentDialogRef.componentInstance.doNotInitializeAsso = true;
+    dialogPaymentDialogRef.componentInstance.customerOrder = this.customerOrder as CustomerOrder;
+
+    dialogPaymentDialogRef.afterClosed().subscribe(response => {
       this.appService.openRoute(null, '/order/' + this.quotation.id, null);
     });
+  }
+
+  openPaymentDialog(payment: Payment) {
+    this.paymentDetailsDialogService.displayPaymentDetailsDialog(payment);
   }
 }

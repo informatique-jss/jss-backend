@@ -47,10 +47,9 @@ public class CentralPayPaymentRequestServiceImpl implements CentralPayPaymentReq
 
     @Override
     public void declareNewCentralPayPaymentRequest(String paymentRequestId, CustomerOrder customerOrder,
-            Quotation quotation, Boolean isForInvoice) {
+            Quotation quotation) {
         CentralPayPaymentRequest request = new CentralPayPaymentRequest();
         request.setCustomerOrder(customerOrder);
-        request.setIsForInvoice(isForInvoice);
         request.setPaymentRequestId(paymentRequestId);
         request.setQuotation(quotation);
         addOrUpdateCentralPayPaymentRequest(request);

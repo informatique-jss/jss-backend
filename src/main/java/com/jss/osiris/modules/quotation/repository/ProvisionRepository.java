@@ -3,9 +3,9 @@ package com.jss.osiris.modules.quotation.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
 
@@ -40,10 +40,14 @@ public interface ProvisionRepository extends QueryCacheCrudRepository<Provision,
                         " left join domiciliation_status doms on doms.id = dom.id_domicilisation_status " +
                         " left join simple_provision sp on sp.id = p.id_simple_provision " +
                         " left join simple_provision_status sps on sps.id = sp.id_simple_provision_status " +
-                        " where cs.code<>'ABANDONED' " +
+                        " where c.id_customer_order_status not in (:customerOrderStatusIdWaitingDeposit,:customerOrderStatusIdAbandonned,:customerOrderStatusIdOpen) "
+                        +
                         " and p.id_employee in (:employeeIds) " +
                         " group by e.id, e.firstname, e.lastname,ans.aggregate_status,fos.aggregate_status,bos.aggregate_status,doms.aggregate_status,sps.aggregate_status "
                         +
                         "")
-        List<ProvisionBoardResult> getDashboardEmployee(@Param("employeeIds") List<Integer> employeeIds);
+        List<ProvisionBoardResult> getDashboardEmployee(@Param("employeeIds") List<Integer> employeeIds,
+                        @Param("customerOrderStatusIdAbandonned") Integer customerOrderStatusIdAbandonned,
+                        @Param("customerOrderStatusIdWaitingDeposit") Integer customerOrderStatusIdWaitingDeposit,
+                        @Param("customerOrderStatusIdOpen") Integer customerOrderStatusIdOpen);
 }

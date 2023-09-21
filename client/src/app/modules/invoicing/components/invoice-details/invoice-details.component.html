@@ -13,6 +13,9 @@
           <span *ngIf="invoice.manualAccountingDocumentDate">,<br> Date de la
             pièce comptable : {{invoice.manualAccountingDocumentDate|date:'dd/MM/yyyy'}}</span>
         </p>
+        <p>
+          Echéance de paiement : {{invoice.dueDate | date:'dd/MM/yyyy'}}
+        </p>
         <div class="invoice-title" *ngIf="invoice.creditNote">
           <span>Avoir n°{{invoice.creditNote.id}} émis à Paris, le
             {{invoice.creditNote.createdDate|date:'dd/MM/yyyy à HH:mm'}}</span>
@@ -42,9 +45,9 @@
             (auxclick)="openRoute($event,'/order/'+invoice.customerOrderForInboundInvoice.id)">visibility
           </mat-icon>
         </p>
-        <p *ngIf="invoice.attachments && !invoice.isCreditNote"> <single-attachment [entity]="invoice"
+        <p *ngIf="invoice.attachments "> <single-attachment [entity]="invoice"
             [entityType]="INVOICE_ENTITY_TYPE.entityType" [editMode]="false"
-            [attachmentTypeToDisplay]="attachmentTypeInvoice">
+            [attachmentTypeToDisplay]="!invoice.isCreditNote?attachmentTypeInvoice:attachmentTypeCreditNote">
           </single-attachment>
         </p>
         <table class="mat-table mat-mdc-table mdc-data-table__table full-width  description-table ">
@@ -171,11 +174,11 @@
           </thead>
           <ng-container *ngFor="let asso of invoice.customerOrder.assoAffaireOrders;let indexAsso = index">
             <tr class="mat-mdc-row mdc-data-table__row ">
-              <td class="mat-mdc-cell mdc-data-table__cell  affaire" colspan="2"
+              <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align" colspan="2"
                 *ngIf="asso.affaire && asso.affaire.denomination">
                 {{asso.affaire.denomination}}
               </td>
-              <td class="mat-mdc-cell mdc-data-table__cell  affaire" colspan="2"
+              <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align" colspan="2"
                 *ngIf="asso.affaire && asso.affaire.firstname">
                 {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
               </td>
@@ -188,8 +191,8 @@
               </tr>
               <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
                 <tr class="mat-mdc-row mdc-data-table__row ">
-                  <td class="mat-mdc-cell mdc-data-table__cell ">
-                    {{invoiceItem.label}}
+                  <td class="mat-mdc-cell mdc-data-table__cell  ">
+                    <span class="invoice-item">{{invoiceItem.label}}</span>
                   </td>
                   <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
                     {{invoiceItem.preTaxPrice|number}} €
@@ -198,7 +201,7 @@
                 <tr class="mat-mdc-row mdc-data-table__row "
                   *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
                   <td class="mat-mdc-cell mdc-data-table__cell ">
-                    Remise
+                    <span class="invoice-item">Remise</span>
                   </td>
                   <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
                     - {{invoiceItem.discountAmount|number}} €
@@ -206,7 +209,7 @@
                 </tr>
                 <tr class="mat-mdc-row mdc-data-table__row " *ngIf="invoiceItem.vat">
                   <td class="mat-mdc-cell mdc-data-table__cell ">
-                    {{invoiceItem.vat.label}}
+                    <span class="invoice-item">{{invoiceItem.vat.label}}</span>
                   </td>
                   <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
                     {{invoiceItem.vatPrice|number}} €
@@ -229,7 +232,8 @@
                 {{invoiceItem.label}}
               </td>
               <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-                {{invoiceItem.preTaxPrice|number}} €
+                {{invoiceItem.preTaxPrice|number}} € <span *ngIf="invoice.isInvoiceFromProvider">(refacturé :
+                  {{invoiceItem.preTaxPriceReinvoiced}} €)</span>
               </td>
             </tr>
             <tr class="mat-mdc-row mdc-data-table__row "
@@ -345,13 +349,16 @@
   *ngIf="false" (auxclick)="editInvoice($event)">
   <mat-icon>edit</mat-icon>
 </button>
-<button *ngIf="canCancelInvoice() && canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code
+<button
+  *ngIf="canCancelInvoice() && canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code
   || invoice.invoiceStatus.code==invoiceStatusSend.code
-  || invoice.isInvoiceFromProvider && invoice.invoiceStatus.code == invoiceStatusPayed.code)"
+  || invoice.invoiceStatus.code==invoiceStatusCreditNoteReceived.code
+  || !invoice.isCreditNote && !invoice.isProviderCreditNote && !invoice.isInvoiceFromProvider &&   invoice.invoiceStatus.code == invoiceStatusPayed.code) && !invoice.customerOrder"
   matTooltip="Annuler la facture" mat-fab color="accent" class="second-fab-button" (click)="cancelInvoice($event)">
   <mat-icon>close</mat-icon>
 </button>
-<button *ngIf="canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code )"
+<button
+  *ngIf="canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code || invoice.isInvoiceFromProvider && invoice.invoiceStatus.code==invoiceStatusPayed.code )"
   matTooltip="Saisir un avoir" mat-fab color="accent" class="third-fab-button" (click)="addCreditNote($event)">
   <mat-icon>payments</mat-icon>
 </button>

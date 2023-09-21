@@ -154,7 +154,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         if (entityType.equals("Ofx"))
             if (activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_GROUP)
                     || activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP))
-                return this.paymentService.uploadOfxFile(file, idEntity);
+                return this.paymentService.uploadOfxFile(file);
             else
                 return null;
 

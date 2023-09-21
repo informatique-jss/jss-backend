@@ -1,5 +1,5 @@
 <div class="mat-elevation-z2 form-div">
-  <div>
+  <div *ngIf="!idCompetentAuthority">
     <table>
       <tr>
         <td>
@@ -15,8 +15,8 @@
       </tr>
     </table>
   </div>
-  <div class="table-container-scroll">
-    <sort-table [idRowSelected]="selectedcompetentAuthorityId" [columns]="displayedColumns"
+  <div class="table-container-scroll" *ngIf="!idCompetentAuthority">
+    <sort-table [idRowSelected]="selectedCompetentAuthorityId" [columns]="displayedColumns"
       (onRowClick)="selectCompetentAuthority($event)" [values]="filteredCompetentAuthorities"
       tableName="Autorités compétentes" [filterText]="searchText">
     </sort-table>

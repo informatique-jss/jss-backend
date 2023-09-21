@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { PROVISION_ENTITY_TYPE, SIMPLE_PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { instanceOfCustomerOrder } from '../../../../libs/TypeHelper';
 import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { SimpleProvision } from '../../model/SimpleProvision';
@@ -34,6 +35,7 @@ export class SimpleProvisionComponent implements OnInit {
   simpleProvisionForm = this.formBuilder.group({});
 
   SIMPLE_PROVISION_ENTITY_TYPE = SIMPLE_PROVISION_ENTITY_TYPE;
+  instanceOfCustomerOrderFn = instanceOfCustomerOrder;
 
   ngOnInit() {
   }

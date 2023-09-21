@@ -43,22 +43,15 @@ import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
-import com.jss.osiris.modules.accounting.service.AccountingRecordService;
-import com.jss.osiris.modules.invoicing.model.Appoint;
-import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
-import com.jss.osiris.modules.invoicing.service.AppointService;
-import com.jss.osiris.modules.invoicing.service.DepositService;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
-import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
-import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
@@ -68,7 +61,6 @@ import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
-import com.jss.osiris.modules.quotation.controller.QuotationController;
 import com.jss.osiris.modules.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
@@ -77,8 +69,6 @@ import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
-import com.jss.osiris.modules.quotation.model.Debour;
-import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
@@ -121,19 +111,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     GeneratePdfDelegate generatePdfDelegate;
 
     @Autowired
-    AccountingRecordService accountingRecordService;
-
-    @Autowired
     CustomerOrderStatusService customerOrderStatusService;
 
     @Autowired
-    DepositService depositService;
-
-    @Autowired
     EmployeeService employeeService;
-
-    @Autowired
-    InvoiceItemService invoiceItemService;
 
     @Autowired
     NotificationService notificationService;
@@ -160,9 +141,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     AnnouncementStatusService announcementStatusService;
 
     @Autowired
-    QuotationController quotationController;
-
-    @Autowired
     PaymentService paymentService;
 
     @Autowired
@@ -175,13 +153,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     MailComputeHelper mailComputeHelper;
 
     @Autowired
-    DirectDebitTransfertService debitTransfertService;
-
-    @Autowired
     QuotationValidationHelper quotationValidationHelper;
-
-    @Autowired
-    AppointService appointService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -258,27 +230,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
             }
 
-        boolean isNewCustomerOrder = customerOrder.getId() == null;
-
         customerOrder = customerOrderRepository.save(customerOrder);
 
         pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
-
         customerOrder = getCustomerOrder(customerOrder.getId());
 
-        indexEntityService.indexEntity(customerOrder, customerOrder.getId());
-        if (customerOrder.getAssoAffaireOrders() != null)
-            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
-                indexEntityService.indexEntity(assoAffaireOrder, assoAffaireOrder.getId());
-                if (assoAffaireOrder.getProvisions() != null)
-                    for (Provision provision : assoAffaireOrder.getProvisions())
-                        if (provision.getDebours() != null)
-                            for (Debour debour : provision.getDebours())
-                                if (debour.getId() != null)
-                                    indexEntityService.indexEntity(debour, debour.getId());
-            }
-
-        if (isNewCustomerOrder)
+        if (customerOrder.getId() == null)
             notificationService.notifyNewCustomerOrderQuotation(customerOrder);
 
         if (checkAllProvisionEnded)
@@ -291,6 +248,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         .equals(constantService.getCustomerOrderOriginWebSite().getId())
                 && isOnlyAnnouncement(customerOrder))
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.OPEN, isFromUser);
+
+        indexEntityService.indexEntity(customerOrder);
         return customerOrder;
     }
 
@@ -373,12 +332,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
             ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
             boolean isDepositMandatory = false;
-            if (tiers instanceof Tiers)
-                isDepositMandatory = ((Tiers) tiers).getIsProvisionalPaymentMandatory();
             if (tiers instanceof Responsable)
-                isDepositMandatory = ((Responsable) tiers).getTiers().getIsProvisionalPaymentMandatory();
-            if (tiers instanceof Confrere)
-                isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
+                tiers = ((Responsable) tiers).getTiers();
+            isDepositMandatory = tiers.getIsProvisionalPaymentMandatory();
 
             if (!isDepositMandatory || remainingToPay <= 0)
                 targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
@@ -407,14 +363,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Target : CANCELLED => vérifiy there is no more deposit
         if (targetStatusCode.equals(CustomerOrderStatus.ABANDONED)) {
-            if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
-                throw new OsirisClientMessageException(
-                        "Impossible d'abandonner cette commande, elle possède encore des acomptes associés");
+            if (customerOrder.getPayments() != null && customerOrder.getPayments().size() > 0)
+                for (Payment payment : customerOrder.getPayments())
+                    if (!payment.getIsCancelled())
+                        throw new OsirisClientMessageException(
+                                "Impossible d'abandonner cette commande, elle possède encore des acomptes associés");
         }
 
         // Target : BEING PROCESSED => notify customer
         if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)) {
-            resetDeboursManuelAmount(customerOrder);
+            resetDeboursInvoiceItems(customerOrder);
             // Confirm deposit taken into account or customer order starting and only if not
             // from to billed
             if (!customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED)) {
@@ -454,117 +412,77 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (targetStatusCode.equals(CustomerOrderStatus.BILLED)) {
             // save once customer order to recompute invoice item before set it in stone...
             this.addOrUpdateCustomerOrder(customerOrder, true, checkAllProvisionEnded);
-            Invoice invoice = generateInvoice(customerOrder);
-            accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(
-                    getInvoice(customerOrder));
 
-            // Check invoice payed
+            // Protection : if we already have an invoice not cancelled, abord...
+            if (customerOrder.getInvoices() != null) {
+                for (Invoice invoice : customerOrder.getInvoices())
+                    if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
+                            || invoice.getInvoiceStatus().getId()
+                                    .equals(constantService.getInvoiceStatusPayed().getId()))
+                        throw new OsirisClientMessageException("Une facture existe déjà pour cette commande !");
+            }
+
             Float remainingToPayForCurrentCustomerOrder = Math
                     .round(getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
 
-            // If deposit already set, associate them to invoice
-            moveCustomerOrderDepositToInvoiceDeposit(customerOrder, invoice);
-
-            // If customer order is on direct debit and we bill the tiers, generate it
-            if (documentService.getBillingDocument(customerOrder.getDocuments()).getBillingLabelType().getId()
-                    .equals(constantService.getBillingLabelTypeCustomer().getId())) {
-                ITiers tiers = invoiceHelper.getCustomerOrder(invoice);
-                PaymentType paymentType = null;
-                if (tiers instanceof Responsable)
-                    paymentType = ((Responsable) tiers).getTiers().getPaymentType();
-                if (tiers instanceof Tiers)
-                    paymentType = ((Tiers) tiers).getPaymentType();
-                if (tiers instanceof Confrere)
-                    paymentType = ((Confrere) tiers).getPaymentType();
-
-                if (paymentType != null
-                        && paymentType.getId().equals(constantService.getPaymentTypePrelevement().getId())) {
-                    DirectDebitTransfert directDebitTransfert = debitTransfertService
-                            .generateDirectDebitTransfertForOutboundInvoice(invoice);
-                    invoice.setDirectDebitTransfert(directDebitTransfert);
-                }
-
-                invoice.setManualPaymentType(paymentType);
-                invoiceService.addOrUpdateInvoice(invoice);
-            }
-
-            // Handle appoint
-            if (remainingToPayForCurrentCustomerOrder != 0 && customerOrder.getDeposits() != null
-                    && customerOrder.getDeposits().size() > 0) {
-                if (Math.abs(remainingToPayForCurrentCustomerOrder) <= Float.parseFloat(payementLimitRefundInEuros)) {
-                    Deposit deposit = customerOrder.getDeposits().get(0);
-                    Appoint appoint = appointService.generateAppointForInvoice(invoice, deposit.getOriginPayment(),
-                            deposit,
-                            -remainingToPayForCurrentCustomerOrder);
-                    invoice.setAppoints(Arrays.asList(appoint));
-                    deposit.setDepositAmount(remainingToPayForCurrentCustomerOrder);
-                    depositService.addOrUpdateDeposit(deposit);
-                    remainingToPayForCurrentCustomerOrder = 0f;
-                }
-            }
-
-            if (remainingToPayForCurrentCustomerOrder < 0) {
+            if (remainingToPayForCurrentCustomerOrder < 0
+                    && Math.abs(remainingToPayForCurrentCustomerOrder) > Float.parseFloat(payementLimitRefundInEuros))
                 throw new OsirisException(null, "Impossible to billed, too much money on customerOrder !");
-            }
+
+            Invoice invoice = generateInvoice(customerOrder);
+
+            // If deposit already set, associate them to invoice
+            if (customerOrder.getPayments() != null)
+                for (Payment payment : customerOrder.getPayments())
+                    if (!payment.getIsCancelled())
+                        paymentService.movePaymentFromCustomerOrderToInvoice(payment, customerOrder, invoice);
 
             entityManager.flush();
             entityManager.clear();
-            accountingRecordService.checkInvoiceForLettrage(invoice);
 
             mailHelper.sendCustomerOrderFinalisationToCustomer(getCustomerOrder(customerOrder.getId()), false, false,
                     false);
+            mailHelper.sendCustomerOrderAttachmentOnFinalisationToCustomer(getCustomerOrder(customerOrder.getId()),
+                    false);
         }
 
-        // Target : going back to TO BILLED => cancel invoice
+        // Target : going back to TO BILLED
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)
-                && targetStatusCode.equals(CustomerOrderStatus.TO_BILLED)) {
-            Invoice invoiceToCancel = null;
+                && targetStatusCode.equals(CustomerOrderStatus.TO_BILLED))
             if (customerOrder.getInvoices() != null)
-                for (Invoice invoice : customerOrder.getInvoices()) {
-                    if (!invoice.getInvoiceStatus().getId()
-                            .equals(constantService.getInvoiceStatusCancelled().getId())
+                for (Invoice invoice : customerOrder.getInvoices())
+                    if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusCancelled().getId())
                             && !invoice.getInvoiceStatus().getId()
                                     .equals(constantService.getInvoiceStatusCreditNoteEmited().getId())) {
-                        invoiceToCancel = invoice;
+                        invoiceService.cancelInvoice(invoice);
                         break;
                     }
-                    if (invoice.getAppoints() != null)
-                        for (Appoint appoint : invoice.getAppoints())
-                            appointService.deleteAppoint(appoint);
-                }
-            moveInvoiceDepositAndPaymentToCustomerOrderDeposit(customerOrder, invoiceToCancel);
-            invoiceService.cancelInvoiceEmitted(invoiceToCancel, customerOrder);
-        }
 
         CustomerOrderStatus customerOrderStatus = customerOrderStatusService
-                .getCustomerOrderStatusByCode(
-                        targetStatusCode);
+                .getCustomerOrderStatusByCode(targetStatusCode);
         if (customerOrderStatus == null)
-            throw new OsirisException(null, "Quotation status not found for code " + targetStatusCode);
+            throw new OsirisException(null, "Customer order status not found for code " + targetStatusCode);
 
         customerOrder.setCustomerOrderStatus(customerOrderStatus);
         customerOrder.setLastStatusUpdate(LocalDateTime.now());
         return this.addOrUpdateCustomerOrder(customerOrder, false, checkAllProvisionEnded);
     }
 
-    private void resetDeboursManuelAmount(CustomerOrder customerOrder) {
+    private void resetDeboursInvoiceItems(CustomerOrder customerOrder) {
+        List<InvoiceItem> invoiceItemToDelete = new ArrayList<InvoiceItem>();
         if (customerOrder.getAssoAffaireOrders() != null)
-            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
-                indexEntityService.indexEntity(assoAffaireOrder, assoAffaireOrder.getId());
+            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
                 if (assoAffaireOrder.getProvisions() != null)
                     for (Provision provision : assoAffaireOrder.getProvisions())
-                        if (provision.getInvoiceItems() != null)
+                        if (provision.getInvoiceItems() != null) {
+                            invoiceItemToDelete = new ArrayList<InvoiceItem>();
                             for (InvoiceItem invoiceItem : provision.getInvoiceItems())
-                                if (invoiceItem.getBillingItem().getBillingType().getIsDebour()) {
-                                    invoiceItem.setPreTaxPrice(0f);
-                                    invoiceItem.setDiscountAmount(0f);
-                                    invoiceItem.setIsOverridePrice(false);
-                                    invoiceItem.setVatPrice(null);
-                                    invoiceItem.setVat(null);
-                                    invoiceItem.setIsGifted(false);
-                                    invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
-                                }
-            }
+                                if (invoiceItem.getBillingItem().getBillingType().getIsDebour())
+                                    invoiceItemToDelete.add(invoiceItem);
+
+                            if (invoiceItemToDelete.size() > 0)
+                                provision.getInvoiceItems().removeAll(invoiceItemToDelete);
+                        }
     }
 
     /**
@@ -602,30 +520,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return allDone;
     }
 
-    private void moveCustomerOrderDepositToInvoiceDeposit(CustomerOrder customerOrder, Invoice invoice)
-            throws OsirisException {
-        if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
-            for (Deposit deposit : customerOrder.getDeposits()) {
-                depositService.moveDepositToInvoice(deposit, invoice);
-            }
-    }
-
-    private void moveInvoiceDepositAndPaymentToCustomerOrderDeposit(CustomerOrder customerOrder, Invoice invoice)
-            throws OsirisException {
-        if (invoice.getDeposits() != null && invoice.getDeposits().size() > 0)
-            for (Deposit deposit : invoice.getDeposits()) {
-                depositService.moveDepositFromInvoiceToCustomerOrder(deposit, invoice, customerOrder);
-            }
-
-        if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
-            for (Payment payment : invoice.getPayments()) {
-                depositService.getNewDepositForCustomerOrder(payment.getPaymentAmount(), LocalDateTime.now(),
-                        customerOrder, null,
-                        payment, false);
-                paymentService.cancelPayment(payment, constantService.getAccountingJournalBank());
-            }
-    }
-
     @Override
     public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
@@ -639,29 +533,38 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     private Invoice generateInvoice(CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        if (!hasAtLeastOneInvoiceItemNotNull(customerOrder))
-            throw new OsirisException(null, "No invoice item found on customer order " + customerOrder.getId());
-
         // Generate blank invoice
-        Invoice invoice = invoiceService.createInvoice(customerOrder,
-                quotationService.getCustomerOrderOfQuotation(customerOrder));
+        ITiers orderingCustomer = quotationService.getCustomerOrderOfQuotation(customerOrder);
+        Invoice invoice = new Invoice();
+
+        invoice.setIsCreditNote(false);
+        invoice.setIsProviderCreditNote(false);
+        invoice.setIsInvoiceFromProvider(false);
+
+        if (orderingCustomer instanceof Tiers)
+            invoice.setTiers((Tiers) orderingCustomer);
+
+        if (orderingCustomer instanceof Responsable)
+            invoice.setResponsable((Responsable) orderingCustomer);
+
+        if (orderingCustomer instanceof Confrere)
+            invoice.setConfrere((Confrere) orderingCustomer);
+
+        invoice.setCustomerOrder(customerOrder);
+
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
         // Associate invoice to invoice item
         for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
             for (Provision provision : assoAffaireOrder.getProvisions()) {
                 if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
                     for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                        invoiceItem.setInvoice(invoice);
                         invoice.getInvoiceItems().add(invoiceItem);
                     }
             }
         }
+        invoiceService.addOrUpdateInvoiceFromUser(invoice);
 
-        invoice.setCustomerOrder(customerOrder);
-        invoiceHelper.setPriceTotal(invoice);
-        invoiceService.addOrUpdateInvoice(invoice);
-
-        // Create invoice PDF and attach it to customerOrder
+        // Create invoice PDF and attach it to customerOrder and invoice
         File invoicePdf = generatePdfDelegate.generateInvoicePdf(customerOrder, invoice, null);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
         try {
@@ -684,42 +587,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         return invoice;
-    }
-
-    private boolean hasAtLeastOneInvoiceItemNotNull(CustomerOrder customerOrder) {
-        for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
-            if (customerOrder != null && assoAffaireOrder.getProvisions() != null
-                    && assoAffaireOrder.getProvisions().size() > 0)
-                for (Provision provision : assoAffaireOrder.getProvisions()) {
-                    if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
-                        return true;
-                }
-        }
-        return false;
-    }
-
-    /**
-     * Assert that provided customerOrder has been billed and throw exception if no
-     * invoice is found
-     * You can check if customerOrder has been billed with hasBeenBilled method of
-     * current class
-     * 
-     * @param customerOrder
-     * @return Invoice
-     * @throws OsirisException
-     * @
-     */
-    private Invoice getInvoice(CustomerOrder customerOrder) throws OsirisException {
-        if (customerOrder == null || customerOrder.getAssoAffaireOrders() == null
-                || customerOrder.getAssoAffaireOrders().get(0).getProvisions() == null
-                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().size() == 0
-                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0) == null
-                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems() == null
-                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().size() == 0
-                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().get(0) == null)
-            throw new OsirisException(null, "No invoice found");
-
-        return customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().get(0).getInvoice();
     }
 
     @Override
@@ -785,7 +652,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         List<CustomerOrder> customerOrders = IterableUtils.toList(customerOrderRepository.findAll());
         if (customerOrders != null)
             for (CustomerOrder customerOrder : customerOrders)
-                indexEntityService.indexEntity(customerOrder, customerOrder.getId());
+                indexEntityService.indexEntity(customerOrder);
     }
 
     @Override
@@ -798,7 +665,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 quotation.getConfrere(), quotation.getSpecialOffers(), LocalDateTime.now(), statusOpen,
                 quotation.getObservations(), quotation.getDescription(), null,
                 quotation.getDocuments(), quotation.getAssoAffaireOrders(), null,
-                quotation.getOverrideSpecialOffer(), quotation.getQuotationLabel(), false, null, null, null);
+                quotation.getOverrideSpecialOffer(), quotation.getQuotationLabel(), false, null, null);
 
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
@@ -978,10 +845,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     customerOrder.getId() + "", subject);
 
             centralPayPaymentRequestService.declareNewCentralPayPaymentRequest(paymentRequest.getPaymentRequestId(),
-                    customerOrder, null, true);
+                    customerOrder, null);
             return paymentRequest.getBreakdowns().get(0).getEndpoint();
+        } else {
+            throw new OsirisException(null, "Nothing to pay on customer order n°" + customerOrder.getId());
         }
-        return "ok";
     }
 
     @Override
@@ -1004,11 +872,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             for (Invoice invoice : customerOrder.getInvoices())
                                 if (invoice.getInvoiceStatus().getId()
                                         .equals(constantService.getInvoiceStatusSend().getId())) {
-                                    generatePaymentOnInvoiceForCbPayment(invoice, centralPayPaymentRequest);
+                                    paymentService.generatePaymentOnInvoiceForCbPayment(invoice,
+                                            centralPayPaymentRequest);
                                     break;
                                 }
                     } else {
-                        generateDepositOnCustomerOrderForCbPayment(customerOrder,
+                        paymentService.generateDepositOnCustomerOrderForCbPayment(customerOrder,
                                 centralPayPaymentRequest);
                         unlockCustomerOrderFromDeposit(customerOrder);
                     }
@@ -1026,60 +895,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         }
         return true;
-    }
-
-    @Override
-    public Payment generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
-            CentralPayPaymentRequest centralPayPaymentRequest)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        customerOrder = getCustomerOrder(customerOrder.getId());
-        // Generate payment to materialize CB payment
-        Payment payment = getCentralPayPayment(centralPayPaymentRequest, true, null);
-
-        Deposit deposit = depositService.getNewDepositForCustomerOrder(payment.getPaymentAmount(), LocalDateTime.now(),
-                customerOrder, null, payment, true);
-
-        deposit.setCustomerOrder(customerOrder);
-        depositService.addOrUpdateDeposit(deposit);
-
-        paymentService.cancelPayment(payment, constantService.getAccountingJournalBank());
-
-        addOrUpdateCustomerOrder(customerOrder, false, true);
-
-        accountingRecordService.generateAccountingRecordsForCentralPayPayment(centralPayPaymentRequest,
-                payment, deposit, customerOrder, null);
-
-        return payment;
-    }
-
-    private void generatePaymentOnInvoiceForCbPayment(Invoice invoice,
-            CentralPayPaymentRequest centralPayPaymentRequest) throws OsirisException, OsirisClientMessageException {
-        // Generate payment to materialize CB payment
-        Payment payment = getCentralPayPayment(centralPayPaymentRequest, false, invoice);
-
-        accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment, null);
-        accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, payment);
-        accountingRecordService.generateAccountingRecordsForCentralPayPayment(centralPayPaymentRequest, payment,
-                null, invoice.getCustomerOrder(), invoice);
-
-        accountingRecordService.checkInvoiceForLettrage(invoice);
-    }
-
-    private Payment getCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest, boolean isForDepostit,
-            Invoice invoice)
-            throws OsirisException {
-        Payment payment = new Payment();
-        payment.setIsExternallyAssociated(false);
-        payment.setBankId(centralPayPaymentRequest.getPaymentRequestId());
-        payment.setLabel(centralPayPaymentRequest.getDescription());
-        payment.setPaymentAmount(centralPayPaymentRequest.getTotalAmount() / 100f);
-        payment.setPaymentDate(centralPayPaymentRequest.getCreationDate());
-        payment.setPaymentWay(constantService.getPaymentWayInbound());
-        payment.setPaymentType(constantService.getPaymentTypeCB());
-        payment.setIsCancelled(isForDepostit);
-        payment.setInvoice(invoice);
-        paymentService.addOrUpdatePayment(payment);
-        return payment;
     }
 
     @Override
@@ -1115,24 +930,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public Float getTotalForCustomerOrder(IQuotation customerOrder) {
         Float total = 0f;
-        if (customerOrder != null) {
-            if (customerOrder.getAssoAffaireOrders() != null) {
-                for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
-                    if (assoAffaireOrder.getProvisions() != null) {
-                        for (Provision provision : assoAffaireOrder.getProvisions()) {
-                            if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0) {
-                                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                                    total += (invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f)
-                                            + (invoiceItem.getVatPrice() != null ? invoiceItem.getVatPrice() : 0f)
-                                            - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
-                                                    : 0f);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        if (customerOrder != null)
+            if (customerOrder.getAssoAffaireOrders() != null)
+                for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
+                    if (assoAffaireOrder.getProvisions() != null)
+                        for (Provision provision : assoAffaireOrder.getProvisions())
+                            if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
+                                for (InvoiceItem invoiceItem : provision.getInvoiceItems())
+                                    total += invoiceHelper.getTotalForInvoiceItem(invoiceItem);
         return total;
     }
 
@@ -1141,11 +946,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder = getCustomerOrder(customerOrder.getId());
         if (customerOrder != null) {
             Float total = getTotalForCustomerOrder(customerOrder);
-
-            if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
-                for (Deposit deposit : customerOrder.getDeposits())
-                    if (!deposit.getIsCancelled())
-                        total -= deposit.getDepositAmount();
+            if (customerOrder.getPayments() != null)
+                for (Payment payment : customerOrder.getPayments())
+                    if (!payment.getIsCancelled())
+                        total -= payment.getPaymentAmount();
 
             return Math.round(total * 100f) / 100f;
         }

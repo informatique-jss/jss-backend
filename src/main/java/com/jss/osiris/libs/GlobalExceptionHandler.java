@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -38,21 +37,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private Boolean devMode;
 
     @ExceptionHandler({ OsirisValidationException.class, OsirisException.class, Exception.class })
-    public ResponseEntity<Object> handleExceptionOsiris(Exception ex, WebRequest request) {
+    public ResponseEntity<Object> handleExceptionOsiris(Exception ex) {
         if (ex instanceof OsirisValidationException) {
-            return validationOsirisValidationException((OsirisValidationException) ex, request);
+            return validationOsirisValidationException((OsirisValidationException) ex);
         }
         if (ex instanceof OsirisClientMessageException) {
-            return validationOsirisClientMessageException((OsirisClientMessageException) ex, request);
+            return validationOsirisClientMessageException((OsirisClientMessageException) ex);
         } else if (ex instanceof OsirisException) {
-            return validationOsirisException((OsirisException) ex, request);
+            return validationOsirisException((OsirisException) ex);
         } else {
-            return validationOtherException(ex, request);
+            return validationOtherException(ex);
         }
     }
 
-    private ResponseEntity<Object> validationOsirisValidationException(OsirisValidationException exception,
-            WebRequest request) {
+    private ResponseEntity<Object> validationOsirisValidationException(OsirisValidationException exception) {
         List<String> customHeaders = new ArrayList<String>();
         customHeaders.add("incorrectField");
         HttpHeaders header = new HttpHeaders();
@@ -61,8 +59,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().headers(header).build();
     }
 
-    private ResponseEntity<Object> validationOsirisClientMessageException(OsirisClientMessageException exception,
-            WebRequest request) {
+    private ResponseEntity<Object> validationOsirisClientMessageException(OsirisClientMessageException exception) {
         List<String> customHeaders = new ArrayList<String>();
         customHeaders.add("errorMessageToDisplay");
         HttpHeaders header = new HttpHeaders();
@@ -71,8 +68,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().headers(header).build();
     }
 
-    private ResponseEntity<Object> validationOsirisException(OsirisException exception,
-            WebRequest request) {
+    private ResponseEntity<Object> validationOsirisException(OsirisException exception) {
         persistLog(exception, OsirisLog.OSRIS_LOG);
         List<String> customHeaders = new ArrayList<String>();
         customHeaders.add("error");
@@ -82,8 +78,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.internalServerError().headers(header).build();
     }
 
-    private ResponseEntity<Object> validationOtherException(Exception exception,
-            WebRequest request) {
+    private ResponseEntity<Object> validationOtherException(Exception exception) {
         if (exception.getMessage() == null || !exception.getMessage().contains("Relais brisé (pipe)")
                 && !exception.getMessage().contains("Connexion ré-initialisée par le correspondant")
                 && !exception.getMessage()

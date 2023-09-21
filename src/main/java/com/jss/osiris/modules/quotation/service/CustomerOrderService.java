@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -15,7 +14,6 @@ import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Quotation;
-import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 
 public interface CustomerOrderService {
         public CustomerOrder getCustomerOrder(Integer id);
@@ -73,10 +71,6 @@ public interface CustomerOrderService {
         public Float getTotalForCustomerOrder(IQuotation customerOrder);
 
         public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder);
-
-        public Payment generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
-                        CentralPayPaymentRequest centralPayPaymentRequest)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrders, boolean printLabel,
                         boolean printLetters)

@@ -50,6 +50,7 @@ public class InvoiceItemServiceImpl implements InvoiceItemService {
         newInvoiceItem.setIsOverridePrice(invoiceItem.getIsOverridePrice());
         newInvoiceItem.setLabel(invoiceItem.getLabel());
         newInvoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice());
+        newInvoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPriceReinvoiced());
         newInvoiceItem.setProvision(invoiceItem.getProvision());
         newInvoiceItem.setVat(invoiceItem.getVat());
         newInvoiceItem.setVatPrice(invoiceItem.getVatPrice());

@@ -38,7 +38,7 @@
     <mat-tab label="Factures" *ngIf="invoiceSearch.customerOrders">
       <invoice-list [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
     </mat-tab>
-    <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id">
+    <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id && !this.idResponsable">
       <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
     </mat-tab>
     <mat-tab label="Reporting" *ngIf="tiers && tiers.id">

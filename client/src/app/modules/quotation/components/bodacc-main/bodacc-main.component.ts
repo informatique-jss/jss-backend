@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { BODACC_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ActType } from '../../model/ActType';
@@ -39,6 +40,7 @@ export class BodaccMainComponent implements OnInit {
 
   BODACC_ENTITY_TYPE = BODACC_ENTITY_TYPE;
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
+  instanceOfCustomerOrderFn = instanceOfCustomerOrder;
 
   bodaccPublicationTypeMerging: BodaccPublicationType = this.constantService.getBodaccPublicationTypeMerging();
   bodaccPublicationTypeSplit: BodaccPublicationType = this.constantService.getBodaccPublicationTypeSplit();

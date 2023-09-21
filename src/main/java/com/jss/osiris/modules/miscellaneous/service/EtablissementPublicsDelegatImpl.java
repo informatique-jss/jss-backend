@@ -35,6 +35,8 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
     private String cciUrl = "/cci";
     private String direccteUrl = "/direccte";
     private String chambreMetierUrl = "/chambre_metier";
+    private String chambreAgricultureUrl = "/chambre_agriculture";
+    private String urssafUrl = "/urssaf";
     private String prefectureUrl = "/prefecture";
 
     @Autowired
@@ -62,6 +64,8 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
         updateCfp();
         updateCci();
         updateChambreMetier();
+        updateChambreAgriculture();
+        updateUrssaf();
         updateDireccte();
         updatePrefecture();
         geoCities = new ArrayList<GeoCity>();
@@ -223,6 +227,49 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
                     competentAuthority = new CompetentAuthority();
 
                 competentAuthority.setCompetentAuthorityType(constantService.getCompetentAuthorityTypeChambreMetier());
+                competentAuthority = mergeCompetentAuthorityWithCityZonage(competentAuthority, organisme);
+                competentAuthorityService.addOrUpdateCompetentAuthority(competentAuthority);
+            }
+    }
+
+    @SuppressWarnings({ "null" })
+    private void updateChambreAgriculture() throws OsirisException {
+        ResponseEntity<Organisme> response = new RestTemplate().getForEntity(
+                etablissementPublicEntryPoint + chambreAgricultureUrl,
+                Organisme.class);
+        if (response.getBody() != null && response.getBody().getFeatures() != null
+                && response.getBody().getFeatures().size() > 0
+                && response.getBody().getFeatures().get(0) != null)
+            for (Feature organisme : response.getBody().getFeatures().get(0)) {
+                CompetentAuthority competentAuthority = null;
+                competentAuthority = competentAuthorityService
+                        .getCompetentAuthorityByApiId(organisme.getProperties().getId());
+                if (competentAuthority == null)
+                    competentAuthority = new CompetentAuthority();
+
+                competentAuthority
+                        .setCompetentAuthorityType(constantService.getCompetentAuthorityTypeChambreAgriculture());
+                competentAuthority = mergeCompetentAuthorityWithCityZonage(competentAuthority, organisme);
+                competentAuthorityService.addOrUpdateCompetentAuthority(competentAuthority);
+            }
+    }
+
+    @SuppressWarnings({ "null" })
+    private void updateUrssaf() throws OsirisException {
+        ResponseEntity<Organisme> response = new RestTemplate().getForEntity(
+                etablissementPublicEntryPoint + urssafUrl,
+                Organisme.class);
+        if (response.getBody() != null && response.getBody().getFeatures() != null
+                && response.getBody().getFeatures().size() > 0
+                && response.getBody().getFeatures().get(0) != null)
+            for (Feature organisme : response.getBody().getFeatures().get(0)) {
+                CompetentAuthority competentAuthority = null;
+                competentAuthority = competentAuthorityService
+                        .getCompetentAuthorityByApiId(organisme.getProperties().getId());
+                if (competentAuthority == null)
+                    competentAuthority = new CompetentAuthority();
+
+                competentAuthority.setCompetentAuthorityType(constantService.getCompetentAuthorityTypeUrssaf());
                 competentAuthority = mergeCompetentAuthorityWithCityZonage(competentAuthority, organisme);
                 competentAuthorityService.addOrUpdateCompetentAuthority(competentAuthority);
             }

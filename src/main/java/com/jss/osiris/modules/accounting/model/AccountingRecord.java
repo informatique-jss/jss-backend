@@ -19,15 +19,13 @@ import javax.persistence.SequenceGenerator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
-import com.jss.osiris.modules.invoicing.model.Appoint;
-import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.Debour;
 
 @Entity
 public class AccountingRecord implements Serializable, IId {
@@ -71,6 +69,7 @@ public class AccountingRecord implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice_item")
+	@JsonIgnoreProperties(value = { "originProviderInvoice" }, allowSetters = true)
 	private InvoiceItem invoiceItem;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -86,29 +85,21 @@ public class AccountingRecord implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment")
-	@JsonIgnoreProperties(value = { "accountingRecords", "invoice", "customerOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "accountingRecords", "invoice", "customerOrder", "originPayment",
+			"childrenPayments" }, allowSetters = true)
 	private Payment payment;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_deposit")
-	@JsonIgnoreProperties(value = { "accountingRecords", "customerOrder" }, allowSetters = true)
-	private Deposit deposit;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_debour")
-	@JsonIgnoreProperties(value = { "accountingRecords", "customerOrder" }, allowSetters = true)
-	private Debour debour;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_appoint")
-	@JsonIgnoreProperties(value = { "accountingRecords", "originPayment" }, allowSetters = true)
-	private Appoint appoint;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_refund")
 	@JsonIgnoreProperties(value = { "accountingRecords", "tiers", "confrere", "affaire", "payment", "customerOrder",
 			"deposit" }, allowSetters = true)
 	private Refund refund;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_bank_transfert")
+	@JsonIgnoreProperties(value = { "accountingRecords", "tiers", "confrere", "affaire", "payment", "customerOrder",
+			"deposit" }, allowSetters = true)
+	private BankTransfert bankTransfert;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_journal")
@@ -145,20 +136,12 @@ public class AccountingRecord implements Serializable, IId {
 		this.payment = payment;
 	}
 
-	public Deposit getDeposit() {
-		return deposit;
-	}
-
 	public CustomerOrder getCustomerOrder() {
 		return customerOrder;
 	}
 
 	public void setCustomerOrder(CustomerOrder customerOrder) {
 		this.customerOrder = customerOrder;
-	}
-
-	public void setDeposit(Deposit deposit) {
-		this.deposit = deposit;
 	}
 
 	public LocalDateTime getAccountingDateTime() {
@@ -329,14 +312,6 @@ public class AccountingRecord implements Serializable, IId {
 		this.isCounterPart = isCounterPart;
 	}
 
-	public Debour getDebour() {
-		return debour;
-	}
-
-	public void setDebour(Debour debour) {
-		this.debour = debour;
-	}
-
 	public Refund getRefund() {
 		return refund;
 	}
@@ -345,12 +320,12 @@ public class AccountingRecord implements Serializable, IId {
 		this.refund = refund;
 	}
 
-	public Appoint getAppoint() {
-		return appoint;
+	public BankTransfert getBankTransfert() {
+		return bankTransfert;
 	}
 
-	public void setAppoint(Appoint appoint) {
-		this.appoint = appoint;
+	public void setBankTransfert(BankTransfert bankTransfert) {
+		this.bankTransfert = bankTransfert;
 	}
 
 }

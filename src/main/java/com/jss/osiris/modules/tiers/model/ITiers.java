@@ -54,4 +54,5 @@ public interface ITiers extends IId, IDocument {
 
 	public String getIntercommunityVat();
 
+	public Boolean getIsProvisionalPaymentMandatory();
 }

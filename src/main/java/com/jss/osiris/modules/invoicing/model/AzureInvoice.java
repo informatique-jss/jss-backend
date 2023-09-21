@@ -15,7 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -62,7 +61,8 @@ public class AzureInvoice {
     private Float vendorTaxIdConfidence;
 
     @OneToMany(mappedBy = "azureInvoice")
-    @JsonIgnore
+    @JsonIgnoreProperties(value = { "attachments", "provision", "customerOrderForInboundInvoice", "accountingRecords",
+            "competentAuthority", "provider", "confrere", "invoiceItems", "azureInvoice" }, allowSetters = true)
     private List<Invoice> invoices;
 
     @OneToMany(mappedBy = "azureInvoice")

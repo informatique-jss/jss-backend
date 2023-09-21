@@ -77,7 +77,7 @@ public class Attachment implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision")
-	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "attachments", "providerInvoices" }, allowSetters = true)
 	private Provision provision;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -87,9 +87,10 @@ public class Attachment implements Serializable, IId {
 	private CustomerOrder customerOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonIgnore
 	@JoinColumn(name = "id_invoice")
-	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "attachments", "provider", "customerOrder", "accountingRecords",
+			"customerOrderForInboundInvoice", "competentAuthority", "invoiceItems",
+			"azureInvoice" }, allowSetters = true)
 	private Invoice invoice;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -110,7 +111,7 @@ public class Attachment implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_azure_invoice")
-	@JsonIgnoreProperties(value = { "attachments", "invoices" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private AzureInvoice azureInvoice;
 
 	@ManyToOne(fetch = FetchType.LAZY)

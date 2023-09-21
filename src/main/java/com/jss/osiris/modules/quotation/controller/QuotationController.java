@@ -33,7 +33,6 @@ import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
-import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -75,7 +74,6 @@ import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
-import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
@@ -322,6 +320,30 @@ public class QuotationController {
 
   @Autowired
   GuichetUniqueDelegateService guichetUniqueDelegateService;
+
+  @GetMapping(inputEntryPoint + "/customer-order/associate")
+  public ResponseEntity<Quotation> associateCustomerOrderToQuotation(@RequestParam Integer idQuotation,
+      @RequestParam Integer idCustomerOrder)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+    Quotation quotation = quotationService.getQuotation(idQuotation);
+    if (quotation == null)
+      throw new OsirisValidationException("idQuotation");
+
+    if (!quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER))
+      throw new OsirisClientMessageException("Le devis doit être au statut Envoyé au client");
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+    if (customerOrder == null)
+      throw new OsirisValidationException("idCustomerOrder");
+
+    if (quotation.getCustomerOrders() != null && quotation.getCustomerOrders().size() > 0)
+      throw new OsirisValidationException("Devis déjà associé à une commande");
+    if (customerOrder.getQuotations() != null && customerOrder.getQuotations().size() > 0)
+      throw new OsirisValidationException("Commande déjà associée à un devis");
+
+    return new ResponseEntity<Quotation>(quotationService.associateCustomerOrderToQuotation(quotation, customerOrder),
+        HttpStatus.OK);
+  }
 
   @GetMapping(inputEntryPoint + "/bank-transferts")
   public ResponseEntity<List<BankTransfert>> getBankTransfers() {
@@ -1846,32 +1868,6 @@ public class QuotationController {
       validationHelper.validateReferential(employee, true, "Employee");
     return new ResponseEntity<List<ProvisionBoardResult>>(provisionService.getDashboardEmployee(employees),
         HttpStatus.OK);
-  }
-
-  @PostMapping(inputEntryPoint + "/debour/payment/associate")
-  public ResponseEntity<List<Debour>> associateDeboursAndPayment(@RequestBody List<Debour> debours,
-      @RequestParam Integer paymentId)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-    if (paymentId == null)
-      throw new OsirisValidationException("paymentId");
-
-    if (debours == null || debours.size() == 0)
-      throw new OsirisValidationException("debours");
-
-    ArrayList<Debour> deboursOut = new ArrayList<Debour>();
-    for (Debour debourIn : debours) {
-      Debour debour = (Debour) validationHelper.validateReferential(debourIn, true, "debour");
-      deboursOut.add(debour);
-
-      if (debour.getPayment() != null)
-        throw new OsirisClientMessageException("Un des débours/frais a déjà été rapproché d'un paiement");
-    }
-
-    Payment payment = paymentService.getPayment(paymentId);
-    if (payment == null)
-      throw new OsirisValidationException("payment");
-    paymentService.associateOutboundPaymentAndDebourFromUser(payment, deboursOut);
-    return new ResponseEntity<List<Debour>>(deboursOut, HttpStatus.OK);
   }
 
   @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
