@@ -224,13 +224,22 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
 
         // Complete provisions
+        boolean oneNewProvision = false;
         if (customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                 assoAffaireOrder.setCustomerOrder(customerOrder);
                 assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
+                if (assoAffaireOrder.getProvisions() != null)
+                    for (Provision provision : assoAffaireOrder.getProvisions())
+                        if (provision.getId() == null)
+                            oneNewProvision = true;
             }
 
+        if (oneNewProvision)
+            customerOrder = customerOrderRepository.save(customerOrder);
+
         pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
+
         customerOrder = customerOrderRepository.save(customerOrder);
 
         customerOrder = getCustomerOrder(customerOrder.getId());
