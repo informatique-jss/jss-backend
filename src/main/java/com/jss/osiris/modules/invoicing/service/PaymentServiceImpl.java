@@ -239,8 +239,9 @@ public class PaymentServiceImpl implements PaymentService {
                     else
                         accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
                 }
-                automatchPayment(
-                        paymentRepository.findByBankId(transaction.id()));
+                Payment payment = paymentRepository.findByBankId(transaction.id());
+                if (payment != null && (payment.getIsCancelled() == null || payment.getIsCancelled() == false))
+                    automatchPayment(payment);
             }
 
         return null;
