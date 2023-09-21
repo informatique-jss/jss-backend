@@ -367,6 +367,9 @@ public class QuotationValidationHelper {
                                 .equals(constantService.getCustomerOrderOriginOsiris().getId()))
                         provision.setAssignedTo(null);
 
+                if (provision.getIsRneUpdate() == null)
+                        provision.setIsRneUpdate(false);
+
                 // Domiciliation
                 if (provision.getDomiciliation() != null) {
                         Domiciliation domiciliation = provision.getDomiciliation();
