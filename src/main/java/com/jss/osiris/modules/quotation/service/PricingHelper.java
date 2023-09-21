@@ -401,7 +401,7 @@ public class PricingHelper {
                             } else if (invoice.getProvider() != null) {
                                 newInvoiceItem.setLabel(invoiceItem.getBillingItem().getBillingType().getLabel());
                             } else if (invoice.getConfrere() != null) {
-                                newInvoiceItem.setLabel(confrere.getLabel() + " -  "
+                                newInvoiceItem.setLabel(invoice.getConfrere().getLabel() + " -  "
                                         + invoiceItem.getBillingItem().getBillingType().getLabel());
                             }
                             newInvoiceItem.setProvision(provision);
