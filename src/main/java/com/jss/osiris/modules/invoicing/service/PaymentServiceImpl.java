@@ -239,8 +239,9 @@ public class PaymentServiceImpl implements PaymentService {
                     else
                         accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
                 }
-                automatchPayment(
-                        paymentRepository.findByBankId(transaction.id()));
+                Payment payment = paymentRepository.findByBankId(transaction.id());
+                if (payment != null && (payment.getIsCancelled() == null || payment.getIsCancelled() == false))
+                    automatchPayment(payment);
             }
 
         return null;
@@ -386,7 +387,8 @@ public class PaymentServiceImpl implements PaymentService {
                 for (IndexEntity foundEntity : correspondingEntities) {
                     if (foundEntity.getEntityType().equals(BankTransfert.class.getSimpleName())) {
                         BankTransfert bankTransfert = bankTransfertService.getBankTransfert(foundEntity.getEntityId());
-                        if (bankTransfert != null && bankTransfert.getIsMatched() == false)
+                        if (bankTransfert != null
+                                && (bankTransfert.getIsMatched() == null || bankTransfert.getIsMatched() == false))
                             bankTransfertFound = bankTransfert;
                     }
                 }

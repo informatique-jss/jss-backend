@@ -134,10 +134,15 @@ public class QuotationServiceImpl implements QuotationService {
                     getCustomerOrderOfQuotation(quotation).getDefaultCustomerOrderEmployee());
 
         // Complete provisions
+        boolean oneNewProvision = false;
         if (quotation.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                 assoAffaireOrder.setQuotation(quotation);
                 assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation, true);
+                if (assoAffaireOrder.getProvisions() != null)
+                    for (Provision provision : assoAffaireOrder.getProvisions())
+                        if (provision.getId() == null)
+                            oneNewProvision = true;
             }
 
         boolean isNewQuotation = quotation.getId() == null;
@@ -147,9 +152,11 @@ public class QuotationServiceImpl implements QuotationService {
             quotation = quotationRepository.save(quotation);
         }
 
-        quotation = quotationRepository.save(quotation);
+        if (oneNewProvision)
+            quotation = quotationRepository.save(quotation);
 
         pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
+        quotation = quotationRepository.save(quotation);
 
         quotation = getQuotation(quotation.getId());
 

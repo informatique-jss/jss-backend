@@ -33,6 +33,7 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUniq
 import com.jss.osiris.modules.quotation.model.guichetUnique.ValidationRequest;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
 import com.jss.osiris.modules.quotation.repository.guichetUnique.FormaliteGuichetUniqueRepository;
+import com.jss.osiris.modules.quotation.repository.guichetUnique.PartnerCenterRepository;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
 
@@ -68,6 +69,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Autowired
     FormaliteService formaliteService;
+
+    @Autowired
+    PartnerCenterRepository partnerCenterRepository;
 
     private String cartStatusPayed = "PAID";
     private String cartStatusRefund = "REFUNDED";
@@ -108,6 +112,12 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             formaliteStatusHistoryItems = guichetUniqueDelegateService
                     .getFormalityStatusHistoriesById(inFormaliteGuichetUnique.getId());
         }
+
+        if (formaliteGuichetUnique.getValidationsRequests() != null)
+            for (ValidationRequest validationRequest : formaliteGuichetUnique.getValidationsRequests()) {
+                if (validationRequest.getPartnerCenter() != null)
+                    partnerCenterRepository.save(validationRequest.getPartnerCenter());
+            }
 
         FormaliteGuichetUnique originalFormalite = getFormaliteGuichetUnique(inFormaliteGuichetUnique.getId());
 
@@ -157,11 +167,16 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         }
                     }
                 } else {
+                    ArrayList<Cart> cartsToReplace = new ArrayList<Cart>();
                     for (Cart currentCart : formaliteGuichetUnique.getCarts()) {
                         boolean found = false;
                         for (Cart originalCart : originalFormalite.getCarts()) {
-                            if (originalCart.getId().equals(currentCart.getId()))
+                            if (originalCart.getId().equals(currentCart.getId())) {
+                                if (!originalCart.getStatus().equals(currentCart.getStatus())
+                                        && originalCart.getInvoice() == null)
+                                    cartsToReplace.add(currentCart);
                                 found = true;
+                            }
                         }
                         if (!found) {
                             currentCart.setFormaliteGuichetUnique(originalFormalite);
@@ -171,6 +186,23 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                             originalFormalite.getCarts().add(currentCart);
                             currentCart.setFormaliteGuichetUnique(originalFormalite);
                         }
+                    }
+
+                    if (cartsToReplace != null) {
+                        ArrayList<Cart> finalCarts = new ArrayList<Cart>();
+                        boolean found = false;
+                        for (Cart cart : originalFormalite.getCarts()) {
+                            for (Cart cartToReplace : cartsToReplace) {
+                                if (cart.getId().equals(cartToReplace.getId()))
+                                    found = true;
+                            }
+                            if (!found)
+                                finalCarts.add(cart);
+                        }
+                        finalCarts.addAll(cartsToReplace);
+                        originalFormalite.setCarts(finalCarts);
+                        for (Cart cart : originalFormalite.getCarts())
+                            cart.setFormaliteGuichetUnique(originalFormalite);
                     }
 
                     originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);

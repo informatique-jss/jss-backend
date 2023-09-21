@@ -338,6 +338,10 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 		return accountingAccountDepositProvider;
 	}
 
+	public void setAccountingAccountDeposit(AccountingAccount accountingAccountDepositProvider) {
+		this.accountingAccountDepositProvider = accountingAccountDepositProvider;
+	}
+
 	public void setAccountingAccountDepositProvider(AccountingAccount accountingAccountDepositProvider) {
 		this.accountingAccountDepositProvider = accountingAccountDepositProvider;
 	}

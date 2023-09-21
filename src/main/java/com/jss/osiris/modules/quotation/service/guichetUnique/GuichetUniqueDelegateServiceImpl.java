@@ -207,11 +207,16 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = createHeaders();
 
-        ResponseEntity<FormaliteGuichetUnique> response = new RestTemplate().exchange(
-                guichetUniqueEntryPoint + formalitiesRequestUrl + "/" + id,
-                HttpMethod.GET, new HttpEntity<String>(headers),
-                new ParameterizedTypeReference<FormaliteGuichetUnique>() {
-                });
+        ResponseEntity<FormaliteGuichetUnique> response;
+        try {
+            response = new RestTemplate().exchange(
+                    guichetUniqueEntryPoint + formalitiesRequestUrl + "/" + id,
+                    HttpMethod.GET, new HttpEntity<String>(headers),
+                    new ParameterizedTypeReference<FormaliteGuichetUnique>() {
+                    });
+        } catch (Exception e) {
+            throw new OsirisException(e, "Impossible to fetch formality guichet unique " + id);
+        }
 
         if (response.getBody() != null) {
             response.getBody().setIsAnnualAccounts(false);
