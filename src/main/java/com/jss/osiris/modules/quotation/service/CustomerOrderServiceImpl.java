@@ -230,9 +230,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
             }
 
+        pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
         customerOrder = customerOrderRepository.save(customerOrder);
 
-        pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
         customerOrder = getCustomerOrder(customerOrder.getId());
 
         if (customerOrder.getId() == null)
