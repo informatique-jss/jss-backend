@@ -193,7 +193,7 @@ public class Provision implements IId, IAttachment {
 	private List<Invoice> providerInvoices;
 
 	@OneToMany(targetEntity = Payment.class, mappedBy = "provision")
-	@JsonIgnoreProperties(value = { "provision", "accountingRecords", "assoAffaireOrder",
+	@JsonIgnoreProperties(value = { "provision", "accountingRecords", "assoAffaireOrder", "customerOrder",
 			"invoice" }, allowSetters = true)
 	private List<Payment> payments;
 

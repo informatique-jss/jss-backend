@@ -37,5 +37,8 @@
     <mat-tab label="Historique" *ngIf="simpleProvision && simpleProvision.id">
       <history [entity]="simpleProvision" [entityType]="SIMPLE_PROVISION_ENTITY_TYPE"></history>
     </mat-tab>
+    <mat-tab label="Débours" *ngIf="simpleProvision && simpleProvision.id && canAddNewInvoice()">
+      <debour [provision]="provision"></debour>
+    </mat-tab>
   </mat-tab-group>
 </form>

@@ -1,0 +1,41 @@
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+td {
+  padding-right: 8px;
+}
+
+.button-td {
+  width: 35px
+}
+
+.mini-fab-add {
+  margin: 5px
+}
+
+.add-button {
+  top: -8px;
+}
+
+.row-field-container {
+  flex-direction: row;
+  display: flex;
+}
+
+.margin-top {
+  margin-top: 15px;
+}
+
+.add-button {
+  top: -8px;
+}
+
+.table-fixed-layout {
+  table-layout: fixed;
+}
+
+.fab-td-button {
+  width: 35px;
+}

@@ -120,7 +120,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
     if (this.payment && this.tiersOrder) {
       let paymentAssociate = {} as PaymentAssociate;
 
-      if (this.selectedRefundTiers == null && this.getBalance() > INVOICING_PAYMENT_LIMIT_REFUND_EUROS) {
+      if (this.selectedRefundTiers == null && this.selectedRefundAffaire == null && this.selectedRefundConfrere == null && this.getBalance() > INVOICING_PAYMENT_LIMIT_REFUND_EUROS) {
         this.appService.displaySnackBar("Veuillez choisir un tiers à rembourser", true, 30);
         return;
       }
