@@ -375,7 +375,7 @@ public class PricingHelper {
             if (provision.getInvoiceItems() != null) {
                 for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
                     if (invoiceItem.getOriginProviderInvoice() != null) {
-                        if (invoiceItem.getInvoice().getInvoiceStatus()
+                        if (invoiceItem.getOriginProviderInvoice().getInvoiceStatus()
                                 .getId().equals(constantService.getInvoiceStatusCancelled().getId())) {
                             invoiceItemsDeleted.add(invoiceItem);
                         }

@@ -74,6 +74,7 @@ import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.quotation.model.DebourDel;
 import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
@@ -117,6 +118,7 @@ import com.jss.osiris.modules.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
+import com.jss.osiris.modules.quotation.service.DebourDelService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
@@ -321,6 +323,9 @@ public class QuotationController {
   @Autowired
   GuichetUniqueDelegateService guichetUniqueDelegateService;
 
+  @Autowired
+  DebourDelService debourDelService;
+
   @GetMapping(inputEntryPoint + "/customer-order/associate")
   public ResponseEntity<Quotation> associateCustomerOrderToQuotation(@RequestParam Integer idQuotation,
       @RequestParam Integer idCustomerOrder)
@@ -398,6 +403,13 @@ public class QuotationController {
   public ResponseEntity<List<SimpleProvisionStatus>> getSimpleProvisionStatus() {
     return new ResponseEntity<List<SimpleProvisionStatus>>(simpleProvisonStatusService.getSimpleProvisionStatus(),
         HttpStatus.OK);
+  }
+
+  // TODO : delete
+  @GetMapping(inputEntryPoint + "/debour")
+  public ResponseEntity<List<DebourDel>> getDebourByProvision(@RequestParam Integer idProvision) {
+    Provision provision = provisionService.getProvision(idProvision);
+    return new ResponseEntity<List<DebourDel>>(debourDelService.getDebourByProvision(provision), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/formalite-status")
