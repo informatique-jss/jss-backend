@@ -346,6 +346,9 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         // For each invoice item, one write on product and VAT account for each invoice
         // item
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+            if (invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted())
+                continue;
+
             if (invoiceItem.getBillingItem() == null)
                 throw new OsirisException(null, "No billing item defined in invoice item n°" + invoiceItem.getId());
 

@@ -375,7 +375,7 @@ public class PricingHelper {
             if (provision.getInvoiceItems() != null) {
                 for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
                     if (invoiceItem.getOriginProviderInvoice() != null) {
-                        if (invoiceItem.getInvoice().getInvoiceStatus()
+                        if (invoiceItem.getOriginProviderInvoice().getInvoiceStatus()
                                 .getId().equals(constantService.getInvoiceStatusCancelled().getId())) {
                             invoiceItemsDeleted.add(invoiceItem);
                         }
@@ -399,7 +399,9 @@ public class PricingHelper {
                                 newInvoiceItem.setLabel(invoice.getCompetentAuthority().getLabel() + " - "
                                         + invoiceItem.getBillingItem().getBillingType().getLabel());
                             } else if (invoice.getProvider() != null) {
-                                newInvoiceItem.setLabel(invoice.getProvider().getLabel() + " - "
+                                newInvoiceItem.setLabel(invoiceItem.getBillingItem().getBillingType().getLabel());
+                            } else if (invoice.getConfrere() != null) {
+                                newInvoiceItem.setLabel(invoice.getConfrere().getLabel() + " -  "
                                         + invoiceItem.getBillingItem().getBillingType().getLabel());
                             }
                             newInvoiceItem.setProvision(provision);

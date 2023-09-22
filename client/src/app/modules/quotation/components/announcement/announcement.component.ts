@@ -15,6 +15,7 @@ import { ANNOUNCEMENT_ENTITY_TYPE } from 'src/app/routing/search/search.componen
 import { getDocument } from '../../../../libs/DocumentHelper';
 import { PROVISION_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { AttachmentType } from '../../../miscellaneous/model/AttachmentType';
 import { Document } from "../../../miscellaneous/model/Document";
 import { Announcement } from '../../model/Announcement';
@@ -85,9 +86,13 @@ export class AnnouncementComponent implements OnInit {
     private journalTypeService: JournalTypeService,
     private announcementNoticeTemplateService: AnnouncementNoticeTemplateService,
     private characterNumberService: CharacterNumberService,
-    private confrereService: ConfrereService
+    private confrereService: ConfrereService,
+    private habilitationsService: HabilitationsService
   ) { }
 
+  canAddNewInvoice() {
+    return this.habilitationsService.canAddNewInvoice();
+  }
   ngOnInit() {
 
     this.journalTypeService.getJournalTypes().subscribe(response => {
