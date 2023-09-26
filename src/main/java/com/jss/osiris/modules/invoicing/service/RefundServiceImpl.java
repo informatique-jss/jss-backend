@@ -149,6 +149,8 @@ public class RefundServiceImpl implements RefundService {
             refund.setAffaire(affaireRefund);
             refund.setRefundIBAN(affaireRefund.getPaymentIban());
             refund.setRefundBic(affaireRefund.getPaymentBic());
+            if (tiersOrder instanceof Tiers)
+                refund.setTiers((Tiers) tiersOrder);
         } else if (refundDocument != null) {
             refund.setRefundType(refundDocument.getRefundType());
             if (refundDocument.getRegie() != null && refundDocument.getRegie().getIban() != null

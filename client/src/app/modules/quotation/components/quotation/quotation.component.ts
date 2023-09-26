@@ -517,6 +517,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                 dialogPaymentDialogRef.componentInstance.payment = payment;
             dialogPaymentDialogRef.componentInstance.doNotInitializeAsso = targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED;
             dialogPaymentDialogRef.componentInstance.customerOrder = this.quotation as CustomerOrder;
+            if (targetStatus.code == CUSTOMER_ORDER_STATUS_BILLED)
+              dialogPaymentDialogRef.componentInstance.isForQuotationBilling = true;
 
             dialogPaymentDialogRef.afterClosed().subscribe(response => {
               if (response)
