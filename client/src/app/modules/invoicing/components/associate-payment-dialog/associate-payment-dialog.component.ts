@@ -47,6 +47,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
   selectedRefundConfrere: Confrere | undefined;
   selectedRefundAffaire: Affaire | undefined;
   tiersOrder: ITiers | undefined | null;
+  isForQuotationBilling: boolean = false;
 
   refreshTable: Subject<void> = new Subject<void>();
 
@@ -264,24 +265,35 @@ export class AssociatePaymentDialogComponent implements OnInit {
       return;
     }
 
-    let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
-      width: '35%'
-    });
     let maxAmount = this.getBalance();
-    amountDialogRef.componentInstance.label = "Indiquer le montant à utiliser (max : " + maxAmount + " €) :";
-    amountDialogRef.componentInstance.maxAmount = Math.round(maxAmount * 100) / 100;
-    amountDialogRef.afterClosed().subscribe(response => {
-      if (response != null) {
-        let asso = { payment: this.payment, customerOrder: order, } as AssociationSummaryTable;
-        asso.amountUsed = parseFloat(response);
-        this.associations.push(asso);
-        this.refreshSummaryTables();
-        if (!this.tiersOrder || !this.tiersOrder.id)
-          this.tiersOrder = this.getTiersOrder();
-      } else {
-        return;
-      }
-    });
+    if (this.isForQuotationBilling) {
+      maxAmount = Math.min(this.getBalance(), QuotationComponent.computePriceTotal(this.customerOrder!));
+      let asso = { payment: this.payment, customerOrder: order, } as AssociationSummaryTable;
+      asso.amountUsed = maxAmount;
+      this.associations.push(asso);
+      this.refreshSummaryTables();
+      if (!this.tiersOrder || !this.tiersOrder.id)
+        this.tiersOrder = this.getTiersOrder();
+      this.isForQuotationBilling = false;
+    } else {
+      let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
+        width: '35%'
+      });
+      amountDialogRef.componentInstance.label = "Indiquer le montant à utiliser (max : " + maxAmount + " €) :";
+      amountDialogRef.componentInstance.maxAmount = Math.round(maxAmount * 100) / 100;
+      amountDialogRef.afterClosed().subscribe(response => {
+        if (response != null) {
+          let asso = { payment: this.payment, customerOrder: order, } as AssociationSummaryTable;
+          asso.amountUsed = parseFloat(response);
+          this.associations.push(asso);
+          this.refreshSummaryTables();
+          if (!this.tiersOrder || !this.tiersOrder.id)
+            this.tiersOrder = this.getTiersOrder();
+        } else {
+          return;
+        }
+      });
+    }
   }
 
   isSameCustomerOrder(newCustomerOrder: ITiers): boolean {
