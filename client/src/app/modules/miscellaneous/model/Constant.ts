@@ -34,6 +34,8 @@ import { Language } from './Language';
 import { LegalForm } from "./LegalForm";
 import { PaymentType } from "./PaymentType";
 import { Vat } from "./Vat";
+import { NoticeTypeFamily } from '../../quotation/model/NoticeTypeFamily';
+import { NoticeType } from '../../quotation/model/NoticeType';
 
 export interface Constant {
   id: number;
@@ -206,4 +208,6 @@ export interface Constant {
   customerOrderOriginWebSite: CustomerOrderOrigin;
   customerOrderOriginOsiris: CustomerOrderOrigin;
   providerCentralPay: Provider;
+  noticeOffamilyIndividuals: NoticeTypeFamily;
+  noticeOfNameChange: NoticeType;
 }

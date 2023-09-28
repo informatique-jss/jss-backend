@@ -233,6 +233,7 @@ import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/sel
 import { SelectTiersTypeComponent } from '../forms/select-tiers-type/select-tiers-type.component';
 import { SelectVatCollectionTypeComponent } from '../forms/select-vat-collection-type/select-vat-collection-type.component';
 import { SelectVatComponent } from '../forms/select-vat/select-vat.component';
+import { SelectNoticeTypeComponent } from '../forms/select-notice-type/select-notice-type';
 import { GradeComponent } from '../grade/grade.component';
 import { HistoryComponent } from '../history/history.component';
 import { NotificationDialogComponent } from '../notification-dialog/notification-dialog.component';
@@ -339,6 +340,7 @@ const routes: Routes = [
     AutocompleteCityComponent,
     SelectBillingTypeDebourComponent,
     SelectVatComponent,
+    SelectNoticeTypeComponent,
     SelectRegionsComponent,
     AutocompleteRegionComponent,
     AutocompleteRegieComponent,
@@ -540,6 +542,7 @@ const routes: Routes = [
     ChipsConfrereComponent,
     SelectMailRedirectionComponent,
     SelectVatComponent,
+    SelectNoticeTypeComponent,
     GradeComponent,
     ChipsCompetitorComponent,
     RadioGroupBillingClosureComponent,

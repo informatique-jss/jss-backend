@@ -37,6 +37,8 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.quotation.model.NoticeType;
+import com.jss.osiris.modules.quotation.model.NoticeTypeFamily;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
@@ -921,4 +923,15 @@ public class ConstantServiceImpl implements ConstantService {
     public Provider getProviderCentralPay() throws OsirisException {
         return getConstants().getProviderCentralPay();
     }
+
+    @Override
+    public NoticeTypeFamily getNoticeOffamilyIndividuals() throws OsirisException {
+        return getConstants().getNoticeOffamilyIndividuals();
+    }
+
+    @Override
+    public NoticeType getNoticeOfNameChange() throws OsirisException {
+        return getConstants().getNoticeOfNameChange();
+    }
+
 }

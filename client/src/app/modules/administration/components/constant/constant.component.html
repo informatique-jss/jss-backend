@@ -1308,9 +1308,16 @@
           </tr>
           <tr>
             <td>
-              <autocomplete-provider [(model)]="constant.providerCentralPay" [form]="constantForm"
-                propertyName="providerCentralPay" [isMandatory]="true" [isDisabled]="!editMode"
-                label="Fournisseur - Central Pay"></autocomplete-provider>
+              <select-notice-family [(model)]="constant.noticeOffamilyIndividuals" [form]="constantForm"
+              propertyName="noticeOffamilyIndividuals" [isMandatory]="true" [isDisabled]="!editMode"
+              label="Notice family - Personnes Physiques"></select-notice-family>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-notice-type [(model)]="constant.noticeOfNameChange" [form]="constantForm"
+              propertyName="noticeOfNameChange" [isDisabled]="!editMode"
+              label="Notice type - Changement nom"></select-notice-type>
             </td>
           </tr>
         </table>

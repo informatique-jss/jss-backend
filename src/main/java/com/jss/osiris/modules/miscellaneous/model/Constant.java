@@ -23,6 +23,8 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.quotation.model.NoticeType;
+import com.jss.osiris.modules.quotation.model.NoticeTypeFamily;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
@@ -216,6 +218,14 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_payment_deadline_type")
 	private PaymentDeadlineType paymentDeadLineType30;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_notice_family_individuals")
+	private NoticeTypeFamily noticeOffamilyIndividuals;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_notice_name_change")
+	private NoticeType noticeOfNameChange;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_balo_package")
@@ -2075,5 +2085,21 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeRneUpdate(BillingType billingTypeRneUpdate) {
 		this.billingTypeRneUpdate = billingTypeRneUpdate;
+	}
+
+	public NoticeType getNoticeOfNameChange() {
+		return noticeOfNameChange;
+	}
+
+	public void setNoticeOfNameChange(NoticeType noticeOfNameChange) {
+		this.noticeOfNameChange = noticeOfNameChange;
+	}
+
+	public NoticeTypeFamily getNoticeOffamilyIndividuals() {
+		return noticeOffamilyIndividuals;
+	}
+
+	public void setNoticeOffamilyIndividuals(NoticeTypeFamily noticeOffamilyIndividuals) {
+		this.noticeOffamilyIndividuals = noticeOffamilyIndividuals;
 	}
 }

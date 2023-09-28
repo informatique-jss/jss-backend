@@ -707,4 +707,12 @@ export class ConstantService extends AppRestService<Constant>{
   getCentralPayProvider() {
     return this.constant.providerCentralPay;
   }
+
+  getNoticeOffamilyIndividuals(){
+    return this.constant.noticeOffamilyIndividuals;
+  }
+
+  getNoticeOfNameChange(){
+    return this.constant.noticeOfNameChange;
+  }
 }
