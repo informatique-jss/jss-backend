@@ -209,6 +209,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_azure_invoice")
 	@JsonIgnoreProperties(value = { "invoices" }, allowSetters = true)
+	@IndexedField
 	private AzureInvoice azureInvoice;
 
 	public Integer getId() {
