@@ -117,7 +117,8 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         azureInvoice = getAzureInvoice(azureInvoice.getId());
         currentProvision = provisionService.getProvision(currentProvision.getId());
 
-        if (azureInvoice.getCompetentAuthority().getDefaultPaymentType() == null)
+        if (azureInvoice.getCompetentAuthority() != null
+                && azureInvoice.getCompetentAuthority().getDefaultPaymentType() == null)
             throw new OsirisClientMessageException(
                     "Type de paiement par défaut non renseigné sur l'autorité compétente");
 
@@ -129,7 +130,8 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         invoice.setIsProviderCreditNote(false);
         invoice.setAzureInvoice(azureInvoice);
         invoice.setManualAccountingDocumentDate(azureInvoice.getInvoiceDate());
-        invoice.setManualPaymentType(azureInvoice.getCompetentAuthority().getDefaultPaymentType());
+        if (azureInvoice.getCompetentAuthority() != null)
+            invoice.setManualPaymentType(azureInvoice.getCompetentAuthority().getDefaultPaymentType());
 
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
 
@@ -148,7 +150,8 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
                         : ""));
         invoiceItem.setPreTaxPrice(Math.round(azureInvoice.getInvoicePreTaxTotal() * 100f) / 100f);
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
-        vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
+        if (azureInvoice.getCompetentAuthority() != null)
+            vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
 
         invoice.getInvoiceItems().add(invoiceItem);
 
@@ -168,7 +171,8 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
                         : ""));
         invoiceItem2.setPreTaxPrice(Math.round(azureInvoice.getInvoiceNonTaxableTotal() * 100f) / 100f);
         invoiceItem2.setPreTaxPriceReinvoiced(invoiceItem2.getPreTaxPrice());
-        vatService.completeVatOnInvoiceItem(invoiceItem2, invoice);
+        if (azureInvoice.getCompetentAuthority() != null)
+            vatService.completeVatOnInvoiceItem(invoiceItem2, invoice);
 
         invoice.getInvoiceItems().add(invoiceItem2);
 

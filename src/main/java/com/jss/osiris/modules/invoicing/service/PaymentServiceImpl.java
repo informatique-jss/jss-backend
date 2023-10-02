@@ -537,6 +537,9 @@ public class PaymentServiceImpl implements PaymentService {
         if (correspondingInvoice != null)
             amountIndex = correspondingInvoice.size() - 1 + 1;
 
+        if (Math.round(remainingMoney * 100) == 0)
+            return 0f;
+
         // if no by pass, put all on last customer order even if there is too much
         // money
         for (int i = 0; i < correspondingCustomerOrder.size(); i++) {
