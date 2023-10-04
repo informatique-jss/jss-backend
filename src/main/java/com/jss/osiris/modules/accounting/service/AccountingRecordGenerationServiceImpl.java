@@ -477,7 +477,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                     .getAccountingAccountCharge();
 
             if (chargeAccountingAccount == null)
-                throw new OsirisException(null, "No product accounting account defined in billing type n°"
+                throw new OsirisException(null, "No charge accounting account defined in billing type n°"
                         + invoiceItem.getBillingItem().getBillingType().getId());
 
             Float billingItemPrice = invoiceItem.getPreTaxPrice()
@@ -545,7 +545,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                     .getAccountingAccountCharge();
 
             if (chargeAccountingAccount == null)
-                throw new OsirisException(null, "No product accounting account defined in billing type n°"
+                throw new OsirisException(null, "No charge accounting account defined in billing type n°"
                         + invoiceItem.getBillingItem().getBillingType().getId());
 
             Float billingItemPrice = invoiceItem.getPreTaxPrice()
