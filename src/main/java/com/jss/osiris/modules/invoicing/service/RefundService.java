@@ -31,5 +31,6 @@ public interface RefundService {
             Payment payment, Float amount, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-    public File getRefundExport(RefundSearch refundSearch) throws OsirisException, OsirisValidationException;
+    public File getRefundExport(RefundSearch refundSearch)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 }

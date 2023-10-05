@@ -304,7 +304,7 @@ public class PaymentServiceImpl implements PaymentService {
                     totalItemsAmount += invoiceService.getRemainingAmountToPayForInvoice(invoice);
 
             if (correspondingInvoices.size() > 0
-                    && totalItemsAmount > (remainingMoney + Integer.parseInt(payementLimitRefundInEuros))
+                    && totalItemsAmount < (remainingMoney + Integer.parseInt(payementLimitRefundInEuros))
                     && (correspondingCustomerOrder.size() == 0
                             || correspondingQuotation.size() == 0))
                 return;
@@ -581,7 +581,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Float associateInboundPaymentAndInvoices(Payment payment, List<Invoice> correspondingInvoices,
-            List<Float> byPassAmount) throws OsirisException, OsirisValidationException {
+            List<Float> byPassAmount) throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         int amountIndex = 0;
         Float remainingMoney = payment.getPaymentAmount();
 
@@ -647,7 +647,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Float associateOutboundPaymentAndInvoice(Payment payment, Invoice correspondingInvoice)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         Float paymentAmount = Math.round(Math.abs(payment.getPaymentAmount()) * 100f) / 100f;
         Float invoiceAmount = Math
                 .round(Math.abs(invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoice)) * 100f) / 100f;
@@ -739,7 +739,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addCashPaymentForCustomerInvoice(Payment cashPayment, Invoice invoice)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         cashPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         cashPayment.setSourceAccountingAccount(constantService.getAccountingAccountCaisse());
         addOrUpdatePayment(cashPayment);
@@ -761,7 +761,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Payment addOutboundPaymentForProvision(Payment payment, Provision provision)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         payment.setProvision(provision);
         payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         payment.setSourceAccountingAccount(
@@ -932,7 +932,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private void associatePaymentAndInvoice(Payment payment, Invoice invoice, boolean checkForAppoint)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         invoice = invoiceService.getInvoice(invoice.getId());
         payment.setInvoice(invoice);
         if (invoice.getPayments() == null)
@@ -971,7 +971,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void movePaymentFromCustomerOrderToInvoice(Payment payment, CustomerOrder customerOrder, Invoice invoice)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         associateInboundPaymentAndInvoices(payment, Arrays.asList(invoice), null);
     }
 
@@ -1053,7 +1053,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void unassociateInboundPaymentFromInvoice(Payment payment, Invoice invoice)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         cancelPayment(payment);
         Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                 accountingAccountService.getWaitingAccountingAccount());
@@ -1303,7 +1303,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void putPaymentInAccount(Payment payment, CompetentAuthority competentAuthority)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         cancelPayment(payment);
         Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                 competentAuthority.getAccountingAccountDeposit());

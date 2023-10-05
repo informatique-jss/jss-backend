@@ -205,7 +205,8 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public File getRefundExport(RefundSearch refundSearch) throws OsirisException, OsirisValidationException {
+    public File getRefundExport(RefundSearch refundSearch)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
 
         List<RefundSearchResult> refunds = searchRefunds(refundSearch);
         String xml = "";
