@@ -50,11 +50,9 @@ import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
-import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
@@ -164,9 +162,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     ActiveDirectoryHelper activeDirectoryHelper;
 
-    @Autowired
-    CustomerOrderOriginService customerOrderOriginService;
-
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
         Optional<CustomerOrder> customerOrder = customerOrderRepository.findById(id);
@@ -195,16 +190,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder, boolean isFromUser,
             boolean checkAllProvisionEnded)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        if (customerOrder.getId() == null) {
-            customerOrder.setCreatedDate(LocalDateTime.now());
-
-            List<CustomerOrderOrigin> origins = customerOrderOriginService
-                    .getByUsername(activeDirectoryHelper.getCurrentUsername());
-            if (origins != null && origins.size() == 1)
-                customerOrder.setCustomerOrderOrigin(origins.get(0));
-            else
-                customerOrder.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
-        }
 
         if (customerOrder.getCustomerOrderOrigin() == null)
             customerOrder.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());

@@ -21,7 +21,7 @@ public class CompteBilan {
     @JoinColumn(name = "id_pagination")
     private Pagination pagination;
     private boolean confidentiel;
-    private Integer montantCapitauxPropres;
+    private Long montantCapitauxPropres;
 
     public Pagination getPagination() {
         return pagination;
@@ -39,11 +39,11 @@ public class CompteBilan {
         this.confidentiel = confidentiel;
     }
 
-    public Integer getMontantCapitauxPropres() {
+    public Long getMontantCapitauxPropres() {
         return montantCapitauxPropres;
     }
 
-    public void setMontantCapitauxPropres(Integer montantCapitauxPropres) {
+    public void setMontantCapitauxPropres(Long montantCapitauxPropres) {
         this.montantCapitauxPropres = montantCapitauxPropres;
     }
 

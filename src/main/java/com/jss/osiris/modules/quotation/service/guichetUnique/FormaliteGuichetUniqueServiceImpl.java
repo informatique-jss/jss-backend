@@ -327,13 +327,27 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         inProvision.setInvoiceItems(new ArrayList<InvoiceItem>());
 
                     if (provision.getId().equals(inProvision.getId())) {
+                        cart.getCartRates()
+                                .sort((o1, o2) -> ((Long) o1.getAmount()).compareTo((Long) (o2.getAmount())));
+                        InvoiceItem firstItem = null;
                         for (CartRate cartRate : cart.getCartRates()) {
-                            if (cartRate.getRate() != null && cartRate.getRate().getHtAmount() > 0) {
-                                InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
-                                invoiceItem.setPreTaxPriceReinvoiced(-Math.abs(invoiceItem.getPreTaxPriceReinvoiced()));
-                                invoiceItem.setProvision(provision);
-                                invoice.getInvoiceItems().add(invoiceItem);
-                                provision.getInvoiceItems().add(invoiceItem);
+                            if (cartRate.getRate() != null && cartRate.getAmount() != 0) {
+                                if (cartRate.getAmount() > 0 && firstItem != null) {
+                                    firstItem.setPreTaxPrice(
+                                            firstItem.getPreTaxPrice() - Math.abs(cartRate.getHtAmount() / 100f));
+                                    firstItem.setPreTaxPriceReinvoiced(
+                                            -Math.abs(firstItem.getPreTaxPriceReinvoiced()));
+                                } else {
+                                    InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
+                                    invoiceItem.setPreTaxPrice(Math.abs(invoiceItem.getPreTaxPrice()));
+                                    invoiceItem.setPreTaxPriceReinvoiced(
+                                            -Math.abs(invoiceItem.getPreTaxPriceReinvoiced()));
+                                    invoiceItem.setProvision(provision);
+                                    invoice.getInvoiceItems().add(invoiceItem);
+                                    provision.getInvoiceItems().add(invoiceItem);
+                                    if (firstItem == null)
+                                        firstItem = invoiceItem;
+                                }
                             }
                         }
                     }
@@ -382,7 +396,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         if (cartRate.getAmount() > 0 && amount < 0)
             amount = -amount;
 
-        invoiceItem.setPreTaxPrice(Math.abs(Float.parseFloat(amount + "") / 100f));
+        invoiceItem.setPreTaxPrice(Float.parseFloat(amount + "") / 100f);
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
 
         return invoiceItem;

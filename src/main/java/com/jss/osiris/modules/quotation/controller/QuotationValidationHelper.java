@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.quotation.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,16 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
@@ -81,6 +85,12 @@ public class QuotationValidationHelper {
         @Autowired
         ProvisionTypeService provisionTypeService;
 
+        @Autowired
+        CustomerOrderOriginService customerOrderOriginService;
+
+        @Autowired
+        ActiveDirectoryHelper activeDirectoryHelper;
+
         @Transactional(rollbackFor = Exception.class)
         public void validateQuotationAndCustomerOrder(IQuotation quotation, String targetStatusCode)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
@@ -92,6 +102,17 @@ public class QuotationValidationHelper {
                                 quotation = customerOrderService.getCustomerOrder(quotation.getId());
                         if (quotation instanceof Quotation)
                                 quotation = quotationService.getQuotation(quotation.getId());
+                }
+
+                if (quotation.getId() == null) {
+                        quotation.setCreatedDate(LocalDateTime.now());
+
+                        List<CustomerOrderOrigin> origins = customerOrderOriginService
+                                        .getByUsername(activeDirectoryHelper.getCurrentUsername());
+                        if (origins != null && origins.size() == 1)
+                                quotation.setCustomerOrderOrigin(origins.get(0));
+                        else
+                                quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
                 }
 
                 if (quotation.getCustomerOrderOrigin() == null)
@@ -445,8 +466,9 @@ public class QuotationValidationHelper {
                         Announcement currentAnnouncement = null;
                         if (announcement.getId() != null) {
                                 currentAnnouncement = announcementService.getAnnouncement(announcement.getId());
-                        } else {
-                                // By default, always redacted by JSS if option exists
+                        } else if (!quotation.getCustomerOrderOrigin().getId()
+                                        .equals(constantService.getCustomerOrderOriginWebSite().getId())) {
+                                // By default, if not from webstite, always redacted by JSS if option exists
                                 ProvisionType provisionType = provisionTypeService
                                                 .getProvisionType(provision.getProvisionType().getId());
                                 for (BillingType billingType : provisionType.getBillingTypes()) {
