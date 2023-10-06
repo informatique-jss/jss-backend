@@ -76,6 +76,9 @@ export class ProvisionOptionsComponent implements OnInit {
   optionForm = this.formBuilder.group({});
 
   ngOnInit() {
+    if (this.provision?.multipleModificationQuantity === null || this.provision?.multipleModificationQuantity === undefined || Number.isNaN(this.provision.multipleModificationQuantity)) {
+      this.provision!.multipleModificationQuantity = 1;
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {

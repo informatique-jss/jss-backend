@@ -244,7 +244,15 @@ public class PricingHelper {
         }
 
         if (invoiceItem.getPreTaxPrice() != null)
-            invoiceItem.setPreTaxPrice(Math.round(invoiceItem.getPreTaxPrice() * 100f) / 100f);
+            if (invoiceItem.getLabel().equals(constantService.getBillingTypeVacationMultipleModification().getLabel())
+                    ||
+                    invoiceItem.getLabel()
+                            .equals(constantService.getBillingTypeTreatmentMultipleModiciation().getLabel()))
+                invoiceItem.setPreTaxPrice((Math.round(invoiceItem.getPreTaxPrice() * 100f) / 100f)
+                        * provision.multipleModificationQuantity);
+            else {
+                invoiceItem.setPreTaxPrice((Math.round(invoiceItem.getPreTaxPrice() * 100f) / 100f));
+            }
 
         if (invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()) {
             invoiceItem.setPreTaxPrice(0f);

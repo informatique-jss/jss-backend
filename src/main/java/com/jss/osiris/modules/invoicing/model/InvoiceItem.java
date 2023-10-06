@@ -47,7 +47,17 @@ public class InvoiceItem implements Serializable, IId {
 
 	private Float preTaxPrice;
 
+	private Integer multipleModificationQuantity;
+
 	private Float preTaxPriceReinvoiced;
+
+	public Integer getMultipleModificationQuantity() {
+		return multipleModificationQuantity;
+	}
+
+	public void setMultipleModificationQuantity(Integer multipleModificationQuantity) {
+		this.multipleModificationQuantity = multipleModificationQuantity;
+	}
 
 	private Float vatPrice;
 

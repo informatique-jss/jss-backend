@@ -1,0 +1,9 @@
+.td-treatment-quantity {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.div-quantity {
+  margin-left: 15px;
+}

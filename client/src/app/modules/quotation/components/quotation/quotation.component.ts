@@ -290,6 +290,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
         })
       } else {
+        if(Number.isNaN(this.quotation.assoAffaireOrders[0].provisions[0].multipleModificationQuantity))
+        this.quotation.assoAffaireOrders[0].provisions[0].multipleModificationQuantity = 1;
         this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
           this.editMode = false;
           this.quotation = response;

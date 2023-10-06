@@ -60,4 +60,5 @@ export interface Provision extends IAttachment {
   isCorrespondenceFees: boolean;
   providerInvoices: Invoice[];
   payments: Payment[];
+  multipleModificationQuantity: number;
 }

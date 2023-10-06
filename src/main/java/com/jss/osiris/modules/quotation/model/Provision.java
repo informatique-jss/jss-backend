@@ -96,6 +96,7 @@ public class Provision implements IId, IAttachment {
 
 	private Boolean isBaloPublicationFlag;
 	private Boolean isBaloNormalization;
+	public Integer multipleModificationQuantity;
 
 	@Column(nullable = false)
 	private Boolean isPublicationPaper;
@@ -578,6 +579,14 @@ public class Provision implements IId, IAttachment {
 
 	public void setIsRneUpdate(Boolean isRneUpdate) {
 		this.isRneUpdate = isRneUpdate;
+	}
+
+	public Integer getMultipleModificationQuantity() {
+		return multipleModificationQuantity;
+	}
+
+	public void setMultipleModificationQuantity(Integer multipleModificationQuantity) {
+		this.multipleModificationQuantity = multipleModificationQuantity;
 	}
 
 }

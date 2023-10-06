@@ -48,6 +48,9 @@ export class InvoiceManagementComponent implements OnInit {
 
   invoiceStatusCancelled = this.constantService.getInvoiceStatusCancelled();
 
+  vacationMultipleModification = this.constantService.getBillingTypeVacationMultipleModification();
+  treatmentMultipleModification = this.constantService.getBillingTypeTreatmentMultipleModiciation();
+
   constructor(private formBuilder: FormBuilder,
     private constantService: ConstantService,
     private appService: AppService,

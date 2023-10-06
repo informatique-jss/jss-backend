@@ -123,12 +123,17 @@
           </td>
         </tr>
         <tr *ngIf="displayOption(billingTypeTreatmentMultipleModiciation)">
-          <td>
-            <generic-toggle [(model)]="provision.isTreatmentMultipleModiciation"
+          <td class="td-treatment-quantity">
+              <generic-toggle [(model)]="provision.isTreatmentMultipleModiciation"
               label="Traitement - Modification Multiple ?" [form]="optionForm"
               (onToggleChange)="toggleIsMultipleTreatment();provisionChangeFunction()"
               propertyName="isTreatmentMultipleModiciation">
             </generic-toggle>
+            <div class="div-quantity" *ngIf="provision.isTreatmentMultipleModiciation">
+              Quantité:
+              <generic-input [(model)]="provision.multipleModificationQuantity" type="number" label="quantity" [form]="optionForm" [minLength]="1" [maxLength]="100"
+              (onInputChange)="provisionChangeFunction()"></generic-input>
+            </div>
           </td>
         </tr>
         <tr *ngIf="displayOption(billingTypeVacationMultipleModification)">
