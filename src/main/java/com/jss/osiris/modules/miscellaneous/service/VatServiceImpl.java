@@ -384,7 +384,9 @@ public class VatServiceImpl implements VatService {
             invoiceItem.setVat(constantService.getVatTwenty());
 
         if (invoiceItem.getPreTaxPrice() != null)
-            invoiceItem.setVatPrice(invoiceItem.getPreTaxPrice() * invoiceItem.getVat().getRate() / 100f);
+            invoiceItem.setVatPrice((invoiceItem.getPreTaxPrice()
+                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f))
+                    * invoiceItem.getVat().getRate() / 100f);
         else
             invoiceItem.setVatPrice(0f);
     }
