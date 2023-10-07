@@ -336,12 +336,12 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                     firstItem.setPreTaxPrice(
                                             firstItem.getPreTaxPrice() - Math.abs(cartRate.getHtAmount() / 100f));
                                     firstItem.setPreTaxPriceReinvoiced(
-                                            -Math.abs(firstItem.getPreTaxPriceReinvoiced()));
+                                            -Math.abs(firstItem.getPreTaxPrice()));
                                 } else {
                                     InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
                                     invoiceItem.setPreTaxPrice(Math.abs(invoiceItem.getPreTaxPrice()));
                                     invoiceItem.setPreTaxPriceReinvoiced(
-                                            -Math.abs(invoiceItem.getPreTaxPriceReinvoiced()));
+                                            -Math.abs(invoiceItem.getPreTaxPrice()));
                                     invoiceItem.setProvision(provision);
                                     invoice.getInvoiceItems().add(invoiceItem);
                                     provision.getInvoiceItems().add(invoiceItem);
