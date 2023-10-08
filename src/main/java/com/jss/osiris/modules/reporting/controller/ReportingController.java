@@ -16,16 +16,20 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.reporting.model.IAnnouncementReporting;
 import com.jss.osiris.modules.reporting.model.ICustomerOrderReporting;
+import com.jss.osiris.modules.reporting.model.IProvisionReporting;
 import com.jss.osiris.modules.reporting.model.IQuotationReporting;
 import com.jss.osiris.modules.reporting.model.ITiersReporting;
-import com.jss.osiris.modules.reporting.model.IVatReporting;
+import com.jss.osiris.modules.reporting.model.ITurnoverReporting;
 import com.jss.osiris.modules.reporting.model.UserReporting;
+import com.jss.osiris.modules.reporting.service.AnnouncementReportingService;
 import com.jss.osiris.modules.reporting.service.CustomerOrderReportingService;
+import com.jss.osiris.modules.reporting.service.ProvisionReportingService;
 import com.jss.osiris.modules.reporting.service.QuotationReportingService;
 import com.jss.osiris.modules.reporting.service.TiersReportingService;
+import com.jss.osiris.modules.reporting.service.TurnoverReportingService;
 import com.jss.osiris.modules.reporting.service.UserReportingService;
-import com.jss.osiris.modules.reporting.service.VatReportingService;
 
 @RestController
 public class ReportingController {
@@ -36,28 +40,28 @@ public class ReportingController {
 	ValidationHelper validationHelper;
 
 	@Autowired
-	CustomerOrderReportingService customerOrderReportingService;
-
-	@Autowired
 	QuotationReportingService quotationReportingService;
 
 	@Autowired
-	VatReportingService vatReportingService;
+	TurnoverReportingService turnoverReportingService;
 
 	@Autowired
-	TiersReportingService tiersReportingService;
+	CustomerOrderReportingService customerOrderReportingService;
 
 	@Autowired
 	EmployeeService employeeService;
 
-	@GetMapping(inputEntryPoint + "/customer-order")
-	public ResponseEntity<List<ICustomerOrderReporting>> getCustomerOrderReporting()
-			throws OsirisValidationException, OsirisException {
+	@Autowired
+	UserReportingService userReportingService;
 
-		return new ResponseEntity<List<ICustomerOrderReporting>>(
-				customerOrderReportingService.getCustomerOrderReporting(0),
-				HttpStatus.OK);
-	}
+	@Autowired
+	ProvisionReportingService provisionReportingService;
+
+	@Autowired
+	AnnouncementReportingService announcementReportingService;
+
+	@Autowired
+	TiersReportingService tiersReportingService;
 
 	@GetMapping(inputEntryPoint + "/quotation")
 	public ResponseEntity<List<IQuotationReporting>> getQuotationReporting()
@@ -66,33 +70,42 @@ public class ReportingController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/vat")
-	public ResponseEntity<List<IVatReporting>> getVatReporting()
+	@GetMapping(inputEntryPoint + "/turnover")
+	public ResponseEntity<List<ITurnoverReporting>> getTurnoverReporting()
 			throws OsirisValidationException, OsirisException {
+		return new ResponseEntity<List<ITurnoverReporting>>(turnoverReportingService.getTurnoverReporting(),
+				HttpStatus.OK);
+	}
 
-		return new ResponseEntity<List<IVatReporting>>(vatReportingService.getVatReporting(),
+	@GetMapping(inputEntryPoint + "/announcement")
+	public ResponseEntity<List<IAnnouncementReporting>> getAnnouncementReporting()
+			throws OsirisValidationException, OsirisException {
+		return new ResponseEntity<List<IAnnouncementReporting>>(announcementReportingService.getAnnouncementReporting(),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/tiers")
 	public ResponseEntity<List<ITiersReporting>> getTiersReporting()
 			throws OsirisValidationException, OsirisException {
-
 		return new ResponseEntity<List<ITiersReporting>>(tiersReportingService.getTiersReporting(),
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/customer-order/tiers")
-	public ResponseEntity<List<ICustomerOrderReporting>> getQuotationReportingForTiers(@RequestParam Integer tiersId)
+	@GetMapping(inputEntryPoint + "/customer-order")
+	public ResponseEntity<List<ICustomerOrderReporting>> getCustomerOrderReporting()
 			throws OsirisValidationException, OsirisException {
-
 		return new ResponseEntity<List<ICustomerOrderReporting>>(
-				customerOrderReportingService.getCustomerOrderReporting(tiersId),
+				customerOrderReportingService.getCustomerOrderReporting(),
 				HttpStatus.OK);
 	}
 
-	@Autowired
-	UserReportingService userReportingService;
+	@GetMapping(inputEntryPoint + "/provision")
+	public ResponseEntity<List<IProvisionReporting>> getProvisionReporting()
+			throws OsirisValidationException, OsirisException {
+		return new ResponseEntity<List<IProvisionReporting>>(
+				provisionReportingService.getProvisionReporting(),
+				HttpStatus.OK);
+	}
 
 	@GetMapping(inputEntryPoint + "/user-reportings")
 	public ResponseEntity<List<UserReporting>> getUserReportings(@RequestParam Integer employeeId)
