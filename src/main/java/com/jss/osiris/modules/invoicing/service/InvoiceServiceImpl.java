@@ -13,7 +13,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,11 +117,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     DirectDebitTransfertService directDebitTransfertService;
-
-    @Scheduled(initialDelay = 100, fixedDelay = 10000000)
-    public void test() throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        paymentService.automatchPayment(paymentService.getPayment(492457));
-    }
 
     @Override
     public List<Invoice> getAllInvoices() {
