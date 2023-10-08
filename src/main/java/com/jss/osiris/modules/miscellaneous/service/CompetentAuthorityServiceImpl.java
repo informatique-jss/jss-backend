@@ -54,15 +54,6 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     }
 
     @Override
-    public CompetentAuthority getCompetentAuthorityByOwncloudFolderName(String folderName) {
-        Optional<CompetentAuthority> competentAuthority = competentAuthorityRepository
-                .findByOwncloudFolderName(folderName);
-        if (competentAuthority.isPresent())
-            return competentAuthority.get();
-        return null;
-    }
-
-    @Override
     public List<CompetentAuthority> getCompetentAuthorityByInpiReference(String inpiReference) {
         return competentAuthorityRepository.findByInpiReference(inpiReference);
     }
