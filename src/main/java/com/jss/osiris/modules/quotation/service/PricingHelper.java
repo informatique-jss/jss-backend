@@ -313,10 +313,12 @@ public class PricingHelper {
                                 } else
                                     tempInvoiceItem = invoiceItemProvision;
 
+                                if (tempInvoiceItem.getOriginProviderInvoice() != null)
+                                    continue;
+
                                 if (invoiceItemProvision.getBillingItem() != null
                                         && invoiceItemProvision.getBillingItem().getBillingType().getId()
-                                                .equals(billingType.getId())
-                                        && tempInvoiceItem.getOriginProviderInvoice() == null)
+                                                .equals(billingType.getId()))
                                     invoiceItem = invoiceItemProvision;
                             }
 
@@ -403,6 +405,11 @@ public class PricingHelper {
                         if (tempInvoiceItem.getOriginProviderInvoice().getInvoiceStatus()
                                 .getId().equals(constantService.getInvoiceStatusCancelled().getId())) {
                             invoiceItemsDeleted.add(invoiceItem);
+
+                            if (persistInvoiceItem && invoiceItem.getId() != null) {
+                                invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                                invoiceItemService.deleteInvoiceItem(invoiceItem);
+                            }
                         }
                         idInvoiceAlreadyDone.add(tempInvoiceItem.getOriginProviderInvoice().getId());
                     }
@@ -469,19 +476,21 @@ public class PricingHelper {
                 if (tempInvoiceItem.getOriginProviderInvoice() != null) {
                     if (invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()) {
                         invoiceItem.setPreTaxPrice(0f);
-                        invoiceItem.setLabel(invoiceItem.getLabel() + " (offert)");
+                        if (!invoiceItem.getLabel().contains("(offert)"))
+                            invoiceItem.setLabel(invoiceItem.getLabel() + " (offert)");
                         vatService.completeVatOnInvoiceItem(invoiceItem, quotation);
-
+                        invoiceItem.setProvision(provision);
                         if (persistInvoiceItem)
                             invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
                     }
                     if ((invoiceItem.getIsGifted() == null || !invoiceItem.getIsGifted())) {
-                        invoiceItem.setPreTaxPrice(tempInvoiceItem.getPreTaxPriceReinvoiced());
-                        invoiceItem.setLabel(invoiceItem.getLabel().replace(" (offert)", ""));
-                        vatService.completeVatOnInvoiceItem(invoiceItem, quotation);
+                        tempInvoiceItem.setPreTaxPrice(tempInvoiceItem.getPreTaxPriceReinvoiced());
+                        tempInvoiceItem.setLabel(invoiceItem.getLabel().replace(" (offert)", ""));
+                        tempInvoiceItem.setProvision(provision);
+                        vatService.completeVatOnInvoiceItem(tempInvoiceItem, quotation);
 
                         if (persistInvoiceItem)
-                            invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                            invoiceItemService.addOrUpdateInvoiceItem(tempInvoiceItem);
                     }
                 }
             }
