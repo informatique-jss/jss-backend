@@ -284,7 +284,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     if (provision.getId().equals(inProvision.getId())) {
                         for (CartRate cartRate : cart.getCartRates()) {
                             InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
-                            invoiceItem.setProvision(provision);
+                            invoiceItem.setProvision(null);
                             invoice.getInvoiceItems().add(invoiceItem);
                             provision.getInvoiceItems().add(invoiceItem);
                         }
@@ -342,7 +342,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                     invoiceItem.setPreTaxPrice(Math.abs(invoiceItem.getPreTaxPrice()));
                                     invoiceItem.setPreTaxPriceReinvoiced(
                                             -Math.abs(invoiceItem.getPreTaxPrice()));
-                                    invoiceItem.setProvision(provision);
+                                    invoiceItem.setProvision(null);
                                     invoice.getInvoiceItems().add(invoiceItem);
                                     provision.getInvoiceItems().add(invoiceItem);
                                     if (firstItem == null)

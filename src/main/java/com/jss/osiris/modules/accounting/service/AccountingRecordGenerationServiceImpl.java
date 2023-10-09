@@ -375,23 +375,51 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
             balance -= billingItemPrice;
 
-            generateNewAccountingRecord(LocalDateTime.now(), operationId, invoice.getManualAccountingDocumentNumber(),
-                    invoice.getManualAccountingDocumentDate(),
-                    labelPrefix + " - produit " + invoiceItem.getBillingItem().getBillingType().getLabel(),
-                    billingItemPrice,
-                    null, producAccountingAccount, invoiceItem, invoice, null, salesJournal, null, null, null);
-
-            if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null && invoiceItem.getVatPrice() > 0) {
+            if (invoiceItem.getOriginProviderInvoice() != null
+                    && invoiceItem.getOriginProviderInvoice().getIsProviderCreditNote()
+                    && invoiceItem.getPreTaxPrice() < 0) {
                 generateNewAccountingRecord(LocalDateTime.now(), operationId,
                         invoice.getManualAccountingDocumentNumber(),
                         invoice.getManualAccountingDocumentDate(),
-                        labelPrefix + " - TVA pour le produit "
-                                + invoiceItem.getBillingItem().getBillingType().getLabel(),
-                        invoiceItem.getVatPrice(), null, invoiceItem.getVat().getAccountingAccount(), invoiceItem,
-                        invoice, null,
-                        salesJournal, null, null, null);
+                        labelPrefix + " - produit " + invoiceItem.getBillingItem().getBillingType().getLabel(),
+                        null, Math.abs(billingItemPrice),
+                        producAccountingAccount, invoiceItem, invoice, null, salesJournal, null, null, null);
 
-                balance -= invoiceItem.getVatPrice();
+                if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
+                        && invoiceItem.getVatPrice() > 0) {
+                    generateNewAccountingRecord(LocalDateTime.now(), operationId,
+                            invoice.getManualAccountingDocumentNumber(),
+                            invoice.getManualAccountingDocumentDate(),
+                            labelPrefix + " - TVA pour le produit "
+                                    + invoiceItem.getBillingItem().getBillingType().getLabel(),
+                            null, Math.abs(invoiceItem.getVatPrice()), invoiceItem.getVat().getAccountingAccount(),
+                            invoiceItem,
+                            invoice, null,
+                            salesJournal, null, null, null);
+
+                    balance -= invoiceItem.getVatPrice();
+                }
+            } else {
+                generateNewAccountingRecord(LocalDateTime.now(), operationId,
+                        invoice.getManualAccountingDocumentNumber(),
+                        invoice.getManualAccountingDocumentDate(),
+                        labelPrefix + " - produit " + invoiceItem.getBillingItem().getBillingType().getLabel(),
+                        billingItemPrice,
+                        null, producAccountingAccount, invoiceItem, invoice, null, salesJournal, null, null, null);
+
+                if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
+                        && invoiceItem.getVatPrice() > 0) {
+                    generateNewAccountingRecord(LocalDateTime.now(), operationId,
+                            invoice.getManualAccountingDocumentNumber(),
+                            invoice.getManualAccountingDocumentDate(),
+                            labelPrefix + " - TVA pour le produit "
+                                    + invoiceItem.getBillingItem().getBillingType().getLabel(),
+                            invoiceItem.getVatPrice(), null, invoiceItem.getVat().getAccountingAccount(), invoiceItem,
+                            invoice, null,
+                            salesJournal, null, null, null);
+
+                    balance -= invoiceItem.getVatPrice();
+                }
             }
         }
 
