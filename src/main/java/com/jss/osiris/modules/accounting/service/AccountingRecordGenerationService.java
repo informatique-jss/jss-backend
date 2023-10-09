@@ -19,39 +19,39 @@ public interface AccountingRecordGenerationService {
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void generateAccountingRecordsOnInvoiceReception(Invoice invoice)
-                        throws OsirisException, OsirisValidationException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void generateAccountingRecordsOnInvoiceReceptionCancellation(Invoice invoice)
                         throws OsirisException, OsirisValidationException;
 
         public void generateAccountingRecordOnIncomingPaymentCreation(Payment payment, boolean isOdJournal)
-                        throws OsirisException, OsirisValidationException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void generateAccountingRecordOnOutgoingPaymentCreation(Payment payment)
-                        throws OsirisException, OsirisValidationException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void generateAccountingRecordOnPaymentCancellation(Payment payment)
                         throws OsirisException, OsirisValidationException;
 
         public void generateAccountingRecordsForSaleOnInvoicePayment(Invoice invoice, Payment payment)
-                        throws OsirisException, OsirisValidationException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void generateAccountingRecordsForSaleOnCustomerOrderDeposit(CustomerOrder customerOrder, Payment payment)
-                        throws OsirisException, OsirisValidationException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void generateAccountingRecordsForProviderInvoiceRefund(Invoice invoice, Payment payment)
-                        throws OsirisException, OsirisValidationException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void generateAccountingRecordsForPurschaseOnInvoicePayment(Invoice invoice, Payment payment)
-                        throws OsirisException, OsirisValidationException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void generateAccountingRecordsForRefundGeneration(Refund refund)
-                        throws OsirisException, OsirisValidationException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void generateAccountingRecordsForRefundExport(Refund refund)
-                        throws OsirisException, OsirisValidationException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void generateAccountingRecordOnPaymentOnDepositCompetentAuthorityAccount(Payment payment)
-                        throws OsirisException, OsirisValidationException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
 }

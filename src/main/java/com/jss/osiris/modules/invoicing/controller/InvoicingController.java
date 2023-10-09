@@ -264,11 +264,11 @@ public class InvoicingController {
         payment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
         payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         paymentService.addOrUpdatePayment(payment);
-        paymentService.automatchPaymentFromUser(payment);
         if (payment.getPaymentAmount() > 0)
             accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment, false);
         else
             accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
+        paymentService.automatchPaymentFromUser(payment);
         return new ResponseEntity<Payment>(payment, HttpStatus.OK);
     }
 
@@ -347,7 +347,7 @@ public class InvoicingController {
 
     @PostMapping(inputEntryPoint + "/refunds/export")
     public ResponseEntity<byte[]> downloadRefunds(@RequestBody RefundSearch refundSearch)
-            throws OsirisValidationException, OsirisException {
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         byte[] data = null;
         HttpHeaders headers = null;
 

@@ -1,7 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { REPORTING_DATASET_CUSTOMER_ORDER_FOR_TIERS } from 'src/app/libs/Constants';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
@@ -37,9 +36,6 @@ export class TiersComponent implements OnInit, AfterContentChecked {
   provisionSearch: AffaireSearch = {} as AffaireSearch;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   responsableAccountSearch: Tiers | undefined;
-
-  dataToDisplay: any | undefined;
-  reportingSettings: string = "";
 
   saveObservableSubscription: Subscription = new Subscription;
 
@@ -85,7 +81,6 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.responsableMainComponent?.setSelectedResponsableId(this.idResponsable ? this.idResponsable : idTiers);
 
         this.loadQuotationFilter();
-        this.loadReporting();
       })
       // Load by tiers
     } else if (idTiers != null && idTiers != undefined) {
@@ -94,7 +89,6 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.tiersService.setCurrentViewedTiers(this.tiers);
         this.changeHeader();
         this.toggleTabs();
-        this.loadReporting();
 
         this.loadQuotationFilter();
       })
@@ -115,11 +109,6 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
   ngOnDestroy() {
     this.saveObservableSubscription.unsubscribe();
-  }
-
-  loadReporting() {
-    this.reportingSettings = '{"derivedAttributes":{},"hiddenAttributes":[],"hiddenFromAggregators":[],"hiddenFromDragDrop":[],"menuLimit":50000,"cols":["Mois de la facture"],"rows":[],"vals":["Prix TTC"],"rowOrder":"key_a_to_z","colOrder":"key_a_to_z","exclusions":{},"inclusions":{},"unusedAttrsVertical":85,"autoSortUnusedAttrs":false,"onRefresh":null,"showUI":true,"sorters":{},"inclusionsInfo":{},"aggregatorName":"Somme","rendererName":"Tableau"}';
-    this.reportingService.getDataset(REPORTING_DATASET_CUSTOMER_ORDER_FOR_TIERS, this.tiers.id).subscribe(data => this.dataToDisplay = data)
   }
 
   loadQuotationFilter() {

@@ -18,10 +18,13 @@ import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.miscellaneous.model.DepartmentVatSetting;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
+import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.miscellaneous.service.DepartmentVatSettingService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.PaymentTypeService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
@@ -72,6 +75,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Autowired
     PartnerCenterRepository partnerCenterRepository;
+
+    @Autowired
+    DepartmentVatSettingService departmentVatSettingService;
 
     private String cartStatusPayed = "PAID";
     private String cartStatusRefund = "REFUNDED";
@@ -327,13 +333,27 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         inProvision.setInvoiceItems(new ArrayList<InvoiceItem>());
 
                     if (provision.getId().equals(inProvision.getId())) {
+                        cart.getCartRates()
+                                .sort((o1, o2) -> ((Long) o1.getAmount()).compareTo((Long) (o2.getAmount())));
+                        InvoiceItem firstItem = null;
                         for (CartRate cartRate : cart.getCartRates()) {
-                            if (cartRate.getRate() != null && cartRate.getRate().getHtAmount() > 0) {
-                                InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
-                                invoiceItem.setPreTaxPriceReinvoiced(-Math.abs(invoiceItem.getPreTaxPriceReinvoiced()));
-                                invoiceItem.setProvision(provision);
-                                invoice.getInvoiceItems().add(invoiceItem);
-                                provision.getInvoiceItems().add(invoiceItem);
+                            if (cartRate.getRate() != null && cartRate.getAmount() != 0) {
+                                if (cartRate.getAmount() > 0 && firstItem != null) {
+                                    firstItem.setPreTaxPrice(
+                                            firstItem.getPreTaxPrice() - Math.abs(cartRate.getHtAmount() / 100f));
+                                    firstItem.setPreTaxPriceReinvoiced(
+                                            -Math.abs(firstItem.getPreTaxPrice()));
+                                } else {
+                                    InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
+                                    invoiceItem.setPreTaxPrice(Math.abs(invoiceItem.getPreTaxPrice()));
+                                    invoiceItem.setPreTaxPriceReinvoiced(
+                                            -Math.abs(invoiceItem.getPreTaxPrice()));
+                                    invoiceItem.setProvision(provision);
+                                    invoice.getInvoiceItems().add(invoiceItem);
+                                    provision.getInvoiceItems().add(invoiceItem);
+                                    if (firstItem == null)
+                                        firstItem = invoiceItem;
+                                }
                             }
                         }
                     }
@@ -346,19 +366,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     }
 
     private InvoiceItem getInvoiceItemForCartRate(CartRate cartRate, Cart cart) throws OsirisException {
-        List<BillingItem> deboursBillingItem;
-
         InvoiceItem invoiceItem = new InvoiceItem();
-
-        if (Math.abs(cartRate.getAmount()) == Math.abs(cartRate.getHtAmount())) {
-            deboursBillingItem = billingItemService
-                    .getBillingItemByBillingType(constantService.getBillingTypeDeboursNonTaxable());
-            invoiceItem.setVat(constantService.getVatZero());
-        } else
-            deboursBillingItem = billingItemService
-                    .getBillingItemByBillingType(constantService.getBillingTypeEmolumentsDeGreffeDebour());
-
-        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(deboursBillingItem));
+        extractVatFromCartRate(invoiceItem, cartRate);
         invoiceItem.setDiscountAmount(0f);
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);
@@ -382,9 +391,54 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         if (cartRate.getAmount() > 0 && amount < 0)
             amount = -amount;
 
-        invoiceItem.setPreTaxPrice(Math.abs(Float.parseFloat(amount + "") / 100f));
+        invoiceItem.setPreTaxPrice(Float.parseFloat(amount + "") / 100f);
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
 
         return invoiceItem;
+    }
+
+    private void extractVatFromCartRate(InvoiceItem invoiceItem, CartRate cartRate) throws OsirisException {
+        List<BillingItem> deboursBillingItem;
+
+        if (Math.abs(cartRate.getAmount()) == Math.abs(cartRate.getHtAmount())) {
+            deboursBillingItem = billingItemService
+                    .getBillingItemByBillingType(constantService.getBillingTypeDeboursNonTaxable());
+            invoiceItem.setVat(constantService.getVatZero());
+            invoiceItem.setVatPrice(0f);
+        } else {
+            deboursBillingItem = billingItemService
+                    .getBillingItemByBillingType(constantService.getBillingTypeEmolumentsDeGreffeDebour());
+
+            Float vatRate = (cartRate.getAmount() - cartRate.getHtAmount()) * 1.0f / cartRate.getHtAmount() * 100f;
+            vatRate = Math.round(vatRate * 10f) / 10f;
+            Vat vat = null;
+
+            if (isVatEqual(vatRate, constantService.getVatDeductible().getRate()))
+                vat = constantService.getVatDeductible();
+            else if (isVatEqual(vatRate, constantService.getVatDeductibleTwo().getRate()))
+                vat = constantService.getVatDeductibleTwo();
+            else {
+                List<DepartmentVatSetting> vatSettings = departmentVatSettingService.getDepartmentVatSettings();
+                for (DepartmentVatSetting vatSetting : vatSettings) {
+                    if (isVatEqual(vatRate, vatSetting.getIntermediateVatForPurshase().getRate())) {
+                        vat = vatSetting.getIntermediateVatForPurshase();
+                        break;
+                    } else if (isVatEqual(vatRate, vatSetting.getReducedVatForPurshase().getRate())) {
+                        vat = vatSetting.getReducedVatForPurshase();
+                        break;
+                    }
+                }
+            }
+
+            if (vat != null) {
+                invoiceItem.setVat(vat);
+            }
+        }
+
+        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(deboursBillingItem));
+    }
+
+    private boolean isVatEqual(Float vat1, Float vat2) {
+        return Math.abs(vat1 - vat2) < 1;
     }
 }

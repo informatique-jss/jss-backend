@@ -12,7 +12,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DiffusionINSEE;
@@ -79,10 +81,14 @@ public class FormaliteGuichetUnique implements IId {
 
     @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
+    @JsonProperty("validationsRequests")
+    @JsonAlias("annualAccountValidationRequests")
     private List<ValidationRequest> validationsRequests;
 
     @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
+    @JsonProperty("formaliteStatusHistoryItems")
+    @JsonAlias("annualAccountStatusHistories")
     private List<FormaliteStatusHistoryItem> formaliteStatusHistoryItems;
 
     @ManyToOne(fetch = FetchType.LAZY)

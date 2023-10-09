@@ -7,6 +7,6 @@ import com.jss.osiris.modules.reporting.model.ICustomerOrderReporting;
 
 public interface CustomerOrderReportingService {
 
-    List<ICustomerOrderReporting> getCustomerOrderReporting(Integer tiersId) throws OsirisException;
+    List<ICustomerOrderReporting> getCustomerOrderReporting() throws OsirisException;
 
 }

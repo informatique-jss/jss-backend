@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -114,6 +115,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     FormaliteService formaliteService;
+
+    @Autowired
+    CharacterPriceService characterPriceService;
 
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
@@ -286,6 +290,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     announcement = announcementService.updateComplexAnnouncementNotice(announcement, provision,
                             isFromUser);
 
+                announcement.setCharacterNumber(characterPriceService.getCharacterNumber(provision, true));
+
                 if (customerOrder.getId() == null || announcement.getAnnouncementStatus() == null)
                     announcement.setAnnouncementStatus(announcementStatusService
                             .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
@@ -426,7 +432,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (maxWeightEmployee != null) {
             if (assoAffaireOrder.getAssignedTo() == null)
                 assoAffaireOrder.setAssignedTo(maxWeightEmployee);
-          
+
             for (Provision provision : assoAffaireOrder.getProvisions())
                 if (provision.getAssignedTo() == null)
                     provision.setAssignedTo(maxWeightEmployee);
@@ -493,4 +499,22 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId, affaireId);
     }
 
+    // TODO remove
+    @Scheduled(initialDelay = 100, fixedDelay = 10000000)
+    @Transactional
+    public void rattrapAnnouncement() {
+        List<AssoAffaireOrder> assos = IterableUtils.toList(assoAffaireOrderRepository.findAll());
+        for (AssoAffaireOrder asso : assos) {
+            if (asso.getProvisions() != null)
+                for (Provision provision : asso.getProvisions()) {
+                    if (provision.getAnnouncement() != null) {
+                        if (provision.getAnnouncement().getCharacterNumber() == null) {
+                            provision.getAnnouncement()
+                                    .setCharacterNumber(characterPriceService.getCharacterNumber(provision, true));
+                        }
+                    }
+                }
+            assoAffaireOrderRepository.save(asso);
+        }
+    }
 }

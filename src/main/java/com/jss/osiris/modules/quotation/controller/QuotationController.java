@@ -929,7 +929,7 @@ public class QuotationController {
   public ResponseEntity<Integer> getCharacterNumber(@RequestBody Provision provision)
       throws OsirisValidationException {
 
-    return new ResponseEntity<Integer>(characterPriceService.getCharacterNumber(provision), HttpStatus.OK);
+    return new ResponseEntity<Integer>(characterPriceService.getCharacterNumber(provision, false), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/character-prices")

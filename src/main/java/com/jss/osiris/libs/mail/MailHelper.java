@@ -1562,7 +1562,7 @@ public class MailHelper {
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForBillingClosure(tiers));
 
-        mail.setSubject("Votre relevé de compte");
+        mail.setSubject("Votre relevé de compte (" + tiers.getId() + ")");
 
         mailService.addMailToQueue(mail);
     }

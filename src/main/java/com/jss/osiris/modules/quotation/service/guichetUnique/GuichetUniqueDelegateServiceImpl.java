@@ -29,6 +29,7 @@ import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.GuichetUniqueLogin;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
+import com.jss.osiris.modules.quotation.repository.guichetUnique.FormaliteGuichetUniqueRepository;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
 
 @Service
@@ -54,6 +55,9 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
 
     @Autowired
     GlobalExceptionHandler globalExceptionHandler;
+
+    @Autowired
+    FormaliteGuichetUniqueRepository formaliteGuichetUniqueRepository;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
@@ -156,7 +160,13 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     @Override
     public List<FormaliteGuichetUnique> getAllFormalitiesByRefenceMandataire(String reference)
             throws OsirisException, OsirisClientMessageException {
-        List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
+
+        List<FormaliteGuichetUnique> formalites = formaliteGuichetUniqueRepository.findByRefenceMandataire(reference);
+
+        if (formalites != null && formalites.size() > 0)
+            return formalites;
+
+        formalites = new ArrayList<FormaliteGuichetUnique>();
         formalites.addAll(getFormalitiesByRefenceMandataire(reference));
         formalites.addAll(getAnnualAccountsByRefenceMandataire(reference));
 

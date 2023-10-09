@@ -9,6 +9,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
+import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
@@ -112,6 +113,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	AzureReceiptService azureReceiptService;
+
+	@Autowired
+	AuditService auditService;
 
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
@@ -279,6 +283,15 @@ public class OsirisScheduller {
 		try {
 			azureInvoiceService.checkInvoiceToAnalyse();
 			azureReceiptService.checkReceiptToAnalyse();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.audit.clean}")
+	private void cleanAudit() {
+		try {
+			auditService.cleanAudit();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

@@ -1,19 +1,19 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
-import { CustomerOrderReporting } from '../model/CustomerOrderReporting';
+import { TurnoverReporting } from '../model/TurnoverReporting';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CustomerOrderReportingService extends AppRestService<CustomerOrderReporting>{
+export class TurnoverReportingService extends AppRestService<TurnoverReporting>{
 
   constructor(http: HttpClient) {
     super(http, "reporting");
   }
 
-  getCustomerOrderReporting() {
-    return this.getList(new HttpParams(), "customer-order");
+  getTurnoverReporting() {
+    return this.getList(new HttpParams(), "turnover");
   }
 
 }

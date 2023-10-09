@@ -63,7 +63,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             Float creditAmount,
             Float debitAmount, AccountingAccount accountingAccount, InvoiceItem invoiceItem, Invoice invoice,
             CustomerOrder customerOrder, AccountingJournal journal, Payment payment, Refund refund,
-            BankTransfert bankTransfert) {
+            BankTransfert bankTransfert) throws OsirisClientMessageException {
         AccountingRecord accountingRecord = new AccountingRecord();
         accountingRecord.setOperationDateTime(operationDatetime);
         accountingRecord.setTemporaryOperationId(operationId);
@@ -86,6 +86,10 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         accountingRecord.setRefund(refund);
         accountingRecord.setBankTransfert(bankTransfert);
         accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
+
+        if (accountingRecord.getCreditAmount() != null && accountingRecord.getCreditAmount() < 0
+                || accountingRecord.getDebitAmount() != null && accountingRecord.getDebitAmount() < 0)
+            throw new OsirisClientMessageException("Negative debit or credit !");
         return accountingRecord;
     }
 
@@ -510,7 +514,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     @Override
     public void generateAccountingRecordsOnInvoiceReception(Invoice invoice)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         AccountingJournal pushasingJournal = constantService.getAccountingJournalPurchases();
 
         if (invoice == null)
@@ -629,7 +633,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     @Override
     public void generateAccountingRecordOnIncomingPaymentCreation(Payment payment, boolean isOdJournal)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         AccountingJournal bankJournal = !isOdJournal ? constantService.getAccountingJournalBank()
                 : constantService.getAccountingJournalMiscellaneousOperations();
         if (payment.getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId()))
@@ -662,7 +666,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     @Override
     public void generateAccountingRecordOnOutgoingPaymentCreation(Payment payment)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         AccountingJournal bankJournal = payment.getPaymentType().getId()
                 .equals(constantService.getPaymentTypeEspeces().getId()) ? constantService.getAccountingJournalCash()
                         : constantService.getAccountingJournalBank();
@@ -745,7 +749,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     @Override
     public void generateAccountingRecordsForSaleOnInvoicePayment(Invoice invoice, Payment payment)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         if (invoice == null)
             throw new OsirisException(null, "No invoice provided");
 
@@ -789,7 +793,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     @Override
     public void generateAccountingRecordsForSaleOnCustomerOrderDeposit(CustomerOrder customerOrder, Payment payment)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         if (customerOrder == null)
             throw new OsirisException(null, "No customerOrder provided");
 
@@ -829,7 +833,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     @Override
     public void generateAccountingRecordsForProviderInvoiceRefund(Invoice invoice, Payment payment)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
 
         if (invoice == null)
             throw new OsirisException(null, "No invoice provided");
@@ -872,7 +876,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     @Override
     public void generateAccountingRecordsForPurschaseOnInvoicePayment(Invoice invoice, Payment payment)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         if (invoice == null)
             throw new OsirisException(null, "No invoice provided");
 
@@ -917,7 +921,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     @Override
     public void generateAccountingRecordsForRefundGeneration(Refund refund)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
 
         if (refund.getPayments() == null || refund.getPayments().size() != 1)
             throw new OsirisException(null, "Impossible to find refund payment");
@@ -947,7 +951,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     @Override
     public void generateAccountingRecordsForRefundExport(Refund refund)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
 
         if (refund.getPayments() == null || refund.getPayments().size() != 1)
             throw new OsirisException(null, "Impossible to find refund payment");
@@ -977,7 +981,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     @Override
     public void generateAccountingRecordOnPaymentOnDepositCompetentAuthorityAccount(Payment payment)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
 
         AccountingJournal bankJournal = constantService.getAccountingJournalBank();
         Integer operationId = getNewTemporaryOperationId();

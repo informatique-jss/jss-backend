@@ -153,7 +153,6 @@ export class InvoiceManagementComponent implements OnInit {
     });
     dialogPaymentDialogRef.componentInstance.payment = payment;
     dialogPaymentDialogRef.componentInstance.doNotInitializeAsso = true;
-    dialogPaymentDialogRef.componentInstance.customerOrder = this.customerOrder as CustomerOrder;
 
     dialogPaymentDialogRef.afterClosed().subscribe(response => {
       this.appService.openRoute(null, '/order/' + this.quotation.id, null);
