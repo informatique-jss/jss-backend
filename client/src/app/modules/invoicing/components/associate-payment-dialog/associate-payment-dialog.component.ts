@@ -375,6 +375,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
       }
     } else if (this.invoice && this.invoice.customerOrder) {
       affaires.push(...this.invoice!.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban && asso.affaire.paymentIban != "").map(asso => asso.affaire));
+    } else if (this.customerOrder) {
+      affaires.push(...this.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban && asso.affaire.paymentIban != "").map(asso => asso.affaire));
     }
     return affaires;
   }
