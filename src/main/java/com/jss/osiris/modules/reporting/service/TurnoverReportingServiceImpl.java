@@ -24,7 +24,8 @@ public class TurnoverReportingServiceImpl implements TurnoverReportingService {
     public List<ITurnoverReporting> getTurnoverReporting() throws OsirisException {
         return turnoverReportingRepository.getTurnoverReporting(Arrays.asList(
                 constantService.getInvoiceStatusPayed().getId(), constantService.getInvoiceStatusSend().getId(),
-                constantService.getInvoiceStatusCreditNoteEmited().getId()));
+                constantService.getInvoiceStatusCreditNoteEmited().getId(),
+                constantService.getInvoiceStatusCancelled().getId()));
     }
 
 }
