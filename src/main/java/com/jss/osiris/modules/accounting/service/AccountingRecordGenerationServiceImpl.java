@@ -386,7 +386,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                         producAccountingAccount, invoiceItem, invoice, null, salesJournal, null, null, null);
 
                 if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
-                        && invoiceItem.getVatPrice() > 0) {
+                        && invoiceItem.getVatPrice() != 0) {
                     generateNewAccountingRecord(LocalDateTime.now(), operationId,
                             invoice.getManualAccountingDocumentNumber(),
                             invoice.getManualAccountingDocumentDate(),
