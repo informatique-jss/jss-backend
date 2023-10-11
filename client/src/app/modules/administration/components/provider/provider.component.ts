@@ -108,6 +108,7 @@ export class ProviderComponent implements OnInit {
   }
 
   saveProvider() {
+    this.editMode = false;
     if (this.getFormStatus() && this.selectedProvider) {
       this.editMode = false;
       this.providerService.addOrUpdateProvider(this.selectedProvider).subscribe(response => {

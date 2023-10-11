@@ -278,6 +278,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   saveQuotation(): boolean {
 
+    this.editMode = false;
+
     // Can't find a way to make it work correctly ...
     replaceDocument(this.constantService.getDocumentTypeBilling(), this.quotation, this.quotationManagementComponent?.getBillingDocument()!);
     replaceDocument(this.constantService.getDocumentTypeDigital(), this.quotation, this.quotationManagementComponent?.getDigitalDocument()!);

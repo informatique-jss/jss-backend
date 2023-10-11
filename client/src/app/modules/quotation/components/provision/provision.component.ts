@@ -192,7 +192,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   saveAsso() {
-    this.editMode = true;
+    this.editMode = false;
     setTimeout(() => this.checkAndSave(), 0);
   }
 
