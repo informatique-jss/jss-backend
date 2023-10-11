@@ -1142,7 +1142,7 @@ public class MailHelper {
             }
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
+                    for (Provision provision : asso.getProvisions()) {
                         if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
                             for (Attachment attachment : attachmentService
                                     .sortAttachmentByDateDesc(provision.getAttachments()))
@@ -1153,6 +1153,9 @@ public class MailHelper {
                                     attachments.add(attachment);
                                     attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
                                 }
+                        // Send once per provision
+                        attachmentTypeIdsDone = new ArrayList<Integer>();
+                    }
         }
 
         if (attachments.size() > 0)
