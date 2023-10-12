@@ -81,25 +81,22 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
-	@IndexedField
 	private Tiers tiers;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
-	@IndexedField
 	private Responsable responsable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
-	@IndexedField
 	private Confrere confrere;
 
 	@ManyToMany
 	@JoinTable(name = "asso_customer_order_special_offer", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;
 
-	@IndexedField
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@IndexedField
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -120,7 +117,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@OneToMany(targetEntity = Document.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
-	@IndexedField
 	private List<Document> documents;
 
 	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
