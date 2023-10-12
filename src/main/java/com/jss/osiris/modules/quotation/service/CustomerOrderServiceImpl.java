@@ -443,7 +443,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         // Target : going back to TO BILLED
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)
                 && targetStatusCode.equals(CustomerOrderStatus.TO_BILLED))
-            if (customerOrder.getInvoices() != null)
+            if (customerOrder.getInvoices() != null) {
                 for (Invoice invoice : customerOrder.getInvoices())
                     if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusCancelled().getId())
                             && !invoice.getInvoiceStatus().getId()
@@ -451,7 +451,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         invoiceService.cancelInvoice(invoice);
                         break;
                     }
-
+                // Flush to take invoice item break link with provision into account
+                entityManager.flush();
+                entityManager.clear();
+                customerOrder = getCustomerOrder(customerOrder.getId());
+            }
         CustomerOrderStatus customerOrderStatus = customerOrderStatusService
                 .getCustomerOrderStatusByCode(targetStatusCode);
         if (customerOrderStatus == null)
