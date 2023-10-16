@@ -276,29 +276,66 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         }
   }
 
-  saveQuotation(): boolean {
+  async saveQuotation(): Promise<boolean> {
+    //it checks if the commande is simillar one second time(after add affaire)
+    //and if it is it shows up the OrderSimilarities dialog, and the order is only
+    //saved if the box is answered
+    const dialogResult = await new Promise<boolean>((resolve) => {
+      let orderingSearch = {} as OrderingSearch;
+      orderingSearch.customerOrders = [getCustomerOrderForIQuotation(this.quotation)];
+      orderingSearch.customerOrderStatus = [];
+      orderingSearch.affaires = [this.quotation.assoAffaireOrders[0].affaire];
 
-    // Can't find a way to make it work correctly ...
-    replaceDocument(this.constantService.getDocumentTypeBilling(), this.quotation, this.quotationManagementComponent?.getBillingDocument()!);
-    replaceDocument(this.constantService.getDocumentTypeDigital(), this.quotation, this.quotationManagementComponent?.getDigitalDocument()!);
-    replaceDocument(this.constantService.getDocumentTypePaper(), this.quotation, this.quotationManagementComponent?.getPaperDocument()!);
-    if (this.getFormsStatus()) {
-      if (!this.instanceOfCustomerOrder) {
-        this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
-          this.editMode = false;
-          this.quotation = response;
-          this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
-        })
-      } else {
-        this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
-          this.editMode = false;
-          this.quotation = response;
-          this.appService.openRoute(null, '/order/' + this.quotation.id, null);
-        })
-      }
-      return true;
+      if (this.customerOrderStatusList)
+      for (let status of this.customerOrderStatusList)
+        if ([CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED].indexOf(status.code) >= 0)
+          orderingSearch.customerOrderStatus.push(status);
+
+      this.orderingSearchResultService.getOrders(orderingSearch).subscribe((orders) => {
+        if (orders && orders.length > 0 && this.quotation.id == undefined) {
+          let dialogRef = this.orderSimilaritiesDialog.open(OrderSimilaritiesDialogComponent);
+          dialogRef.componentInstance.orderingSearch = orderingSearch;
+
+          dialogRef.afterClosed().subscribe((accept) => {
+            if (accept) {
+              this.selectedTabIndex = 1;
+            }
+            resolve(accept);
+          });
+        } else {
+          this.selectedTabIndex = 1;
+          resolve(true);
+        }
+      });
+    });
+    if (dialogResult) {
+      return this.saveQuotationContinuation();
     }
-    return false;
+    return dialogResult;
+  }
+
+  saveQuotationContinuation(){
+// Can't find a way to make it work correctly ...
+replaceDocument(this.constantService.getDocumentTypeBilling(), this.quotation, this.quotationManagementComponent?.getBillingDocument()!);
+replaceDocument(this.constantService.getDocumentTypeDigital(), this.quotation, this.quotationManagementComponent?.getDigitalDocument()!);
+replaceDocument(this.constantService.getDocumentTypePaper(), this.quotation, this.quotationManagementComponent?.getPaperDocument()!);
+if (this.getFormsStatus()) {
+  if (!this.instanceOfCustomerOrder) {
+    this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
+      this.editMode = false;
+      this.quotation = response;
+      this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
+    })
+  } else {
+    this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
+      this.editMode = false;
+      this.quotation = response;
+      this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+    })
+  }
+  return true;
+}
+return false;
   }
 
   getFormsStatus(): boolean {
