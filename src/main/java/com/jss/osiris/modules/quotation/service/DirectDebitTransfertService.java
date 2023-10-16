@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearch;
@@ -27,7 +28,8 @@ public interface DirectDebitTransfertService {
                         throws OsirisException, OsirisClientMessageException;
 
         public File getDirectDebitTransfertExport(DirectDebitTransfertSearch transfertSearch)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public DirectDebitTransfert cancelDirectDebitTransfert(DirectDebitTransfert directDebitTransfert);
 }

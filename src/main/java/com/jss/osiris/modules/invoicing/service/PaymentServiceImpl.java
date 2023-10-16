@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.ofx.OFXParser;
@@ -197,7 +198,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void paymentGrab()
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
 
         for (Payment payment : payments) {
@@ -208,7 +209,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<Attachment> uploadOfxFile(InputStream file)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         OFXStatement operationList = ofxParser.parseOfx(file);
 
         if (operationList != null && operationList.getAccountStatements() != null
@@ -250,14 +251,14 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void automatchPaymentFromUser(Payment payment)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         automatchPayment(payment);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void automatchPayment(Payment payment)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Match inbound payment
         payment = getPayment(payment.getId());
         if (payment.getPaymentAmount() >= 0) {
@@ -487,7 +488,8 @@ public class PaymentServiceImpl implements PaymentService {
     public void manualMatchPaymentInvoicesAndCustomerOrders(Payment payment, List<Invoice> correspondingInvoices,
             List<CustomerOrder> correspondingCustomerOrder, Affaire affaireRefund, Tiers tiersRefund,
             Confrere confrereRefund, ITiers tiersOrder,
-            List<Float> byPassAmount) throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            List<Float> byPassAmount)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         payment = getPayment(payment.getId());
 
@@ -531,7 +533,7 @@ public class PaymentServiceImpl implements PaymentService {
     private Float associateInboundPaymentAndCustomerOrders(Payment payment,
             List<CustomerOrder> correspondingCustomerOrder, List<Invoice> correspondingInvoice,
             List<Float> byPassAmount, float remainingMoney)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         int amountIndex = 0;
         if (correspondingInvoice != null)
@@ -750,7 +752,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addInboundCheckPayment(Payment checkPayment)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         checkPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         checkPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
         addOrUpdatePayment(checkPayment);
@@ -776,7 +778,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addCashPaymentForCustomerOrder(Payment cashPayment, CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         cashPayment.setSourceAccountingAccount(constantService.getAccountingAccountCaisse());
         cashPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         addOrUpdatePayment(cashPayment);
@@ -964,7 +966,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void movePaymentFromInvoiceToCustomerOrder(Payment payment, Invoice invoice, CustomerOrder customerOrder)
-            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException, OsirisDuplicateException {
         associateInboundPaymentAndCustomerOrders(payment, Arrays.asList(customerOrder), null,
                 Arrays.asList(payment.getPaymentAmount()), payment.getPaymentAmount());
     }
@@ -977,7 +979,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private void generateInvoiceForCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest,
             Payment payment, Invoice targetInvoice, CustomerOrder targetCustomerOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         Invoice invoice = new Invoice();
 
@@ -1031,7 +1033,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Payment generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
             CentralPayPaymentRequest centralPayPaymentRequest)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
         // Generate payment to materialize CB payment
         Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, null);
@@ -1044,7 +1046,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void generatePaymentOnInvoiceForCbPayment(Invoice invoice,
             CentralPayPaymentRequest centralPayPaymentRequest)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Generate payment to materialize CB payment
         Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, null);
         generateInvoiceForCentralPayPayment(centralPayPaymentRequest, payment, invoice, null);

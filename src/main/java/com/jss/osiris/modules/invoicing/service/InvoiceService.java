@@ -3,6 +3,7 @@ package com.jss.osiris.modules.invoicing.service;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -31,7 +32,8 @@ public interface InvoiceService {
         public void reindexInvoices();
 
         public Invoice addOrUpdateInvoiceFromUser(Invoice invoice)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public void sendRemindersForInvoices()
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
@@ -44,11 +46,13 @@ public interface InvoiceService {
         public CustomerOrder getCustomerOrderByIdInvoice(Integer idInvoice);
 
         public Invoice generateProviderInvoiceCreditNote(Invoice newInvoice, Integer idOriginInvoiceForCreditNote)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public Invoice searchInvoicesByIdDirectDebitTransfert(Integer idToFind);
 
         public Invoice cancelInvoice(Invoice invoice)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
 }

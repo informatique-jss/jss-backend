@@ -23,6 +23,7 @@ import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 import com.jss.osiris.libs.PictureHelper;
 import com.jss.osiris.libs.WordGenerationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
@@ -232,7 +233,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder, Announcement announcement)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         // Get provision
         Provision currentProvision = null;
@@ -263,7 +264,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void generateAndStorePublicationReceipt(Announcement announcement, Provision currentProvision)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         if (announcement.getConfrere() != null
                 && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
@@ -288,7 +289,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void generateStoreAndSendPublicationFlag(CustomerOrder customerOrder, Announcement announcement)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         // Get provision
         Provision currentProvision = null;
@@ -320,7 +321,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void generateAndStorePublicationFlag(Announcement announcement, Provision currentProvision)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // To avoid no session error
         announcement = getAnnouncement(announcement.getId());
         currentProvision = provisionService.getProvision(currentProvision.getId());
@@ -348,7 +349,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void sendPublicationFlagNotSent()
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         List<Announcement> announcements = announcementRepository.getAnnouncementForPublicationFlagBatch(
                 announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE),
                 LocalDate.now());
@@ -375,7 +376,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void generateStoreAndSendProofReading(Announcement announcement, CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Get provision
         Provision currentProvision = null;
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
@@ -419,7 +420,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public void generateAndStoreAnnouncementWordFile(CustomerOrder customerOrder, AssoAffaireOrder asso,
             Provision provision, Announcement announcement)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         if (announcement.getIsAnnouncementAlreadySentToConfrere() == null
                 || !announcement.getIsAnnouncementAlreadySentToConfrere()) {
             if (announcement.getConfrere() != null

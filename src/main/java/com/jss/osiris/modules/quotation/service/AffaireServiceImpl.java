@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
@@ -54,13 +56,33 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Affaire addOrUpdateAffaire(Affaire affaire) {
+    public Affaire addOrUpdateAffaire(Affaire affaire) throws OsirisDuplicateException {
         if (affaire.getRna() != null)
             affaire.setRna(affaire.getRna().toUpperCase().replaceAll(" ", ""));
         if (affaire.getSiren() != null)
             affaire.setSiren(affaire.getSiren().toUpperCase().replaceAll(" ", ""));
         if (affaire.getSiret() != null)
             affaire.setSiret(affaire.getSiret().toUpperCase().replaceAll(" ", ""));
+
+        // Check duplicate
+
+        List<Affaire> affairesDuplicates = new ArrayList<Affaire>();
+        if (affaire.getSiret() != null && affaire.getSiret().length() > 0) {
+            Affaire affaireSameSiret = affaireRepository.findBySiret(affaire.getSiret());
+            if (affaireSameSiret != null)
+                affairesDuplicates.add(affaireSameSiret);
+        }
+        if (affairesDuplicates.size() == 0) {
+            if (affaire.getIsIndividual() != null && affaire.getIsIndividual() == true)
+                affairesDuplicates = affaireRepository.findByPostalCodeAndName(affaire.getPostalCode(),
+                        affaire.getFirstname(), affaire.getLastname());
+            else
+                affairesDuplicates = affaireRepository.findByPostalCodeAndDenomination(affaire.getPostalCode(),
+                        affaire.getDenomination());
+        }
+
+        if (affairesDuplicates.size() > 0)
+            throw new OsirisDuplicateException(affairesDuplicates.stream().map(Affaire::getId).toList());
 
         // If mails already exists, get their ids
         if (affaire != null && affaire.getMails() != null && affaire.getMails().size() > 0)

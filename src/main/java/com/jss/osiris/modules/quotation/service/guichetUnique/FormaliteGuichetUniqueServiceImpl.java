@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -99,7 +100,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     @Transactional(rollbackFor = Exception.class)
     public FormaliteGuichetUnique refreshFormaliteGuichetUnique(FormaliteGuichetUnique inFormaliteGuichetUnique,
             Formalite formalite)
-            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         if (inFormaliteGuichetUnique == null)
             throw new OsirisValidationException("inFormaliteGuichetUnique");
 
@@ -255,7 +256,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     private Invoice generateInvoiceFromCart(Cart cart, Provision provision)
             throws OsirisException, OsirisClientMessageException,
-            OsirisValidationException {
+            OsirisValidationException, OsirisDuplicateException {
         Invoice invoice = new Invoice();
         invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
         invoice.setCustomerOrderForInboundInvoice(provision.getAssoAffaireOrder().getCustomerOrder());
@@ -303,7 +304,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     private Invoice generateCreditNoteFromCart(Cart cart, Provision provision)
             throws OsirisException, OsirisClientMessageException,
-            OsirisValidationException {
+            OsirisValidationException, OsirisDuplicateException {
         Invoice invoice = new Invoice();
         invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
         invoice.setCustomerOrderForInboundInvoice(provision.getAssoAffaireOrder().getCustomerOrder());
