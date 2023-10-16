@@ -157,9 +157,9 @@ public class BankTransfertServiceImpl implements BankTransfertService {
     public BankTransfert generateBankTransfertForManualInvoice(Invoice invoice)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         BankTransfert bankTransfert = new BankTransfert();
-        bankTransfert.setLabel("Facture " + invoice.getId() + " / JSS / "
-                + (invoice.getCommandNumber() != null ? invoice.getCommandNumber() : "") + " / "
-                + invoice.getManualAccountingDocumentNumber());
+        bankTransfert
+                .setLabel(invoice.getManualAccountingDocumentNumber() + " / Facture " + invoice.getId() + " / JSS / "
+                        + (invoice.getCommandNumber() != null ? invoice.getCommandNumber() : ""));
         bankTransfert.setIsAlreadyExported(false);
         if (invoice.getCustomerOrder() != null)
             bankTransfert.setCustomerOrder(invoice.getCustomerOrder());
