@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.quotation.model.CentralPayPaymentRequest;
@@ -68,7 +69,7 @@ public class CentralPayPaymentRequestServiceImpl implements CentralPayPaymentReq
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void checkAllPaymentRequests()
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         List<CentralPayPaymentRequest> requests = getCentralPayPaymentRequests();
         if (requests != null && requests.size() > 0) {
             for (CentralPayPaymentRequest request : requests) {

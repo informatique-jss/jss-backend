@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
@@ -43,6 +44,7 @@ import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.repository.QuotationRepository;
 import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Service
 public class QuotationServiceImpl implements QuotationService {
@@ -112,13 +114,13 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Quotation addOrUpdateQuotationFromUser(Quotation quotation)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         return addOrUpdateQuotation(quotation);
     }
 
     @Override
     public Quotation addOrUpdateQuotation(Quotation quotation)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         quotation.setIsQuotation(true);
 
         if (quotation.getDocuments() != null)
@@ -132,6 +134,59 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotation.getAssignedTo() == null)
             quotation.setAssignedTo(
                     getCustomerOrderOfQuotation(quotation).getDefaultCustomerOrderEmployee());
+
+        // Check duplicate
+        // Find first affaire customer order
+        if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0) {
+            QuotationSearch orderingSearch = new QuotationSearch();
+            orderingSearch.setAffaires(Arrays.asList(quotation.getAssoAffaireOrders().get(0).getAffaire()));
+            orderingSearch.setCustomerOrders(new ArrayList<Tiers>());
+            if (quotation.getResponsable() != null) {
+                Tiers tiers = new Tiers();
+                tiers.setId(quotation.getResponsable().getId());
+                orderingSearch.getCustomerOrders().add(tiers);
+            } else if (quotation.getTiers() != null) {
+                orderingSearch.getCustomerOrders().add(quotation.getTiers());
+            } else if (quotation.getConfrere() != null) {
+                Tiers tiers = new Tiers();
+                tiers.setId(quotation.getConfrere().getId());
+                orderingSearch.getCustomerOrders().add(tiers);
+            }
+            List<QuotationSearchResult> duplicatedCustomerOrders = searchQuotations(orderingSearch);
+            List<Quotation> duplicatedFound = new ArrayList<Quotation>();
+
+            if (duplicatedCustomerOrders != null && duplicatedCustomerOrders.size() > 0) {
+                outerloop: for (QuotationSearchResult potentialCustomerOrderResult : duplicatedCustomerOrders) {
+                    Quotation potentialCustomerOrder = getQuotation(potentialCustomerOrderResult.getQuotationId());
+                    for (AssoAffaireOrder currentAsso : quotation.getAssoAffaireOrders()) {
+                        boolean foundAsso = false;
+                        for (AssoAffaireOrder duplicateAsso : potentialCustomerOrder.getAssoAffaireOrders()) {
+                            if (currentAsso.getAffaire().getId().equals(duplicateAsso.getAffaire().getId())) {
+                                foundAsso = true;
+                                for (Provision currentProvision : currentAsso.getProvisions()) {
+                                    boolean foundProvision = false;
+                                    for (Provision duplicateProvision : duplicateAsso.getProvisions()) {
+                                        if (duplicateProvision.getProvisionType().getId()
+                                                .equals(currentProvision.getProvisionType().getId())) {
+                                            foundProvision = true;
+                                        }
+                                    }
+                                    if (!foundProvision)
+                                        break outerloop;
+                                }
+                            }
+                        }
+                        if (!foundAsso)
+                            break outerloop;
+                    }
+                    duplicatedFound.add(potentialCustomerOrder);
+                }
+
+                if (duplicatedFound.size() > 0) {
+                    throw new OsirisDuplicateException(duplicatedFound.stream().map(Quotation::getId).toList());
+                }
+            }
+        }
 
         // Complete provisions
         boolean oneNewProvision = false;
@@ -182,7 +237,7 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         quotation = getQuotation(quotation.getId());
         QuotationStatus targetQuotationStatus = quotationStatusService.getQuotationStatusByCode(targetStatusCode);
         if (targetQuotationStatus == null)
@@ -358,7 +413,7 @@ public class QuotationServiceImpl implements QuotationService {
     @Transactional(rollbackFor = Exception.class)
     public Boolean validateCardPaymentLinkForQuotationDeposit(Quotation quotation,
             com.jss.osiris.modules.quotation.model.CentralPayPaymentRequest request)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         quotation = getQuotation(quotation.getId());
         if (request != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
@@ -390,7 +445,7 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Override
     public Quotation unlockQuotationFromDeposit(Quotation quotation)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
             // Generate customer order
@@ -493,7 +548,7 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Override
     public void updateAssignedToForQuotation(Quotation quotation, Employee employee)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         quotation.setAssignedTo(employee);
         addOrUpdateQuotation(quotation);
     }
@@ -525,7 +580,7 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void validateQuotationFromCustomer(Quotation quotation)
-            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         quotation = getQuotation(quotation.getId());
 
         if (!quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER))
@@ -550,7 +605,7 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Quotation associateCustomerOrderToQuotation(Quotation quotation, CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
 
         quotation = getQuotation(quotation.getId());

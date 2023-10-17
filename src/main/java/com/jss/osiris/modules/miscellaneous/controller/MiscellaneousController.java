@@ -25,6 +25,7 @@ import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -1025,7 +1026,7 @@ public class MiscellaneousController {
             @RequestParam Integer idEntity, @RequestParam String entityType,
             @RequestParam Integer idAttachmentType,
             @RequestParam String filename, @RequestParam Boolean replaceExistingAttachementType)
-            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         if (idAttachmentType == null)
             throw new OsirisValidationException("idAttachmentType");
 

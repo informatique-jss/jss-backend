@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.miscellaneous.model.City;
@@ -67,7 +68,8 @@ public class BulkCreateCustomerOrderService {
     @Transactional(rollbackFor = Exception.class)
     @SuppressWarnings({ "all" })
     public void bulkCreateCustomerOrder()
-            throws OsirisException, IOException, OsirisValidationException, OsirisClientMessageException {
+            throws OsirisException, IOException, OsirisValidationException, OsirisClientMessageException,
+            OsirisDuplicateException {
         File file = new File(
                 "C:\\TEMP\\affaires.csv");
         BufferedReader br = null;

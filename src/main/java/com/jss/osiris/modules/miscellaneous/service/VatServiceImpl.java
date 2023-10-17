@@ -75,7 +75,7 @@ public class VatServiceImpl implements VatService {
 
         if (!country.getId().equals(constantService.getCountryFrance().getId())
                 && !country.getId().equals(constantService.getCountryMonaco().getId()))
-            return null;
+            return constantService.getVatZero();
 
         if (country.getId().equals(constantService.getCountryMonaco().getId()))
             return vat != null ? vat : constantService.getVatTwenty();
@@ -110,7 +110,7 @@ public class VatServiceImpl implements VatService {
 
         if (!country.getId().equals(constantService.getCountryFrance().getId())
                 && !country.getId().equals(constantService.getCountryMonaco().getId()))
-            return null;
+            return constantService.getVatZero();
 
         if (country.getId().equals(constantService.getCountryMonaco().getId()))
             return vat != null ? vat : constantService.getVatDeductible();
@@ -152,7 +152,7 @@ public class VatServiceImpl implements VatService {
 
         if (!country.getId().equals(constantService.getCountryFrance().getId())
                 && !country.getId().equals(constantService.getCountryMonaco().getId()))
-            return null;
+            return constantService.getVatZero();
 
         if (country.getId().equals(constantService.getCountryMonaco().getId()))
             return vat != null ? vat : constantService.getVatTwenty();
