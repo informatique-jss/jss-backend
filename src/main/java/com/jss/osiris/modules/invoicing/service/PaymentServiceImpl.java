@@ -304,7 +304,7 @@ public class PaymentServiceImpl implements PaymentService {
                     totalItemsAmount += invoiceService.getRemainingAmountToPayForInvoice(invoice);
 
             if (correspondingInvoices.size() > 0
-                    && totalItemsAmount < (remainingMoney + Integer.parseInt(payementLimitRefundInEuros))
+                    && totalItemsAmount > (remainingMoney + Integer.parseInt(payementLimitRefundInEuros))
                     && (correspondingCustomerOrder.size() == 0
                             || correspondingQuotation.size() == 0))
                 return;
@@ -505,7 +505,7 @@ public class PaymentServiceImpl implements PaymentService {
                         correspondingInvoices, byPassAmount, remainingMoney);
             }
 
-            if (remainingMoney > 0) {
+            if (remainingMoney > Integer.parseInt(payementLimitRefundInEuros)) {
                 // Refund
                 // Try to find a customerOrder for decorate the refund ...
                 CustomerOrder customerOrder = null;
