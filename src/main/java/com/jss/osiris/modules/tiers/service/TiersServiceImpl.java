@@ -78,16 +78,18 @@ public class TiersServiceImpl implements TiersService {
             throw new OsirisException(null, "Provided tiers is null");
 
         // Find duplicate Tiers
-        List<Tiers> tiersDuplicates = new ArrayList<Tiers>();
-        if (tiers.getIsIndividual() != null && tiers.getIsIndividual() == true)
-            tiersDuplicates = tiersRepository.findByPostalCodeAndName(tiers.getPostalCode(), tiers.getFirstname(),
-                    tiers.getLastname());
-        else
-            tiersDuplicates = tiersRepository.findByPostalCodeAndDenomination(tiers.getPostalCode(),
-                    tiers.getDenomination());
+        if (tiers.getId() == null) {
+            List<Tiers> tiersDuplicates = new ArrayList<Tiers>();
+            if (tiers.getIsIndividual() != null && tiers.getIsIndividual() == true)
+                tiersDuplicates = tiersRepository.findByPostalCodeAndName(tiers.getPostalCode(), tiers.getFirstname(),
+                        tiers.getLastname());
+            else
+                tiersDuplicates = tiersRepository.findByPostalCodeAndDenomination(tiers.getPostalCode(),
+                        tiers.getDenomination());
 
-        if (tiersDuplicates.size() > 0)
-            throw new OsirisDuplicateException(tiersDuplicates.stream().map(Tiers::getId).toList());
+            if (tiersDuplicates.size() > 0)
+                throw new OsirisDuplicateException(tiersDuplicates.stream().map(Tiers::getId).toList());
+        }
 
         // If mails already exists, get their ids
         if (tiers != null && tiers.getMails() != null && tiers.getMails().size() > 0)

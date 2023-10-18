@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.DateHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -137,7 +138,8 @@ public class QuotationServiceImpl implements QuotationService {
 
         // Check duplicate
         // Find first affaire customer order
-        if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0) {
+        if (quotation.getId() == null && quotation.getAssoAffaireOrders() != null
+                && quotation.getAssoAffaireOrders().size() > 0) {
             QuotationSearch orderingSearch = new QuotationSearch();
             orderingSearch.setAffaires(Arrays.asList(quotation.getAssoAffaireOrders().get(0).getAffaire()));
             orderingSearch.setCustomerOrders(new ArrayList<Tiers>());
@@ -152,6 +154,7 @@ public class QuotationServiceImpl implements QuotationService {
                 tiers.setId(quotation.getConfrere().getId());
                 orderingSearch.getCustomerOrders().add(tiers);
             }
+            orderingSearch.setStartDate(DateHelper.subtractDaysSkippingWeekends(LocalDateTime.now(), 3));
             List<QuotationSearchResult> duplicatedCustomerOrders = searchQuotations(orderingSearch);
             List<Quotation> duplicatedFound = new ArrayList<Quotation>();
 
