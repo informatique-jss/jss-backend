@@ -336,6 +336,10 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 ? ("Facture pour la commande n°" + invoice.getCustomerOrder().getId())
                 : ("Facture libre n°" + invoice.getId());
 
+        IGenericTiers orderingTiers = invoiceHelper.getCustomerOrder(invoice);
+        if (orderingTiers != null && orderingTiers.getLabel() != null)
+            labelPrefix += " - " + orderingTiers.getLabel();
+
         AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForInvoice(invoice);
         Float balance = 0f;
         Integer operationId = getNewTemporaryOperationId();
@@ -443,6 +447,10 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 ? ("Avoir n°" + creditNote.getId() + " - Commande n°" + invoice.getCustomerOrder().getId())
                 : ("Avoir n°" + creditNote.getId() + " - Facture libre n°" + invoice.getId());
 
+        IGenericTiers orderingTiers = invoiceHelper.getCustomerOrder(invoice);
+        if (orderingTiers != null && orderingTiers.getLabel() != null)
+            labelPrefix += " - " + orderingTiers.getLabel();
+
         Float balance = 0f;
         Integer operationId = getNewTemporaryOperationId();
 
@@ -477,6 +485,10 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         String labelPrefix = "Avoir n°" + invoice.getId();
         if (originalInvoice != null)
             labelPrefix += " pour la facture " + originalInvoice.getId();
+
+        IGenericTiers orderingTiers = invoiceHelper.getCustomerOrder(invoice);
+        if (orderingTiers != null && orderingTiers.getLabel() != null)
+            labelPrefix += " - " + orderingTiers.getLabel();
 
         AccountingAccount accountingAccountProvider = getProviderAccountingAccountForInvoice(invoice);
 
@@ -550,6 +562,10 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
         String labelPrefix = invoice.getCustomerOrder() != null ? ("Commande n°" + invoice.getCustomerOrder().getId())
                 : ("Facture libre n°" + invoice.getId());
+
+        IGenericTiers orderingTiers = invoiceHelper.getCustomerOrder(invoice);
+        if (orderingTiers != null && orderingTiers.getLabel() != null)
+            labelPrefix += " - " + orderingTiers.getLabel();
 
         AccountingAccount accountingAccountProvider = getProviderAccountingAccountForInvoice(invoice);
 
@@ -631,6 +647,10 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             labelPrefix = "Annulation - Avoir n°" + invoice.getId();
         else
             labelPrefix = "Annulation - Facture libre n°" + invoice.getId();
+
+        IGenericTiers orderingTiers = invoiceHelper.getCustomerOrder(invoice);
+        if (orderingTiers != null && orderingTiers.getLabel() != null)
+            labelPrefix += " - " + orderingTiers.getLabel();
 
         Float balance = 0f;
         Integer operationId = getNewTemporaryOperationId();
