@@ -30,7 +30,6 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordGenerationServi
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
-import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.Payment;
@@ -44,7 +43,6 @@ import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
-import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.Affaire;
@@ -147,9 +145,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     DirectDebitTransfertService debitTransfertService;
-
-    @Autowired
-    DocumentService documentService;
 
     @Override
     public Payment getPayment(Integer id) {
@@ -1039,7 +1034,7 @@ public class PaymentServiceImpl implements PaymentService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
         // Generate payment to materialize CB payment
-        Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, null, customerOrder);
+        Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, null);
         generateInvoiceForCentralPayPayment(centralPayPaymentRequest, payment, null, customerOrder);
         associateInboundPaymentAndCustomerOrders(payment, Arrays.asList(customerOrder), null, null,
                 payment.getPaymentAmount());
@@ -1051,7 +1046,7 @@ public class PaymentServiceImpl implements PaymentService {
             CentralPayPaymentRequest centralPayPaymentRequest)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Generate payment to materialize CB payment
-        Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, invoice, null);
+        Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, null);
         generateInvoiceForCentralPayPayment(centralPayPaymentRequest, payment, invoice, null);
         associateInboundPaymentAndInvoices(payment, Arrays.asList(invoice), null);
     }
@@ -1068,25 +1063,12 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Payment generateCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest, boolean isForDepostit,
-            Invoice invoice, CustomerOrder customerOrder)
+            Invoice invoice)
             throws OsirisException {
         Payment payment = new Payment();
         payment.setIsExternallyAssociated(false);
         payment.setBankId(centralPayPaymentRequest.getPaymentRequestId());
         payment.setLabel(centralPayPaymentRequest.getDescription());
-
-        // Compute DO label
-        CustomerOrder labelledCustomerOrder = customerOrder;
-        if (invoice != null && invoice.getCustomerOrder() != null)
-            labelledCustomerOrder = invoice.getCustomerOrder();
-
-        if (labelledCustomerOrder != null) {
-            InvoiceLabelResult labelResult = invoiceHelper.computeInvoiceLabelResult(
-                    documentService.getBillingDocument(customerOrder.getDocuments()),
-                    customerOrder, quotationService.getCustomerOrderOfQuotation(customerOrder));
-            if (labelResult != null && labelResult.getBillingLabel() != null)
-                payment.setLabel(payment.getLabel() + " - " + labelResult.getBillingLabel());
-        }
         payment.setPaymentAmount(centralPayPaymentRequest.getTotalAmount() / 100f);
         payment.setPaymentDate(centralPayPaymentRequest.getCreationDate());
         payment.setPaymentType(constantService.getPaymentTypeCB());
