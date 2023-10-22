@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.reporting.model.IProvisionReporting;
@@ -34,7 +35,15 @@ public interface ProvisionReportingRepository extends CrudRepository<Quotation, 
                         " sps.label, " +
                         " fst.label, " +
                         " ds.label, " +
-                        " bs.label) as provisionStatus " +
+                        " bs.label) as provisionStatus, " +
+                        " coalesce(ca1.label, ca2.label) as waitedCompetentAuthorityLabel, " +
+                        " sum(ii.pre_tax_price-coalesce (ii.discount_amount, 0)  ) as turnoverAmountWithoutTax,  " +
+                        " sum(ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) as turnoverAmountWithTax,  "
+                        +
+                        " sum(case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 else 1 end * (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithoutTax,  "
+                        +
+                        " sum(case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 else 1 end * (ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithTax                         "
+                        +
                         " from " +
                         "     customer_order co " +
                         " join customer_order_status cos2 on " +
@@ -43,6 +52,10 @@ public interface ProvisionReportingRepository extends CrudRepository<Quotation, 
                         "     aao.id_customer_order = co.id " +
                         " left join provision p on " +
                         "     p.id_asso_affaire_order = aao.id " +
+                        " left join invoice_item ii on ii.id_provision = p.id and co.id_customer_order_status =:customerOrderStatusBilledId "
+                        +
+                        " left join billing_item bi on  bi.id = ii.id_billing_item  " +
+                        " left join billing_type bt on  bt.id = bi.id_billing_type                          " +
                         " left join provision_family_type pft on " +
                         "     pft.id = p.id_provision_family_type " +
                         " left join employee e on " +
@@ -67,6 +80,10 @@ public interface ProvisionReportingRepository extends CrudRepository<Quotation, 
                         " b.id = p.id_bodacc " +
                         " left join bodacc_status bs on " +
                         " bs.id = b.id_bodacc_status " +
+                        " left join competent_authority ca1 on " +
+                        " ca1.id = sp.id_waited_competent_authority " +
+                        " left join competent_authority ca2 on " +
+                        " ca2.id = f.id_waited_competent_authority " +
                         " group by " +
                         " to_char(date_trunc('year', " +
                         " co.created_date), " +
@@ -89,7 +106,9 @@ public interface ProvisionReportingRepository extends CrudRepository<Quotation, 
                         " sps.label, " +
                         " fst.label, " +
                         " ds.label, " +
-                        " bs.label) " +
+                        " bs.label), " +
+                        " coalesce(ca1.label, ca2.label) " +
                         "")
-        List<IProvisionReporting> getProvisionReporting();
+        List<IProvisionReporting> getProvisionReporting(
+                        @Param("customerOrderStatusBilledId") Integer customerOrderStatusBilledId);
 }

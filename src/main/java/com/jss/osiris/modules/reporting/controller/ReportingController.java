@@ -18,15 +18,19 @@ import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.reporting.model.IAnnouncementReporting;
 import com.jss.osiris.modules.reporting.model.ICustomerOrderReporting;
+import com.jss.osiris.modules.reporting.model.IProvisionProductionReporting;
 import com.jss.osiris.modules.reporting.model.IProvisionReporting;
 import com.jss.osiris.modules.reporting.model.IQuotationReporting;
+import com.jss.osiris.modules.reporting.model.IRecoveryReporting;
 import com.jss.osiris.modules.reporting.model.ITiersReporting;
 import com.jss.osiris.modules.reporting.model.ITurnoverReporting;
 import com.jss.osiris.modules.reporting.model.UserReporting;
 import com.jss.osiris.modules.reporting.service.AnnouncementReportingService;
 import com.jss.osiris.modules.reporting.service.CustomerOrderReportingService;
+import com.jss.osiris.modules.reporting.service.ProvisionProductionReportingService;
 import com.jss.osiris.modules.reporting.service.ProvisionReportingService;
 import com.jss.osiris.modules.reporting.service.QuotationReportingService;
+import com.jss.osiris.modules.reporting.service.RecoveryReportingService;
 import com.jss.osiris.modules.reporting.service.TiersReportingService;
 import com.jss.osiris.modules.reporting.service.TurnoverReportingService;
 import com.jss.osiris.modules.reporting.service.UserReportingService;
@@ -56,6 +60,12 @@ public class ReportingController {
 
 	@Autowired
 	ProvisionReportingService provisionReportingService;
+
+	@Autowired
+	RecoveryReportingService recoveryReportingService;
+
+	@Autowired
+	ProvisionProductionReportingService productionReportingService;
 
 	@Autowired
 	AnnouncementReportingService announcementReportingService;
@@ -104,6 +114,22 @@ public class ReportingController {
 			throws OsirisValidationException, OsirisException {
 		return new ResponseEntity<List<IProvisionReporting>>(
 				provisionReportingService.getProvisionReporting(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/provision-production")
+	public ResponseEntity<List<IProvisionProductionReporting>> getProvisionProductionReporting()
+			throws OsirisValidationException, OsirisException {
+		return new ResponseEntity<List<IProvisionProductionReporting>>(
+				productionReportingService.getProvisionProductionReporting(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/recovery")
+	public ResponseEntity<List<IRecoveryReporting>> getRecoveryReporting()
+			throws OsirisValidationException, OsirisException {
+		return new ResponseEntity<List<IRecoveryReporting>>(
+				recoveryReportingService.getRecoveryReporting(),
 				HttpStatus.OK);
 	}
 

@@ -31,4 +31,6 @@ public interface ITurnoverReporting {
     String getsalesEmployeeLabel();
 
     String getinvoiceStatusLabel();
+
+    String getVatLabel();
 }

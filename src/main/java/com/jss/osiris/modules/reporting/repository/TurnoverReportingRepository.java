@@ -31,10 +31,10 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         +
                         " sum(case when i.is_credit_note = false and i.customer_order_id is not null then 1 else 0 end) as nbrCustomerOrder, "
                         +
-                        " sum(case when i.is_credit_note = false then 1 else 0 end) as nbrInvoices, " +
+                        " sum(1) as nbrInvoices, " +
                         " coalesce(case " +
                         " when t1.denomination is not null then t1.denomination " +
-                        " else concat(t1.firstname, " +
+                        " when t1.id is not null then concat(t1.firstname, " +
                         " ' ', " +
                         " t1.lastname) " +
                         " end , " +
@@ -55,11 +55,13 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " concat (e2.firstname, " +
                         " ' ', " +
                         " e2.lastname)) as salesEmployeeLabel, " +
-                        " ist.label as invoiceStatusLabel " +
+                        " ist.label as invoiceStatusLabel, " +
+                        " vat.label as vatLabel " +
                         " from " +
                         " invoice i " +
                         " join invoice_item ii on " +
                         " ii.id_invoice = i.id " +
+                        " left join vat on vat.id = ii.id_vat " +
                         " join invoice_status ist on " +
                         " ist.id = i.id_invoice_status " +
                         " left join billing_item bi on " +
@@ -101,7 +103,7 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " i.created_date) , " +
                         " coalesce(case " +
                         " when t1.denomination is not null then t1.denomination " +
-                        " else concat(t1.firstname, " +
+                        " when t1.id is not null then concat(t1.firstname, " +
                         " ' ', " +
                         " t1.lastname) " +
                         " end , " +
@@ -122,7 +124,7 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " concat (e2.firstname, " +
                         " ' ', " +
                         " e2.lastname)) , " +
-                        " ist.label  " +
+                        " ist.label, vat.label  " +
                         "")
         List<ITurnoverReporting> getTurnoverReporting(@Param("invoiceStatusId") List<Integer> invoiceStatusId);
 }

@@ -707,4 +707,8 @@ export class ConstantService extends AppRestService<Constant>{
   getCentralPayProvider() {
     return this.constant.providerCentralPay;
   }
+
+  getTiersFollowupTypeInvoiceReminder() {
+    return this.constant.tiersFollowupTypeInvoiceReminder;
+  }
 }

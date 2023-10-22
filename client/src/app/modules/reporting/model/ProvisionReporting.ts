@@ -8,4 +8,9 @@ export interface ProvisionReporting {
   provisionFamilyTypeLabel: string;
   provisionNumber: number;
   provisionStatus: string;
+  waitedCompetentAuthorityLabel: string;
+  turnoverAmountWithoutTax: number;
+  turnoverAmountWithTax: number;
+  turnoverAmountWithoutDebourWithoutTax: number;
+  turnoverAmountWithoutDebourWithTax: number;
 }
