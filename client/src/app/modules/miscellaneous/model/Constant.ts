@@ -33,6 +33,7 @@ import { DocumentType } from "./DocumentType";
 import { Language } from './Language';
 import { LegalForm } from "./LegalForm";
 import { PaymentType } from "./PaymentType";
+import { TiersFollowupType } from './TiersFollowupType';
 import { Vat } from "./Vat";
 
 export interface Constant {
@@ -206,4 +207,5 @@ export interface Constant {
   customerOrderOriginWebSite: CustomerOrderOrigin;
   customerOrderOriginOsiris: CustomerOrderOrigin;
   providerCentralPay: Provider;
+  tiersFollowupTypeInvoiceReminder: TiersFollowupType;
 }

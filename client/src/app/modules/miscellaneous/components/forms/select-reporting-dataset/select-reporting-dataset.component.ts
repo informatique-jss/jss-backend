@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { REPORTING_DATASET_ANNOUNCEMENT, REPORTING_DATASET_CUSTOMER_ORDER, REPORTING_DATASET_PROVISION, REPORTING_DATASET_QUOTATION, REPORTING_DATASET_TIERS } from 'src/app/libs/Constants';
+import { REPORTING_DATASET_ANNOUNCEMENT, REPORTING_DATASET_CUSTOMER_ORDER, REPORTING_DATASET_PROVISION, REPORTING_DATASET_PROVISION_PRODUCTION, REPORTING_DATASET_QUOTATION, REPORTING_DATASET_RECOVERY, REPORTING_DATASET_TIERS } from 'src/app/libs/Constants';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { REPORTING_DATASET_TURNOVER_AMOUNT } from '../../../../../libs/Constants';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -27,6 +27,8 @@ export class SelectReportingDatasetComponent extends GenericSelectComponent<stri
     this.types.push(REPORTING_DATASET_PROVISION);
     this.types.push(REPORTING_DATASET_ANNOUNCEMENT);
     this.types.push(REPORTING_DATASET_TIERS);
+    this.types.push(REPORTING_DATASET_PROVISION_PRODUCTION);
+    this.types.push(REPORTING_DATASET_RECOVERY);
     this.types = this.types.sort((a, b) => a.localeCompare(b));
   }
 

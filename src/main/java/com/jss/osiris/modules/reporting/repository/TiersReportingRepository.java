@@ -30,7 +30,31 @@ public interface TiersReportingRepository extends CrudRepository<Quotation, Inte
                         " 	e2.lastname), " +
                         " 	concat(e1.firstname, " +
                         " 	' ', " +
-                        " 	e2.lastname)) as salesEmployeeLabel " +
+                        " 	e2.lastname)) as salesEmployeeLabel, " +
+                        " to_char(date_trunc('year',min(coalesce (co1.created_date,co2.created_date)) ),'YYYY') as firstOrderYear, "
+                        +
+                        " to_char(date_trunc('month',min(coalesce (co1.created_date,co2.created_date)) ),'YYYY-MM') as firstOrderMonth, "
+                        +
+                        " to_char(date_trunc('week',min(coalesce (co1.created_date,co2.created_date)) ),'YYYY-MM - tmw') as firstOrderWeek, "
+                        +
+                        " to_char(date_trunc('day',min(coalesce (co1.created_date,co2.created_date)) ),'YYYY-MM-DD') as firstOrderDay, "
+                        +
+                        " to_char(date_trunc('year',max(coalesce (co1.created_date,co2.created_date)) ),'YYYY') as lastOrderYear, "
+                        +
+                        " to_char(date_trunc('month',max(coalesce (co1.created_date,co2.created_date)) ),'YYYY-MM') as lastOrderMonth, "
+                        +
+                        " to_char(date_trunc('week',max(coalesce (co1.created_date,co2.created_date)) ),'YYYY-MM - tmw') as lastOrderWeek, "
+                        +
+                        " to_char(date_trunc('day',max(coalesce (co1.created_date,co2.created_date)) ),'YYYY-MM-DD') as lastOrderDay, "
+                        +
+                        " to_char(date_trunc('year',min(a1.datetime) ),'YYYY') as createdDateYear, "
+                        +
+                        " to_char(date_trunc('month',min(a1.datetime)  ),'YYYY-MM') as createdDateMonth, "
+                        +
+                        " to_char(date_trunc('week',min(a1.datetime)  ),'YYYY-MM - tmw') as createdDateWeek, "
+                        +
+                        " to_char(date_trunc('day',min(a1.datetime)  ),'YYYY-MM-DD') as createdDateDay "
+                        +
                         " from " +
                         " 	tiers t " +
                         " left join tiers_category tc on " +
@@ -51,6 +75,9 @@ public interface TiersReportingRepository extends CrudRepository<Quotation, Inte
                         " 	e1.id = t.id_commercial " +
                         " left join employee e2 on " +
                         " 	e2.id = r.id_commercial " +
+                        " left join customer_order co1 on co1.id_tiers  = t.id " +
+                        " left join customer_order co2 on co2.id_responsable  = r.id " +
+                        " left join audit a1 on a1.field_name='id' and a1.entity='Tiers' and a1.entity_id = t.id " +
                         " group by " +
                         " 	coalesce(t.denomination, " +
                         " 	concat(t.firstname, " +

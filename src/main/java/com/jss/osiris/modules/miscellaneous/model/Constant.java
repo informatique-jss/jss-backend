@@ -32,6 +32,7 @@ import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
 @Entity
@@ -706,6 +707,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_provider_central_pay")
 	private Provider providerCentralPay;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_tiers_followup_type_invoice_reminder")
+	private TiersFollowupType tiersFollowupTypeInvoiceReminder;
 
 	public Integer getId() {
 		return id;
@@ -2075,5 +2080,13 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeRneUpdate(BillingType billingTypeRneUpdate) {
 		this.billingTypeRneUpdate = billingTypeRneUpdate;
+	}
+
+	public TiersFollowupType getTiersFollowupTypeInvoiceReminder() {
+		return tiersFollowupTypeInvoiceReminder;
+	}
+
+	public void setTiersFollowupTypeInvoiceReminder(TiersFollowupType tiersFollowupTypeInvoiceReminder) {
+		this.tiersFollowupTypeInvoiceReminder = tiersFollowupTypeInvoiceReminder;
 	}
 }

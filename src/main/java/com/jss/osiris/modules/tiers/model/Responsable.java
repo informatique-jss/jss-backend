@@ -533,4 +533,9 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 		return null;
 	}
 
+	@Override
+	public String getLabel() {
+		return getFirstname() + " " + getLastname();
+	}
+
 }

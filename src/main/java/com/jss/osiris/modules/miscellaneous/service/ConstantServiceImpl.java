@@ -46,6 +46,7 @@ import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
 @Service
@@ -920,5 +921,10 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Provider getProviderCentralPay() throws OsirisException {
         return getConstants().getProviderCentralPay();
+    }
+
+    @Override
+    public TiersFollowupType getTiersFollowupTypeInvoiceReminder() throws OsirisException {
+        return getConstants().getTiersFollowupTypeInvoiceReminder();
     }
 }

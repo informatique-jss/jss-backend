@@ -78,6 +78,7 @@ export class ProvisionPaymentComponent implements OnInit {
     this.paymentsDisplayedColumns.push({ id: "paymentTypeLabel", fieldName: "paymentType.label", label: "Type" } as SortTableColumn);
     this.paymentsDisplayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
     this.paymentsDisplayedColumns.push({ id: "checkNumber", fieldName: "checkNumber", label: "Numéro de chèque" } as SortTableColumn);
+    this.paymentsDisplayedColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Est annulé ?" } as SortTableColumn);
     this.paymentsDisplayedColumns.push({ id: "invoice", fieldName: "invoice.manualAccountingDocumentNumber", label: "Facture associée" } as SortTableColumn);
 
     this.paymentsTableActions.push({

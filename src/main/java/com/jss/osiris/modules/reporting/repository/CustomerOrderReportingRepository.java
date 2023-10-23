@@ -15,7 +15,8 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " count(distinct id) as nbrCustomerOrder, " +
                         " customerOrderStatusLabel, " +
                         " customerOrderAssignedEmployee, " +
-                        " aggregateProvisionTypeLabel " +
+                        " aggregateProvisionTypeLabel, " +
+                        " lastReminderDate " +
                         " from " +
                         " ( " +
                         " select " +
@@ -35,7 +36,9 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " when sum(case when pft.code not like 'B%' and p.id_announcement is null then 1 else 0 end)>0 then 'Autre' "
                         +
                         " end], " +
-                        " ' / ') as aggregateProvisionTypeLabel " +
+                        " ' / ') as aggregateProvisionTypeLabel, " +
+                        " to_char(coalesce(third_reminder_date_time,second_reminder_date_time,first_reminder_date_time),'YYYY-MM-DD') as lastReminderDate "
+                        +
                         " from " +
                         " customer_order co " +
                         " join customer_order_status cos2 on " +
@@ -59,7 +62,9 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " group by " +
                         " customerOrderStatusLabel, " +
                         " customerOrderAssignedEmployee, " +
-                        " aggregateProvisionTypeLabel " +
+                        " aggregateProvisionTypeLabel, " +
+                        " lastReminderDate "
+                        +
                         "")
         List<ICustomerOrderReporting> getCustomerOrderReporting();
 }

@@ -14,4 +14,28 @@ public interface ITiersReporting {
     String getResponsableMail();
 
     String getSalesEmployeeLabel();
+
+    String getFirstOrderYear();
+
+    String getFirstOrderMonth();
+
+    String getFirstOrderWeek();
+
+    String getFirstOrderDay();
+
+    String getLastOrderYear();
+
+    String getLastOrderMonth();
+
+    String getLastOrderWeek();
+
+    String getLastOrderDay();
+
+    String getCreatedDateYear();
+
+    String getCreatedDateMonth();
+
+    String getCreatedDateWeek();
+
+    String getCreatedDateDay();
 }

@@ -8,7 +8,6 @@ import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CU
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
-import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
@@ -414,6 +413,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         orderingSearch.customerOrders = [getCustomerOrderForIQuotation(this.quotation)];
         orderingSearch.affaires = [asso.affaire];
         orderingSearch.customerOrderStatus = [];
+        let d = new Date();
+        d.setDate(d.getDate() - 3);
+        orderingSearch.startDate = d;
         if (this.customerOrderStatusList)
           for (let status of this.customerOrderStatusList)
             if ([CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED].indexOf(status.code) >= 0)
@@ -664,10 +666,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   getApplicableVat(): VatBase[] {
-    return QuotationComponent.computeApplicableVat(this.quotation, this.constantService.getVatDeductible());
+    return QuotationComponent.computeApplicableVat(this.quotation);
   }
 
-  public static computeApplicableVat(quotation: IQuotation, debourVat: Vat): VatBase[] {
+  public static computeApplicableVat(quotation: IQuotation): VatBase[] {
     let vatBases: VatBase[] = [];
     if (quotation && quotation.assoAffaireOrders) {
       for (let asso of quotation.assoAffaireOrders) {
@@ -675,7 +677,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           for (let provision of asso.provisions) {
             if (provision.invoiceItems) {
               for (let invoiceItem of provision.invoiceItems) {
-                if (invoiceItem.vat && invoiceItem.vatPrice && invoiceItem.vatPrice > 0) {
+                if (invoiceItem.vat && invoiceItem.vatPrice) {
                   let vatFound = false;
                   for (let vatBase of vatBases) {
                     if (vatBase.label == invoiceItem.vat.label) {

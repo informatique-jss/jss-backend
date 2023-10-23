@@ -37,6 +37,7 @@ import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
 public interface ConstantService {
@@ -383,4 +384,6 @@ public interface ConstantService {
     public PaymentDeadlineType getPaymentDeadLineType30() throws OsirisException;
 
     public Provider getProviderCentralPay() throws OsirisException;
+
+    public TiersFollowupType getTiersFollowupTypeInvoiceReminder() throws OsirisException;
 }

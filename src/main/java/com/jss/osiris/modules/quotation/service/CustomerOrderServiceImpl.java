@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.DateHelper;
 import com.jss.osiris.libs.JacksonLocalDateDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
@@ -204,7 +205,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Check duplicate
         // Find first affaire customer order
-        if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0) {
+        if (customerOrder.getId() == null && customerOrder.getAssoAffaireOrders() != null
+                && customerOrder.getAssoAffaireOrders().size() > 0) {
             OrderingSearch orderingSearch = new OrderingSearch();
             orderingSearch.setAffaires(Arrays.asList(customerOrder.getAssoAffaireOrders().get(0).getAffaire()));
             orderingSearch.setCustomerOrders(new ArrayList<Tiers>());
@@ -219,6 +221,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 tiers.setId(customerOrder.getConfrere().getId());
                 orderingSearch.getCustomerOrders().add(tiers);
             }
+
+            // Only last 3 days
+            orderingSearch.setStartDate(DateHelper.subtractDaysSkippingWeekends(LocalDateTime.now(), 3));
             List<OrderingSearchResult> duplicatedCustomerOrders = searchOrders(orderingSearch);
             List<CustomerOrder> duplicatedFound = new ArrayList<CustomerOrder>();
 

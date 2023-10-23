@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { REPORTING_DATASET_ANNOUNCEMENT, REPORTING_DATASET_CUSTOMER_ORDER, REPORTING_DATASET_PROVISION, REPORTING_DATASET_QUOTATION, REPORTING_DATASET_TIERS, REPORTING_DATASET_TURNOVER_AMOUNT } from 'src/app/libs/Constants';
+import { REPORTING_DATASET_ANNOUNCEMENT, REPORTING_DATASET_CUSTOMER_ORDER, REPORTING_DATASET_PROVISION, REPORTING_DATASET_PROVISION_PRODUCTION, REPORTING_DATASET_QUOTATION, REPORTING_DATASET_RECOVERY, REPORTING_DATASET_TIERS, REPORTING_DATASET_TURNOVER_AMOUNT } from 'src/app/libs/Constants';
 import { AnnouncementReportingService } from './announcement.reporting.service';
 import { CustomerOrderReportingService } from './customer.order.reporting.service';
+import { ProvisionProductionReportingService } from './provision.production.reporting.service';
 import { ProvisionReportingService } from './provision.reporting.service';
 import { QuotationReportingService } from './quotation.reporting.service';
+import { RecoveryReportingService } from './recovery.reporting.service';
 import { TiersReportingService } from './tiers.reporting.service';
 import { TurnoverReportingService } from './turnover.reporting.service';
 
@@ -20,6 +22,8 @@ export class ReportingService {
     private provisionReportingService: ProvisionReportingService,
     private announcementReportingService: AnnouncementReportingService,
     private tiersReportingService: TiersReportingService,
+    private provisionProductionReportingService: ProvisionProductionReportingService,
+    private recoveryReportingService: RecoveryReportingService
   ) {
   }
 
@@ -52,6 +56,16 @@ export class ReportingService {
         });
       } else if (dataset == REPORTING_DATASET_TIERS) {
         this.tiersReportingService.getTiersReporting().subscribe(data => {
+          observer.next(data);
+          observer.complete;
+        });
+      } else if (dataset == REPORTING_DATASET_PROVISION_PRODUCTION) {
+        this.provisionProductionReportingService.getProvisionProductionReporting().subscribe(data => {
+          observer.next(data);
+          observer.complete;
+        });
+      } else if (dataset == REPORTING_DATASET_RECOVERY) {
+        this.recoveryReportingService.getRecoveryReporting().subscribe(data => {
           observer.next(data);
           observer.complete;
         });

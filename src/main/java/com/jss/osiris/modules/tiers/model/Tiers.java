@@ -590,4 +590,11 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 		this.isReceipSent = isReceipSent;
 	}
 
+	@Override
+	public String getLabel() {
+		if (getDenomination() != null)
+			return getDenomination();
+		return getFirstname() + " " + getLastname();
+	}
+
 }

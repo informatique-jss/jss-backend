@@ -85,6 +85,8 @@ export const REPORTING_DATASET_CUSTOMER_ORDER = "Commandes";
 export const REPORTING_DATASET_PROVISION = "Prestations";
 export const REPORTING_DATASET_ANNOUNCEMENT = "Annonces légales";
 export const REPORTING_DATASET_TIERS = "Tiers / responsables";
+export const REPORTING_DATASET_PROVISION_PRODUCTION = "Production : prestations";
+export const REPORTING_DATASET_RECOVERY = "Recouvrement";
 
 // INPI Status
 export const GUICHET_UNIQUE_STATUS_VALIDATION_PENDING = "VALIDATION_PENDING";

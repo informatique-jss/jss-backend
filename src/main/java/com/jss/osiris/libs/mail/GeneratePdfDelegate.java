@@ -378,8 +378,7 @@ public class GeneratePdfDelegate {
         ArrayList<VatMail> vats = null;
         Float vatTotal = 0f;
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-            if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
-                    && invoiceItem.getVatPrice() > 0) {
+            if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null) {
                 vatTotal += invoiceItem.getVatPrice();
                 if (vats == null)
                     vats = new ArrayList<VatMail>();
@@ -387,12 +386,11 @@ public class GeneratePdfDelegate {
                 for (VatMail vatMail : vats) {
                     if (vatMail.getLabel().equals(invoiceItem.getVat().getLabel())) {
                         vatFound = true;
-                        if (vatMail.getTotal() == null && invoiceItem.getVatPrice() != null
-                                && invoiceItem.getVatPrice() > 0) {
+                        if (vatMail.getTotal() == null && invoiceItem.getVatPrice() != null) {
                             vatMail.setTotal(invoiceItem.getVatPrice());
                             vatMail.setBase(invoiceItem.getPreTaxPrice()
                                     - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
-                        } else if (invoiceItem.getVatPrice() != null && invoiceItem.getVatPrice() > 0) {
+                        } else if (invoiceItem.getVatPrice() != null) {
                             vatMail.setTotal(vatMail.getTotal() + invoiceItem.getVatPrice());
                             vatMail.setBase(vatMail.getBase() + invoiceItem.getPreTaxPrice()
                                     - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
