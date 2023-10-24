@@ -272,12 +272,22 @@ public class PaymentServiceImpl implements PaymentService {
             List<Invoice> correspondingInvoices = new ArrayList<Invoice>();
             List<CustomerOrder> correspondingCustomerOrder = new ArrayList<CustomerOrder>();
             List<Quotation> correspondingQuotation = new ArrayList<Quotation>();
+            DirectDebitTransfert directDebitFound = null;
 
             // Get invoices and customer orders and quotations
             Float totalToPay = 0f;
             ArrayList<Integer> foundInvoices = new ArrayList<Integer>();
             if (correspondingEntities != null && correspondingEntities.size() > 0) {
                 for (IndexEntity foundEntity : correspondingEntities) {
+                    if (foundEntity.getEntityType().equals(DirectDebitTransfert.class.getSimpleName())) {
+                        DirectDebitTransfert directDebitTransfert = debitTransfertService
+                                .getDirectDebitTransfert(foundEntity.getEntityId());
+                        if (directDebitTransfert != null && directDebitTransfert.getIsMatched() == false) {
+                            directDebitFound = directDebitTransfert;
+                            break;
+                        }
+                    }
+
                     Invoice invoice = getInvoiceForEntity(foundEntity);
                     if (invoice != null
                             && invoice.getInvoiceStatus().getId()
@@ -298,6 +308,11 @@ public class PaymentServiceImpl implements PaymentService {
                         totalToPay += customerOrderService.getTotalForCustomerOrder(quotation);
                     }
                 }
+            }
+
+            if (directDebitFound != null) {
+                associateOutboundPaymentAndDirectDebitTransfert(payment, directDebitFound);
+                return;
             }
 
             Float remainingMoney = Math.round(payment.getPaymentAmount() * 100f) / 100f;
@@ -366,24 +381,6 @@ public class PaymentServiceImpl implements PaymentService {
 
             if (refundFound != null) {
                 associateOutboundPaymentAndRefund(payment, refundFound);
-                return;
-            }
-
-            DirectDebitTransfert directDebitFound = null;
-            // Try to match direct debit transfert
-            if (correspondingEntities != null && correspondingEntities.size() > 0) {
-                for (IndexEntity foundEntity : correspondingEntities) {
-                    if (foundEntity.getEntityType().equals(DirectDebitTransfert.class.getSimpleName())) {
-                        DirectDebitTransfert directDebitTransfert = debitTransfertService
-                                .getDirectDebitTransfert(foundEntity.getEntityId());
-                        if (directDebitTransfert != null && directDebitTransfert.getIsMatched() == false)
-                            directDebitFound = directDebitTransfert;
-                    }
-                }
-            }
-
-            if (directDebitFound != null) {
-                associateOutboundPaymentAndDirectDebitTransfert(payment, directDebitFound);
                 return;
             }
 
@@ -1084,8 +1081,8 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (labelledCustomerOrder != null) {
             InvoiceLabelResult labelResult = invoiceHelper.computeInvoiceLabelResult(
-                    documentService.getBillingDocument(customerOrder.getDocuments()),
-                    customerOrder, quotationService.getCustomerOrderOfQuotation(customerOrder));
+                    documentService.getBillingDocument(labelledCustomerOrder.getDocuments()),
+                    labelledCustomerOrder, quotationService.getCustomerOrderOfQuotation(labelledCustomerOrder));
             if (labelResult != null && labelResult.getBillingLabel() != null)
                 payment.setLabel(payment.getLabel() + " - " + labelResult.getBillingLabel());
         }
@@ -1115,6 +1112,7 @@ public class PaymentServiceImpl implements PaymentService {
         entityTypesToSearch.add(Invoice.class.getSimpleName());
         entityTypesToSearch.add(CustomerOrder.class.getSimpleName());
         entityTypesToSearch.add(Quotation.class.getSimpleName());
+        entityTypesToSearch.add(DirectDebitTransfert.class.getSimpleName());
 
         return getCorrespondingEntityForPayment(payment, entityTypesToSearch);
     }

@@ -166,7 +166,7 @@
           </tr>
         </table>
         <table class="mat-table mat-mdc-table mdc-data-table__table full-width container-affaire "
-          *ngIf="invoice.customerOrder">
+          *ngIf="invoice.customerOrder && invoice.invoiceStatus.id!=invoiceStatusCancelled.id">
           <thead>
             <tr class="mat-mdc-header-row mdc-data-table__header-row ">
               <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Facture</th>
@@ -220,7 +220,7 @@
           </ng-container>
         </table>
         <table class="mat-table mat-mdc-table mdc-data-table__table full-width container-affaire"
-          *ngIf="!invoice.customerOrder">
+          *ngIf="!invoice.customerOrder || invoice.invoiceStatus.id==invoiceStatusCancelled.id">
           <thead>
             <tr class="mat-mdc-header-row mdc-data-table__header-row ">
               <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Facture</th>
