@@ -433,7 +433,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             // If not found and CB payment, try to match randomly a invoice at same day or
             // in 3 days range before
-            if (payment.getLabel().contains("FACTURE CARTE")) {
+            if (payment.getLabel().contains("FACTURE CARTE") && 1 > 2) {
                 InvoiceSearch invoiceSearch = new InvoiceSearch();
                 invoiceSearch.setStartDate(payment.getPaymentDate().toLocalDate().atTime(0, 0));
                 invoiceSearch.setEndDate(payment.getPaymentDate().toLocalDate().atTime(23, 59));
