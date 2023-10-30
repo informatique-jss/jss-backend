@@ -557,19 +557,20 @@ public class MailHelper {
                             .getId().equals(constantService.getPaymentTypePrelevement().getId());
         }
 
+        if (!isPaymentTypePrelevement && isDepositMandatory) {
+            mail.setPaymentExplaination(
+                    "Votre devis est en attente d'acompte. Pour le valider et lancer votre commande, effectuez dès maintenant un virement de "
+                            + mail.getPriceTotal() + " € sur le compte ci-dessous.");
+        } else {
+            mail.setQuotationValidation("Vous pouvez, si vous le souhaitez, valider ce devis en cliquant ");
+            mail.setQuotationValidationLink(
+                    paymentCbEntryPoint + "/quotation/validate?quotationId=" + quotation.getId()
+                            + "&validationToken=" + quotation.getValidationToken());
+            mail.setPaymentExplaination(" ou régler un acompte pour ce devis d'un montant de "
+                    + mail.getPriceTotal() + " € en suivant les instructions ci-dessous.");
+        }
+
         if (!isPaymentTypePrelevement) {
-            if (isDepositMandatory)
-                mail.setPaymentExplaination(
-                        "Votre devis est en attente d'acompte. Pour le valider et lancer votre commande, effectuez dès maintenant un virement de "
-                                + mail.getPriceTotal() + " € sur le compte ci-dessous.");
-            else {
-                mail.setQuotationValidation("Vous pouvez, si vous le souhaitez, valider ce devis en cliquant ");
-                mail.setQuotationValidationLink(
-                        paymentCbEntryPoint + "/quotation/validate?quotationId=" + quotation.getId()
-                                + "&validationToken=" + quotation.getValidationToken());
-                mail.setPaymentExplaination(" ou régler un acompte pour ce devis d'un montant de "
-                        + mail.getPriceTotal() + " € en suivant les instructions ci-dessous.");
-            }
             mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
 
             if (!disableCbLink) {

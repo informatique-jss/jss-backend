@@ -115,7 +115,9 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
             DirectDebitTransfert directDebitTransfert) {
         if (directDebitTransfert.getIsMatched() == null)
             directDebitTransfert.setIsMatched(false);
-        return directDebitTransfertRepository.save(directDebitTransfert);
+        DirectDebitTransfert transfert = directDebitTransfertRepository.save(directDebitTransfert);
+        indexEntityService.indexEntity(transfert);
+        return transfert;
     }
 
     @Override

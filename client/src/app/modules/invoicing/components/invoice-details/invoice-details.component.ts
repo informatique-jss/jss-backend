@@ -41,6 +41,7 @@ export class InvoiceDetailsComponent implements OnInit {
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
   invoiceStatusPayed = this.constantService.getInvoiceStatusPayed();
   invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
+  invoiceStatusCancelled = this.constantService.getInvoiceStatusCancelled();
   invoiceStatusCreditNoteReceived = this.constantService.getInvoiceStatusCreditNoteReceived();
   attachmentTypeInvoice = this.constantService.getAttachmentTypeInvoice();
   attachmentTypeCreditNote = this.constantService.getAttachmentTypeCreditNote();
