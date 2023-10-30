@@ -19,6 +19,7 @@ import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN } from '../
 import { replaceDocument } from '../../../../libs/DocumentHelper';
 import { formatDateFrance } from '../../../../libs/FormatHelper';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { getCustomerOrderForIQuotation } from '../../../invoicing/components/invoice-tools';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
 import { InvoiceSearchResultService } from '../../../invoicing/services/invoice.search.result.service';
@@ -114,6 +115,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private provisionService: ProvisionService,
     private orderingSearchResultService: OrderingSearchResultService,
     private invoiceSearchResultService: InvoiceSearchResultService,
+    private habilitationsService: HabilitationsService,
     public associatePaymentDialog: MatDialog,
     private changeDetectorRef: ChangeDetectorRef) { }
 
@@ -148,7 +150,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           this.quotation = response;
           if (instanceOfCustomerOrder(this.quotation) && !this.isForIntegration)
             this.appService.changeHeaderTitle("Commande " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
-              (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : ""));
+              (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : "") + (this.quotation.isGifted != null ? (" - Offerte") : ""));
           this.toggleTabs();
           this.setOpenStatus();
           this.checkAffaireAssignation();
@@ -201,6 +203,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   toggleTabs() {
     if (this.tabs != undefined)
       this.tabs.realignInkBar();
+  }
+
+  canOfferCustomerOrder() {
+    return this.habilitationsService.canOfferCustomerOrder();
   }
 
   setOpenStatus() {
@@ -811,6 +817,14 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   getProvisionLabel(provision: Provision): string {
     return QuotationComponent.computeProvisionLabel(provision);
+  }
+
+  offerCustomerOrder() {
+    if (this.quotation && instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED) {
+      this.customerOrderService.offerCustomerOrder(this.quotation).subscribe(response => {
+        this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+      })
+    }
   }
 
   public static computeProvisionLabel(provision: Provision): string {

@@ -687,6 +687,18 @@ public class QuotationController {
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/customer-order/offer")
+  public ResponseEntity<Boolean> offerCustomerOrder(@RequestParam Integer customerOrderId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    customerOrderService.offerCustomerOrder(customerOrder);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/quotation/assign")
   public ResponseEntity<Boolean> updateAssignedToForQuotation(@RequestParam Integer quotationId,
       @RequestParam Integer employeeId)
