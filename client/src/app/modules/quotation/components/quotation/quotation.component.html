@@ -313,12 +313,16 @@
 
 
 <button matTooltip="Changer de statut" mat-fab color="accent" class="third-fab-button"
-  *ngIf="editMode==false && instanceOfCustomerOrderFn(this.quotation) &&quotation && quotation.customerOrderStatus"
+  *ngIf="editMode==false && instanceOfCustomerOrderFn(this.quotation) &&quotation && quotation.customerOrderStatus && (!quotation.isGifted)"
   [matMenuTriggerFor]="menu">
   <mat-icon>done</mat-icon>
   <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
     <button mat-menu-item (click)="displayCustomerOrderWorkflowDialog()">
       <span>Voir le workflow</span>
+    </button>
+    <button mat-menu-item (click)="offerCustomerOrder()"
+      *ngIf="quotation.customerOrderStatus.code==CUSTOMER_ORDER_STATUS_BILLED && canOfferCustomerOrder()">
+      <mat-icon>redeem</mat-icon><span>Offrir la commande</span>
     </button>
     <button disabled mat-menu-item *ngIf="quotation.customerOrderStatus.successors">
       <span>Passer à</span>

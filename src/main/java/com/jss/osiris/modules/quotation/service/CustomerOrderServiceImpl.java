@@ -201,6 +201,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrder.setAssignedTo(
                     quotationService.getCustomerOrderOfQuotation(customerOrder).getDefaultCustomerOrderEmployee());
 
+        if (customerOrder.getIsGifted() == null)
+            customerOrder.setIsGifted(false);
+
         customerOrder.setIsQuotation(false);
 
         // Check duplicate
@@ -502,7 +505,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Target : going back to TO BILLED
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)
-                && targetStatusCode.equals(CustomerOrderStatus.TO_BILLED))
+                && targetStatusCode.equals(CustomerOrderStatus.TO_BILLED) && customerOrder.getIsGifted() == false)
             if (customerOrder.getInvoices() != null) {
                 for (Invoice invoice : customerOrder.getInvoices())
                     if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusCancelled().getId())
@@ -524,6 +527,30 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder.setCustomerOrderStatus(customerOrderStatus);
         customerOrder.setLastStatusUpdate(LocalDateTime.now());
         return this.addOrUpdateCustomerOrder(customerOrder, false, checkAllProvisionEnded);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void offerCustomerOrder(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED))
+            if (customerOrder.getInvoices() != null) {
+                for (Invoice invoice : customerOrder.getInvoices())
+                    if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusCancelled().getId())
+                            && !invoice.getInvoiceStatus().getId()
+                                    .equals(constantService.getInvoiceStatusCreditNoteEmited().getId())) {
+                        invoiceService.cancelInvoice(invoice);
+                        break;
+                    }
+                // Flush to take invoice item break link with provision into account
+                entityManager.flush();
+                entityManager.clear();
+                customerOrder = getCustomerOrder(customerOrder.getId());
+            }
+
+        customerOrder.setLastStatusUpdate(LocalDateTime.now());
+        customerOrder.setIsGifted(true);
+        this.addOrUpdateCustomerOrder(customerOrder, false, false);
     }
 
     private void resetDeboursInvoiceItems(CustomerOrder customerOrder) {
