@@ -297,16 +297,13 @@ public class PaymentServiceImpl implements PaymentService {
             Float remainingMoney = Math.round(payment.getPaymentAmount() * 100f) / 100f;
 
             // Associate automatically only if we have enough item to put all money
-            // For customerOrder and quotation, we can put unlimited money on them
             Float totalItemsAmount = 0f;
             if (correspondingInvoices.size() > 0)
                 for (Invoice invoice : correspondingInvoices)
                     totalItemsAmount += invoiceService.getRemainingAmountToPayForInvoice(invoice);
 
             if (correspondingInvoices.size() > 0
-                    && totalItemsAmount > (remainingMoney + Integer.parseInt(payementLimitRefundInEuros))
-                    && (correspondingCustomerOrder.size() == 0
-                            || correspondingQuotation.size() == 0))
+                    && totalItemsAmount > (remainingMoney + Integer.parseInt(payementLimitRefundInEuros)))
                 return;
 
             // Invoices to payed found
