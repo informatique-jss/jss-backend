@@ -14,6 +14,8 @@
 
 // Foreground Elements
 
+
+
 // Light Theme Text
 $dark-text: #000000;
 $dark-primary-text: rgba($dark-text, 0.87);
@@ -21,6 +23,12 @@ $dark-accent-text: rgba($dark-primary-text, 0.54);
 $dark-disabled-text: rgba($dark-primary-text, 0.38);
 $dark-dividers: rgba($dark-primary-text, 0.12);
 $dark-focused: rgba($dark-primary-text, 0.12);
+
+// global isDisabled new color
+
+[disabled] {
+  color: rgba($dark-text, 0.78) !important;
+}
 
 $mat-light-theme-foreground: (
   base: black,
