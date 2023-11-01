@@ -56,6 +56,7 @@ export class ProvisionOptionsComponent implements OnInit {
   billingTypeBilan = this.constantService.getBillingTypeBilan();
   billingTypeDocumentScanning = this.constantService.getBillingTypeDocumentScanning();
   billingTypeEmergency = this.constantService.getBillingTypeEmergency();
+  billingTypeRneUpdate = this.constantService.getBillingTypeRneUpdate();
   billingTypeVacationUpdateBeneficialOwners = this.constantService.getBillingTypeVacationUpdateBeneficialOwners();
   billingTypeFormalityAdditionalDeclaration = this.constantService.getBillingTypeFormalityAdditionalDeclaration();
   billingTypeCorrespondenceFees = this.constantService.getBillingTypeCorrespondenceFees();
@@ -113,7 +114,7 @@ export class ProvisionOptionsComponent implements OnInit {
       if (!this.provision.isEmergency) this.provision.isEmergency = false;
       if (!this.provision.isComplexeFile) this.provision.isComplexeFile = false;
       if (!this.provision.isDocumentScanning) this.provision.isDocumentScanning = false;
-      if (!this.provision.isEmergency) this.provision.isEmergency = false;
+      if (!this.provision.isRneUpdate) this.provision.isRneUpdate = false;
       if (!this.provision.isVacationUpdateBeneficialOwners) this.provision.isVacationUpdateBeneficialOwners = false;
       if (!this.provision.isFormalityAdditionalDeclaration) this.provision.isFormalityAdditionalDeclaration = false;
       if (!this.provision.isCorrespondenceFees) this.provision.isCorrespondenceFees = false;

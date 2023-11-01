@@ -57,6 +57,8 @@ export class HttpErrorInterceptor implements HttpInterceptor {
               errorMessage = 'Erreur de validation sur ' + error.headers.get("incorrectField");
             else if (error.headers.get("errorMessageToDisplay"))
               errorMessage = "" + error.headers.get("errorMessageToDisplay");
+            else if (error.headers.get("duplicateIds"))
+              errorMessage = "Eléments déjà trouvés avec les identifiants suivants : " + error.headers.get("duplicateIds");
           } else if (error.status == 500) {
             errorMessage = 'Erreur côté serveur. \nMerci de contacter l\'administrateur ou bien de déclarer un bug à l\'aide du bouton en haut à gauche et de founir l\'indication technique suivante : ' + error.headers.get("error");
           } else {

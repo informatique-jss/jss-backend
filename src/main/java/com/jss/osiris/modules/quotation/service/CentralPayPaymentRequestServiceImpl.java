@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.quotation.model.CentralPayPaymentRequest;
@@ -47,10 +48,9 @@ public class CentralPayPaymentRequestServiceImpl implements CentralPayPaymentReq
 
     @Override
     public void declareNewCentralPayPaymentRequest(String paymentRequestId, CustomerOrder customerOrder,
-            Quotation quotation, Boolean isForInvoice) {
+            Quotation quotation) {
         CentralPayPaymentRequest request = new CentralPayPaymentRequest();
         request.setCustomerOrder(customerOrder);
-        request.setIsForInvoice(isForInvoice);
         request.setPaymentRequestId(paymentRequestId);
         request.setQuotation(quotation);
         addOrUpdateCentralPayPaymentRequest(request);
@@ -69,7 +69,7 @@ public class CentralPayPaymentRequestServiceImpl implements CentralPayPaymentReq
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void checkAllPaymentRequests()
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         List<CentralPayPaymentRequest> requests = getCentralPayPaymentRequests();
         if (requests != null && requests.size() > 0) {
             for (CentralPayPaymentRequest request : requests) {

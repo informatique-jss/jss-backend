@@ -8,4 +8,6 @@ public interface AuditService {
     public List<Audit> getAuditForEntity(String entityType, Integer entityId);
 
     public Audit addOrUpdateAudit(Audit audit);
+
+    public void cleanAudit();
 }

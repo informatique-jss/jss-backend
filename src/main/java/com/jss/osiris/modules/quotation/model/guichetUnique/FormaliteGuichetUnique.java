@@ -7,15 +7,20 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DiffusionINSEE;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Status;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
@@ -23,6 +28,8 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePer
 
 @Entity
 @JsonIgnoreProperties
+@Table(indexes = {
+        @Index(name = "idx_formalite_guichet_unique_formalite", columnList = "id_formalite") })
 public class FormaliteGuichetUnique implements IId {
 
     @Id
@@ -76,6 +83,18 @@ public class FormaliteGuichetUnique implements IId {
 
     private Boolean optionME;
 
+    @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
+    @JsonProperty("validationsRequests")
+    @JsonAlias("annualAccountValidationRequests")
+    private List<ValidationRequest> validationsRequests;
+
+    @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
+    @JsonProperty("formaliteStatusHistoryItems")
+    @JsonAlias("annualAccountStatusHistories")
+    private List<FormaliteStatusHistoryItem> formaliteStatusHistoryItems;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_forme_juridique")
     FormeJuridique formeJuridique;
@@ -96,6 +115,17 @@ public class FormaliteGuichetUnique implements IId {
     @JoinColumn(name = "id_formalite")
     @JsonIgnoreProperties(value = { "formalitesGuichetUnique" })
     private Formalite formalite;
+
+    private Integer mandataireId;
+    private String siren;
+    private String numNat;
+    private String statusDate;
+    private String signedDate;
+    private Integer year;
+    private String created;
+
+    private Boolean isFormality;
+    private Boolean isAnnualAccounts;
 
     public Status getStatus() {
         return status;
@@ -295,5 +325,93 @@ public class FormaliteGuichetUnique implements IId {
 
     public void setFormalite(Formalite formalite) {
         this.formalite = formalite;
+    }
+
+    public Integer getMandataireId() {
+        return mandataireId;
+    }
+
+    public void setMandataireId(Integer mandataireId) {
+        this.mandataireId = mandataireId;
+    }
+
+    public String getSiren() {
+        return siren;
+    }
+
+    public void setSiren(String siren) {
+        this.siren = siren;
+    }
+
+    public String getNumNat() {
+        return numNat;
+    }
+
+    public void setNumNat(String numNat) {
+        this.numNat = numNat;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public String getStatusDate() {
+        return statusDate;
+    }
+
+    public void setStatusDate(String statusDate) {
+        this.statusDate = statusDate;
+    }
+
+    public String getSignedDate() {
+        return signedDate;
+    }
+
+    public void setSignedDate(String signedDate) {
+        this.signedDate = signedDate;
+    }
+
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
+    }
+
+    public Boolean getIsFormality() {
+        return isFormality;
+    }
+
+    public void setIsFormality(Boolean isFormality) {
+        this.isFormality = isFormality;
+    }
+
+    public Boolean getIsAnnualAccounts() {
+        return isAnnualAccounts;
+    }
+
+    public void setIsAnnualAccounts(Boolean isAnnualAccounts) {
+        this.isAnnualAccounts = isAnnualAccounts;
+    }
+
+    public List<ValidationRequest> getValidationsRequests() {
+        return validationsRequests;
+    }
+
+    public void setValidationsRequests(List<ValidationRequest> validationsRequests) {
+        this.validationsRequests = validationsRequests;
+    }
+
+    public List<FormaliteStatusHistoryItem> getFormaliteStatusHistoryItems() {
+        return formaliteStatusHistoryItems;
+    }
+
+    public void setFormaliteStatusHistoryItems(List<FormaliteStatusHistoryItem> formaliteStatusHistoryItems) {
+        this.formaliteStatusHistoryItems = formaliteStatusHistoryItems;
     }
 }

@@ -231,4 +231,16 @@ public class CustomerMailServiceImpl implements CustomerMailService {
             mailHelper.getMailSender().send(message);
     }
 
+    // TODO : remove it and replace with strong processus !
+    @Override
+    public List<CustomerMail> getReceiptMailsForResponsable(Responsable responsable) {
+        return customerMailRepository.findReceiptMailsForResponsable(responsable.getId());
+    }
+
+    // TODO : remove it and replace with strong processus !
+    @Override
+    public List<CustomerMail> getReceiptMailsForTiers(Tiers tiers) {
+        return customerMailRepository.findReceiptMailsForTiers(tiers.getId());
+    }
+
 }

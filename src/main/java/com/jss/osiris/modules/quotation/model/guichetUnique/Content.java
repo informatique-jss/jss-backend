@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -75,6 +76,10 @@ public class Content implements Serializable, IId {
     List<PiecesJointe> piecesJointes;
 
     private Boolean indicateurActive;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_comptes_annuels")
+    private ComptesAnnuels comptesAnnuels;
 
     public Integer getId() {
         return id;
@@ -186,6 +191,14 @@ public class Content implements Serializable, IId {
 
     public void setPiecesJointes(List<PiecesJointe> piecesJointes) {
         this.piecesJointes = piecesJointes;
+    }
+
+    public ComptesAnnuels getComptesAnnuels() {
+        return comptesAnnuels;
+    }
+
+    public void setComptesAnnuels(ComptesAnnuels comptesAnnuels) {
+        this.comptesAnnuels = comptesAnnuels;
     }
 
 }

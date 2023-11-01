@@ -27,6 +27,8 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_tiers_followup_tiers", columnList = "id_tiers"),
+		@Index(name = "idx_tiers_followup_invoice", columnList = "id_invoice"),
+		@Index(name = "idx_tiers_followup_confrere", columnList = "id_confrere"),
 		@Index(name = "idx_tiers_followup_responsable", columnList = "id_responsable") })
 public class TiersFollowup implements Serializable, IId {
 

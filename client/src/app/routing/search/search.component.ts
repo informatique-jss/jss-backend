@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AppService } from '../../services/app.service';
 import { EntityType } from './EntityType';
 import { IndexEntity } from './IndexEntity';
@@ -55,6 +56,7 @@ export class SearchComponent implements OnInit {
   userSelectedModule: EntityType | null = null;
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup | undefined;
 
+  searchObservableRef: Subscription | undefined;
   search: string = "";
   foundEntities: IndexEntity[] | null = null;
   tabNames: { [key: string]: string; } = {};
@@ -81,9 +83,12 @@ export class SearchComponent implements OnInit {
   }
 
   effectiveSearchEntities() {
+    if (this.searchObservableRef)
+      this.searchObservableRef.unsubscribe();
+
     if (this.search != null && this.search != undefined) {
       if (this.search.length >= 2) {
-        this.indexEntityService.searchEntities(this.search).subscribe(response => {
+        this.searchObservableRef = this.indexEntityService.searchEntities(this.search).subscribe(response => {
           if (response) {
             this.foundEntities = [] as Array<IndexEntity>;
             for (let foundEntity of response) {
@@ -166,7 +171,7 @@ export class SearchComponent implements OnInit {
 
   getProvisionLabel(entity: any) {
     let out = [];
-    if (entity.text.provisions)
+    if (entity.text.provisions && entity.text.customerOrder) {
       for (let provision of entity.text.provisions)
         out.push((provision.provisionFamilyType ? provision.provisionFamilyType.label : "")
           + " - " + (provision.provisionType ? provision.provisionType.label : "")
@@ -174,7 +179,9 @@ export class SearchComponent implements OnInit {
           + (provision.simpleProvision && provision.simpleProvision.simpleProvisionStatus ? " - " + provision.simpleProvision.simpleProvisionStatus.label : "")
           + (provision.formalite && provision.formalite.formaliteStatus ? " - " + provision.formalite.formaliteStatus.label : "")
         );
-    return out.join(" / ");
+      return out.join(" / ") + " / Commande " + entity.text.customerOrder.id;
+    }
+    return "";
   }
 
   getOrderingCustomerForInvoice(entity: any) {

@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.model.RefundSearchResult;
 
@@ -20,8 +20,7 @@ public interface RefundRepository extends QueryCacheCrudRepository<Refund, Integ
                         + " r.is_already_exported  as isAlreadyExported ,"
                         + " r.is_matched  as isMatched ,"
                         + " (select max(coalesce(a1.denomination,a1.firstname ||' ' || a1.lastname)) from affaire a1 join asso_affaire_order a2 on a1.id = a2.id_affaire where a2.id_customer_order = r.id_customer_order) as affaireLabel ,"
-                        + " coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname, confrere.label, tiers.denomination, tiers.firstname || ' ' || tiers.lastname) as refundTiersLabel ,"
-                        + " r.id_payment as paymentId"
+                        + " coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname, confrere.label, tiers.denomination, tiers.firstname || ' ' || tiers.lastname) as refundTiersLabel "
                         + " from refund r "
                         + " left join affaire on affaire.id = r.id_affaire "
                         + " left join confrere on confrere.id = r.id_confrere "

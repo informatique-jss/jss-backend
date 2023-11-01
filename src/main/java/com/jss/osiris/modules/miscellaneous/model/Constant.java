@@ -15,7 +15,6 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
-import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.AssignationType;
@@ -33,6 +32,7 @@ import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
 @Entity
@@ -338,6 +338,10 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_billing_type_emergency")
 	private BillingType billingTypeEmergency;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_rne_update")
+	private BillingType billingTypeRneUpdate;
+
 	@Column(length = 1000)
 	private String stringNantissementDepositFormeJuridiqueCode;
 	@Column(length = 1000)
@@ -498,6 +502,14 @@ public class Constant implements Serializable, IId {
 	private CompetentAuthorityType competentAuthorityTypeChambreMetier;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_competent_authority_type_chambre_agriculturemetier")
+	private CompetentAuthorityType competentAuthorityTypeChambreAgriculture;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_competent_authority_type_urssaf")
+	private CompetentAuthorityType competentAuthorityTypeUrssaf;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_competent_authority_type_direccte")
 	private CompetentAuthorityType competentAuthorityTypeDireccte;
 
@@ -528,14 +540,6 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_invoice_status_credit_note_received")
 	private InvoiceStatus invoiceStatusCreditNoteReceived;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_payment_way_inbound")
-	private PaymentWay paymentWayInbound;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_payment_way_outbound")
-	private PaymentWay paymentWayOutboud;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_vat_twenty")
@@ -699,6 +703,14 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_customer_order_origin_osiris")
 	private CustomerOrderOrigin customerOrderOriginOsiris;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_provider_central_pay")
+	private Provider providerCentralPay;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_tiers_followup_type_invoice_reminder")
+	private TiersFollowupType tiersFollowupTypeInvoiceReminder;
 
 	public Integer getId() {
 		return id;
@@ -1109,22 +1121,6 @@ public class Constant implements Serializable, IId {
 
 	public void setInvoiceStatusCancelled(InvoiceStatus invoiceStatusCancelled) {
 		this.invoiceStatusCancelled = invoiceStatusCancelled;
-	}
-
-	public PaymentWay getPaymentWayInbound() {
-		return paymentWayInbound;
-	}
-
-	public void setPaymentWayInbound(PaymentWay paymentWayInbound) {
-		this.paymentWayInbound = paymentWayInbound;
-	}
-
-	public PaymentWay getPaymentWayOutboud() {
-		return paymentWayOutboud;
-	}
-
-	public void setPaymentWayOutboud(PaymentWay paymentWayOutboud) {
-		this.paymentWayOutboud = paymentWayOutboud;
 	}
 
 	public Vat getVatTwenty() {
@@ -2051,5 +2047,46 @@ public class Constant implements Serializable, IId {
 
 	public void setPaymentDeadLineType30(PaymentDeadlineType paymentDeadLineType30) {
 		this.paymentDeadLineType30 = paymentDeadLineType30;
+	}
+
+	public Provider getProviderCentralPay() {
+		return providerCentralPay;
+	}
+
+	public void setProviderCentralPay(Provider providerCentralPay) {
+		this.providerCentralPay = providerCentralPay;
+	}
+
+	public CompetentAuthorityType getCompetentAuthorityTypeChambreAgriculture() {
+		return competentAuthorityTypeChambreAgriculture;
+	}
+
+	public void setCompetentAuthorityTypeChambreAgriculture(
+			CompetentAuthorityType competentAuthorityTypeChambreAgriculture) {
+		this.competentAuthorityTypeChambreAgriculture = competentAuthorityTypeChambreAgriculture;
+	}
+
+	public CompetentAuthorityType getCompetentAuthorityTypeUrssaf() {
+		return competentAuthorityTypeUrssaf;
+	}
+
+	public void setCompetentAuthorityTypeUrssaf(CompetentAuthorityType competentAuthorityTypeUrssaf) {
+		this.competentAuthorityTypeUrssaf = competentAuthorityTypeUrssaf;
+	}
+
+	public BillingType getBillingTypeRneUpdate() {
+		return billingTypeRneUpdate;
+	}
+
+	public void setBillingTypeRneUpdate(BillingType billingTypeRneUpdate) {
+		this.billingTypeRneUpdate = billingTypeRneUpdate;
+	}
+
+	public TiersFollowupType getTiersFollowupTypeInvoiceReminder() {
+		return tiersFollowupTypeInvoiceReminder;
+	}
+
+	public void setTiersFollowupTypeInvoiceReminder(TiersFollowupType tiersFollowupTypeInvoiceReminder) {
+		this.tiersFollowupTypeInvoiceReminder = tiersFollowupTypeInvoiceReminder;
 	}
 }

@@ -1,12 +1,14 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
+import { ITiers } from '../../../tiers/model/ITiers';
 import { InvoiceSearch } from '../../model/InvoiceSearch';
 import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
 import { InvoiceStatus } from '../../model/InvoiceStatus';
@@ -19,6 +21,8 @@ import { getColumnLink } from '../invoice-tools';
   styleUrls: ['./invoice-list.component.css']
 })
 export class InvoiceListComponent implements OnInit, AfterContentChecked {
+
+
 
   @Input() invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   @Input() isForDashboard: boolean = false;
@@ -33,6 +37,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   @Input() overrideIconAction: string = "";
   @Input() overrideTooltipAction: string = "";
   @Input() defaultStatusFilter: InvoiceStatus[] | undefined;
+  searchedTiers: IndexEntity | undefined;
 
   bookmark: InvoiceSearch | undefined;
 
@@ -56,12 +61,15 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     return this.habilitationService.canAddNewInvoice();
   }
 
+  ngOnChanges(change: SimpleChanges) {
+  }
+
   ngOnInit() {
     if (!this.defaultStatusFilter && !this.isForDashboard && !this.isForTiersIntegration)
       this.defaultStatusFilter = [this.invoiceStatusSend];
 
     this.bookmark = this.userPreferenceService.getUserSearchBookmark("invoices") as InvoiceSearch;
-    if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
+    if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration && !this.isForPaymentAssocationIntegration) {
       this.invoiceSearch = {} as InvoiceSearch;
       this.invoiceSearch.invoiceStatus = this.bookmark.invoiceStatus;
       this.defaultStatusFilter = this.bookmark.invoiceStatus;
@@ -133,9 +141,13 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
   searchInvoices() {
     if (this.invoiceForm.valid) {
+
+      if (this.searchedTiers) {
+        this.invoiceSearch.customerOrders = [];
+        this.invoiceSearch.customerOrders.push({ id: this.searchedTiers.entityId } as ITiers)
+      }
       if (!this.isForDashboard)
         this.userPreferenceService.setUserSearchBookmark(this.invoiceSearch, "invoices");
-
       this.invoiceSearchResultService.getInvoicesList(this.invoiceSearch).subscribe(response => {
         this.invoices = response;
       })

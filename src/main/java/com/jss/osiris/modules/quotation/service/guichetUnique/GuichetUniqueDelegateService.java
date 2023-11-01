@@ -7,15 +7,26 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
 
 public interface GuichetUniqueDelegateService {
-        public List<FormaliteGuichetUnique> getFormalitiesByDate(LocalDateTime createdAfter, LocalDateTime updatedAfter)
+        public List<FormaliteGuichetUnique> getAllFormalitiesByDate(LocalDateTime createdAfter,
+                        LocalDateTime updatedAfter)
                         throws OsirisException, OsirisClientMessageException;
 
-        public List<FormaliteGuichetUnique> getFormalitiesByRefenceMandataire(String reference)
+        public List<FormaliteGuichetUnique> getAllFormalitiesByRefenceMandataire(String reference)
                         throws OsirisException, OsirisClientMessageException;
 
         public FormaliteGuichetUnique getFormalityById(Integer id)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public List<FormaliteStatusHistoryItem> getFormalityStatusHistoriesById(Integer id)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public FormaliteGuichetUnique getAnnualAccountById(Integer id)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public List<FormaliteStatusHistoryItem> getAnnualAccountStatusHistoriesById(Integer id)
                         throws OsirisException, OsirisClientMessageException;
 
         public void refreshFormalitiesFromLastHour()

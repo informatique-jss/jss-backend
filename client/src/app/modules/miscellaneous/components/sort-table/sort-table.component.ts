@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable, Subscription } from 'rxjs';
@@ -11,11 +11,12 @@ import { SortTableColumn } from '../../model/SortTableColumn';
 
 @Component({
   selector: 'sort-table',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './sort-table.component.html',
   styleUrls: ['./sort-table.component.css']
 })
-export class SortTableComponent implements OnInit {
 
+export class SortTableComponent implements OnInit {
   @Input() columns: SortTableColumn[] | undefined;
   @Input() values: any[] | undefined;
   @Input() actions: SortTableAction[] | undefined;
@@ -38,8 +39,7 @@ export class SortTableComponent implements OnInit {
   internalActions: SortTableAction[] | undefined = [] as Array<SortTableAction>;
 
   constructor(protected userPreferenceService: UserPreferenceService,
-    private appService: AppService
-
+    private appService: AppService,
   ) { }
 
   ngOnInit() {
@@ -80,6 +80,13 @@ export class SortTableComponent implements OnInit {
           if (this.values)
             this.dataSource.data = this.values;
         }
+    }
+  }
+
+  columnActionTrigger(column: SortTableColumn, element: any) {
+    // find in internal
+    if (column && column.actionFunction) {
+      column.actionFunction(element);
     }
   }
 

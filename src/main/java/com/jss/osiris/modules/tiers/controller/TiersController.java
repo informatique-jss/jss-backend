@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.search.service.SearchService;
@@ -405,7 +406,7 @@ public class TiersController {
 
   @PostMapping(inputEntryPoint + "/tiers")
   public ResponseEntity<Tiers> addOrUpdateTiers(@RequestBody Tiers tiers)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     validationHelper.validateReferential(tiers.getTiersType(), true, "TiersType");
 
     if (tiers.getIsIndividual()) {

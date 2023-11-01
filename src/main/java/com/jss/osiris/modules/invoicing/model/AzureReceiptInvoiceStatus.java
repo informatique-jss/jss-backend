@@ -11,7 +11,6 @@ public class AzureReceiptInvoiceStatus {
     Boolean azureInvoicesStatus;
 
     Boolean paymentStatus;
-    Boolean debourStatus;
     Boolean customerInvoicedStatus;
 
     public List<Invoice> getInvoices() {
@@ -52,14 +51,6 @@ public class AzureReceiptInvoiceStatus {
 
     public void setPaymentStatus(Boolean paymentStatus) {
         this.paymentStatus = paymentStatus;
-    }
-
-    public Boolean getDebourStatus() {
-        return debourStatus;
-    }
-
-    public void setDebourStatus(Boolean debourStatus) {
-        this.debourStatus = debourStatus;
     }
 
     public Boolean getCustomerInvoicedStatus() {

@@ -13,7 +13,6 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
-import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -27,6 +26,7 @@ import com.jss.osiris.modules.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.repository.ConstantRepository;
 import com.jss.osiris.modules.profile.model.Employee;
@@ -46,6 +46,7 @@ import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
 @Service
@@ -443,6 +444,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public BillingType getBillingTypeRneUpdate() throws OsirisException {
+        return getConstants().getBillingTypeRneUpdate();
+    }
+
+    @Override
     public BillingType getBillingtypeVacationUpdateBeneficialOwners() throws OsirisException {
         return getConstants().getBillingTypeVacationUpdateBeneficialOwners();
     }
@@ -663,6 +669,16 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeChambreAgriculture() throws OsirisException {
+        return getConstants().getCompetentAuthorityTypeChambreAgriculture();
+    }
+
+    @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeUrssaf() throws OsirisException {
+        return getConstants().getCompetentAuthorityTypeUrssaf();
+    }
+
+    @Override
     public CompetentAuthorityType getCompetentAuthorityTypeDireccte() throws OsirisException {
         return getConstants().getCompetentAuthorityTypeDireccte();
     }
@@ -705,16 +721,6 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public InvoiceStatus getInvoiceStatusCreditNoteReceived() throws OsirisException {
         return getConstants().getInvoiceStatusCreditNoteReceived();
-    }
-
-    @Override
-    public PaymentWay getPaymentWayInbound() throws OsirisException {
-        return getConstants().getPaymentWayInbound();
-    }
-
-    @Override
-    public PaymentWay getPaymentWayOutboud() throws OsirisException {
-        return getConstants().getPaymentWayOutboud();
     }
 
     @Override
@@ -910,5 +916,15 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public PaymentDeadlineType getPaymentDeadLineType30() throws OsirisException {
         return getConstants().getPaymentDeadLineType30();
+    }
+
+    @Override
+    public Provider getProviderCentralPay() throws OsirisException {
+        return getConstants().getProviderCentralPay();
+    }
+
+    @Override
+    public TiersFollowupType getTiersFollowupTypeInvoiceReminder() throws OsirisException {
+        return getConstants().getTiersFollowupTypeInvoiceReminder();
     }
 }

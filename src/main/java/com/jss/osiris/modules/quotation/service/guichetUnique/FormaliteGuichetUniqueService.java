@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.quotation.service.guichetUnique;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.quotation.model.Formalite;
@@ -10,8 +11,9 @@ public interface FormaliteGuichetUniqueService {
 
     public FormaliteGuichetUnique getFormaliteGuichetUnique(Integer id);
 
-    public FormaliteGuichetUnique refreshFormaliteGuichetUnique(Integer id, Formalite formalite)
-            throws OsirisValidationException, OsirisException, OsirisClientMessageException;
+    public FormaliteGuichetUnique refreshFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique,
+            Formalite formalite)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException;
 
     public FormaliteGuichetUnique addOrUpdateFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique);
 }

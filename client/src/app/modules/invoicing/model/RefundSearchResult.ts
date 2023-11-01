@@ -8,6 +8,5 @@ export interface RefundSearchResult {
   refundIban: string;
   isMatched: boolean;
   isAlreadyExported: boolean;
-  paymentId: number;
   affaireLabel: string;
 }

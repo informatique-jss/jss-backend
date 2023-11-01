@@ -293,6 +293,10 @@ $fontConfig: (
   background-color: mat.get-color-from-palette($mat-primary, main) !important;
 }
 
+.payment-tree-active {
+  background-color: mat.get-color-from-palette($mat-primary, main) !important;
+}
+
 .mdc-tab--active .mdc-tab__text-label {
   color: $dark-primary-text !important;
 }

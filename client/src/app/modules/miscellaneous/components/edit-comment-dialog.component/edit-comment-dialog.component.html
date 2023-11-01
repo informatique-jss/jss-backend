@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>Editer le commentaire</h1>
+<div mat-dialog-content>
+  <generic-textarea [(model)]="comment" label="Commentaire" [form]="commentForm" propertyName="comment"
+    [isMandatory]="true" [isDisabled]="false"></generic-textarea>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">Valider</button>
+</div>
