@@ -310,11 +310,7 @@ public class MailComputeHelper {
                             + (responsable.getCivility() != null ? responsable.getCivility().getLabel() + " " : "")
                             + responsable.getFirstname() + " " + responsable.getLastname());
                 else {
-                    invoiceLabelResult.setBillingLabel((tiers.getDenomination() != null ? tiers.getDenomination()
-                            : tiers.getFirstname() + " " + tiers.getLastname()) + "\r\n"
-                            + (responsable.getCivility() != null ? responsable.getCivility().getLabel() + " " : "")
-                            + responsable.getFirstname() + " " + responsable.getLastname() + "\n"
-                            + tiers.getMailRecipient());
+                    invoiceLabelResult.setBillingLabel(tiers.getMailRecipient());
                 }
                 invoiceLabelResult.setBillingLabelAddress(tiers.getAddress());
                 invoiceLabelResult.setBillingLabelCity(tiers.getCity());
