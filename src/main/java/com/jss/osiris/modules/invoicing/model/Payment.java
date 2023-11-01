@@ -64,7 +64,8 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	private Invoice invoice;
 
 	@Column(columnDefinition = "TEXT")
-	private String commentPayment;
+	private String comment;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "payments", "accountingRecords" }, allowSetters = true)
@@ -219,14 +220,6 @@ public class Payment implements Serializable, IId, ICreatedDate {
 		return getPaymentDate();
 	}
 
-	public String getCommentPayment() {
-		return commentPayment;
-	}
-
-	public void SetCommentPayment(String commentPayement) {
-		this.commentPayment = commentPayement;
-	}
-
 	public CustomerOrder getCustomerOrder() {
 		return customerOrder;
 	}
@@ -321,6 +314,14 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	public void setDirectDebitTransfert(DirectDebitTransfert directDebitTransfert) {
 		this.directDebitTransfert = directDebitTransfert;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 }

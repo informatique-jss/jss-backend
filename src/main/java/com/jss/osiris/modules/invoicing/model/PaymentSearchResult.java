@@ -22,7 +22,7 @@ public interface PaymentSearchResult {
 
     public String getPaymentTypeLabel();
 
-    public String getCommentPayment();
+    public String getComment();
 
     public String getOriginPaymentId();
 

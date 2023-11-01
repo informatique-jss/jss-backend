@@ -292,16 +292,18 @@ public class InvoicingController {
                 HttpStatus.OK);
     }
 
-    @PostMapping(inputEntryPoint + "/payments/save-comment")
-    public ResponseEntity<Payment> addOrUpdatePaymentComment(@RequestBody Payment payment)
+    @PostMapping(inputEntryPoint + "/payment/comment")
+    public ResponseEntity<Payment> addOrUpdatePaymentComment(@RequestBody String comment,
+            @RequestParam Integer idPayment)
             throws OsirisValidationException {
 
-        String commentaire = payment.getCommentPayment();
-        payment = paymentService.getPayment(payment.getId());
-        payment.SetCommentPayment(commentaire);
-        paymentService.addOrUpdatePayment(payment);
+        Payment payment = paymentService.getPayment(idPayment);
 
-        return new ResponseEntity<>(payment, HttpStatus.OK);
+        if (payment == null)
+            throw new OsirisValidationException("idPayment");
+
+        payment.setComment(comment);
+        return new ResponseEntity<>(paymentService.addOrUpdatePayment(payment), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/refunds/search")

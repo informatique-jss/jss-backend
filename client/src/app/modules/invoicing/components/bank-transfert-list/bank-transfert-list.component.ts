@@ -1,6 +1,8 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
+import { EditCommentDialogComponent } from 'src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { HabilitationsService } from '../../../../services/habilitations.service';
@@ -8,8 +10,6 @@ import { BankTransfertService } from '../../../quotation/services/bank.transfert
 import { BankTransfertSearch } from '../../model/BankTransfertSearch';
 import { BankTransfertSearchResult } from '../../model/BankTransfertSearchResult';
 import { BankTransfertSearchResultService } from '../../services/bank.transfert.search.result.service';
-import { BankTransfert } from 'src/app/modules/quotation/model/BankTransfert';
-import { SortTableComponent } from '../../../miscellaneous/components/sort-table/sort-table.component';
 
 @Component({
   selector: 'bank-transfer-list',
@@ -32,23 +32,11 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
     private formBuilder: FormBuilder,
     private bankTransfertService: BankTransfertService,
     private habilitationService: HabilitationsService,
-    private sortTableComponent: SortTableComponent,
+    public editCommentDialog: MatDialog,
   ) { }
 
   ngAfterContentChecked(): void {
     this.changeDetectorRef.detectChanges();
-  }
-
-  openEditDialog(element: any) {
-    if (this.transfers !== undefined && this.transfers.length > 0) {
-      const transferSearchResult = element;
-
-      this.sortTableComponent.modifyDialogTransfert(transferSearchResult, (editedTransfer: BankTransfertSearchResult) => {
-        if (editedTransfer) {
-          transferSearchResult.commentTransfert = editedTransfer.commentTransfert;
-        }
-      });
-    }
   }
 
   ngOnInit() {
@@ -62,7 +50,7 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "isSelectedForExport", fieldName: "isSelectedForExport", label: "Est sélectionné pour l'export", valueFonction: (element: any) => { return (element.isSelectedForExport) ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "competentAuthorityLabel", fieldName: "competentAuthorityLabel", label: "Autorité compétente" } as SortTableColumn);
     this.availableColumns.push({ id: "invoiceBillingLabel", fieldName: "invoiceBillingLabel", label: "Libellé de la facture" } as SortTableColumn);
-    this.availableColumns.push({ id: "commentTransfert", fieldName: "commentTransfert", label: "Commentaire" } as SortTableColumn);
+    this.availableColumns.push({ id: "comment", fieldName: "comment", label: "Commentaire" } as SortTableColumn);
 
 
     this.setColumns();
@@ -73,14 +61,6 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
       actionIcon: 'check_box', actionName: 'Sélectionner ce virement pour l\'export', actionClick: (action: SortTableAction, element: any) => {
         this.bankTransfertService.selectBankTransfertForExport(element).subscribe(response => this.searchTransferts());
       }, display: true,
-    } as SortTableAction);
-
-    this.tableAction.push({
-      actionIcon: 'edit',
-      actionName: 'editer commentaire',
-      actionClick: (action: SortTableAction, element: any): void => {
-      this.openEditDialog(element);
-      }, display: true
     } as SortTableAction);
 
     this.tableAction.push({
@@ -95,6 +75,19 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
           this.bankTransfertService.cancelBankTransfert(element).subscribe(response => this.searchTransferts());
         }, display: true,
       } as SortTableAction);
+
+    this.tableAction.push({
+      actionIcon: 'mode_comment', actionName: 'Modifier le commentaire', actionClick: (action: SortTableAction, element: any) => {
+        let dialogRef = this.editCommentDialog.open(EditCommentDialogComponent);
+        dialogRef.componentInstance.comment = element.comment;
+
+        dialogRef.afterClosed().subscribe(newComment => {
+          if (newComment) {
+            this.bankTransfertService.addOrUpdateTransfertComment(newComment, element.id).subscribe(response => { this.searchTransferts() });
+          }
+        });
+      }, display: true,
+    } as SortTableAction);
   }
 
   transfertForm = this.formBuilder.group({

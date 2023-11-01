@@ -3,11 +3,11 @@ import { FormBuilder } from "@angular/forms";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from "src/app/libs/FormatHelper";
 import { AssociatePaymentDialogComponent } from "src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component";
-import { Payment } from "src/app/modules/invoicing/model/Payment";
 import { PaymentSearch } from "src/app/modules/invoicing/model/PaymentSearch";
 import { PaymentSearchResult } from "src/app/modules/invoicing/model/PaymentSearchResult";
 import { PaymentSearchResultService } from "src/app/modules/invoicing/services/payment.search.result.service";
 import { PaymentService } from "src/app/modules/invoicing/services/payment.service";
+import { EditCommentDialogComponent } from "src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component";
 import { UploadAttachementDialogComponent } from "src/app/modules/miscellaneous/components/upload-attachement-dialog/upload-attachement-dialog.component";
 import { IAttachment } from "src/app/modules/miscellaneous/model/IAttachment";
 import { SortTableAction } from "src/app/modules/miscellaneous/model/SortTableAction";
@@ -18,7 +18,6 @@ import { AppService } from "src/app/services/app.service";
 import { HabilitationsService } from "src/app/services/habilitations.service";
 import { AccountingAccount } from '../../../accounting/model/AccountingAccount';
 import { PaymentDetailsDialogService } from '../../../invoicing/services/payment.details.dialog.service';
-import { SortTableComponent } from '../../../miscellaneous/components/sort-table/sort-table.component';
 import { RefundPaymentDialogComponent } from "../refund-payment-dialog/refund-payment-dialog.component";
 import { SelectAccountingAccountDialogComponent } from "../select-accounting-account-dialog/select-accounting-account-dialog.component";
 import { SelectCompetentAuthorityDialogComponent } from "../select-competent-authority-dialog/select-competent-authority-dialog.component";
@@ -58,7 +57,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     public selectCompetentAuthorityDialog: MatDialog,
     private formBuilder: FormBuilder,
     private habilitationService: HabilitationsService,
-    private sortTableComponent: SortTableComponent,
+    private editCommentDialog: MatDialog,
     private paymentDetailsDialogService: PaymentDetailsDialogService,
   ) { }
 
@@ -72,18 +71,6 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
 
   canAddCheckPayment() {
     return this.habilitationService.canAddCheckPayment();
-  }
-
-  openEditDialog(element: any) {
-    if (this.payments !== undefined && this.payments.length > 0) {
-      const paymentSearchResult = element;
-
-      this.sortTableComponent.modifyDialogPayment(paymentSearchResult, (editedPayment: Payment) => {
-        if (editedPayment) {
-          paymentSearchResult.commentPayment = editedPayment.commentPayment;
-        }
-      });
-    }
   }
 
   openRoute(event: any, link: string) {
@@ -102,17 +89,9 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "isExternallyAssociated", fieldName: "isExternallyAssociated", label: "Associé hors Osiris", valueFonction: (element: any) => { return element.isExternallyAssociated ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé", valueFonction: (element: any) => { return element.isCancelled ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture associée", actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
-    this.availableColumns.push({ id: "commentPayment", fieldName: "commentPayment", label: "Commentaire" } as SortTableColumn);
+    this.availableColumns.push({ id: "comment", fieldName: "comment", label: "Commentaire" } as SortTableColumn);
 
     if (this.overrideIconAction == "") {
-      this.tableAction.push({
-        actionIcon: 'edit',
-        actionName: 'editer commentaire',
-        actionClick: (action: SortTableAction, element: any): void => {
-          this.openEditDialog(element);
-        }, display: true
-      } as SortTableAction);
-
       if (this.habilitationService.canModifyPaymentAssociation()) {
         this.tableAction.push({
           actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (action: SortTableAction, element: any) => {
@@ -135,6 +114,20 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
           actionIcon: "account_balance", actionName: "Mettre en compte", actionClick: (action: SortTableAction, element: PaymentSearchResult) => {
             if (!element.isAssociated && !element.isCancelled)
               this.displayAccountingPaymentDetailsDialog(element as any);
+          }, display: true,
+        } as SortTableAction);
+        this.tableAction.push({
+          actionIcon: 'mode_comment', actionName: 'Modifier le commentaire', actionClick: (action: SortTableAction, element: any) => {
+            let dialogRef = this.editCommentDialog.open(EditCommentDialogComponent, {
+              width: '40%'
+            });
+            dialogRef.componentInstance.comment = element.comment;
+
+            dialogRef.afterClosed().subscribe(newComment => {
+              if (newComment) {
+                this.paymentService.addOrUpdatePaymentComment(element.id, newComment).subscribe(response => { this.searchPayments() });
+              }
+            });
           }, display: true,
         } as SortTableAction);
       }

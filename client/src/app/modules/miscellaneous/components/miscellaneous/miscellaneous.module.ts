@@ -39,6 +39,7 @@ import { AvatarComponent } from '../avatar/avatar.component';
 import { ChipsStatusComponent } from '../chips-status/chips-status.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
+import { EditCommentDialogComponent } from '../edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { EmployeeDialogComponent } from '../employee-dialog/employee-dialog.component';
 import { AutocompleteAccountingAccountComponent } from '../forms/autocomplete-accounting-account/autocomplete-accounting-account.component';
 import { AutocompleteAffaireComponent } from '../forms/autocomplete-affaire/autocomplete-affaire.component';
@@ -237,7 +238,6 @@ import { GradeComponent } from '../grade/grade.component';
 import { HistoryComponent } from '../history/history.component';
 import { NotificationDialogComponent } from '../notification-dialog/notification-dialog.component';
 import { SingleAttachmentComponent } from '../single-attachment/single-attachment.component';
-import { SortTableEditDialogComponent } from '../sort-table-edit-dialog-component/sort-table-edit-dialog-component.component';
 import { SortTableComponent } from '../sort-table/sort-table.component';
 import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.component';
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
@@ -397,7 +397,7 @@ const routes: Routes = [
     ChipsPaymentTypeComponent,
     AutocompleteAzureInvoiceComponent,
     SelectCustomerOrderOriginComponent,
-    SortTableEditDialogComponent,
+    EditCommentDialogComponent,
     SelectProvisionComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
@@ -593,7 +593,7 @@ const routes: Routes = [
     SelectAccountingJournalComponent,
     SingleAttachmentComponent,
     SortTableComponent,
-    SortTableEditDialogComponent,
+    EditCommentDialogComponent,
     SelectInvoiceStatusComponent,
     AutocompleteRegieComponent,
     SelectAssignationTypeComponent,

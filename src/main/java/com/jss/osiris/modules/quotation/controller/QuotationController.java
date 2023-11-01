@@ -390,16 +390,18 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  @PostMapping(inputEntryPoint + "/bank-transfert/save-comment")
-  public ResponseEntity<BankTransfert> addOrUpdateTransfertComment(@RequestBody BankTransfert bankTransfert)
+  @PostMapping(inputEntryPoint + "/bank-transfert/comment")
+  public ResponseEntity<BankTransfert> addOrUpdateTransfertComment(@RequestBody String comment,
+      @RequestParam Integer idBankTransfert)
       throws OsirisValidationException {
 
-    String commentaire = bankTransfert.getCommentTransfert();
-    bankTransfert = bankTransfertService.getBankTransfert(bankTransfert.getId());
-    bankTransfert.setCommentTransfert(commentaire);
-    bankTransfertService.addOrUpdateBankTransfert(bankTransfert);
+    BankTransfert bankTransfert = bankTransfertService.getBankTransfert(idBankTransfert);
 
-    return new ResponseEntity<>(bankTransfert, HttpStatus.OK);
+    if (bankTransfert == null)
+      throw new OsirisValidationException("bankTransfert");
+
+    bankTransfert.setComment(comment);
+    return new ResponseEntity<>(bankTransfertService.addOrUpdateBankTransfert(bankTransfert), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/bank-transfert/export/unselect")

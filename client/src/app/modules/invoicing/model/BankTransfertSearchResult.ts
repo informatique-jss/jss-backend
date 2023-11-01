@@ -10,5 +10,5 @@ export interface BankTransfertSearchResult {
   competentAuthorityLabel: string;
   invoiceBillingLabel: string;
   affaireLabel: string;
-  commentTransfert:string;
+  comment: string;
 }

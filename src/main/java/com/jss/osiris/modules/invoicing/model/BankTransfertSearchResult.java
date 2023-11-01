@@ -24,5 +24,5 @@ public interface BankTransfertSearchResult {
 
     public String getAffaireLabel();
 
-    public String getCommentTransfert();
+    public String getComment();
 }

@@ -42,7 +42,7 @@ public class BankTransfert implements Serializable, IId {
 	private String transfertBic;
 
 	@Column(columnDefinition = "TEXT")
-	private String commentTransfert;
+	private String comment;
 
 	private Boolean isAlreadyExported;
 
@@ -156,14 +156,6 @@ public class BankTransfert implements Serializable, IId {
 		this.customerOrder = customerOrder;
 	}
 
-	public String getCommentTransfert() {
-		return commentTransfert;
-	}
-
-	public void setCommentTransfert(String commentTransfert) {
-		this.commentTransfert = commentTransfert;
-	}
-
 	public Boolean getIsMatched() {
 		return isMatched;
 	}
@@ -178,6 +170,14 @@ public class BankTransfert implements Serializable, IId {
 
 	public void setPayments(List<Payment> payments) {
 		this.payments = payments;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 }

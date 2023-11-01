@@ -46,8 +46,8 @@ export class PaymentService extends AppRestService<Payment>{
     return this.postItem(new HttpParams(), "payment/check/add", payment);
   }
 
-  addOrUpdatePaymentComment(payment: Payment) {
-    return this.postItem(new HttpParams(), "payments/save-comment", payment);
+  addOrUpdatePaymentComment(idPayment: number, comment: string) {
+    return this.postItem(new HttpParams().set("idPayment", idPayment), "payment/comment", comment);
   }
 
   addProvisionPayment(payment: Payment, provision: Provision) {
