@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.City;
@@ -43,19 +44,21 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SearchableField
 	@IndexedField
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers_type")
-	@IndexedField
 	private TiersType tiersType;
 
 	@Column(length = 60)
+	@SearchableField
 	@IndexedField
 	private String denomination;
 
 	@Column(nullable = false)
+	@SearchableField
 	@IndexedField
 	private Boolean isIndividual;
 
@@ -115,15 +118,18 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 	private Civility civility;
 
 	@Column(length = 40)
+	@SearchableField
 	@IndexedField
 	private String firstname;
 
 	@Column(length = 40)
+	@SearchableField
 	@IndexedField
 	private String lastname;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_commercial")
+	@SearchableField
 	@IndexedField
 	private Employee salesEmployee;
 

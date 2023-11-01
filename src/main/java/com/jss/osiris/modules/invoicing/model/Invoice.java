@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.City;
@@ -53,11 +54,14 @@ import com.jss.osiris.modules.tiers.model.TiersFollowup;
 		@Index(name = "idx_invoice_azure_invoice_id ", columnList = "id_azure_invoice"),
 		@Index(name = "idx_invoice_bank_transfert ", columnList = "id_bank_transfert"),
 		@Index(name = "idx_invoice_direct_debit_transfert ", columnList = "id_direct_debit_transfert"),
-		@Index(name = "idx_invoice_responsable", columnList = "id_responsable"), })
+		@Index(name = "idx_invoice_responsable", columnList = "id_responsable"),
+		@Index(name = "idx_invoice_confrere", columnList = "id_confrere"),
+		@Index(name = "idx_invoice_tiers", columnList = "id_tiers"), })
 public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@Id
 	@IndexedField
+	@SearchableField
 	@GenericGenerator(name = "invoice_id", strategy = "com.jss.osiris.modules.invoicing.model.InvoiceKeyGenerator")
 	@GeneratedValue(generator = "invoice_id")
 	private Integer id;
@@ -85,14 +89,17 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
+	@SearchableField
 	private Responsable responsable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
+	@SearchableField
 	private Confrere confrere;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
+	@SearchableField
 	private Tiers tiers;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -106,6 +113,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@Column(length = 300, name = "billing_label")
 	@IndexedField
+	@SearchableField
 	private String billingLabel;
 
 	@Column(name = "billing_label_address", length = 160)
@@ -210,6 +218,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@JoinColumn(name = "id_azure_invoice")
 	@JsonIgnoreProperties(value = { "invoices" }, allowSetters = true)
 	@IndexedField
+	@SearchableField
 	private AzureInvoice azureInvoice;
 
 	public Integer getId() {

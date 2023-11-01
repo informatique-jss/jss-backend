@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.City;
@@ -43,16 +44,19 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@IndexedField
+	@SearchableField
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
 	@IndexedField
+	@SearchableField
 	@JsonIgnoreProperties(value = { "responsables" }, allowSetters = true)
 	private Tiers tiers;
 
 	@Column(nullable = false)
 	@IndexedField
+	@SearchableField
 	private Boolean isActive;
 
 	@Column(nullable = false)
@@ -66,29 +70,35 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable_type")
 	@IndexedField
+	@SearchableField
 	private TiersType tiersType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable_category")
 	@IndexedField
+	@SearchableField
 	private TiersCategory tiersCategory;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_civility")
 	@IndexedField
+	@SearchableField
 	private Civility civility;
 
 	@Column(length = 40)
 	@IndexedField
+	@SearchableField
 	private String firstname;
 
 	@Column(length = 40)
 	@IndexedField
+	@SearchableField
 	private String lastname;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_commercial")
 	@IndexedField
+	@SearchableField
 	private Employee salesEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -112,10 +122,12 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 
 	@Column(length = 100)
 	@IndexedField
+	@SearchableField
 	private String address;
 
 	@Column(length = 10)
 	@IndexedField
+	@SearchableField
 	private String postalCode;
 
 	@Column(length = 20)
@@ -124,6 +136,7 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_city")
 	@IndexedField
+	@SearchableField
 	private City city;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -178,6 +191,7 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 	@Column(length = 300)
 	private String password;
 
+	@SearchableField
 	@IndexedField
 	private Integer idAs400;
 	private Integer newIdAs400;

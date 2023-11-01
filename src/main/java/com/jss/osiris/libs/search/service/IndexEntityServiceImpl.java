@@ -26,6 +26,7 @@ import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -38,6 +39,7 @@ public class IndexEntityServiceImpl implements IndexEntityService {
     @Override
     public void indexEntity(IId entity) {
         IndexEntity indexedEntity = new IndexEntity();
+
         if (entity.getClass().getSimpleName().contains("HibernateProxy"))
             entity = (IId) Hibernate.unproxy(entity);
 
@@ -53,7 +55,10 @@ public class IndexEntityServiceImpl implements IndexEntityService {
         indexedEntity.setEntityId(entity.getId());
         indexedEntity.setEntityType(entity.getClass().getSimpleName());
         try {
-            indexedEntity.setText(objectMapper.writeValueAsString(cleanObjectForSerialization(entity)));
+            indexedEntity
+                    .setText(objectMapper.writeValueAsString(cleanObjectForSerialization(entity, IndexedField.class)));
+            indexedEntity.setSearchText(
+                    objectMapper.writeValueAsString(cleanObjectForSerialization(entity, SearchableField.class)));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -63,11 +68,11 @@ public class IndexEntityServiceImpl implements IndexEntityService {
     }
 
     @SuppressWarnings({ "unchecked" })
-    private Object cleanObjectForSerialization(Object entity) {
+    private Object cleanObjectForSerialization(Object entity, Class<?> annotationName) {
         Map<String, Object> outObject = new HashMap<String, Object>();
         for (Field field : entity.getClass().getDeclaredFields()) {
             for (Annotation annotation : field.getAnnotations()) {
-                if (annotation.annotationType().getName().equals(IndexedField.class.getName())) {
+                if (annotation.annotationType().getName().equals(annotationName.getName())) {
                     Method getter;
                     try {
                         getter = entity.getClass()
@@ -85,23 +90,27 @@ public class IndexEntityServiceImpl implements IndexEntityService {
                         } else if (fieldResult instanceof List) {
                             ArrayList<Object> cleanOutList = new ArrayList<Object>();
                             for (Object fieldResultObject : (List<Object>) fieldResult)
-                                cleanOutList.add(cleanObjectForSerialization(fieldResultObject));
+                                cleanOutList
+                                        .add(cleanObjectForSerialization(fieldResultObject, annotationName));
                             outObject.put(field.getName(), cleanOutList);
                         } else if (fieldResult != null) {
-                            outObject.put(field.getName(), cleanObjectForSerialization(fieldResult));
+                            outObject.put(field.getName(),
+                                    cleanObjectForSerialization(fieldResult, annotationName));
                         }
                     } catch (NoSuchMethodException e) {
                         new OsirisException(e, "Indexation : getter not found for field " + field.getName());
                     } catch (SecurityException e) {
-                        new OsirisException(e, "Indexation error");
+                        new OsirisException(e, "Indexat+ion error");
                     } catch (IllegalAccessException e) {
                         new OsirisException(e, "Indexation error");
                     } catch (InvocationTargetException e) {
                         new OsirisException(e, "Indexation error");
                     }
                 }
+
             }
         }
         return outObject;
     }
+
 }

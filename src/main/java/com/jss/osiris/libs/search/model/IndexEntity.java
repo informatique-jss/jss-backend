@@ -18,6 +18,10 @@ public class IndexEntity implements Serializable {
 	@Id
 	private Integer entityId;
 
+	@SearchableField
+	@Column(columnDefinition = "TEXT")
+	private String searchText;
+
 	@Column(columnDefinition = "TEXT")
 	private String text;
 
@@ -43,6 +47,14 @@ public class IndexEntity implements Serializable {
 
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	public String getSearchText() {
+		return searchText;
+	}
+
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
 	}
 
 }
