@@ -92,6 +92,13 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
             competentAuthority.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
             competentAuthority
                     .setAccountingAccountDepositProvider(accountingAccountCouple.getAccountingAccountDeposit());
+        } else {
+            accountingAccountService.updateAccountingAccountLabel(competentAuthority.getAccountingAccountCustomer(),
+                    competentAuthority.getLabel());
+            accountingAccountService.updateAccountingAccountLabel(competentAuthority.getAccountingAccountDeposit(),
+                    competentAuthority.getLabel());
+            accountingAccountService.updateAccountingAccountLabel(competentAuthority.getAccountingAccountProvider(),
+                    competentAuthority.getLabel());
         }
         return competentAuthorityRepository.save(competentAuthority);
     }

@@ -9,5 +9,6 @@ export interface PaymentSearchResult {
   isAssociated: boolean;
   isCancelled: boolean;
   invoiceId: number;
+  comment: string;
   originPaymentId: number;
 }

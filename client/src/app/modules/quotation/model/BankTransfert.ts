@@ -12,5 +12,6 @@ export interface BankTransfert {
   isCancelled: boolean;
   isMatched: boolean;
   invoices: Invoice[];
+  comment: String;
   customerOrder: CustomerOrder;
 }

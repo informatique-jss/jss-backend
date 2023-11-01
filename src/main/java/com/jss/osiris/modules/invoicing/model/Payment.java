@@ -63,6 +63,9 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@JsonIgnoreProperties(value = { "payments", "accountingRecords" }, allowSetters = true)
 	private Invoice invoice;
 
+	@Column(columnDefinition = "TEXT")
+	private String comment;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "payments", "accountingRecords" }, allowSetters = true)
@@ -311,6 +314,14 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	public void setDirectDebitTransfert(DirectDebitTransfert directDebitTransfert) {
 		this.directDebitTransfert = directDebitTransfert;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 }

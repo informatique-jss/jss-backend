@@ -22,6 +22,8 @@ public interface PaymentSearchResult {
 
     public String getPaymentTypeLabel();
 
+    public String getComment();
+
     public String getOriginPaymentId();
 
 }
