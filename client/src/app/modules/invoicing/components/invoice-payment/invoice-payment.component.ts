@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
@@ -10,6 +10,7 @@ import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { Payment } from '../../model/Payment';
 import { PaymentSearchResult } from '../../model/PaymentSearchResult';
+import { PaymentDetailsDialogService } from '../../services/payment.details.dialog.service';
 import { PaymentService } from '../../services/payment.service';
 import { AssociatePaymentDialogComponent } from '../associate-payment-dialog/associate-payment-dialog.component';
 import { getRemainingToPay } from '../invoice-tools';
@@ -19,7 +20,7 @@ import { getRemainingToPay } from '../invoice-tools';
   templateUrl: './invoice-payment.component.html',
   styleUrls: ['./invoice-payment.component.css']
 })
-export class InvoicePaymentComponent implements OnInit {
+export class InvoicePaymentComponent implements OnInit, AfterContentChecked {
 
   advisedPayment: Payment[] = [] as Array<Payment>;
   @Input() invoice: Invoice = {} as Invoice;
@@ -32,21 +33,27 @@ export class InvoicePaymentComponent implements OnInit {
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
   invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
+  invoiceStatusCreditNoteReceived = this.constantService.getInvoiceStatusCreditNoteReceived();
 
   constructor(private paymentService: PaymentService,
     private appService: AppService,
     private constantService: ConstantService,
     public associatePaymentDialog: MatDialog,
     private formBuilder: FormBuilder,
-    private habilitationsService: HabilitationsService
+    private habilitationsService: HabilitationsService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private paymentDetailsDialogService: PaymentDetailsDialogService,
   ) { }
 
   invoicePaymentForm = this.formBuilder.group({});
 
+  ngAfterContentChecked(): void {
+    this.changeDetectorRef.detectChanges();
+  }
+
   ngOnInit() {
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du paiement" } as SortTableColumn);
-    this.displayedColumns.push({ id: "paymentWay", fieldName: "paymentWay.label", label: "Sens" } as SortTableColumn);
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du paiement", actionFunction: (element: any) => this.paymentDetailsDialogService.displayPaymentDetailsDialog(element), actionIcon: "visibility", actionTooltip: "Voir le détail du paiement" } as SortTableColumn);
     this.displayedColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "payemntAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
@@ -60,7 +67,7 @@ export class InvoicePaymentComponent implements OnInit {
         this.openAssociationDialog(element);
       }, display: true,
     } as SortTableAction);
-    if (this.invoice) {
+    if (this.invoice && !this.invoice.isProviderCreditNote) {
       this.paymentService.getAdvisedPayment(this.invoice).subscribe(response => {
         this.advisedPayment = response;
       })
@@ -87,7 +94,6 @@ export class InvoicePaymentComponent implements OnInit {
   addCashPayment() {
     if (this.newPayment && this.invoicePaymentForm.valid) {
       this.onModifyAmount();
-      this.newPayment.paymentWay = this.constantService.getPaymentWayInbound();
       this.newPayment.paymentType = this.constantService.getPaymentTypeEspeces();
       this.newPayment.isCancelled = false;
       this.newPayment.isExternallyAssociated = false;

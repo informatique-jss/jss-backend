@@ -54,15 +54,6 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     }
 
     @Override
-    public CompetentAuthority getCompetentAuthorityByOwncloudFolderName(String folderName) {
-        Optional<CompetentAuthority> competentAuthority = competentAuthorityRepository
-                .findByOwncloudFolderName(folderName);
-        if (competentAuthority.isPresent())
-            return competentAuthority.get();
-        return null;
-    }
-
-    @Override
     public List<CompetentAuthority> getCompetentAuthorityByInpiReference(String inpiReference) {
         return competentAuthorityRepository.findByInpiReference(inpiReference);
     }
@@ -101,6 +92,13 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
             competentAuthority.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
             competentAuthority
                     .setAccountingAccountDepositProvider(accountingAccountCouple.getAccountingAccountDeposit());
+        } else {
+            accountingAccountService.updateAccountingAccountLabel(competentAuthority.getAccountingAccountCustomer(),
+                    competentAuthority.getLabel());
+            accountingAccountService.updateAccountingAccountLabel(competentAuthority.getAccountingAccountDeposit(),
+                    competentAuthority.getLabel());
+            accountingAccountService.updateAccountingAccountLabel(competentAuthority.getAccountingAccountProvider(),
+                    competentAuthority.getLabel());
         }
         return competentAuthorityRepository.save(competentAuthority);
     }

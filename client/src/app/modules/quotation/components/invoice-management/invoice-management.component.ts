@@ -1,10 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
+import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
 import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
+import { Payment } from 'src/app/modules/invoicing/model/Payment';
 import { InvoiceSearchResultService } from 'src/app/modules/invoicing/services/invoice.search.result.service';
+import { PaymentDetailsDialogService } from 'src/app/modules/invoicing/services/payment.details.dialog.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from '../../../../services/app.service';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
@@ -48,6 +52,8 @@ export class InvoiceManagementComponent implements OnInit {
     private constantService: ConstantService,
     private appService: AppService,
     private invoiceLabelResultService: InvoiceLabelResultService,
+    public associatePaymentDialog: MatDialog,
+    private paymentDetailsDialogService: PaymentDetailsDialogService,
     protected invoiceSearchResultService: InvoiceSearchResultService,) { }
 
   ngOnInit() {
@@ -103,7 +109,7 @@ export class InvoiceManagementComponent implements OnInit {
   }
 
   getApplicableVat(): VatBase[] {
-    return QuotationComponent.computeApplicableVat(this.quotation, this.constantService.getVatDeductible());
+    return QuotationComponent.computeApplicableVat(this.quotation);
   }
 
   getPriceTotal(): number {
@@ -139,5 +145,21 @@ export class InvoiceManagementComponent implements OnInit {
         if (invoice.invoiceStatus && (invoice.invoiceStatusId == this.constantService.getInvoiceStatusSend().id || invoice.invoiceStatusId == this.constantService.getInvoiceStatusPayed().id))
           return invoice;
     return undefined;
+  }
+
+  movePayment(payment: Payment) {
+    let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
+      width: '100%'
+    });
+    dialogPaymentDialogRef.componentInstance.payment = payment;
+    dialogPaymentDialogRef.componentInstance.doNotInitializeAsso = true;
+
+    dialogPaymentDialogRef.afterClosed().subscribe(response => {
+      this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+    });
+  }
+
+  openPaymentDialog(payment: Payment) {
+    this.paymentDetailsDialogService.displayPaymentDetailsDialog(payment);
   }
 }

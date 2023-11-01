@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { CustomerOrder } from '../model/CustomerOrder';
 import { IQuotation } from '../model/IQuotation';
 
 @Injectable({
@@ -42,5 +43,13 @@ export class QuotationService extends AppRestService<IQuotation>{
 
   generateInvoicetMail(customerOrder: IQuotation) {
     return this.getList(new HttpParams().set("customerOrderId", customerOrder.id), "mail/generate/invoice", "Mail envoyé !", "Erreur lors de l'envoi du mail");
+  }
+
+  sendCustomerOrderFinalisationToCustomer(customerOrder: CustomerOrder) {
+    return this.get(new HttpParams().set("customerOrderId", customerOrder.id), "mail/send/invoice", "Mail envoyé !", "Erreur lors de l'envoi du mail");
+  }
+
+  associateCustomerOrderToQuotation(customerOrderId: number, quotationId: number) {
+    return this.get(new HttpParams().set("idQuotation", quotationId).set("idCustomerOrder", customerOrderId), "customer-order/associate");
   }
 }

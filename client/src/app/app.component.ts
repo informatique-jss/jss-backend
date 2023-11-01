@@ -63,13 +63,6 @@ export class AppComponent {
         });
       }
 
-      if (this.loggedIn) {
-        this.employeeService.getCurrentEmployee().subscribe(employee => {
-          if (employee && employee.adPath && employee.adPath.indexOf("OU=Formalites") >= 0 && !employee.inpiLogin)
-            this.appService.displaySnackBar("Merci de compléter vos logins INPI dans la rubrique Mon profil", false, 10);
-        })
-      }
-
       if (environment.production == false && this.loginService.hasGroup(['toto']) == false)
         this.loginService.setUserRoleAndRefresh();
     });

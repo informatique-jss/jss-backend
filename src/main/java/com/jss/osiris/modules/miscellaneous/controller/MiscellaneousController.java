@@ -25,6 +25,7 @@ import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -33,6 +34,7 @@ import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.invoicing.service.RefundService;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -99,7 +101,6 @@ import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
-import com.jss.osiris.modules.quotation.service.DebourService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -188,6 +189,9 @@ public class MiscellaneousController {
     AccountingAccountService accountingAccountService;
 
     @Autowired
+    PaymentService paymentService;
+
+    @Autowired
     RegieService regieService;
 
     @Autowired
@@ -234,9 +238,6 @@ public class MiscellaneousController {
 
     @Autowired
     DirectDebitTransfertService directDebitTransfertService;
-
-    @Autowired
-    DebourService debourService;
 
     @Autowired
     CustomerOrderOriginService customerOrderOriginService;
@@ -354,6 +355,8 @@ public class MiscellaneousController {
             validationHelper.validateReferential(constant, true, "constant");
         validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true,
                 "BillingLabelTypeCodeAffaire");
+        validationHelper.validateReferential(constant.getPaymentDeadLineType30(), true,
+                "PaymentDeadLineType30");
         validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true,
                 "BillingLabelTypeCodeAffaire");
         validationHelper.validateReferential(constant.getBillingLabelTypeOther(), true, "BillingLabelTypeOther");
@@ -439,8 +442,6 @@ public class MiscellaneousController {
         validationHelper.validateReferential(constant.getInvoiceStatusReceived(), true, "InvoiceStatusReceived");
         validationHelper.validateReferential(constant.getInvoiceStatusPayed(), true, "InvoiceStatusPayed");
         validationHelper.validateReferential(constant.getInvoiceStatusCancelled(), true, "InvoiceStatusCancelled");
-        validationHelper.validateReferential(constant.getPaymentWayInbound(), true, "PaymentWayInbound");
-        validationHelper.validateReferential(constant.getPaymentWayOutboud(), true, "PaymentWayOutboud");
         validationHelper.validateReferential(constant.getVatTwenty(), true, "VatTwenty");
         validationHelper.validateReferential(constant.getDepartmentMartinique(), true, "DepartmentMartinique");
         validationHelper.validateReferential(constant.getDepartmentGuadeloupe(), true, "DepartmentGuadeloupe");
@@ -1025,7 +1026,7 @@ public class MiscellaneousController {
             @RequestParam Integer idEntity, @RequestParam String entityType,
             @RequestParam Integer idAttachmentType,
             @RequestParam String filename, @RequestParam Boolean replaceExistingAttachementType)
-            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         if (idAttachmentType == null)
             throw new OsirisValidationException("idAttachmentType");
 
@@ -1102,7 +1103,6 @@ public class MiscellaneousController {
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/index/reindex/all")
-    @Transactional
     public ResponseEntity<Boolean> reindexAll() {
         invoiceService.reindexInvoices();
         tiersService.reindexTiers();
@@ -1113,9 +1113,86 @@ public class MiscellaneousController {
         assoAffaireOrderService.reindexAffaires();
         affaireService.reindexAffaire();
         bankTransfertService.reindexBankTransfert();
-        debourService.reindexDebours();
+        paymentService.reindexPayments();
         directDebitTransfertService.reindexDirectDebitTransfert();
 
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/directDebitTransfert")
+    public ResponseEntity<Boolean> reindexDirectDebitTransfert() {
+        directDebitTransfertService.reindexDirectDebitTransfert();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/bankTransfert")
+    public ResponseEntity<Boolean> reindexBankTransfert() {
+        bankTransfertService.reindexBankTransfert();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/affaire")
+    public ResponseEntity<Boolean> reindexAffaire() {
+        affaireService.reindexAffaire();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/assoAffaireOrder")
+    public ResponseEntity<Boolean> reindexAffaires() {
+        assoAffaireOrderService.reindexAffaires();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/payment")
+    public ResponseEntity<Boolean> reindexPayments() {
+        paymentService.reindexPayments();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/customerOrder")
+    public ResponseEntity<Boolean> reindexCustomerOrder() {
+        customerOrderService.reindexCustomerOrder();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/quotation")
+    public ResponseEntity<Boolean> reindexQuotation() {
+        quotationService.reindexQuotation();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/responsable")
+    public ResponseEntity<Boolean> reindexResponsable() {
+        responsableService.reindexResponsable();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/refund")
+    public ResponseEntity<Boolean> reindexRefunds() {
+        refundService.reindexRefunds();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/tiers")
+    public ResponseEntity<Boolean> reindexTiers() {
+        tiersService.reindexTiers();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/invoice")
+    public ResponseEntity<Boolean> reindexInvoices() {
+        invoiceService.reindexInvoices();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 

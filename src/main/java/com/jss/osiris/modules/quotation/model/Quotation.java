@@ -49,25 +49,22 @@ public class Quotation implements IQuotation {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
-	@IndexedField
 	private Tiers tiers;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
-	@IndexedField
 	private Responsable responsable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
-	@IndexedField
 	private Confrere confrere;
 
 	@ManyToMany
 	@JoinTable(name = "asso_quotation_special_offer", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;
 
-	@IndexedField
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@IndexedField
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -102,6 +99,9 @@ public class Quotation implements IQuotation {
 
 	@Column(nullable = false)
 	private Boolean isQuotation;
+
+	@Column(length = 40)
+	private String validationToken;
 
 	@ManyToMany
 	@JoinTable(name = "asso_quotation_customer_order", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_customer_order"))
@@ -302,6 +302,14 @@ public class Quotation implements IQuotation {
 
 	public void setCustomerOrderOrigin(CustomerOrderOrigin customerOrderOrigin) {
 		this.customerOrderOrigin = customerOrderOrigin;
+	}
+
+	public String getValidationToken() {
+		return validationToken;
+	}
+
+	public void setValidationToken(String validationToken) {
+		this.validationToken = validationToken;
 	}
 
 }

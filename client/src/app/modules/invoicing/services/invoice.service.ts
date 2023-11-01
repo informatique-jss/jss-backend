@@ -8,6 +8,10 @@ import { Invoice } from '../../quotation/model/Invoice';
 })
 export class InvoiceService extends AppRestService<Invoice>{
 
+  constructor(http: HttpClient) {
+    super(http, "invoicing");
+  }
+
   saveInvoice(invoice: Invoice) {
     return this.postItem(new HttpParams(), "invoice", invoice, "Facture enregistrée", "Erreur lors de l'enregistrement de la facture");
   }
@@ -16,12 +20,16 @@ export class InvoiceService extends AppRestService<Invoice>{
     return this.postItem(new HttpParams().set("idOriginInvoiceForCreditNote", idInvoiceForCreditNote), "invoice/credit-note", invoice, "Facture enregistrée", "Erreur lors de l'enregistrement de la facture");
   }
 
-  constructor(http: HttpClient) {
-    super(http, "invoicing");
+  cancelInvoice(invoice: Invoice) {
+    return this.get(new HttpParams().set("idInvoice", invoice.id), "invoice/cancel");
   }
 
   getInvoiceById(invoiceId: number) {
     return this.getById("invoice", invoiceId);
+  }
+
+  createInvoiceFromAzureInvoice(azureInvoiceId: number, provisionId: number) {
+    return this.get(new HttpParams().set("azureInvoiceId", azureInvoiceId).set("provisionId", provisionId), "azure-invoice/create");
   }
 
 }

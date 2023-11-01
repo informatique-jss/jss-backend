@@ -186,6 +186,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.countryFrance;
   }
 
+  getPaymentDeadLineType30() {
+    return this.constant.paymentDeadLineType30;
+  }
+
   getCountryMonaco() {
     return this.constant.countryMonaco;
   }
@@ -324,6 +328,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getBillingTypeEmergency() {
     return this.constant.billingTypeEmergency;
+  }
+
+  getBillingTypeRneUpdate() {
+    return this.constant.billingTypeRneUpdate;
   }
 
   getBillingTypeVacationUpdateBeneficialOwners() {
@@ -504,6 +512,14 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.competentAuthorityTypeChambreMetier;
   }
 
+  getCompetentAuthorityTypeChambreAgriculture() {
+    return this.constant.competentAuthorityTypeChambreAgriculture;
+  }
+
+  getCompetentAuthorityTypeUrssaf() {
+    return this.constant.competentAuthorityTypeUrssaf;
+  }
+
   getCompetentAuthorityTypeDireccte() {
     return this.constant.competentAuthorityTypeDireccte;
   }
@@ -526,14 +542,6 @@ export class ConstantService extends AppRestService<Constant>{
 
   getInvoiceStatusCreditNoteReceived() {
     return this.constant.invoiceStatusCreditNoteReceived;
-  }
-
-  getPaymentWayInbound() {
-    return this.constant.paymentWayInbound;
-  }
-
-  getPaymentWayOutbound() {
-    return this.constant.paymentWayOutboud;
   }
 
   getInvoiceStatusPayed() {
@@ -694,5 +702,13 @@ export class ConstantService extends AppRestService<Constant>{
 
   getCustomerOrderOriginOsiris() {
     return this.constant.customerOrderOriginOsiris;
+  }
+
+  getCentralPayProvider() {
+    return this.constant.providerCentralPay;
+  }
+
+  getTiersFollowupTypeInvoiceReminder() {
+    return this.constant.tiersFollowupTypeInvoiceReminder;
   }
 }

@@ -26,4 +26,9 @@ public class AuditServiceImpl implements AuditService {
         return auditRepository.save(audit);
     }
 
+    @Override
+    public void cleanAudit() {
+        auditRepository.cleanAudit();
+    }
+
 }

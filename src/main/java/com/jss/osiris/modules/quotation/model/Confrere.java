@@ -25,7 +25,7 @@ import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.Document;
-import com.jss.osiris.modules.miscellaneous.model.IVat;
+import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
@@ -40,7 +40,7 @@ import com.jss.osiris.modules.tiers.model.TiersFollowup;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Confrere implements ITiers, IVat {
+public class Confrere implements ITiers, IGenericTiers {
 
 	@Id
 	@SequenceGenerator(name = "confrere_sequence", sequenceName = "confrere_sequence", allocationSize = 1)
@@ -180,7 +180,6 @@ public class Confrere implements ITiers, IVat {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_default_customer_order_employee")
-	@IndexedField
 	private Employee defaultCustomerOrderEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)

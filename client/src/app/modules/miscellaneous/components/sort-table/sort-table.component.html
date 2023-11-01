@@ -13,7 +13,12 @@
             <mat-icon color="accent" [matTooltip]="column.actionTooltip" color="accent"
               class="pointer column-content-icon" (click)="openColumnLink($event, column, element)"
               (auxclick)="openColumnLink($event, column, element)" *ngIf=" column.actionLinkFunction && getColumnLink(column,
-              element)">
+              element)  && getColumnValue(column, element) ">
+              {{column.actionIcon}}
+            </mat-icon>
+            <mat-icon color="accent" [matTooltip]="column.actionTooltip" color="accent"
+              class="pointer column-content-icon" (click)="columnActionTrigger( column, element)"
+              *ngIf=" column.actionFunction && getColumnValue(column, element) ">
               {{column.actionIcon}}
             </mat-icon>
           </span>
@@ -48,7 +53,7 @@
             {{action.actionIcon}}
           </mat-icon>
         </ng-container>
-              </td>
+      </td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="getDisplayedColumns()"></tr>
     <tr mat-row *matRowDef="let row; columns: getDisplayedColumns();" (click)="rowClicked(row)" [ngClass]="{'pointer':onRowClick && onRowClick.observers && onRowClick.observers.length>0,
@@ -77,4 +82,8 @@
       {{getColumnLabel(column)}}
     </button>
   </mat-menu>
+  <div *ngIf="values && displayTotalLines" class="column-icon-number"
+    [matTooltip]="values.length+' ligne'+(values.length>1?'s':'')">
+    <chips-status [value]="values.length+''"></chips-status>
+  </div>
 </div>

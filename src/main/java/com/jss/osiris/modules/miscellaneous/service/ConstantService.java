@@ -5,7 +5,6 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
-import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -19,6 +18,7 @@ import com.jss.osiris.modules.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.ActType;
@@ -34,8 +34,10 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePer
 import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
+import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
 public interface ConstantService {
@@ -191,6 +193,8 @@ public interface ConstantService {
 
     public BillingType getBillingTypeEmergency() throws OsirisException;
 
+    public BillingType getBillingTypeRneUpdate() throws OsirisException;
+
     public BillingType getBillingtypeVacationUpdateBeneficialOwners() throws OsirisException;
 
     public BillingType getBillingtypeFormalityAdditionalDeclaration() throws OsirisException;
@@ -281,6 +285,10 @@ public interface ConstantService {
 
     public CompetentAuthorityType getCompetentAuthorityTypeChambreMetier() throws OsirisException;
 
+    public CompetentAuthorityType getCompetentAuthorityTypeChambreAgriculture() throws OsirisException;
+
+    public CompetentAuthorityType getCompetentAuthorityTypeUrssaf() throws OsirisException;
+
     public CompetentAuthorityType getCompetentAuthorityTypeDireccte() throws OsirisException;
 
     public CompetentAuthorityType getCompetentAuthorityTypePrefecture() throws OsirisException;
@@ -296,10 +304,6 @@ public interface ConstantService {
     public InvoiceStatus getInvoiceStatusCreditNoteEmited() throws OsirisException;
 
     public InvoiceStatus getInvoiceStatusCreditNoteReceived() throws OsirisException;
-
-    public PaymentWay getPaymentWayInbound() throws OsirisException;
-
-    public PaymentWay getPaymentWayOutboud() throws OsirisException;
 
     public Vat getVatTwenty() throws OsirisException;
 
@@ -376,4 +380,10 @@ public interface ConstantService {
     public CustomerOrderOrigin getCustomerOrderOriginWebSite() throws OsirisException;
 
     public CustomerOrderOrigin getCustomerOrderOriginOsiris() throws OsirisException;
+
+    public PaymentDeadlineType getPaymentDeadLineType30() throws OsirisException;
+
+    public Provider getProviderCentralPay() throws OsirisException;
+
+    public TiersFollowupType getTiersFollowupTypeInvoiceReminder() throws OsirisException;
 }

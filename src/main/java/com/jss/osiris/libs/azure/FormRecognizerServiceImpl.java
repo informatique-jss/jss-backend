@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -85,6 +85,7 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
         final AnalyzedDocument analyzedDocument = analyzeResult.getDocuments().get(0);
 
         AzureInvoice azureInvoice = new AzureInvoice();
+        azureInvoice.setIsDisabled(false);
         azureInvoice.setGlobalDocumentConfidence(analyzeResult.getDocuments().get(0).getConfidence());
         azureInvoice.setModelUsed(analyzeResult.getDocuments().get(0).getDocType());
         azureInvoice.setToCheck(true);
@@ -124,17 +125,23 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
                 if (documentField.getValue() != null) {
                     invoiceDate = (LocalDate) documentField.getValue();
                 } else if (documentField.getContent() != null) {
+                    String content = (String) documentField.getContent();
+                    content = content.replaceAll(".", "").replaceAll(",", "").trim();
                     try {
-                        invoiceDate = LocalDate.parse((String) documentField.getContent(),
+                        invoiceDate = LocalDate.parse(content,
                                 DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                     } catch (DateTimeParseException e) {
                         try {
-                            invoiceDate = LocalDate.parse((String) documentField.getContent(),
+                            invoiceDate = LocalDate.parse(content,
                                     DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                         } catch (DateTimeParseException e2) {
                             try {
-                                invoiceDate = LocalDate.parse((String) documentField.getContent(),
-                                        DateTimeFormatter.ofPattern("d MMMM u", Locale.FRENCH));
+                                DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder();
+                                builder.parseCaseInsensitive();
+                                builder.appendPattern("d MMMM yyyy");
+                                DateTimeFormatter dateFormat = builder.toFormatter();
+
+                                invoiceDate = LocalDate.parse(content, dateFormat);
                             } catch (DateTimeParseException e3) {
                             }
                         }
@@ -150,14 +157,14 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
             } else if (key.equals("InvoiceTotal")) {
                 Float invoiceTotal = 0f;
                 if (documentField.getValue() != null) {
-                    invoiceTotal = ((Double) documentField.getValue()).floatValue() / 100f;
+                    invoiceTotal = ((Double) documentField.getValue()).floatValue();
                 }
                 azureInvoice.setInvoiceTotal(invoiceTotal);
                 azureInvoice.setInvoiceTotalConfidence(invoiceTotal != null ? documentField.getConfidence() : 0f);
             } else if (key.equals("InvoicePreTaxTotal")) {
                 Float invoicePreTaxTotal = 0f;
                 if (documentField.getValue() != null) {
-                    invoicePreTaxTotal = ((Double) documentField.getValue()).floatValue() / 100f;
+                    invoicePreTaxTotal = ((Double) documentField.getValue()).floatValue();
                 }
                 azureInvoice.setInvoicePreTaxTotal(invoicePreTaxTotal);
                 azureInvoice.setInvoicePreTaxTotalConfidence(
@@ -165,14 +172,14 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
             } else if (key.equals("InvoiceTaxTotal")) {
                 Float invoiceTaxTotal = 0f;
                 if (documentField.getValue() != null) {
-                    invoiceTaxTotal = ((Double) documentField.getValue()).floatValue() / 100f;
+                    invoiceTaxTotal = ((Double) documentField.getValue()).floatValue();
                 }
                 azureInvoice.setInvoiceTaxTotal(invoiceTaxTotal);
                 azureInvoice.setInvoiceTaxTotalConfidence(invoiceTaxTotal != null ? documentField.getConfidence() : 0f);
             } else if (key.equals("InvoiceNonTaxableTotal")) {
                 Float invoiceNonTaxableTotal = 0f;
                 if (documentField.getValue() != null) {
-                    invoiceNonTaxableTotal = ((Double) documentField.getValue()).floatValue() / 100f;
+                    invoiceNonTaxableTotal = ((Double) documentField.getValue()).floatValue();
                 }
                 azureInvoice.setInvoiceNonTaxableTotal(invoiceNonTaxableTotal);
                 azureInvoice.setInvoiceNonTaxableTotalConfidence(
@@ -225,6 +232,7 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
             nbrConfident++;
 
         if (nbrConfident == 3) {
+            resetConfidence = true;
             if (azureInvoice.getInvoiceTotalConfidence() < confidenceLimit)
                 azureInvoice.setInvoiceTotal(azureInvoice.getInvoiceTaxTotal()
                         + azureInvoice.getInvoiceNonTaxableTotal() + azureInvoice.getInvoicePreTaxTotal());
@@ -239,7 +247,9 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
                         .setInvoiceNonTaxableTotal(azureInvoice.getInvoiceTotal() - azureInvoice.getInvoiceTaxTotal()
                                 - azureInvoice.getInvoicePreTaxTotal());
 
-            resetConfidence = true;
+            if (azureInvoice.getInvoiceTotal() < 0 || azureInvoice.getInvoicePreTaxTotal() < 0 ||
+                    azureInvoice.getInvoiceTaxTotal() < 0 || azureInvoice.getInvoiceNonTaxableTotal() < 0)
+                resetConfidence = false;
         }
 
         if (resetConfidence) {
@@ -315,7 +325,7 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
                         receiptInvoice.setAzureReceipt(azureReceipt);
 
                         if (keyMap.equals("InvoiceTotal") && fieldMap.get(keyMap).getValue() != null) {
-                            currentInvoiceTotal = ((Double) fieldMap.get(keyMap).getValue()).floatValue() / 100f;
+                            currentInvoiceTotal = ((Double) fieldMap.get(keyMap).getValue()).floatValue();
                             receiptInvoice.setInvoiceTotal(currentInvoiceTotal);
                         } else if (keyMap.equals("InvoiceId") && fieldMap.get(keyMap).getValue() != null) {
                             currentInvoiceId = ((String) fieldMap.get(keyMap).getValue()).toUpperCase().trim()

@@ -9,8 +9,11 @@ export interface AccountingRecordSearch {
   startDate: Date | undefined;
   endDate: Date | undefined;
   hideLettered: boolean;
-  responsableId: number;
   tiersId: number;
   confrereId: number;
-
+  idPayment: number;
+  idCustomerOrder: number;
+  idInvoice: number;
+  idRefund: number;
+  idBankTransfert: number;
 }

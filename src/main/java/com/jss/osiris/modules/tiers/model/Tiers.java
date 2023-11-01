@@ -29,7 +29,7 @@ import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
-import com.jss.osiris.modules.miscellaneous.model.IVat;
+import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
@@ -39,7 +39,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Tiers implements ITiers, IAttachment, IVat {
+public class Tiers implements ITiers, IAttachment, IGenericTiers {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -129,7 +129,6 @@ public class Tiers implements ITiers, IAttachment, IVat {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_default_customer_order_employee")
-	@IndexedField
 	private Employee defaultCustomerOrderEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -212,6 +211,8 @@ public class Tiers implements ITiers, IAttachment, IVat {
 	@IndexedField
 	private Integer idAs400;
 	private Integer newIdAs400;
+
+	private Boolean isReceipSent;
 
 	public List<Competitor> getCompetitors() {
 		return competitors;
@@ -579,6 +580,21 @@ public class Tiers implements ITiers, IAttachment, IVat {
 
 	public void setDefaultCustomerOrderEmployee(Employee defaultCustomerOrderEmployee) {
 		this.defaultCustomerOrderEmployee = defaultCustomerOrderEmployee;
+	}
+
+	public Boolean getIsReceipSent() {
+		return isReceipSent;
+	}
+
+	public void setIsReceipSent(Boolean isReceipSent) {
+		this.isReceipSent = isReceipSent;
+	}
+
+	@Override
+	public String getLabel() {
+		if (getDenomination() != null)
+			return getDenomination();
+		return getFirstname() + " " + getLastname();
 	}
 
 }

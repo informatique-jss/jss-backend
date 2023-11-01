@@ -23,9 +23,10 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " ca.label as waitedCompetentAuthorityLabel,   " +
                         " customer_order_status.label as quotationStatusLabel,   " +
                         " provision_ft.label as provisionFamilyTypeLabel,   " +
-                        " coalesce(initcap(to_char(a.publication_date,'tmmonth')),'N/A') as publicationDateMonth,   " +
+                        " coalesce(initcap(to_char(a.publication_date,'MM - tmmonth')),'N/A') as publicationDateMonth,   "
+                        +
                         " coalesce(initcap(to_char(a.publication_date,'tmw')),'N/A') as publicationDateWeek,   " +
-                        "   coalesce(initcap(to_char(customer_order.created_date,'tmmonth')),'N/A') as quotationCreatedDateMonth,  "
+                        "   coalesce(initcap(to_char(customer_order.created_date,'MM - tmmonth')),'N/A') as quotationCreatedDateMonth,  "
                         +
                         " coalesce(initcap(to_char(customer_order.created_date,'YYYY-MM-DD')),'N/A') as quotationCreatedDateDay,  "
                         +

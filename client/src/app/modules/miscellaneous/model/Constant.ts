@@ -1,22 +1,23 @@
+import { Provider } from '@angular/core';
 import { AccountingAccount } from '../../accounting/model/AccountingAccount';
 import { AccountingJournal } from "../../accounting/model/AccountingJournal";
 import { PrincipalAccountingAccount } from '../../accounting/model/PrincipalAccountingAccount';
 import { InvoiceStatus } from "../../invoicing/model/InvoiceStatus";
-import { PaymentWay } from "../../invoicing/model/PaymentWay";
 import { Employee } from '../../profile/model/Employee';
 import { ActType } from "../../quotation/model/ActType";
 import { AssignationType } from "../../quotation/model/AssignationType";
 import { BodaccPublicationType } from "../../quotation/model/BodaccPublicationType";
 import { Confrere } from "../../quotation/model/Confrere";
 import { DomiciliationContractType } from "../../quotation/model/DomiciliationContractType";
-import { TypeFormalite } from '../../quotation/model/guichet-unique/referentials/TypeFormalite';
-import { TypePersonne } from '../../quotation/model/guichet-unique/referentials/TypePersonne';
 import { JournalType } from "../../quotation/model/JournalType";
 import { MailRedirectionType } from "../../quotation/model/MailRedirectionType";
 import { TransfertFundsType } from "../../quotation/model/TransfertFundsType";
+import { TypeFormalite } from '../../quotation/model/guichet-unique/referentials/TypeFormalite';
+import { TypePersonne } from '../../quotation/model/guichet-unique/referentials/TypePersonne';
 import { BillingClosureRecipientType } from '../../tiers/model/BillingClosureRecipientType';
 import { BillingClosureType } from '../../tiers/model/BillingClosureType';
 import { BillingLabelType } from "../../tiers/model/BillingLabelType";
+import { PaymentDeadlineType } from '../../tiers/model/PaymentDeadlineType';
 import { RefundType } from "../../tiers/model/RefundType";
 import { SubscriptionPeriodType } from "../../tiers/model/SubscriptionPeriodType";
 import { TiersType } from "../../tiers/model/TiersType";
@@ -32,6 +33,7 @@ import { DocumentType } from "./DocumentType";
 import { Language } from './Language';
 import { LegalForm } from "./LegalForm";
 import { PaymentType } from "./PaymentType";
+import { TiersFollowupType } from './TiersFollowupType';
 import { Vat } from "./Vat";
 
 export interface Constant {
@@ -108,6 +110,7 @@ export interface Constant {
   billingTypeEmolumentsDeGreffeDebour: BillingType;
   billingTypeDocumentScanning: BillingType;
   billingTypeEmergency: BillingType;
+  billingTypeRneUpdate: BillingType;
   billingTypeCentralPayFees: BillingType;
   billingTypeVacationUpdateBeneficialOwners: BillingType;
   billingTypeFormalityAdditionalDeclaration: BillingType;
@@ -123,6 +126,7 @@ export interface Constant {
   paymentTypeAccount: PaymentType;
   refundTypeVirement: RefundType;
   subscriptionPeriodType12M: SubscriptionPeriodType;
+  paymentDeadLineType30: PaymentDeadlineType;
   legalFormUnregistered: LegalForm;
   journalTypeSpel: JournalType;
   journalTypePaper: JournalType;
@@ -156,14 +160,14 @@ export interface Constant {
   competentAuthorityTypeChambreMetier: CompetentAuthorityType;
   competentAuthorityTypeDireccte: CompetentAuthorityType;
   competentAuthorityTypePrefecture: CompetentAuthorityType;
+  competentAuthorityTypeChambreAgriculture: CompetentAuthorityType;
+  competentAuthorityTypeUrssaf: CompetentAuthorityType;
   invoiceStatusSend: InvoiceStatus;
   invoiceStatusReceived: InvoiceStatus;
   invoiceStatusPayed: InvoiceStatus;
   invoiceStatusCancelled: InvoiceStatus;
   invoiceStatusCreditNoteEmited: InvoiceStatus;
   invoiceStatusCreditNoteReceived: InvoiceStatus;
-  paymentWayInbound: PaymentWay;
-  paymentWayOutboud: PaymentWay;
   vatTwenty: Vat;
   vatZero: Vat;
   vatTwo: Vat;
@@ -202,4 +206,6 @@ export interface Constant {
   accountingAccountCaisse: AccountingAccount;
   customerOrderOriginWebSite: CustomerOrderOrigin;
   customerOrderOriginOsiris: CustomerOrderOrigin;
+  providerCentralPay: Provider;
+  tiersFollowupTypeInvoiceReminder: TiersFollowupType;
 }

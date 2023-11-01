@@ -95,10 +95,6 @@
                       [isDisabled]="!editMode">
                     </autocomplete-employee>
                   </td>
-                  <td>
-                    <generic-datepicker [(model)]="selectedResponsable.firstBilling" label="Première facturation"
-                      [form]="principalForm" propertyName="firstBilling" [isDisabled]="true"></generic-datepicker>
-                  </td>
                 </tr>
               </table>
 
@@ -240,9 +236,6 @@
         <mat-tab label="Factures" *ngIf="tiers.id!=null && tiers.id!=undefined">
           <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
             [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
-        </mat-tab>
-        <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id">
-          <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
         </mat-tab>
         <mat-tab label="Suivi" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
           <tiers-followup [tiers]="selectedResponsable!" [editMode]="editMode"></tiers-followup>

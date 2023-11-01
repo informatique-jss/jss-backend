@@ -23,7 +23,7 @@ public class Audit implements Serializable {
 	@Id
 	@SequenceGenerator(name = "audit_sequence", sequenceName = "audit_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "audit_sequence")
-	private Integer id;
+	private Long id;
 
 	@Column(nullable = false)
 	private String entity;
@@ -45,11 +45,11 @@ public class Audit implements Serializable {
 
 	private String username;
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

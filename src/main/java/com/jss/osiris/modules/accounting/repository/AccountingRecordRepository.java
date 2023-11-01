@@ -17,10 +17,10 @@ import com.jss.osiris.modules.accounting.model.AccountingBalanceBilan;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
-import com.jss.osiris.modules.invoicing.model.Appoint;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Refund;
+import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.Debour;
 
 public interface AccountingRecordRepository extends QueryCacheCrudRepository<AccountingRecord, Integer> {
 
@@ -70,9 +70,8 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " r2.operation_id as contrePasseOperationId, " +
                         " (select STRING_AGG( case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')',', ' order by 1) as affaireLabel from asso_affaire_order asso join affaire af on af.id = asso.id_affaire left join city on city.id = af.id_city where  asso.id_customer_order = i.customer_order_id or asso.id_customer_order = r.id_customer_order)  as affaireLabel,"
                         +
-                        " COALESCE(re1.firstname || ' ' || re1.lastname ,re2.firstname || ' ' || re2.lastname ) as responsable, "
+                        " COALESCE(re1.firstname || ' ' || re1.lastname ,re2.firstname || ' ' || re2.lastname ) as responsable "
                         +
-                        " r.id_deposit as depositId " +
                         " from accounting_record r " +
                         " join accounting_journal j on j.id = r.id_accounting_journal " +
                         " join accounting_account a on a.id = r.id_accounting_account " +
@@ -87,8 +86,6 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " where ( COALESCE(:accountingAccountIds) =0 or r.id_accounting_account in (:accountingAccountIds)) "
                         +
                         " and (:journalId =0 or r.id_accounting_journal = :journalId) " +
-                        " and (:responsableId =0 or COALESCE(re1.id ,re2.id )  = :responsableId and t.id is not null) "
-                        +
                         " and (:confrereId =0 or cf.id is not null and cf.id =:confrereId ) "
                         +
                         " and (:tiersId =0 or t.id is not null and t.id = :tiersId) " +
@@ -96,18 +93,29 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " and coalesce(r.manual_accounting_document_date,r.operation_date_time)>=:startDate and coalesce(r.manual_accounting_document_date,r.operation_date_time)<=:endDate  "
                         +
                         " and (:canViewRestricted=true or a.is_view_restricted=false)  " +
-                        " and (:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId) ")
+                        " and (:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId) " +
+                        " " +
+                        " and (:idPayment = 0 or (r.id_payment  = :idPayment or r.id_customer_order = :idCustomerOrder or r.id_invoice = :idInvoice "
+                        +
+                        " or r.id_refund = :idRefund or r.id_bank_transfert = :idBankTransfert ))" +
+                        " order by  r.operation_date_time desc " +
+                        " " +
+                        " ")
         List<AccountingRecordSearchResult> searchAccountingRecords(
                         @Param("accountingAccountIds") List<Integer> accountingAccountIds,
                         @Param("accountingClassId") Integer accountingClassId,
                         @Param("journalId") Integer journalId,
-                        @Param("responsableId") Integer responsableId,
                         @Param("tiersId") Integer tiersId,
                         @Param("confrereId") Integer confrereId,
                         @Param("hideLettered") Boolean hideLettered,
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate,
-                        @Param("canViewRestricted") boolean canViewRestricted);
+                        @Param("canViewRestricted") boolean canViewRestricted,
+                        @Param("idPayment") Integer idPayment,
+                        @Param("idCustomerOrder") Integer idCustomerOrder,
+                        @Param("idInvoice") Integer idInvoice,
+                        @Param("idRefund") Integer idRefund,
+                        @Param("idBankTransfert") Integer idBankTransfert);
 
         @Query(nativeQuery = true, value = "" +
                         "select  sum(case "
@@ -204,9 +212,11 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
 
         List<AccountingRecord> findByOperationId(Integer operationId);
 
-        List<AccountingRecord> findByDebour(Debour debour);
+        List<AccountingRecord> findByAccountingAccountAndRefund(AccountingAccount accountingAccount, Refund refund);
 
-        List<AccountingRecord> findByAppoint(Appoint appoint);
+        List<AccountingRecord> findByAccountingAccountAndBankTransfert(AccountingAccount accountingAccount,
+                        BankTransfert bankTransfert);
+
 }
 
 ;

@@ -1,6 +1,5 @@
 import { AccountingRecord } from "../../accounting/model/AccountingRecord";
-import { Appoint } from "../../invoicing/model/Appoint";
-import { Deposit } from "../../invoicing/model/Deposit";
+import { AzureInvoice } from "../../invoicing/model/AzureInvoice";
 import { InvoiceStatus } from "../../invoicing/model/InvoiceStatus";
 import { Payment } from "../../invoicing/model/Payment";
 import { City } from "../../miscellaneous/model/City";
@@ -16,6 +15,7 @@ import { Tiers } from "../../tiers/model/Tiers";
 import { Confrere } from "./Confrere";
 import { CustomerOrder } from "./CustomerOrder";
 import { InvoiceItem } from "./InvoiceItem";
+import { Provision } from "./Provision";
 
 export interface Invoice extends IAttachment {
   id: number;
@@ -38,7 +38,6 @@ export interface Invoice extends IAttachment {
   customerOrder: CustomerOrder;
   totalPrice: number;
   payments: Payment[];
-  deposits: Deposit[];
   invoiceStatus: InvoiceStatus;
   accountingRecords: AccountingRecord[];
   tiers: Tiers | undefined;
@@ -55,7 +54,9 @@ export interface Invoice extends IAttachment {
   tiersFollowups: TiersFollowup[];
   customerOrderForInboundInvoice: CustomerOrder;
   isCreditNote: boolean;
+  isProviderCreditNote: boolean;
   creditNote: Invoice;
   reverseCreditNote: Invoice;
-  appoints: Appoint[];
+  azureInvoice: AzureInvoice;
+  provision: Provision;
 }

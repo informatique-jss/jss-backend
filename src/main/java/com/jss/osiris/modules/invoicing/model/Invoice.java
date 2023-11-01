@@ -36,6 +36,8 @@ import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -43,15 +45,19 @@ import com.jss.osiris.modules.tiers.model.TiersFollowup;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_invoice_status", columnList = "id_invoice_status"),
-		@Index(name = "idx_invoice_manual_document_number", columnList = "id_competent_authority,manualAccountingDocumentNumber"), })
+		@Index(name = "idx_invoice_manual_document_number", columnList = "id_competent_authority,manualAccountingDocumentNumber"),
+		@Index(name = "idx_invoice_tiers", columnList = "id_tiers"),
+		@Index(name = "idx_invoice_provision", columnList = "id_provision"),
+		@Index(name = "idx_invoice_customer_order_id ", columnList = "customer_order_id"),
+		@Index(name = "idx_invoice_customer_order_for_inbound_invoice", columnList = "id_customer_order_for_inbound_invoice"),
+		@Index(name = "idx_invoice_azure_invoice_id ", columnList = "id_azure_invoice"),
+		@Index(name = "idx_invoice_bank_transfert ", columnList = "id_bank_transfert"),
+		@Index(name = "idx_invoice_direct_debit_transfert ", columnList = "id_direct_debit_transfert"),
+		@Index(name = "idx_invoice_responsable", columnList = "id_responsable"), })
 public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@Id
-	// @SequenceGenerator(name = "invoice_sequence", sequenceName =
-	// "invoice_sequence", allocationSize = 1)
 	@IndexedField
-	// @GeneratedValue(strategy = GenerationType.SEQUENCE, generator =
-	// "invoice_sequence")
 	@GenericGenerator(name = "invoice_id", strategy = "com.jss.osiris.modules.invoicing.model.InvoiceKeyGenerator")
 	@GeneratedValue(generator = "invoice_id")
 	private Integer id;
@@ -65,7 +71,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	private LocalDate dueDate;
 
 	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "invoice", cascade = CascadeType.ALL)
-	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "invoice", "originProviderInvoice" }, allowSetters = true)
 	private List<InvoiceItem> invoiceItems;
 
 	@OneToOne(fetch = FetchType.LAZY)
@@ -73,29 +79,29 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	private CustomerOrder customerOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_provision")
+	@JsonIgnoreProperties(value = { "assoAffaireOrder", "payments", "providerInvoices" }, allowSetters = true)
+	private Provision provision;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
-	@IndexedField
 	private Responsable responsable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
-	@IndexedField
 	private Confrere confrere;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
-	@IndexedField
 	private Tiers tiers;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_competent_authority")
-	@IndexedField
 	@JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
 	private CompetentAuthority competentAuthority;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provider")
-	@IndexedField
 	private Provider provider;
 
 	@Column(length = 300, name = "billing_label")
@@ -137,16 +143,13 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	private Float totalPrice;
 
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
-	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder", "originPayment",
+			"childrenPayments" }, allowSetters = true)
 	private List<Payment> payments;
 
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
-	@JsonIgnoreProperties(value = { "invoice", "accountingRecords" }, allowSetters = true)
-	private List<Appoint> appoints;
-
-	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
-	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder" }, allowSetters = true)
-	private List<Deposit> deposits;
+	@JsonIgnoreProperties(value = { "invoice", "customerOrder" }, allowSetters = true)
+	private List<Refund> refunds;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice_status")
@@ -178,15 +181,16 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	private List<TiersFollowup> tiersFollowups;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonIgnoreProperties(value = { "invoices", "providerInvoices" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "invoices", "providerInvoices", "payments" }, allowSetters = true)
 	@JoinColumn(name = "id_customer_order_for_inbound_invoice")
 	private CustomerOrder customerOrderForInboundInvoice;
 
 	private Boolean isCreditNote;
+	private Boolean isProviderCreditNote;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_credit_note")
-	@JsonIgnoreProperties(value = { "reverseCreditNote" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "reverseCreditNote", "accountingRecords" }, allowSetters = true)
 	private Invoice creditNote;
 
 	@OneToOne(mappedBy = "creditNote", fetch = FetchType.LAZY)
@@ -195,12 +199,17 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_bank_transfert")
-	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "customerOrder", "invoices" }, allowSetters = true)
 	private BankTransfert bankTransfert;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_direct_debit_transfert")
+	private DirectDebitTransfert directDebitTransfert;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_azure_invoice")
 	@JsonIgnoreProperties(value = { "invoices" }, allowSetters = true)
+	@IndexedField
 	private AzureInvoice azureInvoice;
 
 	public Integer getId() {
@@ -379,14 +388,6 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 		this.accountingRecords = accountingRecords;
 	}
 
-	public List<Deposit> getDeposits() {
-		return deposits;
-	}
-
-	public void setDeposits(List<Deposit> deposits) {
-		this.deposits = deposits;
-	}
-
 	public LocalDateTime getFirstReminderDateTime() {
 		return firstReminderDateTime;
 	}
@@ -531,20 +532,44 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 		this.billingLabelIntercommunityVat = billingLabelIntercommunityVat;
 	}
 
-	public List<Appoint> getAppoints() {
-		return appoints;
-	}
-
-	public void setAppoints(List<Appoint> appoints) {
-		this.appoints = appoints;
-	}
-
 	public AzureInvoice getAzureInvoice() {
 		return azureInvoice;
 	}
 
 	public void setAzureInvoice(AzureInvoice azureInvoice) {
 		this.azureInvoice = azureInvoice;
+	}
+
+	public DirectDebitTransfert getDirectDebitTransfert() {
+		return directDebitTransfert;
+	}
+
+	public void setDirectDebitTransfert(DirectDebitTransfert directDebitTransfert) {
+		this.directDebitTransfert = directDebitTransfert;
+	}
+
+	public Boolean getIsProviderCreditNote() {
+		return isProviderCreditNote;
+	}
+
+	public void setIsProviderCreditNote(Boolean isProviderCreditNote) {
+		this.isProviderCreditNote = isProviderCreditNote;
+	}
+
+	public List<Refund> getRefunds() {
+		return refunds;
+	}
+
+	public void setRefunds(List<Refund> refunds) {
+		this.refunds = refunds;
+	}
+
+	public Provision getProvision() {
+		return provision;
+	}
+
+	public void setProvision(Provision provision) {
+		this.provision = provision;
 	}
 
 }

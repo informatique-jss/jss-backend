@@ -71,6 +71,14 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
+  canAddNewAzureInvoice() {
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+  }
+
+  canCancelInvoice() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
   canAddNewAccountingRecord() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
@@ -101,6 +109,14 @@ export class HabilitationsService {
 
   canCancelBankTransfert() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+  }
+
+  canRefundPayment() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
+  canOfferCustomerOrder() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
 
   canImportInfogreffeInvoice() {

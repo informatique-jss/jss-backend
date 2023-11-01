@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable, Subscription } from 'rxjs';
@@ -16,6 +16,7 @@ import { BankTransfertSearchResult } from 'src/app/modules/invoicing/model/BankT
 
 @Component({
   selector: 'sort-table',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './sort-table.component.html',
   styleUrls: ['./sort-table.component.css']
 })
@@ -28,6 +29,7 @@ export class SortTableComponent implements OnInit {
   @Input() tableName: string = "table";
   @Input() idRowSelected: number | undefined;
   @Input() filterPredicate: any;
+  @Input() displayTotalLines: boolean = false;
   /**
  * Fired when row is clicked is modified by user
  */
@@ -87,6 +89,13 @@ export class SortTableComponent implements OnInit {
           if (this.values)
             this.dataSource.data = this.values;
         }
+    }
+  }
+
+  columnActionTrigger(column: SortTableColumn, element: any) {
+    // find in internal
+    if (column && column.actionFunction) {
+      column.actionFunction(element);
     }
   }
 

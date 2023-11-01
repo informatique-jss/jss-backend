@@ -1,8 +1,8 @@
 <div class="div-wrapper ">
-  <mat-chip-listbox style="display: inline;">
-    <mat-chip-option selected class="ok-status" *ngIf="statusType==1">{{value}}</mat-chip-option>
-    <mat-chip-option selected class="warn-status" *ngIf="statusType==2">{{value}}</mat-chip-option>
-    <mat-chip-option selected class="ko-status" *ngIf="statusType==3">{{value}}</mat-chip-option>
-    <mat-chip-option selected class="standard-status" *ngIf="statusType==4">{{value}}</mat-chip-option>
-  </mat-chip-listbox>
+  <mat-chip-set style="display: inline;">
+    <mat-chip selected class="ok-status" *ngIf="statusType==1">{{value}}</mat-chip>
+    <mat-chip selected class="warn-status" *ngIf="statusType==2">{{value}}</mat-chip>
+    <mat-chip selected class="ko-status" *ngIf="statusType==3">{{value}}</mat-chip>
+    <mat-chip selected class="standard-status" *ngIf="statusType==4">{{value}}</mat-chip>
+  </mat-chip-set>
 </div>

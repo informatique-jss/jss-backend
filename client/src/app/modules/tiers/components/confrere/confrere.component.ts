@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
@@ -51,11 +51,17 @@ export class ConfrereComponent implements OnInit {
 
   saveObservableSubscription: Subscription = new Subscription;
 
+  @Input() idConfrere: number | undefined;
+
   journalTypePaper = this.constantService.getJournalTypePaper();
 
   ngOnInit(): void {
-    this.appService.changeHeaderTitle("Confrères");
+    if (!this.idConfrere)
+      this.appService.changeHeaderTitle("Confrères");
     let idConfrere = this.activatedRoute.snapshot.params.id;
+    if (this.idConfrere)
+      idConfrere = this.idConfrere;
+
     if (idConfrere && idConfrere != "null") {
       this.selectedConfrereId = parseInt(idConfrere);
       this.confrereService.getConfrereById(this.selectedConfrereId).subscribe(response => {
@@ -97,7 +103,8 @@ export class ConfrereComponent implements OnInit {
   selectConfrere(element: Confrere) {
     this.selectedConfrere = element;
     this.selectedConfrereId = element.id;
-    this.appService.changeHeaderTitle(element.label);
+    if (!this.idConfrere)
+      this.appService.changeHeaderTitle(element.label);
 
     this.orderingSearch.customerOrders = [];
     this.quotationSearch.customerOrders = [];
@@ -168,6 +175,8 @@ export class ConfrereComponent implements OnInit {
   saveConfrere() {
     if (this.getFormStatus() && this.selectedConfrere) {
       this.editMode = false;
+      if (!this.selectedConfrere.isSepaMandateReceived)
+        this.selectedConfrere.isSepaMandateReceived = false;
       this.confrereService.addOrUpdateConfrere(this.selectedConfrere).subscribe(response => {
         this.selectedConfrere = response;
       });

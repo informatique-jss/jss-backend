@@ -21,7 +21,7 @@ export class ProvisionListComponent implements OnInit {
   @Input() affaireSearch: AffaireSearch | undefined;
   affaires: AssoAffaireOrderSearchResult[] | undefined;
   availableColumns: SortTableColumn[] = [];
-  columnToDisplayOnDashboard: string[] = ["affaireLabel", "provisionType", "status"];
+  columnToDisplayOnDashboard: string[] = ["customerOrderId", "provisionCreatedDatetime", "affaireLabel", "provisionType", "status"];
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
 
@@ -145,6 +145,7 @@ export class ProvisionListComponent implements OnInit {
       || this.affaireSearch.responsible
       || this.affaireSearch.status
       || this.affaireSearch.customerOrders
+      || this.affaireSearch.affaire
     )) {
       if (!this.isForDashboard)
         this.userPreferenceService.setUserSearchBookmark(this.affaireSearch, "prestations");

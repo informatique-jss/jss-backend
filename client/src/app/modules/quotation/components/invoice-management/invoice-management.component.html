@@ -14,16 +14,30 @@
   </ng-container>
   <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) &&  customerOrderProviderInvoices">
     <h3 class="invoice-title" *ngFor="let invoice of customerOrderProviderInvoices">
-      Facture fournisseur n°{{invoice.invoiceId}}, {{invoice.providerLabel}}, saisie le
-      {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}, pour un
-      total
-      de {{invoice.totalPrice}} €
-      <chips-status class="invoice-chip" [status]="invoice.invoiceStatusCode" [value]="invoice.invoiceStatus">
-      </chips-status>
-      <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)"
-        (auxclick)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)" matTooltip="Voir la facture" color="accent"
-        class="pointer invoice-chip">visibility
-      </mat-icon>
+      <ng-container *ngIf="invoice.isInvoiceFromProvider">
+        Facture fournisseur n°{{invoice.invoiceId}}, {{invoice.providerLabel}}, saisie le
+        {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}, pour un
+        total
+        de {{invoice.totalPrice}} €
+        <chips-status class="invoice-chip" [status]="invoice.invoiceStatusCode" [value]="invoice.invoiceStatus">
+        </chips-status>
+        <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)"
+          (auxclick)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)" matTooltip="Voir la facture"
+          color="accent" class="pointer invoice-chip">visibility
+        </mat-icon>
+      </ng-container>
+      <ng-container *ngIf="invoice.isProviderCreditNote">
+        Avoir fournisseur n°{{invoice.invoiceId}}, {{invoice.providerLabel}}, saisi le
+        {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}, pour un
+        total
+        de {{invoice.totalPrice}} €
+        <chips-status class="invoice-chip" [status]="invoice.invoiceStatusCode" [value]="invoice.invoiceStatus">
+        </chips-status>
+        <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)"
+          (auxclick)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)" matTooltip="Voir l'avoir" color="accent"
+          class="pointer invoice-chip">visibility
+        </mat-icon>
+      </ng-container>
     </h3>
   </ng-container>
   <fieldset [disabled]="editMode==false" class="fieldset-no-border">
@@ -75,11 +89,11 @@
         </thead>
         <ng-container *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index">
           <tr class="mat-mdc-row mdc-data-table__row ">
-            <td class="mat-mdc-cell mdc-data-table__cell  affaire " colspan="2"
+            <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align " colspan="2"
               *ngIf="asso.affaire && asso.affaire.denomination">
               {{asso.affaire.denomination}}
             </td>
-            <td class="mat-mdc-cell mdc-data-table__cell  affaire " colspan="2"
+            <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align " colspan="2"
               *ngIf="asso.affaire && asso.affaire.firstname">
               {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
             </td>
@@ -92,15 +106,15 @@
             </tr>
             <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
               <tr class="mat-mdc-row mdc-data-table__row ">
-                <td class="mat-mdc-cell mdc-data-table__cell ">
-                  {{invoiceItem.label}} <mat-icon color="accent" inline="true"
-                    [matTooltip]="invoiceItem.isGifted?'Ne plus offrir cette ligne de facturation':'Offrir cette ligne de facturation'"
-                    *ngIf="editMode && !getLetteringDate(invoiceItem.invoice)" class="info-icon pointer"
-                    (click)="toggleIsGifTed(invoiceItem)">redeem</mat-icon>
-                  <mat-icon color="accent" inline="true"
-                    matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
-                    *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && !invoiceItem.invoice"
-                    class="info-icon">info</mat-icon>
+                <td class="mat-mdc-cell mdc-data-table__cell  ">
+                  <span class="invoice-item">{{invoiceItem.label}} <mat-icon color="accent" inline="true"
+                      [matTooltip]="invoiceItem.isGifted?'Ne plus offrir cette ligne de facturation':'Offrir cette ligne de facturation'"
+                      *ngIf="editMode && !getLetteringDate(invoiceItem.invoice)" class="info-icon pointer"
+                      (click)="toggleIsGifTed(invoiceItem)">redeem</mat-icon>
+                    <mat-icon color="accent" inline="true"
+                      matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
+                      *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && !invoiceItem.invoice"
+                      class="info-icon">info</mat-icon></span>
                 </td>
                 <td class="mat-mdc-cell mdc-data-table__cell  td-price "
                   *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.id || invoiceItem.invoice">
@@ -118,7 +132,7 @@
               <tr class="mat-mdc-row mdc-data-table__row "
                 *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
                 <td class="mat-mdc-cell mdc-data-table__cell ">
-                  Remise
+                  <span class="invoice-item">Remise</span>
                 </td>
                 <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
                   - {{invoiceItem.discountAmount|number}} €
@@ -178,49 +192,24 @@
         </td>
       </tr>
       <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()==undefined">
-        <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let deposit of quotation.deposits">
-          <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="deposit.originPayment.label">
-            Acompte n°{{deposit.id}} - {{deposit.label}} - montant du paiement :
-            {{deposit.originPayment.paymentAmount}}
-            € - {{deposit.originPayment.label}}
-          </td>
-          <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-            - {{deposit.depositAmount|number}} €
-          </td>
-        </tr>
-      </ng-container>
-      <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()!=undefined">
-        <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let deposit of quotation.deposits">
-          <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="deposit.originPayment.label">
-            Acompte n°{{deposit.id}} - {{deposit.label}} - montant du paiement :
-            {{deposit.originPayment.paymentAmount}}
-            € - {{deposit.originPayment.label}}
-          </td>
-          <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-            - {{deposit.depositAmount|number}} €
-          </td>
-        </tr>
-      </ng-container>
-      <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()!=undefined">
-        <tr class="mat-row" *ngFor="let deposit of quotation.deposits">
-          <td class="mat-cell">
-            Acompte n°{{deposit.id}} - {{deposit.label}}
-          </td>
-          <td class="td-price mat-cell">
-            - {{deposit.depositAmount|number}} € (montant du paiement : {{deposit.originPayment.paymentAmount}} €)
-          </td>
+        <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let deposit of quotation.payments">
+          <ng-container *ngIf="!deposit.isCancelled">
+            <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="deposit.label">
+              Acompte n°{{deposit.id}} - {{deposit.label}} (<span class="pointer"
+                (click)="movePayment(deposit)">déplacer</span>) - <mat-icon color="accent"
+                (click)="openPaymentDialog(deposit)" matTooltip="Voir le détail du paiement" color="accent"
+                class="pointer">visibility</mat-icon>
+            </td>
+            <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+              - {{deposit.paymentAmount|number}} €
+            </td>
+          </ng-container>
         </tr>
       </ng-container>
       <tr class="mat-mdc-row mdc-data-table__row ">
         <td class="mat-mdc-cell mdc-data-table__cell ">Reste à payer
         </td>
         <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{getRemainingToPay()}} €
-        </td>
-      </tr>
-      <tr
-        *ngIf="quotation && instanceOfCustomerOrderFn(quotation) && quotation.centralPayPendingPaymentAmount  && quotation.centralPayPendingPaymentAmount >0">
-        <td class="mat-mdc-cell mdc-data-table__cell ">Paiement reçu par CB en attente de réception</td>
-        <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{quotation.centralPayPendingPaymentAmount | number}} €
         </td>
       </tr>
     </table>

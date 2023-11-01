@@ -6,42 +6,44 @@
           <td *ngIf="!invoice.responsable && !invoice.confrere && !invoice.provider && !invoice.competentAuthority">
             <autocomplete-tiers-individual [(model)]="invoice.tiers" [form]="invoiceForm" propertyName="tiers"
               (onOptionSelected)="fillTiers($event)" [isMandatory]="true" label="Tiers"
-              [isDisabled]="!editMode || invoice.id!=undefined"
+              [isDisabled]="!editMode || invoice.id!=undefined || idInvoiceForCreditNote?true:false"
               [conditionnalRequired]="invoice.responsable==undefined && invoice.confrere==undefined && invoice.provider ==undefined  && invoice.competentAuthority ==undefined">
             </autocomplete-tiers-individual>
           </td>
           <td *ngIf="!invoice.tiers && !invoice.confrere && !invoice.provider  && !invoice.competentAuthority">
             <autocomplete-responsable [(model)]="invoice.responsable" [form]="invoiceForm" propertyName="responsable"
               (onOptionSelected)="fillResponsable($event)" [isMandatory]="true" label="Responsable"
-              [isDisabled]="!editMode   || invoice.id!=undefined"
+              [isDisabled]="!editMode   || invoice.id!=undefined || idInvoiceForCreditNote?true:false"
               [conditionnalRequired]="invoice.tiers==undefined && invoice.confrere==undefined && invoice.provider ==undefined && invoice.competentAuthority ==undefined">
             </autocomplete-responsable>
           </td>
           <td *ngIf="!invoice.tiers && !invoice.responsable && !invoice.provider  && !invoice.competentAuthority">
             <autocomplete-confrere label="Confrère" [(model)]="invoice.confrere" [form]="invoiceForm"
-              propertyName="confrere" [isDisabled]="!editMode   || invoice.id!=undefined"
+              propertyName="confrere"
+              [isDisabled]="!editMode   || invoice.id!=undefined || idInvoiceForCreditNote?true:false"
               (onOptionSelected)="fillConfrere($event)" [isMandatory]="true"
               [conditionnalRequired]="invoice.responsable==undefined && invoice.tiers==undefined && invoice.provider ==undefined && invoice.competentAuthority ==undefined">
             </autocomplete-confrere>
           </td>
           <td
-            *ngIf="!invoice.tiers && !invoice.responsable && !invoice.confrere &&  !invoice.competentAuthority && invoice.isInvoiceFromProvider">
+            *ngIf="!invoice.tiers && !invoice.responsable && !invoice.confrere &&  !invoice.competentAuthority && (invoice.isInvoiceFromProvider || invoice.isProviderCreditNote)">
             <autocomplete-provider [(model)]=" invoice.provider" [form]="invoiceForm" propertyName="provider"
-              [isMandatory]="true" [isDisabled]="!editMode   || invoice.id!=undefined"
+              [isMandatory]="true"
+              [isDisabled]="!editMode   || invoice.id!=undefined || idInvoiceForCreditNote?true:false"
               [conditionnalRequired]="invoice.responsable==undefined && invoice.tiers==undefined && invoice.confrere ==undefined && invoice.competentAuthority ==undefined"
               (onOptionSelected)="fillProvider($event)" label="Fournisseur"></autocomplete-provider>
           </td>
           <td
-            *ngIf="!invoice.tiers && !invoice.responsable && !invoice.confrere && !invoice.provider && invoice.isInvoiceFromProvider">
+            *ngIf="!invoice.tiers && !invoice.responsable && !invoice.confrere && !invoice.provider && (invoice.isInvoiceFromProvider || invoice.isProviderCreditNote)">
             <autocomplete-competent-authority [(model)]="invoice.competentAuthority"
-              [isDisabled]="!editMode   || invoice.id!=undefined" [form]="invoiceForm" propertyName="competentAuthority"
-              [isMandatory]="true"
+              [isDisabled]="!editMode   || invoice.id!=undefined || idInvoiceForCreditNote?true:false"
+              [form]="invoiceForm" propertyName="competentAuthority" [isMandatory]="true"
               [conditionnalRequired]="invoice.responsable==undefined && invoice.tiers==undefined && invoice.confrere ==undefined && invoice.provider==undefined"
               (onOptionSelected)="fillCompetentAuthority($event)"
               label="Autorité compétente"></autocomplete-competent-authority>
           </td>
         </tr>
-        <tr>
+        <tr *ngIf="!invoice.isProviderCreditNote">
           <td>
             <generic-toggle [(model)]="invoice.isInvoiceFromProvider" label="Est une facture entrante ?"
               [form]="invoiceForm" propertyName="isInvoiceFromProvider"
@@ -49,7 +51,7 @@
           </td>
         </tr>
       </table>
-      <table class="full-width" *ngIf="!invoice.isInvoiceFromProvider">
+      <table class="full-width" *ngIf="!invoice.isInvoiceFromProvider && !invoice.isProviderCreditNote">
         <tr>
           <td>
             <radio-group-billing-label [(model)]="invoice.billingLabelType" [form]="invoiceForm"
@@ -60,7 +62,7 @@
         </tr>
       </table>
       <table class="full-width"
-        *ngIf="invoice.billingLabelType!=undefined && invoice.billingLabelType.code!=undefined && invoice.billingLabelType.id==billingLableTypeOther.id">
+        *ngIf="invoice.billingLabelType!=undefined && invoice.billingLabelType.code!=undefined && invoice.billingLabelType.id==billingLableTypeOther.id ">
         <tr>
           <td>
             <generic-input [(model)]="invoice.billingLabel" label="Libellé" [form]="invoiceForm"
@@ -111,7 +113,7 @@
       </table>
       <table class="full-width">
         <tr>
-          <td>
+          <td *ngIf="!invoice.isProviderCreditNote">
             <generic-input [(model)]="invoice.commandNumber" label="N° de commande" [form]="invoiceForm"
               propertyName="commandNumber" [isMandatory]="false" [isDisabled]="!editMode || !isManualInvoice()"
               [maxLength]="40">
@@ -123,10 +125,15 @@
               [isDisabled]="!editMode || !isManualInvoice()" [maxLength]="150">
             </generic-input>
           </td>
-          <td *ngIf="invoice.isInvoiceFromProvider">
+          <td *ngIf="invoice.isInvoiceFromProvider && !invoice.isProviderCreditNote">
             <autocomplete-customer-order [(model)]="indexedCustomerOrder" [form]="invoiceForm"
               propertyName="indexedCustomerOrder" [isMandatory]="false" label="Numéro de commande Osiris"
               (onOptionSelected)="fillCustomerOrder($event)"></autocomplete-customer-order>
+          </td>
+          <td *ngIf="invoice.customerOrderForInboundInvoice">
+            <select-provision [(model)]="invoice.provision" [form]="invoiceForm" propertyName="provision"
+              [isMandatory]="false" label="Prestation" [isMandatory]="true"
+              [types]="getProvisionForCustomerOrder()"></select-provision>
           </td>
         </tr>
       </table>
@@ -134,53 +141,38 @@
         <tr>
           <td>
             <select-payment-types [(model)]="invoice.manualPaymentType" label="Type de paiement" [form]="invoiceForm"
-              *ngIf="!displayDeboursTable()" propertyName="manualPaymentType" [isMandatory]="true"
+              *ngIf="  !invoice.isProviderCreditNote" propertyName="manualPaymentType" [isMandatory]="true"
               [isDisabled]="!editMode || invoice.id!=undefined"></select-payment-types>
           </td>
           <td>
             <generic-datepicker [(model)]="invoice.dueDate" label="Date d'échéance" [form]="invoiceForm"
-              *ngIf="!displayDeboursTable()" propertyName="dueDate" [isMandatory]="false"
+              *ngIf=" !invoice.isProviderCreditNote" propertyName="dueDate" [isMandatory]="false"
               [isDisabled]="!editMode || invoice.id!=undefined"></generic-datepicker>
+          </td>
+          <td>
             <generic-datepicker [(model)]="invoice.manualAccountingDocumentDate" label="Date de la pièce comptable"
               [form]="invoiceForm" propertyName="manualAccountingDocumentDate" [isMandatory]="false"
               [isDisabled]="!editMode || !isManualInvoice()"></generic-datepicker>
           </td>
           <td>
-            <single-attachment *ngIf="invoice.id" [entity]="invoice" [entityType]="INVOICE_ENTITY_TYPE.entityType"
-              [editMode]="true" [attachmentTypeToDisplay]="attachmentTypeInvoice"
-              (onUploadedFile)="updateAttachments($event)">
+            <single-attachment *ngIf="invoice.id && !invoice.isProviderCreditNote" [entity]="invoice"
+              [entityType]="INVOICE_ENTITY_TYPE.entityType" [editMode]="true"
+              [attachmentTypeToDisplay]="attachmentTypeInvoice" (onUploadedFile)="updateAttachments($event)">
             </single-attachment>
           </td>
         </tr>
       </table>
-      <div class=" full-width padding-bottom" *ngIf="displayDeboursTable()">
-        <sort-table class="margin-bottom" (onRowClick)="selectDebour($event)" [columns]="displayedColumnsDebours"
-          [refreshTable]="refreshTable.asObservable()" [values]="debours" tableName="Débours">
-        </sort-table>
-      </div>
-      <div class=" full-width padding-bottom" *ngIf="displayDeboursTable() && this.selectedDebours">
-        <div>
-          <h3>Débours/frais sélectionnés :</h3>
-        </div>
-        <sort-table class="margin-bottom" [columns]="displayedColumnsSelectedDebours"
-          [refreshTable]="refreshTable.asObservable()" [actions]="tableActionSelectedDebours" [values]="selectedDebours"
-          tableName="Débours">
-        </sort-table>
-      </div>
     </div>
   </div>
-  <div class=" full-width padding-bottom" *ngIf="!displayDeboursTable()">
+  <div class=" full-width padding-bottom">
     <sort-table [columns]="displayedColumns" [values]="invoiceItems" tableName="Facture Ajout" [actions]="tableAction"
       (onRowClick)="selectInvoiceItem($event)" [refreshTable]="refreshTable.asObservable()">
     </sort-table>
   </div>
-  <div class="align-right" *ngIf="!displayDeboursTable()">
+  <div class="align-right">
     <span class="mat-mdc-cell mdc-data-table__cell ">Total TTC : {{getInvoiceTotal()}} €</span>
   </div>
-  <div class="align-right" *ngIf="displayDeboursTable()">
-    <span class="mat-mdc-cell mdc-data-table__cell ">Total TTC : {{getDeboursTotal()}} €</span>
-  </div>
-  <div *ngIf="!displayDeboursTable()">
+  <div>
     <table class="full-width ">
       <tr>
         <td>
@@ -217,6 +209,11 @@
         <td>
           <generic-input [(model)]="invoiceItem.preTaxPrice" label="Prix HT" [form]="invoiceForm"
             propertyName="preTaxPrice" [isMandatory]="true" [isDisabled]="!editMode || invoice.id!=undefined"
+            type="number" (onFormChange)="fillPreTaxPricedReinvoiced(invoiceItem,invoice)"></generic-input>
+        </td>
+        <td *ngIf="invoice.isInvoiceFromProvider">
+          <generic-input [(model)]="invoiceItem.preTaxPriceReinvoiced" label="Prix HT refacturé" [form]="invoiceForm"
+            propertyName="preTaxPriceReinvoiced" [isMandatory]="true" [isDisabled]="!editMode || invoice.id!=undefined"
             type="number"></generic-input>
         </td>
         <td>
@@ -227,7 +224,7 @@
         <td>
           <generic-input [(model)]="invoiceItem.discountAmount" label="Remise totale" [form]="invoiceForm"
             propertyName="discountAmount" [isMandatory]="false" [isDisabled]="!editMode || invoice.id!=undefined"
-            type="number"></generic-input>
+            type="number" *ngIf="invoice.isInvoiceFromProvider"></generic-input>
         </td>
       </tr>
     </table>

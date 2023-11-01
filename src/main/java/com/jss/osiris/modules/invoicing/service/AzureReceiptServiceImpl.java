@@ -54,7 +54,7 @@ public class AzureReceiptServiceImpl implements AzureReceiptService {
                     if (invoice.getIsReconciliated() == null || invoice.getIsReconciliated() == false) {
                         AzureReceiptInvoiceStatus status = azureReceiptInvoiceService
                                 .getAzureReceiptInvoiceStatus(invoice);
-                        if (status.getCustomerInvoicedStatus() && status.getDebourStatus() && status.getInvoicesStatus()
+                        if (status.getCustomerInvoicedStatus() && status.getInvoicesStatus()
                                 && status.getPaymentStatus())
                             azureReceiptInvoiceService.markAsReconciliated(invoice, true);
                     }
@@ -76,13 +76,13 @@ public class AzureReceiptServiceImpl implements AzureReceiptService {
         List<Attachment> attachments = attachmentService.getReceiptAttachmentOnCompetentAuthorityToAnalyse();
         if (attachments != null && attachments.size() > 0) {
             for (Attachment attachment : attachments)
-                if (attachment.getId() >= 6421151) // TODO remove
-                    try {
-                        formRecognizerService.recongnizeRecipts(attachment);
-                    } catch (Exception e) {
-                        attachmentService.disableDocument(attachment);
-                        throw new OsirisException(e, "Erreur while recongnize receipt with Azure");
-                    }
+                try {
+                    formRecognizerService.recongnizeRecipts(attachment);
+                } catch (Exception e) {
+                    attachmentService.disableDocument(attachment);
+                    throw new OsirisException(e,
+                            "Erreur while recongnize receipt with Azure fot attachment " + attachment.getId());
+                }
         }
     }
 

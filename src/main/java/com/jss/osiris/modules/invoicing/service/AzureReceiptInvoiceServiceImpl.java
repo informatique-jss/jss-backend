@@ -96,7 +96,7 @@ public class AzureReceiptInvoiceServiceImpl implements AzureReceiptInvoiceServic
         List<AzureInvoice> finalAzureInvoices = new ArrayList<AzureInvoice>();
         if (azureInvoices != null && azureInvoices.size() > 0)
             for (AzureInvoice invoice : azureInvoices)
-                if ((Math.round(invoice.getInvoiceTotal() * 100f)
+                if (invoice.getIsDisabled() == false && (Math.round(invoice.getInvoiceTotal() * 100f)
                         / 100f) == (Math.round(azureReceiptInvoice.getInvoiceTotal() * 100f) / 100f))
                     finalAzureInvoices.add(invoice);
 
@@ -129,14 +129,6 @@ public class AzureReceiptInvoiceServiceImpl implements AzureReceiptInvoiceServic
         }
 
         status.setPaymentStatus(paymentStatus);
-
-        // Check at least one debour associated
-        boolean debourStatus = false;
-        if (finalInvoices != null && finalInvoices.size() > 0 && finalInvoices.get(0).getInvoiceItems() != null) {
-            debourStatus = finalInvoices.get(0).getInvoiceItems().get(0).getDebours() != null
-                    && finalInvoices.get(0).getInvoiceItems().get(0).getDebours().size() > 0;
-        }
-        status.setDebourStatus(debourStatus);
 
         // Check customer invoice sent after AC invoice creation
         boolean customerInvoicedStatus = false;

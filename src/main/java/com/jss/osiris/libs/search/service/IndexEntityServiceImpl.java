@@ -27,6 +27,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
+import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Service
 public class IndexEntityServiceImpl implements IndexEntityService {
@@ -35,8 +36,10 @@ public class IndexEntityServiceImpl implements IndexEntityService {
     IndexEntityRepository indexEntityRepository;
 
     @Override
-    public void indexEntity(Object entity, Integer entityId) {
+    public void indexEntity(IId entity) {
         IndexEntity indexedEntity = new IndexEntity();
+        if (entity.getClass().getSimpleName().contains("HibernateProxy"))
+            entity = (IId) Hibernate.unproxy(entity);
 
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
@@ -47,7 +50,7 @@ public class IndexEntityServiceImpl implements IndexEntityService {
         module.enable(Feature.FORCE_LAZY_LOADING);
         objectMapper.registerModule(module);
 
-        indexedEntity.setEntityId(entityId);
+        indexedEntity.setEntityId(entity.getId());
         indexedEntity.setEntityType(entity.getClass().getSimpleName());
         try {
             indexedEntity.setText(objectMapper.writeValueAsString(cleanObjectForSerialization(entity)));

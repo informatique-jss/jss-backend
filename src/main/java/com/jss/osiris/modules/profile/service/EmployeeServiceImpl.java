@@ -8,11 +8,14 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
+import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.model.User;
 import com.jss.osiris.modules.profile.repository.EmployeeRepository;
@@ -33,6 +36,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     MailHelper mailHelper;
+
+    @Autowired
+    CustomerOrderOriginService customerOrderOriginService;
 
     @Override
     public Employee getEmployee(Integer id) {
@@ -132,13 +138,18 @@ public class EmployeeServiceImpl implements EmployeeService {
             String passwordExpected = responsable.getPassword();
             String passwordGiven = diggestPassword(user.getPassword(), responsable.getSalt());
 
-            if (passwordExpected != null && passwordExpected.equals(passwordGiven) || isIntrospection)
-                return responsable;
+            // Check if user authorized
+            List<CustomerOrderOrigin> origins = customerOrderOriginService
+                    .getByUsername(activeDirectoryHelper.getCurrentUsername());
+            if (origins != null && origins.size() == 1)
+                if (passwordExpected != null && passwordExpected.equals(passwordGiven) || isIntrospection)
+                    return responsable;
         }
         return null;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean renewResponsablePassword(Responsable responsable) throws OsirisException {
         String salt = SSLHelper.randomPassword(20);
         String password = SSLHelper.randomPassword(12);

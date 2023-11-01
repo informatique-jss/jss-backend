@@ -46,19 +46,18 @@ public class ResponsableServiceImpl implements ResponsableService {
         if (responsable.isPresent())
             return responsable.get();
         if (responsable.isPresent()) {
-            Responsable responsableInstance = responsable.get();
-            responsableInstance.setFirstBilling(invoiceService.getFirstBillingDateForResponsable(responsableInstance));
-            return responsableInstance;
+            return responsable.get();
         }
         return null;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void reindexResponsable() {
         List<Responsable> responsables = IterableUtils.toList(responsableRepository.findAll());
         if (responsables != null)
             for (Responsable responsable : responsables)
-                indexEntityService.indexEntity(responsable, responsable.getId());
+                indexEntityService.indexEntity(responsable);
     }
 
     @Override
