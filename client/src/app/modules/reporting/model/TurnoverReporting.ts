@@ -9,10 +9,13 @@ export interface TurnoverReporting {
   turnoverAmountWithoutDebourWithTax: number;
   nbrCustomerOrder: number;
   nbrInvoices: number;
+  nbrCreditNote: number;
   tiersLabel: string;
   tiersCategory: string;
   invoiceCreator: string;
   salesEmployeeLabel: string;
   invoiceStatusLabel: string;
   vatLabel: string;
+  nbrAnnouncement: number;
+  announcementDepartment: string;
 }

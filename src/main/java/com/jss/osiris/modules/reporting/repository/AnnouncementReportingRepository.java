@@ -27,6 +27,7 @@ public interface AnnouncementReportingRepository extends CrudRepository<Quotatio
                         " 	'YYYY-MM-DD') as announcementCreatedDateDay, " +
                         " 	as2.label as announcementStatus, " +
                         " 	c.label as confrereAnnouncementLabel, " +
+                        " 	d.code as announcementDepartment, " +
                         " 	sum(coalesce(a.character_number,0)) as characterNumber " +
                         " from " +
                         " 	announcement a " +
@@ -40,6 +41,8 @@ public interface AnnouncementReportingRepository extends CrudRepository<Quotatio
                         " 	co.id = aao.id_customer_order " +
                         " join confrere c on " +
                         " 	c.id = a.id_confrere " +
+                        " join department d on " +
+                        " 	d.id = a.id_department  " +
                         " where " +
                         " 	co.id_customer_order_status not in :customerOrderStatusIdExcluded " +
                         " group by " +
@@ -56,7 +59,7 @@ public interface AnnouncementReportingRepository extends CrudRepository<Quotatio
                         " 	a.publication_date), " +
                         " 	'YYYY-MM-DD'), " +
                         " 	as2.label, " +
-                        " 	c.label   " +
+                        " 	c.label ,d.code  " +
                         "")
         List<IAnnouncementReporting> getAnnouncementReporting(
                         @Param("customerOrderStatusIdExcluded") List<Integer> customerOrderStatusIdExcluded);

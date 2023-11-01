@@ -53,7 +53,9 @@ public interface TiersReportingRepository extends CrudRepository<Quotation, Inte
                         +
                         " to_char(date_trunc('week',min(a1.datetime)  ),'YYYY-MM - tmw') as createdDateWeek, "
                         +
-                        " to_char(date_trunc('day',min(a1.datetime)  ),'YYYY-MM-DD') as createdDateDay "
+                        " to_char(date_trunc('day',min(a1.datetime)  ),'YYYY-MM-DD') as createdDateDay, " +
+                        " to_char(date_trunc('day',max(tf1.followup_date)  ),'YYYY-MM-DD') as lastTiersFollowupDate, " +
+                        " to_char(date_trunc('day',max(tf2.followup_date)  ),'YYYY-MM-DD') as lastResponsableFollowupDate "
                         +
                         " from " +
                         " 	tiers t " +
@@ -78,6 +80,8 @@ public interface TiersReportingRepository extends CrudRepository<Quotation, Inte
                         " left join customer_order co1 on co1.id_tiers  = t.id " +
                         " left join customer_order co2 on co2.id_responsable  = r.id " +
                         " left join audit a1 on a1.field_name='id' and a1.entity='Tiers' and a1.entity_id = t.id " +
+                        " left join  tiers_followup tf1 on tf1.id_tiers = t.id  " +
+                        " left join  tiers_followup tf2 on tf2.id_responsable = r.id  " +
                         " group by " +
                         " 	coalesce(t.denomination, " +
                         " 	concat(t.firstname, " +

@@ -77,8 +77,10 @@ export const Dictionnary = {
   "isTiersIndividual": "Est personne physique ?",
   "nbrCustomerOrder": "Nombre de commandes",
   "nbrInvoices": "Nombre de factures",
+  "nbrCreditNote": "Nombre d'avoirs",
   "nbrQuotation": "Nombre de devis",
   "nbrAnnouncement": "Nombre d'annonces légales",
+  "announcementDepartment": "Département de l'annonce légale",
   "nbrFormalities": "Nombre de formalités",
   "docTiersPaperRecipient": "Destinataire papier du tiers",
   "docTiersPaperNumeric": "Destinataire numérique du tiers",
@@ -110,5 +112,7 @@ export const Dictionnary = {
   "weekField": "Semaine",
   "dayField": "Jour",
   "reminderType": "Type de relance",
-  "payedPeriod": "Période de paiement"
+  "payedPeriod": "Période de paiement",
+  "lastResponsableFollowupDate": "Dernier suivi du responsable",
+  "lastTiersFollowupDate": "Dernier suivi du tiers"
 };
