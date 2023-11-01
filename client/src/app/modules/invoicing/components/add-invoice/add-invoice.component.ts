@@ -43,7 +43,6 @@ export class AddInvoiceComponent implements OnInit {
   invoiceItem: InvoiceItem = {} as InvoiceItem;
   isEditing: boolean = false;
   editMode = true;
-  autoEdit = false;
 
   countryFrance: Country = this.contantService.getCountryFrance();
   billingLableTypeOther = this.contantService.getBillingLabelTypeOther();
@@ -135,23 +134,6 @@ export class AddInvoiceComponent implements OnInit {
           this.invoice.provider = response.provider;
         if (response && response.confrere)
           this.invoice.confrere = response.confrere;
-        if (response && response.manualAccountingDocumentNumber)
-          this.invoice.manualAccountingDocumentNumber = response.manualAccountingDocumentNumber;
-        if (response && response.manualAccountingDocumentNumber)
-          this.invoice.manualAccountingDocumentDate = new Date();
-        if (response && response.invoiceItems) {
-          for (let i = 0; i < response.invoiceItems.length; i++) {
-            if (!this.autoEdit)
-              this.autoEdit = true;
-            this.invoice.invoiceItems[i].label = response.invoiceItems[i].label;
-            this.invoice.invoiceItems[i].preTaxPrice = response.invoiceItems[i].preTaxPrice;
-            this.invoice.invoiceItems[i].vat = response.invoiceItems[i].vat;
-            this.invoice.invoiceItems[i].billingItem = response.invoiceItems[i].billingItem;
-            this.invoice.invoiceItems[i].discountAmount = response.invoiceItems[i].discountAmount;
-            if (i != response.invoiceItems.length - 1)
-              this.addInvoiceItem();
-          }
-        }
         this.appService.changeHeaderTitle("Saisir un avoir sur la facture n°" + this.idInvoiceForCreditNote);
       });
     } else {
@@ -236,7 +218,7 @@ export class AddInvoiceComponent implements OnInit {
   }
 
   addInvoiceItem() {
-    if (this.invoiceForm.valid || this.autoEdit) {
+    if (this.invoiceForm.valid) {
       let newInvoiceItem = {} as InvoiceItem;
       this.invoiceItems.push(newInvoiceItem);
       this.invoiceItem = newInvoiceItem;
