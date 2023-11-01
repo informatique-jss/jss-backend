@@ -25,8 +25,8 @@ export interface AzureInvoice extends IAttachment {
   invoiceTaxTotalConfidence: number;
   invoiceNonTaxableTotalConfidence: number;
   vendorTaxIdConfidence: number;
-  invoices: Invoice[];
   competentAuthority: CompetentAuthority;
   toCheck: boolean;
+  invoices: Invoice[];
 }
 

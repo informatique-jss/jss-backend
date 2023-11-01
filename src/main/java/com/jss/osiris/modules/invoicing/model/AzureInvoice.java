@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 
@@ -26,6 +27,7 @@ public class AzureInvoice {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @IndexedField
     private Integer id;
     private Boolean isDisabled;
 
@@ -41,6 +43,7 @@ public class AzureInvoice {
     private LocalDate invoiceDate;
 
     @Column(length = 2500)
+    @IndexedField
     private String invoiceId;
     private Float invoiceTotal;
     private Float invoicePreTaxTotal;
@@ -61,7 +64,8 @@ public class AzureInvoice {
     private Float vendorTaxIdConfidence;
 
     @OneToMany(mappedBy = "azureInvoice")
-    @JsonIgnoreProperties(value = { "azureInvoice", "invoiceItems" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "attachments", "provision", "customerOrderForInboundInvoice", "accountingRecords",
+            "competentAuthority", "provider", "confrere", "invoiceItems", "azureInvoice" }, allowSetters = true)
     private List<Invoice> invoices;
 
     @OneToMany(mappedBy = "azureInvoice")

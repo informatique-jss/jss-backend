@@ -35,7 +35,6 @@ public class DescriptionPersonne implements Serializable, IId {
     @JoinColumn(name = "id_role")
     Role role;
 
-    @Column()
     private LocalDate dateEffetRoleDeclarant;
 
     @Column(length = 255)

@@ -27,4 +27,8 @@ public interface CustomerMailService {
 
     public void sendNextMail() throws OsirisException;
 
+    public List<CustomerMail> getReceiptMailsForResponsable(Responsable responsable);
+
+    public List<CustomerMail> getReceiptMailsForTiers(Tiers tiers);
+
 }

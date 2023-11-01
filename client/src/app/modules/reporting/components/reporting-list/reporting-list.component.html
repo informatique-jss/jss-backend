@@ -5,6 +5,7 @@
   </div>
   <div class="table-container-scroll"><sort-table *ngIf="userReportings" [actions]="tableAction"
       [refreshTable]="refreshTable.asObservable()" [columns]="displayedColumns" [values]="filteredUserReportings"
+      [idRowSelected]="currentUserReporting? currentUserReporting.id! : undefined"
       (onRowClick)="selectReporting($event)" tableName="Reporting">
     </sort-table></div>
 </div>

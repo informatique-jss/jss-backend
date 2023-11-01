@@ -37,7 +37,6 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.competant.authorities.update");
         isOk = isOk && checkProperty("schedulling.log.osiris.announcement.confrere.query.reminder");
         isOk = isOk && checkProperty("schedulling.log.osiris.customer.proof.reading.reminder");
-        isOk = isOk && checkProperty("schedulling.owncloud.greffe.invoice.update");
         isOk = isOk && checkProperty("schedulling.guichet.unique.refresh.update.last.hour");
         isOk = isOk && checkProperty("schedulling.guichet.unique.refresh.opened");
         isOk = isOk && checkProperty("schedulling.central.pay.payment.request.validation.check");
@@ -75,15 +74,16 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("jss.sepa.identification");
         isOk = isOk && checkProperty("jss.bic");
         isOk = isOk && checkProperty("jss.iban");
-        isOk = isOk && checkProperty("owncloud.greffe.login");
-        isOk = isOk && checkProperty("owncloud.greffe.password");
-        isOk = isOk && checkProperty("owncloud.greffe.webdav.url");
-        isOk = isOk && checkProperty("owncloud.greffe.webdav.folder.root");
+        isOk = isOk && checkProperty("guichet.unique.entry.point");
+        isOk = isOk && checkProperty("guichet.unique.login");
+        isOk = isOk && checkProperty("guichet.unique.password");
+        isOk = isOk && checkProperty("schedulling.payment.automatch");
         isOk = isOk && checkProperty("azure.form.recognizer.endpoint");
         isOk = isOk && checkProperty("azure.form.recognizer.api.key");
         isOk = isOk && checkProperty("azure.form.recognizer.model.invoices.name");
         isOk = isOk && checkProperty("azure.form.recognizer.model.receipts.name");
         isOk = isOk && checkProperty("azure.form.recognizer.confidence.threshold");
+        isOk = isOk && checkProperty("schedulling.audit.clean");
 
         isOk = isOk && checkAccountingParams();
 

@@ -19,6 +19,8 @@ public interface InvoiceSearchResult {
 
     public String getProviderLabel();
 
+    public Integer getIdPaymentType();
+
     public String getTiersLabel();
 
     public Integer getConfrereId();
@@ -54,4 +56,8 @@ public interface InvoiceSearchResult {
     public Float getRemainingToPay();
 
     public String getInvoiceRecipient();
+
+    public Boolean getIsInvoiceFromProvider();
+
+    public Boolean getIsProviderCreditNote();
 }

@@ -6,6 +6,7 @@ import { formatDateTimeForSortTable, formatEurosForSortTable } from "src/app/lib
 import { AssociatePaymentDialogComponent } from "src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component";
 import { Payment } from "src/app/modules/invoicing/model/Payment";
 import { PaymentSearchResult } from "src/app/modules/invoicing/model/PaymentSearchResult";
+import { PaymentDetailsDialogService } from "src/app/modules/invoicing/services/payment.details.dialog.service";
 import { PaymentService } from "src/app/modules/invoicing/services/payment.service";
 import { SortTableAction } from "src/app/modules/miscellaneous/model/SortTableAction";
 import { SortTableColumn } from "src/app/modules/miscellaneous/model/SortTableColumn";
@@ -37,15 +38,15 @@ export class CustomerOrderPaymentComponent implements OnInit {
     private constantService: ConstantService,
     public associatePaymentDialog: MatDialog,
     private formBuilder: FormBuilder,
-    private habilitationsService: HabilitationsService
+    private habilitationsService: HabilitationsService,
+    private paymentDetailsDialogService: PaymentDetailsDialogService,
   ) { }
 
   customerOrderPaymentForm = this.formBuilder.group({});
 
   ngOnInit() {
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du paiement" } as SortTableColumn);
-    this.displayedColumns.push({ id: "paymentWay", fieldName: "paymentWay.label", label: "Sens" } as SortTableColumn);
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du paiement", actionFunction: (element: any) => this.paymentDetailsDialogService.displayPaymentDetailsDialog(element), actionIcon: "visibility", actionTooltip: "Voir le détail du paiement" } as SortTableColumn);
     this.displayedColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "payemntAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
@@ -70,6 +71,10 @@ export class CustomerOrderPaymentComponent implements OnInit {
     }
   }
 
+  openPaymentDialog(payment: Payment) {
+    this.paymentDetailsDialogService.displayPaymentDetailsDialog(payment);
+  }
+
   openAssociationDialog(elementIn: PaymentSearchResult) {
     this.paymentService.getPaymentById(elementIn.id).subscribe(element => {
       let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
@@ -86,7 +91,6 @@ export class CustomerOrderPaymentComponent implements OnInit {
 
   addCashPayment() {
     if (this.newPayment && this.customerOrderPaymentForm.valid) {
-      this.newPayment.paymentWay = this.constantService.getPaymentWayInbound();
       this.newPayment.paymentType = this.constantService.getPaymentTypeEspeces();
       this.newPayment.isCancelled = false;
       this.newPayment.isExternallyAssociated = false;

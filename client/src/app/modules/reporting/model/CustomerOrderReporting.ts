@@ -1,32 +1,7 @@
 export interface CustomerOrderReporting {
-  affaireId: number;
-  affaireSiren: string;
-  affaireSiret: number;
-  waitedCompetentAuthorityLabel: string;
-  affaireLabel: string;
-  customerOrderId: number;
-  provisionId: number;
-  provisionTypeLabel: string;
-  provisionFamilyTypeLabel: string;
-  customerOrderLabel: string;
-  tiersLabel: string;
-  preTaxPrice: number;
-  preTaxPriceWithoutDebour: number;
-  taxedPrice: number;
-  provisionStatus: string;
-  provisionAssignedToLabel: string;
-  publicationDateMonth: string;
-  salesEmployeeLabel: string;
+  nbrCustomerOrder: number;
   customerOrderStatusLabel: string;
-  customerOrderCreatedDateMonth: string;
-  characterNumber: number;
-  invoiceDateMonth: string;
-  invoiceDateDay: string;
-  publicationDateWeek: string;
-  confrereAnnouncementLabel: string;
-  noticeTypeFamilyLabel: string;
-  noticeTypeLabel: string;
-  invoiceCreator: string;
-  invoiceStatusLabel: string;
-  customerOrderOriginLabel: string;
+  customerOrderAssignedEmployee: string;
+  aggregateProvisionTypeLabel: string;
+  lastReminderDate: string;
 }

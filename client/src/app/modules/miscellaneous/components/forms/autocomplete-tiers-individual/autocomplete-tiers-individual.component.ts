@@ -41,6 +41,9 @@ export class AutocompleteTiersIndividualComponent extends GenericAutocompleteCom
   displayLabel(tiers: IndexEntity): string {
     if (!tiers)
       return "";
+    if ((tiers as any).denomination || (tiers as any).firstname) {
+      return (tiers as any).denomination ? (tiers as any).denomination : ((tiers as any).firstname + ' ' + (tiers as any).lastname);
+    }
     let text = JSON.parse(tiers.text);
     if (text.denomination)
       return text.denomination!;

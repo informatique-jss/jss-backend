@@ -78,6 +78,7 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
     }
 
     @Override
+    @SuppressWarnings({ "null" })
     public CentralPayTransaction getTransaction(CentralPayPaymentRequest centralPayPaymentRequest)
             throws OsirisException {
         SSLHelper.disableCertificateValidation();
@@ -94,23 +95,20 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
                 for (CentralPayPayment centralPayPayment : centralPayBreakdown.getPayments())
                     if (centralPayPayment.getPaymentMethod().equals("TRANSACTION")) {
                         transactionId = centralPayPayment.getUuid();
-                        break;
+
+                        ResponseEntity<CentralPayTransaction> res = new RestTemplate().exchange(
+                                centralPayEndpoint + transactiontUrl + "/" + transactionId, HttpMethod.GET,
+                                new HttpEntity<Object>(headers),
+                                CentralPayTransaction.class);
+
+                        if (res.getBody() != null && res.getBody().getTransactionStatus().equals("SUCCESS")) {
+                            return res.getBody();
+                        }
                     }
         }
 
-        if (transactionId == null)
-            throw new OsirisException(null, "No transaction found not found in Payment Request n°"
-                    + centralPayPaymentRequest.getPaymentRequestId());
-
-        ResponseEntity<CentralPayTransaction> res = new RestTemplate().exchange(
-                centralPayEndpoint + transactiontUrl + "/" + transactionId, HttpMethod.GET,
-                new HttpEntity<Object>(headers),
-                CentralPayTransaction.class);
-
-        if (res.getBody() != null) {
-            return res.getBody();
-        }
-        return null;
+        throw new OsirisException(null, "No valid transaction found not found in Payment Request n°"
+                + centralPayPaymentRequest.getPaymentRequestId());
     }
 
     @Override

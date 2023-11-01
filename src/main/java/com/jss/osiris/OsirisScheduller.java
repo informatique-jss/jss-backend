@@ -9,13 +9,13 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
+import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.service.AzureInvoiceService;
 import com.jss.osiris.modules.invoicing.service.AzureReceiptService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
-import com.jss.osiris.modules.invoicing.service.OwncloudGreffeDelegate;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.service.EtablissementPublicsDelegate;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
@@ -29,11 +29,11 @@ import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
-import com.jss.osiris.modules.quotation.service.GuichetUniqueDelegateService;
 import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.GuichetUniqueDelegateService;
 
 @Service
 @ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
@@ -103,9 +103,6 @@ public class OsirisScheduller {
 	EtablissementPublicsDelegate etablissementPublicsDelegate;
 
 	@Autowired
-	OwncloudGreffeDelegate owncloudGreffeDelegate;
-
-	@Autowired
 	GuichetUniqueDelegateService guichetUniqueDelegateService;
 
 	@Autowired
@@ -116,6 +113,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	AzureReceiptService azureReceiptService;
+
+	@Autowired
+	AuditService auditService;
 
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
@@ -129,7 +129,7 @@ public class OsirisScheduller {
 		try {
 			accountingRecordService.dailyAccountClosing();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -138,7 +138,7 @@ public class OsirisScheduller {
 		try {
 			employeeService.updateUserFromActiveDirectory();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -147,7 +147,7 @@ public class OsirisScheduller {
 		try {
 			customerMailService.sendNextMail();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -156,7 +156,7 @@ public class OsirisScheduller {
 		try {
 			notificationService.purgeNotification();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -165,7 +165,7 @@ public class OsirisScheduller {
 		try {
 			quotationService.sendRemindersForQuotation();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -174,7 +174,7 @@ public class OsirisScheduller {
 		try {
 			customerOrderService.sendRemindersForCustomerOrderDeposit();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -183,7 +183,7 @@ public class OsirisScheduller {
 		try {
 			invoiceService.sendRemindersForInvoices();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -192,7 +192,7 @@ public class OsirisScheduller {
 		try {
 			announcementService.sendRemindersToConfrereForAnnouncement();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -202,7 +202,7 @@ public class OsirisScheduller {
 			announcementService.sendRemindersToCustomerForProofReading();
 
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -211,7 +211,7 @@ public class OsirisScheduller {
 		try {
 			accountingRecordService.sendBillingClosureReceipt();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -220,7 +220,7 @@ public class OsirisScheduller {
 		try {
 			announcementService.publishAnnouncementsToActuLegale();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -229,7 +229,16 @@ public class OsirisScheduller {
 		try {
 			announcementService.sendPublicationFlagNotSent();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.payment.automatch}")
+	private void automatchPayments() {
+		try {
+			paymentService.paymentGrab();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -238,16 +247,7 @@ public class OsirisScheduller {
 		try {
 			etablissementPublicsDelegate.updateCompetentAuthorities();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
-		}
-	}
-
-	@Scheduled(cron = "${schedulling.owncloud.greffe.invoice.update}")
-	private void updateOwncloudGreffeInvoices() {
-		try {
-			owncloudGreffeDelegate.grabAllFiles();
-		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -256,7 +256,7 @@ public class OsirisScheduller {
 		try {
 			guichetUniqueDelegateService.refreshAllOpenFormalities();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -265,7 +265,7 @@ public class OsirisScheduller {
 		try {
 			guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -274,7 +274,7 @@ public class OsirisScheduller {
 		try {
 			centralPayPaymentRequestService.checkAllPaymentRequests();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -284,7 +284,16 @@ public class OsirisScheduller {
 			azureInvoiceService.checkInvoiceToAnalyse();
 			azureReceiptService.checkReceiptToAnalyse();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.audit.clean}")
+	private void cleanAudit() {
+		try {
+			auditService.cleanAudit();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
@@ -301,7 +310,7 @@ public class OsirisScheduller {
 			assignationTypeService.updateAssignationTypes();
 			provisionScreenTypeService.updateScreenTypes();
 		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
+			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
