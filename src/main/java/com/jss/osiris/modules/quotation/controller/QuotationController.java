@@ -689,7 +689,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/customer-order/offer")
   public ResponseEntity<Boolean> offerCustomerOrder(@RequestParam Integer customerOrderId)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
 
     CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
     if (customerOrder == null)

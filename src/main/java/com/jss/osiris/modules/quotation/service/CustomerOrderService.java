@@ -82,6 +82,6 @@ public interface CustomerOrderService {
         public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation);
 
         public void offerCustomerOrder(CustomerOrder customerOrder) throws OsirisException,
-                        OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException;
+                        OsirisClientMessageException, OsirisValidationException;
 
 }

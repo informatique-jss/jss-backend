@@ -472,7 +472,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void offerCustomerOrder(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED))
             if (customerOrder.getInvoices() != null) {
                 for (Invoice invoice : customerOrder.getInvoices())
