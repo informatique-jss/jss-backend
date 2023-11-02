@@ -76,7 +76,7 @@
         </ng-container>
       </td>
     </ng-container>
-    <tr mat-header-row *matHeaderRowDef="getDisplayedColumns(); sticky: true"></tr>
+    <tr mat-header-row *matHeaderRowDef="getDisplayedColumns(); "></tr>
     <tr mat-row *matRowDef="let row; columns: getDisplayedColumns();" (click)="rowClicked(row)" [ngClass]="{'pointer':onRowClick && onRowClick.observers && onRowClick.observers.length>0,
       'selected-mat-row':idRowSelected && row.id && idRowSelected==row.id,
       'color-warn':true}">

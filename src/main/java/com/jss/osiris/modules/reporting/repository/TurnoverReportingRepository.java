@@ -64,9 +64,9 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         +
                         " from " +
                         " invoice i " +
-                        " join invoice_item ii on " +
+                        " left join invoice_item ii on " +
                         " ii.id_invoice = i.id " +
-                        " left join vat on vat.id = ii.id_vat " +
+                        " join vat on vat.id = ii.id_vat " +
                         " join invoice_status ist on " +
                         " ist.id = i.id_invoice_status " +
                         " left join billing_item bi on " +

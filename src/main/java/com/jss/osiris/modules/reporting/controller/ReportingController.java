@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -72,6 +73,9 @@ public class ReportingController {
 
 	@Autowired
 	TiersReportingService tiersReportingService;
+
+	@Autowired
+	ActiveDirectoryHelper activeDirectoryHelper;
 
 	@GetMapping(inputEntryPoint + "/quotation")
 	public ResponseEntity<List<IQuotationReporting>> getQuotationReporting()
@@ -177,6 +181,22 @@ public class ReportingController {
 			throw new OsirisValidationException("userReportingId");
 
 		userReportingService.copyUserReportingToUser(userReporting, employee);
+
+		return new ResponseEntity<UserReporting>(userReporting, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/user-reporting/delete")
+	public ResponseEntity<UserReporting> deleteUserReporting(@RequestParam Integer userReportingId)
+			throws OsirisValidationException {
+		UserReporting userReporting = userReportingService.getUserReporting(userReportingId);
+		if (userReporting == null)
+			throw new OsirisValidationException("userReportingId");
+
+		if (!userReporting.getEmployee().getId().equals(employeeService.getCurrentEmployee().getId())
+				&& activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP))
+			throw new OsirisValidationException("forbidden");
+
+		userReportingService.deleteReporting(userReporting);
 
 		return new ResponseEntity<UserReporting>(userReporting, HttpStatus.OK);
 	}
