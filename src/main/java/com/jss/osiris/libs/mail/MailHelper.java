@@ -548,8 +548,9 @@ public class MailHelper {
                     .getId().equals(constantService.getPaymentTypePrelevement().getId());
         } else if (tiers instanceof Confrere) {
             isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
-            isPaymentTypePrelevement = ((Confrere) tiers).getPaymentType() != null && ((Tiers) tiers).getPaymentType()
-                    .getId().equals(constantService.getPaymentTypePrelevement().getId());
+            isPaymentTypePrelevement = ((Confrere) tiers).getPaymentType() != null
+                    && ((Confrere) tiers).getPaymentType()
+                            .getId().equals(constantService.getPaymentTypePrelevement().getId());
         } else if (tiers instanceof Responsable) {
             isDepositMandatory = ((Responsable) tiers).getTiers().getIsProvisionalPaymentMandatory();
             isPaymentTypePrelevement = ((Responsable) tiers).getTiers().getPaymentType() != null
