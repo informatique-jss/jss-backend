@@ -15,6 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Civility;
 import com.jss.osiris.modules.miscellaneous.model.Country;
@@ -28,6 +29,7 @@ public class Affaire implements Serializable, IId {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@IndexedField
+	@SearchableField
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -36,6 +38,7 @@ public class Affaire implements Serializable, IId {
 
 	@Column(length = 150)
 	@IndexedField
+	@SearchableField
 	private String denomination;
 
 	@Column(nullable = false)
@@ -43,26 +46,32 @@ public class Affaire implements Serializable, IId {
 
 	@Column(length = 50)
 	@IndexedField
+	@SearchableField
 	private String firstname;
 
 	@Column(length = 50)
 	@IndexedField
+	@SearchableField
 	private String lastname;
 
 	@Column(length = 9)
 	@IndexedField
+	@SearchableField
 	private String siren;
 
 	@Column(length = 14)
 	@IndexedField
+	@SearchableField
 	private String siret;
 
 	@Column(length = 10)
 	@IndexedField
+	@SearchableField
 	private String rna;
 
 	@Column(length = 10)
 	@IndexedField
+	@SearchableField
 	private String postalCode;
 
 	@Column(length = 20)
@@ -71,15 +80,18 @@ public class Affaire implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_city")
 	@IndexedField
+	@SearchableField
 	private City city;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
 	@IndexedField
+	@SearchableField
 	private Country country;
 
 	@Column(length = 100, nullable = false)
 	@IndexedField
+	@SearchableField
 	private String address;
 
 	@ManyToMany

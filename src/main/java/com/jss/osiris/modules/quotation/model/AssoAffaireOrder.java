@@ -19,6 +19,7 @@ import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
 
@@ -33,11 +34,13 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@SequenceGenerator(name = "asso_affaire_order_sequence", sequenceName = "asso_affaire_order_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_affaire_order_sequence")
 	@IndexedField
+	@SearchableField
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_affaire")
 	@IndexedField
+	@SearchableField
 	private Affaire affaire;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -45,6 +48,7 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "assoAffaireOrders", "invoices", "deposits", "payments",
 			"accountingRecords" }, allowSetters = true)
 	@IndexedField
+	@SearchableField
 	private CustomerOrder customerOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -59,6 +63,7 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@OneToMany(targetEntity = Provision.class, mappedBy = "assoAffaireOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "assoAffaireOrder" }, allowSetters = true)
 	@IndexedField
+	@SearchableField
 	private List<Provision> provisions;
 
 	public Affaire getAffaire() {

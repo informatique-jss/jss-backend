@@ -18,6 +18,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
@@ -32,11 +33,13 @@ public class Refund implements Serializable, IId {
 
 	@Id
 	@IndexedField
+	@SearchableField
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
 	@Column(nullable = false)
 	@IndexedField
+	@SearchableField
 	private String label;
 
 	private Float refundAmount;

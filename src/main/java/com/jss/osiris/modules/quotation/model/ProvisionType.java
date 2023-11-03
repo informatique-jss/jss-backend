@@ -17,6 +17,7 @@ import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -32,6 +33,7 @@ public class ProvisionType implements Serializable, IId {
 
 	@Column(nullable = false, length = 100)
 	@IndexedField
+	@SearchableField
 	private String label;
 
 	@Column(nullable = false, length = 20)

@@ -19,6 +19,7 @@ import org.springframework.ldap.core.AttributesMapper;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
@@ -30,13 +31,16 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 
 	@Column(length = 20)
 	@IndexedField
+	@SearchableField
 	private String firstname;
 
 	@Column(length = 20)
 	@IndexedField
+	@SearchableField
 	private String lastname;
 
 	@IndexedField
+	@SearchableField
 	private String username;
 
 	private String mail;

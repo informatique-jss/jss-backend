@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
@@ -33,6 +34,7 @@ public class SimpleProvisionStatus implements Serializable, IId {
 
 	@Column(nullable = false, length = 100)
 	@IndexedField
+	@SearchableField
 	private String label;
 
 	@Column(nullable = false, length = 100)

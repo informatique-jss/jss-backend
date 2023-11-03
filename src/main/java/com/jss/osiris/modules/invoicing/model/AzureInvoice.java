@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 
@@ -28,6 +29,7 @@ public class AzureInvoice {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @IndexedField
+    @SearchableField
     private Integer id;
     private Boolean isDisabled;
 
@@ -44,6 +46,7 @@ public class AzureInvoice {
 
     @Column(length = 2500)
     @IndexedField
+    @SearchableField
     private String invoiceId;
     private Float invoiceTotal;
     private Float invoicePreTaxTotal;

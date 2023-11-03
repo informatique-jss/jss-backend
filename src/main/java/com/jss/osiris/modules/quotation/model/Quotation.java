@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -40,11 +41,13 @@ public class Quotation implements IQuotation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@IndexedField
+	@SearchableField
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_assigned_to")
 	@IndexedField
+	@SearchableField
 	private Employee assignedTo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -65,6 +68,7 @@ public class Quotation implements IQuotation {
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@IndexedField
+	@SearchableField
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)

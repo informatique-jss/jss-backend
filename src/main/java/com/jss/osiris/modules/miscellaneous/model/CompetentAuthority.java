@@ -19,6 +19,7 @@ import javax.persistence.SequenceGenerator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
@@ -33,6 +34,7 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 
 	@Column(nullable = false, length = 200)
 	@IndexedField
+	@SearchableField
 	private String label;
 
 	@Column(nullable = false, length = 20)

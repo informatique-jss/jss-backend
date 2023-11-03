@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
@@ -26,6 +27,7 @@ public class Provider implements IAttachment, IGenericTiers {
 
 	@Column(nullable = false)
 	@IndexedField
+	@SearchableField
 	private String label;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -25,6 +26,7 @@ public class BankTransfert implements Serializable, IId {
 
 	@Id
 	@IndexedField
+	@SearchableField
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 

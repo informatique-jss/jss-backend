@@ -115,6 +115,7 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_civility")
 	@IndexedField
+	@SearchableField
 	private Civility civility;
 
 	@Column(length = 40)
@@ -154,10 +155,12 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 
 	@Column(length = 100, nullable = false)
 	@IndexedField
+	@SearchableField
 	private String address;
 
 	@Column(length = 10)
 	@IndexedField
+	@SearchableField
 	private String postalCode;
 
 	@Column(length = 20)
@@ -166,6 +169,7 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_city")
 	@IndexedField
+	@SearchableField
 	private City city;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -215,6 +219,7 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 	private AccountingAccount accountingAccountDeposit;
 
 	@IndexedField
+	@SearchableField
 	private Integer idAs400;
 	private Integer newIdAs400;
 

@@ -16,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
@@ -32,6 +33,7 @@ public class Formalite implements IId {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_formalite_status")
     @IndexedField
+    @SearchableField
     private FormaliteStatus formaliteStatus;
 
     @Column(columnDefinition = "TEXT")

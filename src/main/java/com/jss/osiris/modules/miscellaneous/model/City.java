@@ -15,6 +15,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_city_country", columnList = "id_country") })
@@ -29,6 +30,7 @@ public class City implements Serializable, IId {
 
 	@Column(nullable = false, length = 100)
 	@IndexedField
+	@SearchableField
 	private String label;
 
 	@Column(nullable = false, length = 20)
@@ -36,6 +38,7 @@ public class City implements Serializable, IId {
 
 	@Column(length = 10)
 	@IndexedField
+	@SearchableField
 	private String postalCode;
 
 	@ManyToOne(fetch = FetchType.LAZY)

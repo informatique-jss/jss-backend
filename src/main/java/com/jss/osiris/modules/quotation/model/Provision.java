@@ -19,6 +19,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
@@ -51,11 +52,13 @@ public class Provision implements IId, IAttachment {
 	@JsonIgnoreProperties(value = { "defaultCompetentAuthorityServiceProvider" }, allowSetters = true)
 	@JoinColumn(name = "id_provision_type")
 	@IndexedField
+	@SearchableField
 	private ProvisionType provisionType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision_family_type")
 	@IndexedField
+	@SearchableField
 	private ProvisionFamilyType provisionFamilyType;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -65,11 +68,13 @@ public class Provision implements IId, IAttachment {
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_announcement")
 	@IndexedField
+	@SearchableField
 	private Announcement announcement;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_simple_provision")
 	@IndexedField
+	@SearchableField
 	private SimpleProvision simpleProvision;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -80,6 +85,7 @@ public class Provision implements IId, IAttachment {
 	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
 	@JoinColumn(name = "id_formalite")
 	@IndexedField
+	@SearchableField
 	private Formalite formalite;
 
 	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
@@ -89,6 +95,7 @@ public class Provision implements IId, IAttachment {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_employee")
 	@IndexedField
+	@SearchableField
 	private Employee assignedTo;
 
 	@Column(nullable = false)

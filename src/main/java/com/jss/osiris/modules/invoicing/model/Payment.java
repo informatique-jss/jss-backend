@@ -18,6 +18,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -119,6 +120,7 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	private Boolean isDeposit;
 
 	@IndexedField
+	@SearchableField
 	private String checkNumber;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -23,6 +24,7 @@ public class DirectDebitTransfert implements Serializable, IId {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@IndexedField
+	@SearchableField
 	private Integer id;
 
 	@Column(nullable = false)

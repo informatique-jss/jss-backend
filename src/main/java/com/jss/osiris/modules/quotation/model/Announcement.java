@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IDocument;
@@ -32,6 +33,7 @@ public class Announcement implements IId, IDocument {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@IndexedField
+	@SearchableField
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)

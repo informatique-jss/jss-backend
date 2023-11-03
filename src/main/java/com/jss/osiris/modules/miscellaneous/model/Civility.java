@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 
 @Entity
 public class Civility implements Serializable, IId {
@@ -23,6 +24,7 @@ public class Civility implements Serializable, IId {
 
     @Column(nullable = false)
     @IndexedField
+    @SearchableField
     private String label;
 
     @Column(nullable = false, length = 20)

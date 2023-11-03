@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -72,11 +73,13 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@IndexedField
+	@SearchableField
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_assigned_to")
 	@IndexedField
+	@SearchableField
 	private Employee assignedTo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -97,6 +100,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@IndexedField
+	@SearchableField
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
