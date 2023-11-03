@@ -5,4 +5,5 @@ import { IQuotation } from "./IQuotation";
 export interface CustomerOrder extends IQuotation {
   payments: Payment[];
   customerOrderStatus: CustomerOrderStatus;
+  isGifted: boolean;
 }

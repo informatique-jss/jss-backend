@@ -292,6 +292,20 @@ public class InvoicingController {
                 HttpStatus.OK);
     }
 
+    @PostMapping(inputEntryPoint + "/payment/comment")
+    public ResponseEntity<Payment> addOrUpdatePaymentComment(@RequestBody String comment,
+            @RequestParam Integer idPayment)
+            throws OsirisValidationException {
+
+        Payment payment = paymentService.getPayment(idPayment);
+
+        if (payment == null)
+            throw new OsirisValidationException("idPayment");
+
+        payment.setComment(comment);
+        return new ResponseEntity<>(paymentService.addOrUpdatePayment(payment), HttpStatus.OK);
+    }
+
     @PostMapping(inputEntryPoint + "/refunds/search")
     public ResponseEntity<List<RefundSearchResult>> getRefunds(@RequestBody RefundSearch refundSearch)
             throws OsirisValidationException {

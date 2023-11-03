@@ -18,4 +18,6 @@ export interface TiersReporting {
   createdDateMonth: string;
   createdDateWeek: string;
   createdDateDay: string;
+  lastResponsableFollowupDate: string;
+  lastTiersFollowupDate: string;
 }

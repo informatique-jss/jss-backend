@@ -390,6 +390,20 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
+  @PostMapping(inputEntryPoint + "/bank-transfert/comment")
+  public ResponseEntity<BankTransfert> addOrUpdateTransfertComment(@RequestBody String comment,
+      @RequestParam Integer idBankTransfert)
+      throws OsirisValidationException {
+
+    BankTransfert bankTransfert = bankTransfertService.getBankTransfert(idBankTransfert);
+
+    if (bankTransfert == null)
+      throw new OsirisValidationException("bankTransfert");
+
+    bankTransfert.setComment(comment);
+    return new ResponseEntity<>(bankTransfertService.addOrUpdateBankTransfert(bankTransfert), HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/bank-transfert/export/unselect")
   public ResponseEntity<BankTransfert> unselectBankTransfertForExport(@RequestParam Integer idBankTranfert)
       throws OsirisValidationException {
@@ -685,6 +699,18 @@ public class QuotationController {
       throw new OsirisValidationException("employee");
 
     customerOrderService.updateAssignedToForCustomerOrder(customerOrder, employee);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/offer")
+  public ResponseEntity<Boolean> offerCustomerOrder(@RequestParam Integer customerOrderId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    customerOrderService.offerCustomerOrder(customerOrder);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 

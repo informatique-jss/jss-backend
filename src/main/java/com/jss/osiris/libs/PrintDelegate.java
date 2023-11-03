@@ -48,7 +48,7 @@ public class PrintDelegate {
                 }
             }
             dOut.writeUTF("\r\n");
-            dOut.writeUTF(" " + customerOrder.getId());
+            dOut.writeUTF("  " + customerOrder.getId());
             dOut.writeUTF("\r\n");
             dOut.flush();
             dOut.writeUTF("\r\n");
@@ -63,7 +63,7 @@ public class PrintDelegate {
                         } else
                             lineToPrint.add(line);
                         for (String lin : lineToPrint) {
-                            dOut.writeUTF("               " + StringUtils.stripAccents(lin).toUpperCase());
+                            dOut.writeUTF("   " + StringUtils.stripAccents(lin).toUpperCase());
                             dOut.writeUTF("\r\n");
                             dOut.flush();
                         }
@@ -71,53 +71,50 @@ public class PrintDelegate {
                 }
             }
 
-            dOut.writeUTF(
-                    "               " + StringUtils
-                            .stripAccents((label.getBillingLabelAddress() != null ? label.getBillingLabelAddress()
+            dOut.writeUTF("   "
+                    + StringUtils
+                            .stripAccents(
+                                    (label.getBillingLabelAddress() != null ? label.getBillingLabelAddress() : ""))
+                            .replaceAll("\\p{C}", "").toUpperCase()
+                    +
+                    "    "
+                    + (customerOrder.getTiers() != null ? StringUtils.stripAccents(
+                            (customerOrder.getTiers().getIntercom() != null ? customerOrder.getTiers().getIntercom()
                                     : ""))
-                            .toUpperCase());
-            dOut.writeUTF("\r\n");
+                            .replaceAll("\\p{C}", "").toUpperCase() + " " : "")
+                    +
+                    (customerOrder.getResponsable() != null ? (customerOrder.getResponsable().getBuilding() != null
+                            ? (" | " + customerOrder.getResponsable().getBuilding())
+                            : "") + " " +
+                            (customerOrder.getResponsable().getFloor() != null
+                                    ? (" | " + customerOrder.getResponsable().getFloor())
+                                    : "")
+                            : ""));
+
             dOut.flush();
             dOut.writeUTF("\r\n");
-            dOut.flush();
-            dOut.writeUTF(
-                    "               ");
-            if (customerOrder.getTiers() != null) {
-                dOut.writeUTF(StringUtils.stripAccents((customerOrder.getTiers().getIntercom() != null
-                        ? customerOrder.getTiers().getIntercom()
-                        : ""))
-                        .toUpperCase() + " ");
-            }
-            if (customerOrder.getResponsable() != null) {
-                dOut.writeUTF((customerOrder.getResponsable().getBuilding() != null
-                        ? (" | " + customerOrder.getResponsable().getBuilding())
-                        : "") + " "
-                        + (customerOrder.getResponsable().getFloor() != null
-                                ? (" | " + customerOrder.getResponsable().getFloor())
-                                : ""));
-            }
-            dOut.flush();
-            dOut.writeUTF("\r\n");
-            dOut.flush();
-            dOut.writeUTF("\r\n");
-            dOut.flush();
-            dOut.writeUTF("               " + (label.getBillingLabelPostalCode() != null
-                    ? label.getBillingLabelPostalCode()
-                    : "") + " "
-                    + (label.getBillingLabelCity() != null
+
+            dOut.writeUTF("   "
+                    + StringUtils.stripAccents(label.getBillingLabelCity() != null
                             ? label.getBillingLabelCity().getLabel()
+                            : "").replaceAll("\\p{C}", "")
+                    + " " + (label.getBillingLabelComplementCedex() != null
+                            ? StringUtils.stripAccents(label.getBillingLabelComplementCedex()).toUpperCase()
+                                    .replaceAll("\\p{C}", "")
                             : "")
                     + " "
-                    + (label.getCedexComplement() != null
-                            ? StringUtils.stripAccents(label.getCedexComplement()).toUpperCase()
+                    + (label.getBillingLabelPostalCode() != null
+                            ? label.getBillingLabelPostalCode().replaceAll("\\p{C}", "")
                             : "")
                     + " "
-                    + ((label.getBillingLabelCountry() == null || label
-                            .getBillingLabelCountry().getId()
+                    + ((label.getBillingLabelCountry() == null || label.getBillingLabelCountry().getId()
                             .equals(constantService.getCountryFrance().getId())) ? ""
-                                    : label.getBillingLabelCountry().getLabel()));
+                                    : label.getBillingLabelCountry().getLabel().replaceAll("\\p{C}", "")));
+
+            dOut.flush();
             dOut.writeUTF("\r\n");
             dOut.flush();
+
         } catch (IOException e) {
             throw new OsirisException(e, "Error when printing");
         } finally {

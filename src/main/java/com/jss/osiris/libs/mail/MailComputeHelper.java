@@ -309,8 +309,9 @@ public class MailComputeHelper {
                             : tiers.getFirstname() + " " + tiers.getLastname()) + "\r\n"
                             + (responsable.getCivility() != null ? responsable.getCivility().getLabel() + " " : "")
                             + responsable.getFirstname() + " " + responsable.getLastname());
-                else
+                else {
                     invoiceLabelResult.setBillingLabel(tiers.getMailRecipient());
+                }
                 invoiceLabelResult.setBillingLabelAddress(tiers.getAddress());
                 invoiceLabelResult.setBillingLabelCity(tiers.getCity());
                 invoiceLabelResult.setBillingLabelComplementCedex(tiers.getCedexComplement());

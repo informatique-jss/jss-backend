@@ -18,19 +18,25 @@ public interface ITurnoverReporting {
 
     Float getTurnoverAmountWithoutDebourWithTax();
 
-    Integer getnbrCustomerOrder();
+    Integer getNbrCustomerOrder();
 
-    Integer getnbrInvoices();
+    Integer getNbrInvoices();
 
-    String gettiersLabel();
+    Integer getNbrCreditNote();
 
-    String gettiersCategory();
+    String getTiersLabel();
 
-    String getinvoiceCreator();
+    String getTiersCategory();
 
-    String getsalesEmployeeLabel();
+    String getInvoiceCreator();
 
-    String getinvoiceStatusLabel();
+    String getSalesEmployeeLabel();
+
+    String getInvoiceStatusLabel();
 
     String getVatLabel();
+
+    Integer getNbrAnnouncement();
+
+    String getAnnouncementDepartment();
 }

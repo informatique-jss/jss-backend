@@ -6,4 +6,5 @@ export interface AnnouncementReporting {
   announcementStatus: string;
   confrereAnnouncementLabel: string;
   characterNumber: number;
+  announcementDepartment: string;
 }

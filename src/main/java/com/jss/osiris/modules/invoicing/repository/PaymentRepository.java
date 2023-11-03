@@ -17,9 +17,10 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
 
         @Query(nativeQuery = true, value = " select p.id as id,"
                         + " p.payment_Date as paymentDate,"
-                        + " p.payment_amount  as paymentAmount ,"
+                        + " p.payment_amount  as paymentAmount,"
                         + " p.label as paymentLabel,"
                         + " payment_type.label as paymentTypeLabel,"
+                        + " p.comment as comment,"
                         + " p.is_externally_associated  as isExternallyAssociated ,"
                         + " p.is_cancelled  as isCancelled ,"
                         + " case when p.id_invoice is null and p.id_customer_order is null and id_direct_debit_transfert is null and p.id_refund is null and p.id_bank_transfert is null and p.is_externally_associated=false and p.is_cancelled=false and id_competent_authority is null then false else true end as isAssociated ,"

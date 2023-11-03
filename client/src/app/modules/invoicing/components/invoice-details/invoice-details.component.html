@@ -8,8 +8,8 @@
         <p>Emis<span *ngIf="!invoice.isCreditNote">e</span> à Paris, le {{invoice.createdDate|date:'dd/MM/yyyy à
           HH:mm'}}<span *ngIf="getLetteringDate(invoice)">, lettrée le {{getLetteringDate(invoice)|date:'dd/MM/yyyy à
             HH:mm'}}</span><span *ngIf="invoice.commandNumber">,<br> Numéro de commande :
-            {{invoice.commandNumber}}</span><span *ngIf="invoice.manualAccountingDocumentNumber">,<br> Référence de
-            pièce la comptable : {{invoice.manualAccountingDocumentNumber}}</span>
+            {{invoice.commandNumber}}</span><span *ngIf="invoice.manualAccountingDocumentNumber">,<br> Référence de la
+            pièce comptable : {{invoice.manualAccountingDocumentNumber}}</span>
           <span *ngIf="invoice.manualAccountingDocumentDate">,<br> Date de la
             pièce comptable : {{invoice.manualAccountingDocumentDate|date:'dd/MM/yyyy'}}</span>
         </p>

@@ -38,4 +38,8 @@ public interface ITiersReporting {
     String getCreatedDateWeek();
 
     String getCreatedDateDay();
+
+    String getLastTiersFollowupDate();
+
+    String getLastResponsableFollowupDate();
 }

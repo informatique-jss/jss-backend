@@ -29,9 +29,10 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         +
                         " sum(case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 when i.is_credit_note then -1 else 1 end * (ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithTax, "
                         +
-                        " sum(case when i.is_credit_note = false and i.customer_order_id is not null then 1 else 0 end) as nbrCustomerOrder, "
+                        " count (distinct case when i.is_credit_note = false and i.customer_order_id is not null then i.id else 0 end) as nbrCustomerOrder, "
                         +
-                        " sum(1) as nbrInvoices, " +
+                        " count(distinct case when i.is_credit_note = false then i.id end) as nbrInvoices, " +
+                        " count(distinct case when i.is_credit_note = true then i.id end) as nbrCreditNote, " +
                         " coalesce(case " +
                         " when t1.denomination is not null then t1.denomination " +
                         " when t1.id is not null then concat(t1.firstname, " +
@@ -56,7 +57,11 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " ' ', " +
                         " e2.lastname)) as salesEmployeeLabel, " +
                         " ist.label as invoiceStatusLabel, " +
-                        " vat.label as vatLabel " +
+                        " vat.label as vatLabel, " +
+                        " sum(coalesce((select count(*) from announcement a join provision p on p.id_announcement =a.id join asso_affaire_order aao on aao.id = p.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id),0)) as nbrAnnouncement, "
+                        +
+                        " (select string_agg(distinct cast(d.code as text),', ' )  from announcement a join department d on d.id = a.id_department  join provision p on p.id_announcement = a.id join asso_affaire_order aao on aao.id = p.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id) as announcementDepartment "
+                        +
                         " from " +
                         " invoice i " +
                         " join invoice_item ii on " +
@@ -84,10 +89,9 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " and field_name = 'id' " +
                         " left join employee e1 on " +
                         " e1.username = a1.username " +
+                        " left join customer_order co on co.id = i.customer_order_id " +
                         " left join employee e2 on " +
-                        " e2.id = t1.id_commercial " +
-                        " left join employee e3 on " +
-                        " e3.id = t2.id_commercial " +
+                        " e2.id = co.id_assigned_to " +
                         " where " +
                         " i.id_invoice_status in :invoiceStatusId " +
                         " and i.is_invoice_from_provider = false " +
@@ -124,7 +128,9 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " concat (e2.firstname, " +
                         " ' ', " +
                         " e2.lastname)) , " +
-                        " ist.label, vat.label  " +
+                        " ist.label, vat.label , " +
+                        " (select  string_agg(distinct  cast(d.code as text),', ' )  from announcement a join department d on d.id = a.id_department  join provision p on p.id_announcement = a.id join asso_affaire_order aao on aao.id = p.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id) "
+                        +
                         "")
         List<ITurnoverReporting> getTurnoverReporting(@Param("invoiceStatusId") List<Integer> invoiceStatusId);
 }
