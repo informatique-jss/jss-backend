@@ -126,6 +126,8 @@ public class Attachment implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "attachments", "invoices" }, allowSetters = true)
 	private AzureReceipt azureReceipt;
 
+	private Boolean isAlreadySent;
+
 	public Integer getId() {
 		return id;
 	}
@@ -260,6 +262,14 @@ public class Attachment implements Serializable, IId {
 
 	public void setAzureReceipt(AzureReceipt azureReceipt) {
 		this.azureReceipt = azureReceipt;
+	}
+
+	public Boolean getIsAlreadySent() {
+		return isAlreadySent;
+	}
+
+	public void setIsAlreadySent(Boolean isAlreadySent) {
+		this.isAlreadySent = isAlreadySent;
 	}
 
 }

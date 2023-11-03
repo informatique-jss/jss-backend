@@ -300,9 +300,15 @@ public class MailHelper {
             }
 
             if (mail.getAttachments() != null) {
-                for (Attachment attachment : mail.getAttachments())
+                for (Attachment attachment : mail.getAttachments()) {
                     message.addAttachment(attachment.getUploadedFile().getFilename(),
                             new File(attachment.getUploadedFile().getPath()));
+
+                    if (mail.getSendToMe() == null || mail.getSendToMe() == false) {
+                        attachment.setIsAlreadySent(true);
+                        attachmentService.addOrUpdateAttachment(attachment);
+                    }
+                }
             }
         } catch (MessagingException e) {
         }
@@ -1148,7 +1154,8 @@ public class MailHelper {
                         if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
                             for (Attachment attachment : attachmentService
                                     .sortAttachmentByDateDesc(provision.getAttachments()))
-                                if (attachment.getAttachmentType().getIsToSentOnFinalizationMail()
+                                if ((sendToMe == true || attachment.getIsAlreadySent() == false)
+                                        && attachment.getAttachmentType().getIsToSentOnFinalizationMail()
                                         && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())
                                         && !attachment.getAttachmentType().getId()
                                                 .equals(constantService.getAttachmentTypeInvoice().getId())) {
