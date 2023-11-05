@@ -5,13 +5,9 @@ public interface ITiersReporting {
 
     String getTiersCategory();
 
-    String getTiersMail();
-
     String getResponsableLabel();
 
     String getResponsableCategory();
-
-    String getResponsableMail();
 
     String getSalesEmployeeLabel();
 
