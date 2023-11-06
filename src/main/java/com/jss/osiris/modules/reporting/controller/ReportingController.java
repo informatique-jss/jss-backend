@@ -25,6 +25,7 @@ import com.jss.osiris.modules.reporting.model.IQuotationReporting;
 import com.jss.osiris.modules.reporting.model.IRecoveryReporting;
 import com.jss.osiris.modules.reporting.model.ITiersReporting;
 import com.jss.osiris.modules.reporting.model.ITurnoverReporting;
+import com.jss.osiris.modules.reporting.model.ITurnoverVatReporting;
 import com.jss.osiris.modules.reporting.model.UserReporting;
 import com.jss.osiris.modules.reporting.service.AnnouncementReportingService;
 import com.jss.osiris.modules.reporting.service.CustomerOrderReportingService;
@@ -34,6 +35,7 @@ import com.jss.osiris.modules.reporting.service.QuotationReportingService;
 import com.jss.osiris.modules.reporting.service.RecoveryReportingService;
 import com.jss.osiris.modules.reporting.service.TiersReportingService;
 import com.jss.osiris.modules.reporting.service.TurnoverReportingService;
+import com.jss.osiris.modules.reporting.service.TurnoverVatReportingService;
 import com.jss.osiris.modules.reporting.service.UserReportingService;
 
 @RestController
@@ -49,6 +51,9 @@ public class ReportingController {
 
 	@Autowired
 	TurnoverReportingService turnoverReportingService;
+
+	@Autowired
+	TurnoverVatReportingService turnoverVatReportingService;
 
 	@Autowired
 	CustomerOrderReportingService customerOrderReportingService;
@@ -88,6 +93,13 @@ public class ReportingController {
 	public ResponseEntity<List<ITurnoverReporting>> getTurnoverReporting()
 			throws OsirisValidationException, OsirisException {
 		return new ResponseEntity<List<ITurnoverReporting>>(turnoverReportingService.getTurnoverReporting(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/turnover-vat")
+	public ResponseEntity<List<ITurnoverVatReporting>> getTurnoverVatReporting()
+			throws OsirisValidationException, OsirisException {
+		return new ResponseEntity<List<ITurnoverVatReporting>>(turnoverVatReportingService.getTurnoverVatReporting(),
 				HttpStatus.OK);
 	}
 

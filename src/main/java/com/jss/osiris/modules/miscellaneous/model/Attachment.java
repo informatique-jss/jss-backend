@@ -128,6 +128,11 @@ public class Attachment implements Serializable, IId {
 
 	private Boolean isAlreadySent;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "id_parent_attachment")
+	private Attachment parentAttachment;
+
 	public Integer getId() {
 		return id;
 	}
@@ -270,6 +275,14 @@ public class Attachment implements Serializable, IId {
 
 	public void setIsAlreadySent(Boolean isAlreadySent) {
 		this.isAlreadySent = isAlreadySent;
+	}
+
+	public Attachment getParentAttachment() {
+		return parentAttachment;
+	}
+
+	public void setParentAttachment(Attachment parentAttachment) {
+		this.parentAttachment = parentAttachment;
 	}
 
 }

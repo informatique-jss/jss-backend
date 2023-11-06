@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.reporting.model;
 
-public interface ITurnoverReporting {
+public interface ITurnoverVatReporting {
 
     String getInvoiceDateYear();
 
@@ -18,15 +18,7 @@ public interface ITurnoverReporting {
 
     Float getTurnoverAmountWithoutDebourWithTax();
 
-    Integer getNbrCustomerOrder();
-
-    Integer getNbrInvoices();
-
-    Integer getNbrCreditNote();
-
     String getTiersLabel();
-
-    String getConfrereLabel();
 
     String getTiersCategory();
 
@@ -36,7 +28,6 @@ public interface ITurnoverReporting {
 
     String getInvoiceStatusLabel();
 
-    Integer getNbrAnnouncement();
+    String getVatLabel();
 
-    String getAnnouncementDepartment();
 }

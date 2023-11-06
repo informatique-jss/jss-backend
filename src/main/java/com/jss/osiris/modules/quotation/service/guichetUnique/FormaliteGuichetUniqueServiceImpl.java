@@ -383,9 +383,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             competentAuthority = competentAuthorities.get(0);
 
         invoiceItem.setLabel(competentAuthority.getLabel() + " - " + cartRate.getRate().getLabel());
-        long amount = cartRate.getHtAmount();
+        float amount = cartRate.getHtAmount();
         if (amount == 0)
-            amount = cartRate.getAmount();
+            amount = cartRate.getAmount() / 1.2f;
 
         if (cartRate.getAmount() < 0 && amount > 0)
             amount = -amount;

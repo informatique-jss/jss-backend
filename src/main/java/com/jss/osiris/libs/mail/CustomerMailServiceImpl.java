@@ -104,6 +104,7 @@ public class CustomerMailServiceImpl implements CustomerMailService {
                 newAttachment.setCustomerMail(mail);
                 newAttachment.setUploadedFile(attachment.getUploadedFile());
                 newAttachment.setDescription(attachment.getDescription());
+                newAttachment.setParentAttachment(attachment);
                 attachmentService.addOrUpdateAttachment(newAttachment);
             }
     }
