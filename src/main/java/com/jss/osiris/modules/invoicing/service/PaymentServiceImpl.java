@@ -317,6 +317,51 @@ public class PaymentServiceImpl implements PaymentService {
 
             Float remainingMoney = Math.round(payment.getPaymentAmount() * 100f) / 100f;
 
+            // Quotation waiting customer answer found
+            // Transform them to customer order
+            if (correspondingQuotation.size() > 0 && remainingMoney > 0) {
+                for (Quotation quotation : correspondingQuotation) {
+                    if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER)
+                            && quotation.getCustomerOrders() != null && quotation.getCustomerOrders().size() > 0) {
+                        boolean found = false;
+                        // If already in correspondingCustomerOrder list, do not consider it
+                        if (correspondingCustomerOrder.size() > 0)
+                            for (CustomerOrder customerOrderFound : correspondingCustomerOrder)
+                                if (customerOrderFound.getId().equals(quotation.getCustomerOrders().get(0).getId()))
+                                    found = true;
+                        if (!found) {
+                            // if customer order billed, use invoice if not already matched
+                            if (quotation.getCustomerOrders().get(0).getCustomerOrderStatus().getCode()
+                                    .equals(CustomerOrderStatus.BILLED)
+                                    && quotation.getCustomerOrders().get(0).getInvoices() != null) {
+                                for (Invoice invoice : quotation.getCustomerOrders().get(0).getInvoices()) {
+                                    if (invoice.getInvoiceStatus().getId()
+                                            .equals(constantService.getInvoiceStatusSend().getId())) {
+                                        boolean invoiceFound = false;
+                                        if (correspondingInvoices.size() > 0) {
+                                            for (Invoice correspondingInvoice : correspondingInvoices) {
+                                                if (correspondingInvoice.getId().equals(invoice.getId())) {
+                                                    invoiceFound = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (!invoiceFound)
+                                            correspondingInvoices.add(invoice);
+                                    }
+                                }
+                            } else {
+                                correspondingCustomerOrder
+                                        .add(quotation.getCustomerOrders().get(0));
+                            }
+                        }
+                    } else if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
+                        Quotation validatedQuotation = quotationService.unlockQuotationFromDeposit(quotation);
+                        correspondingCustomerOrder.add(validatedQuotation.getCustomerOrders().get(0));
+                    }
+                }
+            }
+
             // Associate automatically only if we have enough item to put all money
             Float totalItemsAmount = 0f;
             if (correspondingInvoices.size() > 0)
@@ -330,28 +375,6 @@ public class PaymentServiceImpl implements PaymentService {
             // Invoices to payed found
             if (correspondingInvoices.size() > 0) {
                 remainingMoney = associateInboundPaymentAndInvoices(payment, correspondingInvoices, null);
-            }
-
-            // Quotation waiting customer answer found
-            // Transform them to customer order
-            if (correspondingQuotation.size() > 0 && remainingMoney > 0) {
-                for (Quotation quotation : correspondingQuotation) {
-                    if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER)
-                            && quotation.getCustomerOrders() != null && quotation.getCustomerOrders().size() > 0) {
-                        boolean found = false;
-                        // If already in correspondingCustomerOrder list, do not consider it
-                        if (correspondingCustomerOrder.size() > 0)
-                            for (CustomerOrder customerOrderFound : correspondingCustomerOrder)
-                                if (customerOrderFound.getId().equals(quotation.getCustomerOrders().get(0).getId()))
-                                    found = true;
-                        if (!found)
-                            correspondingCustomerOrder
-                                    .add(quotation.getCustomerOrders().get(0));
-                    } else if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
-                        Quotation validatedQuotation = quotationService.unlockQuotationFromDeposit(quotation);
-                        correspondingCustomerOrder.add(validatedQuotation.getCustomerOrders().get(0));
-                    }
-                }
             }
 
             // Customer order waiting for deposit found
@@ -595,6 +618,9 @@ public class PaymentServiceImpl implements PaymentService {
                             invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoices.get(i)) * 100f)
                             / 100f;
                     Float effectivePayment = 0f;
+
+                    if (remainingToPayForCurrentInvoice < 0)
+                        continue;
 
                     if (byPassAmount != null) {
                         effectivePayment = byPassAmount.get(amountIndex);
