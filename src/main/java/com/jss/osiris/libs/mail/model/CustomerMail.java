@@ -163,6 +163,10 @@ public class CustomerMail {
     private Boolean hasErrors;
     private Boolean isSent;
 
+    private String mailTemplate;
+
+    private String recipientName;
+
     public Integer getId() {
         return id;
     }
@@ -497,6 +501,22 @@ public class CustomerMail {
 
     public void setQuotationValidationLink(String quotationValidationLink) {
         this.quotationValidationLink = quotationValidationLink;
+    }
+
+    public String getMailTemplate() {
+        return mailTemplate;
+    }
+
+    public void setMailTemplate(String mailTemplate) {
+        this.mailTemplate = mailTemplate;
+    }
+
+    public String getRecipientName() {
+        return recipientName;
+    }
+
+    public void setRecipientName(String recipientName) {
+        this.recipientName = recipientName;
     }
 
 }

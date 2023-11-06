@@ -15,6 +15,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +112,8 @@ public class MailHelper {
     public static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
 
     private static final String PNG_MIME = "image/png";
+
+    private static final String TEMPLATE_QUOTATION_VALIDATION = "mail-quotation-validation";
 
     private boolean disableCbLink = false;
 
@@ -255,7 +258,7 @@ public class MailHelper {
             message.setSubject(mail.getSubject());
 
             // Create the HTML body using Thymeleaf
-            final String htmlContent = StringEscapeUtils.unescapeHtml4(emailTemplateEngine().process("model", ctx));
+            final String htmlContent = StringEscapeUtils.unescapeHtml4(emailTemplateEngine().process("mail-core", ctx));
             message.setText(htmlContent, true);
 
             // header picture
@@ -316,13 +319,13 @@ public class MailHelper {
         return mimeMessage;
     }
 
-    public File generateGenericPdf(CustomerMail mail) throws OsirisException {
+    public File generateGenericPdfOfMail(CustomerMail mail) throws OsirisException {
         final Context ctx = new Context();
         setContextVariable(ctx, mail, true);
         String htmlContent = "";
         // Create the HTML body using Thymeleaf
         try {
-            htmlContent = StringEscapeUtils.unescapeHtml4(emailTemplateEngine().process("model", ctx));
+            htmlContent = StringEscapeUtils.unescapeHtml4(emailTemplateEngine().process("mail-core", ctx));
         } catch (Exception e) {
             throw new OsirisException(e, "Unable to parse HTML for mail " + mail.getId());
         }
@@ -354,6 +357,7 @@ public class MailHelper {
 
     private void setContextVariable(Context ctx, CustomerMail mail, boolean setPlainPictures) {
         // Prepare the evaluation context
+        ctx.setVariable("mailTemplate", mail.getMailTemplate());
         ctx.setVariable("instagram", "instagram");
         ctx.setVariable("facebook", "facebook");
         ctx.setVariable("linkedin", "linkedin");
@@ -367,6 +371,7 @@ public class MailHelper {
         ctx.setVariable("subtitle", mail.getSubtitle());
         ctx.setVariable("label", mail.getLabel());
         ctx.setVariable("explaination", mail.getExplaination());
+        ctx.setVariable("recipientName", mail.getRecipientName());
         ctx.setVariable("customerMailCustomMessage", mail.getCustomerMailCustomMessage());
         ctx.setVariable("explainationElements",
                 mail.getExplainationElements() != null ? mail.getExplainationElements().split("forgetThis") : null);
@@ -375,6 +380,8 @@ public class MailHelper {
         ctx.setVariable("paymentExplainationWarning", mail.getPaymentExplainationWarning());
         ctx.setVariable("paymentExplaination", mail.getPaymentExplaination());
         ctx.setVariable("paymentExplaination2", mail.getPaymentExplaination2());
+        ctx.setVariable("ibanJss", ibanJss);
+        ctx.setVariable("bicJss", bicJss);
 
         if (mail.getCustomerMailAssoAffaireOrders() != null) {
             ArrayList<AssoAffaireOrder> assos = new ArrayList<AssoAffaireOrder>();
@@ -395,6 +402,16 @@ public class MailHelper {
         ctx.setVariable("priceTotal", mail.getPriceTotal());
         ctx.setVariable("totalSubtitle", mail.getTotalSubtitle());
         ctx.setVariable("greetings", mail.getGreetings());
+
+        if (mail.getReplyTo() != null) {
+            ctx.setVariable("replyToName", StringUtils.capitalize(mail.getReplyTo().getFirstname().toLowerCase()) + " "
+                    + StringUtils.capitalize(mail.getReplyTo().getLastname().toLowerCase()));
+            ctx.setVariable("replyToTitle", mail.getReplyTo().getTitle());
+            ctx.setVariable("replyToPhone", "01 47 03 10 10");
+            ctx.setVariable("replyToMail", mail.getReplyTo().getMail().toLowerCase());
+        }
+
+        ctx.setVariable("displayMyAccountButton", true);
         ctx.setVariable("cbExplanation", mail.getCbExplanation());
         ctx.setVariable("cbLink", mail.getCbLink());
         ctx.setVariable("quotationValidationLink", mail.getQuotationValidationLink());
@@ -500,35 +517,23 @@ public class MailHelper {
     public void sendQuotationToCustomer(Quotation quotation, boolean sendToMe)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         CustomerMail mail = new CustomerMail();
+        mail.setMailTemplate(TEMPLATE_QUOTATION_VALIDATION);
         mail.setQuotation(quotation);
         mail.setHeaderPicture("images/quotation-header.png");
-        mail.setTitle("Votre nouveau devis est prêt !");
-        mail.setSubtitle("Il n'attend plus que votre validation.");
-        if (quotation.getCustomerMailCustomMessage() != null)
-            mail.setCustomerMailCustomMessage(quotation.getCustomerMailCustomMessage());
-        mail.setLabel("Devis n°" + quotation.getId());
+        mail.setTitle("Votre nouveau devis est prêt");
 
-        MailComputeResult mailComputeResult = mailComputeHelper.computeMailForQuotationMail(quotation);
+        List<String> affaireLabels = new ArrayList<String>();
 
         if (quotation.getAssoAffaireOrders().size() == 1) {
-            Affaire affaire = quotation.getAssoAffaireOrders().get(0).getAffaire();
-            mail.setExplaination("Vous trouverez ci-dessous le devis pour la société "
-                    + (affaire.getDenomination() != null ? affaire.getDenomination()
-                            : (affaire.getFirstname() + " " + affaire.getLastname()))
-                    + " (" + (affaire.getAddress() + ", "
-                            + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"));
-        } else {
-            mail.setExplaination("Vous trouverez ci-dessous le devis pour les sociétés suivantes :");
-            ArrayList<String> details = new ArrayList<String>();
             for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
-                details.add((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
-                        : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname())) + " ("
-                        + (asso
-                                .getAffaire().getAddress() + ", "
-                                + (asso.getAffaire().getCity() != null ? asso.getAffaire().getCity().getLabel() : "")
-                                + ")"));
-            mail.setExplainationElements(String.join("forgetThis", details));
+                affaireLabels.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                        : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
         }
+
+        mail.setSubtitle("Devis n°" + quotation.getId() + " - " + String.join(", ", affaireLabels));
+        mail.setPaymentExplaination(quotation.getId() + "");
+
+        MailComputeResult mailComputeResult = mailComputeHelper.computeMailForQuotationMail(quotation);
 
         if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0) {
             ArrayList<CustomerMailAssoAffaireOrder> customerAssos = new ArrayList<CustomerMailAssoAffaireOrder>();
@@ -544,67 +549,33 @@ public class MailHelper {
 
         computeQuotationPrice(mail, quotation);
 
-        ITiers tiers = quotationService.getCustomerOrderOfQuotation(quotation);
-        boolean isDepositMandatory = false;
-        boolean isPaymentTypePrelevement = false;
-
-        if (tiers instanceof Tiers) {
-            isDepositMandatory = ((Tiers) tiers).getIsProvisionalPaymentMandatory();
-            isPaymentTypePrelevement = ((Tiers) tiers).getPaymentType() != null && ((Tiers) tiers).getPaymentType()
-                    .getId().equals(constantService.getPaymentTypePrelevement().getId());
-        } else if (tiers instanceof Confrere) {
-            isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
-            isPaymentTypePrelevement = ((Confrere) tiers).getPaymentType() != null
-                    && ((Confrere) tiers).getPaymentType()
-                            .getId().equals(constantService.getPaymentTypePrelevement().getId());
-        } else if (tiers instanceof Responsable) {
-            isDepositMandatory = ((Responsable) tiers).getTiers().getIsProvisionalPaymentMandatory();
-            isPaymentTypePrelevement = ((Responsable) tiers).getTiers().getPaymentType() != null
-                    && ((Responsable) tiers).getTiers().getPaymentType()
-                            .getId().equals(constantService.getPaymentTypePrelevement().getId());
-        }
-
-        if (!isPaymentTypePrelevement && isDepositMandatory) {
-            mail.setPaymentExplaination(
-                    "Votre devis est en attente d'acompte. Pour le valider et lancer votre commande, effectuez dès maintenant un virement de "
-                            + mail.getPriceTotal() + " € sur le compte ci-dessous.");
-        } else {
-            mail.setQuotationValidation("Vous pouvez, si vous le souhaitez, valider ce devis en cliquant ");
-            mail.setQuotationValidationLink(
-                    paymentCbEntryPoint + "/quotation/validate?quotationId=" + quotation.getId()
-                            + "&validationToken=" + quotation.getValidationToken());
-            mail.setPaymentExplaination(" ou régler un acompte pour ce devis d'un montant de "
-                    + mail.getPriceTotal() + " € en suivant les instructions ci-dessous.");
-        }
-
-        if (!isPaymentTypePrelevement) {
-            mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
-
-            if (!disableCbLink) {
-                mail.setCbExplanation(
-                        "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
-
-                mail.setCbLink(paymentCbEntryPoint + "/quotation/deposit?quotationId=" + quotation.getId() + "&mail="
-                        + mailComputeResult.getRecipientsMailTo().get(0).getMail());
-            }
-
-            mail.setPaymentExplainationWarning(
-                    "Référence à indiquer absolument dans le libellé de votre virement : " + quotation.getId());
-
-        }
+        mail.setQuotationValidationLink(paymentCbEntryPoint + "/quotation/validate?quotationId=" + quotation.getId()
+                + "&validationToken=" + quotation.getValidationToken());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        mail.setTotalSubtitle("Ce devis est valable jusqu'au "
-                + LocalDate.now().withMonth(12).withDayOfMonth(31).format(formatter)
-                + " et sous réserve que les prestations à réaliser, au vu des documents transmis, correspondent à la demande de devis. Toute modification entraînera son actualisation.");
-        mail.setGreetings("Bonne journée !");
+        ITiers tiers = quotationService.getCustomerOrderOfQuotation(quotation);
+        String recipientLabel = "";
+
+        if (tiers instanceof Tiers) {
+            recipientLabel = ((Tiers) tiers).getCivility().getLabel() + " " + ((Tiers) tiers).getLastname();
+        } else if (tiers instanceof Confrere) {
+            recipientLabel = ((Confrere) tiers).getLabel();
+        } else if (tiers instanceof Responsable) {
+            recipientLabel = ((Responsable) tiers).getCivility().getLabel() + " " + ((Responsable) tiers).getLastname();
+        }
+
+        mail.setRecipientName(recipientLabel);
+
+        mail.setExplaination(LocalDate.now().withMonth(12).withDayOfMonth(31).format(formatter));
+        mail.setGreetings("À très bientôt !");
 
         mail.setReplyTo(quotation.getAssignedTo());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
 
-        mail.setSubject("Votre devis n°" + quotation.getId());
+        mail.setSubject(
+                StringUtils.left("Votre devis n°" + quotation.getId() + " - " + String.join(", ", affaireLabels), 255));
 
         mailService.addMailToQueue(mail);
     }

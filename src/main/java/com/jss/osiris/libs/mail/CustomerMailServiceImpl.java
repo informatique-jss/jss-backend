@@ -130,7 +130,7 @@ public class CustomerMailServiceImpl implements CustomerMailService {
                 File mailPdf = null;
                 try {
                     List<Attachment> attachments = null;
-                    mailPdf = mailHelper.generateGenericPdf(mail);
+                    mailPdf = mailHelper.generateGenericPdfOfMail(mail);
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
                     if (mail.getCustomerOrder() != null)
                         attachments = attachmentService.addAttachment(new FileInputStream(mailPdf),
