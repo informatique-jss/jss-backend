@@ -317,7 +317,7 @@ public class InvoicingController {
     }
 
     @GetMapping(inputEntryPoint + "/refund/payment")
-    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<Boolean> refundPayment(@RequestParam Integer paymentId,
             @RequestParam Integer tiersId, @RequestParam Integer affaireId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
