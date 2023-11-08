@@ -52,11 +52,6 @@
                       [isDisabled]="!editMode"></generic-input>
                   </td>
                   <td>
-                    <generic-input [(model)]="selectedcompetentAuthority.owncloudFolderName"
-                      label="Nom du dossier Owncloud" [form]="entityForm2" propertyName="owncloudFolderName"
-                      [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="250"></generic-input>
-                  </td>
-                  <td>
                     <generic-input [(model)]="selectedcompetentAuthority.azureCustomReference"
                       label="Référence de recherche Azure" [maxLength]="250" [form]="entityForm2"
                       propertyName="azureCustomReference" [isMandatory]="false"

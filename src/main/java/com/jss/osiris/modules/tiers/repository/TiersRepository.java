@@ -35,4 +35,12 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
         List<Tiers> findAllTiersForBillingClosureReceiptSend(@Param("invoiceStatusSendId") Integer invoiceStatusSendId,
                         @Param("tiersTypeClientId") Integer tiersTypeClientId);
 
+        @Query(value = "select a from Tiers a where postalCode = :postalCode and isIndividual = true and trim(upper(firstname))=upper(trim(:firstname)) and trim(upper(lastname))=trim(upper(trim(:lastname))) ")
+        List<Tiers> findByPostalCodeAndName(@Param("postalCode") String postalCode,
+                        @Param("firstname") String firstname, @Param("lastname") String lastname);
+
+        @Query(value = "select a from Tiers a where postalCode = :postalCode and isIndividual = false and trim(upper(denomination))=upper(trim(:denomination))  ")
+        List<Tiers> findByPostalCodeAndDenomination(@Param("postalCode") String postalCode,
+                        @Param("denomination") String denomination);
+
 }

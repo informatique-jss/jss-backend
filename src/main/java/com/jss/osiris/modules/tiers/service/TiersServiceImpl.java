@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.tiers.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.search.service.SearchService;
@@ -71,9 +73,23 @@ public class TiersServiceImpl implements TiersService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Tiers addOrUpdateTiers(Tiers tiers) throws OsirisException {
+    public Tiers addOrUpdateTiers(Tiers tiers) throws OsirisException, OsirisDuplicateException {
         if (tiers == null)
             throw new OsirisException(null, "Provided tiers is null");
+
+        // Find duplicate Tiers
+        if (tiers.getId() == null) {
+            List<Tiers> tiersDuplicates = new ArrayList<Tiers>();
+            if (tiers.getIsIndividual() != null && tiers.getIsIndividual() == true)
+                tiersDuplicates = tiersRepository.findByPostalCodeAndName(tiers.getPostalCode(), tiers.getFirstname(),
+                        tiers.getLastname());
+            else
+                tiersDuplicates = tiersRepository.findByPostalCodeAndDenomination(tiers.getPostalCode(),
+                        tiers.getDenomination());
+
+            if (tiersDuplicates.size() > 0)
+                throw new OsirisDuplicateException(tiersDuplicates.stream().map(Tiers::getId).toList());
+        }
 
         // If mails already exists, get their ids
         if (tiers != null && tiers.getMails() != null && tiers.getMails().size() > 0)

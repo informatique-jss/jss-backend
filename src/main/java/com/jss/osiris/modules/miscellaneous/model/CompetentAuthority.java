@@ -129,8 +129,6 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 	@JoinColumn(name = "id_default_payment_type")
 	private PaymentType defaultPaymentType;
 
-	private String owncloudFolderName;
-
 	private String inpiReference;
 
 	private String azureCustomReference;
@@ -368,14 +366,6 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 
 	public void setPaymentTypes(List<PaymentType> paymentTypes) {
 		this.paymentTypes = paymentTypes;
-	}
-
-	public String getOwncloudFolderName() {
-		return owncloudFolderName;
-	}
-
-	public void setOwncloudFolderName(String owncloudFolderName) {
-		this.owncloudFolderName = owncloudFolderName;
 	}
 
 	public PaymentType getDefaultPaymentType() {

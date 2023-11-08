@@ -150,7 +150,7 @@ public class PricingHelper {
             CharacterPrice characterPrice = characterPriceService.getCharacterPrice(provision);
             if (characterPrice != null) {
                 Float price = characterPrice.getPrice()
-                        * characterPriceService.getCharacterNumber(provision);
+                        * characterPriceService.getCharacterNumber(provision, false);
                 invoiceItem.setPreTaxPrice(price);
 
                 // Add notice type indication for announcements
@@ -166,7 +166,7 @@ public class PricingHelper {
 
                 if (noticeFamiliyType != null && noticeTypes.size() > 0)
                     invoiceItem.setLabel(invoiceItem.getLabel() + " ("
-                            + characterPriceService.getCharacterNumber(provision)
+                            + characterPriceService.getCharacterNumber(provision, false)
                             + " caractères"
                             + (provision.getAnnouncement() != null
                                     && provision.getAnnouncement().getPublicationDate() != null
@@ -181,7 +181,7 @@ public class PricingHelper {
                             + String.join(" / ", noticeTypes) + ")");
                 else
                     invoiceItem.setLabel(invoiceItem.getLabel() + " ("
-                            + characterPriceService.getCharacterNumber(provision) + ")");
+                            + characterPriceService.getCharacterNumber(provision, false) + ")");
 
                 if (provision.getAnnouncement().getDepartment() != null)
                     invoiceItem.setLabel(
@@ -217,7 +217,7 @@ public class PricingHelper {
                 Float price = 0f;
                 if (characterPrice != null) {
                     price = characterPrice.getPrice()
-                            * characterPriceService.getCharacterNumber(provision);
+                            * characterPriceService.getCharacterNumber(provision, false);
                 }
 
                 Float additionnalFees = 0f;

@@ -72,7 +72,7 @@ export class HabilitationsService {
   }
 
   canAddNewAzureInvoice() {
-    return this.loginService.hasGroup([ADMINISTRATEURS])
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
   canCancelInvoice() {

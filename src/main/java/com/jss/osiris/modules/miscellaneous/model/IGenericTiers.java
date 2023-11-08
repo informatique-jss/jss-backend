@@ -7,6 +7,8 @@ public interface IGenericTiers extends IId {
 
     public City getCity();
 
+    public String getLabel();
+
     public AccountingAccount getAccountingAccountProvider();
 
     public AccountingAccount getAccountingAccountCustomer();

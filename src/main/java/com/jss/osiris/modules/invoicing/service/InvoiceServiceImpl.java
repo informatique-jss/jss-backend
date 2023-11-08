@@ -13,11 +13,11 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
@@ -119,11 +119,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Autowired
     DirectDebitTransfertService directDebitTransfertService;
 
-    @Scheduled(initialDelay = 100, fixedDelay = 10000000)
-    public void test() throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        paymentService.automatchPayment(paymentService.getPayment(492457));
-    }
-
     @Override
     public List<Invoice> getAllInvoices() {
         return IterableUtils.toList(invoiceRepository.findAll());
@@ -145,7 +140,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Invoice addOrUpdateInvoiceFromUser(Invoice invoice)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         if (!hasAtLeastOneInvoiceItemNotNull(invoice))
             throw new OsirisException(null, "No invoice item found on invoice");
 
@@ -314,7 +309,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Invoice cancelInvoice(Invoice invoice)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         invoice = getInvoice(invoice.getId());
         if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
                 || !invoice.getIsCreditNote() && !invoice.getIsInvoiceFromProvider()
@@ -330,7 +325,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     private Invoice cancelInvoiceEmitted(Invoice invoice, CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Refresh invoice
         invoice = getInvoice(invoice.getId());
 
@@ -456,7 +451,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Invoice generateProviderInvoiceCreditNote(Invoice newInvoice, Integer idOriginInvoiceForCreditNote)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         Invoice invoice = getInvoice(idOriginInvoiceForCreditNote);
         newInvoice.setIsInvoiceFromProvider(false);

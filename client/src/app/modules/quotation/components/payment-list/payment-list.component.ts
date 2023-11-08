@@ -7,6 +7,7 @@ import { PaymentSearch } from "src/app/modules/invoicing/model/PaymentSearch";
 import { PaymentSearchResult } from "src/app/modules/invoicing/model/PaymentSearchResult";
 import { PaymentSearchResultService } from "src/app/modules/invoicing/services/payment.search.result.service";
 import { PaymentService } from "src/app/modules/invoicing/services/payment.service";
+import { EditCommentDialogComponent } from "src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component";
 import { UploadAttachementDialogComponent } from "src/app/modules/miscellaneous/components/upload-attachement-dialog/upload-attachement-dialog.component";
 import { IAttachment } from "src/app/modules/miscellaneous/model/IAttachment";
 import { SortTableAction } from "src/app/modules/miscellaneous/model/SortTableAction";
@@ -56,6 +57,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     public selectCompetentAuthorityDialog: MatDialog,
     private formBuilder: FormBuilder,
     private habilitationService: HabilitationsService,
+    private editCommentDialog: MatDialog,
     private paymentDetailsDialogService: PaymentDetailsDialogService,
   ) { }
 
@@ -86,7 +88,9 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "isInternallyAssociated", fieldName: "isAssociated", label: "Associé dans Osiris", valueFonction: (element: any) => { return (element.isAssociated) ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "isExternallyAssociated", fieldName: "isExternallyAssociated", label: "Associé hors Osiris", valueFonction: (element: any) => { return element.isExternallyAssociated ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé", valueFonction: (element: any) => { return element.isCancelled ? "Oui" : "Non" } } as SortTableColumn);
+    this.availableColumns.push({ id: "isAppoint", fieldName: "isAppoint", label: "Appoint", valueFonction: (element: any) => { return element.isCancelled ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture associée", actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
+    this.availableColumns.push({ id: "comment", fieldName: "comment", label: "Commentaire" } as SortTableColumn);
 
     if (this.overrideIconAction == "") {
       if (this.habilitationService.canModifyPaymentAssociation()) {
@@ -113,6 +117,20 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
               this.displayAccountingPaymentDetailsDialog(element as any);
           }, display: true,
         } as SortTableAction);
+        this.tableAction.push({
+          actionIcon: 'mode_comment', actionName: 'Modifier le commentaire', actionClick: (action: SortTableAction, element: any) => {
+            let dialogRef = this.editCommentDialog.open(EditCommentDialogComponent, {
+              width: '40%'
+            });
+            dialogRef.componentInstance.comment = element.comment;
+
+            dialogRef.afterClosed().subscribe(newComment => {
+              if (newComment) {
+                this.paymentService.addOrUpdatePaymentComment(element.id, newComment).subscribe(response => { this.searchPayments() });
+              }
+            });
+          }, display: true,
+        } as SortTableAction);
       }
     } else {
       this.tableAction.push({
@@ -125,6 +143,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     this.setColumns();
 
     this.paymentSearch.isHideAssociatedPayments = true;
+    this.paymentSearch.isHideAppoint = true;
     this.paymentSearch.isHideCancelledPayments = true;
 
     if (this.isForDashboard && !this.payments && this.paymentSearch) {

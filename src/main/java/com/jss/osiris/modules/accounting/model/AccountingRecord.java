@@ -11,10 +11,12 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -28,6 +30,11 @@ import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
 @Entity
+@Table(indexes = {
+		@Index(name = "idx_accounting_record_payment", columnList = "id_payment"),
+		@Index(name = "idx_accounting_record_customer_order", columnList = "id_customer_order"),
+		@Index(name = "idx_accounting_record_invoice", columnList = "id_invoice")
+})
 public class AccountingRecord implements Serializable, IId {
 
 	@Id

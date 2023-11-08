@@ -1313,6 +1313,14 @@
                 label="Fournisseur - Central Pay"></autocomplete-provider>
             </td>
           </tr>
+          <tr>
+            <td>
+              <select-followup [(model)]="constant.tiersFollowupTypeInvoiceReminder"
+                label="Type de suivi - relance facture" [form]="constantForm"
+                propertyName="tiersFollowupTypeInvoiceReminder" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-followup>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>

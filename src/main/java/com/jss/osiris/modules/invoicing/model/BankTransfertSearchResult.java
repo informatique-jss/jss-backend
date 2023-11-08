@@ -23,4 +23,6 @@ public interface BankTransfertSearchResult {
     public String getCompetentAuthorityLabel();
 
     public String getAffaireLabel();
+
+    public String getComment();
 }

@@ -18,9 +18,13 @@ public interface PaymentSearchResult {
 
     public Boolean getIsCancelled();
 
+    public Boolean getIsAppoint();
+
     public Integer getInvoiceId();
 
     public String getPaymentTypeLabel();
+
+    public String getComment();
 
     public String getOriginPaymentId();
 

@@ -19,8 +19,6 @@ public interface CompetentAuthorityService {
 
     public CompetentAuthority getCompetentAuthorityByApiId(String apiId);
 
-    public CompetentAuthority getCompetentAuthorityByOwncloudFolderName(String folderName);
-
     public List<CompetentAuthority> getCompetentAuthorityByAuthorityType(Integer competentAuthorityTypeId);
  
     public CompetentAuthority getCompetentAuthorityByIntercommunityVat(String intercommunityVat);

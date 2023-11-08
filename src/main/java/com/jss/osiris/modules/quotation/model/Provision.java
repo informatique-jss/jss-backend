@@ -28,7 +28,13 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_provision_asso_affaire_order", columnList = "id_asso_affaire_order") })
+@Table(indexes = { @Index(name = "idx_provision_asso_affaire_order", columnList = "id_asso_affaire_order"),
+		@Index(name = "idx_provision_formalite", columnList = "id_formalite"),
+		@Index(name = "idx_provision_domicialitation", columnList = "id_domiciliation"),
+		@Index(name = "idx_provision_simple_provision", columnList = "id_simple_provision"),
+		@Index(name = "idx_provision_announcement", columnList = "id_announcement"),
+		@Index(name = "idx_provision_bodacc", columnList = "id_bodacc")
+})
 public class Provision implements IId, IAttachment {
 
 	@Id

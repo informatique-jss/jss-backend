@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
@@ -44,7 +45,8 @@ public interface AccountingRecordService {
 
         // Billing closure generation
         public void sendBillingClosureReceipt()
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public File getBillingClosureReceiptFile(Integer tiersId, boolean downloadFile)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;

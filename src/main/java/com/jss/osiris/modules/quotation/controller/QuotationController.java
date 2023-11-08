@@ -26,6 +26,7 @@ import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -329,7 +330,7 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/customer-order/associate")
   public ResponseEntity<Quotation> associateCustomerOrderToQuotation(@RequestParam Integer idQuotation,
       @RequestParam Integer idCustomerOrder)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     Quotation quotation = quotationService.getQuotation(idQuotation);
     if (quotation == null)
       throw new OsirisValidationException("idQuotation");
@@ -387,6 +388,20 @@ public class QuotationController {
       throw new OsirisValidationException("bankTransfert");
     return new ResponseEntity<BankTransfert>(bankTransfertService.selectBankTransfertForExport(bankTransfert, true),
         HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/bank-transfert/comment")
+  public ResponseEntity<BankTransfert> addOrUpdateTransfertComment(@RequestBody String comment,
+      @RequestParam Integer idBankTransfert)
+      throws OsirisValidationException {
+
+    BankTransfert bankTransfert = bankTransfertService.getBankTransfert(idBankTransfert);
+
+    if (bankTransfert == null)
+      throw new OsirisValidationException("bankTransfert");
+
+    bankTransfert.setComment(comment);
+    return new ResponseEntity<>(bankTransfertService.addOrUpdateBankTransfert(bankTransfert), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/bank-transfert/export/unselect")
@@ -673,7 +688,7 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/customer-order/assign")
   public ResponseEntity<Boolean> updateAssignedToForCustomerOrder(@RequestParam Integer customerOrderId,
       @RequestParam Integer employeeId)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
     CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
     if (customerOrder == null)
@@ -689,7 +704,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/customer-order/offer")
   public ResponseEntity<Boolean> offerCustomerOrder(@RequestParam Integer customerOrderId)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
     CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
     if (customerOrder == null)
@@ -702,7 +717,7 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/quotation/assign")
   public ResponseEntity<Boolean> updateAssignedToForQuotation(@RequestParam Integer quotationId,
       @RequestParam Integer employeeId)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
     Quotation quotation = quotationService.getQuotation(quotationId);
     if (quotation == null)
@@ -737,7 +752,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/asso/affaire/order/update")
   public ResponseEntity<AssoAffaireOrder> addOrUpdateAssoAffaireOrder(@RequestBody AssoAffaireOrder assoAffaireOrder)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     validationHelper.validateReferential(assoAffaireOrder, true, "assoAffaireOrder");
     validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true, "Affaire");
     validationHelper.validateReferential(assoAffaireOrder.getAssignedTo(), true, "AssignedTo");
@@ -941,7 +956,7 @@ public class QuotationController {
   public ResponseEntity<Integer> getCharacterNumber(@RequestBody Provision provision)
       throws OsirisValidationException {
 
-    return new ResponseEntity<Integer>(characterPriceService.getCharacterNumber(provision), HttpStatus.OK);
+    return new ResponseEntity<Integer>(characterPriceService.getCharacterNumber(provision, false), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/character-prices")
@@ -1294,7 +1309,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/quotation")
   public ResponseEntity<Quotation> addOrUpdateQuotation(@RequestBody Quotation quotation)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     validateQuotationAndCustomerOrder(quotation);
 
     QuotationStatus openQuotationStatus = quotationStatusService.getQuotationStatusByCode(QuotationStatus.OPEN);
@@ -1339,7 +1354,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/customer-order")
   public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrder(@RequestBody CustomerOrder customerOrder)
-      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException, OsirisDuplicateException {
     validateQuotationAndCustomerOrder(customerOrder);
     CustomerOrderStatus customerOrderStatus = customerOrderStatusService
         .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
@@ -1357,7 +1372,7 @@ public class QuotationController {
   @PostMapping(inputEntryPoint + "/customer-order/status")
   public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrderStatus(@RequestBody CustomerOrder customerOrder,
       @RequestParam String targetStatusCode)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
     if (!targetStatusCode.equals(CustomerOrderStatus.ABANDONED))
       quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, targetStatusCode);
@@ -1382,7 +1397,7 @@ public class QuotationController {
   @PostMapping(inputEntryPoint + "/quotation/status")
   public ResponseEntity<Quotation> addOrUpdateQuotationStatus(@RequestBody Quotation quotation,
       @RequestParam String targetStatusCode)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     quotation = quotationService.getQuotation(quotation.getId());
     if (!targetStatusCode.equals(QuotationStatus.ABANDONED))
       validateQuotationAndCustomerOrder(quotation);
@@ -1411,7 +1426,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/affaire")
   public ResponseEntity<Affaire> addOrUpdateAffaire(@RequestBody Affaire affaire)
-      throws OsirisValidationException, OsirisException {
+      throws OsirisValidationException, OsirisException, OsirisDuplicateException {
     validationHelper.validateString(affaire.getAddress(), true, 100, "Address");
     validationHelper.validateReferential(affaire.getCity(), true, "City");
     validationHelper.validateReferential(affaire.getCountry(), true, "Country");
@@ -1646,7 +1661,7 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/publication/receipt/store")
   public ResponseEntity<Provision> storePublicationReceipt(@RequestParam("idAnnouncement") Integer idAnnouncement,
       @RequestParam("idProvision") Integer idProvision)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
     Provision provision = provisionService.getProvision(idProvision);
 
@@ -1761,7 +1776,7 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/publication/flag/store")
   public ResponseEntity<Provision> storePublicationFlag(@RequestParam("idAnnouncement") Integer idAnnouncement,
       @RequestParam(name = "idProvision", required = false) Integer idProvision)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
     Provision provision = null;
     if (idProvision == null) {

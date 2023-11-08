@@ -39,6 +39,7 @@ import { AvatarComponent } from '../avatar/avatar.component';
 import { ChipsStatusComponent } from '../chips-status/chips-status.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
+import { EditCommentDialogComponent } from '../edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { EmployeeDialogComponent } from '../employee-dialog/employee-dialog.component';
 import { AutocompleteAccountingAccountComponent } from '../forms/autocomplete-accounting-account/autocomplete-accounting-account.component';
 import { AutocompleteAffaireComponent } from '../forms/autocomplete-affaire/autocomplete-affaire.component';
@@ -396,6 +397,7 @@ const routes: Routes = [
     ChipsPaymentTypeComponent,
     AutocompleteAzureInvoiceComponent,
     SelectCustomerOrderOriginComponent,
+    EditCommentDialogComponent,
     SelectProvisionComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
@@ -591,6 +593,7 @@ const routes: Routes = [
     SelectAccountingJournalComponent,
     SingleAttachmentComponent,
     SortTableComponent,
+    EditCommentDialogComponent,
     SelectInvoiceStatusComponent,
     AutocompleteRegieComponent,
     SelectAssignationTypeComponent,
@@ -712,6 +715,7 @@ const routes: Routes = [
     SelectCustomerOrderOriginComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
+    , SortTableComponent
   ]
 })
 export class MiscellaneousModule { }

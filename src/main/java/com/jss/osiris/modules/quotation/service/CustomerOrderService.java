@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.profile.model.Employee;
@@ -21,29 +22,35 @@ public interface CustomerOrderService {
         public CustomerOrder getCustomerOrderForAnnouncement(Announcement announcement);
 
         public CustomerOrder checkAllProvisionEnded(CustomerOrder customerOrderIn)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder quotation, boolean isFromUser,
                         boolean checkAllProvisionEnded)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode,
                         boolean isFromUser)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public CustomerOrder addOrUpdateCustomerOrderStatusFromUser(CustomerOrder customerOrder,
                         String targetStatusCode)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public List<OrderingSearchResult> searchOrders(OrderingSearch orderingSearch);
 
         public void reindexCustomerOrder();
 
         public CustomerOrder createNewCustomerOrderFromQuotation(Quotation quotation)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public void generateInvoiceMail(CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
@@ -59,14 +66,17 @@ public interface CustomerOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void sendRemindersForCustomerOrderDeposit()
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public Boolean validateCardPaymentLinkForCustomerOrder(CustomerOrder customerOrder,
                         com.jss.osiris.modules.quotation.model.CentralPayPaymentRequest request)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public Float getTotalForCustomerOrder(IQuotation customerOrder);
 
@@ -77,11 +87,12 @@ public interface CustomerOrderService {
                         throws OsirisException, OsirisClientMessageException;
 
         public void updateAssignedToForCustomerOrder(CustomerOrder customerOrder, Employee employee)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation);
 
         public void offerCustomerOrder(CustomerOrder customerOrder) throws OsirisException,
-                        OsirisClientMessageException, OsirisValidationException;
+                        OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException;
 
 }

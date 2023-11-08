@@ -15,8 +15,8 @@ import { SortTableColumn } from '../../model/SortTableColumn';
   templateUrl: './sort-table.component.html',
   styleUrls: ['./sort-table.component.css']
 })
-export class SortTableComponent implements OnInit {
 
+export class SortTableComponent implements OnInit {
   @Input() columns: SortTableColumn[] | undefined;
   @Input() values: any[] | undefined;
   @Input() actions: SortTableAction[] | undefined;
@@ -39,8 +39,7 @@ export class SortTableComponent implements OnInit {
   internalActions: SortTableAction[] | undefined = [] as Array<SortTableAction>;
 
   constructor(protected userPreferenceService: UserPreferenceService,
-    private appService: AppService
-
+    private appService: AppService,
   ) { }
 
   ngOnInit() {

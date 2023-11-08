@@ -419,6 +419,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         orderingSearch.customerOrders = [getCustomerOrderForIQuotation(this.quotation)];
         orderingSearch.affaires = [asso.affaire];
         orderingSearch.customerOrderStatus = [];
+        let d = new Date();
+        d.setDate(d.getDate() - 3);
+        orderingSearch.startDate = d;
         if (this.customerOrderStatusList)
           for (let status of this.customerOrderStatusList)
             if ([CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED].indexOf(status.code) >= 0)

@@ -21,6 +21,7 @@ export interface Payment {
   isAppoint: boolean;
   isDeposit: boolean;
   paymentType: PaymentType;
+  comment: string;
   checkNumber: string;
   originPayment: Payment;
   childrenPayments: Payment[];
