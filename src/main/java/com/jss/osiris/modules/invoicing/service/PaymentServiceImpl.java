@@ -369,7 +369,7 @@ public class PaymentServiceImpl implements PaymentService {
                     totalItemsAmount += invoiceService.getRemainingAmountToPayForInvoice(invoice);
 
             if (correspondingInvoices.size() > 0
-                    && totalItemsAmount > (remainingMoney + Integer.parseInt(payementLimitRefundInEuros)))
+                    && Math.round(totalItemsAmount * 100f) != Math.round(remainingMoney * 100f))
                 return;
 
             // Invoices to payed found
@@ -711,7 +711,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private void associateOutboundPaymentAndDirectDebitTransfert(Payment payment,
-            DirectDebitTransfert directDebitTransfert) throws OsirisException {
+            DirectDebitTransfert directDebitTransfert) throws OsirisException, OsirisValidationException {
 
         Float directDebitAmount = Math.round(directDebitTransfert.getTransfertAmount() * 100f) / 100f;
         Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
@@ -721,6 +721,7 @@ public class PaymentServiceImpl implements PaymentService {
             debitTransfertService.addOrUpdateDirectDebitTransfert(directDebitTransfert);
             payment.setDirectDebitTransfert(directDebitTransfert);
             addOrUpdatePayment(payment);
+            cancelPayment(payment);
         }
     }
 
