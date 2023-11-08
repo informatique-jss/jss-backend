@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -498,24 +497,5 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         return assoAffaireOrderRepository.findAsso(responsibleId,
                 assignedId, affaireSearch.getLabel(),
                 statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId, affaireId);
-    }
-
-    // TODO remove
-    @Scheduled(initialDelay = 100, fixedDelay = 10000000)
-    @Transactional
-    public void rattrapAnnouncement() {
-        List<AssoAffaireOrder> assos = IterableUtils.toList(assoAffaireOrderRepository.findAll());
-        for (AssoAffaireOrder asso : assos) {
-            if (asso.getProvisions() != null)
-                for (Provision provision : asso.getProvisions()) {
-                    if (provision.getAnnouncement() != null) {
-                        if (provision.getAnnouncement().getCharacterNumber() == null) {
-                            provision.getAnnouncement()
-                                    .setCharacterNumber(characterPriceService.getCharacterNumber(provision, true));
-                        }
-                    }
-                }
-            assoAffaireOrderRepository.save(asso);
-        }
     }
 }
