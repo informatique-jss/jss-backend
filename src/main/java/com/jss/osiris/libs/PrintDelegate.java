@@ -130,7 +130,6 @@ public class PrintDelegate {
             if (socket != null)
                 socket.close();
         } catch (IOException e) {
-            throw new OsirisException(e, "Error when printing");
         }
     }
 }

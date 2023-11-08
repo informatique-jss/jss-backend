@@ -80,8 +80,8 @@ export interface Constant {
   billingTypeDeboursNonTaxable: BillingType;
   billingTypeLogo: BillingType;
   billingTypeRedactedByJss: BillingType;
-  billingTypeBaloPackage: BillingType;
-  billingTypeBaloPublicationFlag: BillingType;
+  billingTypeBaloPackage: BillingType; 
+  billingTypeBaloPublicationFlag: BillingType; 
   billingTypeBaloNormalization: BillingType;
   billingTypePublicationPaper: BillingType;
   billingTypePublicationReceipt: BillingType;

@@ -100,6 +100,14 @@ public class BankTransfert implements Serializable, IId {
 		this.transfertDateTime = transfertDateTime;
 	}
 
+	public String getTransfertIban() {
+		return transfertIban;
+	}
+
+	public void setTransfertIban(String transfertIban) {
+		this.transfertIban = transfertIban;
+	}
+
 	public String getTransfertBic() {
 		return transfertBic;
 	}
@@ -114,14 +122,6 @@ public class BankTransfert implements Serializable, IId {
 
 	public void setIsAlreadyExported(Boolean isAlreadyExported) {
 		this.isAlreadyExported = isAlreadyExported;
-	}
-
-	public String getTransfertIban() {
-		return transfertIban;
-	}
-
-	public void setTransfertIban(String transfertIban) {
-		this.transfertIban = transfertIban;
 	}
 
 	public List<Invoice> getInvoices() {

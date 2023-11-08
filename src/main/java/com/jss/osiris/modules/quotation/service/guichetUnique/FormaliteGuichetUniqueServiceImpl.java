@@ -79,7 +79,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Autowired
     DepartmentVatSettingService departmentVatSettingService;
-
+  
     private String cartStatusPayed = "PAID";
     private String cartStatusRefund = "REFUNDED";
 
