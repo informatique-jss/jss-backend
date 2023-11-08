@@ -197,7 +197,7 @@ public class PaymentServiceImpl implements PaymentService {
                 paymentSearch.getEndDate().withHour(23).withMinute(59), paymentSearch.getMinAmount(),
                 paymentSearch.getMaxAmount(),
                 paymentSearch.getLabel(), paymentSearch.isHideAssociatedPayments(),
-                paymentSearch.isHideCancelledPayments());
+                paymentSearch.isHideCancelledPayments(), paymentSearch.isHideAppoint());
     }
 
     @Override
@@ -269,13 +269,13 @@ public class PaymentServiceImpl implements PaymentService {
         if (payment.getPaymentAmount() >= 0) {
             // Get corresponding entities
             List<IndexEntity> correspondingEntities = getCorrespondingEntityForInboudPayment(payment);
-            List<Invoice> correspondingInvoices = new ArrayList<Invoice>();
-            List<CustomerOrder> correspondingCustomerOrder = new ArrayList<CustomerOrder>();
-            List<Quotation> correspondingQuotation = new ArrayList<Quotation>();
+            ArrayList<Invoice> correspondingInvoices = new ArrayList<Invoice>();
+            ArrayList<CustomerOrder> correspondingCustomerOrder = new ArrayList<CustomerOrder>();
+            ArrayList<Quotation> correspondingQuotation = new ArrayList<Quotation>();
+
             DirectDebitTransfert directDebitFound = null;
 
             // Get invoices and customer orders and quotations
-            Float totalToPay = 0f;
             ArrayList<Integer> foundInvoices = new ArrayList<Integer>();
             if (correspondingEntities != null && correspondingEntities.size() > 0) {
                 for (IndexEntity foundEntity : correspondingEntities) {
@@ -295,17 +295,14 @@ public class PaymentServiceImpl implements PaymentService {
                             && invoice.getProvider() == null && !foundInvoices.contains(invoice.getId())) {
                         foundInvoices.add(invoice.getId());
                         correspondingInvoices.add(invoice);
-                        totalToPay += invoiceService.getRemainingAmountToPayForInvoice(invoice);
                     }
                     CustomerOrder customerOrder = getCustomerOrderAtNotBilledStatusForEntity(foundEntity);
                     if (customerOrder != null) {
                         correspondingCustomerOrder.add(customerOrder);
-                        totalToPay += customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder);
                     }
                     Quotation quotation = getQuotationForEntity(foundEntity);
                     if (quotation != null) {
                         correspondingQuotation.add(quotation);
-                        totalToPay += customerOrderService.getTotalForCustomerOrder(quotation);
                     }
                 }
             }
@@ -327,8 +324,9 @@ public class PaymentServiceImpl implements PaymentService {
                         // If already in correspondingCustomerOrder list, do not consider it
                         if (correspondingCustomerOrder.size() > 0)
                             for (CustomerOrder customerOrderFound : correspondingCustomerOrder)
-                                if (customerOrderFound.getId().equals(quotation.getCustomerOrders().get(0).getId()))
+                                if (customerOrderFound.getId().equals(quotation.getCustomerOrders().get(0).getId())) {
                                     found = true;
+                                }
                         if (!found) {
                             // if customer order billed, use invoice if not already matched
                             if (quotation.getCustomerOrders().get(0).getCustomerOrderStatus().getCode()
@@ -337,6 +335,7 @@ public class PaymentServiceImpl implements PaymentService {
                                 for (Invoice invoice : quotation.getCustomerOrders().get(0).getInvoices()) {
                                     if (invoice.getInvoiceStatus().getId()
                                             .equals(constantService.getInvoiceStatusSend().getId())) {
+
                                         boolean invoiceFound = false;
                                         if (correspondingInvoices.size() > 0) {
                                             for (Invoice correspondingInvoice : correspondingInvoices) {
@@ -370,7 +369,8 @@ public class PaymentServiceImpl implements PaymentService {
 
             if (correspondingInvoices.size() > 0
                     && Math.round(totalItemsAmount * 100f) != Math.round(remainingMoney * 100f))
-                return;
+                if (correspondingCustomerOrder.size() == 0 && correspondingQuotation.size() == 0)
+                    return;
 
             // Invoices to payed found
             if (correspondingInvoices.size() > 0) {
