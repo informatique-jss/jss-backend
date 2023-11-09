@@ -12,7 +12,7 @@ public interface FormaliteGuichetUniqueService {
     public FormaliteGuichetUnique getFormaliteGuichetUnique(Integer id);
 
     public FormaliteGuichetUnique refreshFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique,
-            Formalite formalite)
+            Formalite formalite, boolean generateInvoices)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException;
 
     public FormaliteGuichetUnique addOrUpdateFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique);
