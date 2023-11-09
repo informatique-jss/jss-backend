@@ -99,7 +99,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     @Override
     @Transactional(rollbackFor = Exception.class)
     public FormaliteGuichetUnique refreshFormaliteGuichetUnique(FormaliteGuichetUnique inFormaliteGuichetUnique,
-            Formalite formalite)
+            Formalite formalite, boolean generateInvoices)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         if (inFormaliteGuichetUnique == null)
             throw new OsirisValidationException("inFormaliteGuichetUnique");
@@ -214,21 +214,22 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
                     originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);
 
-                    for (Cart currentCart : originalFormalite.getCarts()) {
-                        if (currentCart.getInvoice() == null
-                                && currentCart.getFormaliteGuichetUnique().getFormalite() != null
-                                && currentCart.getFormaliteGuichetUnique().getFormalite().getProvision() != null) {
-                            if (currentCart.getStatus().equals(cartStatusPayed)) {
-                                currentCart.setInvoice(generateInvoiceFromCart(currentCart,
-                                        currentCart.getFormaliteGuichetUnique().getFormalite().getProvision()
-                                                .get(0)));
-                            } else if (currentCart.getStatus().equals(cartStatusRefund)) {
-                                currentCart.setInvoice((generateCreditNoteFromCart(currentCart,
-                                        currentCart.getFormaliteGuichetUnique().getFormalite().getProvision()
-                                                .get(0))));
+                    if (generateInvoices)
+                        for (Cart currentCart : originalFormalite.getCarts()) {
+                            if (currentCart.getInvoice() == null
+                                    && currentCart.getFormaliteGuichetUnique().getFormalite() != null
+                                    && currentCart.getFormaliteGuichetUnique().getFormalite().getProvision() != null) {
+                                if (currentCart.getStatus().equals(cartStatusPayed)) {
+                                    currentCart.setInvoice(generateInvoiceFromCart(currentCart,
+                                            currentCart.getFormaliteGuichetUnique().getFormalite().getProvision()
+                                                    .get(0)));
+                                } else if (currentCart.getStatus().equals(cartStatusRefund)) {
+                                    currentCart.setInvoice((generateCreditNoteFromCart(currentCart,
+                                            currentCart.getFormaliteGuichetUnique().getFormalite().getProvision()
+                                                    .get(0))));
+                                }
                             }
                         }
-                    }
                 }
             }
         }
