@@ -3,11 +3,6 @@
     <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && paymentSearch">
       <tr>
         <td>
-          <select-payment-way [(model)]="paymentSearch.paymentWays" label="Sens du paiement" [form]="paymentForm"
-            propertyName="paymentWay" [isMandatory]="true" [defaulTypeSelected]="[paymentWayInbound]">
-          </select-payment-way>
-        </td>
-        <td>
           <generic-input [(model)]="paymentSearch.minAmount" label="Montant minimum" [form]="paymentForm"
             propertyName="minAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
         </td>
@@ -20,10 +15,6 @@
             propertyName="label" [isMandatory]="false" [isDisabled]="false"></generic-input>
         </td>
         <td>
-          <generic-toggle [(model)]="paymentSearch.isHideAssociatedPayments" label="Masquer les paiements associés"
-            [form]="paymentForm" propertyName="isHideAssociatedPayments"></generic-toggle>
-        </td>
-        <td>
           <generic-date-range-picker [(modelStart)]="paymentSearch.startDate" [(modelEnd)]="paymentSearch.endDate"
             label="Plage de recherche" [form]="paymentForm" propertyNameStart="startDate" propertyNameEnd="endDate">
           </generic-date-range-picker>
@@ -34,18 +25,33 @@
           </button>
         </td>
       </tr>
+      <tr>
+        <td>
+          <generic-toggle [(model)]="paymentSearch.isHideAssociatedPayments" label="Masquer les paiements associés"
+            [form]="paymentForm" propertyName="isHideAssociatedPayments"></generic-toggle>
+        </td>
+        <td>
+          <generic-toggle [(model)]="paymentSearch.isHideCancelledPayments" label="Masquer les paiements annulés"
+            [form]="paymentForm" propertyName="isHideCancelledPayments"></generic-toggle>
+        </td>
+        <td>
+          <generic-toggle [(model)]="paymentSearch.isHideAppoint" label="Masquer les appoints" [form]="paymentForm"
+            propertyName="isHideAppoint"></generic-toggle>
+        </td>
+      </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="payments" tableName="Paiements"
       *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true">
     </sort-table>
   </div>
 </div>
-<button *ngIf="!isForDashboard && canImportOfxFile()" matTooltip="Importer un relevé de compte (format OFX)" mat-fab
-  color="accent" class="fab-button" (click)="importOfxFile()">
+<button *ngIf="!isForDashboard && canImportOfxFile() && overrideIconAction==''"
+  matTooltip="Importer un relevé de compte (format OFX)" mat-fab color="accent" class="fab-button"
+  (click)="importOfxFile()">
   <mat-icon>upload</mat-icon>
 </button>
-<button *ngIf="!isForDashboard && canAddCheckPayment()" matTooltip="Ajouter un paiement par chèque" mat-fab
-  color="accent" class="second-fab-button" (click)="openRoute($event,'/invoicing/payment/add/')"
-  (auxclick)="openRoute($event,'/invoicing/payment/add/')">
+<button *ngIf="!isForDashboard && canAddCheckPayment() && overrideIconAction==''"
+  matTooltip="Ajouter un paiement par chèque" mat-fab color="accent" class="second-fab-button"
+  (click)="openRoute($event,'/invoicing/payment/add/')" (auxclick)="openRoute($event,'/invoicing/payment/add/')">
   <mat-icon>attach_money</mat-icon>
 </button>

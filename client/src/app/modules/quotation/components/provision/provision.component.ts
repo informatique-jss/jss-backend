@@ -93,6 +93,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   ngOnInit() {
     this.appService.changeHeaderTitle("Prestation");
     this.idAffaire = this.activatedRoute.snapshot.params.id != "null" ? this.activatedRoute.snapshot.params.id : null;
+
     this.inputProvisionId = this.activatedRoute.snapshot.params.idProvision;
     this.refreshAffaire();
 
@@ -157,13 +158,18 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       return;
     }
 
-    if (provision.debours && provision.debours.length > 0) {
-      this.appService.displaySnackBar("Impossible de supprimer cette prestation : des débours/frais ont déjà été saisis", true, 15);
-      return;
+    if (provision && provision.payments) {
+      for (let payment of provision.payments)
+        if (!payment.isCancelled) {
+          this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : des paiements ont déjà été déclarés.", false, 15);
+          return;
+        }
     }
 
-    if (provision.announcement && provision.announcement.actuLegaleId)
+    if (provision.announcement && provision.announcement.actuLegaleId) {
       this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : elle a déjà été publiée sur ActuLégale.", false, 15);
+      return;
+    }
 
 
     asso.provisions.splice(asso.provisions.indexOf(provision), 1);

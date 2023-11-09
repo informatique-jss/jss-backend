@@ -6,9 +6,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
-import com.jss.osiris.modules.miscellaneous.model.Country;
-import com.jss.osiris.modules.miscellaneous.model.Department;
-import com.jss.osiris.modules.miscellaneous.model.IVat;
+import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 
@@ -17,18 +15,12 @@ public interface VatService {
 
         public Vat getVat(Integer id);
 
-        public Vat getGeographicalApplicableVatForSales(IQuotation quotation, Vat vat)
-                        throws OsirisException, OsirisClientMessageException;
-
-        public Vat getGeographicalApplicableVatForPurshase(Country country, Department departement, Vat vat)
-                        throws OsirisException, OsirisClientMessageException;
-
-        public Vat getGeographicalApplicableVatForPurshases(IVat vatTiers, Vat vat)
-                        throws OsirisValidationException, OsirisException, OsirisClientMessageException;
-
-        public Vat getGeographicalApplicableVatForSales(Invoice invoice, Vat vat)
-                        throws OsirisValidationException, OsirisException, OsirisClientMessageException;
-
         public Vat addOrUpdateVat(Vat vat);
+
+        public void completeVatOnInvoiceItem(InvoiceItem invoiceItem, Invoice invoice)
+                        throws OsirisValidationException, OsirisException, OsirisClientMessageException;
+
+        public void completeVatOnInvoiceItem(InvoiceItem invoiceItem, IQuotation customerOrder)
+                        throws OsirisException, OsirisClientMessageException;
 
 }

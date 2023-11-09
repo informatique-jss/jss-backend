@@ -11,9 +11,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -27,6 +29,9 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutP
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TotalitePartie;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_activite_autre_etablissement", columnList = "id_autres_etablissement"),
+        @Index(name = "idx_activite_etablissement_principal", columnList = "id_etablissement_principal") })
 public class Activite implements Serializable, IId {
 
     public Activite(String activite) {

@@ -1,4 +1,3 @@
-import { Deposit } from "../../invoicing/model/Deposit";
 import { Payment } from "../../invoicing/model/Payment";
 import { CustomerOrder } from "../../quotation/model/CustomerOrder";
 import { Invoice } from "../../quotation/model/Invoice";
@@ -38,7 +37,6 @@ export interface AccountingRecord {
   balance: number;
   customerOrder: CustomerOrder;
   payment: Payment;
-  deposit: Deposit;
   contrePasse: AccountingRecord;
   isANouveau: boolean;
 }

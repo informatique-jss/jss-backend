@@ -16,7 +16,4 @@ export class CustomerOrderReportingService extends AppRestService<CustomerOrderR
     return this.getList(new HttpParams(), "customer-order");
   }
 
-  getCustomerOrderReportingForTiers(tiersId: number) {
-    return this.getList(new HttpParams().set("tiersId", tiersId), "customer-order/tiers");
-  }
 }

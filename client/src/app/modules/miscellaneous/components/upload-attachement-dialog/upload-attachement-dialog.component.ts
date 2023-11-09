@@ -59,7 +59,6 @@ export class UploadAttachementDialogComponent implements OnInit {
     this.file = $event;
     this.filename = this.file.name;
     this.attachmentForm.markAllAsTouched();
-    console.log(this.file);
     this.checkFile();
   }
 

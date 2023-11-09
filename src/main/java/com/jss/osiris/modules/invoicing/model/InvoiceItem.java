@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.invoicing.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -20,11 +18,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
-import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Provision;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_invoice_item_invoice", columnList = "id_invoice"), })
+@Table(indexes = { @Index(name = "idx_invoice_item_invoice", columnList = "id_invoice"),
+		@Index(name = "idx_invoice_item_id_provision", columnList = "id_provision"), })
 public class InvoiceItem implements Serializable, IId {
 
 	@Id
@@ -49,13 +47,15 @@ public class InvoiceItem implements Serializable, IId {
 
 	private Float preTaxPrice;
 
+	private Float preTaxPriceReinvoiced;
+
 	private Float vatPrice;
 
 	private Float discountAmount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision")
-	@JsonIgnoreProperties(value = { "invoiceItems", "assoAffaireOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "invoiceItems", "assoAffaireOrder", "providerInvoices" }, allowSetters = true)
 	Provision provision;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -64,10 +64,12 @@ public class InvoiceItem implements Serializable, IId {
 			"azureInvoice", "azureReceipt", "provision", "customerOrderForInboundInvoice" }, allowSetters = true)
 	Invoice invoice;
 
-	@OneToMany(mappedBy = "invoiceItem")
-	@JsonIgnoreProperties(value = { "invoiceItem", "payment", "accountingRecords", "provision",
-			"cartRate" }, allowSetters = true)
-	List<Debour> debours;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_origin_provider_invoice")
+	@JsonIgnoreProperties(value = { "invoiceItems", "accountingRecords", "customerOrder", "attachments",
+			"azureInvoice", "azureReceipt", "provision", "customerOrderForInboundInvoice",
+			"invoiceItems" }, allowSetters = true)
+	Invoice originProviderInvoice;
 
 	public Integer getId() {
 		return id;
@@ -157,12 +159,19 @@ public class InvoiceItem implements Serializable, IId {
 		this.isGifted = isGifted;
 	}
 
-	public List<Debour> getDebours() {
-		return debours;
+	public Float getPreTaxPriceReinvoiced() {
+		return preTaxPriceReinvoiced;
 	}
 
-	public void setDebours(List<Debour> debours) {
-		this.debours = debours;
+	public void setPreTaxPriceReinvoiced(Float preTaxPriceReinvoiced) {
+		this.preTaxPriceReinvoiced = preTaxPriceReinvoiced;
 	}
 
+	public Invoice getOriginProviderInvoice() {
+		return originProviderInvoice;
+	}
+
+	public void setOriginProviderInvoice(Invoice originProviderInvoice) {
+		this.originProviderInvoice = originProviderInvoice;
+	}
 }

@@ -37,6 +37,10 @@ export interface SortTableColumn {
    */
   actionLinkFunction: any | undefined;
   /**
+   * Action function : action function to call on link icon click
+   */
+  actionFunction: any | undefined;
+  /**
    * Link icon to display
    */
   actionIcon: string;

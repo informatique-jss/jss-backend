@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
+import { CUSTOMER_ORDER_ENTITY_TYPE, PROVISION_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { Attachment } from '../../model/Attachment';
 import { AttachmentType } from '../../model/AttachmentType';
 import { IAttachment } from '../../model/IAttachment';
@@ -53,6 +54,9 @@ export class AttachmentsComponent implements OnInit {
     this.displayedColumns.push({ id: "attachementType", fieldName: "attachmentType.label", label: "Type de document" } as SortTableColumn);
     this.displayedColumns.push({ id: "createdBy", fieldName: "uploadedFile.createdBy", label: "Ajouté par" } as SortTableColumn);
     this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+
+    if (this.entityType && (this.entityType == CUSTOMER_ORDER_ENTITY_TYPE.entityType || this.entityType == QUOTATION_ENTITY_TYPE.entityType || this.entityType == PROVISION_ENTITY_TYPE.entityType))
+      this.displayedColumns.push({ id: "isAlreadySent", fieldName: "isAlreadySent", label: "Envoyé au client ?", valueFonction: (element: any) => { return element.isAlreadySent ? "Oui" : "Non" } } as SortTableColumn);
 
     this.tableActions.push({
       actionIcon: "visibility", actionName: "Prévisualiser le fichier", actionClick: (action: SortTableAction, element: any): void => {

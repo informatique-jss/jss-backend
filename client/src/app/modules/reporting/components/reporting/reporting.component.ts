@@ -5,7 +5,6 @@ import 'pivottable/dist/pivot.min.js';
 import { Dictionnary } from '../../../../libs/Dictionnary';
 declare var jQuery: any;
 declare var $: any;
-declare var google: any;
 
 @Component({
   selector: 'reporting',
@@ -43,6 +42,7 @@ export class ReportingComponent implements OnInit {
     if (!this.el ||
       !this.el.nativeElement ||
       !this.el.nativeElement.children) {
+      console.log('cant build without element');
       return;
     }
 
@@ -51,6 +51,7 @@ export class ReportingComponent implements OnInit {
     this.targetElement = inst.find('#output');
 
     if (!this.targetElement) {
+      console.log('cant find the pivot element');
       return;
     }
 
@@ -58,9 +59,6 @@ export class ReportingComponent implements OnInit {
     while (this.targetElement.firstChild) {
       this.targetElement.removeChild(this.targetElement.firstChild);
     }
-
-    //here is the magic
-    google.load("visualization", "1", { packages: ["corechart", "charteditor"] });
   }
 
   loadPivot() {
@@ -73,7 +71,7 @@ export class ReportingComponent implements OnInit {
         restoreSettings = true;
       }
       var renderersEn = $.extend($.pivotUtilities.renderers,
-        $.pivotUtilities.gchart_renderers);
+        $.pivotUtilities.plotly_renderers);
       var renderersFr: any = [];
       renderersFr["Tableau"] = renderersEn["Table"];
       renderersFr["Tableau avec histogramme"] = renderersEn["Table Barchart"];
@@ -82,38 +80,32 @@ export class ReportingComponent implements OnInit {
       renderersFr["Carte de chaleur en colonnes"] = renderersEn["Col Heatmap"];
       renderersFr["Histogramme"] = renderersEn["Bar Chart"];
       renderersFr["Histogramme empilé"] = renderersEn["Stacked Bar Chart"];
+      renderersFr["Histogramme horizontal"] = renderersEn["Horizontal Bar Chart"];
+      renderersFr["Histogramme horizontal empilé"] = renderersEn["Horizontal Stacked Bar Chart"];
       renderersFr["Courbe"] = renderersEn["Line Chart"];
       renderersFr["Graphique en aires"] = renderersEn["Area Chart"];
       renderersFr["Nuage de points"] = renderersEn["Scatter Chart"];
+      renderersFr["Diagrammes circulaires multiples"] = renderersEn["Multiple Pie Chart"];
 
       options['menuLimit'] = 50000;
       options['renderers'] = renderersFr;
       options['rendererOptions'] = {
-        gchart: {
-          width: 900, height: 600, chartArea: { width: "70%" }, vAxis: {
-            scaleType: 'linear', textPosition: 'out', format: 'decimal', viewWindowMode: 'pretty'
-          }
+        plotly: {
+          width: 900,
+          height: 600,
+        },
+        plotlyConfig: {
+          locale: 'fr',
+          editable: "true",
+          showLink: true,
+          plotlyServerURL: "https://chart-studio.plotly.com",
+          linkText: 'Editer',
+          displaylogo: false
         }
       };
 
-      if (this.data[0]["Mois de la commande"])
-        this.addMonthSorterForColumn(options, "Mois de la commande");
-      if (this.data[0]["Mois de publication"])
-        this.addMonthSorterForColumn(options, "Mois de publication");
-      if (this.data[0]["Mois de la facture"])
-        this.addMonthSorterForColumn(options, "Mois de la facture");
-
       this.targetElement.pivotUI(this.data, options, restoreSettings, "fr");
     }
-  }
-
-  addMonthSorterForColumn(options: any, columnName: string) {
-    var sortAs = $.pivotUtilities.sortAs;
-
-    if (!options["sorters"])
-      options["sorters"] = {};
-
-    options["sorters"][columnName] = sortAs(["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]);
   }
 
   translateDataLabel(data: any[]): any[] {

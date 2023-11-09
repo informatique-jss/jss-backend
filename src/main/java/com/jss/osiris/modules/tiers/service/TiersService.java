@@ -2,6 +2,7 @@ package com.jss.osiris.modules.tiers.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -10,7 +11,7 @@ public interface TiersService {
 
     public Tiers getTiersFromUser(Integer id);
 
-    public Tiers addOrUpdateTiers(Tiers tiers) throws OsirisException;
+    public Tiers addOrUpdateTiers(Tiers tiers) throws OsirisException, OsirisDuplicateException;
 
     public Tiers getTiersByIdResponsable(Integer idResponsable);
 

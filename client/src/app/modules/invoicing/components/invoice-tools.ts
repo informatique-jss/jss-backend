@@ -7,6 +7,8 @@ import { ITiers } from "../../tiers/model/ITiers";
 import { Tiers } from "../../tiers/model/Tiers";
 
 export function getRemainingToPay(invoice: Invoice) {
+  if (invoice.isInvoiceFromProvider)
+    return Math.round((invoice.totalPrice - (-getAmountPayed(invoice))) * 100) / 100;
   return Math.round((invoice.totalPrice - getAmountPayed(invoice)) * 100) / 100;
 }
 
@@ -149,13 +151,11 @@ export function getAmountPayed(invoice: Invoice) {
   let payed = 0;
   if (invoice.payments && invoice.payments.length)
     for (let payment of invoice.payments)
-      payed += payment.paymentAmount;
-  if (invoice.deposits && invoice.deposits.length)
-    for (let deposit of invoice.deposits)
-      payed += deposit.depositAmount;
-  if (invoice.appoints && invoice.appoints.length)
-    for (let appoint of invoice.appoints)
-      payed -= appoint.appointAmount;
+      if (!payment.isCancelled)
+        if (payment.isAppoint)
+          payed += -payment.paymentAmount; // Appoint is on the opposite side in customer point of view (because it's a gain / lost for us when it's a lost / gain for him)
+        else
+          payed += payment.paymentAmount;
 
   return Math.round(payed * 100) / 100;
 }

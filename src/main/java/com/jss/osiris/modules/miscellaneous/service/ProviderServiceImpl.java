@@ -54,6 +54,13 @@ public class ProviderServiceImpl implements ProviderService {
             provider.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
             provider.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
             provider.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
+        } else {
+            accountingAccountService.updateAccountingAccountLabel(provider.getAccountingAccountCustomer(),
+                    provider.getLabel());
+            accountingAccountService.updateAccountingAccountLabel(provider.getAccountingAccountDeposit(),
+                    provider.getLabel());
+            accountingAccountService.updateAccountingAccountLabel(provider.getAccountingAccountProvider(),
+                    provider.getLabel());
         }
 
         // If mails already exists, get their ids

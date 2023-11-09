@@ -68,7 +68,8 @@
             </td>
           </tr>
         </table>
-        <table class="full-width" *ngIf="selectedEntity.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE">
+        <table class="full-width"
+          *ngIf="selectedEntity.provisionScreenType && selectedEntity.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE">
           <tr>
             <td>
               <autocomplete-competent-authority [(model)]="selectedEntity.defaultCompetentAuthorityServiceProvider"

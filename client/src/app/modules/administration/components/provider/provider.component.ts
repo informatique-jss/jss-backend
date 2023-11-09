@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -13,7 +13,7 @@ import { PROVIDER_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'app-provider',
+  selector: 'provider',
   templateUrl: './provider.component.html',
   styleUrls: ['./provider.component.css']
 })
@@ -43,11 +43,15 @@ export class ProviderComponent implements OnInit {
   paymentTypeVirement = this.constantService.getPaymentTypeVirement();
   paymentTypeCB = this.constantService.getPaymentTypeCB();
 
+  @Input() idProvider: number | undefined;
 
   ngOnInit(): void {
-    this.appService.changeHeaderTitle("Fournisseurs");
+    if (!this.idProvider)
+      this.appService.changeHeaderTitle("Fournisseurs");
 
     this.selectedProviderId = this.activatedRoute.snapshot.params.id;
+    if (this.idProvider)
+      this.selectedProviderId = this.idProvider;
 
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);
@@ -82,7 +86,9 @@ export class ProviderComponent implements OnInit {
   selectProvider(element: Provider) {
     this.selectedProvider = element;
     this.selectedProviderId = element.id;
-    this.appService.changeHeaderTitle(element.label);
+
+    if (!this.idProvider)
+      this.appService.changeHeaderTitle(element.label);
     this.invoiceSearch.customerOrders = [];
     setTimeout(() =>
       this.invoiceSearch.customerOrders = [({ id: this.selectedProvider!.id } as any) as ITiers], 0);

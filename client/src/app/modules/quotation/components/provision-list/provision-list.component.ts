@@ -21,7 +21,7 @@ export class ProvisionListComponent implements OnInit {
   @Input() affaireSearch: AffaireSearch | undefined;
   affaires: AssoAffaireOrderSearchResult[] | undefined;
   availableColumns: SortTableColumn[] = [];
-  columnToDisplayOnDashboard: string[] = ["affaireLabel", "provisionType", "status"];
+  columnToDisplayOnDashboard: string[] = ["customerOrderId", "provisionCreatedDatetime", "affaireLabel", "provisionType", "status"];
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
 

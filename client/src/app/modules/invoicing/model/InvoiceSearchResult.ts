@@ -24,6 +24,7 @@ export interface InvoiceSearchResult {
   customerOrderDescription: string;
   paymentId: string;
   remainingToPay: number;
+  idPaymentType: number;
   invoiceRecipient: string;
   isInvoiceFromProvider: boolean;
   isProviderCreditNote: boolean;

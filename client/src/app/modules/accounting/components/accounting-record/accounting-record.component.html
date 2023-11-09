@@ -1,6 +1,6 @@
 <div class="mat-elevation-z2 form-div min-height">
   <div class=" full-width">
-    <table class="full-width table-fixed-layout">
+    <table class="full-width table-fixed-layout" *ngIf="!accountingRecordSearch.idPayment">
       <tr>
         <td>
           <autocomplete-accounting-account [(model)]="accountingRecordSearch.accountingAccount"
@@ -38,7 +38,7 @@
     </sort-table>
     <table mat-table [dataSource]="accumulatedDataSource" class="mat-elevation-z8 table total-table min-widht-table"
       cdkDrag [cdkDragFreeDragPosition]="currentUserPosition" (cdkDragEnded)="dropTotalDiv($event)"
-      *ngIf="accountingRecords">
+      *ngIf="accountingRecords && !accountingRecordSearch.idPayment">
       <ng-container matColumnDef="label">
         <th mat-header-cell *matHeaderCellDef class="without-padding-left">
           <mat-icon color="accent" (click)="restoreDefaultTotalDivPosition()" class="pointer"

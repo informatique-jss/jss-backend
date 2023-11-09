@@ -95,6 +95,8 @@ public class Announcement implements IId, IDocument {
 
 	private Boolean isComplexAnnouncement;
 
+	private Integer characterNumber;
+
 	public Integer getId() {
 		return id;
 	}
@@ -301,6 +303,14 @@ public class Announcement implements IId, IDocument {
 
 	public void setIsComplexAnnouncement(Boolean isComplexAnnouncement) {
 		this.isComplexAnnouncement = isComplexAnnouncement;
+	}
+
+	public Integer getCharacterNumber() {
+		return characterNumber;
+	}
+
+	public void setCharacterNumber(Integer characterNumber) {
+		this.characterNumber = characterNumber;
 	}
 
 }

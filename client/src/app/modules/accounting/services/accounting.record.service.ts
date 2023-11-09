@@ -20,22 +20,6 @@ export class AccountingRecordService extends AppRestService<AccountingRecord>{
     return this.postList(new HttpParams(), "accounting-records/manual/add", accountingRecords, "Opérations correctement ajoutées", "Erreur lors de l'ajout des opérations");
   }
 
-  getAccountingRecordsByTemporaryOperationId(temporaryOperationId: number) {
-    return this.getList(new HttpParams().set("temporaryOperationId", temporaryOperationId), "accounting-records/search/temporary");
-  }
-
-  deleteRecordsByTemporaryOperationId(temporaryOperationId: number) {
-    return this.delete(new HttpParams().set("temporaryOperationId", temporaryOperationId), "accounting-records/delete/temporary");
-  }
-
-  getAccountingRecordsByOperationId(operationId: number) {
-    return this.getList(new HttpParams().set("operationId", operationId), "accounting-records/search");
-  }
-
-  doCounterPartByOperationId(operationId: number) {
-    return this.getList(new HttpParams().set("operationId", operationId), "accounting-records/counter-part");
-  }
-
   exportGrandLivre(accountingClass: AccountingAccountClass, startDate: Date, endDate: Date) {
     this.downloadGet(new HttpParams().set("accountingClassId", accountingClass.id).set("startDate", toIsoString(startDate)).set("endDate", toIsoString(endDate)), "grand-livre/export");
   }

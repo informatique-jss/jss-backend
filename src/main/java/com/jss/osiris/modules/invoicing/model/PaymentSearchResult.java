@@ -6,10 +6,6 @@ public interface PaymentSearchResult {
 
     public Integer getId();
 
-    public String getPaymentWayLabel();
-
-    public String getPaymentWayId();
-
     public LocalDateTime getPaymentDate();
 
     public Float getPaymentAmount();
@@ -22,8 +18,14 @@ public interface PaymentSearchResult {
 
     public Boolean getIsCancelled();
 
+    public Boolean getIsAppoint();
+
     public Integer getInvoiceId();
 
     public String getPaymentTypeLabel();
+
+    public String getComment();
+
+    public String getOriginPaymentId();
 
 }

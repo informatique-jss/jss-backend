@@ -14,6 +14,8 @@ import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
+import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.model.User;
 import com.jss.osiris.modules.profile.repository.EmployeeRepository;
@@ -34,6 +36,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     MailHelper mailHelper;
+
+    @Autowired
+    CustomerOrderOriginService customerOrderOriginService;
 
     @Override
     public Employee getEmployee(Integer id) {
@@ -133,9 +138,12 @@ public class EmployeeServiceImpl implements EmployeeService {
             String passwordExpected = responsable.getPassword();
             String passwordGiven = diggestPassword(user.getPassword(), responsable.getSalt());
 
-            // TODO : rajouter le check sur le user serv web
-            if (passwordExpected != null && passwordExpected.equals(passwordGiven) || isIntrospection)
-                return responsable;
+            // Check if user authorized
+            List<CustomerOrderOrigin> origins = customerOrderOriginService
+                    .getByUsername(activeDirectoryHelper.getCurrentUsername());
+            if (origins != null && origins.size() == 1)
+                if (passwordExpected != null && passwordExpected.equals(passwordGiven) || isIntrospection)
+                    return responsable;
         }
         return null;
     }
