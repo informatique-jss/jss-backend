@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -24,6 +25,7 @@ import com.jss.osiris.modules.reporting.model.IQuotationReporting;
 import com.jss.osiris.modules.reporting.model.IRecoveryReporting;
 import com.jss.osiris.modules.reporting.model.ITiersReporting;
 import com.jss.osiris.modules.reporting.model.ITurnoverReporting;
+import com.jss.osiris.modules.reporting.model.ITurnoverVatReporting;
 import com.jss.osiris.modules.reporting.model.UserReporting;
 import com.jss.osiris.modules.reporting.service.AnnouncementReportingService;
 import com.jss.osiris.modules.reporting.service.CustomerOrderReportingService;
@@ -33,6 +35,7 @@ import com.jss.osiris.modules.reporting.service.QuotationReportingService;
 import com.jss.osiris.modules.reporting.service.RecoveryReportingService;
 import com.jss.osiris.modules.reporting.service.TiersReportingService;
 import com.jss.osiris.modules.reporting.service.TurnoverReportingService;
+import com.jss.osiris.modules.reporting.service.TurnoverVatReportingService;
 import com.jss.osiris.modules.reporting.service.UserReportingService;
 
 @RestController
@@ -48,6 +51,9 @@ public class ReportingController {
 
 	@Autowired
 	TurnoverReportingService turnoverReportingService;
+
+	@Autowired
+	TurnoverVatReportingService turnoverVatReportingService;
 
 	@Autowired
 	CustomerOrderReportingService customerOrderReportingService;
@@ -73,6 +79,9 @@ public class ReportingController {
 	@Autowired
 	TiersReportingService tiersReportingService;
 
+	@Autowired
+	ActiveDirectoryHelper activeDirectoryHelper;
+
 	@GetMapping(inputEntryPoint + "/quotation")
 	public ResponseEntity<List<IQuotationReporting>> getQuotationReporting()
 			throws OsirisValidationException, OsirisException {
@@ -84,6 +93,13 @@ public class ReportingController {
 	public ResponseEntity<List<ITurnoverReporting>> getTurnoverReporting()
 			throws OsirisValidationException, OsirisException {
 		return new ResponseEntity<List<ITurnoverReporting>>(turnoverReportingService.getTurnoverReporting(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/turnover-vat")
+	public ResponseEntity<List<ITurnoverVatReporting>> getTurnoverVatReporting()
+			throws OsirisValidationException, OsirisException {
+		return new ResponseEntity<List<ITurnoverVatReporting>>(turnoverVatReportingService.getTurnoverVatReporting(),
 				HttpStatus.OK);
 	}
 
@@ -177,6 +193,22 @@ public class ReportingController {
 			throw new OsirisValidationException("userReportingId");
 
 		userReportingService.copyUserReportingToUser(userReporting, employee);
+
+		return new ResponseEntity<UserReporting>(userReporting, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/user-reporting/delete")
+	public ResponseEntity<UserReporting> deleteUserReporting(@RequestParam Integer userReportingId)
+			throws OsirisValidationException {
+		UserReporting userReporting = userReportingService.getUserReporting(userReportingId);
+		if (userReporting == null)
+			throw new OsirisValidationException("userReportingId");
+
+		if (!userReporting.getEmployee().getId().equals(employeeService.getCurrentEmployee().getId())
+				&& activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP))
+			throw new OsirisValidationException("forbidden");
+
+		userReportingService.deleteReporting(userReporting);
 
 		return new ResponseEntity<UserReporting>(userReporting, HttpStatus.OK);
 	}

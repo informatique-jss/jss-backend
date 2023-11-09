@@ -25,7 +25,7 @@ public interface ProvisionProductionReportingRepository extends CrudRepository<Q
                         " to_char(date_trunc('day', " +
                         " max(datetime) ), " +
                         " 'YYYY-MM-DD') as dayField , " +
-                        " count(*) " +
+                        " count(*) as provisionNumber " +
                         " from " +
                         " ( " +
                         " select " +

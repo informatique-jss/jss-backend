@@ -300,9 +300,17 @@ public class MailHelper {
             }
 
             if (mail.getAttachments() != null) {
-                for (Attachment attachment : mail.getAttachments())
+                for (Attachment attachment : mail.getAttachments()) {
                     message.addAttachment(attachment.getUploadedFile().getFilename(),
                             new File(attachment.getUploadedFile().getPath()));
+
+                    if (mail.getSendToMe() == null || mail.getSendToMe() == false) {
+                        attachment.setIsAlreadySent(true);
+                        attachmentService.addOrUpdateAttachment(attachment);
+                        attachment.getParentAttachment().setIsAlreadySent(true);
+                        attachmentService.addOrUpdateAttachment(attachment.getParentAttachment());
+                    }
+                }
             }
         } catch (MessagingException e) {
         }
@@ -548,8 +556,9 @@ public class MailHelper {
                     .getId().equals(constantService.getPaymentTypePrelevement().getId());
         } else if (tiers instanceof Confrere) {
             isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
-            isPaymentTypePrelevement = ((Confrere) tiers).getPaymentType() != null && ((Tiers) tiers).getPaymentType()
-                    .getId().equals(constantService.getPaymentTypePrelevement().getId());
+            isPaymentTypePrelevement = ((Confrere) tiers).getPaymentType() != null
+                    && ((Confrere) tiers).getPaymentType()
+                            .getId().equals(constantService.getPaymentTypePrelevement().getId());
         } else if (tiers instanceof Responsable) {
             isDepositMandatory = ((Responsable) tiers).getTiers().getIsProvisionalPaymentMandatory();
             isPaymentTypePrelevement = ((Responsable) tiers).getTiers().getPaymentType() != null
@@ -1147,7 +1156,8 @@ public class MailHelper {
                         if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
                             for (Attachment attachment : attachmentService
                                     .sortAttachmentByDateDesc(provision.getAttachments()))
-                                if (attachment.getAttachmentType().getIsToSentOnFinalizationMail()
+                                if ((sendToMe == true || attachment.getIsAlreadySent() == false)
+                                        && attachment.getAttachmentType().getIsToSentOnFinalizationMail()
                                         && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())
                                         && !attachment.getAttachmentType().getId()
                                                 .equals(constantService.getAttachmentTypeInvoice().getId())) {

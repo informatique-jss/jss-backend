@@ -45,6 +45,7 @@ export const Dictionnary = {
   "characterNumber": "Nombre de caractères",
   "publicationDateWeek": "Semaine de publication",
   "confrereAnnouncementLabel": "Confrère de l'annonce",
+  "confrereLabel": "Confrère",
   "noticeTypeFamilyLabel": "Rubrique de l'annonce",
   "noticeTypeLabel": "Sous-rubrique de l'annonce",
   "month": "Mois",

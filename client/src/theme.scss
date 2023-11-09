@@ -342,6 +342,10 @@ tr.table-row:hover {
   background: mat.get-color-from-palette($mat-accent, lighter) !important;
 }
 
+tr.selected-mat-row {
+  background: mat.get-color-from-palette($mat-accent, lighter) !important;
+}
+
 .light .mat-mdc-card {
   background-color: $light-bg-darker-5 !important;
 }

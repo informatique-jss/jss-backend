@@ -11,4 +11,6 @@ public interface IProvisionProductionReporting {
     String getDayField();
 
     String getProvisionAssignedToLabel();
+
+    Integer getProvisionNumber();
 }

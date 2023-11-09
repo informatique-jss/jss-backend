@@ -7,9 +7,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.quotation.model.Quotation;
-import com.jss.osiris.modules.reporting.model.ITurnoverReporting;
+import com.jss.osiris.modules.reporting.model.ITurnoverVatReporting;
 
-public interface TurnoverReportingRepository extends CrudRepository<Quotation, Integer> {
+public interface TurnoverVatReportingRepository extends CrudRepository<Quotation, Integer> {
 
         @Query(nativeQuery = true, value = "" +
                         " select " +
@@ -29,10 +29,6 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         +
                         " sum(case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 when i.is_credit_note then -1 else 1 end * (ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithTax, "
                         +
-                        " count (distinct case when i.is_credit_note = false and i.customer_order_id is not null then i.id else 0 end) as nbrCustomerOrder, "
-                        +
-                        " count(distinct case when i.is_credit_note = false then i.id end) as nbrInvoices, " +
-                        " count(distinct case when i.is_credit_note = true then i.id end) as nbrCreditNote, " +
                         " coalesce(case " +
                         " when t1.denomination is not null then t1.denomination " +
                         " when t1.id is not null then concat(t1.firstname, " +
@@ -56,16 +52,13 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " concat (e2.firstname, " +
                         " ' ', " +
                         " e2.lastname)) as salesEmployeeLabel, " +
-                        " c1.label as confrereLabel, " +
                         " ist.label as invoiceStatusLabel, " +
-                        " sum(coalesce((select count(*) from announcement a join provision p on p.id_announcement =a.id join asso_affaire_order aao on aao.id = p.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id),0)) as nbrAnnouncement, "
-                        +
-                        " (select string_agg(distinct cast(d.code as text),', ' )  from announcement a join department d on d.id = a.id_department  join provision p on p.id_announcement = a.id join asso_affaire_order aao on aao.id = p.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id) as announcementDepartment "
-                        +
+                        " vat.label as vatLabel " +
                         " from " +
                         " invoice i " +
                         " left join invoice_item ii on " +
                         " ii.id_invoice = i.id " +
+                        " join vat on vat.id = ii.id_vat " +
                         " join invoice_status ist on " +
                         " ist.id = i.id_invoice_status " +
                         " left join billing_item bi on " +
@@ -76,8 +69,6 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " r.id = i.id_responsable " +
                         " left join tiers t1 on " +
                         " t1.id = i.id_tiers " +
-                        " left join confrere c1 on " +
-                        " c1.id = i.id_confrere " +
                         " left join tiers t2 on " +
                         " t2.id = r.id_tiers " +
                         " left join tiers_category tt1 on " +
@@ -105,7 +96,7 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " date_trunc('week', " +
                         " i.created_date) , " +
                         " date_trunc('day', " +
-                        " i.created_date) ,c1.label, " +
+                        " i.created_date) , " +
                         " coalesce(case " +
                         " when t1.denomination is not null then t1.denomination " +
                         " when t1.id is not null then concat(t1.firstname, " +
@@ -129,9 +120,9 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " concat (e2.firstname, " +
                         " ' ', " +
                         " e2.lastname)) , " +
-                        " ist.label,  " +
+                        " ist.label, vat.label , " +
                         " (select  string_agg(distinct  cast(d.code as text),', ' )  from announcement a join department d on d.id = a.id_department  join provision p on p.id_announcement = a.id join asso_affaire_order aao on aao.id = p.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id) "
                         +
                         "")
-        List<ITurnoverReporting> getTurnoverReporting(@Param("invoiceStatusId") List<Integer> invoiceStatusId);
+        List<ITurnoverVatReporting> getTurnoverVatReporting(@Param("invoiceStatusId") List<Integer> invoiceStatusId);
 }

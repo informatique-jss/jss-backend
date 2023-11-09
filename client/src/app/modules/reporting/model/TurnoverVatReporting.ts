@@ -1,4 +1,4 @@
-export interface TurnoverReporting {
+export interface TurnoverVatReporting {
   invoiceDateYear: string;
   invoiceDateMonth: string;
   invoiceDateWeek: string;
@@ -7,15 +7,10 @@ export interface TurnoverReporting {
   turnoverAmountWithTax: number;
   turnoverAmountWithoutDebourWithoutTax: number;
   turnoverAmountWithoutDebourWithTax: number;
-  nbrCustomerOrder: number;
-  nbrInvoices: number;
-  nbrCreditNote: number;
   tiersLabel: string;
   tiersCategory: string;
   invoiceCreator: string;
   salesEmployeeLabel: string;
   invoiceStatusLabel: string;
-  nbrAnnouncement: number;
-  announcementDepartment: string;
-  confrereLabel: string;
+  vatLabel: string;
 }

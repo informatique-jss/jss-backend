@@ -4,4 +4,5 @@ export interface ProvisionProduction {
   weekField: string;
   dayField: string;
   provisionAssignedToLabel: string;
+  provisionNumber: number;
 }

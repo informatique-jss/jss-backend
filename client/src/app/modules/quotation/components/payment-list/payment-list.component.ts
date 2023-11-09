@@ -88,6 +88,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "isInternallyAssociated", fieldName: "isAssociated", label: "Associé dans Osiris", valueFonction: (element: any) => { return (element.isAssociated) ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "isExternallyAssociated", fieldName: "isExternallyAssociated", label: "Associé hors Osiris", valueFonction: (element: any) => { return element.isExternallyAssociated ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé", valueFonction: (element: any) => { return element.isCancelled ? "Oui" : "Non" } } as SortTableColumn);
+    this.availableColumns.push({ id: "isAppoint", fieldName: "isAppoint", label: "Appoint", valueFonction: (element: any) => { return element.isCancelled ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture associée", actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
     this.availableColumns.push({ id: "comment", fieldName: "comment", label: "Commentaire" } as SortTableColumn);
 
@@ -142,6 +143,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     this.setColumns();
 
     this.paymentSearch.isHideAssociatedPayments = true;
+    this.paymentSearch.isHideAppoint = true;
     this.paymentSearch.isHideCancelledPayments = true;
 
     if (this.isForDashboard && !this.payments && this.paymentSearch) {
