@@ -11,8 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
@@ -31,6 +34,8 @@ public class FormaliteStatus implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
+	@IndexedField
+	@SearchableField
 	private String label;
 
 	@Column(nullable = false, length = 100)

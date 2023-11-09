@@ -63,7 +63,6 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@OneToMany(targetEntity = Provision.class, mappedBy = "assoAffaireOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "assoAffaireOrder" }, allowSetters = true)
 	@IndexedField
-	@SearchableField
 	private List<Provision> provisions;
 
 	public Affaire getAffaire() {

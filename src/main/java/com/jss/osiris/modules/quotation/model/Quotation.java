@@ -52,14 +52,17 @@ public class Quotation implements IQuotation {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
+	@IndexedField
 	private Tiers tiers;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
+	@IndexedField
 	private Responsable responsable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
+	@IndexedField
 	private Confrere confrere;
 
 	@ManyToMany
@@ -73,8 +76,10 @@ public class Quotation implements IQuotation {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_quotation_status")
+	@IndexedField
 	private QuotationStatus quotationStatus;
 
+	@IndexedField
 	private LocalDateTime lastStatusUpdate;
 
 	@Column(columnDefinition = "TEXT")

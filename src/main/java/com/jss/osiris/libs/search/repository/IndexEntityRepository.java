@@ -14,11 +14,11 @@ public interface IndexEntityRepository extends QueryCacheCrudRepository<IndexEnt
         List<IndexEntity> searchForEntities(@Param("searchQuery") String searchQuery,
                         @Param("numberOfResult") Integer numberOfResult);
 
-        @Query(nativeQuery = true, value = "select entity_id, entity_type, search_text,text from (SELECT index_entity.* , similarity(text, :searchQuery)  AS rank FROM index_entity ) t where text ILIKE '%'||  :searchQuery ||'%' ORDER BY (case when entity_type in ('Tiers', 'Responsable') then 0.1 else 0 end) + rank desc LIMIT :numberOfResult")
+        @Query(nativeQuery = true, value = "select entity_id, entity_type, search_text,text from (SELECT index_entity.* , similarity(search_text, :searchQuery)  AS rank FROM index_entity ) t where search_text ILIKE '%'||  :searchQuery ||'%' ORDER BY (case when entity_type in ('Tiers', 'Responsable') then 0.1 else 0 end) + rank desc LIMIT :numberOfResult")
         List<IndexEntity> searchForContainsSimilarEntities(@Param("searchQuery") String searchQuery,
                         @Param("numberOfResult") Integer numberOfResult);
 
-        @Query(nativeQuery = true, value = "select entity_id, entity_type, search_text, text from (SELECT index_entity.* , similarity(text, :searchQuery)  AS rank FROM index_entity ) t ORDER BY (case when entity_type in ('Tiers', 'Responsable') then 0.1 else 0 end) + rank desc LIMIT :numberOfResult")
+        @Query(nativeQuery = true, value = "select entity_id, entity_type, search_text, text from (SELECT index_entity.* , similarity(search_text, :searchQuery)  AS rank FROM index_entity ) t ORDER BY (case when entity_type in ('Tiers', 'Responsable') then 0.1 else 0 end) + rank desc LIMIT :numberOfResult")
         List<IndexEntity> searchForDeepSimilarEntities(@Param("searchQuery") String searchQuery,
                         @Param("numberOfResult") Integer numberOfResult);
 
@@ -27,12 +27,12 @@ public interface IndexEntityRepository extends QueryCacheCrudRepository<IndexEnt
                         @Param("entityType") String entityType,
                         @Param("numberOfResult") Integer numberOfResult);
 
-        @Query(nativeQuery = true, value = "select entity_id, entity_type, search_text,text from (SELECT index_entity.* , similarity(text, :searchQuery)  AS rank FROM index_entity ) t where  entity_type=:entityType and text ILIKE '%'||  :searchQuery ||'%' ORDER BY (case when entity_type in ('Tiers', 'Responsable') then 0.1 else 0 end) + rank desc LIMIT :numberOfResult")
+        @Query(nativeQuery = true, value = "select entity_id, entity_type, search_text,text from (SELECT index_entity.* , similarity(search_text, :searchQuery)  AS rank FROM index_entity ) t where  entity_type=:entityType and search_text ILIKE '%'||  :searchQuery ||'%' ORDER BY (case when entity_type in ('Tiers', 'Responsable') then 0.1 else 0 end) + rank desc LIMIT :numberOfResult")
         List<IndexEntity> searchForContainsSimilarEntities(@Param("searchQuery") String searchQuery,
                         @Param("entityType") String entityType,
                         @Param("numberOfResult") Integer numberOfResult);
 
-        @Query(nativeQuery = true, value = "select entity_id, entity_type, search_text,text from (SELECT index_entity.* , similarity(text, :searchQuery)  AS rank FROM index_entity where entity_type=:entityType  ) t ORDER BY (case when entity_type in ('Tiers', 'Responsable') then 0.1 else 0 end) + rank desc LIMIT :numberOfResult")
+        @Query(nativeQuery = true, value = "select entity_id, entity_type, search_text,text from (SELECT index_entity.* , similarity(search_text, :searchQuery)  AS rank FROM index_entity where entity_type=:entityType  ) t ORDER BY (case when entity_type in ('Tiers', 'Responsable') then 0.1 else 0 end) + rank desc LIMIT :numberOfResult")
         List<IndexEntity> searchForDeepSimilarEntities(@Param("searchQuery") String searchQuery,
                         @Param("entityType") String entityType,
                         @Param("numberOfResult") Integer numberOfResult);

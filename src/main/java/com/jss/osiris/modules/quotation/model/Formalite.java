@@ -28,6 +28,8 @@ public class Formalite implements IId {
     @Id
     @SequenceGenerator(name = "formalite_sequence", sequenceName = "formalite_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "formalite_sequence")
+    @IndexedField
+    @SearchableField
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,11 +39,15 @@ public class Formalite implements IId {
     private FormaliteStatus formaliteStatus;
 
     @Column(columnDefinition = "TEXT")
+    @IndexedField
+    @SearchableField
     private String observations;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_waited_competent_authority")
     @JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
+    @IndexedField
+    @SearchableField
     private CompetentAuthority waitedCompetentAuthority;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,6 +61,8 @@ public class Formalite implements IId {
 
     @OneToMany(mappedBy = "formalite")
     @JsonIgnore
+    @IndexedField
+    @SearchableField
     private List<Provision> provision;
 
     public Integer getId() {

@@ -13,6 +13,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 
 @Entity
 public class CustomerOrderStatus extends IWorkflowElement implements Serializable {
@@ -32,6 +34,8 @@ public class CustomerOrderStatus extends IWorkflowElement implements Serializabl
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
+	@IndexedField
+	@SearchableField
 	private String label;
 
 	@Column(nullable = false, length = 100)

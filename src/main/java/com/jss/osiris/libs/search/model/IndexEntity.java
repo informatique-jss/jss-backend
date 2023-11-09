@@ -18,7 +18,6 @@ public class IndexEntity implements Serializable {
 	@Id
 	private Integer entityId;
 
-	@SearchableField
 	@Column(columnDefinition = "TEXT")
 	private String searchText;
 

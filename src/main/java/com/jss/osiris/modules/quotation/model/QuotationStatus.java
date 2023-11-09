@@ -13,6 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
 
 @Entity
 public class QuotationStatus extends IWorkflowElement implements Serializable {
@@ -32,6 +33,7 @@ public class QuotationStatus extends IWorkflowElement implements Serializable {
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
+	@IndexedField
 	private String label;
 
 	@Column(nullable = false, length = 100)

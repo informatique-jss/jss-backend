@@ -85,6 +85,8 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision")
 	@JsonIgnoreProperties(value = { "assoAffaireOrder", "payments", "providerInvoices" }, allowSetters = true)
+	@IndexedField
+	@SearchableField
 	private Provision provision;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -116,7 +118,6 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@Column(length = 300, name = "billing_label")
 	@IndexedField
-	@SearchableField
 	private String billingLabel;
 
 	@Column(name = "billing_label_address", length = 160)
@@ -165,6 +166,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice_status")
 	@IndexedField
+	@SearchableField
 	private InvoiceStatus invoiceStatus;
 
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)

@@ -84,14 +84,17 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
+	@IndexedField
 	private Tiers tiers;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
+	@IndexedField
 	private Responsable responsable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
+	@IndexedField
 	private Confrere confrere;
 
 	@ManyToMany
@@ -105,8 +108,12 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_status")
+	@IndexedField
+	@SearchableField
 	private CustomerOrderStatus customerOrderStatus;
 
+	@IndexedField
+	@SearchableField
 	private LocalDateTime lastStatusUpdate;
 
 	@Column(columnDefinition = "TEXT")
