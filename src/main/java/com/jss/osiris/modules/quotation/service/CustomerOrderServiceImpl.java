@@ -234,28 +234,31 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 outerloop: for (OrderingSearchResult potentialCustomerOrderResult : duplicatedCustomerOrders) {
                     CustomerOrder potentialCustomerOrder = getCustomerOrder(
                             potentialCustomerOrderResult.getCustomerOrderId());
-                    for (AssoAffaireOrder currentAsso : customerOrder.getAssoAffaireOrders()) {
-                        boolean foundAsso = false;
-                        for (AssoAffaireOrder duplicateAsso : potentialCustomerOrder.getAssoAffaireOrders()) {
-                            if (currentAsso.getAffaire().getId().equals(duplicateAsso.getAffaire().getId())) {
-                                foundAsso = true;
-                                for (Provision currentProvision : currentAsso.getProvisions()) {
-                                    boolean foundProvision = false;
-                                    for (Provision duplicateProvision : duplicateAsso.getProvisions()) {
-                                        if (duplicateProvision.getProvisionType().getId()
-                                                .equals(currentProvision.getProvisionType().getId())) {
-                                            foundProvision = true;
+                    if (!potentialCustomerOrder.getCustomerOrderStatus().getCode()
+                            .equals(CustomerOrderStatus.ABANDONED)) {
+                        for (AssoAffaireOrder currentAsso : customerOrder.getAssoAffaireOrders()) {
+                            boolean foundAsso = false;
+                            for (AssoAffaireOrder duplicateAsso : potentialCustomerOrder.getAssoAffaireOrders()) {
+                                if (currentAsso.getAffaire().getId().equals(duplicateAsso.getAffaire().getId())) {
+                                    foundAsso = true;
+                                    for (Provision currentProvision : currentAsso.getProvisions()) {
+                                        boolean foundProvision = false;
+                                        for (Provision duplicateProvision : duplicateAsso.getProvisions()) {
+                                            if (duplicateProvision.getProvisionType().getId()
+                                                    .equals(currentProvision.getProvisionType().getId())) {
+                                                foundProvision = true;
+                                            }
                                         }
+                                        if (!foundProvision)
+                                            break outerloop;
                                     }
-                                    if (!foundProvision)
-                                        break outerloop;
                                 }
                             }
+                            if (!foundAsso)
+                                break outerloop;
                         }
-                        if (!foundAsso)
-                            break outerloop;
+                        duplicatedFound.add(potentialCustomerOrder);
                     }
-                    duplicatedFound.add(potentialCustomerOrder);
                 }
 
                 if (duplicatedFound.size() > 0) {
