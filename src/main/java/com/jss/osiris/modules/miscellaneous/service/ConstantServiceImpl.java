@@ -928,4 +928,9 @@ public class ConstantServiceImpl implements ConstantService {
     public TiersFollowupType getTiersFollowupTypeInvoiceReminder() throws OsirisException {
         return getConstants().getTiersFollowupTypeInvoiceReminder();
     }
+
+    @Override
+    public ProvisionFamilyType getProvisionServiceFamilyEnregistrement() throws OsirisException {
+        return getConstants().getProvisionServiceFamilyEnregistrement();
+    }
 }
