@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Formalite } from '../../model/Formalite';
 import { IQuotation } from '../../model/IQuotation';
@@ -24,6 +26,7 @@ export class FormaliteComponent implements OnInit {
 
   FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY = FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY;
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
+  instanceOfCustomerOrderFn = instanceOfCustomerOrder;
 
   competentAuthorityInpi = this.constantService.getCompetentAuthorityInpi();
   competentAuthorityInfogreffe = this.constantService.getCompetentAuthorityInfogreffe();
@@ -31,10 +34,13 @@ export class FormaliteComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
+    private habilitationsService: HabilitationsService
   ) { }
 
   formaliteForm = this.formBuilder.group({});
-
+  canAddNewInvoice() {
+    return this.habilitationsService.canAddNewInvoice();
+  }
   FORMALITE_ENTITY_TYPE = FORMALITE_ENTITY_TYPE;
 
   ngOnInit() {

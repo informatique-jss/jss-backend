@@ -28,4 +28,8 @@ export class InvoiceService extends AppRestService<Invoice>{
     return this.getById("invoice", invoiceId);
   }
 
+  createInvoiceFromAzureInvoice(azureInvoiceId: number, provisionId: number) {
+    return this.get(new HttpParams().set("azureInvoiceId", azureInvoiceId).set("provisionId", provisionId), "azure-invoice/create");
+  }
+
 }

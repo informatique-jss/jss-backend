@@ -6,6 +6,7 @@ import javax.persistence.QueryHint;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.libs.mail.model.CustomerMail;
@@ -35,4 +36,20 @@ public interface CustomerMailRepository extends QueryCacheCrudRepository<Custome
 
     @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     List<CustomerMail> findByResponsable(Responsable responsable);
+
+    @Query(nativeQuery = true, value = "" +
+            " select cm.* " +
+            " from customer_mail cm  " +
+            " where cm.id_responsable =:idResponsable " +
+            " and cm.created_date_time >=date_trunc('month',now()) " +
+            " and cm.subject ='Votre relevé de compte' ")
+    List<CustomerMail> findReceiptMailsForResponsable(@Param("idResponsable") Integer idResponsable);
+
+    @Query(nativeQuery = true, value = "" +
+            " select cm.* " +
+            " from customer_mail cm  " +
+            " where cm.id_tiers =:idTiers " +
+            " and cm.created_date_time >=date_trunc('month',now()) " +
+            " and cm.subject ='Votre relevé de compte' ")
+    List<CustomerMail> findReceiptMailsForTiers(@Param("idTiers") Integer idTiers);
 }

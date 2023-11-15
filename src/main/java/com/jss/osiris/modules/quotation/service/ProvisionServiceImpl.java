@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
 import com.jss.osiris.modules.quotation.repository.AnnouncementStatusRepository;
@@ -26,6 +27,9 @@ public class ProvisionServiceImpl implements ProvisionService {
 
     @Autowired
     AnnouncementStatusRepository announcementStatusRepository;
+
+    @Autowired
+    CustomerOrderStatusService customerOrderStatusService;
 
     @Override
     public Provision getProvision(Integer id) {
@@ -53,7 +57,10 @@ public class ProvisionServiceImpl implements ProvisionService {
         for (Employee employee : employees)
             employeeIds.add(employee.getId());
 
-        return provisionRepository.getDashboardEmployee(employeeIds);
+        return provisionRepository.getDashboardEmployee(employeeIds,
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED).getId(),
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT).getId(),
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN).getId());
     }
 
 }

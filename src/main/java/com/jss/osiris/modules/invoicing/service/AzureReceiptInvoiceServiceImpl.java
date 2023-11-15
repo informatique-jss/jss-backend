@@ -130,14 +130,6 @@ public class AzureReceiptInvoiceServiceImpl implements AzureReceiptInvoiceServic
 
         status.setPaymentStatus(paymentStatus);
 
-        // Check at least one debour associated
-        boolean debourStatus = false;
-        if (finalInvoices != null && finalInvoices.size() > 0 && finalInvoices.get(0).getInvoiceItems() != null) {
-            debourStatus = finalInvoices.get(0).getInvoiceItems().get(0).getDebours() != null
-                    && finalInvoices.get(0).getInvoiceItems().get(0).getDebours().size() > 0;
-        }
-        status.setDebourStatus(debourStatus);
-
         // Check customer invoice sent after AC invoice creation
         boolean customerInvoicedStatus = false;
         if (finalInvoices != null && finalInvoices.size() == 1) {

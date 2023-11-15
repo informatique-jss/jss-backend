@@ -1,4 +1,4 @@
-import { Debour } from './Debour';
+import { CustomerOrder } from './CustomerOrder';
 import { Invoice } from './Invoice';
 export interface BankTransfert {
   id: number;
@@ -8,6 +8,10 @@ export interface BankTransfert {
   transfertIban: string;
   transfertBic: string;
   isAlreadyExported: boolean;
-  debours: Debour[];
+  isSelectedForExport: boolean;
+  isCancelled: boolean;
+  isMatched: boolean;
   invoices: Invoice[];
+  comment: String;
+  customerOrder: CustomerOrder;
 }

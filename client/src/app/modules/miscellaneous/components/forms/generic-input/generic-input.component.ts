@@ -47,7 +47,7 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
 
   parse(event: any) {
     if (this.form && this.type == 'number') {
-      this.model = this.model.replace(',', '.');
+      this.model = (this.model + "").replace(',', '.');
       if (isNaN(this.model)) {
         this.model = undefined;
       } else {

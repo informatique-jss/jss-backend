@@ -13,4 +13,6 @@ public interface UserReportingService {
     public UserReporting addOrUpdateUserReporting(UserReporting userReporting);
 
     public void copyUserReportingToUser(UserReporting userReporting, Employee employee);
+
+    public void deleteReporting(UserReporting userReporting);
 }

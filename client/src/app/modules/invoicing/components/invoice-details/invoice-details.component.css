@@ -11,6 +11,20 @@
   margin-top: 20px;
 }
 
+.affaire {
+  font-weight: 900;
+  padding-top: 15px;
+}
+
+.affaire-align {
+  text-align: center;
+}
+
+.invoice-item {
+  padding-left: 20px;
+}
+
+
 .sub-row {
   padding-left: 20px;
 }

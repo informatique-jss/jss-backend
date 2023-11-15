@@ -9,12 +9,12 @@
   </mat-panel-description>
 </ng-template>
 <div class="mat-elevation-z2 form-div">
-  <div>
+  <div *ngIf="!this.idConfrere">
     <mat-form-field class="full-width">
       <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
     </mat-form-field>
   </div>
-  <div class="table-container-scroll">
+  <div class="table-container-scroll" *ngIf="!this.idConfrere">
     <sort-table [idRowSelected]="selectedConfrereId" [columns]="displayedColumns" (onRowClick)="selectConfrere($event)"
       [values]="confreres" tableName="Confrères" [filterText]="searchText">
     </sort-table>
@@ -322,7 +322,7 @@
         <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
           [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
       </mat-tab>
-      <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id">
+      <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id && !this.idConfrere">
         <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
       </mat-tab>
       <mat-tab label="Mails" *ngIf="selectedConfrere.id">

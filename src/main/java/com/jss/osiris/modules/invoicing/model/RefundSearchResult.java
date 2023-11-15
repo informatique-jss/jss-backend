@@ -18,8 +18,6 @@ public interface RefundSearchResult {
 
     public Boolean getIsAlreadyExported();
 
-    public Integer getPaymentId();
-
     public String getRefundTiersLabel();
 
     public String getAffaireLabel();

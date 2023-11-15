@@ -54,7 +54,7 @@ public class AzureReceiptServiceImpl implements AzureReceiptService {
                     if (invoice.getIsReconciliated() == null || invoice.getIsReconciliated() == false) {
                         AzureReceiptInvoiceStatus status = azureReceiptInvoiceService
                                 .getAzureReceiptInvoiceStatus(invoice);
-                        if (status.getCustomerInvoicedStatus() && status.getDebourStatus() && status.getInvoicesStatus()
+                        if (status.getCustomerInvoicedStatus() && status.getInvoicesStatus()
                                 && status.getPaymentStatus())
                             azureReceiptInvoiceService.markAsReconciliated(invoice, true);
                     }

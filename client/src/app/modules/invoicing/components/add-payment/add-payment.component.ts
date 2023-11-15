@@ -32,7 +32,6 @@ export class AddPaymentComponent implements OnInit {
   addPayment() {
     if (this.newPayment && this.addPaymentForm.valid) {
       this.newPayment.label = this.newPayment.label + ' - ' + 'n°' + this.checkNumber + ' - ' + this.payer;
-      this.newPayment.paymentWay = this.constantService.getPaymentWayInbound();
       this.newPayment.paymentType = this.constantService.getPaymentTypeCheques();
       this.newPayment.isCancelled = false;
       this.newPayment.isExternallyAssociated = false;

@@ -22,13 +22,17 @@ export class AutocompletePaymentComponent extends GenericAutocompleteComponent<P
     super(formBuild, userNoteService2)
   }
 
-  @Input() forcedPaymentWays = [this.constantService.getPaymentWayOutbound()];
+  @Input() forcedMinAmount = undefined;
+  @Input() forcedMaxAmount = 0;
   @Input() hideAssociatedPayment = true;
 
   searchEntities(value: string): Observable<PaymentSearchResult[]> {
     let search: PaymentSearch = {} as PaymentSearch;
     search.label = value;
-    search.paymentWays = this.forcedPaymentWays;
+    if (this.forcedMinAmount)
+      search.minAmount = this.forcedMinAmount;
+    if (this.forcedMaxAmount)
+      search.maxAmount = this.forcedMaxAmount;
     search.isHideAssociatedPayments = this.hideAssociatedPayment;
     return this.paymentSearchResultService.getPayments(search);
   }

@@ -71,7 +71,7 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
     }
 
     @Override
-    public int getCharacterNumber(Provision provision) {
+    public int getCharacterNumber(Provision provision, boolean ignoreHeaderFree) {
         if (provision.getAnnouncement() != null) {
             int noticeNumber = 0;
             int headerNumber = 0;
@@ -82,7 +82,7 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
 
             return noticeNumber
                     + ((provision.getAnnouncement().getIsHeaderFree() == null
-                            || provision.getAnnouncement().getIsHeaderFree()) ? 0
+                            || provision.getAnnouncement().getIsHeaderFree() && !ignoreHeaderFree) ? 0
                                     : headerNumber);
         }
         return 0;

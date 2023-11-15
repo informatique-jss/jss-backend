@@ -343,6 +343,9 @@ public class ValidationHelper {
             }
             if (mail.getMail() == null || mail.getMail().length() > 250 || !emailvalidator.isValid(mail.getMail()))
                 return false;
+            if (mail.getMail().toLowerCase().contains("é") || mail.getMail().toLowerCase().contains("è")
+                    || mail.getMail().toLowerCase().contains("ê"))
+                return false;
         }
         return true;
     }

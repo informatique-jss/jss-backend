@@ -8,6 +8,7 @@ export interface InvoiceItem {
   label: string;
   billingItem: BillingItem;
   preTaxPrice: number;
+  preTaxPriceReinvoiced: number;
   vatPrice: number;
   vat: Vat;
   discountAmount: number;
@@ -15,4 +16,5 @@ export interface InvoiceItem {
   provision: Provision;
   isOverridePrice: boolean;
   isGifted: boolean;
+  originProviderInvoice: Invoice;
 }

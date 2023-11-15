@@ -1,13 +1,13 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
-import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
+import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
@@ -19,7 +19,7 @@ import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN } from '../
 import { replaceDocument } from '../../../../libs/DocumentHelper';
 import { formatDateFrance } from '../../../../libs/FormatHelper';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
-import { AssociateDepositDialogComponent } from '../../../invoicing/components/associate-deposit-dialog/associate-deposit-dialog.component';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { getCustomerOrderForIQuotation } from '../../../invoicing/components/invoice-tools';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
 import { InvoiceSearchResultService } from '../../../invoicing/services/invoice.search.result.service';
@@ -75,6 +75,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   round = Math.round;
 
   selectedTabIndex = 0;
+  selectedTabIndexAsso = 0;
 
   @ViewChild('tabs', { static: false }) tabs: any;
   @ViewChild(OrderingCustomerComponent) orderingCustomerComponent: OrderingCustomerComponent | undefined;
@@ -87,7 +88,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   updateDocumentsEvent: Subject<IQuotation> = new Subject<IQuotation>();
 
-  idQuotation: number | undefined;
+  @Input() idQuotation: number | undefined;
+  @Input() inputProvision: Provision | undefined;
+  @Input() isForIntegration: boolean = false;
+
 
   saveObservableSubscription: Subscription = new Subscription;
   customerOrderInvoices: InvoiceSearchResult[] | undefined;
@@ -108,10 +112,11 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private constantService: ConstantService,
     private assoAffaireOrderService: AssoAffaireOrderService,
     protected searchService: SearchService,
-    public associateDepositDialog: MatDialog,
     private provisionService: ProvisionService,
     private orderingSearchResultService: OrderingSearchResultService,
     private invoiceSearchResultService: InvoiceSearchResultService,
+    private habilitationsService: HabilitationsService,
+    public associatePaymentDialog: MatDialog,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   quotationForm = this.formBuilder.group({});
@@ -121,7 +126,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnInit() {
-    this.idQuotation = this.activatedRoute.snapshot.params.id;
+    if (!this.idQuotation)
+      this.idQuotation = this.activatedRoute.snapshot.params.id;
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
 
     this.quotationStatusService.getQuotationStatus().subscribe(response => {
@@ -133,20 +139,32 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     })
 
     // Load by order
-    if (url != undefined && url != null && url[0] != undefined && url[0].path == "order") {
+    if (this.isForIntegration && this.idQuotation || url != undefined && url != null && url[0] != undefined && url[0].path == "order") {
       this.isQuotationUrl = false;
-      this.appService.changeHeaderTitle("Commande");
+
+      if (!this.isForIntegration)
+        this.appService.changeHeaderTitle("Commande");
       this.instanceOfCustomerOrder = true;
       if (this.idQuotation != null && this.idQuotation != undefined) {
         this.customerOrderService.getCustomerOrder(this.idQuotation).subscribe(response => {
           this.quotation = response;
-          if (instanceOfCustomerOrder(this.quotation))
+          if (instanceOfCustomerOrder(this.quotation) && !this.isForIntegration)
             this.appService.changeHeaderTitle("Commande " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
-              (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : ""));
+              (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : "") + (this.quotation.isGifted ? (" - Offerte") : ""));
           this.toggleTabs();
           this.setOpenStatus();
           this.checkAffaireAssignation();
           this.updateDocumentsEvent.next(this.quotation);
+
+          // In case of integration, put screen on right provision
+          if (this.inputProvision) {
+            this.selectedTabIndex = 1;
+            if (this.quotation.assoAffaireOrders)
+              for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
+                if (this.quotation.assoAffaireOrders[i].id == this.inputProvision.assoAffaireOrder.id)
+                  this.selectedTabIndexAsso = i;
+              }
+          }
         })
         this.getInvoices();
       }
@@ -185,6 +203,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   toggleTabs() {
     if (this.tabs != undefined)
       this.tabs.realignInkBar();
+  }
+
+  canOfferCustomerOrder() {
+    return this.habilitationsService.canOfferCustomerOrder();
   }
 
   setOpenStatus() {
@@ -397,6 +419,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         orderingSearch.customerOrders = [getCustomerOrderForIQuotation(this.quotation)];
         orderingSearch.affaires = [asso.affaire];
         orderingSearch.customerOrderStatus = [];
+        let d = new Date();
+        d.setDate(d.getDate() - 3);
+        orderingSearch.startDate = d;
         if (this.customerOrderStatusList)
           for (let status of this.customerOrderStatusList)
             if ([CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED].indexOf(status.code) >= 0)
@@ -462,12 +487,19 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       this.displaySnakBarLockProvision();
       return;
     }
-    if (provision.debours && provision.debours.length > 0) {
-      this.appService.displaySnackBar("Impossible de supprimer cette prestation : des débours/frais ont déjà été saisis", true, 15);
+
+    if (provision && provision.payments) {
+      for (let payment of provision.payments)
+        if (!payment.isCancelled) {
+          this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : des paiements ont déjà été déclarés.", false, 15);
+          return;
+        }
+    }
+
+    if (provision.announcement && provision.announcement.actuLegaleId) {
+      this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : elle a déjà été publiée sur ActuLégale.", false, 15);
       return;
     }
-    if (provision.announcement && provision.announcement.actuLegaleId)
-      this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : elle a déjà été publiée sur ActuLégale.", false, 15);
 
     asso.provisions.splice(asso.provisions.indexOf(provision), 1);
   }
@@ -484,13 +516,25 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
           })
         } else {
-          if (this.getRemainingToPay() < 0 && (targetStatus.code == CUSTOMER_ORDER_STATUS_BILLED || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED)) {
-            let dialogDepositDialogRef = this.associateDepositDialog.open(AssociateDepositDialogComponent, {
+          let hasPayment = false;
+          if ((this.quotation as CustomerOrder).payments && (this.quotation as CustomerOrder).payments.length > 0) {
+            for (let payment of (this.quotation as CustomerOrder).payments)
+              if (payment.isCancelled == false)
+                hasPayment = true;
+          }
+          if (hasPayment && ((this.getRemainingToPay() < -INVOICING_PAYMENT_LIMIT_REFUND_EUROS && targetStatus.code == CUSTOMER_ORDER_STATUS_BILLED) || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED)) {
+            let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
               width: '100%'
             });
-            dialogDepositDialogRef.componentInstance.deposit = (this.quotation as CustomerOrder).deposits[0];
-            dialogDepositDialogRef.componentInstance.customerOrder = (this.quotation as CustomerOrder);
-            dialogDepositDialogRef.afterClosed().subscribe(response => {
+            for (let payment of (this.quotation as CustomerOrder).payments)
+              if (!payment.isCancelled)
+                dialogPaymentDialogRef.componentInstance.payment = payment;
+            dialogPaymentDialogRef.componentInstance.doNotInitializeAsso = targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED;
+            dialogPaymentDialogRef.componentInstance.customerOrder = this.quotation as CustomerOrder;
+            if (targetStatus.code == CUSTOMER_ORDER_STATUS_BILLED)
+              dialogPaymentDialogRef.componentInstance.isForQuotationBilling = true;
+
+            dialogPaymentDialogRef.afterClosed().subscribe(response => {
               if (response)
                 this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code).subscribe(response => {
                   this.quotation = response;
@@ -628,10 +672,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   getApplicableVat(): VatBase[] {
-    return QuotationComponent.computeApplicableVat(this.quotation, this.constantService.getVatDeductible());
+    return QuotationComponent.computeApplicableVat(this.quotation);
   }
 
-  public static computeApplicableVat(quotation: IQuotation, debourVat: Vat): VatBase[] {
+  public static computeApplicableVat(quotation: IQuotation): VatBase[] {
     let vatBases: VatBase[] = [];
     if (quotation && quotation.assoAffaireOrders) {
       for (let asso of quotation.assoAffaireOrders) {
@@ -639,39 +683,17 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           for (let provision of asso.provisions) {
             if (provision.invoiceItems) {
               for (let invoiceItem of provision.invoiceItems) {
-                if (invoiceItem.vat && invoiceItem.vatPrice && invoiceItem.vatPrice > 0) {
-
-                  if (!invoiceItem.billingItem.billingType.isDebour && !invoiceItem.billingItem.billingType.isFee || !provision.debours || provision.debours.length == 0) {
-                    let vatFound = false;
-                    for (let vatBase of vatBases) {
-                      if (vatBase.label == invoiceItem.vat.label) {
-                        vatFound = true;
-                        vatBase.base += invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0);
-                        vatBase.total += invoiceItem.vatPrice;
-                      }
+                if (invoiceItem.vat && invoiceItem.vatPrice) {
+                  let vatFound = false;
+                  for (let vatBase of vatBases) {
+                    if (vatBase.label == invoiceItem.vat.label) {
+                      vatFound = true;
+                      vatBase.base += invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0);
+                      vatBase.total += invoiceItem.vatPrice;
                     }
-                    if (!vatFound) {
-                      vatBases.push({ label: invoiceItem.vat.label, base: (invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0)), total: invoiceItem.vatPrice });
-                    }
-                  } else if (provision.debours) {
-                    for (let debour of provision.debours) {
-                      if (!debour.billingType.isNonTaxable) {
-                        let vatFound = false;
-                        let debourAmount = debour.invoicedAmount ? debour.invoicedAmount : debour.debourAmount;
-                        let applicableDebourVat = debour.invoiceItem ? debour.invoiceItem.vat : debourVat;
-
-                        for (let vatBase of vatBases) {
-                          if (vatBase.label == applicableDebourVat.label) {
-                            vatFound = true;
-                            vatBase.base += debourAmount / (1 + (applicableDebourVat.rate / 100));
-                            vatBase.total += (debourAmount / (1 + (applicableDebourVat.rate / 100))) * applicableDebourVat.rate / 100;
-                          }
-                        }
-                        if (!vatFound) {
-                          vatBases.push({ label: applicableDebourVat.label, base: debourAmount / (1 + (applicableDebourVat.rate / 100)), total: (debourAmount / (1 + (applicableDebourVat.rate / 100))) * applicableDebourVat.rate / 100 });
-                        }
-                      }
-                    }
+                  }
+                  if (!vatFound) {
+                    vatBases.push({ label: invoiceItem.vat.label, base: (invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0)), total: invoiceItem.vatPrice });
                   }
                 }
               }
@@ -695,9 +717,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         if (asso.affaire && asso.affaire.id == affaire.id) {
           if (asso.provisions) {
             for (let provision of asso.provisions)
-              if (provision.debours && provision.debours.length > 0) {
-                this.appService.displaySnackBar("Impossible de supprimer cette affaire : des débours/frais ont déjà été saisis sur une prestation", true, 15);
-                return;
+              if (provision && provision.payments) {
+                for (let payment of provision.payments)
+                  if (!payment.isCancelled) {
+                    this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : des paiements ont déjà été déclarés.", false, 15);
+                    return;
+                  }
               }
           }
         }
@@ -722,9 +747,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   public static computePayed(quotation: CustomerOrder) {
     let total = 0;
-    if (quotation && quotation.deposits)
-      for (let deposit of quotation.deposits)
-        total += deposit.depositAmount;
+    if (quotation && quotation.payments)
+      for (let deposit of quotation.payments)
+        if (!deposit.isCancelled)
+          total += deposit.paymentAmount;
     return total;
   }
 
@@ -794,6 +820,14 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   getProvisionLabel(provision: Provision): string {
     return QuotationComponent.computeProvisionLabel(provision);
+  }
+
+  offerCustomerOrder() {
+    if (this.quotation && instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED) {
+      this.customerOrderService.offerCustomerOrder(this.quotation).subscribe(response => {
+        this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+      })
+    }
   }
 
   public static computeProvisionLabel(provision: Provision): string {

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors } from '@angular/forms';
 import { validateSiren } from 'src/app/libs/CustomFormsValidatorsHelper';
+import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Civility } from 'src/app/modules/miscellaneous/model/Civility';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
@@ -38,6 +39,7 @@ export class DomiciliationComponent implements OnInit {
 
   DOMICILIATION_ENTITY_TYPE = DOMICILIATION_ENTITY_TYPE;
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
+  instanceOfCustomerOrderFn = instanceOfCustomerOrder;
   attachmentTypeKbis = this.constantService.getAttachmentTypeKbis();
   attachmentTypeCni = this.constantService.getAttachmentTypeCni();
   attachmentProofOfAddress = this.constantService.getAttachmentTypeProofOfAddress();

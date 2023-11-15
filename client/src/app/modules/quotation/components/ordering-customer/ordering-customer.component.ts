@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { QUOTATION_STATUS_SENT_TO_CUSTOMER } from 'src/app/libs/Constants';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { getCustomerOrderForIQuotation } from 'src/app/modules/invoicing/components/invoice-tools';
@@ -50,6 +51,10 @@ export class OrderingCustomerComponent implements OnInit {
 
   customerOrderQuotations: QuotationSearchResult[] | undefined;
   quotationCustomerOrders: OrderingSearchResult[] | undefined;
+
+  selectedCustomerOrder: IndexEntity | undefined;
+
+  QUOTATION_STATUS_SENT_TO_CUSTOMER = QUOTATION_STATUS_SENT_TO_CUSTOMER;
 
   constructor(private formBuilder: UntypedFormBuilder,
     private tiersService: TiersService,
@@ -208,5 +213,11 @@ export class OrderingCustomerComponent implements OnInit {
     if (instanceOfQuotation(this.quotation))
       this.customerOrderService.updateAssignedToForQuotation(this.quotation, employee).subscribe(response => {
       });
+  }
+
+  selectCustomerOrderOnQuotation(customerOrder: IndexEntity) {
+    this.quotationService.associateCustomerOrderToQuotation(customerOrder.entityId, this.quotation.id).subscribe(response => {
+      this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
+    })
   }
 }

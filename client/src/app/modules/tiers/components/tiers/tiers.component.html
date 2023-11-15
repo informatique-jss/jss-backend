@@ -38,13 +38,8 @@
     <mat-tab label="Factures" *ngIf="invoiceSearch.customerOrders">
       <invoice-list [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
     </mat-tab>
-    <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id">
+    <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id && !this.idResponsable">
       <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
-    </mat-tab>
-    <mat-tab label="Reporting" *ngIf="tiers && tiers.id">
-      <reporting [hidden]="!dataToDisplay " [dataToDisplay]="dataToDisplay"
-        [reportName]="tiers.denomination?tiers.denomination:(tiers.firstname+' '+tiers.lastname)"
-        [settings]="reportingSettings"></reporting>
     </mat-tab>
     <mat-tab label="Suivi" *ngIf="tiers.id!=null && tiers.id!=undefined">
       <tiers-followup [tiers]="tiers" [editMode]="editMode"></tiers-followup>

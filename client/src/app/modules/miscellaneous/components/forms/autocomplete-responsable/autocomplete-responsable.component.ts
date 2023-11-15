@@ -24,14 +24,17 @@ export class AutocompleteResponsableComponent extends GenericAutocompleteCompone
   }
 
   displayLabel(responsable: IndexEntity): string {
-    if (!responsable || !responsable.text)
+    if (!responsable)
       return "";
-    let text = JSON.parse(responsable.text);
-    let label = text.firstname + " " + text.lastname;
-    if (text.tiers && text.tiers.denomination)
-      label += " (" + text.tiers.denomination + " / " + text.tiers.id + ")";
-    else if (text.tiers && text.tiers.firstname)
-      label += " (" + text.tiers.firstname + " " + text.tiers.lastname + " / " + text.tiers.id + ")";
-    return label;
+    if (responsable.text) {
+      let text = JSON.parse(responsable.text);
+      let label = text.firstname + " " + text.lastname;
+      if (text.tiers && text.tiers.denomination)
+        label += " (" + text.tiers.denomination + " / " + text.tiers.id + ")";
+      else if (text.tiers && text.tiers.firstname)
+        label += " (" + text.tiers.firstname + " " + text.tiers.lastname + " / " + text.tiers.id + ")";
+      return label;
+    }
+    return (responsable as any).firstname + " " + (responsable as any).lastname;
   }
 }

@@ -25,7 +25,7 @@ export class AutocompleteAzureInvoiceComponent extends GenericAutocompleteCompon
 
   displayLabel(azureInvoice: AzureInvoice): string {
     if (azureInvoice)
-      return "Facture n°" + azureInvoice.invoiceId + " - " + azureInvoice.competentAuthority.label + " - Total TTC : " + (azureInvoice.invoiceTotal) + " €";
+      return "Facture n°" + azureInvoice.invoiceId + " - " + (azureInvoice.competentAuthority ? azureInvoice.competentAuthority.label : "") + " - Total TTC : " + (azureInvoice.invoiceTotal) + " €";
     return "";
   }
 }

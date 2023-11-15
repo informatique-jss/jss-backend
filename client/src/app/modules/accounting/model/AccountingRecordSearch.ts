@@ -11,5 +11,9 @@ export interface AccountingRecordSearch {
   hideLettered: boolean;
   tiersId: number;
   confrereId: number;
-
+  idPayment: number;
+  idCustomerOrder: number;
+  idInvoice: number;
+  idRefund: number;
+  idBankTransfert: number;
 }

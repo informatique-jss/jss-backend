@@ -1,5 +1,5 @@
 <div class="mat-elevation-z2 form-div">
-  <div>
+  <div *ngIf="!idCompetentAuthority">
     <table>
       <tr>
         <td>
@@ -15,8 +15,8 @@
       </tr>
     </table>
   </div>
-  <div class="table-container-scroll">
-    <sort-table [idRowSelected]="selectedcompetentAuthorityId" [columns]="displayedColumns"
+  <div class="table-container-scroll" *ngIf="!idCompetentAuthority">
+    <sort-table [idRowSelected]="selectedCompetentAuthorityId" [columns]="displayedColumns"
       (onRowClick)="selectCompetentAuthority($event)" [values]="filteredCompetentAuthorities"
       tableName="Autorités compétentes" [filterText]="searchText">
     </sort-table>
@@ -50,11 +50,6 @@
                     <generic-input [(model)]="selectedcompetentAuthority.label" label="Nom fonctionnel"
                       [maxLength]="200" [form]="entityForm2" propertyName="label" [isMandatory]="true"
                       [isDisabled]="!editMode"></generic-input>
-                  </td>
-                  <td>
-                    <generic-input [(model)]="selectedcompetentAuthority.owncloudFolderName"
-                      label="Nom du dossier Owncloud" [form]="entityForm2" propertyName="owncloudFolderName"
-                      [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="250"></generic-input>
                   </td>
                   <td>
                     <generic-input [(model)]="selectedcompetentAuthority.azureCustomReference"

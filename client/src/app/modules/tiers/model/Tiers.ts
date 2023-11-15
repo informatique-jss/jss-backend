@@ -26,7 +26,6 @@ export interface Tiers extends ITiers {
   competitors: Competitor[];
   tiersType: TiersType;
   tiersCategory: TiersCategory;
-  firstBilling: Date;
   civility: Civility;
   firstname: string | null;
   lastname: string | null;
