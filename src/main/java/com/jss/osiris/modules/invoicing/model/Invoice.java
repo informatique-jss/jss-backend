@@ -117,6 +117,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	private Provider provider;
 
 	@Column(length = 300, name = "billing_label")
+	@SearchableField
 	@IndexedField
 	private String billingLabel;
 

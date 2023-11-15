@@ -47,17 +47,20 @@ public class Provision implements IId, IAttachment {
 	@JoinColumn(name = "id_asso_affaire_order")
 	@JsonIgnoreProperties(value = { "provisions" }, allowSetters = true)
 	@IndexedField
+	@SearchableField
 	private AssoAffaireOrder assoAffaireOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "defaultCompetentAuthorityServiceProvider" }, allowSetters = true)
 	@JoinColumn(name = "id_provision_type")
 	@IndexedField
+	@SearchableField
 	private ProvisionType provisionType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision_family_type")
 	@IndexedField
+	@SearchableField
 	private ProvisionFamilyType provisionFamilyType;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -67,11 +70,13 @@ public class Provision implements IId, IAttachment {
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_announcement")
 	@IndexedField
+	@SearchableField
 	private Announcement announcement;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_simple_provision")
 	@IndexedField
+	@SearchableField
 	private SimpleProvision simpleProvision;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -82,6 +87,7 @@ public class Provision implements IId, IAttachment {
 	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
 	@JoinColumn(name = "id_formalite")
 	@IndexedField
+	@SearchableField
 	private Formalite formalite;
 
 	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "provision", cascade = CascadeType.REMOVE)

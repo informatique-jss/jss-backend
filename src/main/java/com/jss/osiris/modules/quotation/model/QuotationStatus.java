@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.model.SearchableField;
 
 @Entity
 public class QuotationStatus extends IWorkflowElement implements Serializable {
@@ -34,6 +35,7 @@ public class QuotationStatus extends IWorkflowElement implements Serializable {
 
 	@Column(nullable = false, length = 100)
 	@IndexedField
+	@SearchableField
 	private String label;
 
 	@Column(nullable = false, length = 100)
