@@ -602,7 +602,7 @@ public class InvoicingController {
                         if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null
                                 && paymentAssociate.getAffaireRefund() == null)
                             throw new OsirisValidationException("not all payment used and no refund tiers set");
-                } else
+                } else if (-totalAmount != Math.round(paymentAssociate.getPayment().getPaymentAmount()))
                     throw new OsirisValidationException("not all payment used");
             }
         }
