@@ -151,6 +151,9 @@ public class InvoicingController {
     @Autowired
     CompetentAuthorityService competentAuthorityService;
 
+    @Autowired
+    ActiveDirectoryHelper activeDirectoryHelper;
+
     @PostMapping(inputEntryPoint + "/azure-receipt/invoice")
     public ResponseEntity<AzureReceiptInvoice> updateAzureReceiptInvoice(
             @RequestBody AzureReceiptInvoice azureReceiptInvoice)
@@ -606,7 +609,8 @@ public class InvoicingController {
 
         // Check same customer order for incoming payment
         Tiers commonCustomerOrder = paymentAssociate.getTiersOrder();
-        if (paymentAssociate.getPayment().getPaymentAmount() >= 0) {
+        if (paymentAssociate.getPayment().getPaymentAmount() >= 0
+                && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP)) {
             if (paymentAssociate.getInvoices() != null) {
                 for (Invoice invoice : paymentAssociate.getInvoices()) {
                     if (invoice.getResponsable() != null
