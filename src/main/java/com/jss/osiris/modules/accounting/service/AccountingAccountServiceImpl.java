@@ -226,38 +226,6 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         }
 
         @Override
-        public AccountingAccount getProfitAccountingAccount() throws OsirisException {
-                List<AccountingAccount> waitingAccountingAccounts = accountingAccountRepository
-                                .findByPrincipalAccountingAccount(
-                                                constantService.getPrincipalAccountingAccountProfit());
-
-                if (waitingAccountingAccounts == null || waitingAccountingAccounts.size() == 0)
-                        throw new OsirisException(null, "Profit accounting account not found");
-
-                if (waitingAccountingAccounts.size() > 1)
-                        throw new OsirisException(null,
-                                        "Multiple waiting accounting account found for profit accounting account ");
-
-                return waitingAccountingAccounts.get(0);
-        }
-
-        @Override
-        public AccountingAccount getLostAccountingAccount() throws OsirisException {
-                List<AccountingAccount> waitingAccountingAccounts = accountingAccountRepository
-                                .findByPrincipalAccountingAccount(
-                                                constantService.getPrincipalAccountingAccountLost());
-
-                if (waitingAccountingAccounts == null || waitingAccountingAccounts.size() == 0)
-                        throw new OsirisException(null, "Lost accounting account not found");
-
-                if (waitingAccountingAccounts.size() > 1)
-                        throw new OsirisException(null,
-                                        "Multiple waiting accounting account found for lost accounting account ");
-
-                return waitingAccountingAccounts.get(0);
-        }
-
-        @Override
         public AccountingAccount updateAccountingAccountLabel(AccountingAccount accountingAccount, String label)
                         throws OsirisException {
 

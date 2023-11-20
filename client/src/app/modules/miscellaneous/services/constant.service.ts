@@ -676,12 +676,12 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.principalAccountingAccountWaiting;
   }
 
-  getPrincipalAccountingAccountLost() {
-    return this.constant.principalAccountingAccountLost;
+  getAccountingAccountLost() {
+    return this.constant.accountingAccountLost;
   }
 
-  getPrincipalAccountingAccountProfit() {
-    return this.constant.principalAccountingAccountProfit;
+  getAccountingAccountProfit() {
+    return this.constant.accountingAccountProfit;
   }
 
   getAccountingAccountBankCentralPay() {

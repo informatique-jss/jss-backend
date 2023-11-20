@@ -874,13 +874,13 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public PrincipalAccountingAccount getPrincipalAccountingAccountLost() throws OsirisException {
-        return getConstants().getPrincipalAccountingAccountLost();
+    public AccountingAccount getAccountingAccountLost() throws OsirisException {
+        return getConstants().getAccountingAccountLost();
     }
 
     @Override
-    public PrincipalAccountingAccount getPrincipalAccountingAccountProfit() throws OsirisException {
-        return getConstants().getPrincipalAccountingAccountProfit();
+    public AccountingAccount getAccountingAccountProfit() throws OsirisException {
+        return getConstants().getAccountingAccountProfit();
     }
 
     @Override
