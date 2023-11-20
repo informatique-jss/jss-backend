@@ -384,7 +384,7 @@ public interface ConstantService {
 
     public PaymentDeadlineType getPaymentDeadLineType30() throws OsirisException;
 
-    public ProvisionFamilyType getProvisionServiceFamilyEnregistrement() throws OsirisException;
+    public ProvisionFamilyType getProvisionFamilyRegistration() throws OsirisException;
 
     public Provider getProviderCentralPay() throws OsirisException;
 

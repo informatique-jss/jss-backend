@@ -70,13 +70,13 @@
         </div>
         <div style="height: 10px;"></div>
         <div>
-            <div class="gray-box">BUREAU D’ENREGISTREMENT DE : <strong>SIE</strong><br></br>ENVOI DU:</div>
-            <div class="gray-box">DENOMINATION:</div>
+            <div class="gray-box">BUREAU D’ENREGISTREMENT DE : <strong>SIE</strong><br></br>ENVOI DU: <strong th:text="${currentDate}"></strong></div>
+            <div class="gray-box">DENOMINATION: <strong th:text="${legalMatterLabel}"></strong></div> 
             <div class="gray-box">AFFAIRE SUIVI PAR DOSSIR N°:</div>
-            <div class="gray-box">RESPONSABLE:</div>
+            <div class="gray-box">RESPONSABLE: <strong th:text="${legalMatterFormalist}"></strong></div>
             <div class="gray-box">N° DE CHEQUE:</div>
             <div class="gray-box">VIREMENT:</div>
-            <div class="gray-box">DATE:</div>
+            <div class="gray-box">DATE: <strong th:text="${currentDate}"></strong></div>
             <div class="gray-box">MONTANT:</div>
             <div class="relative-text">achat du Bureau d'Enregistrement</div>
         </div>

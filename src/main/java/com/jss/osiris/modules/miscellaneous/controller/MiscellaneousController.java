@@ -488,8 +488,8 @@ public class MiscellaneousController {
                 "BillingTypeFormalityAdditionalDeclaration");
         validationHelper.validateReferential(constant.getBillingTypeCorrespondenceFees(), true,
                 "BillingTypeCorrespondenceFees");
-        validationHelper.validateReferential(constant.getProvisionServiceFamilyEnregistrement(), true,
-                "ProvisionServiceFamilyEnregistrement");
+        validationHelper.validateReferential(constant.getProvisionFamilyRegistration(), true,
+                "ProvisionFamilyRegistration");
 
         return new ResponseEntity<Constant>(constantService.addOrUpdateConstant(constant), HttpStatus.OK);
     }

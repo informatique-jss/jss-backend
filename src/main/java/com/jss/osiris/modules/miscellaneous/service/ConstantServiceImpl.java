@@ -930,7 +930,7 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public ProvisionFamilyType getProvisionServiceFamilyEnregistrement() throws OsirisException {
-        return getConstants().getProvisionServiceFamilyEnregistrement();
+    public ProvisionFamilyType getProvisionFamilyRegistration() throws OsirisException {
+        return getConstants().getProvisionFamilyRegistration();
     }
 }

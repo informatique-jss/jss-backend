@@ -52,4 +52,9 @@ export class QuotationService extends AppRestService<IQuotation>{
   associateCustomerOrderToQuotation(customerOrderId: number, quotationId: number) {
     return this.get(new HttpParams().set("idQuotation", quotationId).set("idCustomerOrder", customerOrderId), "customer-order/associate");
   }
+
+  generatePdfRegistration(customerOrder: IQuotation) {
+    return this.downloadGet(new HttpParams().set("customerOrderId", customerOrder.id), "generate/registration");
+  }
+
 }

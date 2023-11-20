@@ -56,10 +56,12 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
@@ -195,15 +197,27 @@ public class GeneratePdfDelegate {
         return tempFile;
     }
 
-    public File generateEnregistrementPdf() throws OsirisException {
+    public File generateEnregistrementPdf(CustomerOrder customerOrder) throws OsirisException {
         final Context ctx = new Context();
+
+        String legalMatterLabel = customerOrder.getAssoAffaireOrders().get(0).getAffaire().getDenomination();
+        String legalMatterFormalist = customerOrder.getAssoAffaireOrders().get(0).getAssignedTo().getFirstname() + " " +
+                customerOrder.getAssoAffaireOrders().get(0).getAssignedTo().getLastname().toLowerCase().substring(0, 1)
+                        .toUpperCase()
+                +
+                customerOrder.getAssoAffaireOrders().get(0).getAssignedTo().getLastname().substring(1).toLowerCase();
+
+        ctx.setVariable("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        ctx.setVariable("legalMatterLabel", legalMatterLabel);
+        ctx.setVariable("legalMatterFormalist", legalMatterFormalist);
+
         final String htmlContent = StringEscapeUtils
                 .unescapeHtml4(mailHelper.emailTemplateEngine().process("registration_deeds", ctx));
 
         File tempFile;
         OutputStream outputStream;
         try {
-            tempFile = File.createTempFile("presta", "pdf");
+            tempFile = File.createTempFile("registeringPdf", "pdf");
             outputStream = new FileOutputStream(tempFile);
         } catch (IOException e) {
             throw new OsirisException(e, "Unable to create temp file");

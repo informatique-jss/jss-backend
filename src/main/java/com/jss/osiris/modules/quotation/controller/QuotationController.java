@@ -1905,11 +1905,12 @@ public class QuotationController {
     return customerOrderService.printMailingLabel(customerOrders, printLabel, printLetters);
   }
 
-  @GetMapping(inputEntryPoint + "/generate/enregistrement")
-  public ResponseEntity<byte[]> generatePdfEnregistrement()
+  @GetMapping(inputEntryPoint + "/generate/registration")
+  public ResponseEntity<byte[]> generatePdfRegistration(@RequestParam Integer customerOrderId)
       throws OsirisException, OsirisClientMessageException {
 
-    return customerOrderService.printEnregistrement();
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    return quotationService.printRegistration(customerOrder);
   }
 
   @PostMapping(inputEntryPoint + "/dashboard/employee")

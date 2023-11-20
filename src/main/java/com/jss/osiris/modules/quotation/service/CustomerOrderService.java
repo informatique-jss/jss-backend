@@ -92,9 +92,6 @@ public interface CustomerOrderService {
 
         public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation);
 
-        public ResponseEntity<byte[]> printEnregistrement()
-                        throws OsirisException, OsirisClientMessageException;
-
         public void offerCustomerOrder(CustomerOrder customerOrder) throws OsirisException,
                         OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException;
 

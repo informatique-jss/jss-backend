@@ -53,9 +53,6 @@ export class CustomerOrderService extends AppRestService<IQuotation>{
     return this.get(new HttpParams().set("quotationId", quotation.id).set("employeeId", employee.id), "quotation/assign");
   }
 
-  generatePdfEnregistrement() {
-    return this.downloadGet(new HttpParams(), "generate/enregistrement");
-  }
   offerCustomerOrder(customerOrder: CustomerOrder) {
     return this.get(new HttpParams().set("customerOrderId", customerOrder.id), "customer-order/offer");
   }

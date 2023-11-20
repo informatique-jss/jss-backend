@@ -2,6 +2,8 @@ package com.jss.osiris.modules.quotation.service;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -67,4 +69,6 @@ public interface QuotationService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
+        public ResponseEntity<byte[]> printRegistration(CustomerOrder customerOrder)
+                        throws OsirisException, OsirisClientMessageException;
 }

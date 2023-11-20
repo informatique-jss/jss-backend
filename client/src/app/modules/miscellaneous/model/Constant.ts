@@ -207,7 +207,7 @@ export interface Constant {
   accountingAccountCaisse: AccountingAccount;
   customerOrderOriginWebSite: CustomerOrderOrigin;
   customerOrderOriginOsiris: CustomerOrderOrigin;
-  provisionServiceFamilyEnregistrement: ProvisionFamilyType;
+  provisionFamilyRegistration: ProvisionFamilyType;
   providerCentralPay: Provider;
   tiersFollowupTypeInvoiceReminder: TiersFollowupType;
 }

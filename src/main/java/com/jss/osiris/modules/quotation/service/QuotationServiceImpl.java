@@ -1,6 +1,10 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +13,9 @@ import java.util.UUID;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +25,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
@@ -64,6 +72,9 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     QuotationStatusService quotationStatusService;
+
+    @Autowired
+    GeneratePdfDelegate generatePdfDelegate;
 
     @Autowired
     EmployeeService employeeService;
@@ -237,6 +248,42 @@ public class QuotationServiceImpl implements QuotationService {
                 mailHelper.sendQuotationCreationConfirmationToCustomer(quotation);
         }
         return quotation;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<byte[]> printRegistration(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException {
+        byte[] data = null;
+        HttpHeaders headers = null;
+        File file = generatePdfDelegate.generateEnregistrementPdf(customerOrder);
+
+        if (file != null) {
+            try {
+                data = Files.readAllBytes(file.toPath());
+            } catch (IOException e) {
+                throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+            }
+
+            headers = new HttpHeaders();
+            headers.setContentLength(data.length);
+            headers.add("filename", "registeringPdf"
+                    + DateTimeFormatter.ofPattern("yyyyMMdd HHmm").format(LocalDateTime.now()) + ".pdf");
+            headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+
+            // Compute content type
+            String mimeType = null;
+            try {
+                mimeType = Files.probeContentType(file.toPath());
+            } catch (IOException e) {
+                throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+            }
+            if (mimeType == null)
+                mimeType = "application/pdf";
+            headers.set("content-type", mimeType);
+            file.delete();
+        }
+        return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
     }
 
     @Override

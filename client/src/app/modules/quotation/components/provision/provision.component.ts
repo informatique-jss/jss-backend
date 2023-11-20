@@ -24,7 +24,6 @@ import { AnnouncementStatusService } from '../../services/announcement.status.se
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { AttachmentTypeMailQueryService } from '../../services/attachment-type-mail-query.service';
 import { BodaccStatusService } from '../../services/bodacc.status.service';
-import { ConfrereService } from '../../services/confrere.service';
 import { DomiciliationStatusService } from '../../services/domiciliation-status.service';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
 import { ProvisionService } from '../../services/provision.service';
@@ -34,9 +33,7 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { QuotationComponent } from '../quotation/quotation.component';
 import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
-import { Constant } from 'src/app/modules/miscellaneous/model/Constant';
 import { CustomerOrderService } from '../../services/customer.order.service';
-import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { IQuotation } from '../../model/IQuotation';
 
 @Component({
@@ -54,13 +51,11 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   isStatusOpen: boolean = false;
   customerOrders: string[] = [];
   inputProvisionId: number = 0;
-  constant: Constant = {} as Constant;
   announcementStatus: AnnouncementStatus[] = [] as Array<AnnouncementStatus>;
   formaliteStatus: FormaliteStatus[] = [] as Array<FormaliteStatus>;
   simpleProvisionStatus: SimpleProvisionStatus[] = [] as Array<SimpleProvisionStatus>;
   bodaccStatus: BodaccStatus[] = [] as Array<BodaccStatus>;
   domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
-  enregistrementLabel: string = "";
   quotation: IQuotation = {} as IQuotation;
 
   confrereJssSpel = this.constantService.getConfrereJssSpel();
@@ -91,7 +86,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private domiciliationStatusService: DomiciliationStatusService,
     private simpleProvisionStatusService: SimpleProvisionStatusService,
     private announcementStatusService: AnnouncementStatusService,
-    private confrereService: ConfrereService,
     private customerOrderService: CustomerOrderService,
   ) { }
 
@@ -103,7 +97,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
     this.inputProvisionId = this.activatedRoute.snapshot.params.idProvision;
     this.refreshAffaire();
-    this.enregistrementLabel = this.constantService.getProvisionServiceFamilyEnregistrement().label;
 
     this.formaliteStatusService.getFormaliteStatus().subscribe(response => this.formaliteStatus = response);
     this.bodaccStatusService.getBodaccStatus().subscribe(response => this.bodaccStatus = response);
@@ -126,10 +119,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
   ngAfterContentChecked(): void {
     this.changeDetectorRef.detectChanges();
-  }
-
-  isEnregistrementActe(): boolean {
-    return this.currentProvisionWorkflow?.provisionFamilyType?.label === this.enregistrementLabel;
   }
 
   refreshAffaire() {
@@ -267,14 +256,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
   getActiveWorkflowElementsForProvisionFn(provision: Provision) {
     return ProvisionComponent.getActiveWorkflowElementsForProvision(provision);
-  }
-
-  generateEnregistrementPfd(){
-    this.customerOrders = [this.asso.customerOrder.id.toString()];
-        if (this.customerOrders && this.customerOrders.length > 0) {
-
-          this.customerOrderService.generatePdfEnregistrement();
-        }
   }
 
   public static getActiveWorkflowElementsForProvision(provision: Provision): IWorkflowElement {

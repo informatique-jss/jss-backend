@@ -221,7 +221,7 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_provision_family_type")
-	private ProvisionFamilyType provisionServiceFamilyEnregistrement;
+	private ProvisionFamilyType provisionFamilyRegistration;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_balo_package")
@@ -2054,12 +2054,12 @@ public class Constant implements Serializable, IId {
 		this.paymentDeadLineType30 = paymentDeadLineType30;
 	}
 
-	public ProvisionFamilyType getProvisionServiceFamilyEnregistrement() {
-		return provisionServiceFamilyEnregistrement;
+	public ProvisionFamilyType getProvisionFamilyRegistration() {
+		return provisionFamilyRegistration;
 	}
 
-	public void setProvisionServiceFamilyEnregistrement(ProvisionFamilyType provisionServiceFamilyEnregistrement) {
-		this.provisionServiceFamilyEnregistrement = provisionServiceFamilyEnregistrement;
+	public void setProvisionFamilyRegistration(ProvisionFamilyType provisionFamilyRegistration) {
+		this.provisionFamilyRegistration = provisionFamilyRegistration;
 	}
 
 	public Provider getProviderCentralPay() {

@@ -283,6 +283,9 @@
     <button mat-menu-item (click)="generateMailingLabel()">
       <span>Imprimer une étiquette/lettre postale</span>
     </button>
+    <button mat-menu-item *ngIf="isEnregistrementActe()" (click)="generateEnregistrementPfd()">
+      <span>Imprimer PDF d'Enregistrement d'Acte(s)</span>
+    </button>
   </mat-menu>
 </button>
 

@@ -189,9 +189,6 @@
   <button mat-menu-item *ngIf="currentProvisionWorkflow" (click)="generateAttachmentsMail()">
     <span>Envoyer des pièces jointes</span>
   </button>
-  <button mat-menu-item *ngIf="isEnregistrementActe()" (click)="generateEnregistrementPfd()">
-    <span>Imprimer enregistrement</span>
-  </button>
   <button mat-menu-item
     *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id!=journalTypeSpel.id"
     (click)="generateAnnouncementRequestToConfrereMail(currentProvisionWorkflow.announcement)">
