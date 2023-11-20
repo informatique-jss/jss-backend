@@ -256,7 +256,7 @@ public class QuotationServiceImpl implements QuotationService {
             throws OsirisException, OsirisClientMessageException {
         byte[] data = null;
         HttpHeaders headers = null;
-        File file = generatePdfDelegate.generateEnregistrementPdf(customerOrder);
+        File file = generatePdfDelegate.generateRegistrationPdf(customerOrder);
 
         if (file != null) {
             try {

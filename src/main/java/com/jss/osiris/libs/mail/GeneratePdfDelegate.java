@@ -197,7 +197,7 @@ public class GeneratePdfDelegate {
         return tempFile;
     }
 
-    public File generateEnregistrementPdf(CustomerOrder customerOrder) throws OsirisException {
+    public File generateRegistrationPdf(CustomerOrder customerOrder) throws OsirisException {
         final Context ctx = new Context();
 
         String legalMatterLabel = customerOrder.getAssoAffaireOrders().get(0).getAffaire().getDenomination();
