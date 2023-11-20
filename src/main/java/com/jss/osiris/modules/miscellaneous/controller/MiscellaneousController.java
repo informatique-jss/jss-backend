@@ -472,11 +472,11 @@ public class MiscellaneousController {
                 "PrincipalAccountingCustomer");
         validationHelper.validateReferential(constant.getPrincipalAccountingAccountDeposit(), true,
                 "PrincipalAccountingDeposit");
-        validationHelper.validateReferential(constant.getPrincipalAccountingAccountLost(), true,
+        validationHelper.validateReferential(constant.getAccountingAccountLost(), true,
                 "PrincipalAccountingLost");
         validationHelper.validateReferential(constant.getPrincipalAccountingAccountProduct(), true,
                 "PrincipalAccountingProduct");
-        validationHelper.validateReferential(constant.getPrincipalAccountingAccountProfit(), true,
+        validationHelper.validateReferential(constant.getAccountingAccountProfit(), true,
                 "PrincipalAccountingProfit");
         validationHelper.validateReferential(constant.getPrincipalAccountingAccountProvider(), true,
                 "PrincipalAccountingAccountProvider");

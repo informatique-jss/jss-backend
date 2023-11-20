@@ -367,9 +367,9 @@ public interface ConstantService {
 
     public PrincipalAccountingAccount getPrincipalAccountingAccountWaiting() throws OsirisException;
 
-    public PrincipalAccountingAccount getPrincipalAccountingAccountLost() throws OsirisException;
+    public AccountingAccount getAccountingAccountLost() throws OsirisException;
 
-    public PrincipalAccountingAccount getPrincipalAccountingAccountProfit() throws OsirisException;
+    public AccountingAccount getAccountingAccountProfit() throws OsirisException;
 
     public AccountingAccount getAccountingAccountBankCentralPay() throws OsirisException;
 
