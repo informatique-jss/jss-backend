@@ -54,7 +54,7 @@ public class PrintDelegate {
       dOut.writeUTF("\r\n");
       dOut.flush();
       if (label.getBillingLabel() != null) {
-        List<String> labelLines = Arrays.asList(label.getBillingLabel().split("\\R"));
+        List<String> labelLines = Arrays.asList(label.getBillingLabel().split("\\n"));
         if (labelLines != null) {
           for (String line : labelLines) {
             List<String> lineToPrint = new ArrayList<String>();

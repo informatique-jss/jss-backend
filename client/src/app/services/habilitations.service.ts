@@ -122,6 +122,10 @@ export class HabilitationsService {
   canImportInfogreffeInvoice() {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
   }
+
+  canByPassMultipleCustomerOrderOnAssociationCheck() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
 }
 
 
