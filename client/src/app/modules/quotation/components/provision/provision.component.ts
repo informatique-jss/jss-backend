@@ -33,8 +33,6 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { QuotationComponent } from '../quotation/quotation.component';
 import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
-import { CustomerOrderService } from '../../services/customer.order.service';
-import { IQuotation } from '../../model/IQuotation';
 
 @Component({
   selector: 'provision',
@@ -49,20 +47,21 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   @ViewChildren(ProvisionItemComponent) provisionItemComponents: any;
   editMode: boolean = false;
   isStatusOpen: boolean = false;
-  customerOrders: string[] = [];
   inputProvisionId: number = 0;
+
   announcementStatus: AnnouncementStatus[] = [] as Array<AnnouncementStatus>;
   formaliteStatus: FormaliteStatus[] = [] as Array<FormaliteStatus>;
   simpleProvisionStatus: SimpleProvisionStatus[] = [] as Array<SimpleProvisionStatus>;
   bodaccStatus: BodaccStatus[] = [] as Array<BodaccStatus>;
   domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
-  quotation: IQuotation = {} as IQuotation;
 
   confrereJssSpel = this.constantService.getConfrereJssSpel();
   journalTypePaper = this.constantService.getJournalTypePaper();
   journalTypeSpel = this.constantService.getJournalTypeSpel();
   getProvisionLabel = QuotationComponent.computeProvisionLabel;
+
   saveObservableSubscription: Subscription = new Subscription;
+
   currentProvisionWorkflow: Provision | undefined;
 
 
@@ -86,7 +85,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private domiciliationStatusService: DomiciliationStatusService,
     private simpleProvisionStatusService: SimpleProvisionStatusService,
     private announcementStatusService: AnnouncementStatusService,
-    private customerOrderService: CustomerOrderService,
   ) { }
 
   affaireForm = this.formBuilder.group({});
@@ -123,6 +121,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
   refreshAffaire() {
     let promise: Observable<AssoAffaireOrder> | undefined;
+
     if (this.idAffaire)
       promise = this.assoAffaireOrderService.getAssoAffaireOrder(this.idAffaire);
     else if (this.inputProvisionId)

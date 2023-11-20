@@ -1900,7 +1900,7 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/customer-order/print/label")
   public ResponseEntity<byte[]> printMailingLabel(@RequestParam List<String> customerOrders,
       @RequestParam boolean printLabel, @RequestParam boolean printLetters)
-      throws OsirisException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
 
     return customerOrderService.printMailingLabel(customerOrders, printLabel, printLetters);
   }

@@ -61,7 +61,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   quotationStatusList: QuotationStatus[] = [] as Array<QuotationStatus>;
   customerOrderStatusList: CustomerOrderStatus[] = [] as Array<CustomerOrderStatus>;
   isQuotationUrl = false;
-  enregistrementId: number | undefined;
+  registrationtId: number | undefined;
 
   VALIDATED_BY_CUSTOMER = VALIDATED_BY_CUSTOMER;
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
@@ -128,7 +128,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   ngOnInit() {
 
-    this.enregistrementId = this.constantService.getProvisionFamilyRegistration().id;
+    this.registrationtId = this.constantService.getProvisionFamilyRegistration().id;
 
     if (!this.idQuotation)
       this.idQuotation = this.activatedRoute.snapshot.params.id;
@@ -821,14 +821,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return ProvisionComponent.getActiveWorkflowElementsForProvision(provision);
   }
 
-  isEnregistrementActe(): boolean {
+  isRegistration(): boolean {
     return this.quotation.assoAffaireOrders[0].provisions.some(provision =>
-      provision.provisionFamilyType.id === this.enregistrementId
+      provision.provisionFamilyType.id === this.registrationtId
     );
   }
 
-  generateEnregistrementPfd(){
-
+  generateRegistrationPfd(){
     this.quotationService.generatePdfRegistration(this.quotation);
   }
 
