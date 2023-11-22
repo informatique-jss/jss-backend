@@ -1,6 +1,8 @@
 import { Formalite } from "../Formalite";
 import { Cart } from "./Cart";
 import { Content } from "./Content";
+import { FormaliteStatusHistoryItem } from "./FormaliteStatusHistoryItem";
+import { ValidationRequest } from "./ValidationRequest";
 import { DiffusionINSEE } from "./referentials/DiffusionINSEE";
 import { FormeJuridique } from "./referentials/FormeJuridique";
 import { TypeFormalite } from "./referentials/TypeFormalite";
@@ -34,4 +36,6 @@ export interface FormaliteGuichetUnique {
   created: string;
   isFormality: boolean;
   isAnnualAccounts: boolean;
+  validationsRequests: ValidationRequest[];
+  formaliteStatusHistoryItems: FormaliteStatusHistoryItem[];
 }

@@ -24,9 +24,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
-import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -50,8 +50,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 			String observations, String description, List<Attachment> attachments, List<Document> documents,
 			List<AssoAffaireOrder> assoAffaireOrders,
 			List<Quotation> quotations, Boolean overrideSpecialOffer, String quotationLabel, Boolean isQuotation,
-			List<Invoice> invoices, List<Deposit> deposits,
-			List<AccountingRecord> accountingRecords) {
+			List<Invoice> invoices, List<AccountingRecord> accountingRecords) {
 		this.assignedTo = assignedTo;
 		this.tiers = tiers;
 		this.responsable = responsable;
@@ -68,7 +67,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.overrideSpecialOffer = overrideSpecialOffer;
 		this.isQuotation = isQuotation;
 		this.invoices = invoices;
-		this.deposits = deposits;
 		this.accountingRecords = accountingRecords;
 	}
 
@@ -84,25 +82,22 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
-	@IndexedField
 	private Tiers tiers;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
-	@IndexedField
 	private Responsable responsable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
-	@IndexedField
 	private Confrere confrere;
 
 	@ManyToMany
 	@JoinTable(name = "asso_customer_order_special_offer", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;
 
-	@IndexedField
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@IndexedField
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -127,7 +122,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@OneToMany(targetEntity = Document.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
-	@IndexedField
 	private List<Document> documents;
 
 	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -150,9 +144,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonIgnore // For client-side performance purpose
 	private List<Invoice> invoices;
 
-	@OneToMany(targetEntity = Deposit.class, mappedBy = "customerOrder")
-	@JsonIgnoreProperties(value = { "customerOrder", "accountingRecords", "invoice" }, allowSetters = true)
-	private List<Deposit> deposits;
+	@OneToMany(mappedBy = "customerOrder", fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder", "originPayment",
+			"childrenPayments" }, allowSetters = true)
+	private List<Payment> payments;
 
 	@OneToMany(targetEntity = AccountingRecord.class, mappedBy = "customerOrder")
 	@JsonIgnoreProperties(value = { "customerOrder", "invoice", "deposit", "payment" }, allowSetters = true)
@@ -174,6 +169,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_origin")
 	private CustomerOrderOrigin customerOrderOrigin;
+
+	private Boolean isGifted;
 
 	public Integer getId() {
 		return id;
@@ -311,14 +308,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.invoices = invoices;
 	}
 
-	public List<Deposit> getDeposits() {
-		return deposits;
-	}
-
-	public void setDeposits(List<Deposit> deposits) {
-		this.deposits = deposits;
-	}
-
 	public List<AccountingRecord> getAccountingRecords() {
 		return accountingRecords;
 	}
@@ -389,6 +378,22 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setAbandonReason(AbandonReason abandonReason) {
 		this.abandonReason = abandonReason;
+	}
+
+	public List<Payment> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<Payment> payments) {
+		this.payments = payments;
+	}
+
+	public Boolean getIsGifted() {
+		return isGifted;
+	}
+
+	public void setIsGifted(Boolean isGifted) {
+		this.isGifted = isGifted;
 	}
 
 }

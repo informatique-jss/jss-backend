@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -27,6 +28,8 @@ import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.GuichetUniqueLogin;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
+import com.jss.osiris.modules.quotation.repository.guichetUnique.FormaliteGuichetUniqueRepository;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
 
 @Service
@@ -50,6 +53,12 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     @Autowired
     FormaliteService formaliteService;
 
+    @Autowired
+    GlobalExceptionHandler globalExceptionHandler;
+
+    @Autowired
+    FormaliteGuichetUniqueRepository formaliteGuichetUniqueRepository;
+
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     private String userRequestUrl = "/user";
@@ -57,6 +66,8 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     private String ssoRequestUrl = "/sso";
     private String formalitiesRequestUrl = "/formalities";
     private String annualAccountsRequestUrl = "/annual_accounts";
+    private String formalityStatusHistoriesUrl = "/formality_status_histories";
+    private String annualAccountStatusHistoriesUrl = "/annual_account_status_histories";
 
     private String bearerValue = null;
     private LocalDateTime bearerExpireDateTime = LocalDateTime.now().minusYears(100);
@@ -149,7 +160,13 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     @Override
     public List<FormaliteGuichetUnique> getAllFormalitiesByRefenceMandataire(String reference)
             throws OsirisException, OsirisClientMessageException {
-        List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
+
+        List<FormaliteGuichetUnique> formalites = formaliteGuichetUniqueRepository.findByRefenceMandataire(reference);
+
+        if (formalites != null && formalites.size() > 0)
+            return formalites;
+
+        formalites = new ArrayList<FormaliteGuichetUnique>();
         formalites.addAll(getFormalitiesByRefenceMandataire(reference));
         formalites.addAll(getAnnualAccountsByRefenceMandataire(reference));
 
@@ -200,15 +217,40 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = createHeaders();
 
-        ResponseEntity<FormaliteGuichetUnique> response = new RestTemplate().exchange(
-                guichetUniqueEntryPoint + formalitiesRequestUrl + "/" + id,
-                HttpMethod.GET, new HttpEntity<String>(headers),
-                new ParameterizedTypeReference<FormaliteGuichetUnique>() {
-                });
+        ResponseEntity<FormaliteGuichetUnique> response;
+        try {
+            response = new RestTemplate().exchange(
+                    guichetUniqueEntryPoint + formalitiesRequestUrl + "/" + id,
+                    HttpMethod.GET, new HttpEntity<String>(headers),
+                    new ParameterizedTypeReference<FormaliteGuichetUnique>() {
+                    });
+        } catch (Exception e) {
+            throw new OsirisException(e, "Impossible to fetch formality guichet unique " + id);
+        }
 
         if (response.getBody() != null) {
             response.getBody().setIsAnnualAccounts(false);
             response.getBody().setIsFormality(true);
+            return response.getBody();
+        } else {
+            throw new OsirisException(null, "Guichet unique formality not found for id " + id);
+        }
+    }
+
+    @Override
+    @SuppressWarnings({ "all" })
+    public List<FormaliteStatusHistoryItem> getFormalityStatusHistoriesById(Integer id)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<List<FormaliteStatusHistoryItem>> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + formalitiesRequestUrl + "/" + id + formalityStatusHistoriesUrl,
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<List<FormaliteStatusHistoryItem>>() {
+                });
+
+        if (response.getBody() != null) {
             return response.getBody();
         } else {
             throw new OsirisException(null, "Guichet unique formality not found for id " + id);
@@ -309,13 +351,38 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     }
 
     @Override
+    @SuppressWarnings({ "all" })
+    public List<FormaliteStatusHistoryItem> getAnnualAccountStatusHistoriesById(Integer id)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<List<FormaliteStatusHistoryItem>> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + annualAccountsRequestUrl + "/" + id + annualAccountStatusHistoriesUrl,
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<List<FormaliteStatusHistoryItem>>() {
+                });
+
+        if (response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new OsirisException(null, "Guichet unique formality not found for id " + id);
+        }
+    }
+
+    @Override
     public void refreshFormalitiesFromLastHour()
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         List<FormaliteGuichetUnique> formalites = getAllFormalitiesByDate(LocalDateTime.now().minusYears(10),
                 LocalDateTime.now().minusHours(1));
         if (formalites != null && formalites.size() > 0) {
-            for (FormaliteGuichetUnique formalite : formalites)
-                formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formalite, null);
+            for (FormaliteGuichetUnique formalite : formalites) {
+                try {
+                    formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formalite, null, true);
+                } catch (Exception e) {
+                    globalExceptionHandler.handleExceptionOsiris(e);
+                }
+            }
         }
     }
 
@@ -329,8 +396,12 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
                 if (formalite.getFormalitesGuichetUnique() != null
                         && formalite.getFormalitesGuichetUnique().size() > 0)
                     for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique())
-                        formaliteGuichetUniqueService
-                                .refreshFormaliteGuichetUnique(formaliteGuichetUnique, formalite);
+                        try {
+                            formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formaliteGuichetUnique,
+                                    formalite, true);
+                        } catch (Exception e) {
+                            globalExceptionHandler.handleExceptionOsiris(e);
+                        }
         }
     }
 }

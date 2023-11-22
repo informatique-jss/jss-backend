@@ -1,0 +1,35 @@
+<div *ngIf="formalitesGuichetUnique">
+  <mat-tab-group animationDuration="0ms" #tabs>
+    <mat-tab *ngFor="let formaliteGuichetUnique of formalitesGuichetUnique;let index = index"
+      [label]="getFormaliteLabel(formaliteGuichetUnique)">
+      <mat-vertical-stepper [linear]="false" #stepper animationDuration="500" [selectedIndex]="selectedIndex[index]">
+        <ng-container *ngFor="let historyItem of formaliteGuichetUnique.formaliteStatusHistoryItems">
+          <mat-step
+            *ngIf="historyItem.status.code!=GUICHET_UNIQUE_STATUS_VALIDATION_PENDING || !formaliteGuichetUnique.validationsRequests">
+            <ng-template matStepLabel>{{historyItem.status.label}}</ng-template>
+          </mat-step>
+          <mat-step
+            *ngIf="historyItem.status.code==GUICHET_UNIQUE_STATUS_VALIDATION_PENDING && formaliteGuichetUnique.validationsRequests">
+            <ng-template matStepLabel>{{historyItem.status.label}}</ng-template>
+            <ul *ngFor="let validation of  formaliteGuichetUnique.validationsRequests">
+              <li>{{validation.statusDate |date:'dd/MM/yyyy HH:mm'}} - {{validation.partnerCenter ?
+                validation.partnerCenter.name :
+                validation.partner.denomination}}</li>
+              <ul>
+                <li>Demandé le : {{validation.created | date:'dd/MM/yyyy HH:mm'}} </li>
+                <li>Etat : {{validation.status.label}}</li>
+                <li>Nombre de validation : {{validation.validationNumber}}</li>
+                <li *ngIf="validation.rejectionReasons && validation.rejectionReasons.length>0">Motifs de rejets :
+                  <ul>
+                    <li *ngFor="let rejectionReason of validation.rejectionReasons">
+                      {{rejectionReason.label}}
+                    </li>
+                  </ul>
+              </ul>
+            </ul>
+          </mat-step>
+        </ng-container>
+      </mat-vertical-stepper>
+    </mat-tab>
+  </mat-tab-group>
+</div>

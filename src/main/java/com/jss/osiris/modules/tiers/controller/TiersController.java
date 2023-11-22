@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.search.service.SearchService;
@@ -405,7 +406,7 @@ public class TiersController {
 
   @PostMapping(inputEntryPoint + "/tiers")
   public ResponseEntity<Tiers> addOrUpdateTiers(@RequestBody Tiers tiers)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     validationHelper.validateReferential(tiers.getTiersType(), true, "TiersType");
 
     if (tiers.getIsIndividual()) {
@@ -486,8 +487,8 @@ public class TiersController {
             "BillingClosureRecipientType");
         validationHelper.validateReferential(document.getBillingLabelCity(), false, "BillingLabelCity");
         validationHelper.validateReferential(document.getBillingLabelCountry(), false, "BillingLabelCountry");
-        validationHelper.validateString(document.getBillingAddress(), false, 100, "BillingAddress");
-        validationHelper.validateString(document.getBillingLabel(), false, 100, "BillingLabel");
+        validationHelper.validateString(document.getBillingAddress(), false, 200, "BillingAddress");
+        validationHelper.validateString(document.getBillingLabel(), false, 200, "BillingLabel");
         validationHelper.validateString(document.getBillingPostalCode(), false, 10, "BillingPostalCode");
         validationHelper.validateString(document.getCedexComplement(), false, 20, "CedexComplement");
 
@@ -556,8 +557,8 @@ public class TiersController {
             validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
             validationHelper.validateReferential(document.getBillingLabelCity(), false, "BillingLabelCity");
             validationHelper.validateReferential(document.getBillingLabelCountry(), false, "BillingLabelCountry");
-            validationHelper.validateString(document.getBillingAddress(), false, 100, "BillingAddress");
-            validationHelper.validateString(document.getBillingLabel(), false, 100, "BillingLabel");
+            validationHelper.validateString(document.getBillingAddress(), false, 200, "BillingAddress");
+            validationHelper.validateString(document.getBillingLabel(), false, 200, "BillingLabel");
             validationHelper.validateString(document.getBillingPostalCode(), false, 10, "BillingPostalCode");
             validationHelper.validateString(document.getCedexComplement(), false, 20, "CedexComplement");
 

@@ -10,14 +10,20 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_autres_etablissement_exploitation", columnList = "id_exploitation"),
+        @Index(name = "idx_autres_etablissement_personne_morale", columnList = "id_personne_morale"),
+        @Index(name = "idx_autres_etablissement_personne_physique", columnList = "id_personne_physique") })
 public class AutresEtablissement implements Serializable, IId {
 
     @Id

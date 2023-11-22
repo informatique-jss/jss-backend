@@ -1,8 +1,6 @@
 
 export interface PaymentSearchResult {
   id: number;
-  paymentWayLabel: string;
-  paymentWayId: number;
   paymentDate: Date;
   paymentAmount: number;
   paymentLabel: string;
@@ -10,5 +8,8 @@ export interface PaymentSearchResult {
   isExternallyAssociated: boolean;
   isAssociated: boolean;
   isCancelled: boolean;
+  isAppoint: boolean;
   invoiceId: number;
+  comment: string;
+  originPaymentId: number;
 }

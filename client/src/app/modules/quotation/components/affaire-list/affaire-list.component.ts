@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
+import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
 import { AppService } from 'src/app/services/app.service';
 import { AFFAIRE_ENTITY_TYPE } from '../../../../routing/search/search.component';
 
@@ -17,6 +18,7 @@ export class AffaireListComponent implements OnInit {
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
   textSearch: string = "";
+  searchObservableRef: Subscription | undefined;
 
   constructor(
     private appService: AppService,
@@ -47,8 +49,11 @@ export class AffaireListComponent implements OnInit {
   });
 
   searchAffaires() {
+    if (this.searchObservableRef)
+      this.searchObservableRef.unsubscribe();
+
     if (this.textSearch.length >= 2) {
-      this.indexEntityService.searchEntitiesByType(this.textSearch, AFFAIRE_ENTITY_TYPE).subscribe(response => {
+      this.searchObservableRef = this.indexEntityService.searchEntitiesByType(this.textSearch, AFFAIRE_ENTITY_TYPE).subscribe(response => {
         this.affaires = response;
         if (this.affaires)
           for (let affaire of this.affaires)

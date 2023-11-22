@@ -5,13 +5,17 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_azure_receipt_invoice", columnList = "id_azure_receipt") })
 public class AzureReceiptInvoice implements IId {
 
     @Id

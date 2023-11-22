@@ -46,4 +46,9 @@ public class UserReportingServiceImpl implements UserReportingService {
         userReportingOut.setSettings(userReporting.getSettings());
         addOrUpdateUserReporting(userReportingOut);
     }
+
+    @Override
+    public void deleteReporting(UserReporting userReporting) {
+        userReportingRepository.delete(userReporting);
+    }
 }

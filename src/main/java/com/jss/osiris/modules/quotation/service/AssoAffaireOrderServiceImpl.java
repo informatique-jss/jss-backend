@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
@@ -17,7 +18,6 @@ import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
-import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
@@ -36,7 +36,6 @@ import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.BodaccStatus;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
-import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.quotation.model.Formalite;
@@ -106,13 +105,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     BankTransfertService bankTransfertService;
 
     @Autowired
-    DebourService debourService;
-
-    @Autowired
     AccountingRecordService accountingRecordService;
-
-    @Autowired
-    PaymentService paymentService;
 
     @Autowired
     ProvisionService provisionService;
@@ -122,6 +115,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     FormaliteService formaliteService;
+
+    @Autowired
+    CharacterPriceService characterPriceService;
 
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
@@ -140,7 +136,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Transactional(rollbackFor = Exception.class)
     public AssoAffaireOrder addOrUpdateAssoAffaireOrderFromUser(
             AssoAffaireOrder assoAffaireOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // To avoid laizy failed of customerOrder subcollections
         assoAffaireOrder
                 .setCustomerOrder(customerOrderService.getCustomerOrder(assoAffaireOrder.getCustomerOrder().getId()));
@@ -150,7 +146,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Override
     public AssoAffaireOrder addOrUpdateAssoAffaireOrder(
             AssoAffaireOrder assoAffaireOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         for (Provision provision : assoAffaireOrder.getProvisions()) {
             provision.setAssoAffaireOrder(assoAffaireOrder);
         }
@@ -159,7 +155,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         assoAffaireOrder.setCustomerOrder(assoAffaireOrder.getCustomerOrder());
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
         if (affaireSaved.getCustomerOrder() != null)
-            indexEntityService.indexEntity(affaireSaved, affaireSaved.getId());
+            indexEntityService.indexEntity(affaireSaved);
         customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
         return affaireSaved;
     }
@@ -178,13 +174,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (affaires != null)
             for (AssoAffaireOrder affaire : affaires)
                 if (affaire.getCustomerOrder() != null)
-                    indexEntityService.indexEntity(affaire, affaire.getId());
+                    indexEntityService.indexEntity(affaire);
     }
 
     @Override
     public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder,
             Boolean isFromUser)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Complete domiciliation end date
         int nbrAssignation = 0;
         Employee currentEmployee = null;
@@ -202,52 +198,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
             if (provision.getId() != null && provision.getInvoiceItems() != null)
                 for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                    invoiceItem.setProvision(provision);
-                    invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                    if (invoiceItem.getId() != null)
+                        invoiceItem = invoiceItemService.getInvoiceItem(invoiceItem.getId());
                 }
-
-            if (provision.getId() != null && provision.getDebours() != null && customerOrder instanceof CustomerOrder)
-                for (Debour debour : provision.getDebours()) {
-                    if (debour.getProvision() == null)
-                        debour.setProvision(provision);
-
-                    boolean isNewDebour = debour.getId() == null;
-                    if (isNewDebour)
-                        debourService.addOrUpdateDebour(debour);
-
-                    if (isNewDebour && debour.getPaymentType().getId()
-                            .equals(constantService.getPaymentTypeCheques().getId())) {
-                        debourService.addOrUpdateDebour(debour);
-                        accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
-                                (CustomerOrder) customerOrder);
-                    } else if (isNewDebour && debour.getPaymentType().getId()
-                            .equals(constantService.getPaymentTypeEspeces().getId())) {
-                        // Generate dummy payment on cash because it will not be declared on OFX files
-                        debour.setPayment(paymentService.generateNewPaymentFromDebour(debour));
-                        debourService.addOrUpdateDebour(debour);
-                        debourService.setDebourAsAssociated(debour);
-                        accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
-                                (CustomerOrder) customerOrder);
-                    }
-                }
-
-            // Delete debours
-            if (provision.getId() != null) {
-                Provision currentProvision = provisionService.getProvision(provision.getId());
-                if (currentProvision.getDebours() != null && currentProvision.getDebours().size() > 0) {
-                    for (Debour debour : currentProvision.getDebours()) {
-                        boolean isDeleted = true;
-                        if (provision.getDebours() != null && provision.getDebours().size() > 0)
-                            for (Debour newDebour : provision.getDebours())
-                                if (newDebour.getId() != null
-                                        && newDebour.getId().equals(debour.getId()))
-                                    isDeleted = false;
-
-                        if (isDeleted)
-                            debourService.deleteDebour(debour);
-                    }
-                }
-            }
 
             if (provision.getDomiciliation() != null) {
                 Domiciliation domiciliation = provision.getDomiciliation();
@@ -290,7 +243,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 if (formalite.getFormalitesGuichetUnique() != null) {
                     for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique()) {
                         formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formaliteGuichetUnique,
-                                formalite);
+                                formalite, true);
                     }
                 }
 
@@ -336,6 +289,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 if (announcement.getIsComplexAnnouncement())
                     announcement = announcementService.updateComplexAnnouncementNotice(announcement, provision,
                             isFromUser);
+
+                announcement.setCharacterNumber(characterPriceService.getCharacterNumber(provision, true));
 
                 if (customerOrder.getId() == null || announcement.getAnnouncementStatus() == null)
                     announcement.setAnnouncementStatus(announcementStatusService
@@ -471,11 +426,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 }
             }
         }
-        if (nbrAssignation == 1)
+        if (nbrAssignation == 1 && assoAffaireOrder.getAssignedTo() == null)
             assoAffaireOrder.setAssignedTo(currentEmployee);
 
         if (maxWeightEmployee != null) {
-            assoAffaireOrder.setAssignedTo(maxWeightEmployee);
+            if (assoAffaireOrder.getAssignedTo() == null)
+                assoAffaireOrder.setAssignedTo(maxWeightEmployee);
+
             for (Provision provision : assoAffaireOrder.getProvisions())
                 if (provision.getAssignedTo() == null)
                     provision.setAssignedTo(maxWeightEmployee);
@@ -541,5 +498,4 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 assignedId, affaireSearch.getLabel(),
                 statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId, affaireId);
     }
-
 }

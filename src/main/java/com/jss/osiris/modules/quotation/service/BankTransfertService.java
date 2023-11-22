@@ -5,7 +5,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.transfer.PmtInfBean;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
@@ -24,9 +26,11 @@ public interface BankTransfertService {
         public BankTransfert addOrUpdateBankTransfert(BankTransfert bankTransfert);
 
         public BankTransfert generateBankTransfertForManualInvoice(Invoice invoice)
-                        throws OsirisException, OsirisClientMessageException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public File getBankTransfertExport(BankTransfertSearch transfertSearch) throws OsirisException;
+        public File getBankTransfertExport(BankTransfertSearch transfertSearch)
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException,
+                        OsirisDuplicateException;
 
         public BankTransfert cancelBankTransfert(BankTransfert bankTransfert);
 

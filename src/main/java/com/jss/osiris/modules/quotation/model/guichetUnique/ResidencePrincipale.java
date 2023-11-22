@@ -10,13 +10,17 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_residence_principal_insaisissabilite", columnList = "id_insaisissabilite") })
 public class ResidencePrincipale implements Serializable, IId {
 
     @Id

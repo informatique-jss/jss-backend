@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
@@ -136,7 +137,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String entityType,
             AttachmentType attachmentType,
             String filename, Boolean replaceExistingAttachementType)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         try {
             return addAttachment(file.getInputStream(), idEntity, entityType, attachmentType, filename,
                     replaceExistingAttachementType, filename);
@@ -149,12 +150,12 @@ public class AttachmentServiceImpl implements AttachmentService {
     public List<Attachment> addAttachment(InputStream file, Integer idEntity, String entityType,
             AttachmentType attachmentType,
             String filename, Boolean replaceExistingAttachementType, String description)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         if (entityType.equals("Ofx"))
             if (activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_GROUP)
                     || activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP))
-                return this.paymentService.uploadOfxFile(file, idEntity);
+                return this.paymentService.uploadOfxFile(file);
             else
                 return null;
 
@@ -254,6 +255,8 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     public Attachment addOrUpdateAttachment(Attachment attachment) {
+        if (attachment.getIsAlreadySent() == null)
+            attachment.setIsAlreadySent(false);
         return attachmentRepository.save(attachment);
     }
 

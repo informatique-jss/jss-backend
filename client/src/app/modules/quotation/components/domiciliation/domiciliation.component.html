@@ -99,9 +99,14 @@
       <provision-options [editMode]="editMode" (provisionChange)="provisionChangeFunction()" [provision]="provision">
       </provision-options>
     </mat-tab>
-    <mat-tab label="Débours/frais" *ngIf="instanceOfCustomerOrder && !isStatusOpen">
-      <add-debour [editMode]="editMode" [(provision)]="provision" [customerOrder]="quotation">
-      </add-debour>
+    <mat-tab label="Documents" *ngIf="domiciliation.id && provision">
+      <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
+      </attachments>
+    </mat-tab>
+    <mat-tab label="Paiements & factures"
+      *ngIf="domiciliation.id && provision && quotation &&  instanceOfCustomerOrderFn(quotation)">
+      <provision-payment [editMode]="editMode" [provision]="provision" [quotation]="quotation">
+      </provision-payment>
     </mat-tab>
     <mat-tab label="Activité">
       <div class=" form-div">
@@ -342,10 +347,6 @@
           </tr>
         </table>
       </div>
-    </mat-tab>
-    <mat-tab label="Documents" *ngIf="domiciliation.id && provision">
-      <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
-      </attachments>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="domiciliation && domiciliation.id">
       <history [entity]="domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE"></history>

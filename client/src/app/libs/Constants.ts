@@ -79,8 +79,15 @@ export const PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED = "PROVISION_GUICHET_UNIQU
 
 
 // Reporting datasets
-export const REPORTING_DATASET_CUSTOMER_ORDER = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante";
 export const REPORTING_DATASET_QUOTATION = "Donneur d'ordre / Devis / Prestations - année calendaire courante";
-export const REPORTING_DATASET_VAT = "TVA";
-export const REPORTING_DATASET_TIERS = "Tiers / Responsable / CA / Documents";
-export const REPORTING_DATASET_CUSTOMER_ORDER_FOR_TIERS = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante pour un tiers";
+export const REPORTING_DATASET_TURNOVER_AMOUNT = "CA HT / TTC / avec et sans débours";
+export const REPORTING_DATASET_TURNOVER_VAT_AMOUNT = "CA HT / TTC / avec et sans débours - TVA";
+export const REPORTING_DATASET_CUSTOMER_ORDER = "Commandes";
+export const REPORTING_DATASET_PROVISION = "Prestations";
+export const REPORTING_DATASET_ANNOUNCEMENT = "Annonces légales";
+export const REPORTING_DATASET_TIERS = "Tiers / responsables";
+export const REPORTING_DATASET_PROVISION_PRODUCTION = "Production : prestations";
+export const REPORTING_DATASET_RECOVERY = "Recouvrement";
+
+// INPI Status
+export const GUICHET_UNIQUE_STATUS_VALIDATION_PENDING = "VALIDATION_PENDING";

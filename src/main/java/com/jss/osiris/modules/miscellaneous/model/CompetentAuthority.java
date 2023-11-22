@@ -22,7 +22,7 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
-public class CompetentAuthority implements IId, IAttachment, IVat {
+public class CompetentAuthority implements IAttachment, IGenericTiers {
 
 	@Id
 	@SequenceGenerator(name = "competent_authority_sequence", sequenceName = "competent_authority_sequence", allocationSize = 1)
@@ -118,6 +118,7 @@ public class CompetentAuthority implements IId, IAttachment, IVat {
 	private String observations;
 
 	@OneToMany(mappedBy = "competentAuthority")
+	@JsonIgnoreProperties(value = { "invoice", "customerOrder" }, allowSetters = true)
 	private List<Attachment> attachments;
 
 	@ManyToMany(cascade = CascadeType.ALL)
@@ -127,8 +128,6 @@ public class CompetentAuthority implements IId, IAttachment, IVat {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_default_payment_type")
 	private PaymentType defaultPaymentType;
-
-	private String owncloudFolderName;
 
 	private String inpiReference;
 
@@ -333,6 +332,14 @@ public class CompetentAuthority implements IId, IAttachment, IVat {
 		return accountingAccountDepositProvider;
 	}
 
+	public AccountingAccount getAccountingAccountDeposit() {
+		return accountingAccountDepositProvider;
+	}
+
+	public void setAccountingAccountDeposit(AccountingAccount accountingAccountDepositProvider) {
+		this.accountingAccountDepositProvider = accountingAccountDepositProvider;
+	}
+
 	public void setAccountingAccountDepositProvider(AccountingAccount accountingAccountDepositProvider) {
 		this.accountingAccountDepositProvider = accountingAccountDepositProvider;
 	}
@@ -359,14 +366,6 @@ public class CompetentAuthority implements IId, IAttachment, IVat {
 
 	public void setPaymentTypes(List<PaymentType> paymentTypes) {
 		this.paymentTypes = paymentTypes;
-	}
-
-	public String getOwncloudFolderName() {
-		return owncloudFolderName;
-	}
-
-	public void setOwncloudFolderName(String owncloudFolderName) {
-		this.owncloudFolderName = owncloudFolderName;
 	}
 
 	public PaymentType getDefaultPaymentType() {

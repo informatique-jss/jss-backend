@@ -1,71 +1,41 @@
 package com.jss.osiris.modules.reporting.model;
 
 public interface ITiersReporting {
-    public Integer getTiersId();
+    String getTiersLabel();
 
-    public Integer getResponsableId();
+    String getTiersCategory();
 
-    public String getTiersLabel();
+    String getResponsableLabel();
 
-    public String getResponsableLabel();
+    String getResponsableCategory();
 
-    public String getSalesEmployeeLabel();
+    String getSalesEmployeeLabel();
 
-    public String getTiersPostalCode();
+    String getFirstOrderYear();
 
-    public String getTiersCedexComplement();
+    String getFirstOrderMonth();
 
-    public String getTiersCity();
+    String getFirstOrderWeek();
 
-    public String getTiersCountry();
+    String getFirstOrderDay();
 
-    public String getTiersIntercommunityVat();
+    String getLastOrderYear();
 
-    public String getTiersType();
+    String getLastOrderMonth();
 
-    public String getResponsableType();
+    String getLastOrderWeek();
 
-    public String getIsTiersIndividual();
+    String getLastOrderDay();
 
-    public Integer getNbrCustomerOrder();
+    String getCreatedDateYear();
 
-    public Integer getNbrAnnouncement();
+    String getCreatedDateMonth();
 
-    public Integer getNbrFormalities();
+    String getCreatedDateWeek();
 
-    public Double getTurnoverAmount();
+    String getCreatedDateDay();
 
-    public Double getTurnoverAmountWithoutDebour();
+    String getLastTiersFollowupDate();
 
-    public String getDocTiersPaperRecipient();
-
-    public String getDocTiersPaperNumeric();
-
-    public String getDocTiersBilling();
-
-    public String getDocTiersBillingLabel();
-
-    public String getDocResponsablePaperRecipient();
-
-    public String getDocResponsablePaperNumeric();
-
-    public String getDocResponsableBilling();
-
-    public String getDocResponsableBillingLabel();
-
-    public String getTiersPaymentType();
-
-    public String getTiersPaymentIban();
-
-    public String getTiersPaymentBic();
-
-    public boolean getTiersIsProvisionnalPaymentMandatory();
-
-    public String getResponsableMail();
-
-    public String getResponsablePhone();
-
-    public Integer getNbrQuotation();
-
-    public String getInvoiceDateMonth();
+    String getLastResponsableFollowupDate();
 }

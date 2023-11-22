@@ -2,17 +2,17 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatBadgeModule } from '@angular/material/badge';
-import { DateAdapter, MatNativeDateModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
+import { DateAdapter, MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
@@ -21,10 +21,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSortModule } from '@angular/material/sort';
 import { RouterModule, Routes } from '@angular/router';
 import { MatTableExporterModule } from 'mat-table-exporter';
 import { NgxEchartsModule } from 'ngx-echarts';
@@ -39,6 +39,7 @@ import { AvatarComponent } from '../avatar/avatar.component';
 import { ChipsStatusComponent } from '../chips-status/chips-status.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
+import { EditCommentDialogComponent } from '../edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { EmployeeDialogComponent } from '../employee-dialog/employee-dialog.component';
 import { AutocompleteAccountingAccountComponent } from '../forms/autocomplete-accounting-account/autocomplete-accounting-account.component';
 import { AutocompleteAffaireComponent } from '../forms/autocomplete-affaire/autocomplete-affaire.component';
@@ -53,8 +54,6 @@ import { AutocompleteCustomerOrderComponent } from '../forms/autocomplete-custom
 import { AutocompleteDepartmentComponent } from '../forms/autocomplete-department/autocomplete-department.component';
 import { AutocompleteEmployeeComponent } from '../forms/autocomplete-employee/autocomplete-employee.component';
 import { AutocompleteGuichetUniqueFormaliteComponent } from '../forms/autocomplete-formalite-guichet-unique/autocomplete-formalite-guichet-unique.component';
-import { AutocompleteGreffeInvoiceComponent } from '../forms/autocomplete-greffe-invoice/autocomplete-greffe-invoice';
-import { AutocompleteInfogreffeInvoiceComponent } from '../forms/autocomplete-infogreffe-invoice/autocomplete-infogreffe-invoice';
 import { AutocompleteLegalFormComponent } from '../forms/autocomplete-legal-form/autocomplete-legal-form.component';
 import { AutocompletePaymentComponent } from '../forms/autocomplete-payment/autocomplete-payment.component';
 import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-code/autocomplete-postal-code.component';
@@ -220,12 +219,11 @@ import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection
 import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/select-notice-family.component';
 import { SelectPaymentDeadlineComponent } from '../forms/select-payment-deadline/select-payment-deadline.component';
 import { SelectPaymentTypesComponent } from '../forms/select-payment-types/select-payment-types.component';
-import { SelectPaymentWayOneComponent } from '../forms/select-payment-way-one/select-payment-way-one.component';
-import { SelectPaymentWayComponent } from '../forms/select-payment-way/select-payment-way.component';
 import { SelectProvisionFamilyComponent } from '../forms/select-provision-family/select-provision-familiy.component';
 import { SelectProvisionScreenTypeComponent } from '../forms/select-provision-screen-type/select-provision-screen-type.component';
 import { SelectProvisionStautsComponent } from '../forms/select-provision-stauts/select-provision-stauts.component';
 import { SelectProvisionTypeComponent } from '../forms/select-provision-type/select-provision-type.component';
+import { SelectProvisionComponent } from '../forms/select-provision/select-provision.component';
 import { SelectQuotationStatusComponent } from '../forms/select-quotation-status/select-quotation-status.component';
 import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-refund-type.component';
 import { SelectRegionsComponent } from '../forms/select-regions/select-regions.component';
@@ -378,9 +376,7 @@ const routes: Routes = [
     SelectQuotationStatusComponent,
     SelectInvoiceStatusOneComponent,
     SelectCustomerOrderStatusComponent,
-    SelectPaymentWayOneComponent,
     AutocompletePaymentComponent,
-    SelectPaymentWayComponent,
     AvatarComponent,
     AvatarChipComponent,
     SelectDepartmentsComponent,
@@ -401,6 +397,8 @@ const routes: Routes = [
     ChipsPaymentTypeComponent,
     AutocompleteAzureInvoiceComponent,
     SelectCustomerOrderOriginComponent,
+    EditCommentDialogComponent,
+    SelectProvisionComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     ChipsTypeDocumentComponent,
@@ -498,9 +496,7 @@ const routes: Routes = [
     SelectTypePersonneContractanteComponent,
     RadioGroupTypeRepresentantComponent,
     AutocompleteTypeVoieComponent,
-    AutocompleteGreffeInvoiceComponent,
     AutocompleteGuichetUniqueFormaliteComponent,
-    AutocompleteInfogreffeInvoiceComponent,
     ChipsFormaliteGuichetUniqueComponent,
   ],
   exports: [
@@ -512,7 +508,6 @@ const routes: Routes = [
     SelectJournalTypeOneComponent,
     SelectInvoiceStatusOneComponent,
     SelectDepartmentComponent,
-    SelectPaymentWayOneComponent,
     ConfirmDialogComponent,
     SelectDayComponent,
     GenericInputComponent,
@@ -598,11 +593,11 @@ const routes: Routes = [
     SelectAccountingJournalComponent,
     SingleAttachmentComponent,
     SortTableComponent,
+    EditCommentDialogComponent,
     SelectInvoiceStatusComponent,
     AutocompleteRegieComponent,
     SelectAssignationTypeComponent,
     ChipsProvisionFamilyTypeComponent,
-    SelectPaymentWayComponent,
     AutocompleteBillingItemComponent,
     AutocompleteCustomerOrderComponent,
     AutocompletePaymentComponent,
@@ -614,6 +609,7 @@ const routes: Routes = [
     SelectReportingDatasetComponent,
     ChipsPaymentTypeComponent,
     AutocompleteAzureInvoiceComponent,
+    SelectProvisionComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     RadioGroupMotifRejetCmaComponent,
@@ -714,13 +710,12 @@ const routes: Routes = [
     ChipsTypeDocumentComponent,
     AutocompleteTypeVoieComponent,
     GenericDatetimePickerComponent,
-    AutocompleteGreffeInvoiceComponent,
     AutocompleteGuichetUniqueFormaliteComponent,
-    AutocompleteInfogreffeInvoiceComponent,
     ChipsFormaliteGuichetUniqueComponent,
     SelectCustomerOrderOriginComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
+    , SortTableComponent
   ]
 })
 export class MiscellaneousModule { }

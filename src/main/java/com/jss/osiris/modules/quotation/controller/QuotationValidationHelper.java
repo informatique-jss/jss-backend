@@ -10,17 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IDocument;
-import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
@@ -37,7 +39,6 @@ import com.jss.osiris.modules.quotation.model.BodaccSplitCompany;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
-import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.IQuotation;
@@ -84,6 +85,12 @@ public class QuotationValidationHelper {
         @Autowired
         ProvisionTypeService provisionTypeService;
 
+        @Autowired
+        CustomerOrderOriginService customerOrderOriginService;
+
+        @Autowired
+        ActiveDirectoryHelper activeDirectoryHelper;
+
         @Transactional(rollbackFor = Exception.class)
         public void validateQuotationAndCustomerOrder(IQuotation quotation, String targetStatusCode)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
@@ -95,6 +102,17 @@ public class QuotationValidationHelper {
                                 quotation = customerOrderService.getCustomerOrder(quotation.getId());
                         if (quotation instanceof Quotation)
                                 quotation = quotationService.getQuotation(quotation.getId());
+                }
+
+                if (quotation.getId() == null) {
+                        quotation.setCreatedDate(LocalDateTime.now());
+
+                        List<CustomerOrderOrigin> origins = customerOrderOriginService
+                                        .getByUsername(activeDirectoryHelper.getCurrentUsername());
+                        if (origins != null && origins.size() == 1)
+                                quotation.setCustomerOrderOrigin(origins.get(0));
+                        else
+                                quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
                 }
 
                 if (quotation.getCustomerOrderOrigin() == null)
@@ -362,75 +380,8 @@ public class QuotationValidationHelper {
                                 .equals(constantService.getCustomerOrderOriginOsiris().getId()))
                         provision.setAssignedTo(null);
 
-                if (provision.getDebours() != null && provision.getDebours().size() > 0)
-                        for (Debour debour : provision.getDebours()) {
-                                validationHelper.validateReferential(debour.getBillingType(), true, "billingType");
-                                validationHelper.validateReferential(debour.getCompetentAuthority(), true,
-                                                "competentAuthority");
-                                validationHelper.validateReferential(debour.getPaymentType(), true, "paymentType");
-                                validationHelper.validateString(debour.getComments(), false, 250, "comments");
-                                validationHelper.validateFloat(debour.getDebourAmount(), true, "debourAmount");
-                                validationHelper.validateFloat(debour.getInvoicedAmount(),
-                                                debour.getBillingType().getIsFee(),
-                                                "invoicedAmount");
-
-                                if (debour.getBillingType().getIsDebour())
-                                        debour.setInvoicedAmount(Math.min(debour.getDebourAmount(),
-                                                        debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
-                                                                        : debour.getDebourAmount()));
-
-                                // check debour payment type
-                                if (debour.getId() == null && debour.getCompetentAuthority().getPaymentTypes() != null
-                                                && debour.getCompetentAuthority().getPaymentTypes().size() > 0) {
-                                        boolean found = false;
-                                        for (PaymentType paymentType : debour.getCompetentAuthority().getPaymentTypes())
-                                                if (paymentType.getId().equals(debour.getPaymentType().getId()))
-                                                        found = true;
-                                        if (!found)
-                                                throw new OsirisClientMessageException(
-                                                                "Type de paiement non autorisé pour l'autorité compétente");
-                                }
-
-                                if (debour.getPaymentDateTime() == null)
-                                        debour.setPaymentDateTime(LocalDateTime.now());
-                                validationHelper.validateDateMax(debour.getPaymentDateTime().toLocalDate(), true,
-                                                LocalDateTime.now().toLocalDate(),
-                                                "paymentDateTime");
-
-                                if (debour.getId() != null) {
-                                        // If already saved, can't change anything except invoicedAmount
-                                        Float invoicedAmount = debour.getInvoicedAmount();
-                                        debour = (Debour) validationHelper.validateReferential(debour, true, "debour");
-                                        debour.setInvoicedAmount(invoicedAmount);
-                                }
-                        }
-
-                // Check deleted debours
-                if (provision.getId() != null) {
-                        Provision currentProvision = provisionService.getProvision(provision.getId());
-                        if (currentProvision.getDebours() != null && currentProvision.getDebours().size() > 0) {
-                                for (Debour debour : currentProvision.getDebours()) {
-                                        boolean isDeleted = true;
-                                        if (provision.getDebours() != null && provision.getDebours().size() > 0)
-                                                for (Debour newDebour : provision.getDebours())
-                                                        if (newDebour.getId() != null
-                                                                        && newDebour.getId().equals(debour.getId()))
-                                                                isDeleted = false;
-
-                                        if (isDeleted && (debour.getPaymentType().getId()
-                                                        .equals(constantService.getPaymentTypeEspeces().getId())
-                                                        || debour.getPaymentType().getId()
-                                                                        .equals(constantService.getPaymentTypeCheques()
-                                                                                        .getId())
-                                                        || debour.getInvoiceItem() != null
-                                                        || debour.getPayment() != null
-                                                        || debour.getIsAssociated() != null
-                                                                        && debour.getIsAssociated() == true))
-                                                throw new OsirisClientMessageException(
-                                                                "Impossible de supprimer ce débours, merci de contacter l'administrateur pour cela");
-                                }
-                        }
-                }
+                if (provision.getIsRneUpdate() == null)
+                        provision.setIsRneUpdate(false);
 
                 // Domiciliation
                 if (provision.getDomiciliation() != null) {
@@ -515,8 +466,9 @@ public class QuotationValidationHelper {
                         Announcement currentAnnouncement = null;
                         if (announcement.getId() != null) {
                                 currentAnnouncement = announcementService.getAnnouncement(announcement.getId());
-                        } else {
-                                // By default, always redacted by JSS if option exists
+                        } else if (!quotation.getCustomerOrderOrigin().getId()
+                                        .equals(constantService.getCustomerOrderOriginWebSite().getId())) {
+                                // By default, if not from webstite, always redacted by JSS if option exists
                                 ProvisionType provisionType = provisionTypeService
                                                 .getProvisionType(provision.getProvisionType().getId());
                                 for (BillingType billingType : provisionType.getBillingTypes()) {
@@ -526,7 +478,7 @@ public class QuotationValidationHelper {
                                 }
                         }
 
-                        LocalDate publicationDateVerification = LocalDate.now().minusDays(1);
+                        LocalDate publicationDateVerification = LocalDate.now();
                         // Do not verify date when quotation has started
                         if (isCustomerOrder) {
                                 CustomerOrderStatus status = ((CustomerOrder) quotation).getCustomerOrderStatus();
