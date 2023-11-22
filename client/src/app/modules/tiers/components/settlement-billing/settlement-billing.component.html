@@ -75,12 +75,13 @@
             <tr>
               <td>
                 <generic-input [(model)]="billingDocument.billingLabel" label="Libellé" [form]="settlementBillingForm"
-                  propertyName="billingLabel" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+                  propertyName="billingLabel" [maxLength]="200" [isMandatory]="true"
+                  [isDisabled]="!editMode"></generic-input>
               </td>
               <td>
                 <generic-input [(model)]="billingDocument.billingAddress" label="Adresse" [form]="settlementBillingForm"
                   propertyName="billingAddress" [isMandatory]="true" [isDisabled]="!editMode"
-                  [maxLength]="100"></generic-input>
+                  [maxLength]="200"></generic-input>
               </td>
               <td>
                 <autocomplete-postal-code [(model)]="billingDocument.billingPostalCode" [form]="settlementBillingForm"
