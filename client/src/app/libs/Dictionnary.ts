@@ -115,5 +115,6 @@ export const Dictionnary = {
   "reminderType": "Type de relance",
   "payedPeriod": "Période de paiement",
   "lastResponsableFollowupDate": "Dernier suivi du responsable",
-  "lastTiersFollowupDate": "Dernier suivi du tiers"
+  "lastTiersFollowupDate": "Dernier suivi du tiers",
+  "isProviderInvoice": "Est une facture fournisseur ?"
 };

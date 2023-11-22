@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.reporting.service;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +21,7 @@ public class TurnoverVatReportingServiceImpl implements TurnoverVatReportingServ
 
     @Override
     public List<ITurnoverVatReporting> getTurnoverVatReporting() throws OsirisException {
-        return turnoverVatReportingRepository.getTurnoverVatReporting(Arrays.asList(
-                constantService.getInvoiceStatusPayed().getId(), constantService.getInvoiceStatusSend().getId(),
-                constantService.getInvoiceStatusCreditNoteEmited().getId(),
-                constantService.getInvoiceStatusCancelled().getId()));
+        return turnoverVatReportingRepository.getTurnoverVatReporting();
     }
 
 }

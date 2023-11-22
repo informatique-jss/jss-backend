@@ -30,4 +30,6 @@ public interface ITurnoverVatReporting {
 
     String getVatLabel();
 
+    Integer getIsProviderInvoice();
+
 }
