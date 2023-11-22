@@ -1082,8 +1082,8 @@ public class QuotationController {
             throw new OsirisValidationException("MailsClient");
 
         validationHelper.validateString(document.getAffaireAddress(), false, 200, "AffaireAddress");
-        validationHelper.validateString(document.getClientAddress(), false, 100, "ClientAddress");
-        validationHelper.validateString(document.getAffaireRecipient(), false, 100, "AffaireRecipient");
+        validationHelper.validateString(document.getClientAddress(), false, 200, "ClientAddress");
+        validationHelper.validateString(document.getAffaireRecipient(), false, 200, "AffaireRecipient");
         validationHelper.validateString(document.getClientRecipient(), false, 200, "ClientRecipient");
         validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
         validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");

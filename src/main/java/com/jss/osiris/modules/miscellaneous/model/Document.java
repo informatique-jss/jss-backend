@@ -93,9 +93,9 @@ public class Document implements Serializable, IId {
 	private Boolean isRecipientAffaire;
 	@Column(length = 200)
 	private String affaireAddress;
-	@Column(length = 100)
+	@Column(length = 200)
 	private String affaireRecipient;
-	@Column(length = 100)
+	@Column(length = 200)
 	private String clientAddress;
 	@Column(length = 200)
 	private String clientRecipient;
