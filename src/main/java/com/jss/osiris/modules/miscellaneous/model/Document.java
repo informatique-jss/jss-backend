@@ -142,10 +142,10 @@ public class Document implements Serializable, IId {
 	@JoinColumn(name = "id_billing_closure_recipient_type")
 	private BillingClosureRecipientType billingClosureRecipientType;
 
-	@Column(length = 100)
+	@Column(length = 200)
 	private String billingLabel;
 
-	@Column(length = 100)
+	@Column(length = 200)
 	private String billingAddress;
 
 	@Column(length = 60)
