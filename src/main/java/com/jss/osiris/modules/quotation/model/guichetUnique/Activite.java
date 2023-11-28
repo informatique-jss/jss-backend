@@ -108,7 +108,7 @@ public class Activite implements Serializable, IId {
     @Column(length = 255)
     private String codeAprm;
 
-    @Column(length = 255)
+    @Column(length = 4000)
     private String descriptionDetaillee;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -226,7 +226,7 @@ public class Activite implements Serializable, IId {
 
     private LocalDate dateEffet20M;
 
-    @Column(length = 255)
+    @Column(length = 2000)
     private String destinationActivite;
 
     public Integer getId() {
