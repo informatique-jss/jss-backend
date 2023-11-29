@@ -37,6 +37,18 @@ public interface ProvisionReportingRepository extends CrudRepository<Quotation, 
                         " ds.label, " +
                         " bs.label) as provisionStatus, " +
                         " coalesce(ca1.label, ca2.label) as waitedCompetentAuthorityLabel, " +
+                        " array_to_string(array[ " +
+                        " case " +
+                        " when sum(case when pft.code like 'B%' then 1 else 0 end)>0 then 'Formalité' " +
+                        " end, " +
+                        " case " +
+                        " when sum(case when p.id_announcement is not null then 1 else 0 end)>0 then 'AL' " +
+                        " end, " +
+                        " case " +
+                        " when sum(case when pft.code not like 'B%' and p.id_announcement is null then 1 else 0 end)>0 then 'Autre' "
+                        +
+                        " end], " +
+                        " ' / ') as aggregateProvisionTypeLabel, " +
                         " sum(ii.pre_tax_price-coalesce (ii.discount_amount, 0)  ) as turnoverAmountWithoutTax,  " +
                         " sum(ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) as turnoverAmountWithTax,  "
                         +
