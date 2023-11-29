@@ -1407,12 +1407,9 @@ public class QuotationController {
       @RequestParam String targetStatusCode)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
-    AbandonReason abandonReason = customerOrder.getAbandonReason();
     customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
     if (!targetStatusCode.equals(CustomerOrderStatus.ABANDONED)) {
       quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, targetStatusCode);
-    } else {
-      customerOrder.setAbandonReason(abandonReason);
     }
     boolean found = true;
     if (customerOrder.getCustomerOrderStatus() != null) {
