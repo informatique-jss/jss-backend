@@ -75,4 +75,8 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 
 	public Boolean getOverrideSpecialOffer();
 
+	public AbandonReason getAbandonReason();
+
+	public void setAbandonReason(AbandonReason abandonReason);
+
 }

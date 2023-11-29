@@ -103,6 +103,10 @@ public class Quotation implements IQuotation {
 	@Column(length = 40)
 	private String validationToken;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_abandon_reason")
+	private AbandonReason abandonReason;
+
 	@ManyToMany
 	@JoinTable(name = "asso_quotation_customer_order", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_customer_order"))
 	@JsonIgnoreProperties(value = { "quotations" }, allowSetters = true)
@@ -312,4 +316,11 @@ public class Quotation implements IQuotation {
 		this.validationToken = validationToken;
 	}
 
+	public AbandonReason getAbandonReason() {
+		return abandonReason;
+	}
+
+	public void setAbandonReason(AbandonReason abandonReason) {
+		this.abandonReason = abandonReason;
+	}
 }

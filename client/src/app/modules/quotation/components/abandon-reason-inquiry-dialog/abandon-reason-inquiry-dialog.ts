@@ -18,28 +18,17 @@ export class AbandonReasonInquiryDialog implements OnInit {
     label: ['', [Validators.required]],
   });
 
-
   constructor(
     public dialogRef: MatDialogRef<AbandonReasonInquiryDialog>,
     private formBuilder: FormBuilder,
-    private abandonReasonService: AbandonReasonService,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
 
-    ) {}
-
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 
   onConfirm(): void {
-    const selectedReasonControl = this.reasonTypeForm.value.label;
-    Object.assign(this.reason, selectedReasonControl);
-        this.abandonReasonService.addOrUpdateCustomerOrderAbandonReason(this.reason, this.data.id_quotation).subscribe(response => {
-        this.dialogRef.close(true);
-      });
-
+    this.dialogRef.close({ abandonReason: this.reasonTypeForm.value });
   }
-
 
   onClose(): void {
     this.dialogRef.close();
