@@ -1,5 +1,6 @@
 export interface ProvisionReporting {
   customerOrderCreatedDateYear: string;
+  invoiceDateMonth: string;
   customerOrderCreatedDateMonth: string;
   customerOrderCreatedDateWeek: string;
   customerOrderCreatedDateDay: string;

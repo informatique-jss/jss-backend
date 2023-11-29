@@ -3,6 +3,8 @@ package com.jss.osiris.modules.reporting.model;
 public interface IProvisionReporting {
     String getCustomerOrderCreatedDateYear();
 
+    String getInvoiceDateMonth();
+
     String getCustomerOrderCreatedDateMonth();
 
     String getCustomerOrderCreatedDateWeek();
