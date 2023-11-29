@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
@@ -385,7 +386,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   @Transactional
   public void sendBillingClosureReceipt()
-      throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+      throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
     List<Tiers> tiers = tiersService.findAllTiersForBillingClosureReceiptSend();
     if (tiers != null && tiers.size() > 0)
       for (Tiers tier : tiers) {

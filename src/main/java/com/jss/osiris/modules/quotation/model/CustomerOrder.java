@@ -165,6 +165,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JoinColumn(name = "id_customer_order_origin")
 	private CustomerOrderOrigin customerOrderOrigin;
 
+	private Boolean isGifted;
+
 	public Integer getId() {
 		return id;
 	}
@@ -371,6 +373,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setPayments(List<Payment> payments) {
 		this.payments = payments;
+	}
+
+	public Boolean getIsGifted() {
+		return isGifted;
+	}
+
+	public void setIsGifted(Boolean isGifted) {
+		this.isGifted = isGifted;
 	}
 
 }

@@ -27,7 +27,7 @@
   (click)="copyToUserReport()" *ngIf="currentUserReporting">
   <mat-icon>share</mat-icon>
 </button>
-<button matTooltip="Cloner le rapport" mat-fab color="accent" class="fifth-fab-button" (click)="cloneReport()"
+<button matTooltip="Supprimer le rapport" mat-fab color="accent" class="fifth-fab-button" (click)="deleteReport()"
   *ngIf="currentUserReporting">
-  <mat-icon>content_copy</mat-icon>
+  <mat-icon>delete</mat-icon>
 </button>

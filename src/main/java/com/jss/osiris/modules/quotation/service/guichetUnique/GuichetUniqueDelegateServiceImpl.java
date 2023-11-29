@@ -378,7 +378,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         if (formalites != null && formalites.size() > 0) {
             for (FormaliteGuichetUnique formalite : formalites) {
                 try {
-                    formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formalite, null);
+                    formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formalite, null, true);
                 } catch (Exception e) {
                     globalExceptionHandler.handleExceptionOsiris(e);
                 }
@@ -398,7 +398,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
                     for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique())
                         try {
                             formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formaliteGuichetUnique,
-                                    formalite);
+                                    formalite, true);
                         } catch (Exception e) {
                             globalExceptionHandler.handleExceptionOsiris(e);
                         }

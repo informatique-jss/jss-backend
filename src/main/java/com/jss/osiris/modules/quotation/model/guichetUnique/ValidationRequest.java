@@ -6,10 +6,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.RejectionReason;
@@ -17,6 +19,8 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Validat
 
 @Entity
 @JsonIgnoreProperties
+@Table(indexes = {
+        @Index(name = "idx_validation_request_formalite", columnList = "id_formalite_guichet_unique") })
 public class ValidationRequest {
 
     @Id

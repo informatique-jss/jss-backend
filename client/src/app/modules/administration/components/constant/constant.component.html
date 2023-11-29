@@ -1270,18 +1270,16 @@
           </tr>
           <tr>
             <td>
-              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountLost"
-                [form]="constantForm" propertyName="principalAccountingAccountLost" [isMandatory]="true"
-                label="Compte comptable principal - Pertes"
-                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+              <autocomplete-accounting-account [(model)]="constant.accountingAccountLost" [form]="constantForm"
+                propertyName="principalAccountingAccountLost" [isMandatory]="true"
+                label="Compte comptable principal - Pertes" [isDisabled]="!editMode"></autocomplete-accounting-account>
             </td>
           </tr>
           <tr>
             <td>
-              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountProfit"
-                [form]="constantForm" propertyName="principalAccountingAccountProfit" [isMandatory]="true"
-                label="Compte comptable principal - Profit"
-                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+              <autocomplete-accounting-account [(model)]="constant.accountingAccountProfit" [form]="constantForm"
+                propertyName="principalAccountingAccountProfit" [isMandatory]="true"
+                label="Compte comptable principal - Profit" [isDisabled]="!editMode"></autocomplete-accounting-account>
             </td>
           </tr>
           <tr>
@@ -1311,6 +1309,14 @@
               <autocomplete-provider [(model)]="constant.providerCentralPay" [form]="constantForm"
                 propertyName="providerCentralPay" [isMandatory]="true" [isDisabled]="!editMode"
                 label="Fournisseur - Central Pay"></autocomplete-provider>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-followup [(model)]="constant.tiersFollowupTypeInvoiceReminder"
+                label="Type de suivi - relance facture" [form]="constantForm"
+                propertyName="tiersFollowupTypeInvoiceReminder" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-followup>
             </td>
           </tr>
         </table>

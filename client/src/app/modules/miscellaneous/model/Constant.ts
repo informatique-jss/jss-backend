@@ -33,6 +33,7 @@ import { DocumentType } from "./DocumentType";
 import { Language } from './Language';
 import { LegalForm } from "./LegalForm";
 import { PaymentType } from "./PaymentType";
+import { TiersFollowupType } from './TiersFollowupType';
 import { Vat } from "./Vat";
 
 export interface Constant {
@@ -198,12 +199,13 @@ export interface Constant {
   principalAccountingAccountCharge: PrincipalAccountingAccount;
   principalAccountingAccountBank: PrincipalAccountingAccount;
   principalAccountingAccountWaiting: PrincipalAccountingAccount;
-  principalAccountingAccountLost: PrincipalAccountingAccount;
-  principalAccountingAccountProfit: PrincipalAccountingAccount;
+  accountingAccountLost: AccountingAccount;
+  accountingAccountProfit: AccountingAccount;
   accountingAccountBankCentralPay: AccountingAccount;
   accountingAccountBankJss: AccountingAccount;
   accountingAccountCaisse: AccountingAccount;
   customerOrderOriginWebSite: CustomerOrderOrigin;
   customerOrderOriginOsiris: CustomerOrderOrigin;
   providerCentralPay: Provider;
+  tiersFollowupTypeInvoiceReminder: TiersFollowupType;
 }

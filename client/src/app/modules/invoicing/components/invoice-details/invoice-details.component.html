@@ -8,8 +8,8 @@
         <p>Emis<span *ngIf="!invoice.isCreditNote">e</span> à Paris, le {{invoice.createdDate|date:'dd/MM/yyyy à
           HH:mm'}}<span *ngIf="getLetteringDate(invoice)">, lettrée le {{getLetteringDate(invoice)|date:'dd/MM/yyyy à
             HH:mm'}}</span><span *ngIf="invoice.commandNumber">,<br> Numéro de commande :
-            {{invoice.commandNumber}}</span><span *ngIf="invoice.manualAccountingDocumentNumber">,<br> Référence de
-            pièce la comptable : {{invoice.manualAccountingDocumentNumber}}</span>
+            {{invoice.commandNumber}}</span><span *ngIf="invoice.manualAccountingDocumentNumber">,<br> Référence de la
+            pièce comptable : {{invoice.manualAccountingDocumentNumber}}</span>
           <span *ngIf="invoice.manualAccountingDocumentDate">,<br> Date de la
             pièce comptable : {{invoice.manualAccountingDocumentDate|date:'dd/MM/yyyy'}}</span>
         </p>
@@ -166,7 +166,7 @@
           </tr>
         </table>
         <table class="mat-table mat-mdc-table mdc-data-table__table full-width container-affaire "
-          *ngIf="invoice.customerOrder">
+          *ngIf="invoice.customerOrder && invoice.invoiceStatus.id!=invoiceStatusCancelled.id">
           <thead>
             <tr class="mat-mdc-header-row mdc-data-table__header-row ">
               <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Facture</th>
@@ -220,7 +220,7 @@
           </ng-container>
         </table>
         <table class="mat-table mat-mdc-table mdc-data-table__table full-width container-affaire"
-          *ngIf="!invoice.customerOrder">
+          *ngIf="!invoice.customerOrder || invoice.invoiceStatus.id==invoiceStatusCancelled.id">
           <thead>
             <tr class="mat-mdc-header-row mdc-data-table__header-row ">
               <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Facture</th>
