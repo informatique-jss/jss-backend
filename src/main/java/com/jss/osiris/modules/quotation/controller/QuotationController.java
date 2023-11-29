@@ -141,6 +141,7 @@ import com.jss.osiris.modules.quotation.service.RnaDelegateService;
 import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.quotation.service.SireneDelegateService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.GuichetUniqueDelegateService;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
@@ -323,6 +324,9 @@ public class QuotationController {
 
   @Autowired
   GuichetUniqueDelegateService guichetUniqueDelegateService;
+
+  @Autowired
+  FormaliteGuichetUniqueService formaliteGuichetUniqueService;
 
   @Autowired
   DebourDelService debourDelService;
@@ -1078,8 +1082,10 @@ public class QuotationController {
             throw new OsirisValidationException("MailsClient");
 
         validationHelper.validateString(document.getAffaireAddress(), false, 200, "AffaireAddress");
-        validationHelper.validateString(document.getClientAddress(), false, 100, "ClientAddress");
-        validationHelper.validateString(document.getAffaireRecipient(), false, 100, "AffaireRecipient");
+        validationHelper.validateString(document.getClientAddress(), false, 200, "ClientAddress");
+        validationHelper.validateString(document.getBillingAddress(), false, 200, "BillingAddress");
+        validationHelper.validateString(document.getBillingLabel(), false, 200, "BillingLabel");
+        validationHelper.validateString(document.getAffaireRecipient(), false, 200, "AffaireRecipient");
         validationHelper.validateString(document.getClientRecipient(), false, 200, "ClientRecipient");
         validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
         validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
@@ -1916,6 +1922,16 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
 
     announcementService.publishAnnouncementsToActuLegale();
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @GetMapping(inputEntryPoint + "/formalite/refresh")
+  public ResponseEntity<Boolean> refreshFormaliteGuichetUnique(@RequestParam Integer idFormaliteGuichetUnique)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+    FormaliteGuichetUnique formalite = formaliteGuichetUniqueService
+        .getFormaliteGuichetUnique(idFormaliteGuichetUnique);
+    formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formalite, formalite.getFormalite(), false);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 

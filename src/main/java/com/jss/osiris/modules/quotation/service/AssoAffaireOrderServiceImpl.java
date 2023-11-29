@@ -243,7 +243,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 if (formalite.getFormalitesGuichetUnique() != null) {
                     for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique()) {
                         formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formaliteGuichetUnique,
-                                formalite);
+                                formalite, true);
                     }
                 }
 

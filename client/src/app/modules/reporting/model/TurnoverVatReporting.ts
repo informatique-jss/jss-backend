@@ -13,4 +13,5 @@ export interface TurnoverVatReporting {
   salesEmployeeLabel: string;
   invoiceStatusLabel: string;
   vatLabel: string;
+  isProviderInvoice: number;
 }

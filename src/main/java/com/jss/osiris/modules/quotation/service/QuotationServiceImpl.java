@@ -159,30 +159,32 @@ public class QuotationServiceImpl implements QuotationService {
             List<Quotation> duplicatedFound = new ArrayList<Quotation>();
 
             if (duplicatedCustomerOrders != null && duplicatedCustomerOrders.size() > 0) {
-                outerloop: for (QuotationSearchResult potentialCustomerOrderResult : duplicatedCustomerOrders) {
-                    Quotation potentialCustomerOrder = getQuotation(potentialCustomerOrderResult.getQuotationId());
-                    for (AssoAffaireOrder currentAsso : quotation.getAssoAffaireOrders()) {
-                        boolean foundAsso = false;
-                        for (AssoAffaireOrder duplicateAsso : potentialCustomerOrder.getAssoAffaireOrders()) {
-                            if (currentAsso.getAffaire().getId().equals(duplicateAsso.getAffaire().getId())) {
-                                foundAsso = true;
-                                for (Provision currentProvision : currentAsso.getProvisions()) {
-                                    boolean foundProvision = false;
-                                    for (Provision duplicateProvision : duplicateAsso.getProvisions()) {
-                                        if (duplicateProvision.getProvisionType().getId()
-                                                .equals(currentProvision.getProvisionType().getId())) {
-                                            foundProvision = true;
+                outerloop: for (QuotationSearchResult potentialQuotationResult : duplicatedCustomerOrders) {
+                    Quotation potentialQuotation = getQuotation(potentialQuotationResult.getQuotationId());
+                    if (!potentialQuotation.getQuotationStatus().getCode().equals(QuotationStatus.ABANDONED)) {
+                        for (AssoAffaireOrder currentAsso : quotation.getAssoAffaireOrders()) {
+                            boolean foundAsso = false;
+                            for (AssoAffaireOrder duplicateAsso : potentialQuotation.getAssoAffaireOrders()) {
+                                if (currentAsso.getAffaire().getId().equals(duplicateAsso.getAffaire().getId())) {
+                                    foundAsso = true;
+                                    for (Provision currentProvision : currentAsso.getProvisions()) {
+                                        boolean foundProvision = false;
+                                        for (Provision duplicateProvision : duplicateAsso.getProvisions()) {
+                                            if (duplicateProvision.getProvisionType().getId()
+                                                    .equals(currentProvision.getProvisionType().getId())) {
+                                                foundProvision = true;
+                                            }
                                         }
+                                        if (!foundProvision)
+                                            break outerloop;
                                     }
-                                    if (!foundProvision)
-                                        break outerloop;
                                 }
                             }
+                            if (!foundAsso)
+                                break outerloop;
                         }
-                        if (!foundAsso)
-                            break outerloop;
+                        duplicatedFound.add(potentialQuotation);
                     }
-                    duplicatedFound.add(potentialCustomerOrder);
                 }
 
                 if (duplicatedFound.size() > 0) {

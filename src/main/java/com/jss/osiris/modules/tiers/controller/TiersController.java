@@ -487,8 +487,8 @@ public class TiersController {
             "BillingClosureRecipientType");
         validationHelper.validateReferential(document.getBillingLabelCity(), false, "BillingLabelCity");
         validationHelper.validateReferential(document.getBillingLabelCountry(), false, "BillingLabelCountry");
-        validationHelper.validateString(document.getBillingAddress(), false, 100, "BillingAddress");
-        validationHelper.validateString(document.getBillingLabel(), false, 100, "BillingLabel");
+        validationHelper.validateString(document.getBillingAddress(), false, 200, "BillingAddress");
+        validationHelper.validateString(document.getBillingLabel(), false, 200, "BillingLabel");
         validationHelper.validateString(document.getBillingPostalCode(), false, 10, "BillingPostalCode");
         validationHelper.validateString(document.getCedexComplement(), false, 20, "CedexComplement");
 
@@ -557,8 +557,8 @@ public class TiersController {
             validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
             validationHelper.validateReferential(document.getBillingLabelCity(), false, "BillingLabelCity");
             validationHelper.validateReferential(document.getBillingLabelCountry(), false, "BillingLabelCountry");
-            validationHelper.validateString(document.getBillingAddress(), false, 100, "BillingAddress");
-            validationHelper.validateString(document.getBillingLabel(), false, 100, "BillingLabel");
+            validationHelper.validateString(document.getBillingAddress(), false, 200, "BillingAddress");
+            validationHelper.validateString(document.getBillingLabel(), false, 200, "BillingLabel");
             validationHelper.validateString(document.getBillingPostalCode(), false, 10, "BillingPostalCode");
             validationHelper.validateString(document.getCedexComplement(), false, 20, "CedexComplement");
 

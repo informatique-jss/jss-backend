@@ -201,8 +201,8 @@ export interface Constant {
   principalAccountingAccountCharge: PrincipalAccountingAccount;
   principalAccountingAccountBank: PrincipalAccountingAccount;
   principalAccountingAccountWaiting: PrincipalAccountingAccount;
-  principalAccountingAccountLost: PrincipalAccountingAccount;
-  principalAccountingAccountProfit: PrincipalAccountingAccount;
+  accountingAccountLost: AccountingAccount;
+  accountingAccountProfit: AccountingAccount;
   accountingAccountBankCentralPay: AccountingAccount;
   accountingAccountBankJss: AccountingAccount;
   accountingAccountCaisse: AccountingAccount;

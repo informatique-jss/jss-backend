@@ -869,9 +869,9 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setPaymentType(constantService.getPaymentTypeAccount());
         if (newPayment.getPaymentAmount() > 0) {
             newPayment.setSourceAccountingAccount(tiersToGiveAppoint.getAccountingAccountCustomer());
-            newPayment.setTargetAccountingAccount(accountingAccountService.getProfitAccountingAccount());
+            newPayment.setTargetAccountingAccount(constantService.getAccountingAccountProfit());
         } else {
-            newPayment.setSourceAccountingAccount(accountingAccountService.getLostAccountingAccount());
+            newPayment.setSourceAccountingAccount(constantService.getAccountingAccountLost());
             newPayment.setTargetAccountingAccount(tiersToGiveAppoint.getAccountingAccountCustomer());
         }
 
