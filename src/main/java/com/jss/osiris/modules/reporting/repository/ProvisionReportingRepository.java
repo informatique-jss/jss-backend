@@ -22,6 +22,8 @@ public interface ProvisionReportingRepository extends CrudRepository<Quotation, 
                         " to_char(date_trunc('week', " +
                         " co.created_date), " +
                         " 'YYYY-MM - tmw') as customerOrderCreatedDateWeek, " +
+                        " to_char(date_trunc('month', " +
+                        " i.created_date),'YYYY-MM') as invoiceDateMonth, " +
                         " to_char(date_trunc('day', " +
                         " co.created_date), " +
                         " 'YYYY-MM-DD') as customerOrderCreatedDateDay,   " +
@@ -66,6 +68,7 @@ public interface ProvisionReportingRepository extends CrudRepository<Quotation, 
                         "     p.id_asso_affaire_order = aao.id " +
                         " left join invoice_item ii on ii.id_provision = p.id and co.id_customer_order_status =:customerOrderStatusBilledId "
                         +
+                        " left join invoice i on i.id = ii.id_invoice  " +
                         " left join billing_item bi on  bi.id = ii.id_billing_item  " +
                         " left join billing_type bt on  bt.id = bi.id_billing_type                          " +
                         " left join provision_family_type pft on " +
@@ -100,6 +103,7 @@ public interface ProvisionReportingRepository extends CrudRepository<Quotation, 
                         " to_char(date_trunc('year', " +
                         " co.created_date), " +
                         " 'YYYY') , " +
+                        " i.created_date, " +
                         " to_char(date_trunc('month', " +
                         " co.created_date), " +
                         " 'YYYY-MM') , " +
