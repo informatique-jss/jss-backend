@@ -49,11 +49,10 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { IQuotation } from './../../model/IQuotation';
-import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
 import { UserNoteService } from 'src/app/services/user.notes.service';
-import { SelectAbandonReasonComponent } from 'src/app/modules/quotation/components/select-abandon-reason/select-abandon-reason';
 import { AbandonReasonInquiryDialog } from 'src/app/modules/quotation/components/abandon-reason-inquiry-dialog/abandon-reason-inquiry-dialog';
 import { AbandonReason } from 'src/app/modules/miscellaneous/model/AbandonReason';
+
 @Component({
   selector: 'quotation',
   templateUrl: './quotation.component.html',
@@ -525,10 +524,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         if (targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
           this.abandonReasonChangeStatus(targetStatus);
         } else {
-          this.handleNonAbandonedStatus(targetStatus, this.abandonReason);
+          this.isStatusOpen = currentStatusOpen;
+          this.proceedWithStatusChange(targetStatus, this.abandonReason);
         }
-      } else {
-        this.isStatusOpen = currentStatusOpen;
       }
       this.editMode = false;
     }, 100);
@@ -546,7 +544,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
         this.abandonReason = result.abandonReason.label;
-        this.handleNonAbandonedStatus(targetStatus, this.abandonReason);
+        this.proceedWithStatusChange(targetStatus, this.abandonReason);
       } else {
         this.isStatusOpen = false;
         this.editMode = false;
@@ -554,7 +552,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     });
   }
 
-  handleNonAbandonedStatus(targetStatus: QuotationStatus, abandonReason: AbandonReason) {
+  proceedWithStatusChange(targetStatus: QuotationStatus, abandonReason: AbandonReason) {
     if (!this.instanceOfCustomerOrder) {
       this.quotationService.updateQuotationStatus(this.quotation, targetStatus.code).subscribe(response => {
         this.quotation = response;
@@ -591,16 +589,25 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             this.appService.openRoute(null, '/order/' + this.quotation.id, null);
         });
       } else {
+        this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code)
+        .subscribe(response => {
+          this.quotation = response;
+
+          if (targetStatus.code === CUSTOMER_ORDER_STATUS_ABANDONED) {
             this.quotation.abandonReason = abandonReason;
-            this.quotationService.addOrUpdateQuotation(this.quotation);
-            this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code).subscribe(response => {
+
+            this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
               this.quotation = response;
-              this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+                  this.appService.openRoute(null, '/order/' + this.quotation.id, null);
             });
+
+          } else {
+            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
           }
+        });
 
       }
-    }
+    }}
 
 
   changeSelectedProvisionType($event: any) {
