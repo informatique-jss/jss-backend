@@ -31,12 +31,14 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.DateHelper;
 import com.jss.osiris.libs.JacksonLocalDateDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
@@ -182,14 +184,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         return addOrUpdateCustomerOrder(customerOrder, true, true);
     }
 
     @Override
     public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder, boolean isFromUser,
             boolean checkAllProvisionEnded)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         if (customerOrder.getCustomerOrderOrigin() == null)
             customerOrder.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
@@ -199,7 +201,71 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrder.setAssignedTo(
                     quotationService.getCustomerOrderOfQuotation(customerOrder).getDefaultCustomerOrderEmployee());
 
+        if (customerOrder.getIsGifted() == null)
+            customerOrder.setIsGifted(false);
+
         customerOrder.setIsQuotation(false);
+
+        // Check duplicate
+        // Find first affaire customer order
+        if (customerOrder.getId() == null && customerOrder.getAssoAffaireOrders() != null
+                && customerOrder.getAssoAffaireOrders().size() > 0) {
+            OrderingSearch orderingSearch = new OrderingSearch();
+            orderingSearch.setAffaires(Arrays.asList(customerOrder.getAssoAffaireOrders().get(0).getAffaire()));
+            orderingSearch.setCustomerOrders(new ArrayList<Tiers>());
+            if (customerOrder.getResponsable() != null) {
+                Tiers tiers = new Tiers();
+                tiers.setId(customerOrder.getResponsable().getId());
+                orderingSearch.getCustomerOrders().add(tiers);
+            } else if (customerOrder.getTiers() != null) {
+                orderingSearch.getCustomerOrders().add(customerOrder.getTiers());
+            } else if (customerOrder.getConfrere() != null) {
+                Tiers tiers = new Tiers();
+                tiers.setId(customerOrder.getConfrere().getId());
+                orderingSearch.getCustomerOrders().add(tiers);
+            }
+
+            // Only last 3 days
+            orderingSearch.setStartDate(DateHelper.subtractDaysSkippingWeekends(LocalDateTime.now(), 3));
+            List<OrderingSearchResult> duplicatedCustomerOrders = searchOrders(orderingSearch);
+            List<CustomerOrder> duplicatedFound = new ArrayList<CustomerOrder>();
+
+            if (duplicatedCustomerOrders != null && duplicatedCustomerOrders.size() > 0) {
+                outerloop: for (OrderingSearchResult potentialCustomerOrderResult : duplicatedCustomerOrders) {
+                    CustomerOrder potentialCustomerOrder = getCustomerOrder(
+                            potentialCustomerOrderResult.getCustomerOrderId());
+                    if (!potentialCustomerOrder.getCustomerOrderStatus().getCode()
+                            .equals(CustomerOrderStatus.ABANDONED)) {
+                        for (AssoAffaireOrder currentAsso : customerOrder.getAssoAffaireOrders()) {
+                            boolean foundAsso = false;
+                            for (AssoAffaireOrder duplicateAsso : potentialCustomerOrder.getAssoAffaireOrders()) {
+                                if (currentAsso.getAffaire().getId().equals(duplicateAsso.getAffaire().getId())) {
+                                    foundAsso = true;
+                                    for (Provision currentProvision : currentAsso.getProvisions()) {
+                                        boolean foundProvision = false;
+                                        for (Provision duplicateProvision : duplicateAsso.getProvisions()) {
+                                            if (duplicateProvision.getProvisionType().getId()
+                                                    .equals(currentProvision.getProvisionType().getId())) {
+                                                foundProvision = true;
+                                            }
+                                        }
+                                        if (!foundProvision)
+                                            break outerloop;
+                                    }
+                                }
+                            }
+                            if (!foundAsso)
+                                break outerloop;
+                        }
+                        duplicatedFound.add(potentialCustomerOrder);
+                    }
+                }
+
+                if (duplicatedFound.size() > 0) {
+                    throw new OsirisDuplicateException(duplicatedFound.stream().map(CustomerOrder::getId).toList());
+                }
+            }
+        }
 
         if (customerOrder.getDocuments() != null)
             for (Document document : customerOrder.getDocuments()) {
@@ -249,7 +315,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public CustomerOrder checkAllProvisionEnded(CustomerOrder customerOrderIn)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         CustomerOrder customerOrder = getCustomerOrder(customerOrderIn.getId());
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null
                 && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)) {
@@ -280,7 +346,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder addOrUpdateCustomerOrderStatusFromUser(CustomerOrder customerOrder, String targetStatusCode)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         return addOrUpdateCustomerOrderStatus(customerOrder, targetStatusCode, true);
     }
 
@@ -311,7 +377,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode,
             boolean isFromUser)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Handle automatic workflow for Announcement created from website
         boolean checkAllProvisionEnded = false;
         boolean onlyAnnonceLegale = isOnlyAnnouncement(customerOrder);
@@ -442,8 +508,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Target : going back to TO BILLED
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)
-                && targetStatusCode.equals(CustomerOrderStatus.TO_BILLED))
-            if (customerOrder.getInvoices() != null)
+                && targetStatusCode.equals(CustomerOrderStatus.TO_BILLED) && customerOrder.getIsGifted() == false)
+            if (customerOrder.getInvoices() != null) {
                 for (Invoice invoice : customerOrder.getInvoices())
                     if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusCancelled().getId())
                             && !invoice.getInvoiceStatus().getId()
@@ -451,7 +517,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         invoiceService.cancelInvoice(invoice);
                         break;
                     }
-
+                // Flush to take invoice item break link with provision into account
+                entityManager.flush();
+                entityManager.clear();
+                customerOrder = getCustomerOrder(customerOrder.getId());
+            }
         CustomerOrderStatus customerOrderStatus = customerOrderStatusService
                 .getCustomerOrderStatusByCode(targetStatusCode);
         if (customerOrderStatus == null)
@@ -460,6 +530,30 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder.setCustomerOrderStatus(customerOrderStatus);
         customerOrder.setLastStatusUpdate(LocalDateTime.now());
         return this.addOrUpdateCustomerOrder(customerOrder, false, checkAllProvisionEnded);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void offerCustomerOrder(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED))
+            if (customerOrder.getInvoices() != null) {
+                for (Invoice invoice : customerOrder.getInvoices())
+                    if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusCancelled().getId())
+                            && !invoice.getInvoiceStatus().getId()
+                                    .equals(constantService.getInvoiceStatusCreditNoteEmited().getId())) {
+                        invoiceService.cancelInvoice(invoice);
+                        break;
+                    }
+                // Flush to take invoice item break link with provision into account
+                entityManager.flush();
+                entityManager.clear();
+                customerOrder = getCustomerOrder(customerOrder.getId());
+            }
+
+        customerOrder.setLastStatusUpdate(LocalDateTime.now());
+        customerOrder.setIsGifted(true);
+        this.addOrUpdateCustomerOrder(customerOrder, false, false);
     }
 
     private void resetDeboursInvoiceItems(CustomerOrder customerOrder) {
@@ -484,9 +578,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
      * 
      * @throws OsirisClientMessageException
      * @throws OsirisValidationException
+     * @throws OsirisDuplicateException
      */
     private boolean moveForwardAnnouncementFromWebsite(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         boolean allDone = true;
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
@@ -516,7 +611,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, false);
             notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, false);
@@ -526,7 +621,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     private Invoice generateInvoice(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Generate blank invoice
         ITiers orderingCustomer = quotationService.getCustomerOrderOfQuotation(customerOrder);
         Invoice invoice = new Invoice();
@@ -651,7 +746,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public CustomerOrder createNewCustomerOrderFromQuotation(Quotation quotation)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         CustomerOrderStatus statusOpen = customerOrderStatusService
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
         CustomerOrder customerOrder = new CustomerOrder(quotation.getAssignedTo(), quotation.getTiers(),
@@ -850,7 +945,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Transactional(rollbackFor = Exception.class)
     public Boolean validateCardPaymentLinkForCustomerOrder(CustomerOrder customerOrder,
             com.jss.osiris.modules.quotation.model.CentralPayPaymentRequest request)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         customerOrder = getCustomerOrder(customerOrder.getId());
 
         if (request != null) {
@@ -894,7 +989,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional
     public void sendRemindersForCustomerOrderDeposit()
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         List<CustomerOrder> customerOrders = customerOrderRepository.findCustomerOrderForReminder(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT));
 
@@ -1009,7 +1104,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateAssignedToForCustomerOrder(CustomerOrder customerOrder, Employee employee)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         customerOrder.setAssignedTo(employee);
         addOrUpdateCustomerOrder(customerOrder, true, false);
     }

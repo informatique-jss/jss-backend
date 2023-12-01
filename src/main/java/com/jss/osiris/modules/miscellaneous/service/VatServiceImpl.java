@@ -75,7 +75,7 @@ public class VatServiceImpl implements VatService {
 
         if (!country.getId().equals(constantService.getCountryFrance().getId())
                 && !country.getId().equals(constantService.getCountryMonaco().getId()))
-            return null;
+            return constantService.getVatZero();
 
         if (country.getId().equals(constantService.getCountryMonaco().getId()))
             return vat != null ? vat : constantService.getVatTwenty();
@@ -110,7 +110,7 @@ public class VatServiceImpl implements VatService {
 
         if (!country.getId().equals(constantService.getCountryFrance().getId())
                 && !country.getId().equals(constantService.getCountryMonaco().getId()))
-            return null;
+            return constantService.getVatZero();
 
         if (country.getId().equals(constantService.getCountryMonaco().getId()))
             return vat != null ? vat : constantService.getVatDeductible();
@@ -152,7 +152,7 @@ public class VatServiceImpl implements VatService {
 
         if (!country.getId().equals(constantService.getCountryFrance().getId())
                 && !country.getId().equals(constantService.getCountryMonaco().getId()))
-            return null;
+            return constantService.getVatZero();
 
         if (country.getId().equals(constantService.getCountryMonaco().getId()))
             return vat != null ? vat : constantService.getVatTwenty();
@@ -362,7 +362,9 @@ public class VatServiceImpl implements VatService {
         }
 
         if (invoiceItem.getPreTaxPrice() != null)
-            invoiceItem.setVatPrice(invoiceItem.getPreTaxPrice() * invoiceItem.getVat().getRate() / 100f);
+            invoiceItem.setVatPrice((invoiceItem.getPreTaxPrice()
+                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f))
+                    * invoiceItem.getVat().getRate() / 100f);
         else
             invoiceItem.setVatPrice(0f);
     }

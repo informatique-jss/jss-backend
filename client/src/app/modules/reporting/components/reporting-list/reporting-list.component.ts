@@ -108,6 +108,14 @@ export class ReportingListComponent implements OnInit {
       this.appService.openRoute(null, "reporting/add/" + this.currentUserReporting.id + "/true", undefined);
   }
 
+  deleteReport() {
+    if (this.currentUserReporting) {
+      this.userReportingService.deleteUserReporting(this.currentUserReporting).subscribe(response => {
+        this.appService.openRoute(null, "reporting/list", undefined);
+      })
+    }
+  }
+
   copyToUserReport() {
     if (this.currentUserReporting) {
       let shareEmployeeDialogRef = this.employeeDialog.open(EmployeeDialogComponent, {

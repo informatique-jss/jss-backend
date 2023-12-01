@@ -93,7 +93,6 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_default_customer_order_employee")
-	@IndexedField
 	private Employee defaultCustomerOrderEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -532,6 +531,11 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 		if (getTiers() != null)
 			return getTiers().getIsProvisionalPaymentMandatory();
 		return null;
+	}
+
+	@Override
+	public String getLabel() {
+		return getFirstname() + " " + getLastname();
 	}
 
 }

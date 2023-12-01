@@ -32,6 +32,7 @@ import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
 @Entity
@@ -661,12 +662,12 @@ public class Constant implements Serializable, IId {
 	private PrincipalAccountingAccount principalAccountingAccountWaiting;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_principal_accounting_account_lost")
-	private PrincipalAccountingAccount principalAccountingAccountLost;
+	@JoinColumn(name = "id_accounting_account_lost")
+	private AccountingAccount accountingAccountLost;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_principal_accounting_account_profit")
-	private PrincipalAccountingAccount principalAccountingAccountProfit;
+	@JoinColumn(name = "id_accounting_account_profit")
+	private AccountingAccount accountingAccountProfit;
 
 	private String salesSharedMailbox;
 	private String accountingSharedMaiblox;
@@ -706,6 +707,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_provider_central_pay")
 	private Provider providerCentralPay;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_tiers_followup_type_invoice_reminder")
+	private TiersFollowupType tiersFollowupTypeInvoiceReminder;
 
 	public Integer getId() {
 		return id;
@@ -1650,22 +1655,6 @@ public class Constant implements Serializable, IId {
 		this.principalAccountingAccountWaiting = principalAccountingAccountWaiting;
 	}
 
-	public PrincipalAccountingAccount getPrincipalAccountingAccountLost() {
-		return principalAccountingAccountLost;
-	}
-
-	public void setPrincipalAccountingAccountLost(PrincipalAccountingAccount principalAccountingAccountLost) {
-		this.principalAccountingAccountLost = principalAccountingAccountLost;
-	}
-
-	public PrincipalAccountingAccount getPrincipalAccountingAccountProfit() {
-		return principalAccountingAccountProfit;
-	}
-
-	public void setPrincipalAccountingAccountProfit(PrincipalAccountingAccount principalAccountingAccountProfit) {
-		this.principalAccountingAccountProfit = principalAccountingAccountProfit;
-	}
-
 	public BillingType getBillingTypeApplicationFees() {
 		return billingTypeApplicationFees;
 	}
@@ -2075,5 +2064,29 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeRneUpdate(BillingType billingTypeRneUpdate) {
 		this.billingTypeRneUpdate = billingTypeRneUpdate;
+	}
+
+	public TiersFollowupType getTiersFollowupTypeInvoiceReminder() {
+		return tiersFollowupTypeInvoiceReminder;
+	}
+
+	public void setTiersFollowupTypeInvoiceReminder(TiersFollowupType tiersFollowupTypeInvoiceReminder) {
+		this.tiersFollowupTypeInvoiceReminder = tiersFollowupTypeInvoiceReminder;
+	}
+
+	public AccountingAccount getAccountingAccountLost() {
+		return accountingAccountLost;
+	}
+
+	public void setAccountingAccountLost(AccountingAccount accountingAccountLost) {
+		this.accountingAccountLost = accountingAccountLost;
+	}
+
+	public AccountingAccount getAccountingAccountProfit() {
+		return accountingAccountProfit;
+	}
+
+	public void setAccountingAccountProfit(AccountingAccount accountingAccountProfit) {
+		this.accountingAccountProfit = accountingAccountProfit;
 	}
 }

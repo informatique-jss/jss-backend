@@ -130,6 +130,10 @@ export class AddInvoiceComponent implements OnInit {
           this.invoice.provider = response.provider;
         if (response && response.competentAuthority)
           this.invoice.competentAuthority = response.competentAuthority;
+        if (response && response.provider)
+          this.invoice.provider = response.provider;
+        if (response && response.confrere)
+          this.invoice.confrere = response.confrere;
         this.appService.changeHeaderTitle("Saisir un avoir sur la facture n°" + this.idInvoiceForCreditNote);
       });
     } else {
@@ -151,6 +155,7 @@ export class AddInvoiceComponent implements OnInit {
     this.appService.changeHeaderTitle("Nouvelle facture");
 
     // Column init
+
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", isShrinkColumn: true } as SortTableColumn);
     this.displayedColumns.push({ id: "billingType", fieldName: "billingItem.billingType.label", label: "Poste de facturation" } as SortTableColumn);

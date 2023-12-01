@@ -6,11 +6,11 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
@@ -136,7 +136,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Transactional(rollbackFor = Exception.class)
     public AssoAffaireOrder addOrUpdateAssoAffaireOrderFromUser(
             AssoAffaireOrder assoAffaireOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // To avoid laizy failed of customerOrder subcollections
         assoAffaireOrder
                 .setCustomerOrder(customerOrderService.getCustomerOrder(assoAffaireOrder.getCustomerOrder().getId()));
@@ -146,7 +146,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Override
     public AssoAffaireOrder addOrUpdateAssoAffaireOrder(
             AssoAffaireOrder assoAffaireOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         for (Provision provision : assoAffaireOrder.getProvisions()) {
             provision.setAssoAffaireOrder(assoAffaireOrder);
         }
@@ -180,7 +180,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Override
     public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder,
             Boolean isFromUser)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Complete domiciliation end date
         int nbrAssignation = 0;
         Employee currentEmployee = null;
@@ -243,7 +243,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 if (formalite.getFormalitesGuichetUnique() != null) {
                     for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique()) {
                         formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formaliteGuichetUnique,
-                                formalite);
+                                formalite, true);
                     }
                 }
 
@@ -497,24 +497,5 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         return assoAffaireOrderRepository.findAsso(responsibleId,
                 assignedId, affaireSearch.getLabel(),
                 statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId, affaireId);
-    }
-
-    // TODO remove
-    @Scheduled(initialDelay = 100, fixedDelay = 10000000)
-    @Transactional
-    public void rattrapAnnouncement() {
-        List<AssoAffaireOrder> assos = IterableUtils.toList(assoAffaireOrderRepository.findAll());
-        for (AssoAffaireOrder asso : assos) {
-            if (asso.getProvisions() != null)
-                for (Provision provision : asso.getProvisions()) {
-                    if (provision.getAnnouncement() != null) {
-                        if (provision.getAnnouncement().getCharacterNumber() == null) {
-                            provision.getAnnouncement()
-                                    .setCharacterNumber(characterPriceService.getCharacterNumber(provision, true));
-                        }
-                    }
-                }
-            assoAffaireOrderRepository.save(asso);
-        }
     }
 }

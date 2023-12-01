@@ -17,7 +17,7 @@ public class AuditServiceImpl implements AuditService {
 
     @Override
     public List<Audit> getAuditForEntity(String entityType, Integer entityId) {
-        return auditRepository.findTop100ByEntityAndEntityId(entityType, entityId);
+        return auditRepository.findByEntityAndEntityId(entityType, entityId);
     }
 
     @Transactional

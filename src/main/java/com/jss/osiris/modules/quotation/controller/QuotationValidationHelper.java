@@ -478,7 +478,7 @@ public class QuotationValidationHelper {
                                 }
                         }
 
-                        LocalDate publicationDateVerification = LocalDate.now().minusDays(1);
+                        LocalDate publicationDateVerification = LocalDate.now();
                         // Do not verify date when quotation has started
                         if (isCustomerOrder) {
                                 CustomerOrderStatus status = ((CustomerOrder) quotation).getCustomerOrderStatus();

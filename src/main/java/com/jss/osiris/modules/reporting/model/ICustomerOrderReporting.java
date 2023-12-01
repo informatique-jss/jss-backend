@@ -9,4 +9,6 @@ public interface ICustomerOrderReporting {
     String getCustomerOrderAssignedEmployee();
 
     String getAggregateProvisionTypeLabel();
+
+    String getLastReminderDate();
 }

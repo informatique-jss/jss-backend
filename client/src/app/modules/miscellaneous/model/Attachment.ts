@@ -15,5 +15,6 @@ export interface Attachment {
   azureInvoice: AzureInvoice;
   provision: Provision;
   invoice: Invoice;
+  isAlreadySent: boolean;
 }
 

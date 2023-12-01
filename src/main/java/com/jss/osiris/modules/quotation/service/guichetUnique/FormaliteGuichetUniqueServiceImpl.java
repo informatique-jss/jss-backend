@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -98,8 +99,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     @Override
     @Transactional(rollbackFor = Exception.class)
     public FormaliteGuichetUnique refreshFormaliteGuichetUnique(FormaliteGuichetUnique inFormaliteGuichetUnique,
-            Formalite formalite)
-            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+            Formalite formalite, boolean generateInvoices)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         if (inFormaliteGuichetUnique == null)
             throw new OsirisValidationException("inFormaliteGuichetUnique");
 
@@ -213,21 +214,22 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
                     originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);
 
-                    for (Cart currentCart : originalFormalite.getCarts()) {
-                        if (currentCart.getInvoice() == null
-                                && currentCart.getFormaliteGuichetUnique().getFormalite() != null
-                                && currentCart.getFormaliteGuichetUnique().getFormalite().getProvision() != null) {
-                            if (currentCart.getStatus().equals(cartStatusPayed)) {
-                                currentCart.setInvoice(generateInvoiceFromCart(currentCart,
-                                        currentCart.getFormaliteGuichetUnique().getFormalite().getProvision()
-                                                .get(0)));
-                            } else if (currentCart.getStatus().equals(cartStatusRefund)) {
-                                currentCart.setInvoice((generateCreditNoteFromCart(currentCart,
-                                        currentCart.getFormaliteGuichetUnique().getFormalite().getProvision()
-                                                .get(0))));
+                    if (generateInvoices)
+                        for (Cart currentCart : originalFormalite.getCarts()) {
+                            if (currentCart.getInvoice() == null
+                                    && currentCart.getFormaliteGuichetUnique().getFormalite() != null
+                                    && currentCart.getFormaliteGuichetUnique().getFormalite().getProvision() != null) {
+                                if (currentCart.getStatus().equals(cartStatusPayed)) {
+                                    currentCart.setInvoice(generateInvoiceFromCart(currentCart,
+                                            currentCart.getFormaliteGuichetUnique().getFormalite().getProvision()
+                                                    .get(0)));
+                                } else if (currentCart.getStatus().equals(cartStatusRefund)) {
+                                    currentCart.setInvoice((generateCreditNoteFromCart(currentCart,
+                                            currentCart.getFormaliteGuichetUnique().getFormalite().getProvision()
+                                                    .get(0))));
+                                }
                             }
                         }
-                    }
                 }
             }
         }
@@ -255,7 +257,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     private Invoice generateInvoiceFromCart(Cart cart, Provision provision)
             throws OsirisException, OsirisClientMessageException,
-            OsirisValidationException {
+            OsirisValidationException, OsirisDuplicateException {
         Invoice invoice = new Invoice();
         invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
         invoice.setCustomerOrderForInboundInvoice(provision.getAssoAffaireOrder().getCustomerOrder());
@@ -303,7 +305,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     private Invoice generateCreditNoteFromCart(Cart cart, Provision provision)
             throws OsirisException, OsirisClientMessageException,
-            OsirisValidationException {
+            OsirisValidationException, OsirisDuplicateException {
         Invoice invoice = new Invoice();
         invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
         invoice.setCustomerOrderForInboundInvoice(provision.getAssoAffaireOrder().getCustomerOrder());
@@ -335,15 +337,35 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     if (provision.getId().equals(inProvision.getId())) {
                         cart.getCartRates()
                                 .sort((o1, o2) -> ((Long) o1.getAmount()).compareTo((Long) (o2.getAmount())));
-                        InvoiceItem firstItem = null;
+                        InvoiceItem firstItemTaxable = null;
+                        InvoiceItem firstItemNonTaxable = null;
                         for (CartRate cartRate : cart.getCartRates()) {
                             if (cartRate.getRate() != null && cartRate.getAmount() != 0) {
-                                if (cartRate.getAmount() > 0 && firstItem != null) {
-                                    firstItem.setPreTaxPrice(
-                                            firstItem.getPreTaxPrice() - Math.abs(cartRate.getHtAmount() / 100f));
-                                    firstItem.setPreTaxPriceReinvoiced(
-                                            -Math.abs(firstItem.getPreTaxPrice()));
-                                } else {
+                                boolean initItem = true;
+                                if (cartRate.getAmount() > 0) {
+                                    InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
+                                    if (invoiceItem.getBillingItem().getBillingType().getId()
+                                            .equals(constantService.getBillingTypeDeboursNonTaxable().getId())) {
+                                        if (firstItemNonTaxable != null) {
+                                            firstItemNonTaxable.setPreTaxPrice(
+                                                    firstItemNonTaxable.getPreTaxPrice()
+                                                            - Math.abs(invoiceItem.getPreTaxPrice()));
+                                            firstItemNonTaxable.setPreTaxPriceReinvoiced(
+                                                    -Math.abs(firstItemNonTaxable.getPreTaxPrice()));
+                                            initItem = false;
+                                        }
+                                    } else {
+                                        if (firstItemTaxable != null) {
+                                            firstItemTaxable.setPreTaxPrice(
+                                                    firstItemTaxable.getPreTaxPrice()
+                                                            - Math.abs(invoiceItem.getPreTaxPrice()));
+                                            firstItemTaxable.setPreTaxPriceReinvoiced(
+                                                    -Math.abs(firstItemTaxable.getPreTaxPrice()));
+                                            initItem = false;
+                                        }
+                                    }
+                                }
+                                if (initItem) {
                                     InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
                                     invoiceItem.setPreTaxPrice(Math.abs(invoiceItem.getPreTaxPrice()));
                                     invoiceItem.setPreTaxPriceReinvoiced(
@@ -351,8 +373,15 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                     invoiceItem.setProvision(null);
                                     invoice.getInvoiceItems().add(invoiceItem);
                                     provision.getInvoiceItems().add(invoiceItem);
-                                    if (firstItem == null)
-                                        firstItem = invoiceItem;
+
+                                    if (invoiceItem.getBillingItem().getBillingType().getId()
+                                            .equals(constantService.getBillingTypeDeboursNonTaxable().getId())) {
+                                        if (firstItemNonTaxable == null)
+                                            firstItemNonTaxable = invoiceItem;
+                                    } else {
+                                        if (firstItemTaxable == null)
+                                            firstItemTaxable = invoiceItem;
+                                    }
                                 }
                             }
                         }
@@ -382,9 +411,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             competentAuthority = competentAuthorities.get(0);
 
         invoiceItem.setLabel(competentAuthority.getLabel() + " - " + cartRate.getRate().getLabel());
-        long amount = cartRate.getHtAmount();
+        float amount = cartRate.getHtAmount();
         if (amount == 0)
-            amount = cartRate.getAmount();
+            amount = cartRate.getAmount() / 1.2f;
 
         if (cartRate.getAmount() < 0 && amount > 0)
             amount = -amount;

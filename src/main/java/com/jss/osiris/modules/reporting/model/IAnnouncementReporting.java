@@ -14,4 +14,6 @@ public interface IAnnouncementReporting {
     String getconfrereAnnouncementLabel();
 
     Integer getcharacterNumber();
+
+    String getAnnouncementDepartment();
 }

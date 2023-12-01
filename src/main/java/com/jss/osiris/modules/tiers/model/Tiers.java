@@ -129,7 +129,6 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_default_customer_order_employee")
-	@IndexedField
 	private Employee defaultCustomerOrderEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -589,6 +588,13 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 
 	public void setIsReceipSent(Boolean isReceipSent) {
 		this.isReceipSent = isReceipSent;
+	}
+
+	@Override
+	public String getLabel() {
+		if (getDenomination() != null)
+			return getDenomination();
+		return getFirstname() + " " + getLastname();
 	}
 
 }

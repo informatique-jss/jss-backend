@@ -41,6 +41,7 @@ export class InvoiceDetailsComponent implements OnInit {
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
   invoiceStatusPayed = this.constantService.getInvoiceStatusPayed();
   invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
+  invoiceStatusCancelled = this.constantService.getInvoiceStatusCancelled();
   invoiceStatusCreditNoteReceived = this.constantService.getInvoiceStatusCreditNoteReceived();
   attachmentTypeInvoice = this.constantService.getAttachmentTypeInvoice();
   attachmentTypeCreditNote = this.constantService.getAttachmentTypeCreditNote();
@@ -162,7 +163,7 @@ export class InvoiceDetailsComponent implements OnInit {
     let vatBases: VatBase[] = [];
     if (this.invoice && this.invoice.invoiceItems) {
       for (let invoiceItem of this.invoice.invoiceItems) {
-        if (invoiceItem.vat && invoiceItem.vatPrice && invoiceItem.vatPrice > 0) {
+        if (invoiceItem.vat && invoiceItem.vatPrice) {
           let vatFound = false;
           for (let vatBase of vatBases) {
             if (vatBase.label == invoiceItem.vat.label) {

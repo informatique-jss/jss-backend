@@ -72,7 +72,7 @@ export class HabilitationsService {
   }
 
   canAddNewAzureInvoice() {
-    return this.loginService.hasGroup([ADMINISTRATEURS])
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
   canCancelInvoice() {
@@ -115,7 +115,15 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
 
+  canOfferCustomerOrder() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
   canImportInfogreffeInvoice() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
+
+  canByPassMultipleCustomerOrderOnAssociationCheck() {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
   }
 }

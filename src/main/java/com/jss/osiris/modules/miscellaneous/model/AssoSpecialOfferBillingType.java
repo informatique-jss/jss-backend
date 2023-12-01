@@ -7,13 +7,18 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
+@Table(indexes = {
+		@Index(name = "idx_special_offer_offer", columnList = "id_special_offer"),
+		@Index(name = "idx_special_offer_billing_type", columnList = "id_billingType") })
 public class AssoSpecialOfferBillingType implements Serializable, IId {
 
 	@Id

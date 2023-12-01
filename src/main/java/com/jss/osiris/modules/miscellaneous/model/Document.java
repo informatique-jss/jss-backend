@@ -35,7 +35,10 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 @Entity
 @Table(indexes = { @Index(name = "idx_tiers_document", columnList = "id_tiers"),
 		@Index(name = "idx_responsable_document", columnList = "id_responsable"),
+		@Index(name = "idx_announcement_document", columnList = "id_announcement"),
+		@Index(name = "idx_confrere_document", columnList = "id_confrere"),
 		@Index(name = "idx_customer_order_document", columnList = "id_customer_order"),
+		@Index(name = "idx_quotation_document", columnList = "id_quotation"),
 })
 public class Document implements Serializable, IId {
 
@@ -90,9 +93,9 @@ public class Document implements Serializable, IId {
 	private Boolean isRecipientAffaire;
 	@Column(length = 200)
 	private String affaireAddress;
-	@Column(length = 100)
+	@Column(length = 200)
 	private String affaireRecipient;
-	@Column(length = 100)
+	@Column(length = 200)
 	private String clientAddress;
 	@Column(length = 200)
 	private String clientRecipient;
@@ -139,10 +142,10 @@ public class Document implements Serializable, IId {
 	@JoinColumn(name = "id_billing_closure_recipient_type")
 	private BillingClosureRecipientType billingClosureRecipientType;
 
-	@Column(length = 100)
+	@Column(length = 200)
 	private String billingLabel;
 
-	@Column(length = 100)
+	@Column(length = 200)
 	private String billingAddress;
 
 	@Column(length = 60)

@@ -10,8 +10,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -19,6 +21,9 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.CodePay
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeVoie;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_immeuble_option_fiscale", columnList = "id_option_fiscale"),
+        @Index(name = "idx_immeuble_option_fiscales", columnList = "id_options_fiscales") })
 public class Immeuble implements Serializable, IId {
 
     @Id

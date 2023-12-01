@@ -7,10 +7,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,6 +28,8 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePer
 
 @Entity
 @JsonIgnoreProperties
+@Table(indexes = {
+        @Index(name = "idx_formalite_guichet_unique_formalite", columnList = "id_formalite") })
 public class FormaliteGuichetUnique implements IId {
 
     @Id

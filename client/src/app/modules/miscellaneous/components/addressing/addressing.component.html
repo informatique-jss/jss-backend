@@ -38,13 +38,13 @@
       <td>
         <generic-textarea [(model)]="document.affaireRecipient" label="Autres destinataires pour l'affaire"
           (onFormChange)="changeDocument()" [form]="adressingForm" propertyName="affaireRecipient"
-          [isDisabled]="!editMode" [maxLength]="100" (filterInput)="limitTextareaSizeAffaire(3)">
+          [isDisabled]="!editMode" [maxLength]="200" (filterInput)="limitTextareaSizeAffaire(3)">
         </generic-textarea>
       </td>
       <td colspan="2">
         <generic-input [(model)]="document.affaireAddress" label="Autres adresses pour l'affaire" [form]="adressingForm"
           propertyName="affaireAddress" [isDisabled]="!editMode" (onFormChange)="changeDocument()"
-          [maxLength]="100"></generic-input>
+          [maxLength]="200"></generic-input>
       </td>
       <td [hidden]="!editMode" align="end"><button mat-icon-button color="accent"
           (click)="overrideAffaireAddress=false ; document.affaireRecipient='' ; document.affaireAddress='';changeDocument()">
@@ -79,7 +79,7 @@
       <td colspan="2">
         <generic-input [(model)]="document.clientAddress" label="Autres adresses pour le client" [form]="adressingForm"
           propertyName="clientAddress" [isDisabled]="!editMode" (onFormChange)="changeDocument()"
-          [maxLength]="100"></generic-input>
+          [maxLength]="200"></generic-input>
       </td>
       <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
           (click)="overrideClientAddress=false ; document.clientAddress='' ; document.clientRecipient='';changeDocument()">

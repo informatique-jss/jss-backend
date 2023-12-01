@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
@@ -157,9 +158,9 @@ public class BankTransfertServiceImpl implements BankTransfertService {
     public BankTransfert generateBankTransfertForManualInvoice(Invoice invoice)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         BankTransfert bankTransfert = new BankTransfert();
-        bankTransfert.setLabel("Facture " + invoice.getId() + " / JSS / "
-                + (invoice.getCommandNumber() != null ? invoice.getCommandNumber() : "") + " / "
-                + invoice.getManualAccountingDocumentNumber());
+        bankTransfert
+                .setLabel(invoice.getManualAccountingDocumentNumber() + " / Facture " + invoice.getId() + " / JSS / "
+                        + (invoice.getCommandNumber() != null ? invoice.getCommandNumber() : ""));
         bankTransfert.setIsAlreadyExported(false);
         if (invoice.getCustomerOrder() != null)
             bankTransfert.setCustomerOrder(invoice.getCustomerOrder());
@@ -191,7 +192,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public File getBankTransfertExport(BankTransfertSearch transfertSearch)
-            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException, OsirisDuplicateException {
         transfertSearch.setDisplaySelectedForExportBankTransfert(true);
         List<BankTransfertSearchResult> bankTransferts = searchBankTransfert(transfertSearch);
         String xml = "";

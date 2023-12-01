@@ -30,7 +30,13 @@ import com.jss.osiris.modules.quotation.model.Provision;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_bank_id", columnList = "bankId", unique = true),
-		@Index(name = "idx_payment_id_invoice", columnList = "id_invoice") })
+		@Index(name = "idx_payment_id_invoice", columnList = "id_invoice"),
+		@Index(name = "idx_payment_id_refund", columnList = "id_refund"),
+		@Index(name = "idx_payment_id_provision", columnList = "id_provision"),
+		@Index(name = "idx_payment_id_bank_transfert", columnList = "id_bank_transfert"),
+		@Index(name = "idx_payment_id_customer_order", columnList = "id_customer_order"),
+		@Index(name = "idx_payment_id_origin_payment", columnList = "id_origin_payment")
+})
 public class Payment implements Serializable, IId, ICreatedDate {
 
 	@Id
@@ -56,6 +62,9 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@JoinColumn(name = "id_invoice")
 	@JsonIgnoreProperties(value = { "payments", "accountingRecords" }, allowSetters = true)
 	private Invoice invoice;
+
+	@Column(columnDefinition = "TEXT")
+	private String comment;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order")
@@ -305,6 +314,14 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	public void setDirectDebitTransfert(DirectDebitTransfert directDebitTransfert) {
 		this.directDebitTransfert = directDebitTransfert;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 }

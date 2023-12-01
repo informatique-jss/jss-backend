@@ -11,9 +11,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -25,6 +27,10 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutP
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDePersonne;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_pouvoir_composition", columnList = "id_composition"),
+        @Index(name = "idx_pouvoir_detail_cessation", columnList = "id_detail_cessation_entreprise"),
+        @Index(name = "idx_pouvoir_detail_etablissement", columnList = "id_detail_cessation_etablissement") })
 public class Pouvoir implements Serializable, IId {
 
     @Id

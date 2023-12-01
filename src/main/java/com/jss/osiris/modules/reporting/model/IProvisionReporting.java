@@ -18,4 +18,14 @@ public interface IProvisionReporting {
     Integer getProvisionNumber();
 
     String getProvisionStatus();
+
+    String getWaitedCompetentAuthorityLabel();
+
+    Float getTurnoverAmountWithoutTax();
+
+    Float getTurnoverAmountWithTax();
+
+    Float getTurnoverAmountWithoutDebourWithoutTax();
+
+    Float getTurnoverAmountWithoutDebourWithTax();
 }

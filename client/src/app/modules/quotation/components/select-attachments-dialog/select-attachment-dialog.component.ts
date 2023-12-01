@@ -37,7 +37,7 @@ export class SelectAttachmentsDialogComponent implements OnInit {
     this.displayedColumns.push({ id: "attachementType", fieldName: "attachmentType.label", label: "Type de document" } as SortTableColumn);
     this.displayedColumns.push({ id: "createdBy", fieldName: "uploadedFile.createdBy", label: "Ajouté par" } as SortTableColumn);
     this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-
+    this.displayedColumns.push({ id: "isAlreadySent", fieldName: "isAlreadySent", label: "Envoyé au client ?", valueFonction: (element: any) => { return element.isAlreadySent ? "Oui" : "Non" } } as SortTableColumn);
   }
 
   ngOnChanges(changes: SimpleChanges) {
