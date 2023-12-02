@@ -261,6 +261,9 @@
     <mat-tab label="Historique" *ngIf="announcement && announcement.id">
       <history [entity]="announcement" [entityType]="ANNOUNCEMENT_ENTITY_TYPE"></history>
     </mat-tab>
+    <mat-tab label="Historique (prestation)" *ngIf="provision && provision.id">
+      <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
+    </mat-tab>
     <mat-tab label="Débours" *ngIf=" announcement && announcement.id && canAddNewInvoice()">
       <debour [provision]="provision"></debour>
     </mat-tab>

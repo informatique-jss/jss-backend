@@ -54,6 +54,9 @@
     <mat-tab label="Historique" *ngIf="formalite && formalite.id">
       <history [entity]="formalite" [entityType]="FORMALITE_ENTITY_TYPE"></history>
     </mat-tab>
+    <mat-tab label="Historique (prestation)" *ngIf="provision && provision.id">
+      <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
+    </mat-tab>
     <mat-tab label="Débours" *ngIf="formalite && formalite.id && canAddNewInvoice()">
       <debour [provision]="provision"></debour>
     </mat-tab>
