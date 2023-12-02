@@ -27,6 +27,7 @@ public interface RefundRepository extends QueryCacheCrudRepository<Refund, Integ
                         + " left join tiers on tiers.id = r.id_tiers "
                         + " where (:isHideExportedRefunds=false OR r.is_already_exported=false) "
                         + " and (:isHideMatchedRefunds=false OR r.is_matched=false) "
+                        + " and (:idRefund=0 OR r.id=:idRefund) "
                         + " and r.refund_date_time>=:startDate and r.refund_date_time<=:endDate "
                         + "  and (:minAmount is null or r.refund_amount>=CAST(CAST(:minAmount as text) as real) ) "
                         + "  and (:maxAmount is null or r.refund_amount<=CAST(CAST(:maxAmount as text) as real) )"
@@ -36,5 +37,6 @@ public interface RefundRepository extends QueryCacheCrudRepository<Refund, Integ
                         @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount,
                         @Param("label") String label,
                         @Param("isHideExportedRefunds") boolean isHideExportedRefunds,
-                        @Param("isHideMatchedRefunds") boolean isHideMatchedRefunds);
+                        @Param("isHideMatchedRefunds") boolean isHideMatchedRefunds,
+                        @Param("idRefund") Integer idRefund);
 }

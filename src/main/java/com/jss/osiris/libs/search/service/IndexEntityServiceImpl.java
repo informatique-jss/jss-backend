@@ -111,7 +111,7 @@ public class IndexEntityServiceImpl implements IndexEntityService {
 
                         if (fieldResult instanceof String || fieldResult instanceof Integer
                                 || fieldResult instanceof LocalDate || fieldResult instanceof LocalDateTime
-                                || fieldResult instanceof Boolean) {
+                                || fieldResult instanceof Boolean || fieldResult instanceof Float) {
                             outObject.put(field.getName(), getter.invoke(entity));
                         } else if (fieldResult instanceof List) {
                             ArrayList<Object> cleanOutList = new ArrayList<Object>();

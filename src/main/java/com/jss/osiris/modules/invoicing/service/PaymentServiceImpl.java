@@ -192,11 +192,14 @@ public class PaymentServiceImpl implements PaymentService {
         if (paymentSearch.getEndDate() == null)
             paymentSearch.setEndDate(LocalDateTime.now().plusYears(100));
 
+        if (paymentSearch.getIdPayment() == null)
+            paymentSearch.setIdPayment(0);
+
         return paymentRepository.findPayments(paymentSearch.getStartDate().withHour(0).withMinute(0),
                 paymentSearch.getEndDate().withHour(23).withMinute(59), paymentSearch.getMinAmount(),
                 paymentSearch.getMaxAmount(),
                 paymentSearch.getLabel(), paymentSearch.isHideAssociatedPayments(),
-                paymentSearch.isHideCancelledPayments(), paymentSearch.isHideAppoint());
+                paymentSearch.isHideCancelledPayments(), paymentSearch.isHideAppoint(), paymentSearch.getIdPayment());
     }
 
     @Override

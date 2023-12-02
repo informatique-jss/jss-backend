@@ -29,10 +29,13 @@ public class BankTransfert implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false)
+	@IndexedField
 	private String label;
 
+	@IndexedField
 	private Float transfertAmount;
 
+	@IndexedField
 	private LocalDateTime transfertDateTime;
 
 	@Column(length = 40)

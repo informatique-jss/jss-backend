@@ -35,3 +35,18 @@
 ::ng-deep .line-broken-tooltip {
   white-space: pre-line;
 }
+
+.center-div {
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.center-span {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Lato';
+  color: grey
+}

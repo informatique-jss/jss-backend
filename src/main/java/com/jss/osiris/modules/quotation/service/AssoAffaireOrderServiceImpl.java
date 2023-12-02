@@ -165,6 +165,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee) {
         asso.setAssignedTo(employee);
         assoAffaireOrderRepository.save(asso);
+        if (asso.getCustomerOrder() != null)
+            indexEntityService.indexEntity(asso);
     }
 
     @Override

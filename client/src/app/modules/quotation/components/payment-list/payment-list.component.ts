@@ -1,6 +1,7 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormBuilder } from "@angular/forms";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { ActivatedRoute } from "@angular/router";
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from "src/app/libs/FormatHelper";
 import { AssociatePaymentDialogComponent } from "src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component";
 import { PaymentSearch } from "src/app/modules/invoicing/model/PaymentSearch";
@@ -59,6 +60,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     private habilitationService: HabilitationsService,
     private editCommentDialog: MatDialog,
     private paymentDetailsDialogService: PaymentDetailsDialogService,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   ngAfterContentChecked(): void {
@@ -149,6 +151,17 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     if (this.isForDashboard && !this.payments && this.paymentSearch) {
       this.searchPayments();
     }
+
+    let idPayment = this.activatedRoute.snapshot.params.id;
+    if (idPayment) {
+      this.paymentSearch.idPayment = idPayment;
+      this.paymentSearch.isHideAssociatedPayments = false;
+      this.paymentSearch.isHideAppoint = false;
+      this.paymentSearch.isHideCancelledPayments = false;
+      this.appService.changeHeaderTitle("Paiements");
+      this.searchPayments();
+    }
+
   }
 
   paymentForm = this.formBuilder.group({

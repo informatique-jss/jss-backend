@@ -16,8 +16,17 @@
       <tr>
         <td>
           <div>
-            <mat-tab-group animationDuration="0ms">
-              <mat-tab [label]="getTabLabel(TIERS_ENTITY_TYPE)">
+            <div *ngIf="isLoading==undefined" class="center-div">
+              <span class="center-span">Commencez par taper votre recherche dans le champ ci-dessus</span>
+            </div>
+            <div *ngIf="isLoading==false && (foundEntities==null || foundEntities.length==0) " class="center-div">
+              <span class="center-span">Aucun résultat trouvé</span>
+            </div>
+            <div *ngIf="isLoading==true" class="center-div">
+              <mat-spinner diameter="100" matSuffix color="accent" class="center-span"></mat-spinner>
+            </div>
+            <mat-tab-group animationDuration="0ms" *ngIf="isLoading==false && foundEntities">
+              <mat-tab [label]="getTabLabel(TIERS_ENTITY_TYPE)" *ngIf="displayTab(TIERS_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card class="pointer mat-card" *ngFor="let entity of getEntitiesForTab(TIERS_ENTITY_TYPE)"
                     (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
@@ -38,7 +47,7 @@
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>
-              <mat-tab [label]="getTabLabel(RESPONSABLE_ENTITY_TYPE)">
+              <mat-tab [label]="getTabLabel(RESPONSABLE_ENTITY_TYPE)" *ngIf="displayTab(RESPONSABLE_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card appearance="outlined" class="pointer mat-card"
                     *ngFor="let entity of getEntitiesForTab(RESPONSABLE_ENTITY_TYPE)"
@@ -67,7 +76,7 @@
 
                 </mat-dialog-content>
               </mat-tab>
-              <mat-tab [label]="getTabLabel(QUOTATION_ENTITY_TYPE)">
+              <mat-tab [label]="getTabLabel(QUOTATION_ENTITY_TYPE)" *ngIf="displayTab(QUOTATION_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card appearance="outlined" class="pointer mat-card"
                     *ngFor="let entity of getEntitiesForTab(QUOTATION_ENTITY_TYPE)" (click)="openEntity($event, entity)"
@@ -89,7 +98,7 @@
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>
-              <mat-tab [label]="getTabLabel(CUSTOMER_ORDER_ENTITY_TYPE)">
+              <mat-tab [label]="getTabLabel(CUSTOMER_ORDER_ENTITY_TYPE)" *ngIf="displayTab(CUSTOMER_ORDER_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card appearance="outlined" class="pointer mat-card"
                     *ngFor="let entity of getEntitiesForTab(CUSTOMER_ORDER_ENTITY_TYPE)"
@@ -111,7 +120,7 @@
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>
-              <mat-tab [label]="getTabLabel(INVOICE_ENTITY_TYPE)">
+              <mat-tab [label]="getTabLabel(INVOICE_ENTITY_TYPE)" *ngIf="displayTab(INVOICE_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card appearance="outlined" class="pointer mat-card"
                     *ngFor="let entity of getEntitiesForTab(INVOICE_ENTITY_TYPE)" (click)="openEntity($event, entity)"
@@ -130,7 +139,7 @@
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>
-              <mat-tab [label]="getTabLabel(ASSO_AFFAIRE_ENTITY_TYPE)">
+              <mat-tab [label]="getTabLabel(ASSO_AFFAIRE_ENTITY_TYPE)" *ngIf="displayTab(ASSO_AFFAIRE_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card appearance="outlined" class="pointer mat-card"
                     *ngFor="let entity of getEntitiesForTab(ASSO_AFFAIRE_ENTITY_TYPE)"
@@ -157,7 +166,7 @@
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>
-              <mat-tab [label]="getTabLabel(AFFAIRE_ENTITY_TYPE)">
+              <mat-tab [label]="getTabLabel(AFFAIRE_ENTITY_TYPE)" *ngIf="displayTab(AFFAIRE_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card appearance="outlined" class="pointer mat-card"
                     *ngFor="let entity of getEntitiesForTab(AFFAIRE_ENTITY_TYPE)" (click)="openEntity($event, entity)"
@@ -176,6 +185,89 @@
                           : "+entity.text.rna):""}}</p>
                       </mat-card-subtitle>
                       <mat-icon color="accent" class="mat-card-icon">work</mat-icon>
+                      <ng-container [ngTemplateOutlet]="cardDates"
+                        [ngTemplateOutletContext]="{entity:entity}"></ng-container>
+                    </mat-card-header>
+
+                  </mat-card>
+                </mat-dialog-content>
+              </mat-tab>
+              <mat-tab [label]="getTabLabel(PAYMENT_ENTITY_TYPE)" *ngIf="displayTab(PAYMENT_ENTITY_TYPE)">
+                <mat-dialog-content class="mat-content">
+                  <mat-card appearance="outlined" class="pointer mat-card"
+                    *ngFor="let entity of getEntitiesForTab(PAYMENT_ENTITY_TYPE)" (click)="openEntity($event, entity)"
+                    (auxclick)="openEntity($event, entity)">
+                    <mat-card-header>
+                      <mat-card-title>
+                        {{entity.text.id}} - {{entity.text.paymentAmount | number}} € -
+                        {{entity.text.paymentType.label}}</mat-card-title>
+                      <mat-card-subtitle>
+                        <p>Paiement du {{entity.text.paymentDate|date:'dd/MM/yyyy à HH:mm'}} - {{entity.text.label}} -
+                          {{entity.text.checkNumber?entity.text.checkNumber:""}} </p>
+                      </mat-card-subtitle>
+                      <mat-icon color="accent" class="mat-card-icon">savings</mat-icon>
+                      <ng-container [ngTemplateOutlet]="cardDates"
+                        [ngTemplateOutletContext]="{entity:entity}"></ng-container>
+                    </mat-card-header>
+
+                  </mat-card>
+                </mat-dialog-content>
+              </mat-tab>
+              <mat-tab [label]="getTabLabel(REFUND_ENTITY_TYPE)" *ngIf="displayTab(REFUND_ENTITY_TYPE)">
+                <mat-dialog-content class="mat-content">
+                  <mat-card appearance="outlined" class="pointer mat-card"
+                    *ngFor="let entity of getEntitiesForTab(REFUND_ENTITY_TYPE)" (click)="openEntity($event, entity)"
+                    (auxclick)="openEntity($event, entity)">
+                    <mat-card-header>
+                      <mat-card-title>
+                        {{entity.text.id}} - {{entity.text.refundAmount | number}} € </mat-card-title>
+                      <mat-card-subtitle>
+                        <p>Remboursement du {{entity.text.refundDateTime|date:'dd/MM/yyyy à HH:mm'}} -
+                          {{entity.text.label}} -
+                          {{entity.text.customerOrder?("Commande n°"+entity.text.customerOrder.id):""}} </p>
+                      </mat-card-subtitle>
+                      <mat-icon color="accent" class="mat-card-icon">savings</mat-icon>
+                      <ng-container [ngTemplateOutlet]="cardDates"
+                        [ngTemplateOutletContext]="{entity:entity}"></ng-container>
+                    </mat-card-header>
+
+                  </mat-card>
+                </mat-dialog-content>
+              </mat-tab>
+              <mat-tab [label]="getTabLabel(BANK_TRANSFERT_ENTITY_TYPE)" *ngIf="displayTab(BANK_TRANSFERT_ENTITY_TYPE)">
+                <mat-dialog-content class="mat-content">
+                  <mat-card appearance="outlined" class="pointer mat-card"
+                    *ngFor="let entity of getEntitiesForTab(BANK_TRANSFERT_ENTITY_TYPE)"
+                    (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
+                    <mat-card-header>
+                      <mat-card-title>
+                        {{entity.text.id}} - {{entity.text.transfertAmount | number}} € </mat-card-title>
+                      <mat-card-subtitle>
+                        <p>Virement du {{entity.text.transfertDateTime|date:'dd/MM/yyyy à HH:mm'}} -
+                          {{entity.text.label}} </p>
+                      </mat-card-subtitle>
+                      <mat-icon color="accent" class="mat-card-icon">savings</mat-icon>
+                      <ng-container [ngTemplateOutlet]="cardDates"
+                        [ngTemplateOutletContext]="{entity:entity}"></ng-container>
+                    </mat-card-header>
+
+                  </mat-card>
+                </mat-dialog-content>
+              </mat-tab>
+              <mat-tab [label]="getTabLabel(DIRECT_DEBIT_TRANSFERT_ENTITY_TYPE)"
+                *ngIf="displayTab(DIRECT_DEBIT_TRANSFERT_ENTITY_TYPE)">
+                <mat-dialog-content class="mat-content">
+                  <mat-card appearance="outlined" class="pointer mat-card"
+                    *ngFor="let entity of getEntitiesForTab(DIRECT_DEBIT_TRANSFERT_ENTITY_TYPE)"
+                    (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
+                    <mat-card-header>
+                      <mat-card-title>
+                        {{entity.text.id}} - {{entity.text.transfertAmount | number}} € </mat-card-title>
+                      <mat-card-subtitle>
+                        <p>Prélèvement du {{entity.text.transfertDateTime|date:'dd/MM/yyyy à HH:mm'}} -
+                          {{entity.text.label}} </p>
+                      </mat-card-subtitle>
+                      <mat-icon color="accent" class="mat-card-icon">savings</mat-icon>
                       <ng-container [ngTemplateOutlet]="cardDates"
                         [ngTemplateOutletContext]="{entity:entity}"></ng-container>
                     </mat-card-header>

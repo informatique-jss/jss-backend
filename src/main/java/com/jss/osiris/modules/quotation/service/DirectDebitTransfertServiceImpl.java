@@ -136,12 +136,16 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
             directDebitTransfertSearch.setStartDate(LocalDateTime.now().minusYears(100));
         if (directDebitTransfertSearch.getEndDate() == null)
             directDebitTransfertSearch.setEndDate(LocalDateTime.now().plusYears(100));
+        if (directDebitTransfertSearch.getIdDirectDebitTransfert() == null)
+            directDebitTransfertSearch.setIdDirectDebitTransfert(0);
         return directDebitTransfertRepository.findTransferts(
                 directDebitTransfertSearch.getStartDate().withHour(0).withMinute(0),
                 directDebitTransfertSearch.getEndDate().withHour(23).withMinute(59),
                 directDebitTransfertSearch.getMinAmount(),
                 directDebitTransfertSearch.getMaxAmount(),
-                directDebitTransfertSearch.getLabel(), directDebitTransfertSearch.isHideExportedDirectDebitTransfert());
+                directDebitTransfertSearch.getLabel(), directDebitTransfertSearch.isHideExportedDirectDebitTransfert(),
+                directDebitTransfertSearch.getIdDirectDebitTransfert());
+
     }
 
     @Override
