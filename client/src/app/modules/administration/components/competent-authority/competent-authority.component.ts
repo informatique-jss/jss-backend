@@ -3,11 +3,13 @@ import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, Valid
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
+import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
+import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { COMPETENT_AUTHORITY_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
 import { CompetentAuthority } from '../../../miscellaneous/model/CompetentAuthority';
@@ -38,6 +40,7 @@ export class CompetentAuthorityComponent implements OnInit {
   displayedColumns: SortTableColumn[] = [];
   editMode: boolean = false;
   selectedCompetentAuthorityId: number | undefined;
+  invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
 
   saveObservableSubscription: Subscription = new Subscription;
   COMPETENT_AUTHORITY_ENTITY_TYPE = COMPETENT_AUTHORITY_ENTITY_TYPE;
@@ -91,6 +94,9 @@ export class CompetentAuthorityComponent implements OnInit {
     this.getCitiesForCurrentCompetentAuthority();
     if (!this.idCompetentAuthority)
       this.appService.changeHeaderTitle(element.label);
+
+    setTimeout(() =>
+      this.invoiceSearch.customerOrders = [{ id: this.selectedcompetentAuthority!.id } as ITiers], 0);
   }
 
   limitTextareaSize(numberOfLine: number) {
