@@ -152,7 +152,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
       this.searchPayments();
     }
 
-    let idPayment = this.activatedRoute.snapshot.params.id;
+    let idPayment = this.activatedRoute.snapshot.params.idPayment;
     if (idPayment) {
       this.paymentSearch.idPayment = idPayment;
       this.paymentSearch.isHideAssociatedPayments = false;

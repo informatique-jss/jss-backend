@@ -36,7 +36,7 @@ import { InvoiceComponent } from "./invoicing.component";
 const routes: Routes = [
   { path: 'invoicing', component: InvoiceComponent },
   { path: 'invoicing/view/:id', component: InvoiceDetailsComponent },
-  { path: 'invoicing/payment/:id', component: PaymentListComponent },
+  { path: 'invoicing/payment/:idPayment', component: PaymentListComponent },
   { path: 'invoicing/refund/:id', component: RefundListComponent },
   { path: 'invoicing/bankTransfert/:id', component: BankTransfertListComponent },
   { path: 'invoicing/directDebit/:id', component: DirectDebitTransfertListComponent },
