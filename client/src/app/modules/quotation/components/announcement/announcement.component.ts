@@ -245,7 +245,7 @@ export class AnnouncementComponent implements OnInit {
 
   private _filterNoticeTemplates(value: string): AnnouncementNoticeTemplate[] {
     const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return this.noticeTemplates.filter(noticeTemplate => noticeTemplate.label != undefined && noticeTemplate.label.toLowerCase().includes(filterValue) && (!noticeTemplate.provisionFamilyTypes || this.provision && noticeTemplate.provisionFamilyTypes.map(type => type.code).indexOf(this.provision.provisionFamilyType.code) >= 0));
+    return this.noticeTemplates.filter(noticeTemplate => noticeTemplate.label != undefined && noticeTemplate.label.toLowerCase().includes(filterValue) && (!noticeTemplate.provisionFamilyTypes || this.provision && noticeTemplate.provisionFamilyTypes.map(type => type.code).indexOf(this.provision.provisionFamilyType.code) >= 0)).sort((a: AnnouncementNoticeTemplate, b: AnnouncementNoticeTemplate) => a.label.localeCompare(b.label));
   }
 
   addNoticeType(event: MatAutocompleteSelectedEvent): void {
