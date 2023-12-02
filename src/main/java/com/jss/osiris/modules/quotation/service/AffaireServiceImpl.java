@@ -82,8 +82,18 @@ public class AffaireServiceImpl implements AffaireService {
                             affaire.getDenomination());
             }
 
-            if (affairesDuplicates.size() > 0)
-                throw new OsirisDuplicateException(affairesDuplicates.stream().map(Affaire::getId).toList());
+            if (affairesDuplicates.size() > 0) {
+                boolean authorize = false;
+                // If current affaire is not registered and found affaires got SIRET =>
+                // authorize it
+                if (affaire.getIsUnregistered())
+                    for (Affaire affaireDuplicate : affairesDuplicates)
+                        if (affaireDuplicate.getSiren() != null || affaireDuplicate.getSiret() != null)
+                            authorize = true;
+
+                if (!authorize)
+                    throw new OsirisDuplicateException(affairesDuplicates.stream().map(Affaire::getId).toList());
+            }
         }
 
         // If mails already exists, get their ids
