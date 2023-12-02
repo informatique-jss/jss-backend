@@ -305,22 +305,24 @@ public class PricingHelper {
 
                             InvoiceItem invoiceItem = null;
 
-                            for (InvoiceItem invoiceItemProvision : provision.getInvoiceItems()) {
+                            if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
+                                for (InvoiceItem invoiceItemProvision : provision.getInvoiceItems()) {
 
-                                InvoiceItem tempInvoiceItem;
-                                if (invoiceItemProvision.getId() != null) {
-                                    tempInvoiceItem = invoiceItemService.getInvoiceItem(invoiceItemProvision.getId());
-                                } else
-                                    tempInvoiceItem = invoiceItemProvision;
+                                    InvoiceItem tempInvoiceItem;
+                                    if (invoiceItemProvision.getId() != null) {
+                                        tempInvoiceItem = invoiceItemService
+                                                .getInvoiceItem(invoiceItemProvision.getId());
+                                    } else
+                                        tempInvoiceItem = invoiceItemProvision;
 
-                                if (tempInvoiceItem.getOriginProviderInvoice() != null)
-                                    continue;
+                                    if (tempInvoiceItem.getOriginProviderInvoice() != null)
+                                        continue;
 
-                                if (invoiceItemProvision.getBillingItem() != null
-                                        && invoiceItemProvision.getBillingItem().getBillingType().getId()
-                                                .equals(billingType.getId()))
-                                    invoiceItem = invoiceItemProvision;
-                            }
+                                    if (invoiceItemProvision.getBillingItem() != null
+                                            && invoiceItemProvision.getBillingItem().getBillingType().getId()
+                                                    .equals(billingType.getId()))
+                                        invoiceItem = invoiceItemProvision;
+                                }
 
                             if (invoiceItem == null) {
                                 invoiceItem = new InvoiceItem();

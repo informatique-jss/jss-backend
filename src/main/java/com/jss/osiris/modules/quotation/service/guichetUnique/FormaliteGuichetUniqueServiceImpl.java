@@ -234,23 +234,26 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             }
         }
 
-        originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);
-        // validationsRequests field
-        originalFormalite.setValidationsRequests(formaliteGuichetUnique.getValidationsRequests());
-        if (originalFormalite.getValidationsRequests() != null)
-            for (ValidationRequest validationRequest : originalFormalite.getValidationsRequests())
-                validationRequest.setFormaliteGuichetUnique(originalFormalite);
+        if (originalFormalite != null) {
+            originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);
+            // validationsRequests field
+            originalFormalite.setValidationsRequests(formaliteGuichetUnique.getValidationsRequests());
+            if (originalFormalite.getValidationsRequests() != null)
+                for (ValidationRequest validationRequest : originalFormalite.getValidationsRequests())
+                    validationRequest.setFormaliteGuichetUnique(originalFormalite);
 
-        // update status history items
-        originalFormalite.setFormaliteStatusHistoryItems(formaliteStatusHistoryItems);
-        for (FormaliteStatusHistoryItem formaliteStatusHistoryItem : originalFormalite.getFormaliteStatusHistoryItems())
-            formaliteStatusHistoryItem.setFormaliteGuichetUnique(originalFormalite);
+            // update status history items
+            originalFormalite.setFormaliteStatusHistoryItems(formaliteStatusHistoryItems);
+            for (FormaliteStatusHistoryItem formaliteStatusHistoryItem : originalFormalite
+                    .getFormaliteStatusHistoryItems())
+                formaliteStatusHistoryItem.setFormaliteGuichetUnique(originalFormalite);
 
-        addOrUpdateFormaliteGuichetUnique(originalFormalite);
-
-        if (formalite != null) {
-            originalFormalite.setFormalite(formalite);
             addOrUpdateFormaliteGuichetUnique(originalFormalite);
+
+            if (formalite != null) {
+                originalFormalite.setFormalite(formalite);
+                addOrUpdateFormaliteGuichetUnique(originalFormalite);
+            }
         }
         return originalFormalite;
     }

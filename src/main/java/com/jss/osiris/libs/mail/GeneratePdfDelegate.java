@@ -133,7 +133,8 @@ public class GeneratePdfDelegate {
                     (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
                             ? announcement.getNoticeHeader()
                                     .replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
-                                    .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
+                                    .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ").replaceAll("<wbr>", " ")
+                                    .replaceAll("</wbr>", " ")
                             : null);
             ctx.setVariable("notice",
                     StringEscapeUtils.unescapeHtml4(announcement.getNotice()

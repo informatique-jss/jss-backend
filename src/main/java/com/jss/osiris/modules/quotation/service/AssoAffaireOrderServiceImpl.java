@@ -249,7 +249,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 if (formalite.getId() != null) {
                     Formalite originalFormalite = formaliteService.getFormalite(formalite.getId());
-                    if (originalFormalite.getFormalitesGuichetUnique() != null)
+                    if (originalFormalite != null && originalFormalite.getFormalitesGuichetUnique() != null)
                         for (FormaliteGuichetUnique formaliteGuichetUniqueOrigin : originalFormalite
                                 .getFormalitesGuichetUnique()) {
                             Boolean found = false;
