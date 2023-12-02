@@ -121,6 +121,21 @@ public class ProfileController {
 				HttpStatus.OK);
 	}
 
+	@PostMapping(inputEntryPoint + "/responsable/password/modify")
+	public ResponseEntity<Boolean> modifyResponsablePassword(@RequestParam Integer idResponsable,
+			@RequestBody String newPassword)
+			throws OsirisValidationException, OsirisException {
+		Responsable responsable = responsableService.getResponsable(idResponsable);
+
+		if (responsable == null) {
+			responsable = responsableService.getResponsableByLoginWeb(idResponsable + "");
+			if (responsable == null)
+				throw new OsirisValidationException("idResponsable");
+		}
+		return new ResponseEntity<Boolean>(employeeService.modifyResponsablePassword(responsable, newPassword),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/login/roles")
 	public ResponseEntity<Collection<? extends GrantedAuthority>> getUserRoles() {
 		return new ResponseEntity<Collection<? extends GrantedAuthority>>(activeDirectoryHelper.getUserRoles(),

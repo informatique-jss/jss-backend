@@ -25,4 +25,6 @@ public interface EmployeeService {
     public Responsable loginWebsiteUser(User user, boolean isIntrospection);
 
     public boolean renewResponsablePassword(Responsable responsable) throws OsirisException;
+
+    public boolean modifyResponsablePassword(Responsable responsable, String newPassword) throws OsirisException;
 }
