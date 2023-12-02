@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +90,33 @@ public class TiersServiceImpl implements TiersService {
 
             if (tiersDuplicates.size() > 0)
                 throw new OsirisDuplicateException(tiersDuplicates.stream().map(Tiers::getId).toList());
+        }
+
+        // Find duplicate Responsable
+        if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
+            for (Responsable responsable : tiers.getResponsables()) {
+                if (responsable.getId() == null) {
+                    List<Responsable> responsablesDuplicates = new ArrayList<Responsable>();
+
+                    for (Responsable responsableCheck : tiers.getResponsables()) {
+                        if (responsableCheck.getId() != null && responsableCheck.getFirstname() != null
+                                && responsableCheck.getLastname() != null) {
+                            if ((StringUtils.stripAccents(responsable.getFirstname().trim()).toUpperCase()
+                                    + StringUtils.stripAccents(responsable.getLastname().trim()))
+                                    .toUpperCase()
+                                    .equals(StringUtils.stripAccents(responsableCheck.getFirstname().trim())
+                                            .toUpperCase()
+                                            + StringUtils.stripAccents(responsableCheck.getLastname().trim())
+                                                    .toUpperCase()))
+                                responsablesDuplicates.add(responsableCheck);
+                        }
+                    }
+
+                    if (responsablesDuplicates.size() > 0)
+                        throw new OsirisDuplicateException(
+                                responsablesDuplicates.stream().map(Responsable::getId).toList());
+                }
+            }
         }
 
         // If mails already exists, get their ids
