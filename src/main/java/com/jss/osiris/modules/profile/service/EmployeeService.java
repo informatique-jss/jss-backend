@@ -10,6 +10,8 @@ import com.jss.osiris.modules.tiers.model.Responsable;
 public interface EmployeeService {
     public Employee getEmployee(Integer id);
 
+    public Employee getEmployeeByUsername(String username);
+
     public List<Employee> getEmployees();
 
     public void updateUserFromActiveDirectory();

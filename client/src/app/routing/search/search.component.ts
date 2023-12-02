@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { formatDateFrance } from 'src/app/libs/FormatHelper';
 import { AppService } from '../../services/app.service';
 import { EntityType } from './EntityType';
 import { IndexEntity } from './IndexEntity';
@@ -196,5 +197,30 @@ export class SearchComponent implements OnInit {
     if (entity.text.provider)
       return entity.text.provider.label;
     return "";
+  }
+
+  getTooltipDateText(entity: IndexEntity) {
+    let text = "";
+    let createdString = "";
+    let createdDateString = "";
+    let updatedString = "";
+    let updatedDateString = "";
+
+    if (entity.createdDate)
+      createdDateString = `Créé le ${formatDateFrance(entity.createdDate)}`;
+
+    if (entity.createdBy)
+      createdString = `par ${entity.createdBy.firstname} ${entity.createdBy.lastname}`;
+
+    if (entity.udpatedDate)
+      updatedDateString = `Mis à jour le ${formatDateFrance(entity.udpatedDate)}`;
+
+    if (entity.updatedBy)
+      updatedString = `par ${entity.updatedBy.firstname} ${entity.updatedBy.lastname} `;
+
+    return `${createdDateString}
+      ${createdString}
+      ${updatedDateString}
+      ${updatedString}`;
   }
 }

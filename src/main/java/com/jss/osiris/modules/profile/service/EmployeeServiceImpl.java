@@ -49,6 +49,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public Employee getEmployeeByUsername(String username) {
+        return employeeRepository.findByUsername(username);
+    }
+
+    @Override
     public List<Employee> getEmployees() {
         return IterableUtils.toList(employeeRepository.findAll());
     }

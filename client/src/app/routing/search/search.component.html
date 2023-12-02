@@ -32,6 +32,8 @@
                         {{entity.text.city?entity.text.city.label:""}}
                       </mat-card-subtitle>
                       <mat-icon color="accent" class="mat-card-icon">group</mat-icon>
+                      <ng-container [ngTemplateOutlet]="cardDates"
+                        [ngTemplateOutletContext]="{entity:entity}"></ng-container>
                     </mat-card-header>
                   </mat-card>
                 </mat-dialog-content>
@@ -57,6 +59,8 @@
                         {{entity.text.idAs400?"("+entity.text.idAs400+")":""}}
                       </mat-card-subtitle>
                       <mat-icon color="accent" class="mat-card-icon">group</mat-icon>
+                      <ng-container [ngTemplateOutlet]="cardDates"
+                        [ngTemplateOutletContext]="{entity:entity}"></ng-container>
                     </mat-card-header>
 
                   </mat-card>
@@ -73,12 +77,13 @@
                       <mat-card-subtitle><span *ngIf="entity.text.tiers!=null">Pour {{entity.text.tiers.firstname}}
                           {{entity.text.tiers.lastname}}</span><span
                           *ngIf="entity.text.responsable!=null">{{entity.text.responsable.firstname}}
-                          {{entity.text.responsable.lastname}}</span> - créé le {{entity.text.createdDate|
-                        date:'dd/MM/yyyy à HH:mm'}}<br>Commercial <span
-                          *ngIf="entity.text.assignedTo!=null">{{entity.text.assignedTo.firstname}}
+                          {{entity.text.responsable.lastname}}</span>
+                        <br>Commercial <span *ngIf="entity.text.assignedTo!=null">{{entity.text.assignedTo.firstname}}
                           {{entity.text.assignedTo.lastname}}</span>
                       </mat-card-subtitle>
                       <mat-icon color="accent" class="mat-card-icon">request_quote</mat-icon>
+                      <ng-container [ngTemplateOutlet]="cardDates"
+                        [ngTemplateOutletContext]="{entity:entity}"></ng-container>
                     </mat-card-header>
 
                   </mat-card>
@@ -94,12 +99,13 @@
                       <mat-card-subtitle><span *ngIf="entity.text.tiers!=null">Pour {{entity.text.tiers.firstname}}
                           {{entity.text.tiers.lastname}}</span><span
                           *ngIf="entity.text.responsable!=null">{{entity.text.responsable.firstname}}
-                          {{entity.text.responsable.lastname}}</span> - créé le {{entity.text.createdDate|
-                        date:'dd/MM/yyyy à HH:mm'}}<br>Commercial <span
-                          *ngIf="entity.text.assignedTo!=null">{{entity.text.assignedTo.firstname}}
+                          {{entity.text.responsable.lastname}}</span>
+                        <br>Commercial <span *ngIf="entity.text.assignedTo!=null">{{entity.text.assignedTo.firstname}}
                           {{entity.text.assignedTo.lastname}}</span>
                       </mat-card-subtitle>
                       <mat-icon color="accent" class="mat-card-icon">request_quote</mat-icon>
+                      <ng-container [ngTemplateOutlet]="cardDates"
+                        [ngTemplateOutletContext]="{entity:entity}"></ng-container>
                     </mat-card-header>
 
                   </mat-card>
@@ -117,6 +123,8 @@
                         {{entity.text.billingLabel}} - {{entity.text.invoiceStatus.label}}
                       </mat-card-subtitle>
                       <mat-icon color="accent" class="mat-card-icon">point_of_sale</mat-icon>
+                      <ng-container [ngTemplateOutlet]="cardDates"
+                        [ngTemplateOutletContext]="{entity:entity}"></ng-container>
                     </mat-card-header>
 
                   </mat-card>
@@ -142,6 +150,8 @@
                         <p>{{getProvisionLabel(entity)}}</p>
                       </mat-card-subtitle>
                       <mat-icon color="accent" class="mat-card-icon">work</mat-icon>
+                      <ng-container [ngTemplateOutlet]="cardDates"
+                        [ngTemplateOutletContext]="{entity:entity}"></ng-container>
                     </mat-card-header>
 
                   </mat-card>
@@ -166,6 +176,8 @@
                           : "+entity.text.rna):""}}</p>
                       </mat-card-subtitle>
                       <mat-icon color="accent" class="mat-card-icon">work</mat-icon>
+                      <ng-container [ngTemplateOutlet]="cardDates"
+                        [ngTemplateOutletContext]="{entity:entity}"></ng-container>
                     </mat-card-header>
 
                   </mat-card>
@@ -178,3 +190,10 @@
     </table>
   </form>
 </div>
+
+
+<ng-template #cardDates let-entity='entity'>
+  <span class="mat-card-date" matTooltipClass="line-broken-tooltip" *ngIf="entity.createdDate"
+    [matTooltip]="getTooltipDateText(entity)">{{entity.createdDate
+    | date:'dd/MM/yyyy'}}</span>
+</ng-template>
