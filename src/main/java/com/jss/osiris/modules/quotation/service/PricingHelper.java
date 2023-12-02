@@ -90,18 +90,8 @@ public class PricingHelper {
 
     private List<SpecialOffer> getAppliableSpecialOffersForQuotation(IQuotation quotation) {
         if (quotation != null) {
-            if (quotation.getSpecialOffers() != null && quotation.getSpecialOffers().size() > 0
-                    || quotation.getOverrideSpecialOffer() != null && quotation.getOverrideSpecialOffer())
+            if (quotation.getSpecialOffers() != null && quotation.getSpecialOffers().size() > 0)
                 return quotation.getSpecialOffers();
-
-            if (quotation.getResponsable() != null && quotation.getResponsable().getTiers() != null
-                    && quotation.getResponsable().getTiers().getSpecialOffers() != null
-                    && quotation.getResponsable().getTiers().getSpecialOffers().size() > 0)
-                return quotation.getResponsable().getTiers().getSpecialOffers();
-
-            if (quotation.getTiers() != null && quotation.getTiers().getSpecialOffers() != null
-                    && quotation.getTiers().getSpecialOffers().size() > 0)
-                return quotation.getTiers().getSpecialOffers();
         }
         return null;
     }
@@ -631,6 +621,8 @@ public class PricingHelper {
                 invoiceItem.setDiscountAmount(Math.round(
                         invoiceItem.getPreTaxPrice() * assoSpecialOfferBillingType.getDiscountRate() / 100f * 100f)
                         / 100f);
+        } else {
+            invoiceItem.setDiscountAmount(0f);
         }
 
         invoiceItem.setVat(invoiceItem.getBillingItem().getBillingType().getVat());

@@ -753,8 +753,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 quotation.getResponsable(),
                 quotation.getConfrere(), quotation.getSpecialOffers(), LocalDateTime.now(), statusOpen,
                 quotation.getObservations(), quotation.getDescription(), null,
-                quotation.getDocuments(), quotation.getAssoAffaireOrders(), null,
-                quotation.getOverrideSpecialOffer(), quotation.getQuotationLabel(), false, null, null);
+                quotation.getDocuments(), quotation.getAssoAffaireOrders(), null, quotation.getQuotationLabel(), false,
+                null, null);
 
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule("SimpleModule");

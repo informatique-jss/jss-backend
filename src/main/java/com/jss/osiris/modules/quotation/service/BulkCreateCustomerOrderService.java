@@ -114,7 +114,6 @@ public class BulkCreateCustomerOrderService {
                     customerOrder = new CustomerOrder();
                     customerOrders.add(customerOrder);
                     customerOrder.setIsQuotation(false);
-                    customerOrder.setOverrideSpecialOffer(false);
                     customerOrder.setResponsable(responsable);
                     customerOrder.setAssoAffaireOrders(new ArrayList<AssoAffaireOrder>());
                     customerOrder.setCustomerOrderStatus(
