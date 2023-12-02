@@ -450,13 +450,13 @@ public class GeneratePdfDelegate {
         if (invoice.getPayments() != null)
             for (Payment payment : invoice.getPayments()) {
                 if (!payment.getIsCancelled())
-                    invoicePayment.add(paymentService.getOriginalPaymentOfPayment(payment));
+                    invoicePayment.add(payment);
             }
 
         if (customerOrder.getPayments() != null)
             for (Payment payment : customerOrder.getPayments())
                 if (!payment.getIsCancelled()) {
-                    invoicePayment.add(paymentService.getOriginalPaymentOfPayment(payment));
+                    invoicePayment.add(payment);
                     remainingToPay -= payment.getPaymentAmount();
                 }
 
