@@ -9,6 +9,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
+import { MatMenuModule } from '@angular/material/menu';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from "@angular/material/tabs";
@@ -55,6 +56,7 @@ const routes: Routes = [
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
+    MatMenuModule,
     MatDialogModule,
     MatIconModule,
     MatExpansionModule,

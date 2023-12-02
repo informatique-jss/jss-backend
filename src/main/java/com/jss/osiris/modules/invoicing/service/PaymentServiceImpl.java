@@ -948,6 +948,15 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Payment movePaymentToWaitingAccount(Payment payment) throws OsirisException, OsirisValidationException {
+        payment = getPayment(payment.getId());
+        cancelPayment(payment);
+        return generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
+                accountingAccountService.getWaitingAccountingAccount());
+    }
+
+    @Override
     public void movePaymentFromCustomerOrderToInvoice(Payment payment, CustomerOrder customerOrder, Invoice invoice)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         associateInboundPaymentAndInvoices(payment, Arrays.asList(invoice), null);
