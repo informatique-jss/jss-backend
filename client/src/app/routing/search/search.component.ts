@@ -162,6 +162,16 @@ export class SearchComponent implements OnInit {
           tabEntities.push(foundEntity);
       })
     }
+    if (tabEntities && tabEntities.length > 0)
+      return tabEntities.sort(function (a: IndexEntity, b: IndexEntity) {
+        if (!a.createdDate && b.createdDate)
+          return 1;
+        if (!b.createdDate && a.createdDate)
+          return -1;
+        if (!b.createdDate && !a.createdDate)
+          return 0;
+        return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime();
+      });
     return tabEntities;
   }
 
