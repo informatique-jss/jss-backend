@@ -255,7 +255,7 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     public Attachment addOrUpdateAttachment(Attachment attachment) {
-        if (attachment.getIsAlreadySent() == null)
+        if (attachment != null && attachment.getIsAlreadySent() == null)
             attachment.setIsAlreadySent(false);
         return attachmentRepository.save(attachment);
     }

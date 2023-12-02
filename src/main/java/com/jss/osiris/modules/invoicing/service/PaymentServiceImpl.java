@@ -32,7 +32,6 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
-import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
@@ -449,58 +448,6 @@ public class PaymentServiceImpl implements PaymentService {
                             associateOutboundCheckPayment(payment, foundPayment);
                     }
                 }
-            }
-
-            // If not found and CB payment, try to match randomly a invoice at same day or
-            // in 3 days range before
-            if (payment.getLabel().contains("FACTURE CARTE") && 1 > 2) {
-                InvoiceSearch invoiceSearch = new InvoiceSearch();
-                invoiceSearch.setStartDate(payment.getPaymentDate().toLocalDate().atTime(0, 0));
-                invoiceSearch.setEndDate(payment.getPaymentDate().toLocalDate().atTime(23, 59));
-                invoiceSearch.setInvoiceStatus(Arrays.asList(constantService.getInvoiceStatusReceived()));
-                invoiceSearch.setMaxAmount(payment.getPaymentAmount());
-                invoiceSearch.setMinAmount(payment.getPaymentAmount());
-                List<InvoiceSearchResult> invoicesFound = invoiceService.searchInvoices(invoiceSearch);
-
-                if (invoicesFound != null && invoicesFound.size() > 0)
-                    for (InvoiceSearchResult invoiceFound : invoicesFound)
-                        if (invoiceFound.getIdPaymentType().equals(constantService.getPaymentTypeCB().getId())) {
-                            associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0));
-                            break;
-                        }
-
-                invoiceSearch.setStartDate(payment.getPaymentDate().toLocalDate().minusDays(1).atTime(0, 0));
-                invoiceSearch.setEndDate(payment.getPaymentDate().toLocalDate().minusDays(1).atTime(23, 59));
-                invoicesFound = invoiceService.searchInvoices(invoiceSearch);
-
-                if (invoicesFound != null && invoicesFound.size() > 0)
-                    for (InvoiceSearchResult invoiceFound : invoicesFound)
-                        if (invoiceFound.getIdPaymentType().equals(constantService.getPaymentTypeCB().getId())) {
-                            associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0));
-                            break;
-                        }
-
-                invoiceSearch.setStartDate(payment.getPaymentDate().toLocalDate().minusDays(2).atTime(0, 0));
-                invoiceSearch.setEndDate(payment.getPaymentDate().toLocalDate().minusDays(2).atTime(23, 59));
-                invoicesFound = invoiceService.searchInvoices(invoiceSearch);
-
-                if (invoicesFound != null && invoicesFound.size() > 0)
-                    for (InvoiceSearchResult invoiceFound : invoicesFound)
-                        if (invoiceFound.getIdPaymentType().equals(constantService.getPaymentTypeCB().getId())) {
-                            associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0));
-                            break;
-                        }
-
-                invoiceSearch.setStartDate(payment.getPaymentDate().toLocalDate().minusDays(3).atTime(0, 0));
-                invoiceSearch.setEndDate(payment.getPaymentDate().toLocalDate().minusDays(3).atTime(23, 59));
-                invoicesFound = invoiceService.searchInvoices(invoiceSearch);
-
-                if (invoicesFound != null && invoicesFound.size() > 0)
-                    for (InvoiceSearchResult invoiceFound : invoicesFound)
-                        if (invoiceFound.getIdPaymentType().equals(constantService.getPaymentTypeCB().getId())) {
-                            associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0));
-                            break;
-                        }
             }
         }
     }
