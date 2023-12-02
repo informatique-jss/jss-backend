@@ -54,6 +54,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + "  i.first_reminder_date_time as firstReminderDateTime,"
                         + "  i.second_reminder_date_time as secondReminderDateTime,"
                         + "  i.third_reminder_date_time as thirdReminderDateTime,"
+                        + "  i.manual_accounting_document_number as manualAccountingDocumentNumber,"
                         + "  i.due_date as dueDate,"
                         + "  max(follow.followup_date) as lastFollowupDate,"
                         + "  COALESCE(i.total_price,0) - sum(COALESCE(case when p.is_appoint then -1 else 1 end * p.payment_amount,0)) as remainingToPay,"

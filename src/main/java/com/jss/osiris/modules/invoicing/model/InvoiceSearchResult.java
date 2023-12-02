@@ -47,6 +47,8 @@ public interface InvoiceSearchResult {
 
     public LocalDateTime getThirdReminderDateTime();
 
+    public String getManualAccountingDocumentNumber();
+
     public LocalDate getDueDate();
 
     public LocalDate getLastFollowupDate();
