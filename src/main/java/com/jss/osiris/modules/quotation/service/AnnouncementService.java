@@ -72,4 +72,7 @@ public interface AnnouncementService {
 
         public Confrere getConfrereForAnnouncement(Integer idAnnouncement);
 
+        public void completeAnnouncementWithAffaire(AssoAffaireOrder assoAffaireOrder)
+                        throws OsirisException, OsirisClientMessageException;
+
 }

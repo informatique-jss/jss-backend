@@ -287,6 +287,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             if (provision.getAnnouncement() != null) {
                 Announcement announcement = provision.getAnnouncement();
 
+                announcementService.completeAnnouncementWithAffaire(assoAffaireOrder);
+
                 // If complex, extract string from PDF and put it to notice
                 if (announcement.getIsComplexAnnouncement())
                     announcement = announcementService.updateComplexAnnouncementNotice(announcement, provision,

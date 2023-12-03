@@ -1,14 +1,12 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
-import { validateSiren } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { CompetentAuthority } from 'src/app/modules/miscellaneous/model/CompetentAuthority';
 import { CompetentAuthorityService } from 'src/app/modules/miscellaneous/services/competent.authority.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { ActType } from '../../model/ActType';
 import { Affaire } from '../../model/Affaire';
 import { BodaccSale } from '../../model/BodaccSale';
-import { Siren } from '../../model/Siren';
 import { TransfertFundsType } from '../../model/TransfertFundsType';
 
 @Component({
@@ -87,69 +85,5 @@ export class BodaccSaleComponent implements OnInit {
   getFormStatus(): boolean {
     this.bodaccSaleForm.markAllAsTouched();
     return this.bodaccSaleForm.valid;
-  }
-
-  checkSiren(fieldName: string): ValidationErrors | null {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as UntypedFormGroup;
-
-      const fieldValue = root.get(fieldName)?.value;
-      if (this.bodaccSale != undefined && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateSiren(fieldValue)))
-        return {
-          notFilled: true
-        };
-      return null;
-    };
-  }
-
-  fillSirenOwner(siren: Siren) {
-    if (siren != undefined && siren != null) {
-      this.bodaccSale.ownerSiren = siren!.uniteLegale.siren;
-      if (siren!.uniteLegale.siren != undefined && siren!.uniteLegale.siren != null) {
-        if (siren.uniteLegale.periodesUniteLegale != null && siren.uniteLegale.periodesUniteLegale != undefined && siren.uniteLegale.periodesUniteLegale.length > 0) {
-          siren.uniteLegale.periodesUniteLegale.forEach(periode => {
-            if (periode.dateFin == null) {
-              this.bodaccSale.ownerFirstname = periode.denominationUniteLegale;
-              this.bodaccSale.ownerDenomination = periode.denominationUniteLegale;
-            }
-            this.bodaccSaleForm.markAllAsTouched();
-          });
-        }
-      }
-    }
-  }
-
-  fillSirenTenant(siren: Siren) {
-    if (siren != undefined && siren != null) {
-      this.bodaccSale.tenantSiren = siren!.uniteLegale.siren;
-      if (siren!.uniteLegale.siren != undefined && siren!.uniteLegale.siren != null) {
-        if (siren.uniteLegale.periodesUniteLegale != null && siren.uniteLegale.periodesUniteLegale != undefined && siren.uniteLegale.periodesUniteLegale.length > 0) {
-          siren.uniteLegale.periodesUniteLegale.forEach(periode => {
-            if (periode.dateFin == null) {
-              this.bodaccSale.tenantDenomination = periode.denominationUniteLegale;
-              this.bodaccSale.tenantFirstname = periode.denominationUniteLegale;
-            }
-            this.bodaccSaleForm.markAllAsTouched();
-          });
-        }
-      }
-    }
-  }
-
-  fillSirenPurchaser(siren: Siren) {
-    if (siren != undefined && siren != null) {
-      this.bodaccSale.purchaserSiren = siren!.uniteLegale.siren;
-      if (siren!.uniteLegale.siren != undefined && siren!.uniteLegale.siren != null) {
-        if (siren.uniteLegale.periodesUniteLegale != null && siren.uniteLegale.periodesUniteLegale != undefined && siren.uniteLegale.periodesUniteLegale.length > 0) {
-          siren.uniteLegale.periodesUniteLegale.forEach(periode => {
-            if (periode.dateFin == null) {
-              this.bodaccSale.purchaserFirstname = periode.denominationUniteLegale;
-              this.bodaccSale.purchaserDenomination = periode.denominationUniteLegale;
-            }
-            this.bodaccSaleForm.markAllAsTouched();
-          });
-        }
-      }
-    }
   }
 }

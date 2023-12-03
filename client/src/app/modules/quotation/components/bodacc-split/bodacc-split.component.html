@@ -1,9 +1,9 @@
 <ng-template #accordionTools>
   <mat-panel-description>
-    <mat-icon color="accent"  matTooltip="Ouvrir tous les onglets"
+    <mat-icon color="accent" matTooltip="Ouvrir tous les onglets"
       (click)="accordion!.openAll();$event.stopPropagation();" class="pointer">
       unfold_more_double</mat-icon>
-    <mat-icon color="accent"  matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();"
+    <mat-icon color="accent" matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();"
       class="pointer">
       unfold_less_double</mat-icon>
   </mat-panel-description>
@@ -28,14 +28,6 @@
                   [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
                   [maxLength]="60">
                 </generic-input>
-              </td>
-              <td>
-                <autocomplete-siren [(model)]="beneficiary.beneficiaryCompanySiren" [form]="bodaccSplitForm"
-                  [propertyName]="'beneficiaryCompanySiren'+i" [isMandatory]="true" label="SIREN"
-                  [byPassAutocompletValidator]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
-                  (onOptionSelected)="fillSirenBeneficiaryCompany($event,beneficiary)">
-                </autocomplete-siren>
               </td>
               <td>
                 <generic-input [(model)]="beneficiary.beneficiaryCompanyAddress" label="Adresse"
@@ -106,13 +98,6 @@
                   [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
                   [maxLength]="60">
                 </generic-input>
-              </td>
-              <td>
-                <autocomplete-siren [(model)]="splitCompany.splitCompanySiren" [form]="bodaccSplitForm"
-                  [propertyName]="'splitCompanySiren'+i" [isMandatory]="true" label="SIREN" [isDisabled]="!editMode"
-                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [byPassAutocompletValidator]="true"
-                  (onOptionSelected)="fillSirenSplitCompany($event, splitCompany)">
-                </autocomplete-siren>
               </td>
               <td>
                 <generic-input [(model)]="splitCompany.splitCompanyAddress" label="Adresse" [form]="bodaccSplitForm"

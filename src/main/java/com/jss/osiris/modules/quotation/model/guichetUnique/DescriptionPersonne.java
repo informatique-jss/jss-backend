@@ -61,7 +61,7 @@ public class DescriptionPersonne implements Serializable, IId {
     private String pseudonyme;
 
     @Column()
-    private LocalDate dateDeNaissance;
+    private String dateDeNaissance;
 
     @Column(length = 255)
     private String paysNaissance;
@@ -194,11 +194,11 @@ public class DescriptionPersonne implements Serializable, IId {
         this.pseudonyme = pseudonyme;
     }
 
-    public LocalDate getDateDeNaissance() {
+    public String getDateDeNaissance() {
         return dateDeNaissance;
     }
 
-    public void setDateDeNaissance(LocalDate dateDeNaissance) {
+    public void setDateDeNaissance(String dateDeNaissance) {
         this.dateDeNaissance = dateDeNaissance;
     }
 

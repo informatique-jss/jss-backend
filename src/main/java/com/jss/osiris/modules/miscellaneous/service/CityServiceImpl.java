@@ -47,6 +47,11 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
+    public List<City> getCitiesByLabel(String label) {
+        return IterableUtils.toList(cityRepository.findByLabelContainingIgnoreCase(label));
+    }
+
+    @Override
     public List<City> getCitiesByCountry(Integer countryId, String city, String postalCode) {
         if (postalCode != null) {
             List<City> cities = getCitiesByPostalCode(postalCode);
