@@ -200,14 +200,6 @@
               </autocomplete-legal-form>
             </td>
             <td>
-              <autocomplete-siren [(model)]="domiciliation.legalGardianSiren" [form]="domiciliationForm"
-                propertyName="legalGardianSiren" [isMandatory]="true" label="SIREN" [isDisabled]="!editMode"
-                [byPassAutocompletValidator]="true"
-                [conditionnalRequired]="domiciliation.isLegalPerson && instanceOfCustomerOrder && !isStatusOpen"
-                (onOptionSelected)="fillSiren($event)">
-              </autocomplete-siren>
-            </td>
-            <td>
               <generic-input [(model)]="domiciliation.legalGardianDenomination" label="Dénomination"
                 [form]="domiciliationForm" propertyName="legalGardianDenomination" [isMandatory]="true"
                 [isDisabled]="!editMode"

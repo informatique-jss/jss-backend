@@ -29,10 +29,6 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.City;
-import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
-import com.jss.osiris.modules.miscellaneous.repository.CityRepository;
-import com.jss.osiris.modules.miscellaneous.repository.CompetentAuthorityRepository;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.ActuLegaleAnnouncement;
@@ -47,25 +43,13 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
-import com.jss.osiris.modules.quotation.model.guichetUnique.RneCompany;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.quotation.repository.AnnouncementRepository;
-import com.jss.osiris.modules.quotation.repository.guichetUnique.FormeJuridiqueRepository;
 
 @Service
 public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Autowired
     AnnouncementRepository announcementRepository;
-
-    @Autowired
-    CityRepository cityRepository;
-
-    @Autowired
-    FormeJuridiqueRepository formeJuridiqueRepository;
-
-    @Autowired
-    CompetentAuthorityRepository competentAuthorityRepository;
 
     @Autowired
     ConstantService constantService;
@@ -102,9 +86,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Autowired
     ProvisionService provisionService;
-
-    @Autowired
-    RneDelegateService rneDelegateService;
 
     @Override
     public List<Announcement> getAnnouncements() {
@@ -604,162 +585,75 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public String parseAnnouncement(String notice, Affaire affaire)
+    public void completeAnnouncementWithAffaire(AssoAffaireOrder assoAffaireOrder)
             throws OsirisException, OsirisClientMessageException {
-        RneCompany rneCompany = rneDelegateService.getCompanyBySiren(affaire.getSiren());
 
-        String companyAddress = "";
-        if (rneCompany != null &&
-                rneCompany.getFormality() != null &&
-                rneCompany.getFormality().getContent() != null &&
-                rneCompany.getFormality().getContent().getPersonneMorale() != null &&
-                rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise() != null &&
-                rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise()
-                        .getAdresse() != null) {
-            companyAddress = (rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise()
-                    .getAdresse().getNumVoie() != null
-                            ? rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise()
-                                    .getAdresse().getNumVoie()
-                            : "")
-                    +
-                    " " +
-                    (rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse()
-                            .getTypeVoie() != null
-                                    ? rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise()
-                                            .getAdresse().getTypeVoie().getCode()
-                                    : "")
-                    +
-                    " " +
-                    (rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse()
-                            .getVoie() != null
-                                    ? rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise()
-                                            .getAdresse().getVoie()
-                                    : "")
-                    +
-                    " " +
-                    (rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse()
-                            .getVoie() != null
-                                    ? rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise()
-                                            .getAdresse().getVoie()
-                                    : "")
-                    +
-                    " , " +
-                    (rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse()
-                            .getCommune() != null
-                                    ? rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise()
-                                            .getAdresse().getCommune()
-                                    : "")
-                    +
-                    " , " +
-                    (rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse()
-                            .getCodePostal() != null
-                                    ? rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise()
-                                            .getAdresse().getCodePostal()
-                                    : "");
-        }
+        Affaire affaire = assoAffaireOrder.getAffaire();
 
-        String mainActivity = (rneCompany != null && rneCompany.getFormality() != null
-                && rneCompany.getFormality().getContent() != null
-                && rneCompany.getFormality().getContent().getFormeExerciceActivitePrincipale() != null)
-                        ? rneCompany.getFormality().getContent().getFormeExerciceActivitePrincipale().getCode()
-                        : "";
+        if (assoAffaireOrder.getProvisions() != null)
+            for (Provision provision : assoAffaireOrder.getProvisions())
+                if (provision.getAnnouncement() != null) {
+                    Announcement announcement = provision.getAnnouncement();
 
-        Float shareSocial = (affaire != null && affaire.getShareCapital() != null) ? affaire.getShareCapital() : 0.0f;
+                    if (affaire.getIsIndividual()) {
+                        if (affaire.getFirstname() != null)
+                            announcement.setNotice(
+                                    announcement.getNotice().replaceAll("\\{prenom\\}", affaire.getFirstname()));
 
-        String label = "";
-        if (rneCompany != null &&
-                rneCompany.getFormality() != null &&
-                rneCompany.getFormality().getContent() != null &&
-                rneCompany.getFormality().getContent().getPersonneMorale() != null &&
-                rneCompany.getFormality().getContent().getPersonneMorale().getIdentite() != null &&
-                rneCompany.getFormality().getContent().getPersonneMorale().getIdentite().getEntreprise() != null) {
-            label = rneCompany.getFormality().getContent().getPersonneMorale().getIdentite().getEntreprise()
-                    .getDenomination();
-        }
+                        if (affaire.getLastname() != null)
+                            announcement
+                                    .setNotice(announcement.getNotice().replaceAll("\\{nom\\}", affaire.getLastname()));
 
-        String legalFormCode = (rneCompany != null && rneCompany.getFormality() != null)
-                ? rneCompany.getFormality().getFormeJuridique()
-                : "";
-        FormeJuridique legalForm = formeJuridiqueRepository.findByCode(legalFormCode);
-        String legalFormLabel = (legalForm != null) ? legalForm.getLabel() : "";
+                        if (affaire.getCivility() != null)
+                            announcement.setNotice(announcement.getNotice().replaceAll("\\{civilite\\}",
+                                    affaire.getCivility().getLabel()));
+                    } else if (affaire.getDenomination() != null) {
+                        announcement.setNotice(
+                                announcement.getNotice().replaceAll("\\{denomination\\}", affaire.getDenomination()));
+                    }
 
-        String cityRne = "";
-        if (rneCompany != null &&
-                rneCompany.getFormality() != null &&
-                rneCompany.getFormality().getContent() != null &&
-                rneCompany.getFormality().getContent().getPersonneMorale() != null &&
-                rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise() != null &&
-                rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise()
-                        .getAdresse() != null) {
-            cityRne = rneCompany.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse()
-                    .getCommune();
-        }
-        List<City> city = cityRepository.findByLabelContainingIgnoreCase(cityRne);
-        Integer idCity = (city != null && !city.isEmpty()) ? city.get(0).getId() : 0;
+                    if (affaire.getAddress() != null)
+                        announcement.setNotice(
+                                announcement.getNotice().replaceAll("\\{adresse\\}", affaire.getAddress()));
 
-        String competentAuthorityTypeRcsCode = (constantService.getCompetentAuthorityTypeRcs() != null)
-                ? constantService.getCompetentAuthorityTypeRcs().getCode()
-                : "";
-        CompetentAuthority ca = competentAuthorityRepository.findByCityIdAndByAuthorityType(idCity,
-                competentAuthorityTypeRcsCode);
+                    if (affaire.getCity() != null)
+                        announcement.setNotice(
+                                announcement.getNotice().replaceAll("\\{ville\\}", affaire.getCity().getLabel()));
 
-        Boolean isIndividual = affaire.getIsIndividual();
-        String firstName = (affaire.getFirstname() != null) ? affaire.getFirstname() : "";
-        String lastName = (affaire.getLastname() != null) ? affaire.getLastname() : "";
-        String civility = (affaire.getCivility() != null && affaire.getCivility().getLabel() != null)
-                ? affaire.getCivility().getLabel()
-                : "";
-        String addressAffaire = (affaire.getAddress() != null) ? affaire.getAddress() : "";
-        String postalCode = (affaire.getPostalCode() != null) ? affaire.getPostalCode() : "";
+                    if (affaire.getPostalCode() != null)
+                        announcement.setNotice(
+                                announcement.getNotice().replaceAll("\\{codePostal\\}", affaire.getPostalCode()));
 
-        if (isIndividual) {
-            if (firstName != null)
-                notice = notice.replace("{prenom}", firstName.toString());
-            if (lastName != null)
-                notice = notice.replace("{nom}", lastName.toString());
-            if (civility != null)
-                notice = notice.replace("{civility}", civility.toString());
-            if (addressAffaire != null)
-                notice = notice.replace("{adresse}", addressAffaire.toString());
-            if (cityRne != null)
-                notice = notice.replace("{ville}", cityRne.toString());
-            if (postalCode != null)
-                notice = notice.replace("{codePostal}", postalCode.toString());
-        }
+                    if (affaire.getMainActivity() != null)
+                        announcement.setNotice(announcement.getNotice().replaceAll("\\{activitePrincipale\\}",
+                                affaire.getMainActivity().getLabel()));
 
-        if (mainActivity != null)
-            notice = notice.replace("{activitePrincipale}", mainActivity.toString());
-        if (postalCode != null)
-            notice = notice.replace("{codePostalEntreprise}", postalCode.toString());
-        if (label != null)
-            notice = notice.replace("{nomSociete}", label.toString());
-        if (shareSocial != null)
-            notice = notice.replace("{capitalSocial}", shareSocial.toString());
-        if (legalForm != null)
-            notice = notice.replace("{formeJuridique}", legalFormLabel);
-        if (companyAddress != null)
-            notice = notice.replace("{adresseEntreprise}", addressAffaire.toString());
-        if (cityRne != null)
-            notice = notice.replace("{villeEntreprise}", cityRne);
+                    if (affaire.getShareCapital() != null)
+                        announcement.setNotice(announcement.getNotice().replaceAll("\\{capitalSocial\\}",
+                                affaire.getShareCapital().toString()));
 
-        String competentAuthorityLabel = "";
-        String competentAuthoritycityLabel = "";
+                    if (affaire.getLegalForm() != null)
+                        announcement.setNotice(announcement.getNotice().replaceAll("\\{formeJuridique\\}",
+                                affaire.getLegalForm().getLabel()));
 
-        if (ca != null) {
+                    if (affaire.getSiren() != null)
+                        announcement.setNotice(announcement.getNotice().replaceAll("\\{siren\\}", affaire.getSiren()));
 
-            if (ca.getLabel() != null) {
-                competentAuthorityLabel = ca.getLabel();
-                notice = notice.replace("{autoriteCompetente}", competentAuthorityLabel);
-            }
-            if (ca.getCity() != null) {
-                competentAuthorityLabel = ca.getCity().getLabel();
-                notice = notice.replace("{autoriteCompetenteVille}", competentAuthoritycityLabel);
-            }
-        }
-        if (notice != null)
+                    if (affaire.getSiret() != null)
+                        announcement.setNotice(announcement.getNotice().replaceAll("\\{siret\\}", affaire.getSiret()));
 
-            return notice;
-        else
-            return null;
+                    if (affaire.getRna() != null)
+                        announcement.setNotice(announcement.getNotice().replaceAll("\\{rna\\}", affaire.getRna()));
+
+                    if (affaire.getCompetentAuthority() != null) {
+                        announcement
+                                .setNotice(announcement.getNotice().replaceAll("\\{autoriteCompetenteDenomination\\}",
+                                        affaire.getCompetentAuthority().getLabel()));
+
+                        if (affaire.getCompetentAuthority().getCity() != null)
+                            announcement.setNotice(announcement.getNotice().replaceAll("\\{autoriteCompetenteVille\\}",
+                                    affaire.getCompetentAuthority().getCity().getLabel()));
+                    }
+                }
     }
 }

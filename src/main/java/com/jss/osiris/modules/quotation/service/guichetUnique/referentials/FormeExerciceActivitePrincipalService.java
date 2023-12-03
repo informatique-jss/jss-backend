@@ -6,4 +6,6 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeEx
 
 public interface FormeExerciceActivitePrincipalService {
     public List<FormeExerciceActivitePrincipal> getFormeExerciceActivitePrincipal();
+
+    public FormeExerciceActivitePrincipal getFormeExerciceActivitePrincipal(String code);
 }

@@ -29,4 +29,11 @@ export class AutocompleteFormeJuridiqueComponent extends GenericLocalAutocomplet
     this.FormeJuridiqueService.getFormeJuridique().subscribe(response => this.types = response);
   }
 
+  displayLabel(object: any): string {
+    if (object && object.label)
+      return object.label + " (" + object.labelShort + ")";
+    if (typeof object === "string")
+      return object;
+    return "";
+  }
 }

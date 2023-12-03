@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.quotation.model.guichetUnique;
 
-public class RneLogInResponse {
+public class RneLoginResponse {
     private String token;
 
     public String getToken() {

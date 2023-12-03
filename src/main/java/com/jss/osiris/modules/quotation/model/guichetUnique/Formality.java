@@ -1,23 +1,16 @@
 package com.jss.osiris.modules.quotation.model.guichetUnique;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
+import java.util.ArrayList;
 
-@Entity
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
+
 public class Formality {
-    @Id
-    @SequenceGenerator(name = "guichet_unique_formality_sequence", sequenceName = "guichet_unique_formality_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "guichet_unique_formality_sequence")
-    private Integer id;
-
     private String siren;
     private Content content;
     private String typePersonne;
     private boolean diffusionCommerciale;
-    private String formeJuridique;
+    private FormeJuridique formeJuridique;
+    private ArrayList<Historique> historique;
 
     public String getSiren() {
         return siren;
@@ -51,11 +44,19 @@ public class Formality {
         this.diffusionCommerciale = diffusionCommerciale;
     }
 
-    public String getFormeJuridique() {
+    public ArrayList<Historique> getHistorique() {
+        return historique;
+    }
+
+    public void setHistorique(ArrayList<Historique> historique) {
+        this.historique = historique;
+    }
+
+    public FormeJuridique getFormeJuridique() {
         return formeJuridique;
     }
 
-    public void setFormeJuridique(String formeJuridique) {
+    public void setFormeJuridique(FormeJuridique formeJuridique) {
         this.formeJuridique = formeJuridique;
     }
 
