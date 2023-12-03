@@ -3,14 +3,18 @@ package com.jss.osiris.modules.quotation.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
@@ -22,10 +26,13 @@ public class DirectDebitTransfert implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false)
+	@IndexedField
 	private String label;
 
+	@IndexedField
 	private Float transfertAmount;
 
+	@IndexedField
 	private LocalDateTime transfertDateTime;
 
 	@Column(length = 40)
@@ -41,6 +48,14 @@ public class DirectDebitTransfert implements Serializable, IId {
 
 	private Boolean isAlreadyExported;
 	private Boolean isCancelled;
+	private Boolean isMatched;
+
+	@OneToMany(mappedBy = "directDebitTransfert")
+	@JsonIgnoreProperties(value = { "bankTransfert", "invoiceItems", "customerOrder", "payments",
+			"deposits", "accountingRecords", "customerOrderForInboundInvoice", "creditNote", "attachments",
+			"azureInvoice", "azureReceipt", "invoices", "directDebitTransfert",
+			"reverseCreditNote" }, allowSetters = true)
+	List<Invoice> invoices;
 
 	public Integer getId() {
 		return id;
@@ -128,6 +143,22 @@ public class DirectDebitTransfert implements Serializable, IId {
 
 	public void setIsCancelled(Boolean isCancelled) {
 		this.isCancelled = isCancelled;
+	}
+
+	public List<Invoice> getInvoices() {
+		return invoices;
+	}
+
+	public void setInvoices(List<Invoice> invoices) {
+		this.invoices = invoices;
+	}
+
+	public Boolean getIsMatched() {
+		return isMatched;
+	}
+
+	public void setIsMatched(Boolean isMatched) {
+		this.isMatched = isMatched;
 	}
 
 }

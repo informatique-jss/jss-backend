@@ -9,13 +9,21 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_prenom_ancien_exploitant", columnList = "id_ancien_exploitant"),
+        @Index(name = "idx_prenom_description_entrepreneur", columnList = "id_description_entrepreneur"),
+        @Index(name = "idx_prenom_locataire_gerant_mandataire", columnList = "id_locataire_gerant_mandataire"),
+        @Index(name = "idx_prenom_preneur_bail", columnList = "id_preneur_bail"),
+        @Index(name = "idx_prenom_description_personne", columnList = "id_description_personne") })
 public class Prenom implements Serializable, IId {
 
     @Id

@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
@@ -31,8 +32,10 @@ public class BankTransfert implements Serializable, IId {
 	@IndexedField
 	private String label;
 
+	@IndexedField
 	private Float transfertAmount;
 
+	@IndexedField
 	private LocalDateTime transfertDateTime;
 
 	@Column(length = 40)
@@ -41,17 +44,15 @@ public class BankTransfert implements Serializable, IId {
 	@Column(length = 40)
 	private String transfertBic;
 
-	private Boolean isAlreadyExported;
+	@Column(columnDefinition = "TEXT")
+	private String comment;
 
-	@OneToMany(mappedBy = "bankTransfert")
-	@JsonIgnoreProperties(value = { "bankTransfert", "payment", "accountingRecords", "provision",
-			"invoiceItem" }, allowSetters = true)
-	List<Debour> debours;
+	private Boolean isAlreadyExported;
 
 	@OneToMany(mappedBy = "bankTransfert")
 	@JsonIgnoreProperties(value = { "bankTransfert", "invoiceItems", "customerOrder", "payments",
 			"deposits", "accountingRecords", "customerOrderForInboundInvoice", "creditNote", "attachments",
-			"azureInvoice", "azureReceipt",
+			"azureInvoice", "azureReceipt", "invoices",
 			"reverseCreditNote" }, allowSetters = true)
 	List<Invoice> invoices;
 
@@ -62,6 +63,13 @@ public class BankTransfert implements Serializable, IId {
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "deposits" }, allowSetters = true)
 	private CustomerOrder customerOrder;
+
+	private Boolean isMatched;
+
+	@OneToMany(mappedBy = "bankTransfert", fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = { "bankTransfert", "accountingRecords", "invoice", "originPayment",
+			"childrenPayments", "customerOrder" }, allowSetters = true)
+	private List<Payment> payments;
 
 	public Integer getId() {
 		return id;
@@ -119,14 +127,6 @@ public class BankTransfert implements Serializable, IId {
 		this.transfertIban = transfertIban;
 	}
 
-	public List<Debour> getDebours() {
-		return debours;
-	}
-
-	public void setDebours(List<Debour> debours) {
-		this.debours = debours;
-	}
-
 	public List<Invoice> getInvoices() {
 		return invoices;
 	}
@@ -157,6 +157,30 @@ public class BankTransfert implements Serializable, IId {
 
 	public void setCustomerOrder(CustomerOrder customerOrder) {
 		this.customerOrder = customerOrder;
+	}
+
+	public Boolean getIsMatched() {
+		return isMatched;
+	}
+
+	public void setIsMatched(Boolean isMatched) {
+		this.isMatched = isMatched;
+	}
+
+	public List<Payment> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<Payment> payments) {
+		this.payments = payments;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 }

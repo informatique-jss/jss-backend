@@ -11,7 +11,7 @@ export function instanceOfTiers(object: any): object is Tiers {
 
 export function instanceOfConfrere(object: any): object is Confrere {
   if (object != null)
-    return 'label' in object;
+    return 'paperGrade' in object;
   return false;
 }
 

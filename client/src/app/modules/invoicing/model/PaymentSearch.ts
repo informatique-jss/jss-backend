@@ -1,4 +1,3 @@
-import { PaymentWay } from "./PaymentWay";
 
 export interface PaymentSearch {
   startDate: Date | undefined;
@@ -6,6 +5,8 @@ export interface PaymentSearch {
   minAmount: number;
   maxAmount: number;
   label: string;
-  paymentWays: PaymentWay[];
   isHideAssociatedPayments: boolean;
+  isHideCancelledPayments: boolean;
+  isHideAppoint: boolean;
+  idPayment: number;
 }

@@ -1,13 +1,15 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
+import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
+import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { COMPETENT_AUTHORITY_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
 import { CompetentAuthority } from '../../../miscellaneous/model/CompetentAuthority';
@@ -35,19 +37,23 @@ export class CompetentAuthorityComponent implements OnInit {
   searchText: string = "";
   selectedcompetentAuthority: CompetentAuthority | undefined;
   selectedCompetentAuthorityType: CompetentAuthorityType | undefined;
-  selectedcompetentAuthorityId: number | undefined;
   displayedColumns: SortTableColumn[] = [];
   editMode: boolean = false;
   selectedCompetentAuthorityId: number | undefined;
+  invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
 
   saveObservableSubscription: Subscription = new Subscription;
   COMPETENT_AUTHORITY_ENTITY_TYPE = COMPETENT_AUTHORITY_ENTITY_TYPE;
 
+  @Input() idCompetentAuthority: number | undefined;
 
   ngOnInit(): void {
-    this.appService.changeHeaderTitle("Autorités compétentes");
+    if (!this.idCompetentAuthority)
+      this.appService.changeHeaderTitle("Autorités compétentes");
 
     this.selectedCompetentAuthorityId = this.activatedRoute.snapshot.params.id;
+    if (this.idCompetentAuthority)
+      this.selectedCompetentAuthorityId = this.idCompetentAuthority;
 
     if (this.selectedCompetentAuthorityId) {
       this.competentAuthorityService.getCompetentAuthorityById(this.selectedCompetentAuthorityId).subscribe(response => {
@@ -84,9 +90,13 @@ export class CompetentAuthorityComponent implements OnInit {
 
   selectCompetentAuthority(element: CompetentAuthority) {
     this.selectedcompetentAuthority = element;
-    this.selectedcompetentAuthorityId = element.id;
+    this.selectedCompetentAuthorityId = element.id;
     this.getCitiesForCurrentCompetentAuthority();
-    this.appService.changeHeaderTitle(element.label);
+    if (!this.idCompetentAuthority)
+      this.appService.changeHeaderTitle(element.label);
+
+    setTimeout(() =>
+      this.invoiceSearch.customerOrders = [{ id: this.selectedcompetentAuthority!.id } as ITiers], 0);
   }
 
   limitTextareaSize(numberOfLine: number) {

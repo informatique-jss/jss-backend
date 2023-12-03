@@ -1,8 +1,10 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { AppService } from '../../../../services/app.service';
 import { DirectDebitTransfertService } from '../../../quotation/services/direct.debit.transfert.service';
 import { DirectDebitTransfertSearch } from '../../model/DirectDebitTransfertSearch';
 import { DirectDebitTransfertSearchResult } from '../../model/DirectDebitTransfertSearchResult';
@@ -25,7 +27,9 @@ export class DirectDebitTransfertListComponent implements OnInit, AfterContentCh
     private directDebitTransfertSearchResultService: DirectDebitTransfertSearchResultService,
     private changeDetectorRef: ChangeDetectorRef,
     private formBuilder: FormBuilder,
-    private directDebitTransfertService: DirectDebitTransfertService
+    private directDebitTransfertService: DirectDebitTransfertService,
+    private activatedRoute: ActivatedRoute,
+    private appService: AppService
   ) { }
 
   ngAfterContentChecked(): void {
@@ -51,6 +55,14 @@ export class DirectDebitTransfertListComponent implements OnInit, AfterContentCh
 
 
     this.transfertSearch.isHideExportedDirectDebitTransfert = true;
+
+    let idDirectDebitTransfert = this.activatedRoute.snapshot.params.id;
+    if (idDirectDebitTransfert) {
+      this.transfertSearch.idDirectDebitTransfert = idDirectDebitTransfert;
+      this.transfertSearch.isHideExportedDirectDebitTransfert = false;
+      this.appService.changeHeaderTitle("Prélèvements");
+      this.searchTransferts();
+    }
   }
 
   transfertForm = this.formBuilder.group({

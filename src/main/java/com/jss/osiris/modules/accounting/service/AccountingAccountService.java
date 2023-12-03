@@ -38,10 +38,6 @@ public interface AccountingAccountService {
 
         public AccountingAccount generateAccountingAccountsForProduct(String label) throws OsirisException;
 
-        public AccountingAccount getProfitAccountingAccount() throws OsirisException;
-
-        public AccountingAccount getLostAccountingAccount() throws OsirisException;
-
         public AccountingAccount updateAccountingAccountLabel(AccountingAccount accountingAccount, String label)
                         throws OsirisException;
 }

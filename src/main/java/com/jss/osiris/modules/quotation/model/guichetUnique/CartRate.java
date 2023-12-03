@@ -1,22 +1,20 @@
 package com.jss.osiris.modules.quotation.model.guichetUnique;
 
-import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.quotation.model.Debour;
+import javax.persistence.Table;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_cart_rate_cart", columnList = "id_cart") })
 public class CartRate {
 
     @Id
@@ -39,10 +37,6 @@ public class CartRate {
     private String recipientCode;
     private String recipientName;
     private long subTotal;
-
-    @OneToMany(mappedBy = "cartRate", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "cartRate" }, allowSetters = true)
-    private List<Debour> debours;
 
     public Integer getId() {
         return id;
@@ -122,14 +116,6 @@ public class CartRate {
 
     public void setCart(Cart cart) {
         this.cart = cart;
-    }
-
-    public List<Debour> getDebours() {
-        return debours;
-    }
-
-    public void setDebours(List<Debour> debours) {
-        this.debours = debours;
     }
 
 }

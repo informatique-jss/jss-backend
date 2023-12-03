@@ -1,13 +1,16 @@
 package com.jss.osiris.modules.tiers.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.search.service.SearchService;
@@ -64,11 +67,6 @@ public class TiersServiceImpl implements TiersService {
         Optional<Tiers> tiers = tiersRepository.findById(id);
         if (tiers.isPresent()) {
             Tiers tiersInstance = tiers.get();
-            tiersInstance.setFirstBilling(invoiceService.getFirstBillingDateForTiers(tiersInstance));
-            if (tiersInstance.getResponsables() != null) {
-                for (Responsable responsable : tiersInstance.getResponsables())
-                    responsable.setFirstBilling(invoiceService.getFirstBillingDateForResponsable(responsable));
-            }
             return tiersInstance;
         }
         return null;
@@ -76,9 +74,50 @@ public class TiersServiceImpl implements TiersService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Tiers addOrUpdateTiers(Tiers tiers) throws OsirisException {
+    public Tiers addOrUpdateTiers(Tiers tiers) throws OsirisException, OsirisDuplicateException {
         if (tiers == null)
             throw new OsirisException(null, "Provided tiers is null");
+
+        // Find duplicate Tiers
+        if (tiers.getId() == null) {
+            List<Tiers> tiersDuplicates = new ArrayList<Tiers>();
+            if (tiers.getIsIndividual() != null && tiers.getIsIndividual() == true)
+                tiersDuplicates = tiersRepository.findByPostalCodeAndName(tiers.getPostalCode(), tiers.getFirstname(),
+                        tiers.getLastname());
+            else
+                tiersDuplicates = tiersRepository.findByPostalCodeAndDenomination(tiers.getPostalCode(),
+                        tiers.getDenomination());
+
+            if (tiersDuplicates.size() > 0)
+                throw new OsirisDuplicateException(tiersDuplicates.stream().map(Tiers::getId).toList());
+        }
+
+        // Find duplicate Responsable
+        if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
+            for (Responsable responsable : tiers.getResponsables()) {
+                if (responsable.getId() == null) {
+                    List<Responsable> responsablesDuplicates = new ArrayList<Responsable>();
+
+                    for (Responsable responsableCheck : tiers.getResponsables()) {
+                        if (responsableCheck.getId() != null && responsableCheck.getFirstname() != null
+                                && responsableCheck.getLastname() != null) {
+                            if ((StringUtils.stripAccents(responsable.getFirstname().trim()).toUpperCase()
+                                    + StringUtils.stripAccents(responsable.getLastname().trim()))
+                                    .toUpperCase()
+                                    .equals(StringUtils.stripAccents(responsableCheck.getFirstname().trim())
+                                            .toUpperCase()
+                                            + StringUtils.stripAccents(responsableCheck.getLastname().trim())
+                                                    .toUpperCase()))
+                                responsablesDuplicates.add(responsableCheck);
+                        }
+                    }
+
+                    if (responsablesDuplicates.size() > 0)
+                        throw new OsirisDuplicateException(
+                                responsablesDuplicates.stream().map(Responsable::getId).toList());
+                }
+            }
+        }
 
         // If mails already exists, get their ids
         if (tiers != null && tiers.getMails() != null && tiers.getMails().size() > 0)
@@ -159,12 +198,12 @@ public class TiersServiceImpl implements TiersService {
 
         tiers = tiersRepository.save(tiers);
 
-        indexEntityService.indexEntity(tiers, tiers.getId());
+        indexEntityService.indexEntity(tiers);
         if (tiers.getResponsables() != null)
             for (Responsable responsable : tiers.getResponsables()) {
                 if (responsable.getLoginWeb() == null)
                     responsable.setLoginWeb(responsable.getId() + "");
-                indexEntityService.indexEntity(responsable, responsable.getId());
+                indexEntityService.indexEntity(responsable);
             }
 
         // Set default customer order assignation to sales employee if not set
@@ -191,7 +230,7 @@ public class TiersServiceImpl implements TiersService {
         List<Tiers> tiers = IterableUtils.toList(tiersRepository.findAll());
         if (tiers != null)
             for (Tiers tier : tiers)
-                indexEntityService.indexEntity(tier, tier.getId());
+                indexEntityService.indexEntity(tier);
     }
 
     @Override

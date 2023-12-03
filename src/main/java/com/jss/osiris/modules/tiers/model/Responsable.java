@@ -29,6 +29,7 @@ import com.jss.osiris.modules.miscellaneous.model.Civility;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
+import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
@@ -38,7 +39,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 @Table(indexes = { @Index(name = "idx_responsable_tiers", columnList = "id_tiers"),
 		@Index(name = "idx_responsable_login_web", columnList = "loginWeb", unique = true) })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Responsable implements ITiers, IAttachment {
+public class Responsable implements ITiers, IAttachment, IGenericTiers {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@IndexedField
@@ -92,7 +93,6 @@ public class Responsable implements ITiers, IAttachment {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_default_customer_order_employee")
-	@IndexedField
 	private Employee defaultCustomerOrderEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -524,6 +524,18 @@ public class Responsable implements ITiers, IAttachment {
 		if (getTiers() != null)
 			return getTiers().getIntercommunityVat();
 		return null;
+	}
+
+	@Override
+	public Boolean getIsProvisionalPaymentMandatory() {
+		if (getTiers() != null)
+			return getTiers().getIsProvisionalPaymentMandatory();
+		return null;
+	}
+
+	@Override
+	public String getLabel() {
+		return getFirstname() + " " + getLastname();
 	}
 
 }

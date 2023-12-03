@@ -14,6 +14,8 @@ import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
+import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.model.User;
 import com.jss.osiris.modules.profile.repository.EmployeeRepository;
@@ -35,12 +37,20 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     MailHelper mailHelper;
 
+    @Autowired
+    CustomerOrderOriginService customerOrderOriginService;
+
     @Override
     public Employee getEmployee(Integer id) {
         Optional<Employee> employee = employeeRepository.findById(id);
         if (employee.isPresent())
             return employee.get();
         return null;
+    }
+
+    @Override
+    public Employee getEmployeeByUsername(String username) {
+        return employeeRepository.findByUsername(username);
     }
 
     @Override
@@ -133,9 +143,12 @@ public class EmployeeServiceImpl implements EmployeeService {
             String passwordExpected = responsable.getPassword();
             String passwordGiven = diggestPassword(user.getPassword(), responsable.getSalt());
 
-            // TODO : rajouter le check sur le user serv web
-            if (passwordExpected != null && passwordExpected.equals(passwordGiven) || isIntrospection)
-                return responsable;
+            // Check if user authorized
+            List<CustomerOrderOrigin> origins = customerOrderOriginService
+                    .getByUsername(activeDirectoryHelper.getCurrentUsername());
+            if (origins != null && origins.size() == 1)
+                if (passwordExpected != null && passwordExpected.equals(passwordGiven) || isIntrospection)
+                    return responsable;
         }
         return null;
     }
@@ -151,6 +164,23 @@ public class EmployeeServiceImpl implements EmployeeService {
         responsableService.addOrUpdateResponsable(responsable);
 
         mailHelper.sendNewPasswordMail(responsable, password);
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean modifyResponsablePassword(Responsable responsable, String newPassword) throws OsirisException {
+        String salt = SSLHelper.randomPassword(20);
+
+        responsable.setSalt(salt);
+        responsable.setPassword(diggestPassword(newPassword, salt));
+
+        // Check if user authorized
+        List<CustomerOrderOrigin> origins = customerOrderOriginService
+                .getByUsername(activeDirectoryHelper.getCurrentUsername());
+        if (origins != null && origins.size() == 1)
+            responsableService.addOrUpdateResponsable(responsable);
+
         return true;
     }
 

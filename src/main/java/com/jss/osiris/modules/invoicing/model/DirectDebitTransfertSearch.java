@@ -14,6 +14,8 @@ public class DirectDebitTransfertSearch {
     @JsonProperty("isHideExportedDirectDebitTransfert")
     private boolean isHideExportedDirectDebitTransfert;
 
+    private Integer idDirectDebitTransfert;
+
     public LocalDateTime getStartDate() {
         return startDate;
     }
@@ -60,6 +62,14 @@ public class DirectDebitTransfertSearch {
 
     public void setHideExportedDirectDebitTransfert(boolean isHideExportedDirectDebitTransfert) {
         this.isHideExportedDirectDebitTransfert = isHideExportedDirectDebitTransfert;
+    }
+
+    public Integer getIdDirectDebitTransfert() {
+        return idDirectDebitTransfert;
+    }
+
+    public void setIdDirectDebitTransfert(Integer idDirectDebitTransfert) {
+        this.idDirectDebitTransfert = idDirectDebitTransfert;
     }
 
 }

@@ -6,7 +6,6 @@ import { Affaire } from '../../model/Affaire';
 import { CustomerOrderStatus } from '../../model/CustomerOrderStatus';
 import { OrderingSearch } from '../../model/OrderingSearch';
 import { OrderingSearchResult } from '../../model/OrderingSearchResult';
-import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 
 @Component({
@@ -24,7 +23,6 @@ export class OrderSimilaritiesDialogComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<AddAffaireDialogComponent>,
-    private customerOrderStatusService: CustomerOrderStatusService,
   ) { }
 
   ngOnInit() {

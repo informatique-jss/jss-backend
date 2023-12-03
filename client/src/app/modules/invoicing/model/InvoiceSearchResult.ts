@@ -18,12 +18,14 @@ export interface InvoiceSearchResult {
   firstReminderDateTime: Date;
   secondReminderDateTime: Date;
   thirdReminderDateTime: Date;
+  manualAccountingDocumentNumber: string;
   dueDate: Date;
   lastFollowupDate: Date;
   totalPrice: number;
   customerOrderDescription: string;
   paymentId: string;
   remainingToPay: number;
+  idPaymentType: number;
   invoiceRecipient: string;
   isInvoiceFromProvider: boolean;
   isProviderCreditNote: boolean;

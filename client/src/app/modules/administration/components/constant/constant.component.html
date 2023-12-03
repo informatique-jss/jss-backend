@@ -599,6 +599,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeRneUpdate"
+                label="Type de poste de facturation - Mise à jour de la fiche RNE" [form]="constantForm"
+                propertyName="billingTypeRneUpdate" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeVacationUpdateBeneficialOwners"
                 label="Type de poste de facturation - Vacation - Mise à jour - Bénéficiaires Effectifs"
                 [form]="constantForm" propertyName="billingTypeVacationUpdateBeneficialOwners" [isMandatory]="true"
@@ -957,6 +965,22 @@
           </tr>
           <tr>
             <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypeChambreAgriculture"
+                label="Type d'authorité compétente - Chambre d'agriculture" [form]="constantForm"
+                propertyName="competentAuthorityTypeChambreAgriculture" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypeUrssaf"
+                label="Type d'authorité compétente - URSSAF" [form]="constantForm"
+                propertyName="competentAuthorityTypeUrssaf" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-competent-authority-type [(model)]="constant.competentAuthorityTypeDireccte"
                 label="Type d'authorité compétente - DIRECCTE" [form]="constantForm"
                 propertyName="competentAuthorityTypeDireccte" [isMandatory]="true"
@@ -1015,20 +1039,6 @@
                 label="Statut de facture - avoir reçu" [form]="constantForm"
                 propertyName="invoiceStatusCreditNoteReceived" [isMandatory]="true" [isDisabled]="!editMode">
               </select-invoice-status-one>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-payment-way-one [(model)]="constant.paymentWayInbound" label="Sens de paiement - entrant"
-                [form]="constantForm" propertyName="paymentWayInbound" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-payment-way-one>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-payment-way-one [(model)]="constant.paymentWayOutboud" label="Sens de paiement - sortant"
-                [form]="constantForm" propertyName="paymentWayOutboud" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-payment-way-one>
             </td>
           </tr>
           <tr>
@@ -1260,18 +1270,16 @@
           </tr>
           <tr>
             <td>
-              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountLost"
-                [form]="constantForm" propertyName="principalAccountingAccountLost" [isMandatory]="true"
-                label="Compte comptable principal - Pertes"
-                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+              <autocomplete-accounting-account [(model)]="constant.accountingAccountLost" [form]="constantForm"
+                propertyName="principalAccountingAccountLost" [isMandatory]="true"
+                label="Compte comptable principal - Pertes" [isDisabled]="!editMode"></autocomplete-accounting-account>
             </td>
           </tr>
           <tr>
             <td>
-              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountProfit"
-                [form]="constantForm" propertyName="principalAccountingAccountProfit" [isMandatory]="true"
-                label="Compte comptable principal - Profit"
-                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+              <autocomplete-accounting-account [(model)]="constant.accountingAccountProfit" [form]="constantForm"
+                propertyName="principalAccountingAccountProfit" [isMandatory]="true"
+                label="Compte comptable principal - Profit" [isDisabled]="!editMode"></autocomplete-accounting-account>
             </td>
           </tr>
           <tr>
@@ -1294,6 +1302,21 @@
               <autocomplete-accounting-account [(model)]="constant.accountingAccountCaisse" [form]="constantForm"
                 propertyName="accountingAccountCaisse" [isMandatory]="true" [isDisabled]="!editMode"
                 label="Compte comptable - Caisse"></autocomplete-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-provider [(model)]="constant.providerCentralPay" [form]="constantForm"
+                propertyName="providerCentralPay" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Fournisseur - Central Pay"></autocomplete-provider>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-followup [(model)]="constant.tiersFollowupTypeInvoiceReminder"
+                label="Type de suivi - relance facture" [form]="constantForm"
+                propertyName="tiersFollowupTypeInvoiceReminder" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-followup>
             </td>
           </tr>
         </table>

@@ -14,7 +14,7 @@ public interface CharacterPriceService {
 
     public CharacterPrice addOrUpdateCharacterPrice(CharacterPrice characterPrice);
 
-    public int getCharacterNumber(Provision provision);
+    public int getCharacterNumber(Provision provision, boolean ignoreHeaderFree);
 
     public CharacterPrice getCharacterPrice(Provision provision);
 

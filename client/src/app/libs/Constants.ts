@@ -5,7 +5,7 @@ export const SEARCH_KEY_CODE: string = "F8";
 export const NOTIFICATION_KEY_CODE: string = "F9";
 export const SAVE_KEY_CODE: string = "F2";
 export const NOTIFICATION_REFRESH_INTERVAL: number = 30 * 1000;
-export const MAX_SIZE_UPLOAD_FILES = 5242880;
+export const MAX_SIZE_UPLOAD_FILES = 10485760;
 export const AZURE_CONFIDENT_THRESHOLD: number = 0.95;
 export const INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = 2;
 export const GUICHET_UNIQUE_BASE_URL = "https://guichet-unique.inpi.fr/";
@@ -79,8 +79,15 @@ export const PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED = "PROVISION_GUICHET_UNIQU
 
 
 // Reporting datasets
-export const REPORTING_DATASET_CUSTOMER_ORDER = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante";
 export const REPORTING_DATASET_QUOTATION = "Donneur d'ordre / Devis / Prestations - année calendaire courante";
-export const REPORTING_DATASET_VAT = "TVA";
-export const REPORTING_DATASET_TIERS = "Tiers / Responsable / CA / Documents";
-export const REPORTING_DATASET_CUSTOMER_ORDER_FOR_TIERS = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante pour un tiers";
+export const REPORTING_DATASET_TURNOVER_AMOUNT = "CA HT / TTC / avec et sans débours";
+export const REPORTING_DATASET_TURNOVER_VAT_AMOUNT = "CA HT / TTC / avec et sans débours - TVA";
+export const REPORTING_DATASET_CUSTOMER_ORDER = "Commandes";
+export const REPORTING_DATASET_PROVISION = "Prestations";
+export const REPORTING_DATASET_ANNOUNCEMENT = "Annonces légales";
+export const REPORTING_DATASET_TIERS = "Tiers / responsables";
+export const REPORTING_DATASET_PROVISION_PRODUCTION = "Production : prestations";
+export const REPORTING_DATASET_RECOVERY = "Recouvrement";
+
+// INPI Status
+export const GUICHET_UNIQUE_STATUS_VALIDATION_PENDING = "VALIDATION_PENDING";
