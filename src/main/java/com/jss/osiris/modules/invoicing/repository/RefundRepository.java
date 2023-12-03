@@ -31,7 +31,7 @@ public interface RefundRepository extends QueryCacheCrudRepository<Refund, Integ
                         + " and r.refund_date_time>=:startDate and r.refund_date_time<=:endDate "
                         + "  and (:minAmount is null or r.refund_amount>=CAST(CAST(:minAmount as text) as real) ) "
                         + "  and (:maxAmount is null or r.refund_amount<=CAST(CAST(:maxAmount as text) as real) )"
-                        + " and (:label is null or  upper(r.label)  like '%' || upper(CAST(:label as text))  || '%' )")
+                        + " and (:label is null or  CAST(r.id as text) = upper(CAST(:label as text)) or  upper(r.label)  like '%' || upper(CAST(:label as text))  || '%' )")
         List<RefundSearchResult> findRefunds(
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                         @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount,

@@ -25,7 +25,7 @@ public interface DirectDebitTransfertRepository extends QueryCacheCrudRepository
                         + " and r.transfert_date_time>=:startDate and r.transfert_date_time<=:endDate "
                         + "  and (:minAmount is null or r.transfert_amount>=CAST(CAST(:minAmount as text) as real) ) "
                         + "  and (:maxAmount is null or r.transfert_amount<=CAST(CAST(:maxAmount as text) as real) )"
-                        + " and (:label is null or  upper(r.label)  like '%' || upper(CAST(:label as text))  || '%' )")
+                        + " and (:label is null or   CAST(r.id as text) = upper(CAST(:label as text)) or upper(r.label)  like '%' || upper(CAST(:label as text))  || '%' )")
         List<DirectDebitTransfertSearchResult> findTransferts(
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                         @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount,
