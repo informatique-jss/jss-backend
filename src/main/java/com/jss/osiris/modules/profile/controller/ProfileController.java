@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -132,6 +133,9 @@ public class ProfileController {
 			if (responsable == null)
 				throw new OsirisValidationException("idResponsable");
 		}
+
+		if (!SSLHelper.checkPasswordStrength(newPassword))
+			throw new OsirisValidationException("Weak password");
 		return new ResponseEntity<Boolean>(employeeService.modifyResponsablePassword(responsable, newPassword),
 				HttpStatus.OK);
 	}
