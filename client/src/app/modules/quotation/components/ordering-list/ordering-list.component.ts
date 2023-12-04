@@ -25,7 +25,7 @@ export class OrderingListComponent implements OnInit {
   @Input() isForPaymentAssocationIntegration: boolean = false;
   orders: OrderingSearchResult[] | undefined;
   availableColumns: SortTableColumn[] = [];
-  columnToDisplayOnDashboard: string[] = ["id", "customerOrderLabel", "customerOrderStatus", "affaireLabel", "createdDate"];
+  columnToDisplayOnDashboard: string[] = ["id", "customerOrderLabel", "customerOrderStatus", "affaireLabel", "createdDate", "lastStatusUpdate"];
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
   bookmark: OrderingSearch | undefined;
