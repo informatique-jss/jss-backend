@@ -727,11 +727,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (orderingSearch.getEndDate() == null)
             orderingSearch.setEndDate(LocalDateTime.now().plusYears(100));
 
+        if (orderingSearch.getIdCustomerOrder() == null)
+            orderingSearch.setIdCustomerOrder(0);
+
         List<OrderingSearchResult> customerOrders = customerOrderRepository.findCustomerOrders(
                 salesEmployeeId, assignedToEmployeeId,
                 statusId,
                 orderingSearch.getStartDate().withHour(0).withMinute(0),
-                orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId, 0);
+                orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId, 0,
+                orderingSearch.getIdCustomerOrder());
         return customerOrders;
     }
 
@@ -753,8 +757,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 quotation.getResponsable(),
                 quotation.getConfrere(), quotation.getSpecialOffers(), LocalDateTime.now(), statusOpen,
                 quotation.getObservations(), quotation.getDescription(), null,
-                quotation.getDocuments(), quotation.getAssoAffaireOrders(), null,
-                quotation.getOverrideSpecialOffer(), quotation.getQuotationLabel(), false, null, null);
+                quotation.getDocuments(), quotation.getAssoAffaireOrders(), null, quotation.getQuotationLabel(), false,
+                null, null);
 
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
@@ -1113,6 +1117,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation) {
         return customerOrderRepository.findCustomerOrders(
                 Arrays.asList(0), Arrays.asList(0), Arrays.asList(0), LocalDateTime.now().minusYears(100),
-                LocalDateTime.now().plusYears(100), Arrays.asList(0), Arrays.asList(0), idQuotation);
+                LocalDateTime.now().plusYears(100), Arrays.asList(0), Arrays.asList(0), idQuotation, 0);
     }
 }

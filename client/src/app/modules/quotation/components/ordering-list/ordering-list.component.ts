@@ -3,6 +3,8 @@ import { FormBuilder } from '@angular/forms';
 import { formatDateForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { ITiers } from 'src/app/modules/tiers/model/ITiers';
+import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AppService } from 'src/app/services/app.service';
 import { formatDateTimeForSortTable, formatEurosForSortTable } from '../../../../libs/FormatHelper';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
@@ -20,6 +22,7 @@ export class OrderingListComponent implements OnInit {
   @Input() orderingSearch: OrderingSearch = {} as OrderingSearch;
   @Input() isForDashboard: boolean = false;
   @Input() isForTiersIntegration: boolean = false;
+  @Input() isForPaymentAssocationIntegration: boolean = false;
   orders: OrderingSearchResult[] | undefined;
   availableColumns: SortTableColumn[] = [];
   columnToDisplayOnDashboard: string[] = ["id", "customerOrderLabel", "customerOrderStatus", "affaireLabel", "createdDate"];
@@ -31,6 +34,7 @@ export class OrderingListComponent implements OnInit {
   @Input() overrideIconAction: string = "";
   @Input() overrideTooltipAction: string = "";
   @Input() defaultStatusFilter: string[] | undefined;
+  searchedTiers: IndexEntity | undefined;
 
   allEmployees: Employee[] | undefined;
 
@@ -168,6 +172,10 @@ export class OrderingListComponent implements OnInit {
         this.orderingSearch.startDate = new Date(toIsoString(this.orderingSearch.startDate));
       if (this.orderingSearch.endDate)
         this.orderingSearch.endDate = new Date(toIsoString(this.orderingSearch.endDate));
+      if (this.searchedTiers) {
+        this.orderingSearch.customerOrders = [];
+        this.orderingSearch.customerOrders.push({ id: this.searchedTiers.entityId } as ITiers)
+      }
       this.orderingSearchResultService.getOrders(this.orderingSearch).subscribe(response => {
         this.orders = response;
       })

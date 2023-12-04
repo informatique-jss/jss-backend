@@ -17,10 +17,13 @@ import javax.persistence.ManyToOne;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Civility;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeExerciceActivitePrincipal;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 
 @Entity
 public class Affaire implements Serializable, IId {
@@ -108,6 +111,21 @@ public class Affaire implements Serializable, IId {
 
 	@Column(length = 20)
 	private String intercommunityVat;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_forme_juridique")
+	@IndexedField
+	private FormeJuridique legalForm;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_forme_exercice")
+	@IndexedField
+	private FormeExerciceActivitePrincipal mainActivity;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_competent_authority")
+	@IndexedField
+	private CompetentAuthority competentAuthority;
 
 	public String getPaymentIban() {
 		return paymentIban;
@@ -291,6 +309,30 @@ public class Affaire implements Serializable, IId {
 
 	public void setIntercommunityVat(String intercommunityVat) {
 		this.intercommunityVat = intercommunityVat;
+	}
+
+	public FormeJuridique getLegalForm() {
+		return legalForm;
+	}
+
+	public void setLegalForm(FormeJuridique legalForm) {
+		this.legalForm = legalForm;
+	}
+
+	public FormeExerciceActivitePrincipal getMainActivity() {
+		return mainActivity;
+	}
+
+	public void setMainActivity(FormeExerciceActivitePrincipal mainActivity) {
+		this.mainActivity = mainActivity;
+	}
+
+	public CompetentAuthority getCompetentAuthority() {
+		return competentAuthority;
+	}
+
+	public void setCompetentAuthority(CompetentAuthority competentAuthority) {
+		this.competentAuthority = competentAuthority;
 	}
 
 }

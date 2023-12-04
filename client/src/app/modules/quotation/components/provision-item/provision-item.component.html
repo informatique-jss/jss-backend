@@ -3,13 +3,15 @@
     <td>
       <select-provision-family (selectionChange)="changeProvisionFamilyType();changeProvisionType();"
         [(model)]="provision.provisionFamilyType" label="Famille de service" [form]="provisionItemForm"
-        propertyName="provisionFamilyType" [isMandatory]="true" [isDisabled]="!editMode">
+        propertyName="provisionFamilyType" [isMandatory]="true"
+        [isDisabled]="!editMode || ( provision.announcement!=undefined && provision.announcement.actuLegaleId!=undefined && provision.announcement.actuLegaleId>0)">
       </select-provision-family>
     </td>
     <td *ngIf="provision.provisionFamilyType">
       <select-provision-type (selectionChange)="changeProvisionType()" [(model)]="provision.provisionType"
         label="Service" [form]="provisionItemForm" propertyName="provisionType" [isMandatory]="true"
-        [isDisabled]="!editMode" [filteredProvisionFamilyType]="provision.provisionFamilyType"></select-provision-type>
+        [isDisabled]="!editMode || ( provision.announcement!=undefined && provision.announcement.actuLegaleId!=undefined && provision.announcement.actuLegaleId>0)"
+        [filteredProvisionFamilyType]="provision.provisionFamilyType"></select-provision-type>
     </td>
   </tr>
   <tr *ngIf="instanceOfCustomerOrder && provision && provision.id">

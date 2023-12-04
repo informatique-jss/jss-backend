@@ -15,7 +15,6 @@ export interface IQuotation extends IAttachment, IDocument {
   responsable: Responsable | undefined;
   confrere: Confrere | undefined;
   specialOffers: SpecialOffer[] | undefined;
-  overrideSpecialOffer: boolean;
   createdDate: Date;
   observations: string;
   description: string;

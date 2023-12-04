@@ -6,4 +6,6 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJu
 
 public interface FormeJuridiqueService {
     public List<FormeJuridique> getFormeJuridique();
+
+    public FormeJuridique getFormeJuridique(String code);
 }

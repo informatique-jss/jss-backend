@@ -62,9 +62,10 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
                         + " where ( COALESCE(:customerOrderStatus) =0 or co.id_customer_order_status in (:customerOrderStatus)) "
                         + " and co.created_date>=:startDate and co.created_date<=:endDate "
                         + " and ( :quotationId =0 or asso_co.id_quotation = :quotationId)"
+                        + " and ( :idCustomerOrder =0 or co.id = :idCustomerOrder)"
                         + " and ( COALESCE(:assignedToEmployee) =0 or co.id_assigned_to in (:assignedToEmployee))"
                         + " and ( COALESCE(:salesEmployee) =0 or cf.id_commercial in (:salesEmployee) or r.id_commercial in (:salesEmployee) or t.id_commercial in (:salesEmployee) or t.id_commercial is null and t2.id_commercial in (:salesEmployee))"
-                        + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder))"
+                        + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder) or t2.id in (:customerOrder))"
                         + " and ( COALESCE(:affaire)=0 or af.id in (:affaire) )"
                         + " group by cf.id, cf.label, r.id, r.firstname,origin.label,  r.lastname, t.denomination, t.firstname, t.lastname, t2.denomination, t2.firstname, t2.lastname, cos.label, "
                         + " co.created_date, cf.id_commercial, r.id_commercial, t.id_commercial, t2.id_commercial, co.id, r.id, t.id,t2.id, cf.id, co.description,co.id_assigned_to ")
@@ -73,7 +74,7 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
                         @Param("customerOrderStatus") List<Integer> customerOrderStatus,
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                         @Param("customerOrder") List<Integer> customerOrder, @Param("affaire") List<Integer> affaire,
-                        @Param("quotationId") Integer quotationId);
+                        @Param("quotationId") Integer quotationId, @Param("idCustomerOrder") Integer idCustomerOrder);
 
         @Query(value = "select n from CustomerOrder n where customerOrderStatus=:customerOrderStatus and thirdReminderDateTime is null ")
         List<CustomerOrder> findCustomerOrderForReminder(

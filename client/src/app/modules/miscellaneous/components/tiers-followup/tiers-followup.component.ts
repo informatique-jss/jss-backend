@@ -117,14 +117,14 @@ export class TiersFollowupComponent implements OnInit {
     this.newFollowup.followupDate = new Date(this.newFollowup.followupDate.setHours(12));
 
     let promise;
-    if (instanceOfConfrere(this.tiers))
+    if (this.invoice)
+      promise = this.tiersFollowupService.addFollowupForInvoice(this.newFollowup, this.invoice);
+    else if (instanceOfConfrere(this.tiers))
       promise = this.tiersFollowupService.addFollowupForConfrere(this.newFollowup, this.tiers);
     else if (instanceOfTiers(this.tiers))
       promise = this.tiersFollowupService.addFollowupForTiers(this.newFollowup, this.tiers);
     else if (instanceOfResponsable(this.tiers))
       promise = this.tiersFollowupService.addFollowupForResponsable(this.newFollowup, this.tiers);
-    else if (this.invoice)
-      promise = this.tiersFollowupService.addFollowupForInvoice(this.newFollowup, this.invoice);
 
     if (promise)
       promise.subscribe(response => {

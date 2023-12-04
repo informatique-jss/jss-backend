@@ -23,6 +23,15 @@
             propertyNameEnd="endDate">
           </generic-date-range-picker>
         </td>
+        <td *ngIf="isForPaymentAssocationIntegration">
+          <generic-input [(model)]="orderingSearch.idCustomerOrder" label="Numéro de commande"
+            [form]="orderingSearchForm" propertyName="orderingSearchForm" [isMandatory]="false"></generic-input>
+        </td>
+        <td *ngIf="isForPaymentAssocationIntegration">
+          <autocomplete-tiers-individual [(model)]="searchedTiers" label="Tiers" [form]="orderingSearchForm"
+            propertyName="tiers" [isMandatory]="false"
+            [authorizeNonIndividualTiers]="true"></autocomplete-tiers-individual>
+        </td>
         <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchOrders()" class="add-button">
             <mat-icon>search</mat-icon>

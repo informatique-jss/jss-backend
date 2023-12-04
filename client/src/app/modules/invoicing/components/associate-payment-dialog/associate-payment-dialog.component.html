@@ -28,7 +28,7 @@
           </mat-tab>
           <mat-tab label="Commandes" bodyClass="tab-height-limit">
             <ordering-list (actionBypass)="associateOrderFromSearch($event)" [overrideIconAction]="'merge_type'"
-              [overrideTooltipAction]="'Associer cette commande au paiement'"
+              [overrideTooltipAction]="'Associer cette commande au paiement'" [isForPaymentAssocationIntegration]="true"
               [defaultStatusFilter]="[CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT,CUSTOMER_ORDER_STATUS_OPEN]"></ordering-list>
           </mat-tab>
         </mat-tab-group>

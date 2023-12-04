@@ -16,4 +16,10 @@ public interface IAnnouncementReporting {
     Integer getcharacterNumber();
 
     String getAnnouncementDepartment();
+
+    Float getPreTaxPrice();
+
+    String getNoticeTypeLabel();
+
+    String getJournalTypeLabel();
 }

@@ -57,9 +57,6 @@ dependencies {
     implementation 'org.xhtmlrenderer:flying-saucer-pdf-itext5:9.1.22'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1'
 
-    // Clients
-    implementation 'com.github.lookfirst:sardine:5.0'
-
     // QR code generation
     implementation 'com.google.zxing:core:3.5.1'
     implementation 'com.google.zxing:javase:3.5.1'
@@ -67,8 +64,6 @@ dependencies {
     // Azure libs
     implementation 'com.azure:azure-ai-formrecognizer:4.0.6'
     implementation 'com.azure:azure-identity:1.8.3'
-
-
 }
  
 group = 'com.jss.osiris'

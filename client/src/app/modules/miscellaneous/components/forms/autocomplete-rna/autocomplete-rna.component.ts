@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { Rna } from 'src/app/modules/quotation/model/Rna';
-import { RnaService } from 'src/app/modules/quotation/services/rna.service';
+import { Affaire } from 'src/app/modules/quotation/model/Affaire';
+import { AffaireService } from 'src/app/modules/quotation/services/affaire.service';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
@@ -11,22 +11,22 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
   templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
   styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css']
 })
-export class AutocompleteRnaComponent extends GenericAutocompleteComponent<Rna, Rna> implements OnInit {
+export class AutocompleteRnaComponent extends GenericAutocompleteComponent<Affaire, Affaire> implements OnInit {
 
-  constructor(private formBuild: UntypedFormBuilder, private rnaService: RnaService, private userNoteService2: UserNoteService,) {
+  constructor(private formBuild: UntypedFormBuilder, private affaireService: AffaireService, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
   }
 
-  searchEntities(value: string): Observable<Rna[]> {
-    this.expectedMinLengthInput = 10;
-    return this.rnaService.getRna(value);
+  searchEntities(value: string): Observable<Affaire[]> {
+    this.expectedMinLengthInput = 14;
+    return this.affaireService.generateAffaireBySiren(value);
   }
 
-  displayLabel(rna: Rna): string {
-    if (!rna)
+  displayLabel(affaire: Affaire): string {
+    if (!affaire)
       return "";
-    if (!rna.association)
-      return rna + "";
-    return rna.association.id_association;
+    if (!affaire.denomination && !affaire.rna)
+      return affaire + "";
+    return affaire.denomination + " - " + affaire.rna;
   }
 }

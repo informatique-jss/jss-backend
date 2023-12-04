@@ -6,7 +6,6 @@ import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { getCustomerOrderForIQuotation } from 'src/app/modules/invoicing/components/invoice-tools';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
@@ -71,11 +70,6 @@ export class OrderingCustomerComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.quotation) {
-      if (!this.quotation.overrideSpecialOffer) {
-        this.quotation.overrideSpecialOffer = false;
-        this.initSpecialOffers();
-      }
-
       if (this.quotation.responsable && this.quotation.responsable.id && !this.searchedResponsable) {
         this.indexEntityService.getResponsableByKeyword(this.quotation.responsable.id + "", false).subscribe(response => this.searchedResponsable = response[0]);
       }
@@ -122,34 +116,12 @@ export class OrderingCustomerComponent implements OnInit {
         return undefined;
       }, display: true,
     } as SortTableAction);
-
   }
 
   orderingCustomerForm = this.formBuilder.group({
   });
 
   getCustomerOrderForIQuotation = getCustomerOrderForIQuotation;
-
-  displayOverrideSpecialOffers() {
-    this.quotation.overrideSpecialOffer = true;
-  }
-
-  hideOverrideSpecialOffers() {
-    this.quotation.overrideSpecialOffer = false;
-  }
-
-  initSpecialOffers() {
-    this.quotation.specialOffers = [] as Array<SpecialOffer>;
-    if (this.quotation.tiers && this.quotation.tiers.specialOffers)
-      this.quotation.specialOffers.push(...this.quotation.tiers.specialOffers);
-
-    if (this.quotation.confrere && this.quotation.confrere.specialOffers)
-      this.quotation.specialOffers.push(...this.quotation.confrere.specialOffers);
-
-    if (this.quotation.responsable && this.quotation.responsable.tiers && this.quotation.responsable.tiers.specialOffers)
-      this.quotation.specialOffers.push(...this.quotation.responsable.tiers.specialOffers);
-  }
-
 
   fillTiers(tiers: IndexEntity) {
     this.tiersService.getTiers(tiers.entityId).subscribe(response => {

@@ -7,4 +7,5 @@ export interface RefundSearch {
   label: string;
   isHideMatchedRefunds: boolean;
   isHideExportedRefunds: boolean;
+  idRefund: number;
 }
