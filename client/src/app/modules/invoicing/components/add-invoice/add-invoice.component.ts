@@ -236,8 +236,8 @@ export class AddInvoiceComponent implements OnInit {
   }
 
   saveInvoice() {
-    this.editMode = false;
     if (this.invoiceForm.valid && (this.invoiceItems && this.invoiceItems.length > 0 || this.invoice.competentAuthority != null && this.invoice.customerOrderForInboundInvoice != null) || this.invoice.id) {
+      this.editMode = false;
       if (this.invoice.dueDate)
         this.invoice.dueDate = new Date(this.invoice.dueDate.setHours(12));
 

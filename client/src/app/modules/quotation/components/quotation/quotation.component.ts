@@ -283,13 +283,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   saveQuotation(): boolean {
 
-    this.editMode = false;
-
     // Can't find a way to make it work correctly ...
     replaceDocument(this.constantService.getDocumentTypeBilling(), this.quotation, this.quotationManagementComponent?.getBillingDocument()!);
     replaceDocument(this.constantService.getDocumentTypeDigital(), this.quotation, this.quotationManagementComponent?.getDigitalDocument()!);
     replaceDocument(this.constantService.getDocumentTypePaper(), this.quotation, this.quotationManagementComponent?.getPaperDocument()!);
     if (this.getFormsStatus()) {
+      this.editMode = false;
       if (!this.instanceOfCustomerOrder) {
         this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
           this.editMode = false;

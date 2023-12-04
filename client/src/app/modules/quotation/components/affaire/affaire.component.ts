@@ -65,8 +65,8 @@ export class AffaireComponent implements OnInit {
   }
 
   saveAffaire(): boolean {
-    this.editMode = false;
     if (this.getFormsStatus() && this.affaire) {
+      this.editMode = false;
       this.affaireService.addOrUpdateAffaire(this.affaire).subscribe(response => {
         this.affaire = response;
         this.editMode = false;
