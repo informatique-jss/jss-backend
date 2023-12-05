@@ -121,7 +121,8 @@
       </td>
       <td>
         <autocomplete-competent-authority [(model)]="affaire.competentAuthority" [form]="affaireForm"
-          propertyName="competentAuthority" [isMandatory]="false" label="RCS"></autocomplete-competent-authority>
+          propertyName="competentAuthority" [isMandatory]="false" label="RCS"
+          [isDisabled]="!editMode"></autocomplete-competent-authority>
       </td>
       <td>
         <generic-input [(model)]="affaire.shareCapital" label="Capital social (€)" [form]="affaireForm"
