@@ -1414,9 +1414,9 @@ public class QuotationController {
     validationHelper.validateString(affaire.getAddress(), true, 100, "Address");
     validationHelper.validateReferential(affaire.getCity(), true, "City");
     validationHelper.validateReferential(affaire.getCountry(), true, "Country");
-    validationHelper.validateReferential(affaire.getMainActivity(), true, "MainActivity");
-    validationHelper.validateReferential(affaire.getLegalForm(), true, "LegalForm");
-    validationHelper.validateReferential(affaire.getCompetentAuthority(), true, "CompetentAuthority");
+    validationHelper.validateReferential(affaire.getMainActivity(), false, "MainActivity");
+    validationHelper.validateReferential(affaire.getLegalForm(), false, "LegalForm");
+    validationHelper.validateReferential(affaire.getCompetentAuthority(), false, "CompetentAuthority");
     validationHelper.validateString(affaire.getExternalReference(), false, 60, "ExternalReference");
     validationHelper.validateString(affaire.getIntercommunityVat(), false, 20, "IntercommunityVat");
     if (affaire.getCountry() != null && affaire.getCountry().getId().equals(constantService.getCountryFrance().getId()))
