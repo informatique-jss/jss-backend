@@ -761,9 +761,9 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 .equals(constantService.getInvoiceStatusPayed().getId())) {
             if (payment.getInvoice().getIsInvoiceFromProvider())
                 unletterInvoiceReceived(payment.getInvoice());
-            if (!payment.getInvoice().getIsInvoiceFromProvider() && !payment.getInvoice().getIsCreditNote())
+            else if (!payment.getInvoice().getIsInvoiceFromProvider() && !payment.getInvoice().getIsCreditNote())
                 unletterInvoiceEmitted(payment.getInvoice());
-            if (!payment.getInvoice().getIsProviderCreditNote())
+            else if (!payment.getInvoice().getIsProviderCreditNote())
                 unletterInvoiceEmitted(payment.getInvoice());
         }
 
