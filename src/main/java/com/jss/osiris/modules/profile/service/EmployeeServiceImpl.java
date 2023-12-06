@@ -49,6 +49,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public Employee getEmployeeByUsername(String username) {
+        return employeeRepository.findByUsername(username);
+    }
+
+    @Override
     public List<Employee> getEmployees() {
         return IterableUtils.toList(employeeRepository.findAll());
     }
@@ -159,6 +164,23 @@ public class EmployeeServiceImpl implements EmployeeService {
         responsableService.addOrUpdateResponsable(responsable);
 
         mailHelper.sendNewPasswordMail(responsable, password);
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean modifyResponsablePassword(Responsable responsable, String newPassword) throws OsirisException {
+        String salt = SSLHelper.randomPassword(20);
+
+        responsable.setSalt(salt);
+        responsable.setPassword(diggestPassword(newPassword, salt));
+
+        // Check if user authorized
+        List<CustomerOrderOrigin> origins = customerOrderOriginService
+                .getByUsername(activeDirectoryHelper.getCurrentUsername());
+        if (origins != null && origins.size() == 1)
+            responsableService.addOrUpdateResponsable(responsable);
+
         return true;
     }
 

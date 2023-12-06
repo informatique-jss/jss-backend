@@ -28,7 +28,11 @@ public interface AnnouncementReportingRepository extends CrudRepository<Quotatio
                         " 	as2.label as announcementStatus, " +
                         " 	c.label as confrereAnnouncementLabel, " +
                         " 	d.code as announcementDepartment, " +
-                        " 	sum(coalesce(a.character_number,0)) as characterNumber " +
+                        " 	sum(coalesce(a.character_number,0)) as characterNumber, " +
+                        " 	sum(pre_tax_price)  as preTaxPrice, " +
+                        " 	(select STRING_AGG(DISTINCT nt.label ,', '  ) from    asso_announcement_notice_type nta   left join notice_type nt on nt.id = nta.id_notice_type  where nta.id_announcement = a.id )  as noticeTypeLabel, "
+                        +
+                        " 	jt.label as journalTypeLabel " +
                         " from " +
                         " 	announcement a " +
                         " join announcement_status as2 on " +
@@ -43,6 +47,9 @@ public interface AnnouncementReportingRepository extends CrudRepository<Quotatio
                         " 	c.id = a.id_confrere " +
                         " join department d on " +
                         " 	d.id = a.id_department  " +
+                        " left join invoice_item ii on ii.id_provision = p.id and p.id_provision_type  in (select id from provision_type pt where label like 'Annonce%')  "
+                        +
+                        " left join journal_type jt on jt.id = c.id_journal_type  " +
                         " where " +
                         " 	co.id_customer_order_status not in :customerOrderStatusIdExcluded " +
                         " group by " +
@@ -59,7 +66,7 @@ public interface AnnouncementReportingRepository extends CrudRepository<Quotatio
                         " 	a.publication_date), " +
                         " 	'YYYY-MM-DD'), " +
                         " 	as2.label, " +
-                        " 	c.label ,d.code  " +
+                        " 	c.label ,d.code , jt.label ,a.character_number, a.id " +
                         "")
         List<IAnnouncementReporting> getAnnouncementReporting(
                         @Param("customerOrderStatusIdExcluded") List<Integer> customerOrderStatusIdExcluded);

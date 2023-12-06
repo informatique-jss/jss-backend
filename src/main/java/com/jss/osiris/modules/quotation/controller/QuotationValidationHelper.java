@@ -165,10 +165,12 @@ public class QuotationValidationHelper {
                         for (SpecialOffer specialOffer : quotation.getSpecialOffers())
                                 validationHelper.validateReferential(specialOffer, false, "specialOffer");
 
-                // If from website, grab special offer from tiers / responsable / confrere
+                // If new or if from website, grab special offer from tiers / responsable /
+                // confrere
                 if (quotation.getCustomerOrderOrigin().getId()
                                 .equals(constantService.getCustomerOrderOriginWebSite().getId())
-                                && (quotation.getSpecialOffers() == null || quotation.getSpecialOffers().size() == 0)) {
+                                && (quotation.getSpecialOffers() == null || quotation.getSpecialOffers().size() == 0)
+                                || quotation.getId() == null) {
                         ITiers tiers = quotationService.getCustomerOrderOfQuotation(quotation);
                         if (tiers instanceof Responsable)
                                 tiers = ((Responsable) tiers).getTiers();

@@ -91,9 +91,6 @@ public class Quotation implements IQuotation {
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
 	private List<AssoAffaireOrder> assoAffaireOrders;
 
-	@Column(nullable = false)
-	private Boolean overrideSpecialOffer;
-
 	@Column(length = 40)
 	private String quotationLabel;
 
@@ -270,14 +267,6 @@ public class Quotation implements IQuotation {
 
 	public void setQuotationLabel(String quotationLabel) {
 		this.quotationLabel = quotationLabel;
-	}
-
-	public Boolean getOverrideSpecialOffer() {
-		return overrideSpecialOffer;
-	}
-
-	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
-		this.overrideSpecialOffer = overrideSpecialOffer;
 	}
 
 	public String getCustomerMailCustomMessage() {

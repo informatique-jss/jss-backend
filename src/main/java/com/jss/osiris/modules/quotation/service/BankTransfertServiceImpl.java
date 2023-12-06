@@ -146,12 +146,15 @@ public class BankTransfertServiceImpl implements BankTransfertService {
             bankTransfertSearch.setStartDate(LocalDateTime.now().minusYears(100));
         if (bankTransfertSearch.getEndDate() == null)
             bankTransfertSearch.setEndDate(LocalDateTime.now().plusYears(100));
+        if (bankTransfertSearch.getIdBankTransfert() == null)
+            bankTransfertSearch.setIdBankTransfert(0);
         return bankTransfertRepository.findTransferts(
                 bankTransfertSearch.getStartDate().withHour(0).withMinute(0),
                 bankTransfertSearch.getEndDate().withHour(23).withMinute(59), bankTransfertSearch.getMinAmount(),
                 bankTransfertSearch.getMaxAmount(),
                 bankTransfertSearch.getLabel(), bankTransfertSearch.isHideExportedBankTransfert(),
-                bankTransfertSearch.isDisplaySelectedForExportBankTransfert());
+                bankTransfertSearch.isDisplaySelectedForExportBankTransfert(),
+                bankTransfertSearch.getIdBankTransfert());
     }
 
     @Override

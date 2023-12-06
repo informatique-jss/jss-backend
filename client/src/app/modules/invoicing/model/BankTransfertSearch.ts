@@ -7,4 +7,5 @@ export interface BankTransfertSearch {
   label: string;
   isHideExportedBankTransfert: boolean;
   isDisplaySelectedForExportBankTransfert: boolean;
+  idBankTransfert: number;
 }

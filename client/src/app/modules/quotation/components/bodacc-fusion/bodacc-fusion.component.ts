@@ -5,7 +5,6 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { BodaccFusion } from '../../model/BodaccFusion';
 import { BodaccFusionAbsorbedCompany } from '../../model/BodaccFusionAbsorbedCompany';
 import { BodaccFusionMergingCompany } from '../../model/BodaccFusionMergingCompany';
-import { Siren } from '../../model/Siren';
 
 @Component({
   selector: 'bodacc-fusion',
@@ -82,35 +81,4 @@ export class BodaccFusionComponent implements OnInit {
         this.bodaccFusion.bodaccFusionMergingCompanies.splice(i, 1);
     }
   }
-
-  fillSirenMergingCompany(siren: Siren, bodaccFusionMergingCompany: BodaccFusionMergingCompany) {
-    if (siren != undefined && siren != null) {
-      bodaccFusionMergingCompany.mergingCompanySiren = siren!.uniteLegale.siren;
-      if (siren!.uniteLegale.siren != undefined && siren!.uniteLegale.siren != null) {
-        if (siren.uniteLegale.periodesUniteLegale != null && siren.uniteLegale.periodesUniteLegale != undefined && siren.uniteLegale.periodesUniteLegale.length > 0) {
-          siren.uniteLegale.periodesUniteLegale.forEach(periode => {
-            if (periode.dateFin == null)
-              bodaccFusionMergingCompany.mergingCompanyDenomination = periode.denominationUniteLegale;
-            this.bodaccFusionForm.markAllAsTouched();
-          });
-        }
-      }
-    }
-  }
-
-  fillSirenAbsorbedCompany(siren: Siren, bodaccAbsorbedCompany: BodaccFusionAbsorbedCompany) {
-    if (siren != undefined && siren != null) {
-      bodaccAbsorbedCompany.absorbedCompanySiren = siren!.uniteLegale.siren;
-      if (siren!.uniteLegale.siren != undefined && siren!.uniteLegale.siren != null) {
-        if (siren.uniteLegale.periodesUniteLegale != null && siren.uniteLegale.periodesUniteLegale != undefined && siren.uniteLegale.periodesUniteLegale.length > 0) {
-          siren.uniteLegale.periodesUniteLegale.forEach(periode => {
-            if (periode.dateFin == null)
-              bodaccAbsorbedCompany.absorbedCompanyDenomination = periode.denominationUniteLegale;
-            this.bodaccFusionForm.markAllAsTouched();
-          });
-        }
-      }
-    }
-  }
-
 }

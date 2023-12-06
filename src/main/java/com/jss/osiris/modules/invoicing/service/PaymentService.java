@@ -76,6 +76,8 @@ public interface PaymentService {
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException,
                         OsirisDuplicateException;
 
+        public Payment movePaymentToWaitingAccount(Payment payment) throws OsirisException, OsirisValidationException;
+
         public Payment addOutboundPaymentForProvision(Payment payment, Provision provision)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 

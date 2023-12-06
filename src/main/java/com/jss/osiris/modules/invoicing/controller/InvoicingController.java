@@ -285,6 +285,16 @@ public class InvoicingController {
         return new ResponseEntity<Payment>(new Payment(), HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/payment/waiting")
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    public ResponseEntity<Payment> movePaymentToWaitingAccount(@RequestParam Integer paymentId)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+        Payment payment = paymentService.getPayment(paymentId);
+        if (payment != null)
+            payment = paymentService.movePaymentToWaitingAccount(payment);
+        return new ResponseEntity<Payment>(payment, HttpStatus.OK);
+    }
+
     @PostMapping(inputEntryPoint + "/payments/search")
     public ResponseEntity<List<PaymentSearchResult>> getPayments(@RequestBody PaymentSearch paymentSearch)
             throws OsirisValidationException {
@@ -602,7 +612,7 @@ public class InvoicingController {
                         if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null
                                 && paymentAssociate.getAffaireRefund() == null)
                             throw new OsirisValidationException("not all payment used and no refund tiers set");
-                } else if (-totalAmount != Math.round(paymentAssociate.getPayment().getPaymentAmount()))
+                } else if (totalAmount != Math.round(paymentAssociate.getPayment().getPaymentAmount() * 100f) / 100f)
                     throw new OsirisValidationException("not all payment used");
             }
         }

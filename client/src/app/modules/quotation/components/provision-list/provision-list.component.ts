@@ -146,6 +146,7 @@ export class ProvisionListComponent implements OnInit {
       || this.affaireSearch.status
       || this.affaireSearch.customerOrders
       || this.affaireSearch.affaire
+      || this.affaireSearch.waitedCompetentAuthority
     )) {
       if (!this.isForDashboard)
         this.userPreferenceService.setUserSearchBookmark(this.affaireSearch, "prestations");

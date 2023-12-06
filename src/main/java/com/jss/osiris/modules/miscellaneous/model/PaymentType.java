@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
+import com.jss.osiris.libs.search.model.IndexedField;
+
 @Entity
 public class PaymentType implements Serializable, IId {
 
@@ -18,6 +20,7 @@ public class PaymentType implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
+	@IndexedField
 	private String label;
 
 	@Column(nullable = false, length = 20)

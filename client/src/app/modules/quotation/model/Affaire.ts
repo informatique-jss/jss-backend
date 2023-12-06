@@ -1,10 +1,12 @@
 import { IReferential } from "../../administration/model/IReferential";
 import { City } from "../../miscellaneous/model/City";
 import { Civility } from "../../miscellaneous/model/Civility";
+import { CompetentAuthority } from "../../miscellaneous/model/CompetentAuthority";
 import { Country } from "../../miscellaneous/model/Country";
 import { Mail } from "../../miscellaneous/model/Mail";
 import { Phone } from "../../miscellaneous/model/Phone";
 import { FormeJuridique } from './guichet-unique/referentials/FormeJuridique';
+import { FormeExerciceActivitePrincipal } from "./guichet-unique/referentials/FormeExerciceActivitePrincipal";
 
 export interface Affaire extends IReferential {
   id: number;
@@ -30,4 +32,7 @@ export interface Affaire extends IReferential {
   paymentBic: string;
   isUnregistered: boolean;
   intercommunityVat: string | null;
+  legalForm: FormeJuridique;
+  mainActivity: FormeExerciceActivitePrincipal;
+  competentAuthority: CompetentAuthority;
 }

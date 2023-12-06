@@ -95,15 +95,10 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         login.setPassword(guichetUniquePassword);
 
         ResponseEntity<GuichetUniqueLogin> res;
-        try {
-            res = new RestTemplate().postForEntity(
-                    guichetUniqueEntryPoint + userRequestUrl + loginRequestUrl + ssoRequestUrl,
-                    new HttpEntity<Object>(login, headers),
-                    GuichetUniqueLogin.class);
-        } catch (Exception e) {
-            throw new OsirisClientMessageException("Impossible de se connecter pour l'utilisateur " + guichetUniqueLogin
-                    + ". Merci de vérifier les identifiants");
-        }
+        res = new RestTemplate().postForEntity(
+                guichetUniqueEntryPoint + userRequestUrl + loginRequestUrl + ssoRequestUrl,
+                new HttpEntity<Object>(login, headers),
+                GuichetUniqueLogin.class);
 
         if (res.getHeaders() != null && res.getHeaders().getFirst(HttpHeaders.SET_COOKIE) != null) {
             List<HttpCookie> cookies = HttpCookie.parse(res.getHeaders().getFirst(HttpHeaders.SET_COOKIE));

@@ -11,6 +11,7 @@ public class RefundSearch {
     private Float minAmount;
     private Float maxAmount;
     private String label;
+    private Integer idRefund;
 
     @JsonProperty("isHideMatchedRefunds")
     private boolean isHideMatchedRefunds;
@@ -72,6 +73,14 @@ public class RefundSearch {
 
     public void setHideExportedRefunds(boolean isHideExportedRefunds) {
         this.isHideExportedRefunds = isHideExportedRefunds;
+    }
+
+    public Integer getIdRefund() {
+        return idRefund;
+    }
+
+    public void setIdRefund(Integer idRefund) {
+        this.idRefund = idRefund;
     }
 
 }

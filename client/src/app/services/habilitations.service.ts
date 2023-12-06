@@ -107,6 +107,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
+  canMovePaymentToWaitingAccount() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
   canCancelBankTransfert() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }

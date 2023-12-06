@@ -116,5 +116,6 @@ export const Dictionnary = {
   "payedPeriod": "Période de paiement",
   "lastResponsableFollowupDate": "Dernier suivi du responsable",
   "lastTiersFollowupDate": "Dernier suivi du tiers",
-  "isProviderInvoice": "Est une facture fournisseur ?"
+  "isProviderInvoice": "Est une facture fournisseur ?",
+  "journalTypeLabel": "Type de journal"
 };

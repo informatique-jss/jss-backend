@@ -3,14 +3,17 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
+import { formatDate } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
 import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
 import { Payment } from 'src/app/modules/invoicing/model/Payment';
 import { InvoiceSearchResultService } from 'src/app/modules/invoicing/services/invoice.search.result.service';
 import { PaymentDetailsDialogService } from 'src/app/modules/invoicing/services/payment.details.dialog.service';
+import { PaymentService } from 'src/app/modules/invoicing/services/payment.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from '../../../../services/app.service';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { IQuotation } from '../../model/IQuotation';
@@ -45,6 +48,7 @@ export class InvoiceManagementComponent implements OnInit {
   getCustomerOrderNameForIQuotation = getCustomerOrderNameForIQuotation;
   getCustomerOrderForIQuotation = getCustomerOrderForIQuotation;
   getAffaireListArrayForIQuotation = getAffaireListArrayForIQuotation;
+  formatDate = formatDate;
 
   invoiceStatusCancelled = this.constantService.getInvoiceStatusCancelled();
 
@@ -54,7 +58,10 @@ export class InvoiceManagementComponent implements OnInit {
     private invoiceLabelResultService: InvoiceLabelResultService,
     public associatePaymentDialog: MatDialog,
     private paymentDetailsDialogService: PaymentDetailsDialogService,
-    protected invoiceSearchResultService: InvoiceSearchResultService,) { }
+    protected invoiceSearchResultService: InvoiceSearchResultService,
+    private habilitationsService: HabilitationsService,
+    private paymentService: PaymentService
+  ) { }
 
   ngOnInit() {
     this.updateInvoiceLabelResult();
@@ -77,6 +84,10 @@ export class InvoiceManagementComponent implements OnInit {
 
   invoiceManagementForm = this.formBuilder.group({
   });
+
+  canMovePaymentToWaitingAccount() {
+    return this.habilitationsService.canMovePaymentToWaitingAccount();
+  }
 
   itemChange(invoiceItem: InvoiceItem) {
     invoiceItem.isOverridePrice = true;
@@ -161,5 +172,11 @@ export class InvoiceManagementComponent implements OnInit {
 
   openPaymentDialog(payment: Payment) {
     this.paymentDetailsDialogService.displayPaymentDetailsDialog(payment);
+  }
+
+  movePaymentToWaitingAccount(payment: Payment) {
+    this.paymentService.movePaymentToWaitingAccount(payment).subscribe((res) => {
+      this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+    });
   }
 }

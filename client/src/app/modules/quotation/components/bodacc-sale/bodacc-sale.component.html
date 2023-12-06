@@ -1,9 +1,9 @@
 <ng-template #accordionTools>
   <mat-panel-description>
-    <mat-icon color="accent"  matTooltip="Ouvrir tous les onglets"
+    <mat-icon color="accent" matTooltip="Ouvrir tous les onglets"
       (click)="accordion!.openAll();$event.stopPropagation();" class="pointer">
       unfold_more_double</mat-icon>
-    <mat-icon color="accent"  matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();"
+    <mat-icon color="accent" matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();"
       class="pointer">
       unfold_less_double</mat-icon>
   </mat-panel-description>
@@ -87,13 +87,6 @@
                   [maxLength]="100">
                 </generic-input>
               </td>
-              <td>
-                <autocomplete-siren [(model)]="bodaccSale.ownerSiren" [form]="bodaccSaleForm" propertyName="ownerSiren"
-                  [isMandatory]="true" [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" label="SIREN"
-                  [byPassAutocompletValidator]="true" [isDisabled]="!editMode"
-                  (onOptionSelected)="fillSirenOwner($event)">
-                </autocomplete-siren>
-              </td>
             </tr>
           </table>
         </mat-expansion-panel>
@@ -121,14 +114,6 @@
                 </generic-input>
               </td>
             </tr>
-            <tr>
-              <td>
-                <autocomplete-siren [(model)]="bodaccSale.purchaserSiren" [form]="bodaccSaleForm" label="SIREN"
-                  [isDisabled]="!editMode" propertyName="purchaserSiren" [isMandatory]="false"
-                  [byPassAutocompletValidator]="true" (onOptionSelected)="fillSirenPurchaser($event)">
-                </autocomplete-siren>
-              </td>
-            </tr>
           </table>
         </mat-expansion-panel>
         <mat-expansion-panel *ngIf="transfertFundsType.id==transfertFundsTypeMoral.id">
@@ -146,12 +131,6 @@
                   [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
                   [maxLength]="60">
                 </generic-input>
-              </td>
-              <td>
-                <autocomplete-siren [(model)]="bodaccSale.purchaserSiren" [form]="bodaccSaleForm" label="SIREN"
-                  [isDisabled]="!editMode" propertyName="purchaserSiren" [isMandatory]="false"
-                  [byPassAutocompletValidator]="true" (onOptionSelected)="fillSirenPurchaser($event)">
-                </autocomplete-siren>
               </td>
               <td>
                 <autocomplete-legal-form [(model)]="bodaccSale.purchaserLegalForm" [form]="bodaccSaleForm"
@@ -232,13 +211,6 @@
               </td>
             </tr>
             <tr *ngIf="!bodaccSale.isOwnerIndividual">
-              <td>
-                <autocomplete-siren [(model)]="bodaccSale.ownerSiren" [form]="bodaccSaleForm" propertyName="ownerSiren"
-                  [isMandatory]="true" [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" label="SIREN"
-                  [byPassAutocompletValidator]="true" [isDisabled]="!editMode"
-                  (onOptionSelected)="fillSirenOwner($event)">
-                </autocomplete-siren>
-              </td>
               <td>
                 <autocomplete-legal-form [(model)]="bodaccSale.ownerLegalForm" [form]="bodaccSaleForm"
                   label="Forme juridique" [isDisabled]="!editMode" propertyName="ownerLegalForm" [isMandatory]="true"
@@ -346,13 +318,6 @@
               </td>
             </tr>
             <tr *ngIf="!bodaccSale.isTenantIndividual">
-              <td>
-                <autocomplete-siren [(model)]="bodaccSale.tenantSiren" [form]="bodaccSaleForm"
-                  propertyName="tenantSiren" [isMandatory]="true" [byPassAutocompletValidator]="true"
-                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" label="SIREN"
-                  [isDisabled]="!editMode" (onOptionSelected)="fillSirenTenant($event)">
-                </autocomplete-siren>
-              </td>
               <td>
                 <autocomplete-legal-form [(model)]="bodaccSale.tenantLegalForm" [form]="bodaccSaleForm"
                   label="Forme juridique" [isDisabled]="!editMode" propertyName="tenantLegalForm" [isMandatory]="true"

@@ -30,14 +30,16 @@ public interface BankTransfertRepository extends QueryCacheCrudRepository<BankTr
                         + " left join confrere on confrere.id = invoice.id_confrere "
                         + " where is_cancelled=false and (:isHideExportedRefunds=false OR r.is_already_exported=false) "
                         + " and (:isDisplaySelectedForExportBankTransfert=false OR r.is_selected_for_export=true) "
+                        + " and (:idBankTransfert=0 OR r.id=:idBankTransfert) "
                         + " and r.transfert_date_time>=:startDate and r.transfert_date_time<=:endDate "
                         + "  and (:minAmount is null or r.transfert_amount>=CAST(CAST(:minAmount as text) as real) ) "
                         + "  and (:maxAmount is null or r.transfert_amount<=CAST(CAST(:maxAmount as text) as real) )"
-                        + " and (:label is null or  upper(r.label)  like '%' || upper(CAST(:label as text))  || '%' )")
+                        + " and (:label is null or  CAST(r.id as text) = upper(CAST(:label as text)) or  upper(r.label)  like '%' || upper(CAST(:label as text))  || '%' )")
         List<BankTransfertSearchResult> findTransferts(
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                         @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount,
                         @Param("label") String label,
                         @Param("isHideExportedRefunds") boolean isHideExportedRefunds,
-                        @Param("isDisplaySelectedForExportBankTransfert") boolean isDisplaySelectedForExportBankTransfert);
+                        @Param("isDisplaySelectedForExportBankTransfert") boolean isDisplaySelectedForExportBankTransfert,
+                        @Param("idBankTransfert") Integer idBankTransfert);
 }

@@ -311,7 +311,9 @@ public class MailHelper {
                             attachment.getParentAttachment().setIsAlreadySent(true);
                         else if (attachment != null)
                             attachment.setIsAlreadySent(true);
-                        attachmentService.addOrUpdateAttachment(attachment.getParentAttachment());
+
+                        if (attachment != null && attachment.getParentAttachment() != null)
+                            attachmentService.addOrUpdateAttachment(attachment.getParentAttachment());
                     }
                 }
             }
