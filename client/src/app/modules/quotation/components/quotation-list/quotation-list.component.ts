@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { QUOTATION_STATUS_OPEN, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY } from 'src/app/libs/Constants';
 import { formatDateForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -11,6 +12,8 @@ import { Employee } from '../../../profile/model/Employee';
 import { IQuotation } from '../../model/IQuotation';
 import { QuotationSearch } from '../../model/QuotationSearch';
 import { QuotationSearchResult } from '../../model/QuotationSearchResult';
+import { QuotationStatus } from '../../model/QuotationStatus';
+import { QuotationStatusService } from '../../services/quotation-status.service';
 import { QuotationSearchResultService } from '../../services/quotation.search.result.service';
 import { QuotationComponent } from '../quotation/quotation.component';
 @Component({
@@ -37,6 +40,7 @@ export class QuotationListComponent implements OnInit {
     private employeeService: EmployeeService,
     private userPreferenceService: UserPreferenceService,
     private formBuilder: FormBuilder,
+    private quotationStatusService: QuotationStatusService,
   ) { }
 
   ngOnInit() {
@@ -95,8 +99,19 @@ export class QuotationListComponent implements OnInit {
 
       this.tableAction.push({ actionIcon: "request_quote", actionName: "Voir le devis", actionLinkFunction: this.getActionLink, display: true, } as SortTableAction);
 
-      if ((this.isForDashboard || this.isForTiersIntegration) && !this.quotations && this.quotationSearch)
-        this.searchOrders();
+
+      if ((this.isForDashboard || this.isForTiersIntegration) && !this.quotations && this.quotationSearch) {
+        this.quotationStatusService.getQuotationStatus().subscribe(res => {
+          if (this.isForTiersIntegration && !this.quotationSearch.quotationStatus) {
+            let status = [] as Array<QuotationStatus>;
+            status.push(this.quotationStatusService.getQuotationStatusByCode(res, QUOTATION_STATUS_OPEN)!);
+            status.push(this.quotationStatusService.getQuotationStatusByCode(res, QUOTATION_STATUS_TO_VERIFY)!);
+            status.push(this.quotationStatusService.getQuotationStatusByCode(res, QUOTATION_STATUS_SENT_TO_CUSTOMER)!);
+            this.quotationSearch.quotationStatus = status;
+          }
+          this.searchOrders();
+        })
+      }
 
     });
   }

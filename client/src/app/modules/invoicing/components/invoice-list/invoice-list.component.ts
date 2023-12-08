@@ -121,6 +121,9 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     };
 
     if ((this.isForDashboard || this.isForTiersIntegration) && !this.invoices && this.invoiceSearch) {
+      if (this.isForTiersIntegration && !this.invoiceSearch.invoiceStatus) {
+        this.invoiceSearch.invoiceStatus = [this.constantService.getInvoiceStatusSend()];
+      }
       this.searchInvoices();
     }
   }
