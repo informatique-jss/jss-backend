@@ -8,7 +8,6 @@ import javax.persistence.QueryHint;
 import org.springframework.data.jpa.repository.QueryHints;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
-import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 
@@ -33,7 +32,7 @@ public interface CompetentAuthorityRepository extends QueryCacheCrudRepository<C
 
     List<CompetentAuthority> findByInpiReference(String inpiReference);
 
-    List<CompetentAuthority> findByCityAndCompetentAuthorityType(City city,
+    List<CompetentAuthority> findByCities_IdAndCompetentAuthorityType(Integer cityId,
             CompetentAuthorityType competentAuthorityType);
 
 }

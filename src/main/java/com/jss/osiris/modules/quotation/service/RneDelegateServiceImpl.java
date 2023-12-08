@@ -19,8 +19,8 @@ import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.guichetUnique.RneCompany;
+import com.jss.osiris.modules.quotation.model.guichetUnique.RneLogInResponse;
 import com.jss.osiris.modules.quotation.model.guichetUnique.RneLogin;
-import com.jss.osiris.modules.quotation.model.guichetUnique.RneLoginResponse;
 import com.jss.osiris.modules.quotation.repository.AnnouncementNoticeTemplateRepository;
 
 @Service
@@ -102,12 +102,12 @@ public class RneDelegateServiceImpl implements RneDelegateService {
         login.setUsername(rneLogin);
         login.setPassword(rneUniquePassword);
 
-        ResponseEntity<RneLoginResponse> res;
+        ResponseEntity<RneLogInResponse> res;
 
         res = new RestTemplate().postForEntity(
                 rneEntryPoint + ssoRequestUrl + loginRequestUrl,
                 new HttpEntity<Object>(login, headers),
-                RneLoginResponse.class);
+                RneLogInResponse.class);
 
         if (res.getBody() != null && res.getBody().getToken() != null) {
             bearerValue = res.getBody().getToken();

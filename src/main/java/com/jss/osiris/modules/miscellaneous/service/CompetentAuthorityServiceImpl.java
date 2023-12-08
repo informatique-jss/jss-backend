@@ -63,7 +63,8 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     @Override
     public List<CompetentAuthority> getCompetentAuthorityByCityAndAuthorityType(City city,
             CompetentAuthorityType competentAuthorityType) {
-        return competentAuthorityRepository.findByCityAndCompetentAuthorityType(city, competentAuthorityType);
+        return competentAuthorityRepository.findByCities_IdAndCompetentAuthorityType(city.getId(),
+                competentAuthorityType);
     }
 
     @Override

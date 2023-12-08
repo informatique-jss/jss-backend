@@ -208,21 +208,22 @@ public class AffaireServiceImpl implements AffaireService {
 
         affaire.setSiret(specificSiret);
         affaire.setSiren(rneCompany.getSiren());
-        updateAffaireFromRneCompany(affaire, rneCompany);
+        updateAffaireFromRneCompany(affaire, rneCompany, false);
 
         // if already existing affaire, use it
         if (affaire.getSiret() != null) {
             Affaire existingAffaire = getAffaireBySiret(affaire.getSiret());
             if (existingAffaire != null) {
                 affaire = existingAffaire;
-                updateAffaireFromRneCompany(existingAffaire, rneCompany);
+                updateAffaireFromRneCompany(existingAffaire, rneCompany, false);
             }
         }
 
         return affaire;
     }
 
-    private void updateAffaireFromRneCompany(Affaire affaire, RneCompany rneCompany) throws OsirisException {
+    private void updateAffaireFromRneCompany(Affaire affaire, RneCompany rneCompany, boolean isForceRefresh)
+            throws OsirisException {
         PersonneMorale personneMorale = null;
 
         if (rneCompany == null)
@@ -264,17 +265,20 @@ public class AffaireServiceImpl implements AffaireService {
             adressElements.add(address.getVoie());
 
             if (affaire.getAddress() == null || affaire.getAddress().length() == 0)
-                affaire.setAddress(adressElements.stream().filter(s -> s != null && !s.isEmpty())
-                        .collect(Collectors.joining(" ")));
+                if (isForceRefresh || affaire.getAddress() == null || affaire.getAddress().equals(""))
+                    affaire.setAddress(adressElements.stream().filter(s -> s != null && !s.isEmpty())
+                            .collect(Collectors.joining(" ")));
 
             companyPostalCode = address.getCodePostal();
 
             if (affaire.getPostalCode() == null || affaire.getPostalCode().length() == 0)
-                affaire.setPostalCode(companyPostalCode);
+                if (isForceRefresh || affaire.getPostalCode() == null || affaire.getPostalCode().equals(""))
+                    affaire.setPostalCode(companyPostalCode);
 
             if (affaire.getCedexComplement() == null || affaire.getCedexComplement().length() == 0)
-                affaire.setCedexComplement(
-                        address.getDistributionSpeciale());
+                if (isForceRefresh || affaire.getCedexComplement() == null || affaire.getCedexComplement().equals(""))
+                    affaire.setCedexComplement(
+                            address.getDistributionSpeciale());
 
             if (address.getCommune() != null && affaire.getCity() == null) {
                 List<City> foundCities = cityService
@@ -293,41 +297,49 @@ public class AffaireServiceImpl implements AffaireService {
                     if (foundCities.size() == 1)
                         companyCity = foundCities.get(0);
                 }
-                affaire.setCity(companyCity);
+                if (isForceRefresh || affaire.getCity() == null)
+                    affaire.setCity(companyCity);
             }
 
-            affaire.setCountry(constantService.getCountryFrance());
+            if (isForceRefresh || affaire.getCountry() == null)
+                affaire.setCountry(constantService.getCountryFrance());
         }
 
         if (affaire.getLegalForm() == null) {
-            affaire.setLegalForm(formeJuridiqueService
-                    .getFormeJuridique(
-                            rneCompany.getFormality().getContent().getNatureCreation().getFormeJuridique().getCode()));
+            if (isForceRefresh || affaire.getLegalForm() == null)
+                affaire.setLegalForm(formeJuridiqueService
+                        .getFormeJuridique(
+                                rneCompany.getFormality().getContent().getNatureCreation().getFormeJuridique()
+                                        .getCode()));
         }
 
         if (affaire.getMainActivity() == null
                 && rneCompany.getFormality().getContent().getFormeExerciceActivitePrincipale() != null) {
-            affaire.setMainActivity(formeExerciceActivitePrincipalService.getFormeExerciceActivitePrincipal(
-                    rneCompany.getFormality().getContent().getFormeExerciceActivitePrincipale().getCode()));
+            if (isForceRefresh || affaire.getMainActivity() == null)
+                affaire.setMainActivity(formeExerciceActivitePrincipalService.getFormeExerciceActivitePrincipal(
+                        rneCompany.getFormality().getContent().getFormeExerciceActivitePrincipale().getCode()));
         }
 
         if ((affaire.getShareCapital() == null || affaire.getShareCapital() <= 0f)
                 && personneMorale.getIdentite() != null
                 && personneMorale.getIdentite().getDescription() != null
                 && personneMorale.getIdentite().getDescription().getMontantCapital() != null)
-            affaire.setShareCapital(personneMorale.getIdentite().getDescription().getMontantCapital() * 1.0f);
+            if (isForceRefresh || affaire.getShareCapital() == null || affaire.getShareCapital().equals(0f))
+                affaire.setShareCapital(personneMorale.getIdentite().getDescription().getMontantCapital() * 1.0f);
 
         if ((affaire.getDenomination() == null || affaire.getDenomination().length() == 0)
                 && personneMorale.getIdentite() != null && personneMorale.getIdentite().getEntreprise() != null
                 && personneMorale.getIdentite().getEntreprise().getDenomination() != null)
-            affaire.setDenomination(personneMorale.getIdentite().getEntreprise().getDenomination());
+            if (isForceRefresh || affaire.getDenomination() == null || affaire.getDenomination().equals(""))
+                affaire.setDenomination(personneMorale.getIdentite().getEntreprise().getDenomination());
 
         if (affaire.getCity() != null && affaire.getCompetentAuthority() == null) {
             List<CompetentAuthority> competentAuthoritiesFound = competentAuthorityService
                     .getCompetentAuthorityByCityAndAuthorityType(affaire.getCity(),
                             constantService.getCompetentAuthorityTypeRcs());
             if (competentAuthoritiesFound != null && competentAuthoritiesFound.size() == 1)
-                affaire.setCompetentAuthority(competentAuthoritiesFound.get(0));
+                if (isForceRefresh || affaire.getCompetentAuthority() == null)
+                    affaire.setCompetentAuthority(competentAuthoritiesFound.get(0));
         }
     }
 
@@ -446,7 +458,7 @@ public class AffaireServiceImpl implements AffaireService {
                     rneCompanies = rneDelegateService.getCompanyBySiren(affaire.getSiren());
 
                 if (rneCompanies != null && rneCompanies.size() == 1)
-                    updateAffaireFromRneCompany(affaire, rneCompanies.get(0));
+                    updateAffaireFromRneCompany(affaire, rneCompanies.get(0), false);
 
                 entityManager.flush();
                 entityManager.clear();
