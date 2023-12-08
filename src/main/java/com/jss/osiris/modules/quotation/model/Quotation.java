@@ -79,6 +79,9 @@ public class Quotation implements IQuotation {
 	@Column(columnDefinition = "TEXT")
 	private String description;
 
+	@Column(columnDefinition = "TEXT")
+	private String instructions;
+
 	@OneToMany(mappedBy = "quotation")
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
 	private List<Attachment> attachments;
@@ -299,6 +302,14 @@ public class Quotation implements IQuotation {
 
 	public void setValidationToken(String validationToken) {
 		this.validationToken = validationToken;
+	}
+
+	public String getInstructions() {
+		return instructions;
+	}
+
+	public void setInstructions(String instructions) {
+		this.instructions = instructions;
 	}
 
 }

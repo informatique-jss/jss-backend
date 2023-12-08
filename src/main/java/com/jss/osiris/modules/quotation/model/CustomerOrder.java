@@ -46,7 +46,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public CustomerOrder(Employee assignedTo, Tiers tiers, Responsable responsable, Confrere confrere,
 			List<SpecialOffer> specialOffers, LocalDateTime createdDate, CustomerOrderStatus customerOrderStatus,
-			String observations, String description, List<Attachment> attachments, List<Document> documents,
+			String observations, String description, String instructions, List<Attachment> attachments,
+			List<Document> documents,
 			List<AssoAffaireOrder> assoAffaireOrders,
 			List<Quotation> quotations, String quotationLabel, Boolean isQuotation,
 			List<Invoice> invoices, List<AccountingRecord> accountingRecords) {
@@ -59,6 +60,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.customerOrderStatus = customerOrderStatus;
 		this.observations = observations;
 		this.description = description;
+		this.instructions = instructions;
 		this.attachments = attachments;
 		this.documents = documents;
 		this.assoAffaireOrders = assoAffaireOrders;
@@ -109,6 +111,9 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@Column(columnDefinition = "TEXT")
 	private String description;
+
+	@Column(columnDefinition = "TEXT")
+	private String instructions;
 
 	@OneToMany(mappedBy = "customerOrder")
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
@@ -369,6 +374,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setIsGifted(Boolean isGifted) {
 		this.isGifted = isGifted;
+	}
+
+	public String getInstructions() {
+		return instructions;
+	}
+
+	public void setInstructions(String instructions) {
+		this.instructions = instructions;
 	}
 
 }

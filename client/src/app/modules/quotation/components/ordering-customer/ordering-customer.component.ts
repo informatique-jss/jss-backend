@@ -130,6 +130,7 @@ export class OrderingCustomerComponent implements OnInit {
       this.quotation.responsable = undefined;
       if (this.quotation.tiers) {
         this.quotation.observations = this.quotation.tiers.observations;
+        this.quotation.instructions = this.quotation.tiers.instructions;
       }
       this.setDocument();
     })
@@ -154,6 +155,7 @@ export class OrderingCustomerComponent implements OnInit {
       if (this.quotation.responsable != null) {
         this.quotation.responsable.tiers = response;
         this.quotation.observations = this.quotation.responsable.tiers.observations;
+        this.quotation.instructions = this.quotation.responsable.tiers.instructions;
         this.setDocument();
       }
     })

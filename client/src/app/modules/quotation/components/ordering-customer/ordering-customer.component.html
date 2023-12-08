@@ -193,6 +193,13 @@
           </tr>
           <tr>
             <td>
+              <generic-textarea [(model)]="quotation.instructions" label="Consignes du tiers"
+                [form]="orderingCustomerForm" propertyName="instructions" [isDisabled]="!editMode" [numberOfLines]="4">
+              </generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-textarea [(model)]="quotation.description" label="Description de la demande"
                 [form]="orderingCustomerForm" propertyName="description" [isDisabled]="!editMode" [numberOfLines]="10">
               </generic-textarea>
