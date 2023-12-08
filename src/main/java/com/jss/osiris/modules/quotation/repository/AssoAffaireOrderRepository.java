@@ -30,7 +30,8 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " p.id as provisionId, " +
                         " max(audit.datetime) as provisionStatusDatetime, " +
                         " coalesce(min(audit2.datetime),c.created_date) as provisionCreatedDatetime, " +
-                        " sp_ca.label as waitedCompetentAuthorityLabel " +
+                        " sp_ca.label as waitedCompetentAuthorityLabel, " +
+                        " ca.label as competentAuthorityLabel " +
                         " from asso_affaire_order asso " +
                         " join affaire a on a.id = asso.id_affaire" +
                         " join customer_order c on c.id = asso.id_customer_order" +
@@ -54,6 +55,7 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " left join simple_provision sp on sp.id = p.id_simple_provision" +
                         " left join simple_provision_status sps on sps.id = sp.id_simple_provision_status " +
                         " left join competent_authority sp_ca on sp_ca.id = sp.id_waited_competent_authority " +
+                        " left join competent_authority ca on ca.id = a.id_competent_authority " +
                         " left join bodacc bo on bo.id = p.id_bodacc" +
                         " left join bodacc_status bos on bos.id = bo.id_bodacc_status" +
                         " left join audit on " +
@@ -88,7 +90,7 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         "  a.address ,a.postal_Code ,ci.label ,c.created_date,  " +
                         "  cf.label,e1.id,e2.id , pf.label ,pt.label,ans.label,fs.label,doms.label, bos.label,sps.label, "
                         +
-                        " asso.id_customer_order,p.is_emergency,p.id  ,sp_ca.label " +
+                        " asso.id_customer_order,p.is_emergency,p.id  ,sp_ca.label,ca.label " +
                         "")
         ArrayList<AssoAffaireOrderSearchResult> findAsso(@Param("responsible") List<Integer> responsibleIds,
                         @Param("assignedTo") List<Integer> assignedToIds,
