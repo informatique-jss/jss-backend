@@ -35,4 +35,8 @@ export class AffaireService extends AppRestService<Affaire>{
   generateAffaireByRna(rna: string) {
     return this.getList(new HttpParams().set("rna", rna), "rna");
   }
+
+  refreshAffaire(affaire: Affaire) {
+    return this.get(new HttpParams().set("idAffaire", affaire.id), "affaire/refresh/rne");
+  }
 }

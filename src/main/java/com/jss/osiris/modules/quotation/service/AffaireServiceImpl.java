@@ -102,6 +102,17 @@ public class AffaireServiceImpl implements AffaireService {
         return affaireRepository.findByRna(rna);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public Affaire refreshAffaireFromRne(Affaire affaire)
+            throws OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+        affaire = getAffaire(affaire.getId());
+        List<RneCompany> rneCompanies = rneDelegateService.getCompanyBySiret(affaire.getSiret());
+        if (rneCompanies != null && rneCompanies.size() == 1)
+            updateAffaireFromRneCompany(affaire, rneCompanies.get(0), true);
+        addOrUpdateAffaire(affaire);
+        return affaire;
+    }
+
     @Autowired
     IndexEntityService indexEntityService;
 

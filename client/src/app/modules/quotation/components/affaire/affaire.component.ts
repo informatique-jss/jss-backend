@@ -74,6 +74,13 @@ export class AffaireComponent implements OnInit {
     return false;
   }
 
+  refreshAffaire() {
+    if (this.affaire)
+      this.affaireService.refreshAffaire(this.affaire).subscribe(response => {
+        this.affaire = response;
+      })
+  }
+
   getFormsStatus(): boolean {
 
     let addAffaireComponentStatus = this.addAffaireComponent?.getFormStatus();

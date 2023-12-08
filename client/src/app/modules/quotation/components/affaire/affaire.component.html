@@ -31,3 +31,7 @@
   (click)="editAffaire()">
   <mat-icon>edit</mat-icon>
 </button>
+<button matTooltip="Raffraichir l'affaire avec le RNE" mat-fab color="accent" class="second-fab-button"
+  (click)="refreshAffaire()" *ngIf="affaire && affaire.siret">
+  <mat-icon>refresh</mat-icon>
+</button>

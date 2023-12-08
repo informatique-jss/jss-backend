@@ -1448,6 +1448,22 @@ public class QuotationController {
     return new ResponseEntity<Affaire>(affaireService.addOrUpdateAffaire(affaire), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/affaire/refresh/rne")
+  public ResponseEntity<Affaire> refreshAffaireFromRne(@RequestParam Integer idAffaire)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+    if (idAffaire == null)
+      throw new OsirisValidationException("idAffaire");
+
+    Affaire affaire = affaireService.getAffaire(idAffaire);
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    if (affaire.getSiret() == null || affaire.getSiret().equals(""))
+      throw new OsirisValidationException("siret");
+
+    return new ResponseEntity<Affaire>(affaireService.refreshAffaireFromRne(affaire), HttpStatus.OK);
+  }
+
   @PostMapping(inputEntryPoint + "/invoice-item/generate")
   public ResponseEntity<IQuotation> generateInvoiceItemForQuotation(@RequestBody Quotation quotation)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException {
