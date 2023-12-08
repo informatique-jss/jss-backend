@@ -343,6 +343,9 @@ public class TiersServiceImpl implements TiersService {
         tiers.setCompetitors(null);
         tiers.setSpecialOffers(null);
 
+        accountingAccountService.deleteAccountingAccount(tiers.getAccountingAccountCustomer());
+        accountingAccountService.deleteAccountingAccount(tiers.getAccountingAccountDeposit());
+        accountingAccountService.deleteAccountingAccount(tiers.getAccountingAccountProvider());
         addOrUpdateTiers(tiers);
 
         tiersRepository.delete(tiers);
