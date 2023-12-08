@@ -832,7 +832,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   checkIfProvisionContainsRegister(getProvisionLabel: string): boolean {
-    return getProvisionLabel.includes(this.provisionFamilyTypeRegister.label);
+    return getProvisionLabel.includes(this.constantService.constant.provisionFamilyTypeRegister.label);
   }
 
   getProvisionLabel(provision: Provision): string {

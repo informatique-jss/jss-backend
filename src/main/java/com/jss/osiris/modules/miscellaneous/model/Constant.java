@@ -708,6 +708,7 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_provision_family_type")
 	private ProvisionFamilyType provisionFamilyTypeRegister;
+
 	@JoinColumn(name = "id_provider_central_pay")
 	private Provider providerCentralPay;
 
