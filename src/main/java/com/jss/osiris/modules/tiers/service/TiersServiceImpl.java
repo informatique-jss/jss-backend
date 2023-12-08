@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.tiers.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,17 +11,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.CustomerMailService;
+import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
+import com.jss.osiris.modules.quotation.model.OrderingSearch;
+import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
+import com.jss.osiris.modules.quotation.model.QuotationSearch;
+import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
+import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.repository.TiersRepository;
@@ -54,6 +66,15 @@ public class TiersServiceImpl implements TiersService {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    CustomerMailService customerMailService;
+
+    @Autowired
+    CustomerOrderService customerOrderService;
+
+    @Autowired
+    QuotationService quotationService;
 
     @Override
     @Transactional
@@ -247,6 +268,85 @@ public class TiersServiceImpl implements TiersService {
     @Override
     public List<Tiers> getTiers() {
         return IterableUtils.toList(tiersRepository.findAll());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean deleteTiers(Tiers tiers)
+            throws OsirisClientMessageException, OsirisException, OsirisDuplicateException {
+        tiers = getTiers(tiers.getId());
+        if (tiers.getAttachments() != null && tiers.getAttachments().size() > 0)
+            throw new OsirisClientMessageException("Impossible de supprimer le tiers, des documents existent");
+
+        if (tiers.getTiersFollowups() != null && tiers.getTiersFollowups().size() > 0)
+            throw new OsirisClientMessageException("Impossible de supprimer le tiers, des suivis existent");
+
+        List<CustomerMail> mails = customerMailService.getMailsByTiers(tiers);
+        if (mails != null && mails.size() > 0)
+            throw new OsirisClientMessageException("Impossible de supprimer le tiers, des mails existent");
+
+        OrderingSearch orderingSearch = new OrderingSearch();
+        orderingSearch.setCustomerOrders(Arrays.asList(tiers));
+        List<OrderingSearchResult> customerOrder = customerOrderService.searchOrders(orderingSearch);
+        if (customerOrder != null && customerOrder.size() > 0)
+            throw new OsirisClientMessageException("Impossible de supprimer le tiers, des commandes existent");
+
+        QuotationSearch quotationSearch = new QuotationSearch();
+        quotationSearch.setCustomerOrders(Arrays.asList(tiers));
+        List<QuotationSearchResult> quotations = quotationService.searchQuotations(quotationSearch);
+        if (quotations != null && quotations.size() > 0)
+            throw new OsirisClientMessageException("Impossible de supprimer le tiers, des devis existent");
+
+        InvoiceSearch invoiceSearch = new InvoiceSearch();
+        invoiceSearch.setCustomerOrders(Arrays.asList(tiers));
+        List<InvoiceSearchResult> invoices = invoiceService.searchInvoices(invoiceSearch);
+        if (invoices != null && invoices.size() > 0)
+            throw new OsirisClientMessageException("Impossible de supprimer le tiers, des factures existent");
+
+        if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
+            for (Responsable responsable : tiers.getResponsables()) {
+                if (responsable.getAttachments() != null && responsable.getAttachments().size() > 0)
+                    throw new OsirisClientMessageException("Impossible de supprimer le tiers, des documents existent");
+
+                if (responsable.getTiersFollowups() != null && responsable.getTiersFollowups().size() > 0)
+                    throw new OsirisClientMessageException("Impossible de supprimer le tiers, des suivis existent");
+
+                mails = customerMailService.getMailsByResponsable(responsable);
+                if (mails != null && mails.size() > 0)
+                    throw new OsirisClientMessageException("Impossible de supprimer le tiers, des mails existent");
+
+                orderingSearch = new OrderingSearch();
+                Tiers dummyTiers = new Tiers();
+                dummyTiers.setId(responsable.getId());
+                orderingSearch.setCustomerOrders(Arrays.asList(dummyTiers));
+                customerOrder = customerOrderService.searchOrders(orderingSearch);
+                if (customerOrder != null && customerOrder.size() > 0)
+                    throw new OsirisClientMessageException("Impossible de supprimer le tiers, des commandes existent");
+
+                quotationSearch = new QuotationSearch();
+                quotationSearch.setCustomerOrders(Arrays.asList(dummyTiers));
+                quotations = quotationService.searchQuotations(quotationSearch);
+                if (quotations != null && quotations.size() > 0)
+                    throw new OsirisClientMessageException("Impossible de supprimer le tiers, des devis existent");
+
+                invoiceSearch = new InvoiceSearch();
+                invoiceSearch.setCustomerOrders(Arrays.asList(dummyTiers));
+                invoices = invoiceService.searchInvoices(invoiceSearch);
+
+                responsable.setMails(null);
+                responsable.setPhones(null);
+            }
+        }
+
+        tiers.setMails(null);
+        tiers.setPhones(null);
+        tiers.setCompetitors(null);
+        tiers.setSpecialOffers(null);
+
+        addOrUpdateTiers(tiers);
+
+        tiersRepository.delete(tiers);
+        return true;
     }
 
 }

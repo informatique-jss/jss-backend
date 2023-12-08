@@ -103,6 +103,7 @@ public class AffaireServiceImpl implements AffaireService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    @Override
     public Affaire refreshAffaireFromRne(Affaire affaire)
             throws OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         affaire = getAffaire(affaire.getId());

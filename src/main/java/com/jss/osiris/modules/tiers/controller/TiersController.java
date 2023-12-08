@@ -394,6 +394,19 @@ public class TiersController {
     return new ResponseEntity<Tiers>(tiersService.getTiersFromUser(id), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/tiers/delete")
+  public ResponseEntity<Boolean> deleteTiers(@RequestParam Integer idTiers)
+      throws OsirisValidationException, OsirisClientMessageException, OsirisException, OsirisDuplicateException {
+    if (idTiers == null)
+      throw new OsirisValidationException("idTiers");
+
+    Tiers tiers = tiersService.getTiers(idTiers);
+    if (tiers == null)
+      throw new OsirisValidationException("tiers");
+
+    return new ResponseEntity<Boolean>(tiersService.deleteTiers(tiers), HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/responsable")
   public ResponseEntity<Responsable> getResponsableById(@RequestParam Integer id) {
     return new ResponseEntity<Responsable>(responsableService.getResponsable(id), HttpStatus.OK);

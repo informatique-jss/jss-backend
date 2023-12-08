@@ -1,6 +1,8 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
@@ -9,7 +11,6 @@ import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
 import { InvoiceSearch } from '../../../invoicing/model/InvoiceSearch';
-import { ReportingService } from '../../../reporting/services/reporting.service';
 import { Responsable } from '../../model/Responsable';
 import { Tiers } from '../../model/Tiers';
 import { TiersService } from '../../services/tiers.service';
@@ -55,7 +56,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     private activatedRoute: ActivatedRoute,
     protected searchService: SearchService,
     private constantService: ConstantService,
-    private reportingService: ReportingService,
+    public confirmationDialog: MatDialog,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit() {
@@ -204,6 +205,25 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
   openSearch() {
     this.searchService.openSearchOnModule(TIERS_ENTITY_TYPE);
+  }
+
+  deleteTiers() {
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Supprimer le tiers n°" + this.tiers.id,
+        content: "Êtes-vous sûr de vouloir supprimer ce tiers ? Cette action est irréversible !",
+        closeActionText: "Annuler",
+        validationActionText: "Supprimer"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult)
+        this.tiersService.deleteTiers(this.tiers).subscribe(res => {
+          this.appService.openRoute(null, '/tiers/', null);
+        });
+    });
   }
 
 }
