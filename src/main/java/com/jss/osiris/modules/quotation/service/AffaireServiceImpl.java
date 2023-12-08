@@ -339,6 +339,12 @@ public class AffaireServiceImpl implements AffaireService {
                 affaire.setShareCapital(personneMorale.getIdentite().getDescription().getMontantCapital() * 1.0f);
 
         if ((affaire.getDenomination() == null || affaire.getDenomination().length() == 0)
+                && personneMorale.getIdentite() != null && personneMorale.getIdentite().getDescription() != null
+                && personneMorale.getIdentite().getDescription().getSigle() != null)
+            if (isForceRefresh || affaire.getAcronym() == null || affaire.getAcronym().equals(""))
+                affaire.setAcronym(personneMorale.getIdentite().getDescription().getSigle());
+
+        if ((affaire.getAcronym() == null || affaire.getAcronym().length() == 0)
                 && personneMorale.getIdentite() != null && personneMorale.getIdentite().getEntreprise() != null
                 && personneMorale.getIdentite().getEntreprise().getDenomination() != null)
             if (isForceRefresh || affaire.getDenomination() == null || affaire.getDenomination().equals(""))

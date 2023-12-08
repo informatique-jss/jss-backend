@@ -54,6 +54,11 @@
           propertyName="denomination" [isMandatory]="true" [isDisabled]="!editMode"
           [conditionnalRequired]="!this.affaire.isIndividual" [maxLength]="150"></generic-input>
       </td>
+      <td>
+        <generic-input [(model)]="affaire.acronym" label="Sigle" [form]="affaireForm" propertyName="acronym"
+          [isMandatory]="false" [isDisabled]="!editMode" [conditionnalRequired]="!this.affaire.isIndividual"
+          [maxLength]="150"></generic-input>
+      </td>
     </tr>
   </table>
   <table class="full-width">

@@ -35,4 +35,5 @@ export interface Affaire extends IReferential {
   legalForm: FormeJuridique;
   mainActivity: FormeExerciceActivitePrincipal;
   competentAuthority: CompetentAuthority;
+  acronym: string;
 }

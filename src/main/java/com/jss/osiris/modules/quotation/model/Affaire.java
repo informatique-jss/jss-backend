@@ -41,6 +41,9 @@ public class Affaire implements Serializable, IId {
 	@IndexedField
 	private String denomination;
 
+	@Column(length = 150)
+	private String acronym;
+
 	@Column(nullable = false)
 	private Boolean isIndividual;
 
@@ -333,6 +336,14 @@ public class Affaire implements Serializable, IId {
 
 	public void setCompetentAuthority(CompetentAuthority competentAuthority) {
 		this.competentAuthority = competentAuthority;
+	}
+
+	public String getAcronym() {
+		return acronym;
+	}
+
+	public void setAcronym(String acronym) {
+		this.acronym = acronym;
 	}
 
 }
