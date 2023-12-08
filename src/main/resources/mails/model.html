@@ -313,7 +313,7 @@
                                                                                             </td>
                                                                                         </tr>
                                                                                         <tr
-                                                                                            th:if="${invoiceItem.discountAmount!=null}">
+                                                                                            th:if="${invoiceItem.discountAmount!=null} and ${invoiceItem.discountAmount>0}">
                                                                                             <td colspan="4">
                                                                                                 <span>Remise</span>
                                                                                             </td>
