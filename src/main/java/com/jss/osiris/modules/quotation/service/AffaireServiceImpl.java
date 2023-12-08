@@ -261,7 +261,6 @@ public class AffaireServiceImpl implements AffaireService {
                     adressElements.add(typeVoie.getLabel());
             }
 
-            adressElements.add(address.getTypeVoie().getLabel());
             adressElements.add(address.getVoie());
 
             if (affaire.getAddress() == null || affaire.getAddress().length() == 0)
