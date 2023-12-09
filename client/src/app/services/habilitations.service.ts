@@ -130,6 +130,10 @@ export class HabilitationsService {
   canByPassMultipleCustomerOrderOnAssociationCheck() {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
   }
+
+  canPutNegativePaymentIntoAccount() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
 }
 
 

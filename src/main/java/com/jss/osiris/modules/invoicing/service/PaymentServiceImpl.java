@@ -1306,12 +1306,23 @@ public class PaymentServiceImpl implements PaymentService {
     public void putPaymentInAccount(Payment payment, CompetentAuthority competentAuthority)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         cancelPayment(payment);
-        Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
-                competentAuthority.getAccountingAccountDeposit());
-        newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
-        accountingRecordGenerationService
-                .generateAccountingRecordOnPaymentOnDepositCompetentAuthorityAccount(newPayment);
-        newPayment.setCompetentAuthority(competentAuthority);
+        Payment newPayment = null;
+        if (payment.getPaymentAmount() > 0) {
+            newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
+                    competentAuthority.getAccountingAccountDeposit());
+            newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
+            accountingRecordGenerationService
+                    .generateAccountingRecordOnIncomingPaymentOnDepositCompetentAuthorityAccount(newPayment);
+            newPayment.setCompetentAuthority(competentAuthority);
+        } else {
+            newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
+                    competentAuthority.getAccountingAccountDeposit());
+            newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+            newPayment.setTargetAccountingAccount(competentAuthority.getAccountingAccountProvider());
+            accountingRecordGenerationService
+                    .generateAccountingRecordOnOutgoingPaymentOnDepositCompetentAuthorityAccount(newPayment);
+            newPayment.setCompetentAuthority(competentAuthority);
+        }
         addOrUpdatePayment(newPayment);
     }
 }

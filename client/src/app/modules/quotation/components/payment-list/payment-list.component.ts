@@ -261,9 +261,15 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
   }
 
   displayAccountingPaymentDetailsDialog(payment: PaymentSearchResult) {
-    if (!this.habilitationService.canRefundPayment())
+    if (!this.habilitationService.canRefundPayment()) {
       this.appService.displaySnackBar("Non autorisé", true, 10);
-    if (payment && payment.paymentAmount < 0) {
+      return;
+    }
+    if (payment) {
+      if (payment.paymentAmount < 0 && !this.habilitationService.canPutNegativePaymentIntoAccount()) {
+        this.appService.displaySnackBar("Non autorisé", true, 10);
+        return;
+      }
       this.paymentService.getPaymentById(payment.id).subscribe(element => {
         let dialogCompetentAuthorityDialogRef = this.selectCompetentAuthorityDialog.open(SelectCompetentAuthorityDialogComponent, {
           width: '100%'
