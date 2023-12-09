@@ -202,6 +202,8 @@ public class Confrere implements ITiers, IGenericTiers {
 	@JsonIgnoreProperties(value = { "confrere" }, allowSetters = true)
 	private List<TiersFollowup> tiersFollowups;
 
+	private Boolean doNotUse;
+
 	public Integer getId() {
 		return id;
 	}
@@ -581,6 +583,14 @@ public class Confrere implements ITiers, IGenericTiers {
 
 	public void setIntercommunityVat(String intercommunityVat) {
 		this.intercommunityVat = intercommunityVat;
+	}
+
+	public Boolean getDoNotUse() {
+		return doNotUse;
+	}
+
+	public void setDoNotUse(Boolean doNotUse) {
+		this.doNotUse = doNotUse;
 	}
 
 }

@@ -69,7 +69,6 @@ import { AutocompleteTiersIndividualComponent } from '../forms/autocomplete-tier
 import { ChipsAttachmentTypeComponent } from '../forms/chips-attachment-type/chips-attachment-type.component';
 import { ChipsCityComponent } from '../forms/chips-city/chips-city.component';
 import { ChipsCompetitorComponent } from '../forms/chips-competitor/chips-competitor.component';
-import { ChipsConfrereComponent } from '../forms/chips-confrere/chips-confrere.component';
 import { ChipsEmployeeComponent } from '../forms/chips-employee/chips-employee.component';
 import { ChipsFormaliteGuichetUniqueComponent } from '../forms/chips-formalite-guichet-unique/chips-formalite-guichet-unique.component';
 import { ChipsMailComponent } from '../forms/chips-mail/chips-mail.component';
@@ -350,7 +349,6 @@ const routes: Routes = [
     SelectCompetentAuthorityTypeComponent,
     ChipsCompetitorComponent,
     SelectBillingItemsComponent,
-    ChipsConfrereComponent,
     SelectJournalTypeComponent,
     TrustHtmlPipe,
     SelectVatCollectionTypeComponent,
@@ -539,7 +537,6 @@ const routes: Routes = [
     AutocompleteLegalFormComponent,
     AvatarComponent,
     AvatarChipComponent,
-    ChipsConfrereComponent,
     SelectMailRedirectionComponent,
     SelectVatComponent,
     GradeComponent,

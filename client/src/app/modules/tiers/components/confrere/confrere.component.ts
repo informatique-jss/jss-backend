@@ -180,8 +180,9 @@ export class ConfrereComponent implements OnInit {
   saveConfrere() {
     if (this.getFormStatus() && this.selectedConfrere) {
       this.editMode = false;
-      if (!this.selectedConfrere.isSepaMandateReceived)
-        this.selectedConfrere.isSepaMandateReceived = false;
+      if (!this.selectedConfrere.doNotUse) this.selectedConfrere.doNotUse = false;
+      if (!this.selectedConfrere.isSepaMandateReceived) this.selectedConfrere.isSepaMandateReceived = false;
+
       this.confrereService.addOrUpdateConfrere(this.selectedConfrere).subscribe(response => {
         this.selectedConfrere = response;
       });

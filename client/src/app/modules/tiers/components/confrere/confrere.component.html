@@ -33,19 +33,19 @@
                       <generic-input [(model)]="selectedConfrere.id" label="Identifiant technique" [form]="entityForm2"
                         propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
                     </td>
-                  </tr>
-                  <tr>
                     <td>
                       <generic-input [(model)]="selectedConfrere.code" label="Codification" [maxLength]="20"
                         [form]="entityForm2" propertyName="code" [isMandatory]="true"
                         [isDisabled]="!editMode"></generic-input>
                     </td>
-                  </tr>
-                  <tr>
                     <td>
                       <generic-input [(model)]="selectedConfrere.label" label="Nom fonctionnel" [maxLength]="100"
                         [form]="entityForm2" propertyName="label" [isMandatory]="true"
                         [isDisabled]="!editMode"></generic-input>
+                    </td>
+                    <td>
+                      <generic-toggle [(model)]="selectedConfrere.doNotUse" label="Indiquer à ne pas utiliser"
+                        [form]="entityForm2" propertyName="doNotUse"></generic-toggle>
                     </td>
                   </tr>
                 </table>
