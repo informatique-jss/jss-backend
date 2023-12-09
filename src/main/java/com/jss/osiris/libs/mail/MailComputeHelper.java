@@ -225,7 +225,9 @@ public class MailComputeHelper {
         Document billingClosureDocument = documentService.getDocumentByDocumentType(tiers.getDocuments(),
                 constantService.getDocumentTypeBillingClosure());
         if (billingClosureDocument != null && billingClosureDocument.getMailsClient() != null
-                && billingClosureDocument.getMailsClient().size() > 0) {
+                && billingClosureDocument.getMailsClient().size() > 0
+                && billingClosureDocument.getBillingClosureRecipientType().getId()
+                        .equals(constantService.getBillingClosureRecipientTypeOther().getId())) {
             mailComputeResult.getRecipientsMailTo().addAll(billingClosureDocument.getMailsClient());
             mailComputeResult.setMailToClientOrigin("mails Autres du paramétrage du relevé de compte");
         } else if (tiers instanceof Responsable
@@ -250,6 +252,16 @@ public class MailComputeHelper {
             mailComputeResult.setMailToClientOrigin("mails du tiers/confrère");
         } else
             throw new OsirisClientMessageException("Aucun mail trouvé pour le client");
+
+        // Add other mails
+        if (billingClosureDocument != null && billingClosureDocument.getMailsClient() != null
+                && billingClosureDocument.getMailsClient().size() > 0
+                && !billingClosureDocument.getBillingClosureRecipientType().getId()
+                        .equals(constantService.getBillingClosureRecipientTypeOther().getId())) {
+            mailComputeResult.getRecipientsMailTo().addAll(billingClosureDocument.getMailsClient());
+            mailComputeResult.setMailToClientOrigin(
+                    mailComputeResult.getMailToClientOrigin() + " et mails Autres du paramétrage du relevé de compte");
+        }
 
         return mailComputeResult;
     }

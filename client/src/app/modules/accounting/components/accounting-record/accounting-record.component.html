@@ -91,3 +91,7 @@
   *ngIf="tiersToDisplay" (click)="downloadBillingClosureReceipt()">
   <mat-icon>download</mat-icon>
 </button>
+<button matTooltip="Envoyer un relevé de comptes" mat-fab color="accent" class="fourth-fab-button"
+  *ngIf="tiersToDisplay" (click)="sendBillingClosureReceipt()">
+  <mat-icon>outgoing_mail</mat-icon>
+</button>

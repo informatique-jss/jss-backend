@@ -243,6 +243,12 @@
                 <chips-mail [(model)]="billingClosureDocument.mailsClient" label="Mails" [form]="settlementBillingForm"
                   propertyName="mailsClient" [isMandatory]="true" [isDisabled]="!editMode"></chips-mail>
               </td>
+              <td
+                *ngIf="billingClosureDocument.billingClosureRecipientType && billingClosureDocument.billingClosureRecipientType.id != billingClosureRecipientTypeOther.id">
+                <chips-mail [(model)]="billingClosureDocument.mailsClient" label="Destinataires supplémentaires"
+                  [form]="settlementBillingForm" propertyName="mailsClient" [isMandatory]="false"
+                  [isDisabled]="!editMode"></chips-mail>
+              </td>
             </tr>
           </table>
         </mat-expansion-panel>

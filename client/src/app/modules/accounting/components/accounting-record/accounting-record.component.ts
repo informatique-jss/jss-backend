@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { Payment } from 'src/app/modules/invoicing/model/Payment';
 import { PaymentDetailsDialogService } from 'src/app/modules/invoicing/services/payment.details.dialog.service';
+import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
@@ -39,6 +40,7 @@ export class AccountingRecordComponent implements OnInit {
     public deleteAccountingRecordDialog: MatDialog,
     private habilitationService: HabilitationsService,
     private paymentDetailsDialogService: PaymentDetailsDialogService,
+    public confirmationDialog: MatDialog,
   ) { }
 
   accountingRecords: AccountingRecordSearchResult[] | undefined;
@@ -211,6 +213,25 @@ export class AccountingRecordComponent implements OnInit {
   downloadBillingClosureReceipt() {
     if (this.tiersToDisplay)
       this.accountingRecordService.downloadBillingClosureReceipt(this.tiersToDisplay);
+  }
+
+  sendBillingClosureReceipt() {
+    if (this.tiersToDisplay) {
+      const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Envoyer les relevés de compte",
+          content: "Êtes-vous sûr de vouloir envoyer le(s) relevé(s) de compte de ces tiers/responsables ?",
+          closeActionText: "Annuler",
+          validationActionText: "Envoyer"
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(dialogResult => {
+        if (dialogResult)
+          this.accountingRecordService.sendBillingClosureReceipt(this.tiersToDisplay!).subscribe(res => { });
+      });
+    }
   }
 
 }
