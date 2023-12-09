@@ -30,6 +30,12 @@ public interface GuichetUniqueDelegateService {
         public List<FormaliteStatusHistoryItem> getAnnualAccountStatusHistoriesById(Integer id)
                         throws OsirisException, OsirisClientMessageException;
 
+        public FormaliteGuichetUnique getActeDepositById(Integer id)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public List<FormaliteStatusHistoryItem> getActeDepositStatusHistoriesById(Integer id)
+                        throws OsirisException, OsirisClientMessageException;
+
         public void refreshFormalitiesFromLastHour()
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException;
 

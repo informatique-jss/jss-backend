@@ -71,8 +71,10 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     private String attachmentsRequestUrl = "/attachments";
     private String fileRequestUrl = "/file";
     private String annualAccountsRequestUrl = "/annual_accounts";
+    private String acteDepositRequestUrl = "/acte_deposits";
     private String formalityStatusHistoriesUrl = "/formality_status_histories";
     private String annualAccountStatusHistoriesUrl = "/annual_account_status_histories";
+    private String acteDepositStatusHistoriesUrl = "/acte_deposit_status_histories";
 
     private String bearerValue = null;
     private LocalDateTime bearerExpireDateTime = LocalDateTime.now().minusYears(100);
@@ -120,6 +122,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
         formalites.addAll(getFormalitiesByDate(createdAfter, updatedAfter));
         formalites.addAll(getAnnualAccountsByDate(createdAfter, updatedAfter));
+        formalites.addAll(getActeDepositsByDate(createdAfter, updatedAfter));
         return formalites;
     }
 
@@ -169,6 +172,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         formalites = new ArrayList<FormaliteGuichetUnique>();
         formalites.addAll(getFormalitiesByRefenceMandataire(reference));
         formalites.addAll(getAnnualAccountsByRefenceMandataire(reference));
+        formalites.addAll(getActeDepositsByRefenceMandataire(reference));
 
         return formalites;
     }
@@ -204,6 +208,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
             for (FormaliteGuichetUnique formaliteGuichetUnique : res) {
                 formaliteGuichetUnique.setIsFormality(true);
                 formaliteGuichetUnique.setIsAnnualAccounts(false);
+                formaliteGuichetUnique.setIsActeDeposit(false);
             }
 
             return response.getBody();
@@ -230,6 +235,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
 
         if (response.getBody() != null) {
             response.getBody().setIsAnnualAccounts(false);
+            response.getBody().setIsActeDeposit(false);
             response.getBody().setIsFormality(true);
             return response.getBody();
         } else {
@@ -363,6 +369,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
             for (FormaliteGuichetUnique formaliteGuichetUnique : res) {
                 formaliteGuichetUnique.setIsFormality(false);
                 formaliteGuichetUnique.setIsAnnualAccounts(true);
+                formaliteGuichetUnique.setIsActeDeposit(false);
             }
             return response.getBody();
         }
@@ -385,6 +392,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         if (response.getBody() != null) {
             response.getBody().setIsAnnualAccounts(true);
             response.getBody().setIsFormality(false);
+            response.getBody().setIsActeDeposit(false);
             return response.getBody();
         } else {
             throw new OsirisException(null, "Guichet unique formality not found for id " + id);
@@ -400,6 +408,121 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
 
         ResponseEntity<List<FormaliteStatusHistoryItem>> response = new RestTemplate().exchange(
                 guichetUniqueEntryPoint + annualAccountsRequestUrl + "/" + id + annualAccountStatusHistoriesUrl,
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<List<FormaliteStatusHistoryItem>>() {
+                });
+
+        if (response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new OsirisException(null, "Guichet unique formality not found for id " + id);
+        }
+    }
+
+    private List<FormaliteGuichetUnique> getActeDepositsByDate(LocalDateTime createdAfter, LocalDateTime updatedAfter)
+            throws OsirisException, OsirisClientMessageException {
+        List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
+        int page = 1;
+        List<FormaliteGuichetUnique> inFormalites = getActeDepositsByDatePaginated(page, createdAfter, updatedAfter);
+        while (inFormalites.size() > 0) {
+            formalites.addAll(inFormalites);
+            page++;
+            inFormalites = getActeDepositsByDatePaginated(page, createdAfter, updatedAfter);
+        }
+
+        return formalites;
+    }
+
+    private List<FormaliteGuichetUnique> getActeDepositsByDatePaginated(int page, LocalDateTime createdAfter,
+            LocalDateTime updatedAfter)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<List<FormaliteGuichetUnique>> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + acteDepositRequestUrl + "?page=" + page + "&created[after]="
+                        + (createdAfter != null ? formatter.format(createdAfter) : "")
+                        + (updatedAfter != null ? "&updated[after]=" + formatter.format(updatedAfter) : ""),
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<List<FormaliteGuichetUnique>>() {
+                });
+
+        if (response.getBody() != null) {
+            return response.getBody();
+        }
+        return null;
+    }
+
+    private List<FormaliteGuichetUnique> getActeDepositsByRefenceMandataire(String reference)
+            throws OsirisException, OsirisClientMessageException {
+        List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
+        int page = 1;
+        List<FormaliteGuichetUnique> inFormalites = getActeDepositsByRefenceMandatairePaginated(page, reference);
+        while (inFormalites.size() > 0) {
+            formalites.addAll(inFormalites);
+            page++;
+            inFormalites = getActeDepositsByRefenceMandatairePaginated(page, reference);
+        }
+
+        return formalites;
+    }
+
+    private List<FormaliteGuichetUnique> getActeDepositsByRefenceMandatairePaginated(int page, String reference)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<List<FormaliteGuichetUnique>> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + acteDepositRequestUrl + "?page=" + page + "&order[created]=desc&search="
+                        + reference,
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<List<FormaliteGuichetUnique>>() {
+                });
+
+        List<FormaliteGuichetUnique> res = response.getBody();
+        if (res != null) {
+            for (FormaliteGuichetUnique formaliteGuichetUnique : res) {
+                formaliteGuichetUnique.setIsFormality(false);
+                formaliteGuichetUnique.setIsAnnualAccounts(false);
+                formaliteGuichetUnique.setIsActeDeposit(true);
+            }
+            return response.getBody();
+        }
+        return res;
+    }
+
+    @Override
+    @SuppressWarnings({ "all" })
+    public FormaliteGuichetUnique getActeDepositById(Integer id)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<FormaliteGuichetUnique> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + acteDepositRequestUrl + "/" + id,
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<FormaliteGuichetUnique>() {
+                });
+
+        if (response.getBody() != null) {
+            response.getBody().setIsAnnualAccounts(false);
+            response.getBody().setIsFormality(false);
+            response.getBody().setIsActeDeposit(true);
+            return response.getBody();
+        } else {
+            throw new OsirisException(null, "Guichet unique formality not found for id " + id);
+        }
+    }
+
+    @Override
+    @SuppressWarnings({ "all" })
+    public List<FormaliteStatusHistoryItem> getActeDepositStatusHistoriesById(Integer id)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<List<FormaliteStatusHistoryItem>> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + acteDepositRequestUrl + "/" + id + acteDepositStatusHistoriesUrl,
                 HttpMethod.GET, new HttpEntity<String>(headers),
                 new ParameterizedTypeReference<List<FormaliteStatusHistoryItem>>() {
                 });

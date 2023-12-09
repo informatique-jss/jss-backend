@@ -128,6 +128,11 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     .getAnnualAccountById(inFormaliteGuichetUnique.getId());
             formaliteStatusHistoryItems = guichetUniqueDelegateService
                     .getAnnualAccountStatusHistoriesById(inFormaliteGuichetUnique.getId());
+        } else if (inFormaliteGuichetUnique.getIsActeDeposit() != null && inFormaliteGuichetUnique.getIsActeDeposit()) {
+            formaliteGuichetUnique = guichetUniqueDelegateService
+                    .getActeDepositById(inFormaliteGuichetUnique.getId());
+            formaliteStatusHistoryItems = guichetUniqueDelegateService
+                    .getActeDepositStatusHistoriesById(inFormaliteGuichetUnique.getId());
         } else {
             formaliteGuichetUnique = guichetUniqueDelegateService.getFormalityById(inFormaliteGuichetUnique.getId());
             formaliteStatusHistoryItems = guichetUniqueDelegateService
@@ -138,6 +143,13 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             for (ValidationRequest validationRequest : formaliteGuichetUnique.getValidationsRequests()) {
                 if (validationRequest.getPartnerCenter() != null)
                     partnerCenterRepository.save(validationRequest.getPartnerCenter());
+            }
+
+        if (formaliteGuichetUnique.getFormaliteStatusHistoryItems() != null)
+            for (FormaliteStatusHistoryItem statusHistoryItem : formaliteGuichetUnique
+                    .getFormaliteStatusHistoryItems()) {
+                if (statusHistoryItem.getPartnerCenter() != null)
+                    partnerCenterRepository.save(statusHistoryItem.getPartnerCenter());
             }
 
         FormaliteGuichetUnique originalFormalite = getFormaliteGuichetUnique(inFormaliteGuichetUnique.getId());
