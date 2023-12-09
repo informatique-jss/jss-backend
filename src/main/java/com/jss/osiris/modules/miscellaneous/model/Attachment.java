@@ -24,6 +24,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -132,6 +133,11 @@ public class Attachment implements Serializable, IId {
 	@JsonIgnore
 	@JoinColumn(name = "id_parent_attachment")
 	private Attachment parentAttachment;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_piece_jointe")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	private PiecesJointe piecesJointe;
 
 	public Integer getId() {
 		return id;
@@ -283,6 +289,14 @@ public class Attachment implements Serializable, IId {
 
 	public void setParentAttachment(Attachment parentAttachment) {
 		this.parentAttachment = parentAttachment;
+	}
+
+	public PiecesJointe getPiecesJointe() {
+		return piecesJointe;
+	}
+
+	public void setPiecesJointe(PiecesJointe piecesJointe) {
+		this.piecesJointe = piecesJointe;
 	}
 
 }

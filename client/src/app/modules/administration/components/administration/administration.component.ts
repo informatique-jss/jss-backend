@@ -49,6 +49,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   TIERS_FOLLOWUP_TYPE_REFERENTIAL = "Type de suivi";
   TIERS_TYPE_REFERENTIAL = "Type de tiers";
   ATTACHMENT_TYPE_REFERENTIAL = "Type de pièces jointes";
+  TYPE_DOCUMENT_REFERENTIAL = "Type de pièces jointes - INPI";
   CIVILITY_REFERENTIAL = "Civilité";
   COMPETENT_AUTHORITY_TYPE_REFERENTIAL = "Type d'autorité compétente";
   COUNTRY_REFERENTIAL = "Pays";
@@ -113,6 +114,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.TIERS_FOLLOWUP_TYPE_REFERENTIAL);
     this.referentials.push(this.TIERS_TYPE_REFERENTIAL);
     this.referentials.push(this.ATTACHMENT_TYPE_REFERENTIAL);
+    this.referentials.push(this.TYPE_DOCUMENT_REFERENTIAL);
     this.referentials.push(this.CIVILITY_REFERENTIAL);
     this.referentials.push(this.COMPETENT_AUTHORITY_TYPE_REFERENTIAL);
     this.referentials.push(this.COUNTRY_REFERENTIAL);

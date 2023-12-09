@@ -138,31 +138,31 @@ public class CustomerMailServiceImpl implements CustomerMailService {
                                 mail.getCustomerOrder().getId(),
                                 CustomerOrder.class.getSimpleName(), constantService.getAttachmentTypeAutomaticMail(),
                                 "Customer_mail_" + formatter.format(LocalDateTime.now()) + ".pdf", false,
-                                "Mail automatique n°" + mail.getId());
+                                "Mail automatique n°" + mail.getId(), null);
                     if (mail.getQuotation() != null)
                         attachments = attachmentService.addAttachment(new FileInputStream(mailPdf),
                                 mail.getQuotation().getId(),
                                 Quotation.class.getSimpleName(), constantService.getAttachmentTypeAutomaticMail(),
                                 "Customer_mail_" + formatter.format(LocalDateTime.now()) + ".pdf", false,
-                                "Mail automatique n°" + mail.getId());
+                                "Mail automatique n°" + mail.getId(), null);
                     if (mail.getTiers() != null)
                         attachments = attachmentService.addAttachment(new FileInputStream(mailPdf),
                                 mail.getTiers().getId(),
                                 Tiers.class.getSimpleName(), constantService.getAttachmentTypeAutomaticMail(),
                                 "Customer_mail_" + formatter.format(LocalDateTime.now()) + ".pdf", false,
-                                "Mail automatique n°" + mail.getId());
+                                "Mail automatique n°" + mail.getId(), null);
                     if (mail.getResponsable() != null)
                         attachments = attachmentService.addAttachment(new FileInputStream(mailPdf),
                                 mail.getResponsable().getId(),
                                 Responsable.class.getSimpleName(), constantService.getAttachmentTypeAutomaticMail(),
                                 "Customer_mail_" + formatter.format(LocalDateTime.now()) + ".pdf", false,
-                                "Mail automatique n°" + mail.getId());
+                                "Mail automatique n°" + mail.getId(), null);
                     if (mail.getConfrere() != null)
                         attachments = attachmentService.addAttachment(new FileInputStream(mailPdf),
                                 mail.getConfrere().getId(),
                                 Confrere.class.getSimpleName(), constantService.getAttachmentTypeAutomaticMail(),
                                 "Customer_mail_" + formatter.format(LocalDateTime.now()) + ".pdf", false,
-                                "Mail automatique n°" + mail.getId());
+                                "Mail automatique n°" + mail.getId(), null);
 
                     if (mail.getAttachments() == null)
                         mail.setAttachments(new ArrayList<Attachment>());

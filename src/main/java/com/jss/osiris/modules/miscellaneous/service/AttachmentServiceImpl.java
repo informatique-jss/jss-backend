@@ -37,6 +37,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.BodaccService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
@@ -140,7 +141,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         try {
             return addAttachment(file.getInputStream(), idEntity, entityType, attachmentType, filename,
-                    replaceExistingAttachementType, filename);
+                    replaceExistingAttachementType, filename, null);
         } catch (IOException e) {
             throw new OsirisException(e, "Error when reading file");
         }
@@ -149,7 +150,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     public List<Attachment> addAttachment(InputStream file, Integer idEntity, String entityType,
             AttachmentType attachmentType,
-            String filename, Boolean replaceExistingAttachementType, String description)
+            String filename, Boolean replaceExistingAttachementType, String description, PiecesJointe piecesJointe)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         if (entityType.equals("Ofx"))
@@ -184,6 +185,8 @@ public class AttachmentServiceImpl implements AttachmentService {
         attachment.setIsDisabled(false);
         attachment.setDescription(description);
         attachment.setUploadedFile(uploadedFileService.createUploadedFile(filename, absoluteFilePath));
+        if (piecesJointe != null)
+            attachment.setPiecesJointe(piecesJointe);
 
         if (entityType.equals(Tiers.class.getSimpleName())) {
             Tiers tiers = tiersService.getTiers(idEntity);

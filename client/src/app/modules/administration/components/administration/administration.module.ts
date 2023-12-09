@@ -75,6 +75,7 @@ import { ReferentialTiersCategoryComponent } from '../referentials/referential-t
 import { ReferentialTiersFollowupTypeComponent } from '../referentials/referential-tiers-followup-type/referential-tiers-followup-type.component';
 import { ReferentialTiersTypeComponent } from '../referentials/referential-tiers-type/referential-tiers-type.component';
 import { ReferentialTransfertFundsTypeComponent } from '../referentials/referential-transfert-fund-type/referential-transfert-fund-type.component';
+import { ReferentialTypeDocumentComponent } from '../referentials/referential-type-document/referential-type-document.component';
 import { ReferentialVatCollectionTypeComponent } from '../referentials/referential-vat-collection-type/referential-vat-collection-type.component';
 import { ReferentialVatComponent } from '../referentials/referential-vat/referential-vat.component';
 import { ReferentialWeekDayComponent } from '../referentials/referential-weekday/referential-weekday.component';
@@ -179,6 +180,7 @@ const routes: Routes = [
     ProviderComponent,
     ReferentialCustomerOrderOriginComponent,
     ReferentialDepartmentVatSettingComponent,
+    ReferentialTypeDocumentComponent,
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

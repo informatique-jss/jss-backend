@@ -20,7 +20,8 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDoc
 
 @Entity
 @Table(indexes = {
-        @Index(name = "idx_piece_jointe_content", columnList = "id_content") })
+        @Index(name = "idx_piece_jointe_content", columnList = "id_content"),
+        @Index(name = "idx_piece_jointe_id", columnList = "attachmentId") })
 public class PiecesJointe implements Serializable {
 
     @Column(length = 255)

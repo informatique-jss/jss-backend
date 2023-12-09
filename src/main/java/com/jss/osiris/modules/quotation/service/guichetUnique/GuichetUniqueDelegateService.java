@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.service.guichetUnique;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,4 +35,7 @@ public interface GuichetUniqueDelegateService {
 
         public void refreshAllOpenFormalities()
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException;
+
+        public File getAttachmentById(String attachmentId)
+                        throws OsirisException, OsirisClientMessageException;
 }

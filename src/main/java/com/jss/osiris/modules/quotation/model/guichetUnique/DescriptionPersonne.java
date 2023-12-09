@@ -60,7 +60,6 @@ public class DescriptionPersonne implements Serializable, IId {
     @Column(length = 255)
     private String pseudonyme;
 
-    @Column()
     private String dateDeNaissance;
 
     @Column(length = 255)

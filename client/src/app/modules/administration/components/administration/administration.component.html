@@ -122,6 +122,11 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-attachment-type>
+        <referential-type-document *ngIf="selectedReferential==TYPE_DOCUMENT_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-type-document>
         <referential-civility *ngIf="selectedReferential==CIVILITY_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"

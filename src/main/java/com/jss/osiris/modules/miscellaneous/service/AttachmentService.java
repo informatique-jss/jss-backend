@@ -11,6 +11,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
+import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 
 public interface AttachmentService {
         public List<Attachment> getAttachments();
@@ -24,7 +25,7 @@ public interface AttachmentService {
 
         public List<Attachment> addAttachment(InputStream file, Integer idEntity, String entityType,
                         AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType,
-                        String description)
+                        String description, PiecesJointe piecesJointe)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 

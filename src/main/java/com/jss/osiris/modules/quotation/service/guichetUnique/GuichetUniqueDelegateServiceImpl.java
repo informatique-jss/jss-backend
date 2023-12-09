@@ -1,5 +1,8 @@
 package com.jss.osiris.modules.quotation.service.guichetUnique;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.HttpCookie;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -65,6 +68,8 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     private String loginRequestUrl = "/login";
     private String ssoRequestUrl = "/sso";
     private String formalitiesRequestUrl = "/formalities";
+    private String attachmentsRequestUrl = "/attachments";
+    private String fileRequestUrl = "/file";
     private String annualAccountsRequestUrl = "/annual_accounts";
     private String formalityStatusHistoriesUrl = "/formality_status_histories";
     private String annualAccountStatusHistoriesUrl = "/annual_account_status_histories";
@@ -252,6 +257,47 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         }
     }
 
+    @Override
+    @SuppressWarnings({ "all" })
+    public File getAttachmentById(String attachmentId)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+        // headers.setAccept(Arrays.asList(new MediaType[] {
+        // MediaType.APPLICATION_OCTET_STREAM }));
+
+        ResponseEntity<byte[]> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + attachmentsRequestUrl + "/" + attachmentId + fileRequestUrl, HttpMethod.GET,
+                new HttpEntity<String>(headers), byte[].class);
+
+        if (response.getBody() != null) {
+            File tempFile = null;
+            try {
+                ByteArrayInputStream fis = new ByteArrayInputStream(response.getBody());
+                // opens input stream from the HTTP connection
+                tempFile = File.createTempFile("attachment_inpi", "pdf");
+
+                // opens an output stream to save into file
+                FileOutputStream outputStream = new FileOutputStream(tempFile);
+
+                int bytesRead = -1;
+                byte[] buffer = new byte[4096];
+                while ((bytesRead = fis.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+
+                outputStream.close();
+                fis.close();
+            } catch (Exception e) {
+                throw new OsirisException(e, "Impossible to create inpi attachment " + attachmentId);
+            }
+
+            return tempFile;
+        } else {
+            throw new OsirisException(null, "Guichet unique attachment not found for id " + attachmentId);
+        }
+    }
+
     private List<FormaliteGuichetUnique> getAnnualAccountsByDate(LocalDateTime createdAfter, LocalDateTime updatedAfter)
             throws OsirisException, OsirisClientMessageException {
         List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
@@ -290,17 +336,17 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
             throws OsirisException, OsirisClientMessageException {
         List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
         int page = 1;
-        List<FormaliteGuichetUnique> inFormalites = getAnnuaAccountsByRefenceMandatairePaginated(page, reference);
+        List<FormaliteGuichetUnique> inFormalites = getAnnualAccountsByRefenceMandatairePaginated(page, reference);
         while (inFormalites.size() > 0) {
             formalites.addAll(inFormalites);
             page++;
-            inFormalites = getAnnuaAccountsByRefenceMandatairePaginated(page, reference);
+            inFormalites = getAnnualAccountsByRefenceMandatairePaginated(page, reference);
         }
 
         return formalites;
     }
 
-    private List<FormaliteGuichetUnique> getAnnuaAccountsByRefenceMandatairePaginated(int page, String reference)
+    private List<FormaliteGuichetUnique> getAnnualAccountsByRefenceMandatairePaginated(int page, String reference)
             throws OsirisException, OsirisClientMessageException {
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = createHeaders();
