@@ -48,6 +48,7 @@ import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
+import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -629,44 +630,63 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         if (invoices != null && invoices.size() > 0)
             for (Invoice invoice : invoices) {
-                boolean toSend = false;
-
-                // Do not remind on direct debit transfert
-                if (invoice.getManualPaymentType() == null
-                        || !invoice.getManualPaymentType().getId()
-                                .equals(constantService.getPaymentTypePrelevement().getId())) {
-                    if (invoice.getFirstReminderDateTime() == null
-                            && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8))) {
-                        toSend = true;
-                        invoice.setFirstReminderDateTime(LocalDateTime.now());
-
-                        IGenericTiers customerOrderToSetProvision = invoiceHelper.getCustomerOrder(invoice);
-                        if (customerOrderToSetProvision instanceof Tiers)
-                            notificationService.notifyTiersDepositMandatory((Tiers) customerOrderToSetProvision, null,
-                                    invoice);
-                        else if (customerOrderToSetProvision instanceof Responsable)
-                            notificationService.notifyTiersDepositMandatory(null,
-                                    (Responsable) customerOrderToSetProvision,
-                                    invoice);
-                    } else if (invoice.getSecondReminderDateTime() == null
-                            && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))) {
-                        toSend = true;
-                        invoice.setSecondReminderDateTime(LocalDateTime.now());
-                    } else if (invoice.getThirdReminderDateTime() == null
-                            && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15 + 15))) {
-                        toSend = true;
-                        invoice.setThirdReminderDateTime(LocalDateTime.now());
-                        notificationService.notifyInvoiceToReminder(invoice);
-                    }
-
-                    if (toSend) {
-                        mailHelper.sendCustomerOrderFinalisationToCustomer(
-                                customerOrderService.getCustomerOrder(invoice.getCustomerOrder().getId()), false, true,
-                                invoice.getThirdReminderDateTime() != null);
-                        addOrUpdateInvoice(invoice);
-                    }
-                }
+                remindInvoice(invoice);
             }
+    }
+
+    @Override
+    @Transactional
+    public void sendRemindersForInvoices(LocalDate startDate, LocalDate endDate, BillingLabelType billingLabelType)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+
+        List<Invoice> invoices = invoiceRepository.findInvoiceForCustomReminder(constantService.getInvoiceStatusSend(),
+                startDate, endDate, billingLabelType);
+
+        if (invoices != null && invoices.size() > 0)
+            for (Invoice invoice : invoices) {
+                remindInvoice(invoice);
+            }
+    }
+
+    private void remindInvoice(Invoice invoice)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        boolean toSend = false;
+
+        // Do not remind on direct debit transfert
+        if (invoice.getManualPaymentType() == null
+                || !invoice.getManualPaymentType().getId()
+                        .equals(constantService.getPaymentTypePrelevement().getId())) {
+            if (invoice.getFirstReminderDateTime() == null
+                    && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8))) {
+                toSend = true;
+                invoice.setFirstReminderDateTime(LocalDateTime.now());
+
+                IGenericTiers customerOrderToSetProvision = invoiceHelper.getCustomerOrder(invoice);
+                if (customerOrderToSetProvision instanceof Tiers)
+                    notificationService.notifyTiersDepositMandatory((Tiers) customerOrderToSetProvision, null,
+                            invoice);
+                else if (customerOrderToSetProvision instanceof Responsable)
+                    notificationService.notifyTiersDepositMandatory(null,
+                            (Responsable) customerOrderToSetProvision,
+                            invoice);
+            } else if (invoice.getSecondReminderDateTime() == null
+                    && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))) {
+                toSend = true;
+                invoice.setSecondReminderDateTime(LocalDateTime.now());
+            } else if (invoice.getThirdReminderDateTime() == null
+                    && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15 + 15))) {
+                toSend = true;
+                invoice.setThirdReminderDateTime(LocalDateTime.now());
+                notificationService.notifyInvoiceToReminder(invoice);
+            }
+
+            if (toSend) {
+                mailHelper.sendCustomerOrderFinalisationToCustomer(
+                        customerOrderService.getCustomerOrder(invoice.getCustomerOrder().getId()), false, true,
+                        invoice.getThirdReminderDateTime() != null);
+                addOrUpdateInvoice(invoice);
+            }
+        }
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.jss.osiris.modules.invoicing.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -75,6 +77,7 @@ import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.service.BillingLabelTypeService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
 @RestController
@@ -153,6 +156,9 @@ public class InvoicingController {
 
     @Autowired
     ActiveDirectoryHelper activeDirectoryHelper;
+
+    @Autowired
+    BillingLabelTypeService billingLabelTypeService;
 
     @PostMapping(inputEntryPoint + "/azure-receipt/invoice")
     public ResponseEntity<AzureReceiptInvoice> updateAzureReceiptInvoice(
@@ -1042,5 +1048,18 @@ public class InvoicingController {
             @RequestBody CustomerOrder customerOrder) throws OsirisException, OsirisClientMessageException {
         return new ResponseEntity<InvoiceLabelResult>(mailComputeHelper.computePaperLabelResult(customerOrder),
                 HttpStatus.OK);
+    }
+
+    // TODO : remove
+    @GetMapping(inputEntryPoint + "/invoice/reminder")
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    public ResponseEntity<Boolean> sendRemindersForInvoices(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam Integer billingLabelTypeId)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        BillingLabelType billingLabelType = billingLabelTypeService.getBillingLabelType(billingLabelTypeId);
+        invoiceService.sendRemindersForInvoices(startDate, endDate, billingLabelType);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 }

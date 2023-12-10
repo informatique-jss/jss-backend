@@ -15,6 +15,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -111,5 +112,11 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
 
         @Query("select i from Invoice i where id_direct_debit_transfert=:id")
         Invoice searchInvoicesByIdDirectDebitTransfert(@Param("id") Integer idToFind);
+
+        @Query(value = "select n from Invoice n where invoiceStatus=:invoiceStatus and thirdReminderDateTime is null and billingLabelType=:billingLabelType and dueDate>=:startDate and dueDate<:endDate ")
+        List<Invoice> findInvoiceForCustomReminder(@Param("invoiceStatus") InvoiceStatus invoiceStatusSend,
+                        @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate,
+                        @Param("billingLabelType") BillingLabelType billingLabelType);
 
 }
