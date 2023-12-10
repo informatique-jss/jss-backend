@@ -58,7 +58,7 @@ export class ProvisionPaymentComponent implements OnInit {
     this.invoiceDisplayedColumns.push({ id: "manualAccountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N°" } as SortTableColumn);
     this.invoiceDisplayedColumns.push({ id: "invoiceDate", fieldName: "createdDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.invoiceDisplayedColumns.push({ id: "invoiceAmount", fieldName: "totalPrice", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.invoiceDisplayedColumns.push({ id: "invoiceStatus", fieldName: "invoiceStatus.label", label: "Statut" } as SortTableColumn);
+    this.invoiceDisplayedColumns.push({ id: "invoiceStatus", fieldName: "invoiceStatus.label", label: "Statut", statusFonction: (element: any) => { return element.invoiceStatus.code }, displayAsStatus: true } as SortTableColumn);
     this.invoiceDisplayedColumns.push({ id: "confrere", fieldName: "confrere.label", label: "Confrere" } as SortTableColumn);
     this.invoiceDisplayedColumns.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
     this.invoiceDisplayedColumns.push({ id: "provider", fieldName: "provider.label", label: "Fournisseur" } as SortTableColumn);

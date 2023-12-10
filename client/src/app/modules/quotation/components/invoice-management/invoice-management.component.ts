@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
-import { formatDate } from 'src/app/libs/FormatHelper';
+import { formatDate, formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
 import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
@@ -11,10 +11,12 @@ import { Payment } from 'src/app/modules/invoicing/model/Payment';
 import { InvoiceSearchResultService } from 'src/app/modules/invoicing/services/invoice.search.result.service';
 import { PaymentDetailsDialogService } from 'src/app/modules/invoicing/services/payment.details.dialog.service';
 import { PaymentService } from 'src/app/modules/invoicing/services/payment.service';
+import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from '../../../../services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
+import { SortTableAction } from '../../../miscellaneous/model/SortTableAction';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { IQuotation } from '../../model/IQuotation';
 import { InvoiceItem } from '../../model/InvoiceItem';
@@ -38,7 +40,9 @@ export class InvoiceManagementComponent implements OnInit {
   @Input() instanceOfCustomerOrder: boolean = false;
   @Output() invoiceItemChange: EventEmitter<void> = new EventEmitter<void>();
   updateDocumentsSubscription: Subscription | undefined;
-
+  customerInvoicesColumns: SortTableColumn[] = [];
+  providerInvoicesColumns: SortTableColumn[] = [];
+  invoicesActions: SortTableAction[] = [];
   invoiceLabelResult: InvoiceLabelResult | undefined;
 
   instanceOfCustomerOrderFn = instanceOfCustomerOrder;
@@ -69,6 +73,38 @@ export class InvoiceManagementComponent implements OnInit {
 
     if (instanceOfCustomerOrder(this.quotation))
       this.invoiceSearchResultService.getProviderInvoiceForCustomerOrder(this.quotation).subscribe(invoices => this.customerOrderProviderInvoices = invoices);
+
+    this.customerInvoicesColumns = [];
+    this.customerInvoicesColumns.push({ id: "id", fieldName: "invoiceId", label: "N° de facture" } as SortTableColumn);
+    this.customerInvoicesColumns.push({ id: "status", fieldName: "invoiceStatus", label: "Status", statusFonction: (element: any) => { return element.invoiceStatusCode }, displayAsStatus: true } as SortTableColumn);
+    this.customerInvoicesColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date d'émission", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+    this.customerInvoicesColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.customerInvoicesColumns.push({ id: "payments", fieldName: "paymentId", label: "Paiement(s) associé(s)" } as SortTableColumn);
+    this.customerInvoicesColumns.push({ id: "dueDate", fieldName: "dueDate", label: "Date d'échéance", valueFonction: formatDateForSortTable } as SortTableColumn);
+    this.customerInvoicesColumns.push({ id: "firstReminderDateTime", fieldName: "firstReminderDateTime", label: "Date de première relance", valueFonction: formatDateForSortTable } as SortTableColumn);
+    this.customerInvoicesColumns.push({ id: "secondReminderDateTime", fieldName: "secondReminderDateTime", label: "Date de seconde relance", valueFonction: formatDateForSortTable } as SortTableColumn);
+    this.customerInvoicesColumns.push({ id: "thirdReminderDateTime", fieldName: "thirdReminderDateTime", label: "Date de troisième relance", valueFonction: formatDateForSortTable } as SortTableColumn);
+    this.customerInvoicesColumns.push({ id: "lastFollowupDate", fieldName: "lastFollowupDate", label: "Dernier suivi", valueFonction: formatDateForSortTable } as SortTableColumn);
+
+
+    this.providerInvoicesColumns = [];
+    this.providerInvoicesColumns.push({ id: "id", fieldName: "invoiceId", label: "N° de facture" } as SortTableColumn);
+    this.providerInvoicesColumns.push({ id: "status", fieldName: "invoiceStatus", label: "Status", statusFonction: (element: any) => { return element.invoiceStatusCode }, displayAsStatus: true } as SortTableColumn);
+    this.providerInvoicesColumns.push({ id: "providerLabel", fieldName: "providerLabel", label: "Fournisseur" } as SortTableColumn);
+    this.providerInvoicesColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date d'émission", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+    this.providerInvoicesColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.providerInvoicesColumns.push({ id: "manualAccountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N° pièce" } as SortTableColumn);
+    this.providerInvoicesColumns.push({ id: "payments", fieldName: "paymentId", label: "Paiement(s) associé(s)" } as SortTableColumn);
+    this.providerInvoicesColumns.push({ id: "dueDate", fieldName: "dueDate", label: "Date d'échéance", valueFonction: formatDateForSortTable } as SortTableColumn);
+
+
+    this.invoicesActions.push({
+      actionIcon: "point_of_sale", actionName: "Voir le détail de la facture / associer", actionLinkFunction: (action: SortTableAction, element: any) => {
+        if (element)
+          return ['/invoicing/view', element.invoiceId];
+        return undefined;
+      }, display: true,
+    } as SortTableAction);
   }
 
   ngOnDestroy() {

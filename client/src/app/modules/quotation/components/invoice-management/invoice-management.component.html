@@ -1,85 +1,54 @@
 <div *ngIf="quotation && quotation.id" class=" form-div min-height ">
-  <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) &&  customerOrderInvoices">
-    <h3 *ngFor="let invoice of customerOrderInvoices">
-      <div class="invoice-title">Facture n°{{invoice.invoiceId}} émise à Paris, le
-        {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}<chips-status class="invoice-chip"
-          [status]="invoice.invoiceStatusCode" [value]="invoice.invoiceStatus">
-        </chips-status>
-        <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)"
-          (auxclick)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)" matTooltip="Voir la facture"
-          color="accent" class="pointer invoice-chip">visibility
-        </mat-icon>
-      </div>
-    </h3>
-  </ng-container>
-  <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) &&  customerOrderProviderInvoices">
-    <h3 class="invoice-title" *ngFor="let invoice of customerOrderProviderInvoices">
-      <ng-container *ngIf="invoice.isInvoiceFromProvider">
-        Facture fournisseur n°{{invoice.invoiceId}}, {{invoice.providerLabel}}, saisie le
-        {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}, pour un
-        total
-        de {{invoice.totalPrice}} €
-        <chips-status class="invoice-chip" [status]="invoice.invoiceStatusCode" [value]="invoice.invoiceStatus">
-        </chips-status>
-        <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)"
-          (auxclick)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)" matTooltip="Voir la facture"
-          color="accent" class="pointer invoice-chip">visibility
-        </mat-icon>
-      </ng-container>
-      <ng-container *ngIf="invoice.isProviderCreditNote">
-        Avoir fournisseur n°{{invoice.invoiceId}}, {{invoice.providerLabel}}, saisi le
-        {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}, pour un
-        total
-        de {{invoice.totalPrice}} €
-        <chips-status class="invoice-chip" [status]="invoice.invoiceStatusCode" [value]="invoice.invoiceStatus">
-        </chips-status>
-        <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)"
-          (auxclick)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)" matTooltip="Voir l'avoir" color="accent"
-          class="pointer invoice-chip">visibility
-        </mat-icon>
-      </ng-container>
-    </h3>
-  </ng-container>
-  <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-    <table class="mat-table mat-mdc-table mdc-data-table__table full-width  description-table ">
-      <thead>
-        <tr class="mat-mdc-header-row mdc-data-table__header-row ">
-          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Affaire(s)</th>
-          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Payeur</th>
-          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Donneur d'ordre</th>
-        </tr>
-      </thead>
-      <tr class="mat-mdc-row mdc-data-table__row ">
-        <td class="mat-mdc-cell mdc-data-table__cell  td-info">
-          <p>{{getAffaireListFromIQuotation(quotation)}}</p>
-        </td>
-        <td class="mat-mdc-cell mdc-data-table__cell  td-info">
-          <ng-container *ngIf="invoiceLabelResult">
-            <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabel}">
-              {{invoiceLabelResult.billingLabel?invoiceLabelResult.billingLabel:"Libellé inconnu"}}</p>
-            <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelAddress}">
-              {{invoiceLabelResult.billingLabelAddress?invoiceLabelResult.billingLabelAddress:"Adresse"}}</p>
-            <p
-              [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelPostalCode || !invoiceLabelResult.billingLabelCity || !invoiceLabelResult.billingLabelCountry}">
-              {{invoiceLabelResult.billingLabelPostalCode?invoiceLabelResult.billingLabelPostalCode:"Code
-              postal inconnu"}}
-              {{invoiceLabelResult.billingLabelCity?invoiceLabelResult.billingLabelCity.label:"Ville inconnue"}}
-              {{invoiceLabelResult.billingLabelCountry?invoiceLabelResult.billingLabelCountry.label:"Pays
-              inconnu"}}
-            </p>
-            <p *ngIf="invoiceLabelResult.billingLabelIntercommunityVat">N° de TVA :
-              {{invoiceLabelResult.billingLabelIntercommunityVat}}</p>
-          </ng-container>
-        </td>
-        <td class="mat-mdc-cell mdc-data-table__cell  td-info">
-          <p>{{getCustomerOrderNameForIQuotation(quotation)}}</p>
-          <p>{{getCustomerOrderForIQuotation(quotation).address}}</p>
-          <p>{{getCustomerOrderForIQuotation(quotation).postalCode}}
-            {{getCustomerOrderForIQuotation(quotation).city?getCustomerOrderForIQuotation(quotation).city.label:""}}{{getCustomerOrderForIQuotation(quotation).country?getCustomerOrderForIQuotation(quotation).country.label:""}}
-          </p>
-        </td>
+  <div *ngIf="customerOrderInvoices && customerOrderInvoices.length>0">
+    <sort-table [actions]="invoicesActions" [columns]="customerInvoicesColumns" [values]="customerOrderInvoices"
+      tableName="Factures" *ngIf="customerInvoicesColumns && customerInvoicesColumns.length>0 ">
+    </sort-table>
+  </div>
+  <div *ngIf="customerOrderProviderInvoices && customerOrderProviderInvoices.length>0" class="description-table ">
+    <sort-table [actions]="invoicesActions" [columns]="providerInvoicesColumns" [values]="customerOrderProviderInvoices"
+      tableName="Factures" *ngIf="providerInvoicesColumns && providerInvoicesColumns.length>0 ">
+    </sort-table>
+  </div>
+  <table class="mat-table mat-mdc-table mdc-data-table__table full-width  mat-elevation-z8 table description-table  ">
+    <thead>
+      <tr class="mat-mdc-header-row mdc-data-table__header-row ">
+        <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Affaire(s)</th>
+        <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Payeur</th>
+        <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Donneur d'ordre</th>
       </tr>
-    </table>
+    </thead>
+    <tr class="mat-mdc-row mdc-data-table__row ">
+      <td class="mat-mdc-cell mdc-data-table__cell  td-info">
+        <p>{{getAffaireListFromIQuotation(quotation)}}</p>
+      </td>
+      <td class="mat-mdc-cell mdc-data-table__cell  td-info">
+        <ng-container *ngIf="invoiceLabelResult">
+          <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabel}">
+            {{invoiceLabelResult.billingLabel?invoiceLabelResult.billingLabel:"Libellé inconnu"}}</p>
+          <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelAddress}">
+            {{invoiceLabelResult.billingLabelAddress?invoiceLabelResult.billingLabelAddress:"Adresse"}}</p>
+          <p
+            [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelPostalCode || !invoiceLabelResult.billingLabelCity || !invoiceLabelResult.billingLabelCountry}">
+            {{invoiceLabelResult.billingLabelPostalCode?invoiceLabelResult.billingLabelPostalCode:"Code
+            postal inconnu"}}
+            {{invoiceLabelResult.billingLabelCity?invoiceLabelResult.billingLabelCity.label:"Ville inconnue"}}
+            {{invoiceLabelResult.billingLabelCountry?invoiceLabelResult.billingLabelCountry.label:"Pays
+            inconnu"}}
+          </p>
+          <p *ngIf="invoiceLabelResult.billingLabelIntercommunityVat">N° de TVA :
+            {{invoiceLabelResult.billingLabelIntercommunityVat}}</p>
+        </ng-container>
+      </td>
+      <td class="mat-mdc-cell mdc-data-table__cell  td-info">
+        <p>{{getCustomerOrderNameForIQuotation(quotation)}}</p>
+        <p>{{getCustomerOrderForIQuotation(quotation).address}}</p>
+        <p>{{getCustomerOrderForIQuotation(quotation).postalCode}}
+          {{getCustomerOrderForIQuotation(quotation).city?getCustomerOrderForIQuotation(quotation).city.label:""}}{{getCustomerOrderForIQuotation(quotation).country?getCustomerOrderForIQuotation(quotation).country.label:""}}
+        </p>
+      </td>
+    </tr>
+  </table>
+  <fieldset [disabled]="editMode==false" class="fieldset-no-border">
     <form [formGroup]="invoiceManagementForm">
       <table class="mat-table mat-mdc-table mdc-data-table__table full-width container-affaire ">
         <thead>

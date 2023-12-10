@@ -199,6 +199,15 @@ export class SortTableComponent implements OnInit {
     return "Not found";
   }
 
+  getColumnStatus(column: SortTableColumn, element: any): any {
+    if (column) {
+      if (column.statusFonction) {
+        return column.statusFonction(element, this.values, column, this.columns);
+      }
+    }
+    return "Not found";
+  }
+
   getIsElementWarnColor(column: SortTableColumn, element: any): any {
     if (column) {
       if (column.colorWarnFunction) {

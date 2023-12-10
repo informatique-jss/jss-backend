@@ -81,7 +81,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
       this.appService.changeHeaderTitle("Factures & paiements");
     this.availableColumns = [];
     this.availableColumns.push({ id: "id", fieldName: "invoiceId", label: "N° de facture" } as SortTableColumn);
-    this.availableColumns.push({ id: "status", fieldName: "invoiceStatus", label: "Status" } as SortTableColumn);
+    this.availableColumns.push({ id: "status", fieldName: "invoiceStatus", label: "Status", statusFonction: (element: any) => { return element.invoiceStatusCode }, displayAsStatus: true } as SortTableColumn);
     this.availableColumns.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "N° de commande", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn);
     this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
     this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
