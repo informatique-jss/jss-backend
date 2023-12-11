@@ -230,7 +230,7 @@
           </customer-order-payment>
         </mat-tab>
         <mat-tab label="Historique" *ngIf="quotation.id!=null && quotation.id!=undefined">
-          <history [entity]="quotation" [entityType]="getEntityType()"></history>
+          <history [entity]="quotation" [entityType]="getEntityType()" [parseTypeList]="getParseTypeList()"></history>
         </mat-tab>
       </mat-tab-group>
     </div>

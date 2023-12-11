@@ -7,6 +7,7 @@ import { Subject, Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
+import { IReferential } from 'src/app/modules/administration/model/IReferential';
 import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
@@ -363,6 +364,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   getEntityType(): EntityType {
     return this.instanceOfCustomerOrder ? CUSTOMER_ORDER_ENTITY_TYPE : QUOTATION_ENTITY_TYPE;
+  }
+
+  getParseTypeList(): IReferential[] | undefined {
+    return this.instanceOfCustomerOrder ? this.customerOrderStatusList : this.quotationStatusList;
   }
 
   createProvision(asso: AssoAffaireOrder): Provision {

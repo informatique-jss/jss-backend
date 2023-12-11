@@ -20,6 +20,7 @@ import { AttachmentType } from '../../../miscellaneous/model/AttachmentType';
 import { Document } from "../../../miscellaneous/model/Document";
 import { Announcement } from '../../model/Announcement';
 import { AnnouncementNoticeTemplate } from '../../model/AnnouncementNoticeTemplate';
+import { AnnouncementStatus } from '../../model/AnnouncementStatus';
 import { CharacterPrice } from '../../model/CharacterPrice';
 import { Confrere } from '../../model/Confrere';
 import { IQuotation } from '../../model/IQuotation';
@@ -27,9 +28,9 @@ import { JournalType } from '../../model/JournalType';
 import { NoticeType } from '../../model/NoticeType';
 import { Provision } from '../../model/Provision';
 import { AnnouncementNoticeTemplateService } from '../../services/announcement.notice.template.service';
+import { AnnouncementStatusService } from '../../services/announcement.status.service';
 import { CharacterNumberService } from '../../services/character.number.service';
 import { CharacterPriceService } from '../../services/character.price.service';
-import { ConfrereService } from '../../services/confrere.service';
 import { JournalTypeService } from '../../services/journal.type.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
 
@@ -77,6 +78,8 @@ export class AnnouncementComponent implements OnInit {
 
   characterNumber: number = 0;
 
+  announcementStatus: AnnouncementStatus[] | undefined;
+
   constructor(private formBuilder: UntypedFormBuilder,
     private characterPriceService: CharacterPriceService,
     private constantService: ConstantService,
@@ -86,14 +89,15 @@ export class AnnouncementComponent implements OnInit {
     private journalTypeService: JournalTypeService,
     private announcementNoticeTemplateService: AnnouncementNoticeTemplateService,
     private characterNumberService: CharacterNumberService,
-    private confrereService: ConfrereService,
-    private habilitationsService: HabilitationsService
+    private habilitationsService: HabilitationsService,
+    private announcementStatusService: AnnouncementStatusService,
   ) { }
 
   canAddNewInvoice() {
     return this.habilitationsService.canAddNewInvoice();
   }
   ngOnInit() {
+    this.announcementStatusService.getAnnouncementStatus().subscribe(response => { this.announcementStatus = response });
 
     this.journalTypeService.getJournalTypes().subscribe(response => {
       this.journalTypes = response;

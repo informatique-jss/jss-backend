@@ -279,7 +279,8 @@
       </provision-payment>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="announcement && announcement.id">
-      <history [entity]="announcement" [entityType]="ANNOUNCEMENT_ENTITY_TYPE"></history>
+      <history [entity]="announcement" [entityType]="ANNOUNCEMENT_ENTITY_TYPE" [parseTypeList]="announcementStatus">
+      </history>
     </mat-tab>
     <mat-tab label="Historique (prestation)" *ngIf="provision && provision.id">
       <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
