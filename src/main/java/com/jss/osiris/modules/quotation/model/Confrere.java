@@ -199,7 +199,7 @@ public class Confrere implements ITiers, IGenericTiers {
 	private Regie regie;
 
 	@OneToMany(mappedBy = "confrere")
-	@JsonIgnoreProperties(value = { "confrere" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "confrere", "affaire" }, allowSetters = true)
 	private List<TiersFollowup> tiersFollowups;
 
 	private Boolean doNotUse;

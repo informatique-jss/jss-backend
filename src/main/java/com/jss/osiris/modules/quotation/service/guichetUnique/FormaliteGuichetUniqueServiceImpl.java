@@ -148,8 +148,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         if (formaliteGuichetUnique.getFormaliteStatusHistoryItems() != null)
             for (FormaliteStatusHistoryItem statusHistoryItem : formaliteGuichetUnique
                     .getFormaliteStatusHistoryItems()) {
-                if (statusHistoryItem.getPartnerCenter() != null)
-                    partnerCenterRepository.save(statusHistoryItem.getPartnerCenter());
+                // if (statusHistoryItem.getPartnerCenter() != null)
+                // partnerCenterRepository.save(statusHistoryItem.getPartnerCenter());
             }
 
         FormaliteGuichetUnique originalFormalite = getFormaliteGuichetUnique(inFormaliteGuichetUnique.getId());

@@ -10,6 +10,7 @@ import { Gift } from 'src/app/modules/miscellaneous/model/Gift';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
+import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { environment } from 'src/environments/environment';
 import { Invoice } from '../../../quotation/model/Invoice';
@@ -27,6 +28,7 @@ export class TiersFollowupComponent implements OnInit {
 
   @Input() tiers: ITiers | undefined;
   @Input() invoice: Invoice | undefined;
+  @Input() affaire: Affaire | undefined;
   @Input() editMode: boolean = false;
 
   newFollowup = {} as TiersFollowup;
@@ -68,7 +70,7 @@ export class TiersFollowupComponent implements OnInit {
   formatDateForSortTable = formatDateForSortTable;
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.tiers != undefined || changes.invoice != undefined) {
+    if (changes.tiers != undefined || changes.invoice != undefined || changes.affaire != undefined) {
       this.followupForm.markAllAsTouched();
       this.setData();
 
@@ -85,6 +87,16 @@ export class TiersFollowupComponent implements OnInit {
         this.newFollowup.salesEmployee = this.tiers.salesEmployee;
     } else if (this.invoice && this.invoice.tiersFollowups != null) {
       this.invoice.tiersFollowups.sort(function (a: TiersFollowup, b: TiersFollowup) {
+        return new Date(b.followupDate).getTime() - new Date(a.followupDate).getTime();
+      });
+      // By default, select Invoice recover responsible
+      if (this.newFollowup && !this.newFollowup.salesEmployee)
+        this.newFollowup.salesEmployee = this.constantService.getEmployeeInvoiceReminderResponsible();
+
+      if (this.newFollowup)
+        this.newFollowup.giftNumber = 1;
+    } else if (this.affaire && this.affaire.tiersFollowups != null) {
+      this.affaire.tiersFollowups.sort(function (a: TiersFollowup, b: TiersFollowup) {
         return new Date(b.followupDate).getTime() - new Date(a.followupDate).getTime();
       });
       // By default, select Invoice recover responsible
@@ -112,6 +124,9 @@ export class TiersFollowupComponent implements OnInit {
     } else if (this.invoice) {
       if (this.invoice.tiersFollowups == null || this.invoice.tiersFollowups == undefined)
         this.invoice.tiersFollowups = [] as Array<TiersFollowup>;
+    } else if (this.affaire) {
+      if (this.affaire.tiersFollowups == null || this.affaire.tiersFollowups == undefined)
+        this.affaire.tiersFollowups = [] as Array<TiersFollowup>;
     }
     // Remove UTC delay
     this.newFollowup.followupDate = new Date(this.newFollowup.followupDate.setHours(12));
@@ -119,6 +134,8 @@ export class TiersFollowupComponent implements OnInit {
     let promise;
     if (this.invoice)
       promise = this.tiersFollowupService.addFollowupForInvoice(this.newFollowup, this.invoice);
+    else if (this.affaire)
+      promise = this.tiersFollowupService.addFollowupForAffaire(this.newFollowup, this.affaire);
     else if (instanceOfConfrere(this.tiers))
       promise = this.tiersFollowupService.addFollowupForConfrere(this.newFollowup, this.tiers);
     else if (instanceOfTiers(this.tiers))
@@ -132,6 +149,8 @@ export class TiersFollowupComponent implements OnInit {
           this.tiers.tiersFollowups = response;
         else if (this.invoice)
           this.invoice.tiersFollowups = response;
+        else if (this.affaire)
+          this.affaire.tiersFollowups = response;
         this.setData();
       });
     this.newFollowup = {} as TiersFollowup;
@@ -193,6 +212,19 @@ export class TiersFollowupComponent implements OnInit {
       event.end = d;
 
       createEvent([event], 'Rappel factue n°' + this.invoice.id + '.ics');
+    } else if (this.affaire) {
+      event.description = "Bonjour, \n\nMerci de relancer l'affaire " + this.affaire.id + " " + this.affaire.denomination + ".";
+      event.htmlDescription = "<!DOCTYPE HTML PUBLIC -//W3C//DTD HTML 3.2//EN><html><body><p>Bonjour,</p><p>Merci de relancer l'<a href=\"" + environment.frontendUrl + "quotation/affaire/" + this.affaire.id + "\">affaire n°" + this.affaire.id + "</a></p></html></body>";
+
+      event.summary = "[Relance Facture] : n°" + this.affaire.id;
+      event.location = "";
+      event.url = "";
+      event.start = new Date(this.reminderDatetime);
+      let d = new Date(event.start.getTime());
+      d.setMinutes(d.getMinutes() + 60);
+      event.end = d;
+
+      createEvent([event], 'Rappel affaire n°' + this.affaire.id + '.ics');
     }
   }
 }

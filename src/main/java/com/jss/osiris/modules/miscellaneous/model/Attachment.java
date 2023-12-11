@@ -21,6 +21,7 @@ import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.invoicing.model.AzureInvoice;
 import com.jss.osiris.modules.invoicing.model.AzureReceipt;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
@@ -100,6 +101,13 @@ public class Attachment implements Serializable, IId {
 			"customerOrderForInboundInvoice", "competentAuthority", "invoiceItems",
 			"azureInvoice" }, allowSetters = true)
 	private Invoice invoice;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_affaire")
+	@JsonIgnoreProperties(value = { "attachments", "provider", "customerOrder", "accountingRecords",
+			"customerOrderForInboundInvoice", "competentAuthority", "invoiceItems",
+			"azureInvoice" }, allowSetters = true)
+	private Affaire affaire;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_attachment_type")
@@ -297,6 +305,14 @@ public class Attachment implements Serializable, IId {
 
 	public void setPiecesJointe(PiecesJointe piecesJointe) {
 		this.piecesJointe = piecesJointe;
+	}
+
+	public Affaire getAffaire() {
+		return affaire;
+	}
+
+	public void setAffaire(Affaire affaire) {
+		this.affaire = affaire;
 	}
 
 }

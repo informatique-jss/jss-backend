@@ -93,6 +93,7 @@ import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.miscellaneous.service.WeekDayService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -1052,6 +1053,7 @@ public class MiscellaneousController {
                 && !entityType.equals(Provider.class.getSimpleName())
                 && !entityType.equals(CompetentAuthority.class.getSimpleName())
                 && !entityType.equals(Provision.class.getSimpleName())
+                && !entityType.equals(Affaire.class.getSimpleName())
                 && !entityType.equals(Invoice.class.getSimpleName()))
             throw new OsirisValidationException("entityType");
 

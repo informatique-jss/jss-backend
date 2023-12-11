@@ -32,7 +32,9 @@ import com.jss.osiris.modules.miscellaneous.service.DocumentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.tiers.model.BillingClosureType;
@@ -134,6 +136,9 @@ public class TiersController {
 
   @Autowired
   InvoiceService invoiceService;
+
+  @Autowired
+  AffaireService affaireService;
 
   @GetMapping(inputEntryPoint + "/competitors")
   public ResponseEntity<List<Competitor>> getCompetitors() {
@@ -239,6 +244,18 @@ public class TiersController {
       throw new OsirisValidationException("Invoice");
 
     tiersFollowup.setInvoice(invoice);
+    return saveTiersFollomUp(tiersFollowup);
+  }
+
+  @PostMapping(inputEntryPoint + "/tiers-followup/affaire")
+  public ResponseEntity<List<TiersFollowup>> addTiersFollowupForAffaire(@RequestBody TiersFollowup tiersFollowup,
+      @RequestParam Integer idAffaire)
+      throws OsirisValidationException, OsirisException {
+    Affaire affaire = affaireService.getAffaire(idAffaire);
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    tiersFollowup.setAffaire(affaire);
     return saveTiersFollomUp(tiersFollowup);
   }
 

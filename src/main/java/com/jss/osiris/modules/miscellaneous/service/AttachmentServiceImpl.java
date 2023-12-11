@@ -33,11 +33,13 @@ import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
+import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.BodaccService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
@@ -95,6 +97,9 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     InvoiceService invoiceService;
+
+    @Autowired
+    AffaireService affaireService;
 
     @Autowired
     ActiveDirectoryHelper activeDirectoryHelper;
@@ -238,6 +243,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (invoice == null)
                 return new ArrayList<Attachment>();
             attachment.setInvoice(invoice);
+        } else if (entityType.equals(Affaire.class.getSimpleName())) {
+            Affaire affaire = affaireService.getAffaire(idEntity);
+            if (affaire == null)
+                return new ArrayList<Attachment>();
+            attachment.setAffaire(affaire);
         } else if (entityType.equals(CustomerMail.class.getSimpleName())) {
             CustomerMail mail = customerMailService.getMail(idEntity);
             if (mail == null)
@@ -284,6 +294,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByCustomerOrderId(idEntity);
         } else if (entityType.equals(Invoice.class.getSimpleName())) {
             attachments = attachmentRepository.findByInvoiceId(idEntity);
+        } else if (entityType.equals(Affaire.class.getSimpleName())) {
+            attachments = attachmentRepository.findByAffaireId(idEntity);
         } else if (entityType.equals(CustomerMail.class.getSimpleName())) {
             attachments = attachmentRepository.findByCustomerMailId(idEntity);
         } else if (entityType.equals(Provider.class.getSimpleName())) {
@@ -325,6 +337,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         newAttachment.setCustomerOrder(attachment.getCustomerOrder());
         newAttachment.setDescription(attachment.getDescription());
         newAttachment.setInvoice(attachment.getInvoice());
+        newAttachment.setAffaire(attachment.getAffaire());
         newAttachment.setIsDisabled(attachment.getIsDisabled());
         newAttachment.setProvider(attachment.getProvider());
         newAttachment.setProvision(attachment.getProvision());
