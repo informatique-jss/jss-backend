@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -74,6 +75,9 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Autowired
     TypeVoieService typeVoieService;
+
+    @Autowired
+    GlobalExceptionHandler globalExceptionHandler;
 
     @Override
     public List<Affaire> getAffaires() {
@@ -339,13 +343,13 @@ public class AffaireServiceImpl implements AffaireService {
             if (isForceRefresh || affaire.getShareCapital() == null || affaire.getShareCapital().equals(0f))
                 affaire.setShareCapital(personneMorale.getIdentite().getDescription().getMontantCapital() * 1.0f);
 
-        if ((affaire.getDenomination() == null || affaire.getDenomination().length() == 0)
+        if ((affaire.getAcronym() == null || affaire.getAcronym().length() == 0)
                 && personneMorale.getIdentite() != null && personneMorale.getIdentite().getDescription() != null
                 && personneMorale.getIdentite().getDescription().getSigle() != null)
             if (isForceRefresh || affaire.getAcronym() == null || affaire.getAcronym().equals(""))
                 affaire.setAcronym(personneMorale.getIdentite().getDescription().getSigle());
 
-        if ((affaire.getAcronym() == null || affaire.getAcronym().length() == 0)
+        if ((affaire.getDenomination() == null || affaire.getDenomination().length() == 0)
                 && personneMorale.getIdentite() != null && personneMorale.getIdentite().getEntreprise() != null
                 && personneMorale.getIdentite().getEntreprise().getDenomination() != null)
             if (isForceRefresh || affaire.getDenomination() == null || affaire.getDenomination().equals(""))
@@ -476,7 +480,11 @@ public class AffaireServiceImpl implements AffaireService {
                     rneCompanies = rneDelegateService.getCompanyBySiren(affaire.getSiren());
 
                 if (rneCompanies != null && rneCompanies.size() == 1)
-                    updateAffaireFromRneCompany(affaire, rneCompanies.get(0), false);
+                    try {
+                        updateAffaireFromRneCompany(affaire, rneCompanies.get(0), false);
+                    } catch (Exception e) {
+                        globalExceptionHandler.handleExceptionOsiris(e);
+                    }
 
                 entityManager.flush();
                 entityManager.clear();
