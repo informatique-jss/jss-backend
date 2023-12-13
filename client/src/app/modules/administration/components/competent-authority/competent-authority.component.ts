@@ -95,8 +95,11 @@ export class CompetentAuthorityComponent implements OnInit {
     if (!this.idCompetentAuthority)
       this.appService.changeHeaderTitle(element.label);
 
-    setTimeout(() =>
-      this.invoiceSearch.customerOrders = [{ id: this.selectedcompetentAuthority!.id } as ITiers], 0);
+    setTimeout(() => {
+      this.invoiceSearch.customerOrders = [{ id: this.selectedcompetentAuthority!.id } as ITiers];
+      this.invoiceSearch.invoiceStatus = [this.constantService.getInvoiceStatusReceived()];
+    }, 0);
+
   }
 
   limitTextareaSize(numberOfLine: number) {
