@@ -949,11 +949,21 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Payment movePaymentToWaitingAccount(Payment payment) throws OsirisException, OsirisValidationException {
+    public Payment movePaymentToWaitingAccount(Payment payment)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         payment = getPayment(payment.getId());
         cancelPayment(payment);
-        return generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
+        Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                 accountingAccountService.getWaitingAccountingAccount());
+        newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+        newPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
+        addOrUpdatePayment(newPayment);
+        if (newPayment.getPaymentAmount() > 0)
+            accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(newPayment,
+                    false);
+        else
+            accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(newPayment);
+        return newPayment;
     }
 
     @Override
