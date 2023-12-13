@@ -1,10 +1,16 @@
 <div *ngIf="quotation && quotation.id" class=" form-div min-height ">
   <div *ngIf="customerOrderInvoices && customerOrderInvoices.length>0">
+    <p>
+      Factures clientes :
+    </p>
     <sort-table [actions]="invoicesActions" [columns]="customerInvoicesColumns" [values]="customerOrderInvoices"
       tableName="Factures" *ngIf="customerInvoicesColumns && customerInvoicesColumns.length>0 ">
     </sort-table>
   </div>
   <div *ngIf="customerOrderProviderInvoices && customerOrderProviderInvoices.length>0" class="description-table ">
+    <p>
+      Factures fournisseurs :
+    </p>
     <sort-table [actions]="invoicesActions" [columns]="providerInvoicesColumns" [values]="customerOrderProviderInvoices"
       tableName="Factures" *ngIf="providerInvoicesColumns && providerInvoicesColumns.length>0 ">
     </sort-table>
