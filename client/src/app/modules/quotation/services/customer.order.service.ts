@@ -57,4 +57,8 @@ export class CustomerOrderService extends AppRestService<IQuotation>{
     return this.get(new HttpParams().set("customerOrderId", customerOrder.id), "customer-order/offer");
   }
 
+  generateCreditNoteForCustomerOrderInvoice(invoice: Invoice, customerOrder: CustomerOrder) {
+    return this.get(new HttpParams().set("invoiceId", invoice.id).set("customerOrderId", customerOrder.id), "customer-order/credit-note");
+  }
+
 }

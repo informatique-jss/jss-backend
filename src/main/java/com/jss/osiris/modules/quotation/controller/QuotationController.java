@@ -34,6 +34,7 @@ import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -1941,6 +1942,23 @@ public class QuotationController {
       formalites = guichetUniqueDelegateService.getAllFormalitiesByRefenceMandataire(value);
 
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @GetMapping(inputEntryPoint + "/customer-order/credit-note")
+  public ResponseEntity<Boolean> generateCreditNoteForCustomerOrderInvoice(
+      @RequestParam Integer customerOrderId, @RequestParam Integer invoiceId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+    Invoice invoice = invoiceService.getInvoice(invoiceId);
+    if (invoice == null)
+      throw new OsirisValidationException("invoice");
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    customerOrderService.generateCreditNoteForCustomerOrderInvoice(customerOrder, invoice);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
 }
