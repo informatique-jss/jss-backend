@@ -115,8 +115,12 @@ public class IndexEntityServiceImpl implements IndexEntityService {
                             outObject.put(field.getName(), getter.invoke(entity));
                         } else if (fieldResult instanceof List) {
                             ArrayList<Object> cleanOutList = new ArrayList<Object>();
-                            for (Object fieldResultObject : (List<Object>) fieldResult)
+                            for (Object fieldResultObject : (List<Object>) fieldResult) {
+                                if (fieldResultObject != null
+                                        && fieldResultObject.getClass().getSimpleName().contains("HibernateProxy"))
+                                    fieldResultObject = Hibernate.unproxy(fieldResultObject);
                                 cleanOutList.add(cleanObjectForSerialization(fieldResultObject));
+                            }
                             outObject.put(field.getName(), cleanOutList);
                         } else if (fieldResult != null) {
                             outObject.put(field.getName(), cleanObjectForSerialization(fieldResult));
