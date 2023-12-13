@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DocumentExtension;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TaciteReconduction;
@@ -78,6 +79,7 @@ public class PiecesJointe implements Serializable {
     private String path;
 
     @Id
+    @JsonAlias({ "id" })
     private String attachmentId;
 
     @Column(length = 255)

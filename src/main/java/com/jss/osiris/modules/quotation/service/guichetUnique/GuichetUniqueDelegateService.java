@@ -8,6 +8,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
 
 public interface GuichetUniqueDelegateService {
@@ -36,6 +37,15 @@ public interface GuichetUniqueDelegateService {
         public List<FormaliteStatusHistoryItem> getActeDepositStatusHistoriesById(Integer id)
                         throws OsirisException, OsirisClientMessageException;
 
+        public List<PiecesJointe> getActeDepositAttachments(FormaliteGuichetUnique formaliteGuichetUnique)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public List<PiecesJointe> getAnnualAccountsAttachments(FormaliteGuichetUnique formaliteGuichetUnique)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public List<PiecesJointe> getFormalityAttachments(FormaliteGuichetUnique formaliteGuichetUnique)
+                        throws OsirisException, OsirisClientMessageException;
+
         public void refreshFormalitiesFromLastHour()
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException;
 
@@ -44,4 +54,5 @@ public interface GuichetUniqueDelegateService {
 
         public File getAttachmentById(String attachmentId)
                         throws OsirisException, OsirisClientMessageException;
+
 }

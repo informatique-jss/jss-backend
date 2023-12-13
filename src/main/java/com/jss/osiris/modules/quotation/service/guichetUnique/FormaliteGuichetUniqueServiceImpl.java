@@ -260,15 +260,14 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                             }
                     }
                 }
-
-                // Attachments
-                originalFormalite.getContent().setPiecesJointes(formaliteGuichetUnique.getContent().getPiecesJointes());
-                originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);
             }
 
             // Download attachments
-            if (formaliteGuichetUnique.getContent().getPiecesJointes() != null
-                    && formaliteGuichetUnique.getContent().getPiecesJointes().size() > 0) {
+            originalFormalite.getContent().setPiecesJointes(getAttachmentOfFormaliteGuichetUnique(originalFormalite));
+            originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);
+
+            if (originalFormalite.getContent().getPiecesJointes() != null
+                    && originalFormalite.getContent().getPiecesJointes().size() > 0) {
                 List<TypeDocument> typeDocuments = typeDocumentService.getTypeDocument();
                 List<String> typeDocumentsToDownload = new ArrayList<String>();
                 if (typeDocuments != null)
@@ -278,9 +277,10 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                             typeDocumentsToDownload.add(typeDocument.getCode());
 
                 if (typeDocumentsToDownload.size() > 0) {
-                    for (PiecesJointe piecesJointe : formaliteGuichetUnique.getContent().getPiecesJointes())
-                        if (typeDocumentsToDownload.contains(piecesJointe.getTypeDocument().getCode()))
+                    for (PiecesJointe piecesJointe : originalFormalite.getContent().getPiecesJointes())
+                        if (typeDocumentsToDownload.contains(piecesJointe.getTypeDocument().getCode())) {
                             downloadPieceJointeOnProvision(formalite.getProvision().get(0), piecesJointe);
+                        }
                 }
             }
         }
@@ -307,6 +307,17 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             }
         }
         return originalFormalite;
+    }
+
+    private List<PiecesJointe> getAttachmentOfFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique)
+            throws OsirisException, OsirisClientMessageException {
+        if (formaliteGuichetUnique.getIsActeDeposit())
+            return guichetUniqueDelegateService.getActeDepositAttachments(formaliteGuichetUnique);
+        if (formaliteGuichetUnique.getIsAnnualAccounts())
+            return guichetUniqueDelegateService.getAnnualAccountsAttachments(formaliteGuichetUnique);
+        if (formaliteGuichetUnique.getIsFormality())
+            return guichetUniqueDelegateService.getFormalityAttachments(formaliteGuichetUnique);
+        return null;
     }
 
     private void downloadPieceJointeOnProvision(Provision provision, PiecesJointe piecesJointe)

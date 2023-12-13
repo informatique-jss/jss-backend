@@ -31,6 +31,7 @@ import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.GuichetUniqueLogin;
+import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
 import com.jss.osiris.modules.quotation.repository.guichetUnique.FormaliteGuichetUniqueRepository;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
@@ -269,8 +270,6 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
             throws OsirisException, OsirisClientMessageException {
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = createHeaders();
-        // headers.setAccept(Arrays.asList(new MediaType[] {
-        // MediaType.APPLICATION_OCTET_STREAM }));
 
         ResponseEntity<byte[]> response = new RestTemplate().exchange(
                 guichetUniqueEntryPoint + attachmentsRequestUrl + "/" + attachmentId + fileRequestUrl, HttpMethod.GET,
@@ -531,6 +530,72 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
             return response.getBody();
         } else {
             throw new OsirisException(null, "Guichet unique formality not found for id " + id);
+        }
+    }
+
+    @Override
+    @SuppressWarnings({ "all" })
+    public List<PiecesJointe> getActeDepositAttachments(FormaliteGuichetUnique formaliteGuichetUnique)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<List<PiecesJointe>> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + acteDepositRequestUrl + "/" + formaliteGuichetUnique.getId()
+                        + attachmentsRequestUrl,
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<List<PiecesJointe>>() {
+                });
+
+        if (response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new OsirisException(null,
+                    "Guichet unique formality not found for id " + formaliteGuichetUnique.getId());
+        }
+    }
+
+    @Override
+    @SuppressWarnings({ "all" })
+    public List<PiecesJointe> getAnnualAccountsAttachments(FormaliteGuichetUnique formaliteGuichetUnique)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<List<PiecesJointe>> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + annualAccountsRequestUrl + "/" + formaliteGuichetUnique.getId()
+                        + attachmentsRequestUrl,
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<List<PiecesJointe>>() {
+                });
+
+        if (response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new OsirisException(null,
+                    "Guichet unique formality not found for id " + formaliteGuichetUnique.getId());
+        }
+    }
+
+    @Override
+    @SuppressWarnings({ "all" })
+    public List<PiecesJointe> getFormalityAttachments(FormaliteGuichetUnique formaliteGuichetUnique)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<List<PiecesJointe>> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + formalitiesRequestUrl + "/" + formaliteGuichetUnique.getId()
+                        + attachmentsRequestUrl,
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<List<PiecesJointe>>() {
+                });
+
+        if (response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new OsirisException(null,
+                    "Guichet unique formality not found for id " + formaliteGuichetUnique.getId());
         }
     }
 
