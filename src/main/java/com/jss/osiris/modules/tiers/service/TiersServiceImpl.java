@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.tiers.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,8 +34,10 @@ import com.jss.osiris.modules.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
+import com.jss.osiris.modules.tiers.model.ITiersSearchResult;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.model.TiersSearch;
 import com.jss.osiris.modules.tiers.repository.TiersRepository;
 
 @Service
@@ -350,6 +353,33 @@ public class TiersServiceImpl implements TiersService {
 
         tiersRepository.delete(tiers);
         return true;
+    }
+
+    @Override
+    public List<ITiersSearchResult> searchTiers(TiersSearch tiersSearch) throws OsirisException {
+        Integer tiersId = 0;
+        if (tiersSearch.getTiers() != null)
+            tiersId = tiersSearch.getTiers().getId();
+
+        Integer salesEmployeeId = 0;
+        if (tiersSearch.getSalesEmployee() != null)
+            salesEmployeeId = tiersSearch.getSalesEmployee().getId();
+
+        if (tiersSearch.getStartDate() == null)
+            tiersSearch.setStartDate(LocalDate.now().minusYears(10));
+
+        if (tiersSearch.getEndDate() == null)
+            tiersSearch.setEndDate(LocalDate.now().plusYears(10));
+
+        if (tiersSearch.getLabel() == null)
+            tiersSearch.setLabel("");
+
+        return tiersRepository.searchTiers(tiersId, salesEmployeeId,
+                tiersSearch.getStartDate(),
+                tiersSearch.getEndDate(), tiersSearch.getLabel(), constantService.getConfrereJssSpel().getId(),
+                Arrays.asList(constantService.getInvoiceStatusPayed().getId(),
+                        constantService.getInvoiceStatusSend().getId()),
+                this.constantService.getDocumentTypeBilling().getId());
     }
 
 }
