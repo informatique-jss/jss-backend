@@ -223,10 +223,6 @@ public class Constant implements Serializable, IId {
 	private PaymentDeadlineType paymentDeadLineType30;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_notice_family_individuals")
-	private NoticeTypeFamily noticeOffamilyIndividuals;
-
-	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_notice_name_change")
 	private NoticeType noticeOfNameChange;
 
@@ -2100,14 +2096,6 @@ public class Constant implements Serializable, IId {
 
 	public void setNoticeOfNameChange(NoticeType noticeOfNameChange) {
 		this.noticeOfNameChange = noticeOfNameChange;
-	}
-
-	public NoticeTypeFamily getNoticeOffamilyIndividuals() {
-		return noticeOffamilyIndividuals;
-	}
-
-	public void setNoticeOffamilyIndividuals(NoticeTypeFamily noticeOffamilyIndividuals) {
-		this.noticeOffamilyIndividuals = noticeOffamilyIndividuals;
 	}
 
 	public TiersFollowupType getTiersFollowupTypeInvoiceReminder() {

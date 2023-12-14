@@ -37,7 +37,6 @@ import { LegalForm } from "./LegalForm";
 import { PaymentType } from "./PaymentType";
 import { TiersFollowupType } from './TiersFollowupType';
 import { Vat } from "./Vat";
-import { NoticeTypeFamily } from '../../quotation/model/NoticeTypeFamily';
 import { NoticeType } from '../../quotation/model/NoticeType';
 
 export interface Constant {
@@ -211,7 +210,6 @@ export interface Constant {
   customerOrderOriginWebSite: CustomerOrderOrigin;
   customerOrderOriginOsiris: CustomerOrderOrigin;
   providerCentralPay: Provider;
-  noticeOffamilyIndividuals: NoticeTypeFamily;
   noticeOfNameChange: NoticeType;
   tiersFollowupTypeInvoiceReminder: TiersFollowupType;
   tiersCategoryPresse: TiersCategory;
