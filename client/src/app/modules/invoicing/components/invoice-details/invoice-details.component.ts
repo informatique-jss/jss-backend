@@ -7,6 +7,7 @@ import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { VatBase } from 'src/app/modules/quotation/model/VatBase';
+import { CustomerOrderService } from 'src/app/modules/quotation/services/customer.order.service';
 import { QuotationService } from 'src/app/modules/quotation/services/quotation.service';
 import { CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
@@ -36,6 +37,7 @@ export class InvoiceDetailsComponent implements OnInit {
     private constantService: ConstantService,
     private habilitationService: HabilitationsService,
     private quotationService: QuotationService,
+    private customerOrderService: CustomerOrderService
   ) { }
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
@@ -210,6 +212,14 @@ export class InvoiceDetailsComponent implements OnInit {
     }
   }
 
+  generateCreditNoteForCustomerOrderInvoice(event: any) {
+    if (this.invoice && this.invoice.customerOrder) {
+      this.customerOrderService.generateCreditNoteForCustomerOrderInvoice(this.invoice, this.invoice.customerOrder).subscribe(response => {
+        this.appService.openRoute(null, 'invoicing/view/' + this.invoice!.id, undefined);
+      })
+    }
+  }
+
   canCancelInvoice() {
     return this.habilitationService.canCancelInvoice();
   }
@@ -219,6 +229,10 @@ export class InvoiceDetailsComponent implements OnInit {
       return this.habilitationService.canAddNewInvoice();
     }
     return false;
+  }
+
+  canAddCreditNoteForCustomerOrderInvoice() {
+    return this.habilitationService.canAddCreditNoteForCustomerOrderInvoice();
   }
 
   sendMailReminder() {

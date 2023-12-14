@@ -39,8 +39,10 @@ public class Refund implements Serializable, IId {
 	@IndexedField
 	private String label;
 
+	@IndexedField
 	private Float refundAmount;
 
+	@IndexedField
 	private LocalDateTime refundDateTime;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -62,6 +64,7 @@ public class Refund implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "deposits" }, allowSetters = true)
+	@IndexedField
 	private CustomerOrder customerOrder;
 
 	@Column(length = 40)

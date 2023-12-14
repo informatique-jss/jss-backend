@@ -183,7 +183,7 @@
           <autocomplete-billing-item [(model)]="invoiceItem.billingItem" [form]="invoiceForm"
             label="Poste de facturation" propertyName="Poste de facturation" [isMandatory]="true"
             (onOptionSelected)="fillBillingItem(invoiceItem,invoiceItem.billingItem)" [isMandatory]="true"
-             [isDisabled]="!editMode || invoice.id!=undefined">
+            [isDisabled]="!editMode || invoice.id!=undefined">
           </autocomplete-billing-item>
         </td>
       </tr>
@@ -211,7 +211,7 @@
             propertyName="preTaxPrice" [isMandatory]="true" [isDisabled]="!editMode || invoice.id!=undefined"
             type="number" (onFormChange)="fillPreTaxPricedReinvoiced(invoiceItem,invoice)"></generic-input>
         </td>
-        <td *ngIf="invoice.isInvoiceFromProvider">
+        <td *ngIf="invoice.isInvoiceFromProvider && indexedCustomerOrder">
           <generic-input [(model)]="invoiceItem.preTaxPriceReinvoiced" label="Prix HT refacturé" [form]="invoiceForm"
             propertyName="preTaxPriceReinvoiced" [isMandatory]="true" [isDisabled]="!editMode || invoice.id!=undefined"
             type="number"></generic-input>

@@ -1,15 +1,20 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
 import { formatDateForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { ITiers } from 'src/app/modules/tiers/model/ITiers';
+import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AppService } from 'src/app/services/app.service';
 import { formatDateTimeForSortTable, formatEurosForSortTable } from '../../../../libs/FormatHelper';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Employee } from '../../../profile/model/Employee';
 import { EmployeeService } from '../../../profile/services/employee.service';
+import { CustomerOrderStatus } from '../../model/CustomerOrderStatus';
 import { OrderingSearch } from '../../model/OrderingSearch';
 import { OrderingSearchResult } from '../../model/OrderingSearchResult';
+import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
 import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
 @Component({
   selector: 'ordering-list',
@@ -20,9 +25,10 @@ export class OrderingListComponent implements OnInit {
   @Input() orderingSearch: OrderingSearch = {} as OrderingSearch;
   @Input() isForDashboard: boolean = false;
   @Input() isForTiersIntegration: boolean = false;
+  @Input() isForPaymentAssocationIntegration: boolean = false;
   orders: OrderingSearchResult[] | undefined;
   availableColumns: SortTableColumn[] = [];
-  columnToDisplayOnDashboard: string[] = ["id", "customerOrderLabel", "customerOrderStatus", "affaireLabel", "createdDate"];
+  columnToDisplayOnDashboard: string[] = ["id", "customerOrderLabel", "customerOrderStatus", "affaireLabel", "createdDate", "lastStatusUpdate"];
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
   bookmark: OrderingSearch | undefined;
@@ -31,6 +37,7 @@ export class OrderingListComponent implements OnInit {
   @Input() overrideIconAction: string = "";
   @Input() overrideTooltipAction: string = "";
   @Input() defaultStatusFilter: string[] | undefined;
+  searchedTiers: IndexEntity | undefined;
 
   allEmployees: Employee[] | undefined;
 
@@ -40,6 +47,7 @@ export class OrderingListComponent implements OnInit {
     private employeeService: EmployeeService,
     private userPreferenceService: UserPreferenceService,
     private formBuilder: FormBuilder,
+    private customerOrderStatusService: CustomerOrderStatusService
   ) { }
 
   ngOnInit() {
@@ -68,8 +76,8 @@ export class OrderingListComponent implements OnInit {
       this.availableColumns.push({ id: "customerOrderDescription", fieldName: "customerOrderDescription", label: "Description", isShrinkColumn: true } as SortTableColumn);
       this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
       this.availableColumns.push({ id: "customerOrderLabel", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
-      this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
-      this.availableColumns.push({ id: "depositTotalAmount", fieldName: "depositTotalAmount", label: "Acompte versé", valueFonction: formatEurosForSortTable } as SortTableColumn);
+      this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix TTC", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.totalPrice) } } as SortTableColumn);
+      this.availableColumns.push({ id: "depositTotalAmount", fieldName: "depositTotalAmount", label: "Acompte versé", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.depositTotalAmount) } } as SortTableColumn);
       this.availableColumns.push({
         id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true, valueFonction: (element: any) => {
           if (element && this.allEmployees) {
@@ -113,8 +121,19 @@ export class OrderingListComponent implements OnInit {
           }, display: true,
         } as SortTableAction);
       };
-      if ((this.isForDashboard || this.isForTiersIntegration) && !this.orders && this.orderingSearch)
-        this.searchOrders();
+      if ((this.isForDashboard || this.isForTiersIntegration) && !this.orders && this.orderingSearch) {
+        this.customerOrderStatusService.getCustomerOrderStatus().subscribe(res => {
+          if (this.isForTiersIntegration && !this.orderingSearch.customerOrderStatus) {
+            let status = [] as Array<CustomerOrderStatus>;
+            status.push(this.customerOrderStatusService.getCustomerStatusByCode(res, CUSTOMER_ORDER_STATUS_OPEN)!);
+            status.push(this.customerOrderStatusService.getCustomerStatusByCode(res, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT)!);
+            status.push(this.customerOrderStatusService.getCustomerStatusByCode(res, CUSTOMER_ORDER_STATUS_TO_BILLED)!);
+            status.push(this.customerOrderStatusService.getCustomerStatusByCode(res, CUSTOMER_ORDER_STATUS_BEING_PROCESSED)!);
+            this.orderingSearch.customerOrderStatus = status;
+          }
+          this.searchOrders();
+        })
+      }
     });
   }
 
@@ -168,6 +187,10 @@ export class OrderingListComponent implements OnInit {
         this.orderingSearch.startDate = new Date(toIsoString(this.orderingSearch.startDate));
       if (this.orderingSearch.endDate)
         this.orderingSearch.endDate = new Date(toIsoString(this.orderingSearch.endDate));
+      if (this.searchedTiers) {
+        this.orderingSearch.customerOrders = [];
+        this.orderingSearch.customerOrders.push({ id: this.searchedTiers.entityId } as ITiers)
+      }
       this.orderingSearchResultService.getOrders(this.orderingSearch).subscribe(response => {
         this.orders = response;
       })

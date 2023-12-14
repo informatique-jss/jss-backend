@@ -121,6 +121,9 @@ export class SortTableComponent implements OnInit {
 
               let columnValue = this.getColumnValue(column, item);
 
+              if (!isNaN(columnValue))
+                columnValue = parseFloat(columnValue);
+
               // Handle date or date string
               if (columnValue && columnValue.indexOf && columnValue.indexOf("/") > 0) {
                 let dateTimeSplit = columnValue.split(" ");
@@ -194,6 +197,15 @@ export class SortTableComponent implements OnInit {
           } catch {
           }
         return element[column.fieldName];
+      }
+    }
+    return "Not found";
+  }
+
+  getColumnStatus(column: SortTableColumn, element: any): any {
+    if (column) {
+      if (column.statusFonction) {
+        return column.statusFonction(element, this.values, column, this.columns);
       }
     }
     return "Not found";

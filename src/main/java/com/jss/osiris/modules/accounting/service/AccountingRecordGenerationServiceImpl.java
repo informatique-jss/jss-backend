@@ -1028,7 +1028,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     }
 
     @Override
-    public void generateAccountingRecordOnPaymentOnDepositCompetentAuthorityAccount(Payment payment)
+    public void generateAccountingRecordOnIncomingPaymentOnDepositCompetentAuthorityAccount(Payment payment)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
 
         AccountingJournal bankJournal = constantService.getAccountingJournalBank();
@@ -1052,4 +1052,28 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     }
 
+    @Override
+    public void generateAccountingRecordOnOutgoingPaymentOnDepositCompetentAuthorityAccount(Payment payment)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+
+        AccountingJournal bankJournal = constantService.getAccountingJournalBank();
+        Integer operationId = getNewTemporaryOperationId();
+
+        if (payment.getTargetAccountingAccount() == null)
+            throw new OsirisException(null, "No target accounting account for payment n°" + payment.getId());
+
+        if (payment.getSourceAccountingAccount() == null)
+            throw new OsirisException(null, "No source accounting account for payment n°" + payment.getId());
+
+        generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+                "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
+                null, Math.abs(payment.getPaymentAmount()), payment.getSourceAccountingAccount(), null, null, null,
+                bankJournal, payment, null, null);
+
+        generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+                "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
+                Math.abs(payment.getPaymentAmount()), null, payment.getTargetAccountingAccount(), null, null, null,
+                bankJournal, payment, null, null);
+
+    }
 }

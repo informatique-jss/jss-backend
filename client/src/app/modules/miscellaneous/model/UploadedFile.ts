@@ -5,4 +5,5 @@ export interface UploadedFile {
   checksum: string;
   creationDate: Date;
   createdBy: string;
+  size: number;
 }

@@ -230,7 +230,7 @@
           </customer-order-payment>
         </mat-tab>
         <mat-tab label="Historique" *ngIf="quotation.id!=null && quotation.id!=undefined">
-          <history [entity]="quotation" [entityType]="getEntityType()"></history>
+          <history [entity]="quotation" [entityType]="getEntityType()" [parseTypeList]="getParseTypeList()"></history>
         </mat-tab>
       </mat-tab-group>
     </div>
@@ -265,6 +265,11 @@
 <button matTooltip="Recevoir le mail de devis" mat-fab color="accent" class="fourth-fab-button"
   *ngIf="editMode==false && instanceOfQuotationFn(quotation) && quotation.id" (click)="generateQuotationMail()">
   <mat-icon>mail</mat-icon>
+</button>
+<button matTooltip="Réinitialiser la facturation" mat-fab color="accent" class="fifth-fab-button"
+  *ngIf="editMode==false && instanceOfCustomerOrderFn(quotation) && quotation.id && canReinitInvoicing()"
+  (click)="reinitInvoicing()">
+  <mat-icon>autorenew</mat-icon>
 </button>
 
 <button matTooltip="Recevoir un mail" mat-fab color="accent" class="fourth-fab-button mail-menu"

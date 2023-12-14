@@ -555,7 +555,7 @@ public class BillingClosureReceiptDelegate {
                     new FileInputStream(billingClosureReceipt), tiers.getId(),
                     tiersType, constantService.getAttachmentTypeBillingClosure(),
                     "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".pdf", false,
-                    "Relevé de compte du " + LocalDateTime.now().format(formatter));
+                    "Relevé de compte du " + LocalDateTime.now().format(formatter), null);
 
             for (Attachment attachment : attachmentsList)
                 if (attachment.getUploadedFile().getFilename()

@@ -242,6 +242,26 @@
               </td>
             </tr>
           </table>
+          <div *ngIf="!announcement.isComplexAnnouncement">
+            <p>Liste des mots-clés disponibles :</p>
+            <ul>
+              <li>&#123;prenom&#125;</li>
+              <li>&#123;nom&#125;</li>
+              <li>&#123;civilite&#125;</li>
+              <li>&#123;adresse&#125;</li>
+              <li>&#123;denomination&#125;</li>
+              <li>&#123;ville&#125;</li>
+              <li>&#123;codePostal&#125;</li>
+              <li>&#123;activitePrincipale&#125;</li>
+              <li>&#123;capitalSocial&#125;</li>
+              <li>&#123;formeJuridique&#125;</li>
+              <li>&#123;autoriteCompetenteDenomination&#125;</li>
+              <li>&#123;autoriteCompetenteVille&#125;</li>
+              <li>&#123;siren&#125;</li>
+              <li>&#123;siret&#125;</li>
+              <li>&#123;rna&#125;</li>
+            </ul>
+          </div>
         </div>
       </fieldset>
     </mat-tab>
@@ -259,7 +279,11 @@
       </provision-payment>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="announcement && announcement.id">
-      <history [entity]="announcement" [entityType]="ANNOUNCEMENT_ENTITY_TYPE"></history>
+      <history [entity]="announcement" [entityType]="ANNOUNCEMENT_ENTITY_TYPE" [parseTypeList]="announcementStatus">
+      </history>
+    </mat-tab>
+    <mat-tab label="Historique (prestation)" *ngIf="provision && provision.id">
+      <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
     </mat-tab>
     <mat-tab label="Débours" *ngIf=" announcement && announcement.id && canAddNewInvoice()">
       <debour [provision]="provision"></debour>

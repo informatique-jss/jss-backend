@@ -29,6 +29,10 @@ public class Identite implements Serializable, IId {
     Entreprise entreprise;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_description")
+    Description description;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_entrepreneur")
     Entrepreneur entrepreneur;
 
@@ -135,6 +139,14 @@ public class Identite implements Serializable, IId {
 
     public void setEirl(List<Eirl> eirl) {
         this.eirl = eirl;
+    }
+
+    public Description getDescription() {
+        return description;
+    }
+
+    public void setDescription(Description description) {
+        this.description = description;
     }
 
 }

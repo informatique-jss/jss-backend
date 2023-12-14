@@ -45,7 +45,9 @@ import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
+import com.jss.osiris.modules.tiers.model.RffFrequency;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersCategory;
 import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
@@ -281,6 +283,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public BillingType getBillingTypeCentralPayFees() throws OsirisException {
         return getConstants().getBillingTypeCentralPayFees();
+    }
+
+    @Override
+    public BillingType getBillingTypeRff() throws OsirisException {
+        return getConstants().getBillingTypeRff();
     }
 
     @Override
@@ -926,5 +933,25 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public TiersFollowupType getTiersFollowupTypeInvoiceReminder() throws OsirisException {
         return getConstants().getTiersFollowupTypeInvoiceReminder();
+    }
+
+    @Override
+    public TiersCategory getTiersCategoryPresse() throws OsirisException {
+        return getConstants().getTiersCategoryPresse();
+    }
+
+    @Override
+    public RffFrequency getRffFrequencyAnnual() throws OsirisException {
+        return getConstants().getRffFrequencyAnnual();
+    }
+
+    @Override
+    public RffFrequency getRffFrequencyMonthly() throws OsirisException {
+        return getConstants().getRffFrequencyMonthly();
+    }
+
+    @Override
+    public RffFrequency getRffFrequencyQuarterly() throws OsirisException {
+        return getConstants().getRffFrequencyQuarterly();
     }
 }

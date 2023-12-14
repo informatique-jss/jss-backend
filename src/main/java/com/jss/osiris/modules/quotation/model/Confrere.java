@@ -199,8 +199,10 @@ public class Confrere implements ITiers, IGenericTiers {
 	private Regie regie;
 
 	@OneToMany(mappedBy = "confrere")
-	@JsonIgnoreProperties(value = { "confrere" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "confrere", "affaire" }, allowSetters = true)
 	private List<TiersFollowup> tiersFollowups;
+
+	private Boolean doNotUse;
 
 	public Integer getId() {
 		return id;
@@ -581,6 +583,14 @@ public class Confrere implements ITiers, IGenericTiers {
 
 	public void setIntercommunityVat(String intercommunityVat) {
 		this.intercommunityVat = intercommunityVat;
+	}
+
+	public Boolean getDoNotUse() {
+		return doNotUse;
+	}
+
+	public void setDoNotUse(Boolean doNotUse) {
+		this.doNotUse = doNotUse;
 	}
 
 }

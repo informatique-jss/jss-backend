@@ -19,7 +19,9 @@ import { BillingClosureType } from '../../tiers/model/BillingClosureType';
 import { BillingLabelType } from "../../tiers/model/BillingLabelType";
 import { PaymentDeadlineType } from '../../tiers/model/PaymentDeadlineType';
 import { RefundType } from "../../tiers/model/RefundType";
+import { RffFrequency } from '../../tiers/model/RffFrequency';
 import { SubscriptionPeriodType } from "../../tiers/model/SubscriptionPeriodType";
+import { TiersCategory } from '../../tiers/model/TiersCategory';
 import { TiersType } from "../../tiers/model/TiersType";
 import { AttachmentType } from "./AttachmentType";
 import { BillingType } from "./BillingType";
@@ -115,6 +117,7 @@ export interface Constant {
   billingTypeVacationUpdateBeneficialOwners: BillingType;
   billingTypeFormalityAdditionalDeclaration: BillingType;
   billingTypeCorrespondenceFees: BillingType;
+  billingTypeRff: BillingType;
   stringNantissementDepositFormeJuridiqueCode: string;
   strinSocialShareNantissementRedactionFormeJuridiqueCode: string;
   stringBusinnessNantissementRedactionFormeJuridiqueCode: string;
@@ -208,4 +211,8 @@ export interface Constant {
   customerOrderOriginOsiris: CustomerOrderOrigin;
   providerCentralPay: Provider;
   tiersFollowupTypeInvoiceReminder: TiersFollowupType;
+  tiersCategoryPresse: TiersCategory;
+  rffFrequencyAnnual: RffFrequency;
+  rffFrequencyQuarterly: RffFrequency;
+  rffFrequencyMonthly: RffFrequency;
 }

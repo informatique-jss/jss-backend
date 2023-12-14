@@ -26,7 +26,7 @@ public class Description implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(length = 255)
+    @Column(length = 4000)
     private String objet;
 
     @Column(length = 255)
@@ -34,7 +34,7 @@ public class Description implements Serializable, IId {
 
     private Integer duree;
 
-    private LocalDate dateClotureExerciceSocial;
+    private String dateClotureExerciceSocial;
 
     private LocalDate datePremiereCloture;
 
@@ -44,7 +44,7 @@ public class Description implements Serializable, IId {
 
     private Boolean capitalVariable;
 
-    private Integer montantCapital;
+    private Float montantCapital;
 
     private Integer capitalMinimum;
 
@@ -160,11 +160,11 @@ public class Description implements Serializable, IId {
         this.duree = duree;
     }
 
-    public LocalDate getDateClotureExerciceSocial() {
+    public String getDateClotureExerciceSocial() {
         return dateClotureExerciceSocial;
     }
 
-    public void setDateClotureExerciceSocial(LocalDate dateClotureExerciceSocial) {
+    public void setDateClotureExerciceSocial(String dateClotureExerciceSocial) {
         this.dateClotureExerciceSocial = dateClotureExerciceSocial;
     }
 
@@ -200,11 +200,11 @@ public class Description implements Serializable, IId {
         this.capitalVariable = capitalVariable;
     }
 
-    public Integer getMontantCapital() {
+    public Float getMontantCapital() {
         return montantCapital;
     }
 
-    public void setMontantCapital(Integer montantCapital) {
+    public void setMontantCapital(Float montantCapital) {
         this.montantCapital = montantCapital;
     }
 

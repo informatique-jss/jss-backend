@@ -5,6 +5,7 @@ import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { AppService } from 'src/app/services/app.service';
+import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { Payment } from '../../model/Payment';
 import { PaymentDetailsDialogService } from '../../services/payment.details.dialog.service';
@@ -31,6 +32,7 @@ export class InvoicePaymentTableComponent implements OnInit {
     public associatePaymentDialog: MatDialog,
     private paymentService: PaymentService,
     private paymentDetailsDialogService: PaymentDetailsDialogService,
+    private habilitationsService: HabilitationsService
   ) { }
 
   ngOnInit() {
@@ -38,6 +40,12 @@ export class InvoicePaymentTableComponent implements OnInit {
 
   openPaymentDialog(payment: Payment) {
     this.paymentDetailsDialogService.displayPaymentDetailsDialog(payment);
+  }
+
+  movePaymentToWaitingAccount(payment: Payment) {
+    this.paymentService.movePaymentToWaitingAccount(payment).subscribe((res) => {
+      this.appService.openRoute(null, '/invoicing/view/' + this.invoice.id, null);
+    });
   }
 
   movePayment(payment: Payment) {
@@ -63,6 +71,11 @@ export class InvoicePaymentTableComponent implements OnInit {
       });
     }
   }
+
+  canMovePaymentToWaitingAccount() {
+    return this.habilitationsService.canMovePaymentToWaitingAccount();
+  }
+
 
 
 }

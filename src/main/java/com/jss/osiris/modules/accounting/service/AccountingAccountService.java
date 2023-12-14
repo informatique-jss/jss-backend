@@ -13,6 +13,8 @@ public interface AccountingAccountService {
 
         public AccountingAccount getAccountingAccount(Integer id);
 
+        public void deleteAccountingAccount(AccountingAccount accountingAccount);
+
         public AccountingAccount addOrUpdateAccountingAccountFromUser(AccountingAccount accountingAccount)
                         throws OsirisException;
 

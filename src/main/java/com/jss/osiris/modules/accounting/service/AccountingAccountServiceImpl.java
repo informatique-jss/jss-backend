@@ -248,4 +248,9 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 }
                 return accountingAccount;
         }
+
+        @Override
+        public void deleteAccountingAccount(AccountingAccount accountingAccount) {
+                accountingAccountRepository.delete(accountingAccount);
+        }
 }

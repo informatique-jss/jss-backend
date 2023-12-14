@@ -362,3 +362,9 @@
   matTooltip="Saisir un avoir" mat-fab color="accent" class="third-fab-button" (click)="addCreditNote($event)">
   <mat-icon>payments</mat-icon>
 </button>
+<button
+  *ngIf="canAddCreditNoteForCustomerOrderInvoice() && invoice && invoice.customerOrder && (invoice.invoiceStatus.code==invoiceStatusSend.code  )"
+  matTooltip="Générer un avoir" mat-fab color="accent" class="fourth-fab-button"
+  (click)="generateCreditNoteForCustomerOrderInvoice($event)">
+  <mat-icon>shopping_cart_checkout</mat-icon>
+</button>

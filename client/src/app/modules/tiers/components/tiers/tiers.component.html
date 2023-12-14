@@ -41,6 +41,11 @@
     <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id && !this.idResponsable">
       <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
     </mat-tab>
+    <mat-tab label="RFF" *ngIf="rffSearch && rffSearch.tiers  ">
+      <div class="mat-elevation-z2 form-div">
+        <rff-list [rffSearch]="rffSearch" [isForTiersIntegration]="true"></rff-list>
+      </div>
+    </mat-tab>
     <mat-tab label="Suivi" *ngIf="tiers.id!=null && tiers.id!=undefined">
       <tiers-followup [tiers]="tiers" [editMode]="editMode"></tiers-followup>
     </mat-tab>
@@ -48,6 +53,9 @@
       <history [entity]="tiers" [entityType]="TIERS_ENTITY_TYPE"></history>
     </mat-tab>
   </mat-tab-group>
+</div>
+<div [hidden]="(tiers.id!=undefined && tiers.id!=null)">
+  <tiers-list></tiers-list>
 </div>
 <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true" (click)="saveTiers()">
   <mat-icon>save</mat-icon>
@@ -60,7 +68,7 @@
   *ngIf="editMode==false && (tiers.id==undefined || tiers.id==null)" (click)="createTiers()">
   <mat-icon>add</mat-icon>
 </button>
-<button matTooltip="Rechercher un tiers" mat-fab color="accent" class="second-fab-button" *ngIf="editMode==false"
-  (click)="openSearch()">
-  <mat-icon>search</mat-icon>
+<button matTooltip="Supprimer le tiers" mat-fab color="warn" class="third-fab-button"
+  *ngIf="editMode==false &&  tiers.id" (click)="deleteTiers()">
+  <mat-icon>delete</mat-icon>
 </button>

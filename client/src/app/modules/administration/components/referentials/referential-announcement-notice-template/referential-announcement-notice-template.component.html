@@ -48,7 +48,7 @@
                 <span [innerHTML]="selectedEntity.text| trustHtml" class="no-font"></span>
               </div>
               <editor apiKey="tuyvqqbiskpltllm13hwnc00n4gjq5sc3gzrhlocmr75s1fw" *ngIf="editMode"
-                formControlName="notice" [disabled]="!editMode" [(ngModel)]="selectedEntity.text" [init]="{
+                formControlName="notice" [disabled]="!editMode" [(ngModel)]="selectedEntity.text" [init]="&#123;
    height: 500,
    menubar: false,
    entity_encoding : 'raw',
@@ -59,11 +59,31 @@
      'undo redo | formatselect | bold italic backcolor | \
      alignleft aligncenter alignright alignjustify | \
      bullist numlist outdent indent | removeformat | help'
- }"></editor>
+ &#125;"></editor>
             </td>
           </tr>
         </table>
       </fieldset>
     </div>
   </form>
+</div>
+<div>
+  <p>Liste des mots-clés disponibles :</p>
+  <ul>
+    <li>&#123;prenom&#125;</li>
+    <li>&#123;nom&#125;</li>
+    <li>&#123;civilite&#125;</li>
+    <li>&#123;adresse&#125;</li>
+    <li>&#123;denomination&#125;</li>
+    <li>&#123;ville&#125;</li>
+    <li>&#123;codePostal&#125;</li>
+    <li>&#123;activitePrincipale&#125;</li>
+    <li>&#123;capitalSocial&#125;</li>
+    <li>&#123;formeJuridique&#125;</li>
+    <li>&#123;autoriteCompetenteDenomination&#125;</li>
+    <li>&#123;autoriteCompetenteVille&#125;</li>
+    <li>&#123;siren&#125;</li>
+    <li>&#123;siret&#125;</li>
+    <li>&#123;rna&#125;</li>
+  </ul>
 </div>

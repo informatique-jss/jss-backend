@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.model.guichetUnique.referentials;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -10,6 +11,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.guichetUnique.Partenaire;
 
 @Entity
 @Table(indexes = {
@@ -30,6 +32,18 @@ public class FormaliteStatusHistoryItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_status")
     private Status status;
+
+    private String created;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinColumn(name = "id_partenaire")
+    private Partenaire partner;
+
+    // TODO : ask inpi for format ... "partnerCenter": "/api/partner_centers/103",
+    // @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST,
+    // CascadeType.DETACH, CascadeType.REFRESH })
+    // @JoinColumn(name = "id_partner_center")
+    // private PartnerCenter partnerCenter;
 
     public long getId() {
         return id;
@@ -61,6 +75,22 @@ public class FormaliteStatusHistoryItem {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
+    }
+
+    public Partenaire getPartner() {
+        return partner;
+    }
+
+    public void setPartner(Partenaire partner) {
+        this.partner = partner;
     }
 
 }

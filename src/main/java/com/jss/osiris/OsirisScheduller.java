@@ -20,6 +20,7 @@ import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.service.EtablissementPublicsDelegate;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.quotation.service.AssignationTypeService;
@@ -101,6 +102,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	EtablissementPublicsDelegate etablissementPublicsDelegate;
+
+	@Autowired
+	AffaireService affaireService;
 
 	@Autowired
 	GuichetUniqueDelegateService guichetUniqueDelegateService;
@@ -246,6 +250,15 @@ public class OsirisScheduller {
 	private void updateCompetentAuthorities() {
 		try {
 			etablissementPublicsDelegate.updateCompetentAuthorities();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.affaire.rne.update}")
+	private void updateAffaireFromRne() {
+		try {
+			affaireService.updateAffaireFromRne();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

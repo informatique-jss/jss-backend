@@ -82,6 +82,20 @@
         <table class="full-width">
           <tr>
             <td>
+              <generic-toggle [(model)]="selectedEntity.isUsedForFormaliteRff"
+                label="Est utilisé dans le calcul des RFF de formalités ?" [form]="entityForm"
+                propertyName="isUsedForFormaliteRff"></generic-toggle>
+            </td>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isUsedForInsertionRff"
+                label="Est utilisé dans le calcul des RFF d'annonces légales ?" [form]="entityForm"
+                propertyName="isUsedForInsertionRff"></generic-toggle>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
               <generic-toggle [(model)]="selectedEntity.isGenerateAccountProduct"
                 label="Auto-générer un compte de produit ?" [form]="entityForm"
                 propertyName="isGenerateAccountProduct"></generic-toggle>

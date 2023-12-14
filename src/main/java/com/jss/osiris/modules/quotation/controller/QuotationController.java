@@ -34,6 +34,7 @@ import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -98,10 +99,7 @@ import com.jss.osiris.modules.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.RecordType;
-import com.jss.osiris.modules.quotation.model.Rna;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
-import com.jss.osiris.modules.quotation.model.Siren;
-import com.jss.osiris.modules.quotation.model.Siret;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
@@ -139,7 +137,6 @@ import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.quotation.service.RecordTypeService;
 import com.jss.osiris.modules.quotation.service.RnaDelegateService;
 import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
-import com.jss.osiris.modules.quotation.service.SireneDelegateService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.GuichetUniqueDelegateService;
@@ -174,9 +171,6 @@ public class QuotationController {
 
   @Autowired
   RecordTypeService recordTypeService;
-
-  @Autowired
-  SireneDelegateService sireneDelegateService;
 
   @Autowired
   RnaDelegateService rnaDelegateService;
@@ -742,7 +736,7 @@ public class QuotationController {
     if (affaireSearch.getLabel() == null
         && affaireSearch.getAssignedTo() == null && affaireSearch.getResponsible() == null
         && affaireSearch.getStatus() == null && affaireSearch.getCustomerOrders() == null
-        && affaireSearch.getAffaire() == null)
+        && affaireSearch.getAffaire() == null && affaireSearch.getWaitedCompetentAuthority() == null)
       throw new OsirisValidationException("Label or AssignedTo or Responsible or Status");
 
     if (affaireSearch.getLabel() == null)
@@ -1221,29 +1215,30 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/siren")
-  public ResponseEntity<List<Siren>> getSiren(@RequestParam String siren) throws OsirisClientMessageException {
-    if (siren != null && !siren.equals("") && siren.replaceAll(" ", "").length() == 9)
-      return new ResponseEntity<List<Siren>>(sireneDelegateService.getSiren(siren.replaceAll(" ", "")), HttpStatus.OK);
-    return new ResponseEntity<List<Siren>>(HttpStatus.OK);
+  public ResponseEntity<List<Affaire>> getAffairesFromSiren(@RequestParam String siren)
+      throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+    if (siren == null)
+      throw new OsirisValidationException("siren");
+    return new ResponseEntity<List<Affaire>>(affaireService.getAffairesFromSiren(siren.trim().replaceAll(" ", "")),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/siret")
-  public ResponseEntity<List<Siret>> getSiret(@RequestParam String siret) throws OsirisClientMessageException {
-    if (siret != null && !siret.equals("") && siret.replaceAll(" ", "").length() == 14)
-      return new ResponseEntity<List<Siret>>(sireneDelegateService.getSiret(siret.replaceAll(" ", "")), HttpStatus.OK);
-    return new ResponseEntity<List<Siret>>(HttpStatus.OK);
+  public ResponseEntity<List<Affaire>> getAffairesFromSiret(@RequestParam String siret)
+      throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+    if (siret == null)
+      throw new OsirisValidationException("siren");
+    return new ResponseEntity<List<Affaire>>(affaireService.getAffairesFromSiret(siret.trim().replaceAll(" ", "")),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/rna")
-  public ResponseEntity<List<Rna>> getRna(@RequestParam String rna) throws OsirisValidationException {
-    if (rna == null || rna.equals("")
-        || rna.replaceAll(" ", "").length() != 10 && !rna.toUpperCase().subSequence(0, 1).equals("W"))
-      throw new OsirisValidationException("rna");
-
-    if (rna != null && !rna.equals("") && rna.replaceAll(" ", "").length() == 14
-        && rna.toUpperCase().subSequence(0, 1).equals("W"))
-      return new ResponseEntity<List<Rna>>(rnaDelegateService.getRna(rna.replaceAll(" ", "")), HttpStatus.OK);
-    return new ResponseEntity<List<Rna>>(HttpStatus.OK);
+  public ResponseEntity<List<Affaire>> getAffairesFromRna(@RequestParam String rna)
+      throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+    if (rna == null)
+      throw new OsirisValidationException("siren");
+    return new ResponseEntity<List<Affaire>>(affaireService.getAffairesFromRna(rna.trim().replaceAll(" ", "")),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/affaire")
@@ -1252,22 +1247,6 @@ public class QuotationController {
       throw new OsirisValidationException("id");
 
     return new ResponseEntity<Affaire>(affaireService.getAffaire(id), HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/affaire/siret")
-  public ResponseEntity<Affaire> getAffaireBySiret(@RequestParam String siret) throws OsirisValidationException {
-    if (siret == null)
-      return null;
-
-    return new ResponseEntity<Affaire>(affaireService.getAffaireBySiret(siret), HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/affaire/siren")
-  public ResponseEntity<List<Affaire>> getAffairesBySiren(@RequestParam String siren) throws OsirisValidationException {
-    if (siren == null)
-      return null;
-
-    return new ResponseEntity<List<Affaire>>(affaireService.getAffairesBySiren(siren), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/affaires")
@@ -1436,6 +1415,9 @@ public class QuotationController {
     validationHelper.validateString(affaire.getAddress(), true, 100, "Address");
     validationHelper.validateReferential(affaire.getCity(), true, "City");
     validationHelper.validateReferential(affaire.getCountry(), true, "Country");
+    validationHelper.validateReferential(affaire.getMainActivity(), false, "MainActivity");
+    validationHelper.validateReferential(affaire.getLegalForm(), false, "LegalForm");
+    validationHelper.validateReferential(affaire.getCompetentAuthority(), false, "CompetentAuthority");
     validationHelper.validateString(affaire.getExternalReference(), false, 60, "ExternalReference");
     validationHelper.validateString(affaire.getIntercommunityVat(), false, 20, "IntercommunityVat");
     if (affaire.getCountry() != null && affaire.getCountry().getId().equals(constantService.getCountryFrance().getId()))
@@ -1465,6 +1447,22 @@ public class QuotationController {
         throw new OsirisValidationException("SIRET");
     }
     return new ResponseEntity<Affaire>(affaireService.addOrUpdateAffaire(affaire), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/affaire/refresh/rne")
+  public ResponseEntity<Affaire> refreshAffaireFromRne(@RequestParam Integer idAffaire)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+    if (idAffaire == null)
+      throw new OsirisValidationException("idAffaire");
+
+    Affaire affaire = affaireService.getAffaire(idAffaire);
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    if (affaire.getSiret() == null || affaire.getSiret().equals(""))
+      throw new OsirisValidationException("siret");
+
+    return new ResponseEntity<Affaire>(affaireService.refreshAffaireFromRne(affaire), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/invoice-item/generate")
@@ -1944,6 +1942,39 @@ public class QuotationController {
       formalites = guichetUniqueDelegateService.getAllFormalitiesByRefenceMandataire(value);
 
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @GetMapping(inputEntryPoint + "/customer-order/credit-note")
+  public ResponseEntity<Boolean> generateCreditNoteForCustomerOrderInvoice(
+      @RequestParam Integer customerOrderId, @RequestParam Integer invoiceId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+    Invoice invoice = invoiceService.getInvoice(invoiceId);
+    if (invoice == null)
+      throw new OsirisValidationException("invoice");
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    customerOrderService.generateCreditNoteForCustomerOrderInvoice(customerOrder, invoice);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+  @GetMapping(inputEntryPoint + "/customer-order/invoicing/reinit")
+  public ResponseEntity<Boolean> reinitInvoicing(@RequestParam Integer customerOrderId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED) ||
+        customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED))
+      throw new OsirisValidationException("customerOrder status");
+
+    customerOrderService.reinitInvoicing(customerOrder);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
 }

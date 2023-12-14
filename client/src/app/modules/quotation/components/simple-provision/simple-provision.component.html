@@ -35,7 +35,11 @@
       </provision-payment>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="simpleProvision && simpleProvision.id">
-      <history [entity]="simpleProvision" [entityType]="SIMPLE_PROVISION_ENTITY_TYPE"></history>
+      <history [entity]="simpleProvision" [entityType]="SIMPLE_PROVISION_ENTITY_TYPE"
+        [parseTypeList]="simpleProvisionStatus"></history>
+    </mat-tab>
+    <mat-tab label="Historique (prestation)" *ngIf="provision && provision.id">
+      <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
     </mat-tab>
     <mat-tab label="Débours" *ngIf="simpleProvision && simpleProvision.id && canAddNewInvoice()">
       <debour [provision]="provision"></debour>

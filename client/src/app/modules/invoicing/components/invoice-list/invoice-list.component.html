@@ -1,6 +1,6 @@
-<div class="mat-elevation-z2 form-div" [ngClass]="{'min-height':!isForDashboard  && !isForTiersIntegration }">
+<div class="mat-elevation-z2 form-div" [ngClass]="{'min-height':!isForDashboard  }">
   <div class=" full-width">
-    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && !isForTiersIntegration && invoiceSearch">
+    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard   && invoiceSearch">
       <tr>
         <td>
           <select-invoice-status [(model)]=" invoiceSearch.invoiceStatus" label="Statut de la facture"
@@ -16,7 +16,7 @@
           <generic-input [(model)]="invoiceSearch.maxAmount" label="Montant maximum" [form]="invoiceForm"
             propertyName="maxAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
         </td>
-        <td>
+        <td *ngIf=" !isForTiersIntegration">
           <generic-date-range-picker [(modelStart)]="invoiceSearch.startDate" [(modelEnd)]="invoiceSearch.endDate"
             label="Plage de recherche" [form]="invoiceForm" propertyNameStart="startDate" propertyNameEnd="endDate">
           </generic-date-range-picker>
@@ -30,10 +30,10 @@
             propertyName="customerOrderId" [isMandatory]="false"></generic-input>
         </td>
         <td *ngIf="isForPaymentAssocationIntegration">
-          <autocomplete-tiers-individual [(model)]="searchedTiers" label = "Tiers" [form]="invoiceForm"
-            propertyName="tiers" [isMandatory]="false" [authorizeNonIndividualTiers]="true"></autocomplete-tiers-individual>
+          <autocomplete-tiers-individual [(model)]="searchedTiers" label="Tiers" [form]="invoiceForm"
+            propertyName="tiers" [isMandatory]="false"
+            [authorizeNonIndividualTiers]="true"></autocomplete-tiers-individual>
         </td>
-
         <td *ngIf="isForPaymentAssocationIntegration">
           <generic-input [(model)]="invoiceSearch.invoiceId" label="Numéro de facture" [form]="invoiceForm"
             propertyName="invoiceId" [isMandatory]="false"></generic-input>

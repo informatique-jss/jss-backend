@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +49,8 @@ public class UploadedFileServiceImpl implements UploadedFileService {
         uploadedFile.setChecksum(computeChecksumForFile(absoluteFilePath));
         uploadedFile.setFilename(filename);
         uploadedFile.setPath(absoluteFilePath);
+        File file = new File(absoluteFilePath);
+        uploadedFile.setSize(file.length());
         uploadedFileRepository.save(uploadedFile);
         return uploadedFile;
     }

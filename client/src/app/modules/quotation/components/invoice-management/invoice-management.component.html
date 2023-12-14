@@ -1,85 +1,60 @@
 <div *ngIf="quotation && quotation.id" class=" form-div min-height ">
-  <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) &&  customerOrderInvoices">
-    <h3 *ngFor="let invoice of customerOrderInvoices">
-      <div class="invoice-title">Facture n°{{invoice.invoiceId}} émise à Paris, le
-        {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}<chips-status class="invoice-chip"
-          [status]="invoice.invoiceStatusCode" [value]="invoice.invoiceStatus">
-        </chips-status>
-        <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)"
-          (auxclick)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)" matTooltip="Voir la facture"
-          color="accent" class="pointer invoice-chip">visibility
-        </mat-icon>
-      </div>
-    </h3>
-  </ng-container>
-  <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) &&  customerOrderProviderInvoices">
-    <h3 class="invoice-title" *ngFor="let invoice of customerOrderProviderInvoices">
-      <ng-container *ngIf="invoice.isInvoiceFromProvider">
-        Facture fournisseur n°{{invoice.invoiceId}}, {{invoice.providerLabel}}, saisie le
-        {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}, pour un
-        total
-        de {{invoice.totalPrice}} €
-        <chips-status class="invoice-chip" [status]="invoice.invoiceStatusCode" [value]="invoice.invoiceStatus">
-        </chips-status>
-        <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)"
-          (auxclick)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)" matTooltip="Voir la facture"
-          color="accent" class="pointer invoice-chip">visibility
-        </mat-icon>
-      </ng-container>
-      <ng-container *ngIf="invoice.isProviderCreditNote">
-        Avoir fournisseur n°{{invoice.invoiceId}}, {{invoice.providerLabel}}, saisi le
-        {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}, pour un
-        total
-        de {{invoice.totalPrice}} €
-        <chips-status class="invoice-chip" [status]="invoice.invoiceStatusCode" [value]="invoice.invoiceStatus">
-        </chips-status>
-        <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)"
-          (auxclick)="openRoute($event,'/invoicing/view/'+invoice.invoiceId)" matTooltip="Voir l'avoir" color="accent"
-          class="pointer invoice-chip">visibility
-        </mat-icon>
-      </ng-container>
-    </h3>
-  </ng-container>
-  <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-    <table class="mat-table mat-mdc-table mdc-data-table__table full-width  description-table ">
-      <thead>
-        <tr class="mat-mdc-header-row mdc-data-table__header-row ">
-          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Affaire(s)</th>
-          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Payeur</th>
-          <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Donneur d'ordre</th>
-        </tr>
-      </thead>
-      <tr class="mat-mdc-row mdc-data-table__row ">
-        <td class="mat-mdc-cell mdc-data-table__cell  td-info">
-          <p>{{getAffaireListFromIQuotation(quotation)}}</p>
-        </td>
-        <td class="mat-mdc-cell mdc-data-table__cell  td-info">
-          <ng-container *ngIf="invoiceLabelResult">
-            <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabel}">
-              {{invoiceLabelResult.billingLabel?invoiceLabelResult.billingLabel:"Libellé inconnu"}}</p>
-            <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelAddress}">
-              {{invoiceLabelResult.billingLabelAddress?invoiceLabelResult.billingLabelAddress:"Adresse"}}</p>
-            <p
-              [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelPostalCode || !invoiceLabelResult.billingLabelCity || !invoiceLabelResult.billingLabelCountry}">
-              {{invoiceLabelResult.billingLabelPostalCode?invoiceLabelResult.billingLabelPostalCode:"Code
-              postal inconnu"}}
-              {{invoiceLabelResult.billingLabelCity?invoiceLabelResult.billingLabelCity.label:"Ville inconnue"}}
-              {{invoiceLabelResult.billingLabelCountry?invoiceLabelResult.billingLabelCountry.label:"Pays
-              inconnu"}}
-            </p>
-            <p *ngIf="invoiceLabelResult.billingLabelIntercommunityVat">N° de TVA :
-              {{invoiceLabelResult.billingLabelIntercommunityVat}}</p>
-          </ng-container>
-        </td>
-        <td class="mat-mdc-cell mdc-data-table__cell  td-info">
-          <p>{{getCustomerOrderNameForIQuotation(quotation)}}</p>
-          <p>{{getCustomerOrderForIQuotation(quotation).address}}</p>
-          <p>{{getCustomerOrderForIQuotation(quotation).postalCode}}
-            {{getCustomerOrderForIQuotation(quotation).city?getCustomerOrderForIQuotation(quotation).city.label:""}}{{getCustomerOrderForIQuotation(quotation).country?getCustomerOrderForIQuotation(quotation).country.label:""}}
-          </p>
-        </td>
+  <div *ngIf="customerOrderInvoices && customerOrderInvoices.length>0">
+    <p>
+      Factures clientes :
+    </p>
+    <sort-table [actions]="invoicesActions" [columns]="customerInvoicesColumns" [values]="customerOrderInvoices"
+      tableName="Factures" *ngIf="customerInvoicesColumns && customerInvoicesColumns.length>0 ">
+    </sort-table>
+  </div>
+  <div *ngIf="customerOrderProviderInvoices && customerOrderProviderInvoices.length>0" class="description-table ">
+    <p>
+      Factures fournisseurs :
+    </p>
+    <sort-table [actions]="invoicesActions" [columns]="providerInvoicesColumns" [values]="customerOrderProviderInvoices"
+      tableName="Factures" *ngIf="providerInvoicesColumns && providerInvoicesColumns.length>0 ">
+    </sort-table>
+  </div>
+  <table class="mat-table mat-mdc-table mdc-data-table__table full-width  mat-elevation-z8 table description-table  ">
+    <thead>
+      <tr class="mat-mdc-header-row mdc-data-table__header-row ">
+        <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Affaire(s)</th>
+        <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Payeur</th>
+        <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Donneur d'ordre</th>
       </tr>
-    </table>
+    </thead>
+    <tr class="mat-mdc-row mdc-data-table__row ">
+      <td class="mat-mdc-cell mdc-data-table__cell  td-info">
+        <p>{{getAffaireListFromIQuotation(quotation)}}</p>
+      </td>
+      <td class="mat-mdc-cell mdc-data-table__cell  td-info">
+        <ng-container *ngIf="invoiceLabelResult">
+          <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabel}">
+            {{invoiceLabelResult.billingLabel?invoiceLabelResult.billingLabel:"Libellé inconnu"}}</p>
+          <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelAddress}">
+            {{invoiceLabelResult.billingLabelAddress?invoiceLabelResult.billingLabelAddress:"Adresse"}}</p>
+          <p
+            [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelPostalCode || !invoiceLabelResult.billingLabelCity || !invoiceLabelResult.billingLabelCountry}">
+            {{invoiceLabelResult.billingLabelPostalCode?invoiceLabelResult.billingLabelPostalCode:"Code
+            postal inconnu"}}
+            {{invoiceLabelResult.billingLabelCity?invoiceLabelResult.billingLabelCity.label:"Ville inconnue"}}
+            {{invoiceLabelResult.billingLabelCountry?invoiceLabelResult.billingLabelCountry.label:"Pays
+            inconnu"}}
+          </p>
+          <p *ngIf="invoiceLabelResult.billingLabelIntercommunityVat">N° de TVA :
+            {{invoiceLabelResult.billingLabelIntercommunityVat}}</p>
+        </ng-container>
+      </td>
+      <td class="mat-mdc-cell mdc-data-table__cell  td-info">
+        <p>{{getCustomerOrderNameForIQuotation(quotation)}}</p>
+        <p>{{getCustomerOrderForIQuotation(quotation).address}}</p>
+        <p>{{getCustomerOrderForIQuotation(quotation).postalCode}}
+          {{getCustomerOrderForIQuotation(quotation).city?getCustomerOrderForIQuotation(quotation).city.label:""}}{{getCustomerOrderForIQuotation(quotation).country?getCustomerOrderForIQuotation(quotation).country.label:""}}
+        </p>
+      </td>
+    </tr>
+  </table>
+  <fieldset [disabled]="editMode==false" class="fieldset-no-border">
     <form [formGroup]="invoiceManagementForm">
       <table class="mat-table mat-mdc-table mdc-data-table__table full-width container-affaire ">
         <thead>
@@ -143,75 +118,87 @@
         </ng-container>
       </table>
     </form>
-    <table class="mat-table mat-mdc-table mdc-data-table__table total-table  full-width">
-      <thead>
-        <tr class="mat-mdc-header-row mdc-data-table__header-row ">
-          <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Total</th>
-        </tr>
-      </thead>
-      <tr class="mat-mdc-row mdc-data-table__row ">
+  </fieldset>
+  <table class="mat-table mat-mdc-table mdc-data-table__table total-table  full-width">
+    <thead>
+      <tr class="mat-mdc-header-row mdc-data-table__header-row ">
+        <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Total</th>
+      </tr>
+    </thead>
+    <tr class="mat-mdc-row mdc-data-table__row ">
+      <td class="mat-mdc-cell mdc-data-table__cell ">
+        Prix total HT
+      </td>
+      <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+        {{getPreTaxPriceTotal() |number}} €
+      </td>
+    </tr>
+    <tr class="mat-mdc-row mdc-data-table__row " *ngIf="getDiscountTotal() && getDiscountTotal()>0">
+      <td class="mat-mdc-cell mdc-data-table__cell ">
+        Remise totale
+      </td>
+      <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
+        - {{getDiscountTotal()|number}} €
+      </td>
+    </tr>
+    <tr class="mat-mdc-row mdc-data-table__row " *ngIf="getDiscountTotal() && getDiscountTotal()>0">
+      <td class="mat-mdc-cell mdc-data-table__cell ">
+        Total HT avec remise
+      </td>
+      <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+        {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
+      </td>
+    </tr>
+    <ng-container *ngIf="getApplicableVat().length>0">
+      <tr *ngFor="let vat of getApplicableVat()">
         <td class="mat-mdc-cell mdc-data-table__cell ">
-          Prix total HT
+          Total {{vat.label}} sur la base de {{vat.base |number}} €
         </td>
         <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-          {{getPreTaxPriceTotal() |number}} €
+          {{vat.total|number}} €
         </td>
       </tr>
-      <tr class="mat-mdc-row mdc-data-table__row " *ngIf="getDiscountTotal() && getDiscountTotal()>0">
-        <td class="mat-mdc-cell mdc-data-table__cell ">
-          Remise totale
-        </td>
-        <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
-          - {{getDiscountTotal()|number}} €
-        </td>
-      </tr>
-      <tr class="mat-mdc-row mdc-data-table__row " *ngIf="getDiscountTotal() && getDiscountTotal()>0">
-        <td class="mat-mdc-cell mdc-data-table__cell ">
-          Total HT avec remise
-        </td>
-        <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-          {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
-        </td>
-      </tr>
-      <ng-container *ngIf="getApplicableVat().length>0">
-        <tr *ngFor="let vat of getApplicableVat()">
-          <td class="mat-mdc-cell mdc-data-table__cell ">
-            Total {{vat.label}} sur la base de {{vat.base |number}} €
+    </ng-container>
+    <tr class="mat-mdc-row mdc-data-table__row ">
+      <td class="mat-mdc-cell mdc-data-table__cell ">
+        Total TTC
+      </td>
+      <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+        {{getPriceTotal()|number}} €
+      </td>
+    </tr>
+    <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()==undefined">
+      <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let deposit of quotation.payments">
+        <ng-container *ngIf="!deposit.isCancelled">
+          <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="deposit.label">
+            <button matTooltip="Actions" mat-button color="accent" [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
+              <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+                <button mat-menu-item (click)="movePayment(deposit)">
+                  <mat-icon>move_up</mat-icon><span>Déplacer le paiement</span>
+                </button>
+                <button mat-menu-item (click)="openPaymentDialog(deposit)">
+                  <mat-icon>visibility</mat-icon><span>Voir le détail du paiement</span>
+                </button>
+                <button mat-menu-item (click)="movePaymentToWaitingAccount(deposit)"
+                  *ngIf="canMovePaymentToWaitingAccount()">
+                  <mat-icon>hourglass_empty</mat-icon><span>Déplacer dans le compte d'attente</span>
+                </button>
+              </mat-menu>
+            </button>
+            N°{{deposit.id}} du {{formatDate(deposit.paymentDate)}} - {{deposit.label}}
           </td>
           <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-            {{vat.total|number}} €
-          </td>
-        </tr>
-      </ng-container>
-      <tr class="mat-mdc-row mdc-data-table__row ">
-        <td class="mat-mdc-cell mdc-data-table__cell ">
-          Total TTC
-        </td>
-        <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-          {{getPriceTotal()|number}} €
-        </td>
+            - {{deposit.paymentAmount|number}} €
+          </td> 
+        </ng-container> 
       </tr>
-      <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()==undefined">
-        <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let deposit of quotation.payments">
-          <ng-container *ngIf="!deposit.isCancelled">
-            <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="deposit.label">
-              Acompte n°{{deposit.id}} - {{deposit.label}} (<span class="pointer"
-                (click)="movePayment(deposit)">déplacer</span>) - <mat-icon color="accent"
-                (click)="openPaymentDialog(deposit)" matTooltip="Voir le détail du paiement" color="accent"
-                class="pointer">visibility</mat-icon>
-            </td>
-            <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-              - {{deposit.paymentAmount|number}} €
-            </td>
-          </ng-container>
-        </tr>
-      </ng-container> 
-      <tr class="mat-mdc-row mdc-data-table__row "> 
-        <td class="mat-mdc-cell mdc-data-table__cell ">Reste à payer
-        </td>
-        <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{getRemainingToPay()}} €
-        </td>
-      </tr>
-    </table>
-  </fieldset>
+    </ng-container>
+    <tr class="mat-mdc-row mdc-data-table__row ">
+      <td class="mat-mdc-cell mdc-data-table__cell ">Reste à payer
+      </td>
+      <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{getRemainingToPay()}} €
+      </td>
+    </tr>
+  </table>
 </div>

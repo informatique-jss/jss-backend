@@ -165,6 +165,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee) {
         asso.setAssignedTo(employee);
         assoAffaireOrderRepository.save(asso);
+        if (asso.getCustomerOrder() != null)
+            indexEntityService.indexEntity(asso);
     }
 
     @Override
@@ -249,7 +251,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 if (formalite.getId() != null) {
                     Formalite originalFormalite = formaliteService.getFormalite(formalite.getId());
-                    if (originalFormalite.getFormalitesGuichetUnique() != null)
+                    if (originalFormalite != null && originalFormalite.getFormalitesGuichetUnique() != null)
                         for (FormaliteGuichetUnique formaliteGuichetUniqueOrigin : originalFormalite
                                 .getFormalitesGuichetUnique()) {
                             Boolean found = false;
@@ -284,6 +286,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
             if (provision.getAnnouncement() != null) {
                 Announcement announcement = provision.getAnnouncement();
+
+                announcementService.completeAnnouncementWithAffaire(assoAffaireOrder);
 
                 // If complex, extract string from PDF and put it to notice
                 if (announcement.getIsComplexAnnouncement())

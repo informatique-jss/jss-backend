@@ -23,17 +23,26 @@ import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.audit.model.Audit;
+import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.profile.service.EmployeeService;
 
 @Service
 public class IndexEntityServiceImpl implements IndexEntityService {
 
     @Autowired
     IndexEntityRepository indexEntityRepository;
+
+    @Autowired
+    AuditService auditService;
+
+    @Autowired
+    EmployeeService employeeService;
 
     @Override
     public void indexEntity(IId entity) {
@@ -58,6 +67,28 @@ public class IndexEntityServiceImpl implements IndexEntityService {
             e.printStackTrace();
         }
 
+        // Set creator / updator
+        List<Audit> auditEntries = auditService.getAuditForEntity(entity.getClass().getSimpleName(), entity.getId());
+        if (auditEntries != null && auditEntries.size() > 0) {
+            Audit lastEntry = null;
+            for (Audit auditEntry : auditEntries) {
+                if (auditEntry.getFieldName().equals("id")) {
+                    if (auditEntry.getUsername() != null) {
+                        indexedEntity.setCreatedBy(employeeService.getEmployeeByUsername(auditEntry.getUsername()));
+                        indexedEntity.setCreatedDate(auditEntry.getDatetime());
+                    }
+                } else {
+                    if (lastEntry == null || lastEntry.getDatetime().isBefore(auditEntry.getDatetime()))
+                        if (auditEntry.getUsername() != null)
+                            lastEntry = auditEntry;
+                }
+            }
+            if (lastEntry != null) {
+                indexedEntity.setUpdatedBy(employeeService.getEmployeeByUsername(lastEntry.getUsername()));
+                indexedEntity.setUdpatedDate(lastEntry.getDatetime());
+            }
+        }
+
         indexEntityRepository.save(indexedEntity);
 
     }
@@ -80,12 +111,16 @@ public class IndexEntityServiceImpl implements IndexEntityService {
 
                         if (fieldResult instanceof String || fieldResult instanceof Integer
                                 || fieldResult instanceof LocalDate || fieldResult instanceof LocalDateTime
-                                || fieldResult instanceof Boolean) {
+                                || fieldResult instanceof Boolean || fieldResult instanceof Float) {
                             outObject.put(field.getName(), getter.invoke(entity));
                         } else if (fieldResult instanceof List) {
                             ArrayList<Object> cleanOutList = new ArrayList<Object>();
-                            for (Object fieldResultObject : (List<Object>) fieldResult)
+                            for (Object fieldResultObject : (List<Object>) fieldResult) {
+                                if (fieldResultObject != null
+                                        && fieldResultObject.getClass().getSimpleName().contains("HibernateProxy"))
+                                    fieldResultObject = Hibernate.unproxy(fieldResultObject);
                                 cleanOutList.add(cleanObjectForSerialization(fieldResultObject));
+                            }
                             outObject.put(field.getName(), cleanOutList);
                         } else if (fieldResult != null) {
                             outObject.put(field.getName(), cleanObjectForSerialization(fieldResult));

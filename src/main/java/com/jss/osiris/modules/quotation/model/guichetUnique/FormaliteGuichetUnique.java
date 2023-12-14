@@ -86,13 +86,13 @@ public class FormaliteGuichetUnique implements IId {
     @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
     @JsonProperty("validationsRequests")
-    @JsonAlias("annualAccountValidationRequests")
+    @JsonAlias({ "annualAccountValidationRequests", "acteDepositValidationRequests" })
     private List<ValidationRequest> validationsRequests;
 
     @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
     @JsonProperty("formaliteStatusHistoryItems")
-    @JsonAlias("annualAccountStatusHistories")
+    @JsonAlias({ "annualAccountStatusHistories", "acteDepositValidationRequests" })
     private List<FormaliteStatusHistoryItem> formaliteStatusHistoryItems;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -126,6 +126,7 @@ public class FormaliteGuichetUnique implements IId {
 
     private Boolean isFormality;
     private Boolean isAnnualAccounts;
+    private Boolean isActeDeposit;
 
     public Status getStatus() {
         return status;
@@ -413,5 +414,13 @@ public class FormaliteGuichetUnique implements IId {
 
     public void setFormaliteStatusHistoryItems(List<FormaliteStatusHistoryItem> formaliteStatusHistoryItems) {
         this.formaliteStatusHistoryItems = formaliteStatusHistoryItems;
+    }
+
+    public Boolean getIsActeDeposit() {
+        return isActeDeposit;
+    }
+
+    public void setIsActeDeposit(Boolean isActeDeposit) {
+        this.isActeDeposit = isActeDeposit;
     }
 }

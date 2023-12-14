@@ -77,11 +77,13 @@ export class DashboardComponent implements OnInit {
   affaireSearchWaitingDocument: AffaireSearch = {} as AffaireSearch;
 
   ORDER_OPEN = "Mes commandes ouvertes";
+  ALL_ORDER_OPEN = "Commandes ouvertes";
   ORDER_BEING_PROCESSED = "Mes commandes en cours";
   ORDER_TO_BILLED = "Commandes en attente de facturation";
   ORDERS_AWAITING_DEPOSIT = "Mes commandes en attente d’acompte";
 
   orderingSearchOpen: OrderingSearch = {} as OrderingSearch;
+  orderingSearchAllOpen: OrderingSearch = {} as OrderingSearch;
   orderingSearchBeingProcessed: OrderingSearch = {} as OrderingSearch;
   orderingSearchToBilled: OrderingSearch = {} as OrderingSearch;
   orderingSearchToAwaitingDeposit: OrderingSearch = {} as OrderingSearch;
@@ -109,7 +111,7 @@ export class DashboardComponent implements OnInit {
   PROVISION_BOARD = "Suivi d'équipe";
 
   allItems: Array<string> = [this.QUOTATION_REFUSED, this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY,
-  this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDERS_AWAITING_DEPOSIT, this.ORDER_OPEN,
+  this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDERS_AWAITING_DEPOSIT, this.ORDER_OPEN, this.ALL_ORDER_OPEN,
   this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY,
   this.AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO, this.QUOTATION_SENT,
   this.PROVISION_BOARD].sort((a, b) => a.localeCompare(b));
@@ -189,6 +191,8 @@ export class DashboardComponent implements OnInit {
 
         this.orderingSearchOpen.assignedToEmployee = this.currentEmployee!;
         this.orderingSearchOpen.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_OPEN)!];
+
+        this.orderingSearchAllOpen.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_OPEN)!];
 
         this.orderingSearchBeingProcessed.assignedToEmployee = this.currentEmployee!;
         this.orderingSearchBeingProcessed.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_BEING_PROCESSED)!];

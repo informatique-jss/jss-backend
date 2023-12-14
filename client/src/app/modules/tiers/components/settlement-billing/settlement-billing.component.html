@@ -243,6 +243,39 @@
                 <chips-mail [(model)]="billingClosureDocument.mailsClient" label="Mails" [form]="settlementBillingForm"
                   propertyName="mailsClient" [isMandatory]="true" [isDisabled]="!editMode"></chips-mail>
               </td>
+              <td
+                *ngIf="billingClosureDocument.billingClosureRecipientType && billingClosureDocument.billingClosureRecipientType.id != billingClosureRecipientTypeOther.id">
+                <chips-mail [(model)]="billingClosureDocument.mailsClient" label="Destinataires supplémentaires"
+                  [form]="settlementBillingForm" propertyName="mailsClient" [isMandatory]="false"
+                  [isDisabled]="!editMode"></chips-mail>
+              </td>
+            </tr>
+          </table>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              RFF
+            </mat-panel-title>
+            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+          </mat-expansion-panel-header>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-input [(model)]="tiers.rffIban" label="IBAN de versement du RFF" [form]="settlementBillingForm"
+                  propertyName="rffIban" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+                </generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="tiers.rffBic" label="BIC de versement du RFF" [form]="settlementBillingForm"
+                  propertyName="rffBic" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+                </generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="tiers.rffMail" label="Mail d'envoi du RFF" [form]="settlementBillingForm"
+                  propertyName="rffMail" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="100">
+                </generic-input>
+              </td>
             </tr>
           </table>
         </mat-expansion-panel>

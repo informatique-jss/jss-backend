@@ -1,4 +1,4 @@
-<div class="div-wrapper ">
+<div class="div-wrapper " *ngIf="value && value.length>0">
   <mat-chip-set style="display: inline;">
     <mat-chip selected class="ok-status" *ngIf="statusType==1">{{value}}</mat-chip>
     <mat-chip selected class="warn-status" *ngIf="statusType==2">{{value}}</mat-chip>

@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { ChipsConfrereComponent } from './chips-confrere.component';
+import { RffListComponent } from './rff-list.component';
 
-describe('ChipsConfrereComponent', () => {
-  let component: ChipsConfrereComponent;
-  let fixture: ComponentFixture<ChipsConfrereComponent>;
+describe('RffListComponent', () => {
+  let component: RffListComponent;
+  let fixture: ComponentFixture<RffListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ChipsConfrereComponent ]
+      declarations: [ RffListComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ChipsConfrereComponent);
+    fixture = TestBed.createComponent(RffListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

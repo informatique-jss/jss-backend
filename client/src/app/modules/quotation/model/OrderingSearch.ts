@@ -11,4 +11,5 @@ export interface OrderingSearch {
   customerOrderStatus: CustomerOrderStatus[];
   customerOrders: ITiers[];
   affaires: Affaire[];
+  idCustomerOrder: number;
 }

@@ -203,10 +203,6 @@ export class AssociatePaymentDialogComponent implements OnInit {
           this.appService.displaySnackBar("Veuillez choisir une facture avec un total de " + this.payment.paymentAmount + " €", true, 15);
           return;
         }
-        if (this.payment && invoice.manualPaymentType.id != this.payment.paymentType.id) {
-          this.appService.displaySnackBar("Le type de réglement de la facture et le type de paiement doivent être identiques", true, 15);
-          return;
-        }
       }
     }
 

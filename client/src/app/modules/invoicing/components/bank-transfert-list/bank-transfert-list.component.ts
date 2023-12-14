@@ -1,10 +1,12 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { EditCommentDialogComponent } from 'src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { BankTransfertService } from '../../../quotation/services/bank.transfert.service';
 import { BankTransfertSearch } from '../../model/BankTransfertSearch';
@@ -33,6 +35,8 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
     private bankTransfertService: BankTransfertService,
     private habilitationService: HabilitationsService,
     public editCommentDialog: MatDialog,
+    private activatedRoute: ActivatedRoute,
+    private appService: AppService,
   ) { }
 
   ngAfterContentChecked(): void {
@@ -43,7 +47,7 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
     this.availableColumns = [];
     this.availableColumns.push({ id: "id", fieldName: "id", label: "N° du virement" } as SortTableColumn);
     this.availableColumns.push({ id: "transfertDate", fieldName: "transfertDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "transfertAmount", fieldName: "transfertAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.availableColumns.push({ id: "transfertAmount", fieldName: "transfertAmount", label: "Montant", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.transfertAmount) } } as SortTableColumn);
     this.availableColumns.push({ id: "transfertLabel", fieldName: "transfertLabel", label: "Libellé" } as SortTableColumn);
     this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire" } as SortTableColumn);
     this.availableColumns.push({ id: "isAlreadyExported", fieldName: "isAlreadyExported", label: "A été exporté", valueFonction: (element: any) => { return (element.isAlreadyExported) ? "Oui" : "Non" } } as SortTableColumn);
@@ -88,6 +92,14 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
         });
       }, display: true,
     } as SortTableAction);
+
+    let idBankTransfert = this.activatedRoute.snapshot.params.id;
+    if (idBankTransfert) {
+      this.transfertSearch.idBankTransfert = idBankTransfert;
+      this.transfertSearch.isHideExportedBankTransfert = false;
+      this.appService.changeHeaderTitle("Virements");
+      this.searchTransferts();
+    }
   }
 
   transfertForm = this.formBuilder.group({

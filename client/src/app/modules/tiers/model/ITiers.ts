@@ -8,6 +8,7 @@ import { Mail } from "../../miscellaneous/model/Mail";
 import { Phone } from "../../miscellaneous/model/Phone";
 import { TiersFollowup } from "../../miscellaneous/model/TiersFollowup";
 import { Employee } from "../../profile/model/Employee";
+import { RffFrequency } from "./RffFrequency";
 
 export interface ITiers extends IAttachment, IDocument {
   id: number;
@@ -29,4 +30,8 @@ export interface ITiers extends IAttachment, IDocument {
   accountingAccountCustomer: AccountingAccount;
   accountingAccountProvider: AccountingAccount;
   accountingAccountDeposit: AccountingAccount;
+  rffFrequency: RffFrequency;
+  rffIban: string;
+  rffBic: string;
+  rffMail: string;
 }

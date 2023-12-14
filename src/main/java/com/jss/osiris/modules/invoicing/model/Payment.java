@@ -41,17 +41,22 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@IndexedField
 	private Integer id;
 
+	@IndexedField
 	private String bankId;
 
 	@Column(nullable = false, columnDefinition = "TEXT")
+	@IndexedField
 	private String label;
 
 	@Column(nullable = false)
+	@IndexedField
 	private LocalDateTime paymentDate;
 
 	@Column(nullable = false)
+	@IndexedField
 	private Float paymentAmount;
 
 	@OneToMany(mappedBy = "payment")
@@ -91,6 +96,7 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment_type")
+	@IndexedField
 	private PaymentType paymentType;
 
 	@ManyToOne(fetch = FetchType.LAZY)

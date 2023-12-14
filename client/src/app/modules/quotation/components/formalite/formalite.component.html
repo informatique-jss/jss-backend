@@ -52,7 +52,10 @@
       <guichet-unique-status [formalitesGuichetUnique]="formalite.formalitesGuichetUnique"></guichet-unique-status>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="formalite && formalite.id">
-      <history [entity]="formalite" [entityType]="FORMALITE_ENTITY_TYPE"></history>
+      <history [entity]="formalite" [entityType]="FORMALITE_ENTITY_TYPE" [parseTypeList]="formaliteStatus"></history>
+    </mat-tab>
+    <mat-tab label="Historique (prestation)" *ngIf="provision && provision.id">
+      <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
     </mat-tab>
     <mat-tab label="Débours" *ngIf="formalite && formalite.id && canAddNewInvoice()">
       <debour [provision]="provision"></debour>

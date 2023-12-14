@@ -1,16 +1,19 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
+import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
 import { InvoiceSearch } from '../../../invoicing/model/InvoiceSearch';
-import { ReportingService } from '../../../reporting/services/reporting.service';
 import { Responsable } from '../../model/Responsable';
+import { RffSearch } from '../../model/RffSearch';
 import { Tiers } from '../../model/Tiers';
 import { TiersService } from '../../services/tiers.service';
 import { ResponsableMainComponent } from '../responsable-main/responsable-main.component';
@@ -36,6 +39,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
   provisionSearch: AffaireSearch = {} as AffaireSearch;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   responsableAccountSearch: Tiers | undefined;
+  rffSearch: RffSearch | undefined;
 
   saveObservableSubscription: Subscription = new Subscription;
 
@@ -55,7 +59,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     private activatedRoute: ActivatedRoute,
     protected searchService: SearchService,
     private constantService: ConstantService,
-    private reportingService: ReportingService,
+    public confirmationDialog: MatDialog,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit() {
@@ -91,6 +95,20 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.toggleTabs();
 
         this.loadQuotationFilter();
+
+        this.rffSearch = {} as RffSearch;
+        this.rffSearch.tiers = { entityId: this.tiers.id } as IndexEntity;
+        this.rffSearch.isHideCancelledRff = false;
+
+        let start = new Date();
+        let d = new Date(start.getTime());
+        d.setFullYear(d.getFullYear() - 1);
+        this.rffSearch.startDate = d;
+
+        let end = new Date();
+        let d2 = new Date(end.getTime());
+        d2.setFullYear(d2.getFullYear() + 1);
+        this.rffSearch.endDate = d2;
       })
     } else if (this.createMode == false) {
       // Blank page
@@ -204,6 +222,25 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
   openSearch() {
     this.searchService.openSearchOnModule(TIERS_ENTITY_TYPE);
+  }
+
+  deleteTiers() {
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Supprimer le tiers n°" + this.tiers.id,
+        content: "Êtes-vous sûr de vouloir supprimer ce tiers ? Cette action est irréversible !",
+        closeActionText: "Annuler",
+        validationActionText: "Supprimer"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult)
+        this.tiersService.deleteTiers(this.tiers).subscribe(res => {
+          this.appService.openRoute(null, '/tiers/', null);
+        });
+    });
   }
 
 }

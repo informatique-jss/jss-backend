@@ -92,6 +92,16 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 	@Column(length = 40)
 	private String paymentBic;
 
+	@Column(length = 40)
+	@JsonProperty("rffIban")
+	private String rffIban;
+
+	@Column(length = 40)
+	private String rffBic;
+
+	@Column(length = 100)
+	private String rffMail;
+
 	@Column(nullable = false)
 	private Boolean isProvisionalPaymentMandatory;
 
@@ -207,6 +217,10 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_deposit")
 	private AccountingAccount accountingAccountDeposit;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_rff_frequency")
+	private RffFrequency rffFrequency;
 
 	@IndexedField
 	private Integer idAs400;
@@ -595,6 +609,38 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 		if (getDenomination() != null)
 			return getDenomination();
 		return getFirstname() + " " + getLastname();
+	}
+
+	public RffFrequency getRffFrequency() {
+		return rffFrequency;
+	}
+
+	public void setRffFrequency(RffFrequency rffFrequency) {
+		this.rffFrequency = rffFrequency;
+	}
+
+	public String getRffIban() {
+		return rffIban;
+	}
+
+	public void setRffIban(String rffIban) {
+		this.rffIban = rffIban;
+	}
+
+	public String getRffBic() {
+		return rffBic;
+	}
+
+	public void setRffBic(String rffBic) {
+		this.rffBic = rffBic;
+	}
+
+	public String getRffMail() {
+		return rffMail;
+	}
+
+	public void setRffMail(String rffMail) {
+		this.rffMail = rffMail;
 	}
 
 }

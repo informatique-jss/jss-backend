@@ -334,19 +334,25 @@ public class ValidationHelper {
     }
 
     public boolean validateMailList(List<Mail> mails) {
-        EmailValidator emailvalidator = EmailValidator.getInstance(true);
         for (Mail mail : mails) {
-            if (mail.getMail() != null) {
-                String[] mailSplit = mail.getMail().toLowerCase().split("\\.");
-                if (mailSplit[mailSplit.length - 1].equals("notaires"))
-                    return true;
-            }
-            if (mail.getMail() == null || mail.getMail().length() > 250 || !emailvalidator.isValid(mail.getMail()))
-                return false;
-            if (mail.getMail().toLowerCase().contains("é") || mail.getMail().toLowerCase().contains("è")
-                    || mail.getMail().toLowerCase().contains("ê"))
+            if (!validateMail(mail.getMail()))
                 return false;
         }
+        return true;
+    }
+
+    public boolean validateMail(String mail) {
+        EmailValidator emailvalidator = EmailValidator.getInstance(true);
+        if (mail != null) {
+            String[] mailSplit = mail.toLowerCase().split("\\.");
+            if (mailSplit[mailSplit.length - 1].equals("notaires"))
+                return true;
+        }
+        if (mail == null || mail.length() > 250 || !emailvalidator.isValid(mail))
+            return false;
+        if (mail.toLowerCase().contains("é") || mail.toLowerCase().contains("è")
+                || mail.toLowerCase().contains("ê"))
+            return false;
         return true;
     }
 }

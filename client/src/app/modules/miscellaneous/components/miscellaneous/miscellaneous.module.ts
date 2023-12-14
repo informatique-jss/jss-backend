@@ -69,7 +69,6 @@ import { AutocompleteTiersIndividualComponent } from '../forms/autocomplete-tier
 import { ChipsAttachmentTypeComponent } from '../forms/chips-attachment-type/chips-attachment-type.component';
 import { ChipsCityComponent } from '../forms/chips-city/chips-city.component';
 import { ChipsCompetitorComponent } from '../forms/chips-competitor/chips-competitor.component';
-import { ChipsConfrereComponent } from '../forms/chips-confrere/chips-confrere.component';
 import { ChipsEmployeeComponent } from '../forms/chips-employee/chips-employee.component';
 import { ChipsFormaliteGuichetUniqueComponent } from '../forms/chips-formalite-guichet-unique/chips-formalite-guichet-unique.component';
 import { ChipsMailComponent } from '../forms/chips-mail/chips-mail.component';
@@ -229,6 +228,7 @@ import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-re
 import { SelectRegionsComponent } from '../forms/select-regions/select-regions.component';
 import { SelectReportingDatasetComponent } from '../forms/select-reporting-dataset/select-reporting-dataset.component';
 import { SelectResponsableComponent } from '../forms/select-responsable/select-responsable.component';
+import { SelectRffFrequencyComponent } from '../forms/select-rff-frequency/select-rff-frequency.component';
 import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-period/select-subscription-period.component';
 import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/select-tiers-category.component';
 import { SelectTiersTypeComponent } from '../forms/select-tiers-type/select-tiers-type.component';
@@ -350,7 +350,6 @@ const routes: Routes = [
     SelectCompetentAuthorityTypeComponent,
     ChipsCompetitorComponent,
     SelectBillingItemsComponent,
-    ChipsConfrereComponent,
     SelectJournalTypeComponent,
     TrustHtmlPipe,
     SelectVatCollectionTypeComponent,
@@ -498,6 +497,7 @@ const routes: Routes = [
     AutocompleteTypeVoieComponent,
     AutocompleteGuichetUniqueFormaliteComponent,
     ChipsFormaliteGuichetUniqueComponent,
+    SelectRffFrequencyComponent,
   ],
   exports: [
     HistoryComponent,
@@ -539,7 +539,6 @@ const routes: Routes = [
     AutocompleteLegalFormComponent,
     AvatarComponent,
     AvatarChipComponent,
-    ChipsConfrereComponent,
     SelectMailRedirectionComponent,
     SelectVatComponent,
     GradeComponent,
@@ -713,6 +712,7 @@ const routes: Routes = [
     AutocompleteGuichetUniqueFormaliteComponent,
     ChipsFormaliteGuichetUniqueComponent,
     SelectCustomerOrderOriginComponent,
+    SelectRffFrequencyComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

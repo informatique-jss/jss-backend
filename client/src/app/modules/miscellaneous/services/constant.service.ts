@@ -202,6 +202,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.billingTypeCentralPayFees;
   }
 
+  getBillingTypeRff() {
+    return this.constant.billingTypeRff;
+  }
+
   getBillingTypeLogo() {
     return this.constant.billingTypeLogo;
   }
@@ -710,5 +714,21 @@ export class ConstantService extends AppRestService<Constant>{
 
   getTiersFollowupTypeInvoiceReminder() {
     return this.constant.tiersFollowupTypeInvoiceReminder;
+  }
+
+  getTiersCategoryPresse() {
+    return this.constant.tiersCategoryPresse;
+  }
+
+  getRffFrequencyAnnual() {
+    return this.constant.rffFrequencyAnnual;
+  }
+
+  getRffFrequencyQuarterly() {
+    return this.constant.rffFrequencyQuarterly;
+  }
+
+  getRffFrequencyMonthly() {
+    return this.constant.rffFrequencyMonthly;
   }
 }

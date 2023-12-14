@@ -54,6 +54,7 @@ export class AttachmentsComponent implements OnInit {
     this.displayedColumns.push({ id: "attachementType", fieldName: "attachmentType.label", label: "Type de document" } as SortTableColumn);
     this.displayedColumns.push({ id: "createdBy", fieldName: "uploadedFile.createdBy", label: "Ajouté par" } as SortTableColumn);
     this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "size", fieldName: "uploadedFile.size", label: "Taille", valueFonction: (element: any) => { return element.uploadedFile.size ? Math.round((element.uploadedFile.size / 1024 / 1024) * 100) / 100 + " Mo" : "" } } as SortTableColumn);
 
     if (this.entityType && (this.entityType == CUSTOMER_ORDER_ENTITY_TYPE.entityType || this.entityType == QUOTATION_ENTITY_TYPE.entityType || this.entityType == PROVISION_ENTITY_TYPE.entityType))
       this.displayedColumns.push({ id: "isAlreadySent", fieldName: "isAlreadySent", label: "Envoyé au client ?", valueFonction: (element: any) => { return element.isAlreadySent ? "Oui" : "Non" } } as SortTableColumn);

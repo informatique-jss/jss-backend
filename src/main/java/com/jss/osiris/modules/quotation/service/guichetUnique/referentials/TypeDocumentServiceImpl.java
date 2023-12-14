@@ -19,4 +19,14 @@ public class TypeDocumentServiceImpl implements TypeDocumentService {
     public List<TypeDocument> getTypeDocument() {
         return IterableUtils.toList(TypeDocumentRepository.findAll());
     }
+
+    @Override
+    public TypeDocument addOrUpdateTypeDocument(TypeDocument typeDocument) {
+        return TypeDocumentRepository.save(typeDocument);
+    }
+
+    @Override
+    public TypeDocument getTypeDocumentByCode(String code) {
+        return TypeDocumentRepository.findByCode(code);
+    }
 }
