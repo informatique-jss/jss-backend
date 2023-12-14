@@ -69,12 +69,14 @@ import { ReferentialProvisionTypeComponent } from '../referentials/referential-p
 import { ReferentialRefundTypeComponent } from '../referentials/referential-refund-type/referential-refund-type.component';
 import { ReferentialRegieComponent } from '../referentials/referential-regie/referential-regie.component';
 import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
+import { ReferentialRffFrequencyComponent } from '../referentials/referential-rff-frequency/referential-rff-frequency.component';
 import { ReferentialSpecialOfferComponent } from '../referentials/referential-special-offer/referential-special-offer.component';
 import { ReferentialSubscriptionPeriodTypeComponent } from '../referentials/referential-subscription-period-type/referential-subscription-period-type.component';
 import { ReferentialTiersCategoryComponent } from '../referentials/referential-tiers-category/referential-tiers-category.component';
 import { ReferentialTiersFollowupTypeComponent } from '../referentials/referential-tiers-followup-type/referential-tiers-followup-type.component';
 import { ReferentialTiersTypeComponent } from '../referentials/referential-tiers-type/referential-tiers-type.component';
 import { ReferentialTransfertFundsTypeComponent } from '../referentials/referential-transfert-fund-type/referential-transfert-fund-type.component';
+import { ReferentialTypeDocumentComponent } from '../referentials/referential-type-document/referential-type-document.component';
 import { ReferentialVatCollectionTypeComponent } from '../referentials/referential-vat-collection-type/referential-vat-collection-type.component';
 import { ReferentialVatComponent } from '../referentials/referential-vat/referential-vat.component';
 import { ReferentialWeekDayComponent } from '../referentials/referential-weekday/referential-weekday.component';
@@ -179,6 +181,8 @@ const routes: Routes = [
     ProviderComponent,
     ReferentialCustomerOrderOriginComponent,
     ReferentialDepartmentVatSettingComponent,
+    ReferentialTypeDocumentComponent,
+    ReferentialRffFrequencyComponent,
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

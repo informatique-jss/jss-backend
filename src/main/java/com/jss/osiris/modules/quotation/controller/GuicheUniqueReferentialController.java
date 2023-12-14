@@ -5,9 +5,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.ActiviteReguliere;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.CapaciteEngagement;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.CodeEEEPays;
@@ -207,9 +214,25 @@ public class GuicheUniqueReferentialController {
     @Autowired
     TypeDocumentService typeDocumentService;
 
+    @Autowired
+    ValidationHelper validationHelper;
+
     @GetMapping(inputEntryPoint + "/type-document")
     public ResponseEntity<List<TypeDocument>> getTypeDocument() {
         return new ResponseEntity<List<TypeDocument>>(typeDocumentService.getTypeDocument(), HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @PostMapping(inputEntryPoint + "/type-document")
+    public ResponseEntity<TypeDocument> addOrUpdateTypeDocument(
+            @RequestBody TypeDocument attachmentTypes) throws OsirisValidationException, OsirisException {
+        validationHelper.validateString(attachmentTypes.getCode(), true, 20, "code");
+        validationHelper.validateString(attachmentTypes.getLabel(), true, 100, "label");
+        validationHelper.validateReferential(attachmentTypes.getAttachmentType(),
+                attachmentTypes.getIsToDownloadOnProvision(), "attachmentType");
+
+        return new ResponseEntity<TypeDocument>(typeDocumentService.addOrUpdateTypeDocument(attachmentTypes),
+                HttpStatus.OK);
     }
 
     @Autowired

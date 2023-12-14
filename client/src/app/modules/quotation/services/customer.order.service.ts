@@ -4,15 +4,14 @@ import { AppRestService } from 'src/app/services/appRest.service';
 import { Employee } from '../../profile/model/Employee';
 import { Announcement } from '../model/Announcement';
 import { CustomerOrder } from '../model/CustomerOrder';
-import { Invoice } from '../model/Invoice';
 import { IQuotation } from '../model/IQuotation';
+import { Invoice } from '../model/Invoice';
 import { Quotation } from '../model/Quotation';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CustomerOrderService extends AppRestService<IQuotation>{
-
   constructor(http: HttpClient) {
     super(http, "quotation");
   }
@@ -51,6 +50,18 @@ export class CustomerOrderService extends AppRestService<IQuotation>{
 
   updateAssignedToForQuotation(quotation: Quotation, employee: Employee) {
     return this.get(new HttpParams().set("quotationId", quotation.id).set("employeeId", employee.id), "quotation/assign");
+  }
+
+  offerCustomerOrder(customerOrder: CustomerOrder) {
+    return this.get(new HttpParams().set("customerOrderId", customerOrder.id), "customer-order/offer");
+  }
+
+  generateCreditNoteForCustomerOrderInvoice(invoice: Invoice, customerOrder: CustomerOrder) {
+    return this.get(new HttpParams().set("invoiceId", invoice.id).set("customerOrderId", customerOrder.id), "customer-order/credit-note");
+  }
+
+  reinitInvoicing(quotation: CustomerOrder) {
+    return this.get(new HttpParams().set("customerOrderId", quotation.id), "customer-order/invoicing/reinit", "Facturation réinitialisée");
   }
 
 }

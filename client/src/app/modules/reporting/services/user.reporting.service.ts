@@ -29,4 +29,8 @@ export class UserReportingService extends AppRestService<UserReporting>{
     return this.get(new HttpParams().set("userReportingId", userReporting.id!).set("employeeId", employee.id), "user-reporting/copy", "Le rapport a été copié chez " + (employee.firstname + " " + employee.lastname), "Erreur lors de la copie");
   }
 
+  deleteUserReporting(userReporting: UserReporting) {
+    return this.get(new HttpParams().set("userReportingId", userReporting.id!), "user-reporting/delete");
+  }
+
 }

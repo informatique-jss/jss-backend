@@ -21,9 +21,11 @@ import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.invoicing.model.AzureInvoice;
 import com.jss.osiris.modules.invoicing.model.AzureReceipt;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -31,6 +33,13 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 @Table(indexes = { @Index(name = "idx_tiers_attachment", columnList = "id_tiers"),
 		@Index(name = "idx_customer_order_attachment", columnList = "id_customer_order"),
 		@Index(name = "idx_quotation_attachment", columnList = "id_quotation"),
+		@Index(name = "idx_customer_mail_attachment", columnList = "id_customer_mail"),
+		@Index(name = "idx_provider_attachment", columnList = "id_provider"),
+		@Index(name = "idx_competent_authority_attachment", columnList = "id_competent_authority"),
+		@Index(name = "idx_providion_attachment", columnList = "id_provision"),
+		@Index(name = "idx_invoice_attachment", columnList = "id_invoice"),
+		@Index(name = "idx_azure_invoice_attachment", columnList = "id_azure_invoice"),
+		@Index(name = "idx_azure_receipt_attachment", columnList = "id_azure_receipt"),
 		@Index(name = "idx_responsable_attachment", columnList = "id_responsable") })
 public class Attachment implements Serializable, IId {
 
@@ -94,6 +103,13 @@ public class Attachment implements Serializable, IId {
 	private Invoice invoice;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_affaire")
+	@JsonIgnoreProperties(value = { "attachments", "provider", "customerOrder", "accountingRecords",
+			"customerOrderForInboundInvoice", "competentAuthority", "invoiceItems",
+			"azureInvoice" }, allowSetters = true)
+	private Affaire affaire;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_attachment_type")
 	private AttachmentType attachmentType;
 
@@ -118,6 +134,18 @@ public class Attachment implements Serializable, IId {
 	@JoinColumn(name = "id_azure_receipt")
 	@JsonIgnoreProperties(value = { "attachments", "invoices" }, allowSetters = true)
 	private AzureReceipt azureReceipt;
+
+	private Boolean isAlreadySent;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "id_parent_attachment")
+	private Attachment parentAttachment;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_piece_jointe")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	private PiecesJointe piecesJointe;
 
 	public Integer getId() {
 		return id;
@@ -253,6 +281,38 @@ public class Attachment implements Serializable, IId {
 
 	public void setAzureReceipt(AzureReceipt azureReceipt) {
 		this.azureReceipt = azureReceipt;
+	}
+
+	public Boolean getIsAlreadySent() {
+		return isAlreadySent;
+	}
+
+	public void setIsAlreadySent(Boolean isAlreadySent) {
+		this.isAlreadySent = isAlreadySent;
+	}
+
+	public Attachment getParentAttachment() {
+		return parentAttachment;
+	}
+
+	public void setParentAttachment(Attachment parentAttachment) {
+		this.parentAttachment = parentAttachment;
+	}
+
+	public PiecesJointe getPiecesJointe() {
+		return piecesJointe;
+	}
+
+	public void setPiecesJointe(PiecesJointe piecesJointe) {
+		this.piecesJointe = piecesJointe;
+	}
+
+	public Affaire getAffaire() {
+		return affaire;
+	}
+
+	public void setAffaire(Affaire affaire) {
+		this.affaire = affaire;
 	}
 
 }

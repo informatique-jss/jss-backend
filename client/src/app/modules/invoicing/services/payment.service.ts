@@ -34,6 +34,10 @@ export class PaymentService extends AppRestService<Payment>{
     return this.postList(new HttpParams(), "payments/associate", paymentAssociate, "Association réalisée avec succès", "Erreur lors de l'association");
   }
 
+  movePaymentToWaitingAccount(payment: Payment) {
+    return this.get(new HttpParams().set("paymentId", payment.id), "payment/waiting");
+  }
+
   addCashPaymentForInvoice(payment: Payment, invoice: Invoice) {
     return this.postItem(new HttpParams().set("idInvoice", invoice.id), "payment/cash/add/invoice", payment);
   }
@@ -44,6 +48,10 @@ export class PaymentService extends AppRestService<Payment>{
 
   addCheckPayment(payment: Payment) {
     return this.postItem(new HttpParams(), "payment/check/add", payment);
+  }
+
+  addOrUpdatePaymentComment(idPayment: number, comment: string) {
+    return this.postItem(new HttpParams().set("idPayment", idPayment), "payment/comment", comment);
   }
 
   addProvisionPayment(payment: Payment, provision: Provision) {

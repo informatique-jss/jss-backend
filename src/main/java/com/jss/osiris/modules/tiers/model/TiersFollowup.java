@@ -23,10 +23,13 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.miscellaneous.model.Gift;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_tiers_followup_tiers", columnList = "id_tiers"),
+		@Index(name = "idx_tiers_followup_invoice", columnList = "id_invoice"),
+		@Index(name = "idx_tiers_followup_confrere", columnList = "id_confrere"),
 		@Index(name = "idx_tiers_followup_responsable", columnList = "id_responsable") })
 public class TiersFollowup implements Serializable, IId {
 
@@ -58,6 +61,12 @@ public class TiersFollowup implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
 	@JsonIgnore
 	private Invoice invoice;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_affaire")
+	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
+	@JsonIgnore
+	private Affaire affaire;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers_followup_type")
@@ -166,6 +175,14 @@ public class TiersFollowup implements Serializable, IId {
 
 	public void setGiftNumber(Integer giftNumber) {
 		this.giftNumber = giftNumber;
+	}
+
+	public Affaire getAffaire() {
+		return affaire;
+	}
+
+	public void setAffaire(Affaire affaire) {
+		this.affaire = affaire;
 	}
 
 }

@@ -118,11 +118,14 @@ public class RefundServiceImpl implements RefundService {
             refundSearch.setStartDate(LocalDateTime.now().minusYears(100));
         if (refundSearch.getEndDate() == null)
             refundSearch.setEndDate(LocalDateTime.now().plusYears(100));
+        if (refundSearch.getIdRefund() == null)
+            refundSearch.setIdRefund(0);
         return refundRepository.findRefunds(
                 refundSearch.getStartDate().withHour(0).withMinute(0),
                 refundSearch.getEndDate().withHour(23).withMinute(59), refundSearch.getMinAmount(),
                 refundSearch.getMaxAmount(),
-                refundSearch.getLabel(), refundSearch.isHideExportedRefunds(), refundSearch.isHideMatchedRefunds());
+                refundSearch.getLabel(), refundSearch.isHideExportedRefunds(), refundSearch.isHideMatchedRefunds(),
+                refundSearch.getIdRefund());
     }
 
     @Override
@@ -205,7 +208,8 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public File getRefundExport(RefundSearch refundSearch) throws OsirisException, OsirisValidationException {
+    public File getRefundExport(RefundSearch refundSearch)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
 
         List<RefundSearchResult> refunds = searchRefunds(refundSearch);
         String xml = "";

@@ -19,7 +19,9 @@ import { BillingClosureType } from '../../tiers/model/BillingClosureType';
 import { BillingLabelType } from "../../tiers/model/BillingLabelType";
 import { PaymentDeadlineType } from '../../tiers/model/PaymentDeadlineType';
 import { RefundType } from "../../tiers/model/RefundType";
+import { RffFrequency } from '../../tiers/model/RffFrequency';
 import { SubscriptionPeriodType } from "../../tiers/model/SubscriptionPeriodType";
+import { TiersCategory } from '../../tiers/model/TiersCategory';
 import { TiersType } from "../../tiers/model/TiersType";
 import { AttachmentType } from "./AttachmentType";
 import { BillingType } from "./BillingType";
@@ -33,6 +35,7 @@ import { DocumentType } from "./DocumentType";
 import { Language } from './Language';
 import { LegalForm } from "./LegalForm";
 import { PaymentType } from "./PaymentType";
+import { TiersFollowupType } from './TiersFollowupType';
 import { Vat } from "./Vat";
 import { NoticeTypeFamily } from '../../quotation/model/NoticeTypeFamily';
 import { NoticeType } from '../../quotation/model/NoticeType';
@@ -200,8 +203,8 @@ export interface Constant {
   principalAccountingAccountCharge: PrincipalAccountingAccount;
   principalAccountingAccountBank: PrincipalAccountingAccount;
   principalAccountingAccountWaiting: PrincipalAccountingAccount;
-  principalAccountingAccountLost: PrincipalAccountingAccount;
-  principalAccountingAccountProfit: PrincipalAccountingAccount;
+  accountingAccountLost: AccountingAccount;
+  accountingAccountProfit: AccountingAccount;
   accountingAccountBankCentralPay: AccountingAccount;
   accountingAccountBankJss: AccountingAccount;
   accountingAccountCaisse: AccountingAccount;
@@ -210,4 +213,9 @@ export interface Constant {
   providerCentralPay: Provider;
   noticeOffamilyIndividuals: NoticeTypeFamily;
   noticeOfNameChange: NoticeType;
+  tiersFollowupTypeInvoiceReminder: TiersFollowupType;
+  tiersCategoryPresse: TiersCategory;
+  rffFrequencyAnnual: RffFrequency;
+  rffFrequencyQuarterly: RffFrequency;
+  rffFrequencyMonthly: RffFrequency;
 }

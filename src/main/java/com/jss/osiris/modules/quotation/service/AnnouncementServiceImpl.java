@@ -23,6 +23,7 @@ import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 import com.jss.osiris.libs.PictureHelper;
 import com.jss.osiris.libs.WordGenerationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
@@ -31,6 +32,7 @@ import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.ActuLegaleAnnouncement;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementListSearch;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearch;
@@ -232,7 +234,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder, Announcement announcement)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         // Get provision
         Provision currentProvision = null;
@@ -263,7 +265,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void generateAndStorePublicationReceipt(Announcement announcement, Provision currentProvision)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         if (announcement.getConfrere() != null
                 && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
@@ -277,7 +279,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                 Provision.class.getSimpleName(),
                                 constantService.getAttachmentTypePublicationReceipt(),
                                 "Publication_receipt_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                false, "Attestation de parution n°" + announcement.getId()));
+                                false, "Attestation de parution n°" + announcement.getId(), null));
             } catch (FileNotFoundException e) {
                 throw new OsirisException(e, "Impossible to read invoice PDF temp file");
             } finally {
@@ -288,7 +290,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void generateStoreAndSendPublicationFlag(CustomerOrder customerOrder, Announcement announcement)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         // Get provision
         Provision currentProvision = null;
@@ -320,7 +322,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void generateAndStorePublicationFlag(Announcement announcement, Provision currentProvision)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // To avoid no session error
         announcement = getAnnouncement(announcement.getId());
         currentProvision = provisionService.getProvision(currentProvision.getId());
@@ -336,7 +338,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                 Provision.class.getSimpleName(),
                                 constantService.getAttachmentTypePublicationFlag(),
                                 "Publication_flag_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                false, "Témoin de publication n°" + announcement.getId()));
+                                false, "Témoin de publication n°" + announcement.getId(), null));
             } catch (FileNotFoundException e) {
                 throw new OsirisException(e, "Impossible to read invoice PDF temp file");
             } finally {
@@ -348,7 +350,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void sendPublicationFlagNotSent()
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         List<Announcement> announcements = announcementRepository.getAnnouncementForPublicationFlagBatch(
                 announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE),
                 LocalDate.now());
@@ -375,7 +377,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void generateStoreAndSendProofReading(Announcement announcement, CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Get provision
         Provision currentProvision = null;
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
@@ -402,7 +404,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                 Provision.class.getSimpleName(),
                                 constantService.getAttachmentTypeProofReading(),
                                 "Proof_reading_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                false, "Bon à tirer n°" + announcement.getId()));
+                                false, "Bon à tirer n°" + announcement.getId(), null));
             } catch (FileNotFoundException e) {
                 throw new OsirisException(e, "Impossible to read invoice PDF temp file");
             } finally {
@@ -419,7 +421,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public void generateAndStoreAnnouncementWordFile(CustomerOrder customerOrder, AssoAffaireOrder asso,
             Provision provision, Announcement announcement)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         if (announcement.getIsAnnouncementAlreadySentToConfrere() == null
                 || !announcement.getIsAnnouncementAlreadySentToConfrere()) {
             if (announcement.getConfrere() != null
@@ -453,7 +455,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                     "announcement_" + announcement.getId()
                                             + DateTimeFormatter.ofPattern("yyyyMMdd HHmm").format(LocalDateTime.now())
                                             + ".docx",
-                                    false, "Annonce n°" + announcement.getId()));
+                                    false, "Annonce n°" + announcement.getId(), null));
                 } catch (FileNotFoundException e) {
                     throw new OsirisException(e, "Impossible to read announcement Word temp file");
                 } finally {
@@ -582,4 +584,76 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return null;
     }
 
+    @Override
+    public void completeAnnouncementWithAffaire(AssoAffaireOrder assoAffaireOrder)
+            throws OsirisException, OsirisClientMessageException {
+
+        Affaire affaire = assoAffaireOrder.getAffaire();
+
+        if (assoAffaireOrder.getProvisions() != null)
+            for (Provision provision : assoAffaireOrder.getProvisions())
+                if (provision.getAnnouncement() != null) {
+                    Announcement announcement = provision.getAnnouncement();
+
+                    if (affaire.getIsIndividual()) {
+                        if (affaire.getFirstname() != null)
+                            announcement.setNotice(
+                                    announcement.getNotice().replaceAll("\\{prenom\\}", affaire.getFirstname()));
+
+                        if (affaire.getLastname() != null)
+                            announcement
+                                    .setNotice(announcement.getNotice().replaceAll("\\{nom\\}", affaire.getLastname()));
+
+                        if (affaire.getCivility() != null)
+                            announcement.setNotice(announcement.getNotice().replaceAll("\\{civilite\\}",
+                                    affaire.getCivility().getLabel()));
+                    } else if (affaire.getDenomination() != null) {
+                        announcement.setNotice(
+                                announcement.getNotice().replaceAll("\\{denomination\\}", affaire.getDenomination()));
+                    }
+
+                    if (affaire.getAddress() != null)
+                        announcement.setNotice(
+                                announcement.getNotice().replaceAll("\\{adresse\\}", affaire.getAddress()));
+
+                    if (affaire.getCity() != null)
+                        announcement.setNotice(
+                                announcement.getNotice().replaceAll("\\{ville\\}", affaire.getCity().getLabel()));
+
+                    if (affaire.getPostalCode() != null)
+                        announcement.setNotice(
+                                announcement.getNotice().replaceAll("\\{codePostal\\}", affaire.getPostalCode()));
+
+                    if (affaire.getMainActivity() != null)
+                        announcement.setNotice(announcement.getNotice().replaceAll("\\{activitePrincipale\\}",
+                                affaire.getMainActivity().getLabel()));
+
+                    if (affaire.getShareCapital() != null)
+                        announcement.setNotice(announcement.getNotice().replaceAll("\\{capitalSocial\\}",
+                                affaire.getShareCapital().toString()));
+
+                    if (affaire.getLegalForm() != null)
+                        announcement.setNotice(announcement.getNotice().replaceAll("\\{formeJuridique\\}",
+                                affaire.getLegalForm().getLabel()));
+
+                    if (affaire.getSiren() != null)
+                        announcement.setNotice(announcement.getNotice().replaceAll("\\{siren\\}", affaire.getSiren()));
+
+                    if (affaire.getSiret() != null)
+                        announcement.setNotice(announcement.getNotice().replaceAll("\\{siret\\}", affaire.getSiret()));
+
+                    if (affaire.getRna() != null)
+                        announcement.setNotice(announcement.getNotice().replaceAll("\\{rna\\}", affaire.getRna()));
+
+                    if (affaire.getCompetentAuthority() != null) {
+                        announcement
+                                .setNotice(announcement.getNotice().replaceAll("\\{autoriteCompetenteDenomination\\}",
+                                        affaire.getCompetentAuthority().getLabel()));
+
+                        if (affaire.getCompetentAuthority().getCity() != null)
+                            announcement.setNotice(announcement.getNotice().replaceAll("\\{autoriteCompetenteVille\\}",
+                                    affaire.getCompetentAuthority().getCity().getLabel()));
+                    }
+                }
+    }
 }

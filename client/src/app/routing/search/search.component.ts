@@ -3,6 +3,8 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { formatDateFrance } from 'src/app/libs/FormatHelper';
 import { AppService } from '../../services/app.service';
 import { EntityType } from './EntityType';
 import { IndexEntity } from './IndexEntity';
@@ -27,6 +29,10 @@ export const INVOICE_ENTITY_TYPE: EntityType = { entityType: 'Invoice', tabName:
 export const JOURNAL_ENTITY_TYPE: EntityType = { entityType: 'Journal', tabName: 'Journaux', entryPoint: 'journal' };
 export const SIMPLE_PROVISION_ENTITY_TYPE: EntityType = { entityType: 'SimpleProvision', tabName: 'Formalité simple', entryPoint: 'simpleProvision' };
 export const AZURE_INVOICE_ENTITY_TYPE: EntityType = { entityType: 'AzureInvoice', tabName: 'Facture automatique', entryPoint: 'invoicing/azure/edit' };
+export const PAYMENT_ENTITY_TYPE: EntityType = { entityType: 'Payment', tabName: 'Paiements', entryPoint: 'invoicing/payment' };
+export const REFUND_ENTITY_TYPE: EntityType = { entityType: 'Refund', tabName: 'Remboursements', entryPoint: 'invoicing/refund' };
+export const BANK_TRANSFERT_ENTITY_TYPE: EntityType = { entityType: 'BankTransfert', tabName: 'Virements', entryPoint: 'invoicing/bankTransfert' };
+export const DIRECT_DEBIT_TRANSFERT_ENTITY_TYPE: EntityType = { entityType: 'DirectDebitTransfert', tabName: 'Prélèvements', entryPoint: 'invoicing/directDebit' };
 
 @Component({
   selector: 'app-search',
@@ -51,13 +57,23 @@ export class SearchComponent implements OnInit {
   CONFRERE_ENTITY_TYPE = CONFRERE_ENTITY_TYPE;
   PROVIDER_ENTITY_TYPE = PROVIDER_ENTITY_TYPE;
   AFFAIRE_ENTITY_TYPE = AFFAIRE_ENTITY_TYPE;
-  entityTypes: EntityType[] = [TIERS_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE, QUOTATION_ENTITY_TYPE, CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE, ASSO_AFFAIRE_ENTITY_TYPE, AFFAIRE_ENTITY_TYPE, PROVIDER_ENTITY_TYPE, CONFRERE_ENTITY_TYPE];
+  PAYMENT_ENTITY_TYPE = PAYMENT_ENTITY_TYPE;
+  REFUND_ENTITY_TYPE = REFUND_ENTITY_TYPE;
+  BANK_TRANSFERT_ENTITY_TYPE = BANK_TRANSFERT_ENTITY_TYPE;
+  DIRECT_DEBIT_TRANSFERT_ENTITY_TYPE = DIRECT_DEBIT_TRANSFERT_ENTITY_TYPE;
+  entityTypes: EntityType[] = [TIERS_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE, QUOTATION_ENTITY_TYPE, CUSTOMER_ORDER_ENTITY_TYPE,
+    INVOICE_ENTITY_TYPE, ASSO_AFFAIRE_ENTITY_TYPE, AFFAIRE_ENTITY_TYPE,
+    PAYMENT_ENTITY_TYPE, REFUND_ENTITY_TYPE, BANK_TRANSFERT_ENTITY_TYPE, DIRECT_DEBIT_TRANSFERT_ENTITY_TYPE];
   userSelectedModule: EntityType | null = null;
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup | undefined;
 
+  searchObservableRef: Subscription | undefined;
   search: string = "";
   foundEntities: IndexEntity[] | null = null;
   tabNames: { [key: string]: string; } = {};
+  tabNumber: { [key: string]: number; } = {};
+
+  isLoading: boolean | undefined = undefined;
 
   ngOnInit() {
     this.generateTabLabel();
@@ -81,9 +97,14 @@ export class SearchComponent implements OnInit {
   }
 
   effectiveSearchEntities() {
+    if (this.searchObservableRef)
+      this.searchObservableRef.unsubscribe();
+
     if (this.search != null && this.search != undefined) {
       if (this.search.length >= 2) {
-        this.indexEntityService.searchEntities(this.search).subscribe(response => {
+        this.isLoading = true;
+        this.searchObservableRef = this.indexEntityService.searchEntities(this.search).subscribe(response => {
+          this.isLoading = false;
           if (response) {
             this.foundEntities = [] as Array<IndexEntity>;
             for (let foundEntity of response) {
@@ -110,12 +131,18 @@ export class SearchComponent implements OnInit {
     return "";
   }
 
+  displayTab(entityType: EntityType): boolean {
+    if (this.tabNumber != null && this.tabNumber != undefined)
+      return this.tabNumber[entityType.entityType] ? true : false;
+    return false;
+  }
+
   generateTabLabel() {
     this.entityTypes.forEach(entityType => {
       let tabName = "";
+      let entityNumber = 0;
       tabName += entityType.tabName;
       if (this.foundEntities != null && this.foundEntities != undefined) {
-        let entityNumber = 0;
         this.foundEntities.forEach(foundEntity => {
           if (foundEntity.entityType == entityType.entityType)
             entityNumber++;
@@ -123,6 +150,7 @@ export class SearchComponent implements OnInit {
         tabName += " (" + entityNumber + ")"
       }
       this.tabNames[entityType.entityType] = tabName;
+      this.tabNumber[entityType.entityType] = entityNumber;
     })
   }
 
@@ -134,6 +162,16 @@ export class SearchComponent implements OnInit {
           tabEntities.push(foundEntity);
       })
     }
+    if (tabEntities && tabEntities.length > 0)
+      return tabEntities.sort(function (a: IndexEntity, b: IndexEntity) {
+        if (!a.createdDate && b.createdDate)
+          return 1;
+        if (!b.createdDate && a.createdDate)
+          return -1;
+        if (!b.createdDate && !a.createdDate)
+          return 0;
+        return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime();
+      });
     return tabEntities;
   }
 
@@ -149,17 +187,23 @@ export class SearchComponent implements OnInit {
   selectTab() {
     // select tab : input tab if provide else first tab of first fetch entity (because it's the most relevant)
     if (this.userSelectedModule != null) {
+      let selectedIndex = 0;
       for (let i = 0; i < this.entityTypes.length; i++) {
         const entityType = this.entityTypes[i];
         if (entityType == this.userSelectedModule && this.tabGroup) {
-          this.tabGroup.selectedIndex = i;
+          this.tabGroup.selectedIndex = selectedIndex;
         }
+        if (this.displayTab(entityType))
+          selectedIndex++;
       }
     } else if (this.foundEntities != null && this.foundEntities.length > 0) {
+      let selectedIndex = 0;
       for (let i = 0; i < this.entityTypes.length; i++) {
         const entityType = this.entityTypes[i];
         if (entityType.entityType == this.foundEntities[0].entityType && this.tabGroup)
-          this.tabGroup.selectedIndex = i;
+          this.tabGroup.selectedIndex = selectedIndex;
+        if (this.displayTab(entityType))
+          selectedIndex++;
       }
     }
   }
@@ -191,5 +235,30 @@ export class SearchComponent implements OnInit {
     if (entity.text.provider)
       return entity.text.provider.label;
     return "";
+  }
+
+  getTooltipDateText(entity: IndexEntity) {
+    let text = "";
+    let createdString = "";
+    let createdDateString = "";
+    let updatedString = "";
+    let updatedDateString = "";
+
+    if (entity.createdDate)
+      createdDateString = `Créé le ${formatDateFrance(entity.createdDate)}`;
+
+    if (entity.createdBy)
+      createdString = `par ${entity.createdBy.firstname} ${entity.createdBy.lastname}`;
+
+    if (entity.udpatedDate)
+      updatedDateString = `Mis à jour le ${formatDateFrance(entity.udpatedDate)}`;
+
+    if (entity.updatedBy)
+      updatedString = `par ${entity.updatedBy.firstname} ${entity.updatedBy.lastname} `;
+
+    return `${createdDateString}
+      ${createdString}
+      ${updatedDateString}
+      ${updatedString}`;
   }
 }

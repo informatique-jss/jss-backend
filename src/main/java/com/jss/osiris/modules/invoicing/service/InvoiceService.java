@@ -1,8 +1,10 @@
 package com.jss.osiris.modules.invoicing.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -10,6 +12,7 @@ import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.tiers.model.BillingLabelType;
 
 public interface InvoiceService {
         public List<Invoice> getAllInvoices();
@@ -31,7 +34,8 @@ public interface InvoiceService {
         public void reindexInvoices();
 
         public Invoice addOrUpdateInvoiceFromUser(Invoice invoice)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public void sendRemindersForInvoices()
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
@@ -44,11 +48,16 @@ public interface InvoiceService {
         public CustomerOrder getCustomerOrderByIdInvoice(Integer idInvoice);
 
         public Invoice generateProviderInvoiceCreditNote(Invoice newInvoice, Integer idOriginInvoiceForCreditNote)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public Invoice searchInvoicesByIdDirectDebitTransfert(Integer idToFind);
 
         public Invoice cancelInvoice(Invoice invoice)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
+
+        public void sendRemindersForInvoices(LocalDate startDate, LocalDate endDate, BillingLabelType billingLabelType)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
 }

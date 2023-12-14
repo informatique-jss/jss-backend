@@ -6,15 +6,19 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_cart_formalite", columnList = "id_formalite_guichet_unique") })
 public class Cart {
 
     @Id

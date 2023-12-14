@@ -3,7 +3,9 @@ package com.jss.osiris.modules.miscellaneous.service;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 
 public interface CompetentAuthorityService {
     public List<CompetentAuthority> getCompetentAuthorities();
@@ -19,8 +21,6 @@ public interface CompetentAuthorityService {
 
     public CompetentAuthority getCompetentAuthorityByApiId(String apiId);
 
-    public CompetentAuthority getCompetentAuthorityByOwncloudFolderName(String folderName);
-
     public List<CompetentAuthority> getCompetentAuthorityByAuthorityType(Integer competentAuthorityTypeId);
 
     public CompetentAuthority getCompetentAuthorityByIntercommunityVat(String intercommunityVat);
@@ -28,4 +28,7 @@ public interface CompetentAuthorityService {
     public CompetentAuthority getCompetentAuthorityByAzureCustomReference(String azureCustomReference);
 
     public List<CompetentAuthority> getCompetentAuthorityByInpiReference(String inpiReference);
+
+    public List<CompetentAuthority> getCompetentAuthorityByCityAndAuthorityType(City city,
+            CompetentAuthorityType competentAuthorityType);
 }

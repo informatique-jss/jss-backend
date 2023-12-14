@@ -6,8 +6,10 @@ import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/se
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Formalite } from '../../model/Formalite';
+import { FormaliteStatus } from '../../model/FormaliteStatus';
 import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
+import { FormaliteStatusService } from '../../services/formalite.status.service';
 
 @Component({
   selector: 'formalite',
@@ -31,10 +33,13 @@ export class FormaliteComponent implements OnInit {
   competentAuthorityInpi = this.constantService.getCompetentAuthorityInpi();
   competentAuthorityInfogreffe = this.constantService.getCompetentAuthorityInfogreffe();
 
+  formaliteStatus: FormaliteStatus[] | undefined;
+
   constructor(
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
-    private habilitationsService: HabilitationsService
+    private habilitationsService: HabilitationsService,
+    private formaliteStatusService: FormaliteStatusService
   ) { }
 
   formaliteForm = this.formBuilder.group({});
@@ -44,6 +49,7 @@ export class FormaliteComponent implements OnInit {
   FORMALITE_ENTITY_TYPE = FORMALITE_ENTITY_TYPE;
 
   ngOnInit() {
+    this.formaliteStatusService.getFormaliteStatus().subscribe(response => { this.formaliteStatus = response });
   }
 
   ngOnChanges(changes: SimpleChanges) {

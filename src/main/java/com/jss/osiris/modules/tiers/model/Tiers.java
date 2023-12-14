@@ -129,7 +129,6 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_default_customer_order_employee")
-	@IndexedField
 	private Employee defaultCustomerOrderEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -208,6 +207,10 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_deposit")
 	private AccountingAccount accountingAccountDeposit;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_rff_frequency")
+	private RffFrequency rffFrequency;
 
 	@IndexedField
 	private Integer idAs400;
@@ -589,6 +592,21 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 
 	public void setIsReceipSent(Boolean isReceipSent) {
 		this.isReceipSent = isReceipSent;
+	}
+
+	@Override
+	public String getLabel() {
+		if (getDenomination() != null)
+			return getDenomination();
+		return getFirstname() + " " + getLastname();
+	}
+
+	public RffFrequency getRffFrequency() {
+		return rffFrequency;
+	}
+
+	public void setRffFrequency(RffFrequency rffFrequency) {
+		this.rffFrequency = rffFrequency;
 	}
 
 }

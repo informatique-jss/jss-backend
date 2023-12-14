@@ -52,11 +52,6 @@
                       [isDisabled]="!editMode"></generic-input>
                   </td>
                   <td>
-                    <generic-input [(model)]="selectedcompetentAuthority.owncloudFolderName"
-                      label="Nom du dossier Owncloud" [form]="entityForm2" propertyName="owncloudFolderName"
-                      [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="250"></generic-input>
-                  </td>
-                  <td>
                     <generic-input [(model)]="selectedcompetentAuthority.azureCustomReference"
                       label="Référence de recherche Azure" [maxLength]="250" [form]="entityForm2"
                       propertyName="azureCustomReference" [isMandatory]="false"
@@ -275,6 +270,10 @@
         </mat-tab>
         <mat-tab label="Pointage des relevés" *ngIf="selectedcompetentAuthority.id">
           <receipt-reconciliation [provider]="selectedcompetentAuthority"></receipt-reconciliation>
+        </mat-tab>
+        <mat-tab label="Factures" *ngIf="selectedcompetentAuthority.id">
+          <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
+            [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
         </mat-tab>
         <mat-tab label=" Documents" *ngIf="selectedcompetentAuthority.id">
           <attachments [entity]="selectedcompetentAuthority" [editMode]="editMode"

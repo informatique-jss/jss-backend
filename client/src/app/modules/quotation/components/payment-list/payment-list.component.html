@@ -34,6 +34,10 @@
           <generic-toggle [(model)]="paymentSearch.isHideCancelledPayments" label="Masquer les paiements annulés"
             [form]="paymentForm" propertyName="isHideCancelledPayments"></generic-toggle>
         </td>
+        <td>
+          <generic-toggle [(model)]="paymentSearch.isHideAppoint" label="Masquer les appoints" [form]="paymentForm"
+            propertyName="isHideAppoint"></generic-toggle>
+        </td>
       </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="payments" tableName="Paiements"

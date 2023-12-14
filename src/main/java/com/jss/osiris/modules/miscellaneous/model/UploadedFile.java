@@ -32,6 +32,8 @@ public class UploadedFile implements Serializable, IId {
 
 	private String createdBy;
 
+	private Long size;
+
 	public Integer getId() {
 		return id;
 	}
@@ -78,6 +80,14 @@ public class UploadedFile implements Serializable, IId {
 
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
+	}
+
+	public Long getSize() {
+		return size;
+	}
+
+	public void setSize(Long size) {
+		this.size = size;
 	}
 
 }

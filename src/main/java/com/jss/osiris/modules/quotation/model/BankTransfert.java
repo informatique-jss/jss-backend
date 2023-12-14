@@ -29,10 +29,13 @@ public class BankTransfert implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false)
+	@IndexedField
 	private String label;
 
+	@IndexedField
 	private Float transfertAmount;
 
+	@IndexedField
 	private LocalDateTime transfertDateTime;
 
 	@Column(length = 40)
@@ -40,6 +43,9 @@ public class BankTransfert implements Serializable, IId {
 
 	@Column(length = 40)
 	private String transfertBic;
+
+	@Column(columnDefinition = "TEXT")
+	private String comment;
 
 	private Boolean isAlreadyExported;
 
@@ -167,6 +173,14 @@ public class BankTransfert implements Serializable, IId {
 
 	public void setPayments(List<Payment> payments) {
 		this.payments = payments;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 }

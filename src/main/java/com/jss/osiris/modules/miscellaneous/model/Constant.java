@@ -33,7 +33,10 @@ import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
+import com.jss.osiris.modules.tiers.model.RffFrequency;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersCategory;
+import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
 @Entity
@@ -671,12 +674,12 @@ public class Constant implements Serializable, IId {
 	private PrincipalAccountingAccount principalAccountingAccountWaiting;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_principal_accounting_account_lost")
-	private PrincipalAccountingAccount principalAccountingAccountLost;
+	@JoinColumn(name = "id_accounting_account_lost")
+	private AccountingAccount accountingAccountLost;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_principal_accounting_account_profit")
-	private PrincipalAccountingAccount principalAccountingAccountProfit;
+	@JoinColumn(name = "id_accounting_account_profit")
+	private AccountingAccount accountingAccountProfit;
 
 	private String salesSharedMailbox;
 	private String accountingSharedMaiblox;
@@ -716,6 +719,26 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_provider_central_pay")
 	private Provider providerCentralPay;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_tiers_followup_type_invoice_reminder")
+	private TiersFollowupType tiersFollowupTypeInvoiceReminder;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_tiers_category_presse")
+	private TiersCategory tiersCategoryPresse;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_rff_frequency_annual")
+	private RffFrequency rffFrequencyAnnual;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_rff_frequency_quarterly")
+	private RffFrequency rffFrequencyQuarterly;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_rff_frequency_monthly")
+	private RffFrequency rffFrequencyMonthly;
 
 	public Integer getId() {
 		return id;
@@ -1660,22 +1683,6 @@ public class Constant implements Serializable, IId {
 		this.principalAccountingAccountWaiting = principalAccountingAccountWaiting;
 	}
 
-	public PrincipalAccountingAccount getPrincipalAccountingAccountLost() {
-		return principalAccountingAccountLost;
-	}
-
-	public void setPrincipalAccountingAccountLost(PrincipalAccountingAccount principalAccountingAccountLost) {
-		this.principalAccountingAccountLost = principalAccountingAccountLost;
-	}
-
-	public PrincipalAccountingAccount getPrincipalAccountingAccountProfit() {
-		return principalAccountingAccountProfit;
-	}
-
-	public void setPrincipalAccountingAccountProfit(PrincipalAccountingAccount principalAccountingAccountProfit) {
-		this.principalAccountingAccountProfit = principalAccountingAccountProfit;
-	}
-
 	public BillingType getBillingTypeApplicationFees() {
 		return billingTypeApplicationFees;
 	}
@@ -2101,5 +2108,61 @@ public class Constant implements Serializable, IId {
 
 	public void setNoticeOffamilyIndividuals(NoticeTypeFamily noticeOffamilyIndividuals) {
 		this.noticeOffamilyIndividuals = noticeOffamilyIndividuals;
+	}
+
+	public TiersFollowupType getTiersFollowupTypeInvoiceReminder() {
+		return tiersFollowupTypeInvoiceReminder;
+	}
+
+	public void setTiersFollowupTypeInvoiceReminder(TiersFollowupType tiersFollowupTypeInvoiceReminder) {
+		this.tiersFollowupTypeInvoiceReminder = tiersFollowupTypeInvoiceReminder;
+	}
+
+	public AccountingAccount getAccountingAccountLost() {
+		return accountingAccountLost;
+	}
+
+	public void setAccountingAccountLost(AccountingAccount accountingAccountLost) {
+		this.accountingAccountLost = accountingAccountLost;
+	}
+
+	public AccountingAccount getAccountingAccountProfit() {
+		return accountingAccountProfit;
+	}
+
+	public void setAccountingAccountProfit(AccountingAccount accountingAccountProfit) {
+		this.accountingAccountProfit = accountingAccountProfit;
+	}
+
+	public TiersCategory getTiersCategoryPresse() {
+		return tiersCategoryPresse;
+	}
+
+	public void setTiersCategoryPresse(TiersCategory tiersCategoryPresse) {
+		this.tiersCategoryPresse = tiersCategoryPresse;
+	}
+
+	public RffFrequency getRffFrequencyAnnual() {
+		return rffFrequencyAnnual;
+	}
+
+	public void setRffFrequencyAnnual(RffFrequency rffFrequencyAnnual) {
+		this.rffFrequencyAnnual = rffFrequencyAnnual;
+	}
+
+	public RffFrequency getRffFrequencyQuarterly() {
+		return rffFrequencyQuarterly;
+	}
+
+	public void setRffFrequencyQuarterly(RffFrequency rffFrequencyQuarterly) {
+		this.rffFrequencyQuarterly = rffFrequencyQuarterly;
+	}
+
+	public RffFrequency getRffFrequencyMonthly() {
+		return rffFrequencyMonthly;
+	}
+
+	public void setRffFrequencyMonthly(RffFrequency rffFrequencyMonthly) {
+		this.rffFrequencyMonthly = rffFrequencyMonthly;
 	}
 }

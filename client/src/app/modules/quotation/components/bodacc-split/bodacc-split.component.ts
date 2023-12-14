@@ -5,7 +5,6 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { BodaccSplit } from '../../model/BodaccSplit';
 import { BodaccSplitBeneficiary } from '../../model/BodaccSplitBeneficiary';
 import { BodaccSplitCompany } from '../../model/BodaccSplitCompany';
-import { Siren } from '../../model/Siren';
 
 @Component({
   selector: 'bodacc-split',
@@ -84,35 +83,4 @@ export class BodaccSplitComponent implements OnInit {
         this.bodaccSplit.bodaccSplitCompanies.splice(i, 1);
     }
   }
-
-  fillSirenBeneficiaryCompany(siren: Siren, beneficiaryCompagny: BodaccSplitBeneficiary) {
-    if (siren != undefined && siren != null) {
-      beneficiaryCompagny.beneficiaryCompanySiren = siren!.uniteLegale.siren;
-      if (siren!.uniteLegale.siren != undefined && siren!.uniteLegale.siren != null) {
-        if (siren.uniteLegale.periodesUniteLegale != null && siren.uniteLegale.periodesUniteLegale != undefined && siren.uniteLegale.periodesUniteLegale.length > 0) {
-          siren.uniteLegale.periodesUniteLegale.forEach(periode => {
-            if (periode.dateFin == null)
-              beneficiaryCompagny.beneficiaryCompanyDenomination = periode.denominationUniteLegale;
-            this.bodaccSplitForm.markAllAsTouched();
-          });
-        }
-      }
-    }
-  }
-
-  fillSirenSplitCompany(siren: Siren, bodaccSplitCompany: BodaccSplitCompany) {
-    if (siren != undefined && siren != null) {
-      bodaccSplitCompany.splitCompanySiren = siren!.uniteLegale.siren;
-      if (siren!.uniteLegale.siren != undefined && siren!.uniteLegale.siren != null) {
-        if (siren.uniteLegale.periodesUniteLegale != null && siren.uniteLegale.periodesUniteLegale != undefined && siren.uniteLegale.periodesUniteLegale.length > 0) {
-          siren.uniteLegale.periodesUniteLegale.forEach(periode => {
-            if (periode.dateFin == null)
-              bodaccSplitCompany.splitCompanyDenomination = periode.denominationUniteLegale;
-            this.bodaccSplitForm.markAllAsTouched();
-          });
-        }
-      }
-    }
-  }
-
 }

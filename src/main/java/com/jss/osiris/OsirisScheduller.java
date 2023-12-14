@@ -9,6 +9,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
+import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
@@ -19,6 +20,7 @@ import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.service.EtablissementPublicsDelegate;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.quotation.service.AssignationTypeService;
@@ -102,6 +104,9 @@ public class OsirisScheduller {
 	EtablissementPublicsDelegate etablissementPublicsDelegate;
 
 	@Autowired
+	AffaireService affaireService;
+
+	@Autowired
 	GuichetUniqueDelegateService guichetUniqueDelegateService;
 
 	@Autowired
@@ -112,6 +117,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	AzureReceiptService azureReceiptService;
+
+	@Autowired
+	AuditService auditService;
 
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
@@ -247,6 +255,15 @@ public class OsirisScheduller {
 		}
 	}
 
+	@Scheduled(cron = "${schedulling.affaire.rne.update}")
+	private void updateAffaireFromRne() {
+		try {
+			affaireService.updateAffaireFromRne();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.opened}")
 	private void refreshAllOpenFormalities() {
 		try {
@@ -279,6 +296,15 @@ public class OsirisScheduller {
 		try {
 			azureInvoiceService.checkInvoiceToAnalyse();
 			azureReceiptService.checkReceiptToAnalyse();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.audit.clean}")
+	private void cleanAudit() {
+		try {
+			auditService.cleanAudit();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

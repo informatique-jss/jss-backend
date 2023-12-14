@@ -67,12 +67,16 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
   }
 
+  canAddCreditNoteForCustomerOrderInvoice() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
   canAddNewInvoice() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
   canAddNewAzureInvoice() {
-    return this.loginService.hasGroup([ADMINISTRATEURS])
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
   canCancelInvoice() {
@@ -107,6 +111,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
+  canMovePaymentToWaitingAccount() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
   canCancelBankTransfert() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
@@ -115,8 +123,24 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
 
+  canOfferCustomerOrder() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
   canImportInfogreffeInvoice() {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
+
+  canByPassMultipleCustomerOrderOnAssociationCheck() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
+
+  canPutNegativePaymentIntoAccount() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
+
+  canReinitInvoicing() {
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 }
 

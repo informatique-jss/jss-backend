@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
@@ -33,13 +34,16 @@ public interface PaymentService {
 
         public List<PaymentSearchResult> searchPayments(PaymentSearch payemntSearch);
 
-        public void paymentGrab() throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+        public void paymentGrab() throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public void automatchPaymentFromUser(Payment payment)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public void automatchPayment(Payment payment)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public List<Payment> getAdvisedPaymentForInvoice(Invoice invoice);
 
@@ -49,29 +53,38 @@ public interface PaymentService {
                         List<Invoice> correspondingInvoices, List<CustomerOrder> correspondingCustomerOrder,
                         Affaire affaireRefund, Tiers tiersRefund,
                         Confrere confrereRefund, ITiers tiersOrder, List<Float> byPassAmount)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public List<Attachment> uploadOfxFile(InputStream file)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public void addCashPaymentForCustomerInvoice(Payment cashPayment, Invoice invoice)
-                        throws OsirisException, OsirisValidationException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void addInboundCheckPayment(Payment cashPayment)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public void addCashPaymentForCustomerOrder(Payment cashPayment, CustomerOrder customerOrder)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public void movePaymentFromInvoiceToCustomerOrder(Payment payment, Invoice invoice,
                         CustomerOrder customerOrder)
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException,
+                        OsirisDuplicateException;
+
+        public Payment movePaymentToWaitingAccount(Payment payment)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public Payment addOutboundPaymentForProvision(Payment payment, Provision provision)
-                        throws OsirisException, OsirisValidationException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void movePaymentFromCustomerOrderToInvoice(Payment payment, CustomerOrder customerOrder,
-                        Invoice invoice) throws OsirisException, OsirisValidationException;
+                        Invoice invoice)
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public Payment generateNewAccountPayment(Float paymentAmount, AccountingAccount sourceDepositAccountingAccount,
                         AccountingAccount targetAccountingAccount,
@@ -85,14 +98,16 @@ public interface PaymentService {
 
         public Payment generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
                         CentralPayPaymentRequest centralPayPaymentRequest)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public void generatePaymentOnInvoiceForCbPayment(Invoice invoice,
                         CentralPayPaymentRequest centralPayPaymentRequest)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
 
         public void unassociateInboundPaymentFromInvoice(Payment payment, Invoice invoice)
-                        throws OsirisException, OsirisValidationException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void cancelAppoint(Payment payment) throws OsirisException, OsirisValidationException;
 
@@ -107,5 +122,5 @@ public interface PaymentService {
         public Payment getOriginalPaymentOfPayment(Payment payment);
 
         public void putPaymentInAccount(Payment payment, CompetentAuthority competentAuthority)
-                        throws OsirisException, OsirisValidationException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 }

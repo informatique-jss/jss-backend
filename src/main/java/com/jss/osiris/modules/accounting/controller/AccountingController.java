@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
@@ -212,7 +213,7 @@ public class AccountingController {
     @GetMapping(inputEntryPoint + "/billing-closure-receipt/trigger")
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     public ResponseEntity<Boolean> triggerBillingClosureReceipt()
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         accountingRecordService.sendBillingClosureReceipt();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
@@ -408,7 +409,7 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/billing-closure-receipt/download")
-    public ResponseEntity<byte[]> downloadBillingClosureReceiptV2(@RequestParam("tiersId") Integer tiersId)
+    public ResponseEntity<byte[]> downloadBillingClosureReceipt(@RequestParam("tiersId") Integer tiersId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         byte[] data = null;
         HttpHeaders headers = null;
@@ -437,6 +438,17 @@ public class AccountingController {
 
         }
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/billing-closure-receipt/send")
+    public ResponseEntity<Boolean> sendBillingClosureReceipt(@RequestParam("tiersId") Integer tiersId)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        if (tiersId == null)
+            throw new OsirisValidationException("tiersId");
+
+        accountingRecordService.getBillingClosureReceiptFile(tiersId, false);
+
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/accounting-balance/search")

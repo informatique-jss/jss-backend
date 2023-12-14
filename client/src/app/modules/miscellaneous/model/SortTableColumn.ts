@@ -9,6 +9,11 @@ export interface SortTableColumn {
    */
   valueFonction: any | undefined;
   /**
+   * Function that return a string of the status to display
+   * The raw element and element list is provided as input
+   */
+  statusFonction: any | undefined;
+  /**
    * Function that return a string of the value to order items
    * The raw element and element list is provided as input
    * If not provided, label field is used
@@ -28,6 +33,10 @@ export interface SortTableColumn {
    * Display element as employee (value fonction must provide an Employee object !)
    */
   displayAsEmployee: boolean | undefined;
+  /**
+   * Display element as a status chips (status function must provider a valid status code !)
+   */
+  displayAsStatus: boolean | undefined;
   /**
    * Indicate to use ellipsis on the column
    */

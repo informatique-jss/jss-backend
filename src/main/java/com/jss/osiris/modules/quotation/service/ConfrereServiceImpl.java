@@ -96,6 +96,13 @@ public class ConfrereServiceImpl implements ConfrereService {
             confrere.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
             confrere.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
             confrere.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
+        } else {
+            accountingAccountService.updateAccountingAccountLabel(confrere.getAccountingAccountCustomer(),
+                    confrere.getLabel());
+            accountingAccountService.updateAccountingAccountLabel(confrere.getAccountingAccountDeposit(),
+                    confrere.getLabel());
+            accountingAccountService.updateAccountingAccountLabel(confrere.getAccountingAccountProvider(),
+                    confrere.getLabel());
         }
 
         // Set default customer order assignation to sales employee if not set

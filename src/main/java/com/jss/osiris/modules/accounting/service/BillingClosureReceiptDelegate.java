@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -537,7 +538,7 @@ public class BillingClosureReceiptDelegate {
     }
 
     private void sendBillingClosureReceiptFile(File billingClosureReceipt, ITiers tiers)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         List<Attachment> attachments = new ArrayList<Attachment>();
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -554,7 +555,7 @@ public class BillingClosureReceiptDelegate {
                     new FileInputStream(billingClosureReceipt), tiers.getId(),
                     tiersType, constantService.getAttachmentTypeBillingClosure(),
                     "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".pdf", false,
-                    "Relevé de compte du " + LocalDateTime.now().format(formatter));
+                    "Relevé de compte du " + LocalDateTime.now().format(formatter), null);
 
             for (Attachment attachment : attachmentsList)
                 if (attachment.getUploadedFile().getFilename()

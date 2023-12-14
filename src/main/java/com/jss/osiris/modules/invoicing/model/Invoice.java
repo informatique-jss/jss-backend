@@ -40,6 +40,7 @@ import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.model.TiersFollowup;
 
@@ -47,7 +48,12 @@ import com.jss.osiris.modules.tiers.model.TiersFollowup;
 @Table(indexes = { @Index(name = "idx_invoice_status", columnList = "id_invoice_status"),
 		@Index(name = "idx_invoice_manual_document_number", columnList = "id_competent_authority,manualAccountingDocumentNumber"),
 		@Index(name = "idx_invoice_tiers", columnList = "id_tiers"),
+		@Index(name = "idx_invoice_provision", columnList = "id_provision"),
 		@Index(name = "idx_invoice_customer_order_id ", columnList = "customer_order_id"),
+		@Index(name = "idx_invoice_customer_order_for_inbound_invoice", columnList = "id_customer_order_for_inbound_invoice"),
+		@Index(name = "idx_invoice_azure_invoice_id ", columnList = "id_azure_invoice"),
+		@Index(name = "idx_invoice_bank_transfert ", columnList = "id_bank_transfert"),
+		@Index(name = "idx_invoice_direct_debit_transfert ", columnList = "id_direct_debit_transfert"),
 		@Index(name = "idx_invoice_responsable", columnList = "id_responsable"), })
 public class Invoice implements IId, IAttachment, ICreatedDate {
 
@@ -80,28 +86,23 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
-	@IndexedField
 	private Responsable responsable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
-	@IndexedField
 	private Confrere confrere;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
-	@IndexedField
 	private Tiers tiers;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_competent_authority")
-	@IndexedField
 	@JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
 	private CompetentAuthority competentAuthority;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provider")
-	@IndexedField
 	private Provider provider;
 
 	@Column(length = 300, name = "billing_label")
@@ -209,7 +210,12 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_azure_invoice")
 	@JsonIgnoreProperties(value = { "invoices" }, allowSetters = true)
+	@IndexedField
 	private AzureInvoice azureInvoice;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_rff")
+	private Rff rff;
 
 	public Integer getId() {
 		return id;
@@ -569,6 +575,14 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	public void setProvision(Provision provision) {
 		this.provision = provision;
+	}
+
+	public Rff getRff() {
+		return rff;
+	}
+
+	public void setRff(Rff rff) {
+		this.rff = rff;
 	}
 
 }

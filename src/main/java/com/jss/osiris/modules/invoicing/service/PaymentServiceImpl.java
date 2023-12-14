@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.ofx.OFXParser;
@@ -30,7 +31,7 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordGenerationServi
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
-import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
+import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
@@ -43,6 +44,7 @@ import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.Affaire;
@@ -146,6 +148,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     DirectDebitTransfertService debitTransfertService;
 
+    @Autowired
+    DocumentService documentService;
+
     @Override
     public Payment getPayment(Integer id) {
         Optional<Payment> payment = paymentRepository.findById(id);
@@ -187,17 +192,20 @@ public class PaymentServiceImpl implements PaymentService {
         if (paymentSearch.getEndDate() == null)
             paymentSearch.setEndDate(LocalDateTime.now().plusYears(100));
 
+        if (paymentSearch.getIdPayment() == null)
+            paymentSearch.setIdPayment(0);
+
         return paymentRepository.findPayments(paymentSearch.getStartDate().withHour(0).withMinute(0),
                 paymentSearch.getEndDate().withHour(23).withMinute(59), paymentSearch.getMinAmount(),
                 paymentSearch.getMaxAmount(),
                 paymentSearch.getLabel(), paymentSearch.isHideAssociatedPayments(),
-                paymentSearch.isHideCancelledPayments());
+                paymentSearch.isHideCancelledPayments(), paymentSearch.isHideAppoint(), paymentSearch.getIdPayment());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void paymentGrab()
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
 
         for (Payment payment : payments) {
@@ -208,7 +216,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<Attachment> uploadOfxFile(InputStream file)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         OFXStatement operationList = ofxParser.parseOfx(file);
 
         if (operationList != null && operationList.getAccountStatements() != null
@@ -250,28 +258,38 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void automatchPaymentFromUser(Payment payment)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         automatchPayment(payment);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void automatchPayment(Payment payment)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Match inbound payment
         payment = getPayment(payment.getId());
         if (payment.getPaymentAmount() >= 0) {
             // Get corresponding entities
             List<IndexEntity> correspondingEntities = getCorrespondingEntityForInboudPayment(payment);
-            List<Invoice> correspondingInvoices = new ArrayList<Invoice>();
-            List<CustomerOrder> correspondingCustomerOrder = new ArrayList<CustomerOrder>();
-            List<Quotation> correspondingQuotation = new ArrayList<Quotation>();
+            ArrayList<Invoice> correspondingInvoices = new ArrayList<Invoice>();
+            ArrayList<CustomerOrder> correspondingCustomerOrder = new ArrayList<CustomerOrder>();
+            ArrayList<Quotation> correspondingQuotation = new ArrayList<Quotation>();
+
+            DirectDebitTransfert directDebitFound = null;
 
             // Get invoices and customer orders and quotations
-            Float totalToPay = 0f;
             ArrayList<Integer> foundInvoices = new ArrayList<Integer>();
             if (correspondingEntities != null && correspondingEntities.size() > 0) {
                 for (IndexEntity foundEntity : correspondingEntities) {
+                    if (foundEntity.getEntityType().equals(DirectDebitTransfert.class.getSimpleName())) {
+                        DirectDebitTransfert directDebitTransfert = debitTransfertService
+                                .getDirectDebitTransfert(foundEntity.getEntityId());
+                        if (directDebitTransfert != null && directDebitTransfert.getIsMatched() == false) {
+                            directDebitFound = directDebitTransfert;
+                            break;
+                        }
+                    }
+
                     Invoice invoice = getInvoiceForEntity(foundEntity);
                     if (invoice != null
                             && invoice.getInvoiceStatus().getId()
@@ -279,40 +297,24 @@ public class PaymentServiceImpl implements PaymentService {
                             && invoice.getProvider() == null && !foundInvoices.contains(invoice.getId())) {
                         foundInvoices.add(invoice.getId());
                         correspondingInvoices.add(invoice);
-                        totalToPay += invoiceService.getRemainingAmountToPayForInvoice(invoice);
                     }
                     CustomerOrder customerOrder = getCustomerOrderAtNotBilledStatusForEntity(foundEntity);
                     if (customerOrder != null) {
                         correspondingCustomerOrder.add(customerOrder);
-                        totalToPay += customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder);
                     }
                     Quotation quotation = getQuotationForEntity(foundEntity);
                     if (quotation != null) {
                         correspondingQuotation.add(quotation);
-                        totalToPay += customerOrderService.getTotalForCustomerOrder(quotation);
                     }
                 }
             }
 
-            Float remainingMoney = Math.round(payment.getPaymentAmount() * 100f) / 100f;
-
-            // Associate automatically only if we have enough item to put all money
-            // For customerOrder and quotation, we can put unlimited money on them
-            Float totalItemsAmount = 0f;
-            if (correspondingInvoices.size() > 0)
-                for (Invoice invoice : correspondingInvoices)
-                    totalItemsAmount += invoiceService.getRemainingAmountToPayForInvoice(invoice);
-
-            if (correspondingInvoices.size() > 0
-                    && totalItemsAmount > (remainingMoney + Integer.parseInt(payementLimitRefundInEuros))
-                    && (correspondingCustomerOrder.size() == 0
-                            || correspondingQuotation.size() == 0))
+            if (directDebitFound != null) {
+                associateOutboundPaymentAndDirectDebitTransfert(payment, directDebitFound);
                 return;
-
-            // Invoices to payed found
-            if (correspondingInvoices.size() > 0) {
-                remainingMoney = associateInboundPaymentAndInvoices(payment, correspondingInvoices, null);
             }
+
+            Float remainingMoney = Math.round(payment.getPaymentAmount() * 100f) / 100f;
 
             // Quotation waiting customer answer found
             // Transform them to customer order
@@ -324,16 +326,57 @@ public class PaymentServiceImpl implements PaymentService {
                         // If already in correspondingCustomerOrder list, do not consider it
                         if (correspondingCustomerOrder.size() > 0)
                             for (CustomerOrder customerOrderFound : correspondingCustomerOrder)
-                                if (customerOrderFound.getId().equals(quotation.getCustomerOrders().get(0).getId()))
+                                if (customerOrderFound.getId().equals(quotation.getCustomerOrders().get(0).getId())) {
                                     found = true;
-                        if (!found)
-                            correspondingCustomerOrder
-                                    .add(quotation.getCustomerOrders().get(0));
+                                }
+                        if (!found) {
+                            // if customer order billed, use invoice if not already matched
+                            if (quotation.getCustomerOrders().get(0).getCustomerOrderStatus().getCode()
+                                    .equals(CustomerOrderStatus.BILLED)
+                                    && quotation.getCustomerOrders().get(0).getInvoices() != null) {
+                                for (Invoice invoice : quotation.getCustomerOrders().get(0).getInvoices()) {
+                                    if (invoice.getInvoiceStatus().getId()
+                                            .equals(constantService.getInvoiceStatusSend().getId())) {
+
+                                        boolean invoiceFound = false;
+                                        if (correspondingInvoices.size() > 0) {
+                                            for (Invoice correspondingInvoice : correspondingInvoices) {
+                                                if (correspondingInvoice.getId().equals(invoice.getId())) {
+                                                    invoiceFound = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (!invoiceFound)
+                                            correspondingInvoices.add(invoice);
+                                    }
+                                }
+                            } else {
+                                correspondingCustomerOrder
+                                        .add(quotation.getCustomerOrders().get(0));
+                            }
+                        }
                     } else if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
                         Quotation validatedQuotation = quotationService.unlockQuotationFromDeposit(quotation);
                         correspondingCustomerOrder.add(validatedQuotation.getCustomerOrders().get(0));
                     }
                 }
+            }
+
+            // Associate automatically only if we have enough item to put all money
+            Float totalItemsAmount = 0f;
+            if (correspondingInvoices.size() > 0)
+                for (Invoice invoice : correspondingInvoices)
+                    totalItemsAmount += invoiceService.getRemainingAmountToPayForInvoice(invoice);
+
+            if (correspondingInvoices.size() > 0
+                    && Math.round(totalItemsAmount * 100f) != Math.round(remainingMoney * 100f))
+                if (correspondingCustomerOrder.size() == 0 && correspondingQuotation.size() == 0)
+                    return;
+
+            // Invoices to payed found
+            if (correspondingInvoices.size() > 0) {
+                remainingMoney = associateInboundPaymentAndInvoices(payment, correspondingInvoices, null);
             }
 
             // Customer order waiting for deposit found
@@ -360,24 +403,6 @@ public class PaymentServiceImpl implements PaymentService {
 
             if (refundFound != null) {
                 associateOutboundPaymentAndRefund(payment, refundFound);
-                return;
-            }
-
-            DirectDebitTransfert directDebitFound = null;
-            // Try to match direct debit transfert
-            if (correspondingEntities != null && correspondingEntities.size() > 0) {
-                for (IndexEntity foundEntity : correspondingEntities) {
-                    if (foundEntity.getEntityType().equals(DirectDebitTransfert.class.getSimpleName())) {
-                        DirectDebitTransfert directDebitTransfert = debitTransfertService
-                                .getDirectDebitTransfert(foundEntity.getEntityId());
-                        if (directDebitTransfert != null && directDebitTransfert.getIsMatched() == false)
-                            directDebitFound = directDebitTransfert;
-                    }
-                }
-            }
-
-            if (directDebitFound != null) {
-                associateOutboundPaymentAndDirectDebitTransfert(payment, directDebitFound);
                 return;
             }
 
@@ -427,58 +452,6 @@ public class PaymentServiceImpl implements PaymentService {
                     }
                 }
             }
-
-            // If not found and CB payment, try to match randomly a invoice at same day or
-            // in 3 days range before
-            if (payment.getLabel().contains("FACTURE CARTE")) {
-                InvoiceSearch invoiceSearch = new InvoiceSearch();
-                invoiceSearch.setStartDate(payment.getPaymentDate().toLocalDate().atTime(0, 0));
-                invoiceSearch.setEndDate(payment.getPaymentDate().toLocalDate().atTime(23, 59));
-                invoiceSearch.setInvoiceStatus(Arrays.asList(constantService.getInvoiceStatusReceived()));
-                invoiceSearch.setMaxAmount(payment.getPaymentAmount());
-                invoiceSearch.setMinAmount(payment.getPaymentAmount());
-                List<InvoiceSearchResult> invoicesFound = invoiceService.searchInvoices(invoiceSearch);
-
-                if (invoicesFound != null && invoicesFound.size() > 0)
-                    for (InvoiceSearchResult invoiceFound : invoicesFound)
-                        if (invoiceFound.getIdPaymentType().equals(constantService.getPaymentTypeCB().getId())) {
-                            associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0));
-                            break;
-                        }
-
-                invoiceSearch.setStartDate(payment.getPaymentDate().toLocalDate().minusDays(1).atTime(0, 0));
-                invoiceSearch.setEndDate(payment.getPaymentDate().toLocalDate().minusDays(1).atTime(23, 59));
-                invoicesFound = invoiceService.searchInvoices(invoiceSearch);
-
-                if (invoicesFound != null && invoicesFound.size() > 0)
-                    for (InvoiceSearchResult invoiceFound : invoicesFound)
-                        if (invoiceFound.getIdPaymentType().equals(constantService.getPaymentTypeCB().getId())) {
-                            associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0));
-                            break;
-                        }
-
-                invoiceSearch.setStartDate(payment.getPaymentDate().toLocalDate().minusDays(2).atTime(0, 0));
-                invoiceSearch.setEndDate(payment.getPaymentDate().toLocalDate().minusDays(2).atTime(23, 59));
-                invoicesFound = invoiceService.searchInvoices(invoiceSearch);
-
-                if (invoicesFound != null && invoicesFound.size() > 0)
-                    for (InvoiceSearchResult invoiceFound : invoicesFound)
-                        if (invoiceFound.getIdPaymentType().equals(constantService.getPaymentTypeCB().getId())) {
-                            associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0));
-                            break;
-                        }
-
-                invoiceSearch.setStartDate(payment.getPaymentDate().toLocalDate().minusDays(3).atTime(0, 0));
-                invoiceSearch.setEndDate(payment.getPaymentDate().toLocalDate().minusDays(3).atTime(23, 59));
-                invoicesFound = invoiceService.searchInvoices(invoiceSearch);
-
-                if (invoicesFound != null && invoicesFound.size() > 0)
-                    for (InvoiceSearchResult invoiceFound : invoicesFound)
-                        if (invoiceFound.getIdPaymentType().equals(constantService.getPaymentTypeCB().getId())) {
-                            associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0));
-                            break;
-                        }
-            }
         }
     }
 
@@ -487,7 +460,8 @@ public class PaymentServiceImpl implements PaymentService {
     public void manualMatchPaymentInvoicesAndCustomerOrders(Payment payment, List<Invoice> correspondingInvoices,
             List<CustomerOrder> correspondingCustomerOrder, Affaire affaireRefund, Tiers tiersRefund,
             Confrere confrereRefund, ITiers tiersOrder,
-            List<Float> byPassAmount) throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            List<Float> byPassAmount)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         payment = getPayment(payment.getId());
 
@@ -505,7 +479,7 @@ public class PaymentServiceImpl implements PaymentService {
                         correspondingInvoices, byPassAmount, remainingMoney);
             }
 
-            if (remainingMoney > 0) {
+            if (remainingMoney > Integer.parseInt(payementLimitRefundInEuros)) {
                 // Refund
                 // Try to find a customerOrder for decorate the refund ...
                 CustomerOrder customerOrder = null;
@@ -531,11 +505,14 @@ public class PaymentServiceImpl implements PaymentService {
     private Float associateInboundPaymentAndCustomerOrders(Payment payment,
             List<CustomerOrder> correspondingCustomerOrder, List<Invoice> correspondingInvoice,
             List<Float> byPassAmount, float remainingMoney)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         int amountIndex = 0;
         if (correspondingInvoice != null)
             amountIndex = correspondingInvoice.size() - 1 + 1;
+
+        if (Math.round(remainingMoney * 100) == 0)
+            return 0f;
 
         // if no by pass, put all on last customer order even if there is too much
         // money
@@ -578,7 +555,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Float associateInboundPaymentAndInvoices(Payment payment, List<Invoice> correspondingInvoices,
-            List<Float> byPassAmount) throws OsirisException, OsirisValidationException {
+            List<Float> byPassAmount) throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         int amountIndex = 0;
         Float remainingMoney = payment.getPaymentAmount();
 
@@ -591,6 +568,9 @@ public class PaymentServiceImpl implements PaymentService {
                             invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoices.get(i)) * 100f)
                             / 100f;
                     Float effectivePayment = 0f;
+
+                    if (remainingToPayForCurrentInvoice < 0)
+                        continue;
 
                     if (byPassAmount != null) {
                         effectivePayment = byPassAmount.get(amountIndex);
@@ -644,7 +624,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Float associateOutboundPaymentAndInvoice(Payment payment, Invoice correspondingInvoice)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         Float paymentAmount = Math.round(Math.abs(payment.getPaymentAmount()) * 100f) / 100f;
         Float invoiceAmount = Math
                 .round(Math.abs(invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoice)) * 100f) / 100f;
@@ -681,7 +661,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private void associateOutboundPaymentAndDirectDebitTransfert(Payment payment,
-            DirectDebitTransfert directDebitTransfert) throws OsirisException {
+            DirectDebitTransfert directDebitTransfert) throws OsirisException, OsirisValidationException {
 
         Float directDebitAmount = Math.round(directDebitTransfert.getTransfertAmount() * 100f) / 100f;
         Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
@@ -691,6 +671,7 @@ public class PaymentServiceImpl implements PaymentService {
             debitTransfertService.addOrUpdateDirectDebitTransfert(directDebitTransfert);
             payment.setDirectDebitTransfert(directDebitTransfert);
             addOrUpdatePayment(payment);
+            cancelPayment(payment);
         }
     }
 
@@ -736,7 +717,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addCashPaymentForCustomerInvoice(Payment cashPayment, Invoice invoice)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         cashPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         cashPayment.setSourceAccountingAccount(constantService.getAccountingAccountCaisse());
         addOrUpdatePayment(cashPayment);
@@ -747,7 +728,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addInboundCheckPayment(Payment checkPayment)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         checkPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         checkPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
         addOrUpdatePayment(checkPayment);
@@ -758,7 +739,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Payment addOutboundPaymentForProvision(Payment payment, Provision provision)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         payment.setProvision(provision);
         payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         payment.setSourceAccountingAccount(
@@ -773,7 +754,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addCashPaymentForCustomerOrder(Payment cashPayment, CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         cashPayment.setSourceAccountingAccount(constantService.getAccountingAccountCaisse());
         cashPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         addOrUpdatePayment(cashPayment);
@@ -838,9 +819,9 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setPaymentType(constantService.getPaymentTypeAccount());
         if (newPayment.getPaymentAmount() > 0) {
             newPayment.setSourceAccountingAccount(tiersToGiveAppoint.getAccountingAccountCustomer());
-            newPayment.setTargetAccountingAccount(accountingAccountService.getProfitAccountingAccount());
+            newPayment.setTargetAccountingAccount(constantService.getAccountingAccountProfit());
         } else {
-            newPayment.setSourceAccountingAccount(accountingAccountService.getLostAccountingAccount());
+            newPayment.setSourceAccountingAccount(constantService.getAccountingAccountLost());
             newPayment.setTargetAccountingAccount(tiersToGiveAppoint.getAccountingAccountCustomer());
         }
 
@@ -929,7 +910,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private void associatePaymentAndInvoice(Payment payment, Invoice invoice, boolean checkForAppoint)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         invoice = invoiceService.getInvoice(invoice.getId());
         payment.setInvoice(invoice);
         if (invoice.getPayments() == null)
@@ -961,20 +942,39 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void movePaymentFromInvoiceToCustomerOrder(Payment payment, Invoice invoice, CustomerOrder customerOrder)
-            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException, OsirisDuplicateException {
         associateInboundPaymentAndCustomerOrders(payment, Arrays.asList(customerOrder), null,
                 Arrays.asList(payment.getPaymentAmount()), payment.getPaymentAmount());
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Payment movePaymentToWaitingAccount(Payment payment)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+        payment = getPayment(payment.getId());
+        cancelPayment(payment);
+        Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
+                accountingAccountService.getWaitingAccountingAccount());
+        newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+        newPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
+        addOrUpdatePayment(newPayment);
+        if (newPayment.getPaymentAmount() > 0)
+            accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(newPayment,
+                    false);
+        else
+            accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(newPayment);
+        return newPayment;
+    }
+
+    @Override
     public void movePaymentFromCustomerOrderToInvoice(Payment payment, CustomerOrder customerOrder, Invoice invoice)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         associateInboundPaymentAndInvoices(payment, Arrays.asList(invoice), null);
     }
 
     private void generateInvoiceForCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest,
             Payment payment, Invoice targetInvoice, CustomerOrder targetCustomerOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         Invoice invoice = new Invoice();
 
@@ -1028,10 +1028,10 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Payment generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
             CentralPayPaymentRequest centralPayPaymentRequest)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
         // Generate payment to materialize CB payment
-        Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, null);
+        Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, null, customerOrder);
         generateInvoiceForCentralPayPayment(centralPayPaymentRequest, payment, null, customerOrder);
         associateInboundPaymentAndCustomerOrders(payment, Arrays.asList(customerOrder), null, null,
                 payment.getPaymentAmount());
@@ -1041,16 +1041,16 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void generatePaymentOnInvoiceForCbPayment(Invoice invoice,
             CentralPayPaymentRequest centralPayPaymentRequest)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Generate payment to materialize CB payment
-        Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, null);
+        Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, invoice, null);
         generateInvoiceForCentralPayPayment(centralPayPaymentRequest, payment, invoice, null);
         associateInboundPaymentAndInvoices(payment, Arrays.asList(invoice), null);
     }
 
     @Override
     public void unassociateInboundPaymentFromInvoice(Payment payment, Invoice invoice)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         cancelPayment(payment);
         Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                 accountingAccountService.getWaitingAccountingAccount());
@@ -1060,12 +1060,25 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Payment generateCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest, boolean isForDepostit,
-            Invoice invoice)
+            Invoice invoice, CustomerOrder customerOrder)
             throws OsirisException {
         Payment payment = new Payment();
         payment.setIsExternallyAssociated(false);
         payment.setBankId(centralPayPaymentRequest.getPaymentRequestId());
         payment.setLabel(centralPayPaymentRequest.getDescription());
+
+        // Compute DO label
+        CustomerOrder labelledCustomerOrder = customerOrder;
+        if (invoice != null && invoice.getCustomerOrder() != null)
+            labelledCustomerOrder = invoice.getCustomerOrder();
+
+        if (labelledCustomerOrder != null) {
+            InvoiceLabelResult labelResult = invoiceHelper.computeInvoiceLabelResult(
+                    documentService.getBillingDocument(labelledCustomerOrder.getDocuments()),
+                    labelledCustomerOrder, quotationService.getCustomerOrderOfQuotation(labelledCustomerOrder));
+            if (labelResult != null && labelResult.getBillingLabel() != null)
+                payment.setLabel(payment.getLabel() + " - " + labelResult.getBillingLabel());
+        }
         payment.setPaymentAmount(centralPayPaymentRequest.getTotalAmount() / 100f);
         payment.setPaymentDate(centralPayPaymentRequest.getCreationDate());
         payment.setPaymentType(constantService.getPaymentTypeCB());
@@ -1092,6 +1105,7 @@ public class PaymentServiceImpl implements PaymentService {
         entityTypesToSearch.add(Invoice.class.getSimpleName());
         entityTypesToSearch.add(CustomerOrder.class.getSimpleName());
         entityTypesToSearch.add(Quotation.class.getSimpleName());
+        entityTypesToSearch.add(DirectDebitTransfert.class.getSimpleName());
 
         return getCorrespondingEntityForPayment(payment, entityTypesToSearch);
     }
@@ -1300,14 +1314,25 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void putPaymentInAccount(Payment payment, CompetentAuthority competentAuthority)
-            throws OsirisException, OsirisValidationException {
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         cancelPayment(payment);
-        Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
-                competentAuthority.getAccountingAccountDeposit());
-        newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
-        accountingRecordGenerationService
-                .generateAccountingRecordOnPaymentOnDepositCompetentAuthorityAccount(newPayment);
-        newPayment.setCompetentAuthority(competentAuthority);
+        Payment newPayment = null;
+        if (payment.getPaymentAmount() > 0) {
+            newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
+                    competentAuthority.getAccountingAccountDeposit());
+            newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
+            accountingRecordGenerationService
+                    .generateAccountingRecordOnIncomingPaymentOnDepositCompetentAuthorityAccount(newPayment);
+            newPayment.setCompetentAuthority(competentAuthority);
+        } else {
+            newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
+                    competentAuthority.getAccountingAccountDeposit());
+            newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+            newPayment.setTargetAccountingAccount(competentAuthority.getAccountingAccountProvider());
+            accountingRecordGenerationService
+                    .generateAccountingRecordOnOutgoingPaymentOnDepositCompetentAuthorityAccount(newPayment);
+            newPayment.setCompetentAuthority(competentAuthority);
+        }
         addOrUpdatePayment(newPayment);
     }
 }

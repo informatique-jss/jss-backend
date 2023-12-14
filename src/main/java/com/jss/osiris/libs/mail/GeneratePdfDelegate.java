@@ -133,7 +133,8 @@ public class GeneratePdfDelegate {
                     (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
                             ? announcement.getNoticeHeader()
                                     .replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
-                                    .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
+                                    .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ").replaceAll("<wbr>", " ")
+                                    .replaceAll("</wbr>", " ")
                             : null);
             ctx.setVariable("notice",
                     StringEscapeUtils.unescapeHtml4(announcement.getNotice()
@@ -378,8 +379,7 @@ public class GeneratePdfDelegate {
         ArrayList<VatMail> vats = null;
         Float vatTotal = 0f;
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-            if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
-                    && invoiceItem.getVatPrice() > 0) {
+            if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null) {
                 vatTotal += invoiceItem.getVatPrice();
                 if (vats == null)
                     vats = new ArrayList<VatMail>();
@@ -387,12 +387,11 @@ public class GeneratePdfDelegate {
                 for (VatMail vatMail : vats) {
                     if (vatMail.getLabel().equals(invoiceItem.getVat().getLabel())) {
                         vatFound = true;
-                        if (vatMail.getTotal() == null && invoiceItem.getVatPrice() != null
-                                && invoiceItem.getVatPrice() > 0) {
+                        if (vatMail.getTotal() == null && invoiceItem.getVatPrice() != null) {
                             vatMail.setTotal(invoiceItem.getVatPrice());
                             vatMail.setBase(invoiceItem.getPreTaxPrice()
                                     - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
-                        } else if (invoiceItem.getVatPrice() != null && invoiceItem.getVatPrice() > 0) {
+                        } else if (invoiceItem.getVatPrice() != null) {
                             vatMail.setTotal(vatMail.getTotal() + invoiceItem.getVatPrice());
                             vatMail.setBase(vatMail.getBase() + invoiceItem.getPreTaxPrice()
                                     - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
@@ -451,13 +450,13 @@ public class GeneratePdfDelegate {
         if (invoice.getPayments() != null)
             for (Payment payment : invoice.getPayments()) {
                 if (!payment.getIsCancelled())
-                    invoicePayment.add(paymentService.getOriginalPaymentOfPayment(payment));
+                    invoicePayment.add(payment);
             }
 
         if (customerOrder.getPayments() != null)
             for (Payment payment : customerOrder.getPayments())
                 if (!payment.getIsCancelled()) {
-                    invoicePayment.add(paymentService.getOriginalPaymentOfPayment(payment));
+                    invoicePayment.add(payment);
                     remainingToPay -= payment.getPaymentAmount();
                 }
 

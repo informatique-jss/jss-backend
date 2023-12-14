@@ -230,7 +230,7 @@
           </customer-order-payment>
         </mat-tab>
         <mat-tab label="Historique" *ngIf="quotation.id!=null && quotation.id!=undefined">
-          <history [entity]="quotation" [entityType]="getEntityType()"></history>
+          <history [entity]="quotation" [entityType]="getEntityType()" [parseTypeList]="getParseTypeList()"></history>
         </mat-tab>
       </mat-tab-group>
     </div>
@@ -265,6 +265,11 @@
 <button matTooltip="Recevoir le mail de devis" mat-fab color="accent" class="fourth-fab-button"
   *ngIf="editMode==false && instanceOfQuotationFn(quotation) && quotation.id" (click)="generateQuotationMail()">
   <mat-icon>mail</mat-icon>
+</button>
+<button matTooltip="Réinitialiser la facturation" mat-fab color="accent" class="fifth-fab-button"
+  *ngIf="editMode==false && instanceOfCustomerOrderFn(quotation) && quotation.id && canReinitInvoicing()"
+  (click)="reinitInvoicing()">
+  <mat-icon>autorenew</mat-icon>
 </button>
 
 <button matTooltip="Recevoir un mail" mat-fab color="accent" class="fourth-fab-button mail-menu"
@@ -313,12 +318,16 @@
 
 
 <button matTooltip="Changer de statut" mat-fab color="accent" class="third-fab-button"
-  *ngIf="editMode==false && instanceOfCustomerOrderFn(this.quotation) &&quotation && quotation.customerOrderStatus"
+  *ngIf="editMode==false && instanceOfCustomerOrderFn(this.quotation) &&quotation && quotation.customerOrderStatus && (!quotation.isGifted)"
   [matMenuTriggerFor]="menu">
   <mat-icon>done</mat-icon>
   <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
     <button mat-menu-item (click)="displayCustomerOrderWorkflowDialog()">
       <span>Voir le workflow</span>
+    </button>
+    <button mat-menu-item (click)="offerCustomerOrder()"
+      *ngIf="quotation.customerOrderStatus.code==CUSTOMER_ORDER_STATUS_BILLED && canOfferCustomerOrder()">
+      <mat-icon>redeem</mat-icon><span>Offrir la commande</span>
     </button>
     <button disabled mat-menu-item *ngIf="quotation.customerOrderStatus.successors">
       <span>Passer à</span>

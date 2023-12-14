@@ -93,7 +93,6 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_default_customer_order_employee")
-	@IndexedField
 	private Employee defaultCustomerOrderEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -182,6 +181,10 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 	@IndexedField
 	private Integer idAs400;
 	private Integer newIdAs400;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_rff_frequency")
+	private RffFrequency rffFrequency;
 
 	public Tiers getTiers() {
 		return tiers;
@@ -532,6 +535,11 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 		if (getTiers() != null)
 			return getTiers().getIsProvisionalPaymentMandatory();
 		return null;
+	}
+
+	@Override
+	public String getLabel() {
+		return getFirstname() + " " + getLastname();
 	}
 
 }

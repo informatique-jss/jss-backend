@@ -1582,13 +1582,10 @@ public class AccountingExportHelper {
                                                 || completeAccountingRecord.getContrePasse() != null)
                                         continue;
 
-                                if (completeAccountingRecord.getAccountingAccount().getPrincipalAccountingAccount()
-                                                .getId()
-                                                .equals(constantService.getPrincipalAccountingAccountProfit().getId())
-                                                || completeAccountingRecord.getAccountingAccount()
-                                                                .getPrincipalAccountingAccount().getId()
-                                                                .equals(constantService
-                                                                                .getPrincipalAccountingAccountLost()
+                                if (completeAccountingRecord.getAccountingAccount().getId()
+                                                .equals(constantService.getAccountingAccountProfit().getId())
+                                                || completeAccountingRecord.getAccountingAccount().getId()
+                                                                .equals(constantService.getAccountingAccountLost()
                                                                                 .getId()))
                                         continue;
 

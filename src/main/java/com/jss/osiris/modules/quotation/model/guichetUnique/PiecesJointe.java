@@ -8,15 +8,21 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DocumentExtension;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TaciteReconduction;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_piece_jointe_content", columnList = "id_content"),
+        @Index(name = "idx_piece_jointe_id", columnList = "attachmentId") })
 public class PiecesJointe implements Serializable {
 
     @Column(length = 255)
@@ -73,6 +79,7 @@ public class PiecesJointe implements Serializable {
     private String path;
 
     @Id
+    @JsonAlias({ "id" })
     private String attachmentId;
 
     @Column(length = 255)

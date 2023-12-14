@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.transfer.PmtInfBean;
@@ -28,7 +29,8 @@ public interface BankTransfertService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public File getBankTransfertExport(BankTransfertSearch transfertSearch)
-                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException,
+                        OsirisDuplicateException;
 
         public BankTransfert cancelBankTransfert(BankTransfert bankTransfert);
 

@@ -24,6 +24,10 @@ export class TiersService extends AppRestService<Tiers>{
     return this.get(new HttpParams().set("idResponsable", idResponsable), "tiers/responsable");
   }
 
+  deleteTiers(tiers: Tiers) {
+    return this.get(new HttpParams().set("idTiers", tiers.id), "tiers/delete", "Tiers supprimé avec succès");
+  }
+
   addOrUpdateTiers(tiers: Tiers) {
     return this.addOrUpdate(new HttpParams(), "tiers", tiers, "Tiers enregistré", "Erreur lors de l'enregistrement du tiers");
   }

@@ -1,13 +1,13 @@
 <div class="mat-elevation-z2 form-div " [ngClass]="{'min-height':!isForDashboard }">
   <div class=" full-width">
-    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && !isForTiersIntegration && orderingSearch">
+    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard  && orderingSearch">
       <tr>
-        <td>
+        <td *ngIf=" !isForTiersIntegration">
           <autocomplete-employee [(model)]="orderingSearch.salesEmployee" label="Commercial" [form]="orderingSearchForm"
             propertyName="salesEmployee" [isMandatory]="false">
           </autocomplete-employee>
         </td>
-        <td>
+        <td *ngIf=" !isForTiersIntegration">
           <autocomplete-employee [(model)]="orderingSearch.assignedToEmployee" label="Assignée à"
             [form]="orderingSearchForm" propertyName="assignedToEmployee" [isMandatory]="false">
           </autocomplete-employee>
@@ -17,11 +17,20 @@
             [form]="orderingSearchForm" propertyName="customerOrderStatus" [isMandatory]="false" [isDisabled]="false"
             [defaultCodesSelected]="defaultStatusFilter"></select-customer-order-status>
         </td>
-        <td>
+        <td *ngIf=" !isForTiersIntegration">
           <generic-date-range-picker [(modelStart)]="orderingSearch.startDate" [(modelEnd)]="orderingSearch.endDate"
             label="Date de création" [form]="orderingSearchForm" propertyNameStart="startDate"
             propertyNameEnd="endDate">
           </generic-date-range-picker>
+        </td>
+        <td *ngIf="isForPaymentAssocationIntegration">
+          <generic-input [(model)]="orderingSearch.idCustomerOrder" label="Numéro de commande"
+            [form]="orderingSearchForm" propertyName="orderingSearchForm" [isMandatory]="false"></generic-input>
+        </td>
+        <td *ngIf="isForPaymentAssocationIntegration">
+          <autocomplete-tiers-individual [(model)]="searchedTiers" label="Tiers" [form]="orderingSearchForm"
+            propertyName="tiers" [isMandatory]="false"
+            [authorizeNonIndividualTiers]="true"></autocomplete-tiers-individual>
         </td>
         <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchOrders()" class="add-button">

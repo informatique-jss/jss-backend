@@ -18,6 +18,7 @@ import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { AppService } from 'src/app/services/app.service';
 import { CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
 import { Responsable } from '../../../tiers/model/Responsable';
 import { AssociationSummaryTable } from '../../model/AssociationSummaryTable';
@@ -73,6 +74,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
     private customerOrderService: CustomerOrderService,
     private constantService: ConstantService,
     private formBuilder: FormBuilder,
+    private habilitationsService: HabilitationsService,
   ) { }
 
   refundForm = this.formBuilder.group({
@@ -201,14 +203,10 @@ export class AssociatePaymentDialogComponent implements OnInit {
           this.appService.displaySnackBar("Veuillez choisir une facture avec un total de " + this.payment.paymentAmount + " €", true, 15);
           return;
         }
-        if (this.payment && invoice.manualPaymentType.id != this.payment.paymentType.id) {
-          this.appService.displaySnackBar("Le type de réglement de la facture et le type de paiement doivent être identiques", true, 15);
-          return;
-        }
       }
     }
 
-    if (!this.isSameCustomerOrder(getCustomerOrderForInvoice(invoice))) {
+    if (!this.isSameCustomerOrder(getCustomerOrderForInvoice(invoice)) && !this.habilitationsService.canByPassMultipleCustomerOrderOnAssociationCheck()) {
       this.appService.displaySnackBar("Veuillez choisir une facture du même donneur d'ordre que les autres éléments associés au paiement", true, 15);
       return;
     }
@@ -375,6 +373,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
       }
     } else if (this.invoice && this.invoice.customerOrder) {
       affaires.push(...this.invoice!.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban && asso.affaire.paymentIban != "").map(asso => asso.affaire));
+    } else if (this.customerOrder) {
+      affaires.push(...this.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban && asso.affaire.paymentIban != "").map(asso => asso.affaire));
     }
     return affaires;
   }

@@ -38,7 +38,10 @@ import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
+import com.jss.osiris.modules.tiers.model.RffFrequency;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersCategory;
+import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
 public interface ConstantService {
@@ -368,9 +371,9 @@ public interface ConstantService {
 
     public PrincipalAccountingAccount getPrincipalAccountingAccountWaiting() throws OsirisException;
 
-    public PrincipalAccountingAccount getPrincipalAccountingAccountLost() throws OsirisException;
+    public AccountingAccount getAccountingAccountLost() throws OsirisException;
 
-    public PrincipalAccountingAccount getPrincipalAccountingAccountProfit() throws OsirisException;
+    public AccountingAccount getAccountingAccountProfit() throws OsirisException;
 
     public AccountingAccount getAccountingAccountBankCentralPay() throws OsirisException;
 
@@ -390,4 +393,13 @@ public interface ConstantService {
 
     public NoticeType getNoticeOfNameChange() throws OsirisException;
 
+    public TiersFollowupType getTiersFollowupTypeInvoiceReminder() throws OsirisException;
+
+    public TiersCategory getTiersCategoryPresse() throws OsirisException;
+
+    public RffFrequency getRffFrequencyAnnual() throws OsirisException;
+
+    public RffFrequency getRffFrequencyMonthly() throws OsirisException;
+
+    public RffFrequency getRffFrequencyQuarterly() throws OsirisException;
 }

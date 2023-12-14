@@ -52,8 +52,8 @@ export class HistoryComponent implements OnInit {
     this.internalHistoryActions = this.historyActions;
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "fieldName", fieldName: "fieldName", label: "Champ" } as SortTableColumn);
-    this.displayedColumns.push({ id: "oldValue", fieldName: "oldValue", label: "Ancienne valeur" } as SortTableColumn);
-    this.displayedColumns.push({ id: "newValue", fieldName: "newValue", label: "Nouvelle valeur" } as SortTableColumn);
+    this.displayedColumns.push({ id: "oldValue", fieldName: "oldValue", label: "Ancienne valeur", valueFonction: (element: any) => { return this.parseValues(element.oldValue) } } as SortTableColumn);
+    this.displayedColumns.push({ id: "newValue", fieldName: "newValue", label: "Nouvelle valeur", valueFonction: (element: any) => { return this.parseValues(element.newValue) } } as SortTableColumn);
     this.displayedColumns.push({ id: "createdBy", fieldName: "username", label: "Auteur" } as SortTableColumn);
     this.displayedColumns.push({ id: "creationDate", fieldName: "datetime", label: "Modifié le", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
   }
@@ -79,6 +79,7 @@ export class HistoryComponent implements OnInit {
       }
 
       setTimeout(() => {
+        console.log("aa");
         this.auditDataSource = new MatTableDataSource(this.audits);
         this.auditDataSource.sort = this.sort;
         this.auditDataSource.sortingDataAccessor = (item: Audit, property) => {

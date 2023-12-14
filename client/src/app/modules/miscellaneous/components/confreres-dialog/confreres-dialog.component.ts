@@ -1,10 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Confrere } from '../../../quotation/model/Confrere';
 import { JournalType } from '../../../quotation/model/JournalType';
 import { ConfrereService } from '../../../quotation/services/confrere.service';
 import { Department } from '../../model/Department';
 import { SortTableColumn } from '../../model/SortTableColumn';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'confreres-dialog',
@@ -28,6 +29,7 @@ export class ConfrereDialogComponent implements OnInit {
   filterValue: string = "";
 
   constructor(private confrereService: ConfrereService,
+    public confirmationDialog: MatDialog,
     private confreresDialogRef: MatDialogRef<ConfrereDialogComponent>) { }
 
   ngOnInit() {
@@ -90,13 +92,27 @@ export class ConfrereDialogComponent implements OnInit {
   }
 
   chooseConfrere(confrereFlatten: Confrere) {
-    let outConfrere = null;
+    let outConfrere = {} as Confrere;
     this.confreres.forEach(confrere => {
       if (confrere.id == confrereFlatten.id)
         outConfrere = confrere;
       return;
     });
-    this.confreresDialogRef.close(outConfrere);
+
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Confrère non autorisé !",
+        content: "Attention, ce confrère n'est pas censé être utilisé ! Rapprochez-vous du service des Annonces Légales avant de l'utiliser !",
+        closeActionText: "Annuler",
+        validationActionText: "Choisir"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult)
+        this.confreresDialogRef.close(outConfrere!);
+    });
   }
 
   closeDialog() {

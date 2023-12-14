@@ -49,6 +49,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   TIERS_FOLLOWUP_TYPE_REFERENTIAL = "Type de suivi";
   TIERS_TYPE_REFERENTIAL = "Type de tiers";
   ATTACHMENT_TYPE_REFERENTIAL = "Type de pièces jointes";
+  TYPE_DOCUMENT_REFERENTIAL = "Type de pièces jointes - INPI";
   CIVILITY_REFERENTIAL = "Civilité";
   COMPETENT_AUTHORITY_TYPE_REFERENTIAL = "Type d'autorité compétente";
   COUNTRY_REFERENTIAL = "Pays";
@@ -80,6 +81,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL = "Compte comptable principal";
   CUSTOMER_ORDER_ORIGIN_REFERENTIAL = "Origine des commandes";
   DEPARTMENT_VAT_SETTING_REFERENTIAL = "TVA par département";
+  RFF_FREQUENCY_REFERENTIAL = "Périodicité des RFF";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -110,9 +112,11 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.REFUND_TYPE_REFERENTIAL);
     this.referentials.push(this.SUBSCRIPTION_PERIOD_TYPE_REFERENTIAL);
     this.referentials.push(this.TIERS_CATEGORY_REFERENTIAL);
+    this.referentials.push(this.RFF_FREQUENCY_REFERENTIAL);
     this.referentials.push(this.TIERS_FOLLOWUP_TYPE_REFERENTIAL);
     this.referentials.push(this.TIERS_TYPE_REFERENTIAL);
     this.referentials.push(this.ATTACHMENT_TYPE_REFERENTIAL);
+    this.referentials.push(this.TYPE_DOCUMENT_REFERENTIAL);
     this.referentials.push(this.CIVILITY_REFERENTIAL);
     this.referentials.push(this.COMPETENT_AUTHORITY_TYPE_REFERENTIAL);
     this.referentials.push(this.COUNTRY_REFERENTIAL);

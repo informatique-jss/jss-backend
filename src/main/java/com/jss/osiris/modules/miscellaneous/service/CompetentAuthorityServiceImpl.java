@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
+import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.repository.CompetentAuthorityRepository;
 
@@ -54,17 +56,15 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     }
 
     @Override
-    public CompetentAuthority getCompetentAuthorityByOwncloudFolderName(String folderName) {
-        Optional<CompetentAuthority> competentAuthority = competentAuthorityRepository
-                .findByOwncloudFolderName(folderName);
-        if (competentAuthority.isPresent())
-            return competentAuthority.get();
-        return null;
+    public List<CompetentAuthority> getCompetentAuthorityByInpiReference(String inpiReference) {
+        return competentAuthorityRepository.findByInpiReference(inpiReference);
     }
 
     @Override
-    public List<CompetentAuthority> getCompetentAuthorityByInpiReference(String inpiReference) {
-        return competentAuthorityRepository.findByInpiReference(inpiReference);
+    public List<CompetentAuthority> getCompetentAuthorityByCityAndAuthorityType(City city,
+            CompetentAuthorityType competentAuthorityType) {
+        return competentAuthorityRepository.findByCities_IdAndCompetentAuthorityType(city.getId(),
+                competentAuthorityType);
     }
 
     @Override
@@ -101,6 +101,13 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
             competentAuthority.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
             competentAuthority
                     .setAccountingAccountDepositProvider(accountingAccountCouple.getAccountingAccountDeposit());
+        } else {
+            accountingAccountService.updateAccountingAccountLabel(competentAuthority.getAccountingAccountCustomer(),
+                    competentAuthority.getLabel());
+            accountingAccountService.updateAccountingAccountLabel(competentAuthority.getAccountingAccountDeposit(),
+                    competentAuthority.getLabel());
+            accountingAccountService.updateAccountingAccountLabel(competentAuthority.getAccountingAccountProvider(),
+                    competentAuthority.getLabel());
         }
         return competentAuthorityRepository.save(competentAuthority);
     }

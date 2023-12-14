@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
@@ -114,7 +115,9 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
             DirectDebitTransfert directDebitTransfert) {
         if (directDebitTransfert.getIsMatched() == null)
             directDebitTransfert.setIsMatched(false);
-        return directDebitTransfertRepository.save(directDebitTransfert);
+        DirectDebitTransfert transfert = directDebitTransfertRepository.save(directDebitTransfert);
+        indexEntityService.indexEntity(transfert);
+        return transfert;
     }
 
     @Override
@@ -133,12 +136,16 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
             directDebitTransfertSearch.setStartDate(LocalDateTime.now().minusYears(100));
         if (directDebitTransfertSearch.getEndDate() == null)
             directDebitTransfertSearch.setEndDate(LocalDateTime.now().plusYears(100));
+        if (directDebitTransfertSearch.getIdDirectDebitTransfert() == null)
+            directDebitTransfertSearch.setIdDirectDebitTransfert(0);
         return directDebitTransfertRepository.findTransferts(
                 directDebitTransfertSearch.getStartDate().withHour(0).withMinute(0),
                 directDebitTransfertSearch.getEndDate().withHour(23).withMinute(59),
                 directDebitTransfertSearch.getMinAmount(),
                 directDebitTransfertSearch.getMaxAmount(),
-                directDebitTransfertSearch.getLabel(), directDebitTransfertSearch.isHideExportedDirectDebitTransfert());
+                directDebitTransfertSearch.getLabel(), directDebitTransfertSearch.isHideExportedDirectDebitTransfert(),
+                directDebitTransfertSearch.getIdDirectDebitTransfert());
+
     }
 
     @Override
@@ -207,7 +214,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
     @Override
     @Transactional(rollbackFor = Exception.class)
     public File getDirectDebitTransfertExport(DirectDebitTransfertSearch transfertSearch)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         List<DirectDebitTransfertSearchResult> bankTransferts = searchDirectDebitTransfert(transfertSearch);
         String xml = "";

@@ -1,13 +1,13 @@
 <div class="mat-elevation-z2 form-div" [ngClass]="{'min-height':!isForDashboard}">
   <div class="full-width">
-    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && !isForTiersIntegration && quotationSearch">
+    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && quotationSearch">
       <tr>
-        <td>
+        <td *ngIf=" !isForTiersIntegration">
           <autocomplete-employee [(model)]="quotationSearch.salesEmployee" label="Commercial"
             [form]="quotationSearchForm" propertyName="salesEmployee" [isMandatory]="false">
           </autocomplete-employee>
         </td>
-        <td>
+        <td *ngIf=" !isForTiersIntegration">
           <autocomplete-employee [(model)]="quotationSearch.assignedToEmployee" label="Assigné à"
             [form]="quotationSearchForm" propertyName="assignedToEmployee" [isMandatory]="false">
           </autocomplete-employee>
@@ -17,7 +17,7 @@
             [form]="quotationSearchForm" propertyName="quotationStatus" [isMandatory]="false" [isDisabled]="false">
           </select-quotation-status>
         </td>
-        <td>
+        <td *ngIf=" !isForTiersIntegration">
           <generic-date-range-picker [(modelStart)]="quotationSearch.startDate" [(modelEnd)]="quotationSearch.endDate"
             label="Date de création" [form]="quotationSearchForm" propertyNameStart="startDate" [isMandatory]="false"
             propertyNameEnd="endDate">

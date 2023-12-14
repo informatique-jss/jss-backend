@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
@@ -115,6 +116,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     FormaliteService formaliteService;
 
+    @Autowired
+    CharacterPriceService characterPriceService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -132,7 +136,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Transactional(rollbackFor = Exception.class)
     public AssoAffaireOrder addOrUpdateAssoAffaireOrderFromUser(
             AssoAffaireOrder assoAffaireOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // To avoid laizy failed of customerOrder subcollections
         assoAffaireOrder
                 .setCustomerOrder(customerOrderService.getCustomerOrder(assoAffaireOrder.getCustomerOrder().getId()));
@@ -142,7 +146,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Override
     public AssoAffaireOrder addOrUpdateAssoAffaireOrder(
             AssoAffaireOrder assoAffaireOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         for (Provision provision : assoAffaireOrder.getProvisions()) {
             provision.setAssoAffaireOrder(assoAffaireOrder);
         }
@@ -161,6 +165,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee) {
         asso.setAssignedTo(employee);
         assoAffaireOrderRepository.save(asso);
+        if (asso.getCustomerOrder() != null)
+            indexEntityService.indexEntity(asso);
     }
 
     @Override
@@ -176,7 +182,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Override
     public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder,
             Boolean isFromUser)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Complete domiciliation end date
         int nbrAssignation = 0;
         Employee currentEmployee = null;
@@ -239,13 +245,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 if (formalite.getFormalitesGuichetUnique() != null) {
                     for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique()) {
                         formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formaliteGuichetUnique,
-                                formalite);
+                                formalite, true);
                     }
                 }
 
                 if (formalite.getId() != null) {
                     Formalite originalFormalite = formaliteService.getFormalite(formalite.getId());
-                    if (originalFormalite.getFormalitesGuichetUnique() != null)
+                    if (originalFormalite != null && originalFormalite.getFormalitesGuichetUnique() != null)
                         for (FormaliteGuichetUnique formaliteGuichetUniqueOrigin : originalFormalite
                                 .getFormalitesGuichetUnique()) {
                             Boolean found = false;
@@ -281,10 +287,14 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             if (provision.getAnnouncement() != null) {
                 Announcement announcement = provision.getAnnouncement();
 
+                announcementService.completeAnnouncementWithAffaire(assoAffaireOrder);
+
                 // If complex, extract string from PDF and put it to notice
                 if (announcement.getIsComplexAnnouncement())
                     announcement = announcementService.updateComplexAnnouncementNotice(announcement, provision,
                             isFromUser);
+
+                announcement.setCharacterNumber(characterPriceService.getCharacterNumber(provision, true));
 
                 if (customerOrder.getId() == null || announcement.getAnnouncementStatus() == null)
                     announcement.setAnnouncementStatus(announcementStatusService
@@ -426,7 +436,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (maxWeightEmployee != null) {
             if (assoAffaireOrder.getAssignedTo() == null)
                 assoAffaireOrder.setAssignedTo(maxWeightEmployee);
-          
+
             for (Provision provision : assoAffaireOrder.getProvisions())
                 if (provision.getAssignedTo() == null)
                     provision.setAssignedTo(maxWeightEmployee);
@@ -492,5 +502,4 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 assignedId, affaireSearch.getLabel(),
                 statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId, affaireId);
     }
-
 }

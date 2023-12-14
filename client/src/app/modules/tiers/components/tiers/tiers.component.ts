@@ -1,7 +1,8 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { REPORTING_DATASET_CUSTOMER_ORDER_FOR_TIERS } from 'src/app/libs/Constants';
+import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
@@ -10,7 +11,6 @@ import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
 import { InvoiceSearch } from '../../../invoicing/model/InvoiceSearch';
-import { ReportingService } from '../../../reporting/services/reporting.service';
 import { Responsable } from '../../model/Responsable';
 import { Tiers } from '../../model/Tiers';
 import { TiersService } from '../../services/tiers.service';
@@ -38,9 +38,6 @@ export class TiersComponent implements OnInit, AfterContentChecked {
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   responsableAccountSearch: Tiers | undefined;
 
-  dataToDisplay: any | undefined;
-  reportingSettings: string = "";
-
   saveObservableSubscription: Subscription = new Subscription;
 
   selectedTabIndex = 0;
@@ -59,7 +56,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     private activatedRoute: ActivatedRoute,
     protected searchService: SearchService,
     private constantService: ConstantService,
-    private reportingService: ReportingService,
+    public confirmationDialog: MatDialog,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit() {
@@ -85,7 +82,6 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.responsableMainComponent?.setSelectedResponsableId(this.idResponsable ? this.idResponsable : idTiers);
 
         this.loadQuotationFilter();
-        this.loadReporting();
       })
       // Load by tiers
     } else if (idTiers != null && idTiers != undefined) {
@@ -94,7 +90,6 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.tiersService.setCurrentViewedTiers(this.tiers);
         this.changeHeader();
         this.toggleTabs();
-        this.loadReporting();
 
         this.loadQuotationFilter();
       })
@@ -115,11 +110,6 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
   ngOnDestroy() {
     this.saveObservableSubscription.unsubscribe();
-  }
-
-  loadReporting() {
-    this.reportingSettings = '{"derivedAttributes":{},"hiddenAttributes":[],"hiddenFromAggregators":[],"hiddenFromDragDrop":[],"menuLimit":50000,"cols":["Mois de la facture"],"rows":[],"vals":["Prix TTC"],"rowOrder":"key_a_to_z","colOrder":"key_a_to_z","exclusions":{},"inclusions":{},"unusedAttrsVertical":85,"autoSortUnusedAttrs":false,"onRefresh":null,"showUI":true,"sorters":{},"inclusionsInfo":{},"aggregatorName":"Somme","rendererName":"Tableau"}';
-    this.reportingService.getDataset(REPORTING_DATASET_CUSTOMER_ORDER_FOR_TIERS, this.tiers.id).subscribe(data => this.dataToDisplay = data)
   }
 
   loadQuotationFilter() {
@@ -215,6 +205,25 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
   openSearch() {
     this.searchService.openSearchOnModule(TIERS_ENTITY_TYPE);
+  }
+
+  deleteTiers() {
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Supprimer le tiers n°" + this.tiers.id,
+        content: "Êtes-vous sûr de vouloir supprimer ce tiers ? Cette action est irréversible !",
+        closeActionText: "Annuler",
+        validationActionText: "Supprimer"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult)
+        this.tiersService.deleteTiers(this.tiers).subscribe(res => {
+          this.appService.openRoute(null, '/tiers/', null);
+        });
+    });
   }
 
 }

@@ -1270,18 +1270,16 @@
           </tr>
           <tr>
             <td>
-              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountLost"
-                [form]="constantForm" propertyName="principalAccountingAccountLost" [isMandatory]="true"
-                label="Compte comptable principal - Pertes"
-                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+              <autocomplete-accounting-account [(model)]="constant.accountingAccountLost" [form]="constantForm"
+                propertyName="principalAccountingAccountLost" [isMandatory]="true"
+                label="Compte comptable principal - Pertes" [isDisabled]="!editMode"></autocomplete-accounting-account>
             </td>
           </tr>
           <tr>
             <td>
-              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountProfit"
-                [form]="constantForm" propertyName="principalAccountingAccountProfit" [isMandatory]="true"
-                label="Compte comptable principal - Profit"
-                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+              <autocomplete-accounting-account [(model)]="constant.accountingAccountProfit" [form]="constantForm"
+                propertyName="principalAccountingAccountProfit" [isMandatory]="true"
+                label="Compte comptable principal - Profit" [isDisabled]="!editMode"></autocomplete-accounting-account>
             </td>
           </tr>
           <tr>
@@ -1322,9 +1320,45 @@
           </tr>
           <tr>
             <td>
+              <select-followup [(model)]="constant.tiersFollowupTypeInvoiceReminder"
+                label="Type de suivi - relance facture" [form]="constantForm"
+                propertyName="tiersFollowupTypeInvoiceReminder" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-followup>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-notice-type [(model)]="constant.noticeOfNameChange" [form]="constantForm"
               propertyName="noticeOfNameChange" [isDisabled]="!editMode"
               label="Notice type - Changement nom"></select-notice-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-tiers-category [(model)]="constant.tiersCategoryPresse" label="Catégorie du tiers - Presse"
+                [form]="constantForm" propertyName="tiersCategoryPresse" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-tiers-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-rff-frequency [(model)]="constant.rffFrequencyAnnual" label="Périodicité des RFF - Annuel"
+                [form]="constantForm" propertyName="rffFrequencyAnnual " [isMandatory]="true"
+                [isDisabled]="!editMode"></select-rff-frequency>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-rff-frequency [(model)]="constant.rffFrequencyQuarterly" label="Périodicité des RFF - Trimestiel"
+                [form]="constantForm" propertyName="rffFrequencyQuarterly " [isMandatory]="true"
+                [isDisabled]="!editMode"></select-rff-frequency>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-rff-frequency [(model)]="constant.rffFrequencyMonthly" label="Périodicité des RFF - Mensuel"
+                [form]="constantForm" propertyName="rffFrequencyMonthly " [isMandatory]="true"
+                [isDisabled]="!editMode"></select-rff-frequency>
             </td>
           </tr>
         </table>

@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors } from '@angular/forms';
-import { validateSiren } from 'src/app/libs/CustomFormsValidatorsHelper';
+import { UntypedFormBuilder } from '@angular/forms';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Civility } from 'src/app/modules/miscellaneous/model/Civility';
@@ -14,7 +13,6 @@ import { DomiciliationContractType } from '../../model/DomiciliationContractType
 import { IQuotation } from '../../model/IQuotation';
 import { MailRedirectionType } from '../../model/MailRedirectionType';
 import { Provision } from '../../model/Provision';
-import { Siren } from '../../model/Siren';
 import { BuildingDomiciliationService } from '../../services/building.domiciliation.service';
 import { DomiciliationContractTypeService } from '../../services/domiciliation.contract.type.service';
 import { MailRedirectionTypeService } from '../../services/mail.redirection.type.service';
@@ -252,34 +250,6 @@ export class DomiciliationComponent implements OnInit {
       if (l.length > numberOfLine) {
         outValue = l.slice(0, numberOfLine).join("\n");
         this.domiciliation.legalGardianMailRecipient = outValue;
-      }
-    }
-  }
-
-  checkSiren(fieldName: string): ValidationErrors | null {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as UntypedFormGroup;
-
-      const fieldValue = root.get(fieldName)?.value;
-      if (this.domiciliation! != undefined && this.domiciliation!.isLegalPerson && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateSiren(fieldValue)))
-        return {
-          notFilled: true
-        };
-      return null;
-    };
-  }
-
-  fillSiren(siren: Siren) {
-    if (siren != undefined && siren != null) {
-      this.domiciliation!.legalGardianSiren = siren!.uniteLegale.siren;
-      if (siren!.uniteLegale.siren != undefined && siren!.uniteLegale.siren != null) {
-        if (siren.uniteLegale.periodesUniteLegale != null && siren.uniteLegale.periodesUniteLegale != undefined && siren.uniteLegale.periodesUniteLegale.length > 0) {
-          siren.uniteLegale.periodesUniteLegale.forEach(periode => {
-            if (periode.dateFin == null)
-              this.domiciliation!.legalGardianDenomination = periode.denominationUniteLegale;
-            this.domiciliationForm.markAllAsTouched();
-          });
-        }
       }
     }
   }

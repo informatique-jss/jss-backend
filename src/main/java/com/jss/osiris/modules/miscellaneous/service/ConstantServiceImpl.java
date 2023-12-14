@@ -47,7 +47,10 @@ import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
+import com.jss.osiris.modules.tiers.model.RffFrequency;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersCategory;
+import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
 @Service
@@ -875,13 +878,13 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public PrincipalAccountingAccount getPrincipalAccountingAccountLost() throws OsirisException {
-        return getConstants().getPrincipalAccountingAccountLost();
+    public AccountingAccount getAccountingAccountLost() throws OsirisException {
+        return getConstants().getAccountingAccountLost();
     }
 
     @Override
-    public PrincipalAccountingAccount getPrincipalAccountingAccountProfit() throws OsirisException {
-        return getConstants().getPrincipalAccountingAccountProfit();
+    public AccountingAccount getAccountingAccountProfit() throws OsirisException {
+        return getConstants().getAccountingAccountProfit();
     }
 
     @Override
@@ -934,4 +937,27 @@ public class ConstantServiceImpl implements ConstantService {
         return getConstants().getNoticeOfNameChange();
     }
 
+    public TiersFollowupType getTiersFollowupTypeInvoiceReminder() throws OsirisException {
+        return getConstants().getTiersFollowupTypeInvoiceReminder();
+    }
+
+    @Override
+    public TiersCategory getTiersCategoryPresse() throws OsirisException {
+        return getConstants().getTiersCategoryPresse();
+    }
+
+    @Override
+    public RffFrequency getRffFrequencyAnnual() throws OsirisException {
+        return getConstants().getRffFrequencyAnnual();
+    }
+
+    @Override
+    public RffFrequency getRffFrequencyMonthly() throws OsirisException {
+        return getConstants().getRffFrequencyMonthly();
+    }
+
+    @Override
+    public RffFrequency getRffFrequencyQuarterly() throws OsirisException {
+        return getConstants().getRffFrequencyQuarterly();
+    }
 }

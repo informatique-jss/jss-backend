@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.quotation.model;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -13,17 +12,25 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Civility;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeExerciceActivitePrincipal;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
+import com.jss.osiris.modules.tiers.model.TiersFollowup;
 
 @Entity
-public class Affaire implements Serializable, IId {
+public class Affaire implements IId, IAttachment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -37,6 +44,9 @@ public class Affaire implements Serializable, IId {
 	@Column(length = 150)
 	@IndexedField
 	private String denomination;
+
+	@Column(length = 150)
+	private String acronym;
 
 	@Column(nullable = false)
 	private Boolean isIndividual;
@@ -108,6 +118,29 @@ public class Affaire implements Serializable, IId {
 
 	@Column(length = 20)
 	private String intercommunityVat;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_forme_juridique")
+	@IndexedField
+	private FormeJuridique legalForm;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_forme_exercice")
+	@IndexedField
+	private FormeExerciceActivitePrincipal mainActivity;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_competent_authority")
+	@IndexedField
+	private CompetentAuthority competentAuthority;
+
+	@OneToMany(mappedBy = "affaire")
+	@JsonIgnoreProperties(value = { "affaire" }, allowSetters = true)
+	private List<TiersFollowup> tiersFollowups;
+
+	@OneToMany(mappedBy = "affaire", fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = { "affaire" }, allowSetters = true)
+	private List<Attachment> attachments;
 
 	public String getPaymentIban() {
 		return paymentIban;
@@ -291,6 +324,54 @@ public class Affaire implements Serializable, IId {
 
 	public void setIntercommunityVat(String intercommunityVat) {
 		this.intercommunityVat = intercommunityVat;
+	}
+
+	public FormeJuridique getLegalForm() {
+		return legalForm;
+	}
+
+	public void setLegalForm(FormeJuridique legalForm) {
+		this.legalForm = legalForm;
+	}
+
+	public FormeExerciceActivitePrincipal getMainActivity() {
+		return mainActivity;
+	}
+
+	public void setMainActivity(FormeExerciceActivitePrincipal mainActivity) {
+		this.mainActivity = mainActivity;
+	}
+
+	public CompetentAuthority getCompetentAuthority() {
+		return competentAuthority;
+	}
+
+	public void setCompetentAuthority(CompetentAuthority competentAuthority) {
+		this.competentAuthority = competentAuthority;
+	}
+
+	public String getAcronym() {
+		return acronym;
+	}
+
+	public void setAcronym(String acronym) {
+		this.acronym = acronym;
+	}
+
+	public List<TiersFollowup> getTiersFollowups() {
+		return tiersFollowups;
+	}
+
+	public void setTiersFollowups(List<TiersFollowup> tiersFollowups) {
+		this.tiersFollowups = tiersFollowups;
+	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
 	}
 
 }

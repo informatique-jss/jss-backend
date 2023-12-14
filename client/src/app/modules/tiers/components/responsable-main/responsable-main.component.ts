@@ -63,6 +63,8 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   tableActions: SortTableAction[] = [] as Array<SortTableAction>;
   searchText: string | undefined;
 
+  tiersCategoryPresse = this.constantService.getTiersCategoryPresse();
+
   @ViewChild(SettlementBillingComponent) documentSettlementBillingComponent: SettlementBillingComponent | undefined;
 
   constructor(private formBuilder: UntypedFormBuilder,
@@ -88,6 +90,10 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
         this.tableActions[0].display = false;
       }
     }
+
+    if (this.selectedResponsable)
+      if (!this.selectedResponsable.rffFrequency)
+        this.selectedResponsable.rffFrequency = this.constantService.getRffFrequencyAnnual();
 
     if (changes.tiers != undefined && this.tiers.responsables != undefined && this.tiers.responsables != null) {
       this.principalForm.markAllAsTouched();

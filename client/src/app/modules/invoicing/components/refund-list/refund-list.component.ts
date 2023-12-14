@@ -1,8 +1,10 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { AppService } from 'src/app/services/app.service';
 import { RefundSearch } from '../../model/RefundSearch';
 import { RefundSearchResult } from '../../model/RefundSearchResult';
 import { RefundSearchResultService } from '../../services/refund.search.result.service';
@@ -26,6 +28,8 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
     private refundSearchResultService: RefundSearchResultService,
     private changeDetectorRef: ChangeDetectorRef,
     private formBuilder: FormBuilder,
+    private activatedRoute: ActivatedRoute,
+    private appService: AppService
   ) { }
 
   ngAfterContentChecked(): void {
@@ -36,7 +40,7 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
     this.availableColumns = [];
     this.availableColumns.push({ id: "id", fieldName: "id", label: "N° du remboursement" } as SortTableColumn);
     this.availableColumns.push({ id: "refundDate", fieldName: "refundDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "refundAmount", fieldName: "refundAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.availableColumns.push({ id: "refundAmount", fieldName: "refundAmount", label: "Montant", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.refundAmount) } } as SortTableColumn);
     this.availableColumns.push({ id: "refundTiersLabel", fieldName: "refundTiersLabel", label: "Tiers remboursé" } as SortTableColumn);
     this.availableColumns.push({ id: "refundLabel", fieldName: "refundLabel", label: "Libellé" } as SortTableColumn);
     this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire" } as SortTableColumn);
@@ -49,6 +53,15 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
     this.refundSearch.isHideMatchedRefunds = true;
 
     if (this.isForDashboard && !this.refunds && this.refundSearch) {
+      this.searchRefunds();
+    }
+
+    let idRefund = this.activatedRoute.snapshot.params.id;
+    if (idRefund) {
+      this.refundSearch.idRefund = idRefund;
+      this.refundSearch.isHideExportedRefunds = false;
+      this.refundSearch.isHideMatchedRefunds = false;
+      this.appService.changeHeaderTitle("Remboursements");
       this.searchRefunds();
     }
   }

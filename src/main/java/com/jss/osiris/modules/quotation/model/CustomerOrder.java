@@ -46,9 +46,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public CustomerOrder(Employee assignedTo, Tiers tiers, Responsable responsable, Confrere confrere,
 			List<SpecialOffer> specialOffers, LocalDateTime createdDate, CustomerOrderStatus customerOrderStatus,
-			String observations, String description, List<Attachment> attachments, List<Document> documents,
+			String observations, String description, String instructions, List<Attachment> attachments,
+			List<Document> documents,
 			List<AssoAffaireOrder> assoAffaireOrders,
-			List<Quotation> quotations, Boolean overrideSpecialOffer, String quotationLabel, Boolean isQuotation,
+			List<Quotation> quotations, String quotationLabel, Boolean isQuotation,
 			List<Invoice> invoices, List<AccountingRecord> accountingRecords) {
 		this.assignedTo = assignedTo;
 		this.tiers = tiers;
@@ -59,11 +60,11 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.customerOrderStatus = customerOrderStatus;
 		this.observations = observations;
 		this.description = description;
+		this.instructions = instructions;
 		this.attachments = attachments;
 		this.documents = documents;
 		this.assoAffaireOrders = assoAffaireOrders;
 		this.quotations = quotations;
-		this.overrideSpecialOffer = overrideSpecialOffer;
 		this.isQuotation = isQuotation;
 		this.invoices = invoices;
 		this.accountingRecords = accountingRecords;
@@ -81,25 +82,22 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
-	@IndexedField
 	private Tiers tiers;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
-	@IndexedField
 	private Responsable responsable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
-	@IndexedField
 	private Confrere confrere;
 
 	@ManyToMany
 	@JoinTable(name = "asso_customer_order_special_offer", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;
 
-	@IndexedField
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@IndexedField
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -114,13 +112,15 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@Column(columnDefinition = "TEXT")
 	private String description;
 
+	@Column(columnDefinition = "TEXT")
+	private String instructions;
+
 	@OneToMany(mappedBy = "customerOrder")
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<Attachment> attachments;
 
 	@OneToMany(targetEntity = Document.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
-	@IndexedField
 	private List<Document> documents;
 
 	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -131,9 +131,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonIgnoreProperties(value = { "customerOrders" }, allowSetters = true)
 	@JsonIgnore // For client-side performance purpose
 	private List<Quotation> quotations;
-
-	@Column(nullable = false)
-	private Boolean overrideSpecialOffer;
 
 	@Column(nullable = false)
 	private Boolean isQuotation;
@@ -168,6 +165,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_origin")
 	private CustomerOrderOrigin customerOrderOrigin;
+
+	private Boolean isGifted;
 
 	public Integer getId() {
 		return id;
@@ -281,14 +280,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.quotations = quotations;
 	}
 
-	public Boolean getOverrideSpecialOffer() {
-		return overrideSpecialOffer;
-	}
-
-	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
-		this.overrideSpecialOffer = overrideSpecialOffer;
-	}
-
 	public Boolean getIsQuotation() {
 		return isQuotation;
 	}
@@ -375,6 +366,22 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setPayments(List<Payment> payments) {
 		this.payments = payments;
+	}
+
+	public Boolean getIsGifted() {
+		return isGifted;
+	}
+
+	public void setIsGifted(Boolean isGifted) {
+		this.isGifted = isGifted;
+	}
+
+	public String getInstructions() {
+		return instructions;
+	}
+
+	public void setInstructions(String instructions) {
+		this.instructions = instructions;
 	}
 
 }

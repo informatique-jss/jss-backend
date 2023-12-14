@@ -676,12 +676,12 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.principalAccountingAccountWaiting;
   }
 
-  getPrincipalAccountingAccountLost() {
-    return this.constant.principalAccountingAccountLost;
+  getAccountingAccountLost() {
+    return this.constant.accountingAccountLost;
   }
 
-  getPrincipalAccountingAccountProfit() {
-    return this.constant.principalAccountingAccountProfit;
+  getAccountingAccountProfit() {
+    return this.constant.accountingAccountProfit;
   }
 
   getAccountingAccountBankCentralPay() {
@@ -714,5 +714,25 @@ export class ConstantService extends AppRestService<Constant>{
 
   getNoticeOfNameChange(){
     return this.constant.noticeOfNameChange;
+  }
+
+  getTiersFollowupTypeInvoiceReminder() {
+    return this.constant.tiersFollowupTypeInvoiceReminder;
+  }
+
+  getTiersCategoryPresse() {
+    return this.constant.tiersCategoryPresse;
+  }
+
+  getRffFrequencyAnnual() {
+    return this.constant.rffFrequencyAnnual;
+  }
+
+  getRffFrequencyQuarterly() {
+    return this.constant.rffFrequencyQuarterly;
+  }
+
+  getRffFrequencyMonthly() {
+    return this.constant.rffFrequencyMonthly;
   }
 }

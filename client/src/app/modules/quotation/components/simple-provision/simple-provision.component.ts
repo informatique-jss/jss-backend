@@ -8,6 +8,8 @@ import { HabilitationsService } from '../../../../services/habilitations.service
 import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { SimpleProvision } from '../../model/SimpleProvision';
+import { SimpleProvisionStatus } from '../../model/SimpleProvisonStatus';
+import { SimpleProvisionStatusService } from '../../services/simple.provision.status.service';
 
 @Component({
   selector: 'simple-provision',
@@ -28,10 +30,13 @@ export class SimpleProvisionComponent implements OnInit {
   SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY = SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY;
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
 
+  simpleProvisionStatus: SimpleProvisionStatus[] | undefined;
+
   constructor(
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
-    private habilitationsService: HabilitationsService
+    private habilitationsService: HabilitationsService,
+    private simpleProvisionStatusService: SimpleProvisionStatusService
   ) { }
 
   canAddNewInvoice() {
@@ -43,6 +48,7 @@ export class SimpleProvisionComponent implements OnInit {
   instanceOfCustomerOrderFn = instanceOfCustomerOrder;
 
   ngOnInit() {
+    this.simpleProvisionStatusService.getSimpleProvisionStatus().subscribe(response => this.simpleProvisionStatus = response);
   }
 
   ngOnChanges(changes: SimpleChanges) {

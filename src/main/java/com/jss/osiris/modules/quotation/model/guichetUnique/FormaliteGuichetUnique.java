@@ -7,12 +7,16 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DiffusionINSEE;
@@ -24,6 +28,8 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePer
 
 @Entity
 @JsonIgnoreProperties
+@Table(indexes = {
+        @Index(name = "idx_formalite_guichet_unique_formalite", columnList = "id_formalite") })
 public class FormaliteGuichetUnique implements IId {
 
     @Id
@@ -79,10 +85,14 @@ public class FormaliteGuichetUnique implements IId {
 
     @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
+    @JsonProperty("validationsRequests")
+    @JsonAlias({ "annualAccountValidationRequests", "acteDepositValidationRequests" })
     private List<ValidationRequest> validationsRequests;
 
     @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
+    @JsonProperty("formaliteStatusHistoryItems")
+    @JsonAlias({ "annualAccountStatusHistories", "acteDepositValidationRequests" })
     private List<FormaliteStatusHistoryItem> formaliteStatusHistoryItems;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -116,6 +126,7 @@ public class FormaliteGuichetUnique implements IId {
 
     private Boolean isFormality;
     private Boolean isAnnualAccounts;
+    private Boolean isActeDeposit;
 
     public Status getStatus() {
         return status;
@@ -403,5 +414,13 @@ public class FormaliteGuichetUnique implements IId {
 
     public void setFormaliteStatusHistoryItems(List<FormaliteStatusHistoryItem> formaliteStatusHistoryItems) {
         this.formaliteStatusHistoryItems = formaliteStatusHistoryItems;
+    }
+
+    public Boolean getIsActeDeposit() {
+        return isActeDeposit;
+    }
+
+    public void setIsActeDeposit(Boolean isActeDeposit) {
+        this.isActeDeposit = isActeDeposit;
     }
 }
