@@ -118,6 +118,14 @@ public class QuotationValidationHelper {
                 if (quotation.getCustomerOrderOrigin() == null)
                         quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
 
+                if (targetStatusCode != null) {
+                        // Is for status update, override input quotation with database one
+                        if (quotation instanceof CustomerOrder)
+                                quotation = customerOrderService.getCustomerOrder(quotation.getId());
+                        if (quotation instanceof Quotation)
+                                quotation = quotationService.getQuotation(quotation.getId());
+                }
+
                 if (quotation instanceof CustomerOrder) {
                         CustomerOrder customerOrder = (CustomerOrder) quotation;
                         isOpen = customerOrder.getCustomerOrderStatus() == null ||
