@@ -3,6 +3,7 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -55,6 +56,9 @@ public class ValidationRequest {
     private String statusDate;
     private String created;
     private String updated;
+
+    @Column(columnDefinition = "TEXT")
+    private String validationObservation;
 
     public Integer getId() {
         return id;
@@ -150,6 +154,14 @@ public class ValidationRequest {
 
     public void setUpdated(String updated) {
         this.updated = updated;
+    }
+
+    public String getValidationObservation() {
+        return validationObservation;
+    }
+
+    public void setValidationObservation(String validationObservation) {
+        this.validationObservation = validationObservation;
     }
 
 }
