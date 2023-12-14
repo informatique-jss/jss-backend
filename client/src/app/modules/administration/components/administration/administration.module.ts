@@ -69,6 +69,7 @@ import { ReferentialProvisionTypeComponent } from '../referentials/referential-p
 import { ReferentialRefundTypeComponent } from '../referentials/referential-refund-type/referential-refund-type.component';
 import { ReferentialRegieComponent } from '../referentials/referential-regie/referential-regie.component';
 import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
+import { ReferentialRffFrequencyComponent } from '../referentials/referential-rff-frequency/referential-rff-frequency.component';
 import { ReferentialSpecialOfferComponent } from '../referentials/referential-special-offer/referential-special-offer.component';
 import { ReferentialSubscriptionPeriodTypeComponent } from '../referentials/referential-subscription-period-type/referential-subscription-period-type.component';
 import { ReferentialTiersCategoryComponent } from '../referentials/referential-tiers-category/referential-tiers-category.component';
@@ -181,6 +182,7 @@ const routes: Routes = [
     ReferentialCustomerOrderOriginComponent,
     ReferentialDepartmentVatSettingComponent,
     ReferentialTypeDocumentComponent,
+    ReferentialRffFrequencyComponent,
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

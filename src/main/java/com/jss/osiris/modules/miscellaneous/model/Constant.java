@@ -31,7 +31,9 @@ import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
+import com.jss.osiris.modules.tiers.model.RffFrequency;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersCategory;
 import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
@@ -711,6 +713,22 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_tiers_followup_type_invoice_reminder")
 	private TiersFollowupType tiersFollowupTypeInvoiceReminder;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_tiers_category_presse")
+	private TiersCategory tiersCategoryPresse;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_rff_frequency_annual")
+	private RffFrequency rffFrequencyAnnual;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_rff_frequency_quarterly")
+	private RffFrequency rffFrequencyQuarterly;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_rff_frequency_monthly")
+	private RffFrequency rffFrequencyMonthly;
 
 	public Integer getId() {
 		return id;
@@ -2088,5 +2106,37 @@ public class Constant implements Serializable, IId {
 
 	public void setAccountingAccountProfit(AccountingAccount accountingAccountProfit) {
 		this.accountingAccountProfit = accountingAccountProfit;
+	}
+
+	public TiersCategory getTiersCategoryPresse() {
+		return tiersCategoryPresse;
+	}
+
+	public void setTiersCategoryPresse(TiersCategory tiersCategoryPresse) {
+		this.tiersCategoryPresse = tiersCategoryPresse;
+	}
+
+	public RffFrequency getRffFrequencyAnnual() {
+		return rffFrequencyAnnual;
+	}
+
+	public void setRffFrequencyAnnual(RffFrequency rffFrequencyAnnual) {
+		this.rffFrequencyAnnual = rffFrequencyAnnual;
+	}
+
+	public RffFrequency getRffFrequencyQuarterly() {
+		return rffFrequencyQuarterly;
+	}
+
+	public void setRffFrequencyQuarterly(RffFrequency rffFrequencyQuarterly) {
+		this.rffFrequencyQuarterly = rffFrequencyQuarterly;
+	}
+
+	public RffFrequency getRffFrequencyMonthly() {
+		return rffFrequencyMonthly;
+	}
+
+	public void setRffFrequencyMonthly(RffFrequency rffFrequencyMonthly) {
+		this.rffFrequencyMonthly = rffFrequencyMonthly;
 	}
 }

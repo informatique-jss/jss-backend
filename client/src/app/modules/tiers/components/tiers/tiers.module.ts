@@ -25,6 +25,7 @@ import { ConfrereComponent } from '../confrere/confrere.component';
 import { SearchPhoneComponent } from '../phone-teams/search-phone.component';
 import { ResponsableMainComponent } from '../responsable-main/responsable-main.component';
 import { SettlementBillingComponent } from '../settlement-billing/settlement-billing.component';
+import { TiersListComponent } from '../tiers-list/tiers-list.component';
 import { PrincipalComponent } from '../tiers-main/tiers-main.component';
 import { TiersComponent } from './tiers.component';
 
@@ -59,7 +60,7 @@ const routes: Routes = [
     DragDropModule,
     QuotationModule,
     InvoicingModule,
-    ReportingModule,
+    ReportingModule
   ],
   declarations: [TiersComponent,
     PrincipalComponent,
@@ -68,6 +69,7 @@ const routes: Routes = [
     ResponsableMainComponent,
     ConfrereComponent,
     SearchPhoneComponent,
+    TiersListComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

@@ -66,6 +66,9 @@ public class BillingType implements Serializable, IId {
 	@Column(nullable = false)
 	private Boolean isGenerateAccountCharge;
 
+	private Boolean isUsedForInsertionRff;
+	private Boolean isUsedForFormaliteRff;
+
 	public Integer getId() {
 		return id;
 	}
@@ -184,6 +187,22 @@ public class BillingType implements Serializable, IId {
 
 	public void setIsFee(Boolean isFee) {
 		this.isFee = isFee;
+	}
+
+	public Boolean getIsUsedForInsertionRff() {
+		return isUsedForInsertionRff;
+	}
+
+	public void setIsUsedForInsertionRff(Boolean isUsedForInsertionRff) {
+		this.isUsedForInsertionRff = isUsedForInsertionRff;
+	}
+
+	public Boolean getIsUsedForFormaliteRff() {
+		return isUsedForFormaliteRff;
+	}
+
+	public void setIsUsedForFormaliteRff(Boolean isUsedForFormaliteRff) {
+		this.isUsedForFormaliteRff = isUsedForFormaliteRff;
 	}
 
 }

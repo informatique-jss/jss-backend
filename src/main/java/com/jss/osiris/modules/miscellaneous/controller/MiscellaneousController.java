@@ -356,6 +356,10 @@ public class MiscellaneousController {
             validationHelper.validateReferential(constant, true, "constant");
         validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true,
                 "BillingLabelTypeCodeAffaire");
+        validationHelper.validateReferential(constant.getTiersCategoryPresse(), true, "tiersCategoryPresse");
+        validationHelper.validateReferential(constant.getRffFrequencyAnnual(), true, "RffFrequencyAnnual");
+        validationHelper.validateReferential(constant.getRffFrequencyMonthly(), true, "RffFrequencyMonthly");
+        validationHelper.validateReferential(constant.getRffFrequencyQuarterly(), true, "RffFrequencyQuarterly");
         validationHelper.validateReferential(constant.getPaymentDeadLineType30(), true,
                 "PaymentDeadLineType30");
         validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true,
@@ -680,6 +684,13 @@ public class MiscellaneousController {
         validationHelper.validateString(billingType.getCode(), true, 20, "code");
         validationHelper.validateString(billingType.getLabel(), true, 100, "label");
         validationHelper.validateReferential(billingType.getVat(), billingType.getIsOverrideVat(), "Vat");
+
+        if (billingType.getIsUsedForFormaliteRff() == null)
+            billingType.setIsUsedForFormaliteRff(false);
+
+        if (billingType.getIsUsedForInsertionRff() == null)
+            billingType.setIsUsedForInsertionRff(false);
+
         if (!billingType.getIsOverrideVat())
             billingType.setVat(null);
 

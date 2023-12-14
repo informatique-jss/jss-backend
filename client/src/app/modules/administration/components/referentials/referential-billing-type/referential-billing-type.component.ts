@@ -34,6 +34,10 @@ export class ReferentialBillingTypeComponent extends GenericReferentialComponent
         entity.isDebour = false;
       if (!entity.isFee)
         entity.isFee = false;
+      if (!entity.isUsedForFormaliteRff)
+        entity.isUsedForFormaliteRff = false;
+      if (!entity.isUsedForInsertionRff)
+        entity.isUsedForInsertionRff = false;
     }
   }
 

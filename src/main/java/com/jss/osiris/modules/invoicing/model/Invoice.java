@@ -40,6 +40,7 @@ import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.model.TiersFollowup;
 
@@ -211,6 +212,10 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@JsonIgnoreProperties(value = { "invoices" }, allowSetters = true)
 	@IndexedField
 	private AzureInvoice azureInvoice;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_rff")
+	private Rff rff;
 
 	public Integer getId() {
 		return id;
@@ -570,6 +575,14 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	public void setProvision(Provision provision) {
 		this.provision = provision;
+	}
+
+	public Rff getRff() {
+		return rff;
+	}
+
+	public void setRff(Rff rff) {
+		this.rff = rff;
 	}
 
 }

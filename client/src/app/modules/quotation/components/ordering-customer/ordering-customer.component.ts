@@ -93,7 +93,7 @@ export class OrderingCustomerComponent implements OnInit {
     this.customerOrderDisplayedColumns.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "N° de la commande" } as SortTableColumn);
     this.customerOrderDisplayedColumns.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut" } as SortTableColumn);
     this.customerOrderDisplayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.customerOrderDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.customerOrderDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.totalPrice) } } as SortTableColumn);
 
     this.customerOrderTableActions.push({
       actionIcon: "visibility", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction, element: any) => {
@@ -107,7 +107,7 @@ export class OrderingCustomerComponent implements OnInit {
     this.quotationDisplayedColumns.push({ id: "quotationId", fieldName: "quotationId", label: "N° du devis" } as SortTableColumn);
     this.quotationDisplayedColumns.push({ id: "quotationStatus", fieldName: "quotationStatus", label: "Statut" } as SortTableColumn);
     this.quotationDisplayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.quotationDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.quotationDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.totalPrice) } } as SortTableColumn);
 
     this.quotationTableActions.push({
       actionIcon: "visibility", actionName: "Voir le devis", actionLinkFunction: (action: SortTableAction, element: any) => {

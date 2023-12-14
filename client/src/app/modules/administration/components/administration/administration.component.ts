@@ -81,6 +81,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL = "Compte comptable principal";
   CUSTOMER_ORDER_ORIGIN_REFERENTIAL = "Origine des commandes";
   DEPARTMENT_VAT_SETTING_REFERENTIAL = "TVA par département";
+  RFF_FREQUENCY_REFERENTIAL = "Périodicité des RFF";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -111,6 +112,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.REFUND_TYPE_REFERENTIAL);
     this.referentials.push(this.SUBSCRIPTION_PERIOD_TYPE_REFERENTIAL);
     this.referentials.push(this.TIERS_CATEGORY_REFERENTIAL);
+    this.referentials.push(this.RFF_FREQUENCY_REFERENTIAL);
     this.referentials.push(this.TIERS_FOLLOWUP_TYPE_REFERENTIAL);
     this.referentials.push(this.TIERS_TYPE_REFERENTIAL);
     this.referentials.push(this.ATTACHMENT_TYPE_REFERENTIAL);

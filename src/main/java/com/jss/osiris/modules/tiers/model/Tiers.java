@@ -208,6 +208,10 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 	@JoinColumn(name = "id_accounting_account_deposit")
 	private AccountingAccount accountingAccountDeposit;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_rff_frequency")
+	private RffFrequency rffFrequency;
+
 	@IndexedField
 	private Integer idAs400;
 	private Integer newIdAs400;
@@ -595,6 +599,14 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 		if (getDenomination() != null)
 			return getDenomination();
 		return getFirstname() + " " + getLastname();
+	}
+
+	public RffFrequency getRffFrequency() {
+		return rffFrequency;
+	}
+
+	public void setRffFrequency(RffFrequency rffFrequency) {
+		this.rffFrequency = rffFrequency;
 	}
 
 }

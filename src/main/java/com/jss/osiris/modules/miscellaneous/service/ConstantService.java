@@ -36,7 +36,9 @@ import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
+import com.jss.osiris.modules.tiers.model.RffFrequency;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersCategory;
 import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
@@ -386,4 +388,12 @@ public interface ConstantService {
     public Provider getProviderCentralPay() throws OsirisException;
 
     public TiersFollowupType getTiersFollowupTypeInvoiceReminder() throws OsirisException;
+
+    public TiersCategory getTiersCategoryPresse() throws OsirisException;
+
+    public RffFrequency getRffFrequencyAnnual() throws OsirisException;
+
+    public RffFrequency getRffFrequencyMonthly() throws OsirisException;
+
+    public RffFrequency getRffFrequencyQuarterly() throws OsirisException;
 }

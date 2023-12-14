@@ -41,7 +41,7 @@ export class DirectDebitTransfertListComponent implements OnInit, AfterContentCh
     this.availableColumns.push({ id: "id", fieldName: "id", label: "N° du prélèvement" } as SortTableColumn);
     this.availableColumns.push({ id: "customerOrderLabel", fieldName: "customerOrderLabel", label: "Payeur" } as SortTableColumn);
     this.availableColumns.push({ id: "transfertDate", fieldName: "transfertDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "transfertAmount", fieldName: "transfertAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.availableColumns.push({ id: "transfertAmount", fieldName: "transfertAmount", label: "Montant", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.transfertAmount) } } as SortTableColumn);
     this.availableColumns.push({ id: "transfertLabel", fieldName: "transfertLabel", label: "Libellé" } as SortTableColumn);
     this.availableColumns.push({ id: "isAlreadyExported", fieldName: "isAlreadyExported", label: "A été exporté", valueFonction: (element: any) => { return (element.isAlreadyExported) ? "Oui" : "Non" } } as SortTableColumn);
 

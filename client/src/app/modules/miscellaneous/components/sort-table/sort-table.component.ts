@@ -121,6 +121,9 @@ export class SortTableComponent implements OnInit {
 
               let columnValue = this.getColumnValue(column, item);
 
+              if (!isNaN(columnValue))
+                columnValue = parseFloat(columnValue);
+
               // Handle date or date string
               if (columnValue && columnValue.indexOf && columnValue.indexOf("/") > 0) {
                 let dateTimeSplit = columnValue.split(" ");

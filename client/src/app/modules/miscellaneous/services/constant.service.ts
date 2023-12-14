@@ -711,4 +711,20 @@ export class ConstantService extends AppRestService<Constant>{
   getTiersFollowupTypeInvoiceReminder() {
     return this.constant.tiersFollowupTypeInvoiceReminder;
   }
+
+  getTiersCategoryPresse() {
+    return this.constant.tiersCategoryPresse;
+  }
+
+  getRffFrequencyAnnual() {
+    return this.constant.rffFrequencyAnnual;
+  }
+
+  getRffFrequencyQuarterly() {
+    return this.constant.rffFrequencyQuarterly;
+  }
+
+  getRffFrequencyMonthly() {
+    return this.constant.rffFrequencyMonthly;
+  }
 }

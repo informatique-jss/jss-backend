@@ -67,6 +67,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
   }
 
+  canAddCreditNoteForCustomerOrderInvoice() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
   canAddNewInvoice() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }

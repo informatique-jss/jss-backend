@@ -162,7 +162,8 @@
                       propertyName="floor" [maxLength]="8"></generic-input>
                 </tr>
               </table>
-              <table class="full-width">
+              <table class="full-width"
+                *ngIf="tiers && (!tiers.tiersCategory ||  tiers.tiersCategory.id!=tiersCategoryPresse.id)">
                 <tr>
                   <td>
                     <generic-input [(model)]="selectedResponsable.rffFormaliteRate" label="Taux RFF Formalité"
@@ -171,6 +172,11 @@
                   <td>
                     <generic-input [(model)]="selectedResponsable.rffInsertionRate" label="Taux RFF Insertion"
                       [form]="principalForm" propertyName="rffInsertionRate" type="number"></generic-input>
+                  </td>
+                  <td *ngIf="tiers && !tiers.rffFormaliteRate && !tiers.rffInsertionRate">
+                    <select-rff-frequency [(model)]="selectedResponsable.rffFrequency" label="Périodicité des RFF"
+                      [form]="principalForm" propertyName="rffFrequency" [isMandatory]="true"
+                      [isDisabled]="!editMode"></select-rff-frequency>
                   </td>
                 </tr>
               </table>

@@ -146,6 +146,11 @@
               <generic-input [(model)]="tiers.rffInsertionRate" [isDisabled]="!editMode" label="Taux RFF Insertion"
                 [form]="principalForm" propertyName="rffInsertionRate" type="number"></generic-input>
             </td>
+            <td
+              *ngIf="tiers.rffFormaliteRate && tiers.rffFormaliteRate>0 || tiers.rffInsertionRate && tiers.rffInsertionRate>0">
+              <select-rff-frequency [(model)]="tiers.rffFrequency" label="Périodicité des RFF" [form]="principalForm"
+                propertyName="rffFrequency" [isMandatory]="true" [isDisabled]="!editMode"></select-rff-frequency>
+            </td>
           </tr>
         </table>
         <table class="full-width">

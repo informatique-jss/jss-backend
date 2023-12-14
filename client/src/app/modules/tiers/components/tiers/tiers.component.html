@@ -49,6 +49,9 @@
     </mat-tab>
   </mat-tab-group>
 </div>
+<div [hidden]="(tiers.id!=undefined && tiers.id!=null)">
+  <tiers-list></tiers-list>
+</div>
 <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true" (click)="saveTiers()">
   <mat-icon>save</mat-icon>
 </button>
@@ -59,10 +62,6 @@
 <button matTooltip="Ajouter un tiers" mat-fab color="accent" class="fab-button"
   *ngIf="editMode==false && (tiers.id==undefined || tiers.id==null)" (click)="createTiers()">
   <mat-icon>add</mat-icon>
-</button>
-<button matTooltip="Rechercher un tiers" mat-fab color="accent" class="second-fab-button" *ngIf="editMode==false"
-  (click)="openSearch()">
-  <mat-icon>search</mat-icon>
 </button>
 <button matTooltip="Supprimer le tiers" mat-fab color="warn" class="third-fab-button"
   *ngIf="editMode==false &&  tiers.id" (click)="deleteTiers()">

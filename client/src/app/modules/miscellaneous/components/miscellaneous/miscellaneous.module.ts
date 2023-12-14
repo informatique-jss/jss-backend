@@ -228,6 +228,7 @@ import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-re
 import { SelectRegionsComponent } from '../forms/select-regions/select-regions.component';
 import { SelectReportingDatasetComponent } from '../forms/select-reporting-dataset/select-reporting-dataset.component';
 import { SelectResponsableComponent } from '../forms/select-responsable/select-responsable.component';
+import { SelectRffFrequencyComponent } from '../forms/select-rff-frequency/select-rff-frequency.component';
 import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-period/select-subscription-period.component';
 import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/select-tiers-category.component';
 import { SelectTiersTypeComponent } from '../forms/select-tiers-type/select-tiers-type.component';
@@ -496,6 +497,7 @@ const routes: Routes = [
     AutocompleteTypeVoieComponent,
     AutocompleteGuichetUniqueFormaliteComponent,
     ChipsFormaliteGuichetUniqueComponent,
+    SelectRffFrequencyComponent,
   ],
   exports: [
     HistoryComponent,
@@ -710,6 +712,7 @@ const routes: Routes = [
     AutocompleteGuichetUniqueFormaliteComponent,
     ChipsFormaliteGuichetUniqueComponent,
     SelectCustomerOrderOriginComponent,
+    SelectRffFrequencyComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

@@ -182,6 +182,10 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 	private Integer idAs400;
 	private Integer newIdAs400;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_rff_frequency")
+	private RffFrequency rffFrequency;
+
 	public Tiers getTiers() {
 		return tiers;
 	}

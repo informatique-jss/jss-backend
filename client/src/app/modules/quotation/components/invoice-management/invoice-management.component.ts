@@ -78,7 +78,7 @@ export class InvoiceManagementComponent implements OnInit {
     this.customerInvoicesColumns.push({ id: "id", fieldName: "invoiceId", label: "N° de facture" } as SortTableColumn);
     this.customerInvoicesColumns.push({ id: "status", fieldName: "invoiceStatus", label: "Status", statusFonction: (element: any) => { return element.invoiceStatusCode }, displayAsStatus: true } as SortTableColumn);
     this.customerInvoicesColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date d'émission", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.customerInvoicesColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.customerInvoicesColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Montant TTC", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.totalPrice) } } as SortTableColumn);
     this.customerInvoicesColumns.push({ id: "payments", fieldName: "paymentId", label: "Paiement(s) associé(s)" } as SortTableColumn);
     this.customerInvoicesColumns.push({ id: "dueDate", fieldName: "dueDate", label: "Date d'échéance", valueFonction: formatDateForSortTable } as SortTableColumn);
     this.customerInvoicesColumns.push({ id: "firstReminderDateTime", fieldName: "firstReminderDateTime", label: "Date de première relance", valueFonction: formatDateForSortTable } as SortTableColumn);
@@ -92,7 +92,7 @@ export class InvoiceManagementComponent implements OnInit {
     this.providerInvoicesColumns.push({ id: "status", fieldName: "invoiceStatus", label: "Status", statusFonction: (element: any) => { return element.invoiceStatusCode }, displayAsStatus: true } as SortTableColumn);
     this.providerInvoicesColumns.push({ id: "providerLabel", fieldName: "providerLabel", label: "Fournisseur" } as SortTableColumn);
     this.providerInvoicesColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date d'émission", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.providerInvoicesColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.providerInvoicesColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Montant TTC", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.totalPrice) } } as SortTableColumn);
     this.providerInvoicesColumns.push({ id: "manualAccountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N° pièce" } as SortTableColumn);
     this.providerInvoicesColumns.push({ id: "payments", fieldName: "paymentId", label: "Paiement(s) associé(s)" } as SortTableColumn);
     this.providerInvoicesColumns.push({ id: "dueDate", fieldName: "dueDate", label: "Date d'échéance", valueFonction: formatDateForSortTable } as SortTableColumn);
