@@ -65,6 +65,7 @@ export class AnnouncementComponent implements OnInit {
   attachmentTypePublicationReceipt: AttachmentType = this.constantService.getAttachmentTypePublicationReceipt();
   attachmentTypePublicationFlag: AttachmentType = this.constantService.getAttachmentTypePublicationFlag();
   attachmentTypeComplexAnnouncement: AttachmentType = this.constantService.getAttachmentTypeComplexAnnouncement();
+  changingOfName: NoticeType = this.constantService.getNoticeOfNameChange();
 
   characterPrice: CharacterPrice = {} as CharacterPrice;
 
@@ -75,7 +76,7 @@ export class AnnouncementComponent implements OnInit {
   filteredNoticeTemplates: Observable<AnnouncementNoticeTemplate[]> | undefined;
   selectedNoticeTemplates: AnnouncementNoticeTemplate[] = [] as Array<AnnouncementNoticeTemplate>;
   paperDocument: Document = {} as Document;
-
+  isChangeOfName= false;
   characterNumber: number = 0;
 
   announcementStatus: AnnouncementStatus[] | undefined;
@@ -197,6 +198,10 @@ export class AnnouncementComponent implements OnInit {
 
   applyNoticeTemplate() {
     if (this.selectedNoticeTemplates) {
+      this.isChangeOfName = false;
+      if(this.selectedNoticeTemplates[0].label.toUpperCase() == this.changingOfName.label.toUpperCase()){
+        this.isChangeOfName = true;
+      }
       this.announcement.notice = "";
       for (let template of this.selectedNoticeTemplates) {
         this.announcement.notice += template.text + "<br>";

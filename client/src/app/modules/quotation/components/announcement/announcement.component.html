@@ -242,6 +242,11 @@
               </td>
             </tr>
           </table>
+          <div *ngIf="isChangeOfName" [ngClass]="'publicServiceSiteDiv'">
+            <a href="https://auth.service-public.fr/realms/service-public/protocol/openid-connect/auth?response_type=code&client_id=spclient&scope=address%20phone%20openid%20profile%20particulier%20email&state=vLvcKCe1ctj__1QZ0s2l25yfFKhHo3TYyRxd1JiYN_M%3D&redirect_uri=https://www.service-public.fr/openid_connect_login&nonce=ev2iDcK-GIMzkn3ECUKIlH8DQj7bN2lLksPgDR9lPQg" target="_blank">
+              Link vers le Site du Service public
+            </a>
+          </div>
           <div *ngIf="!announcement.isComplexAnnouncement">
             <p>Liste des mots-clés disponibles :</p>
             <ul>

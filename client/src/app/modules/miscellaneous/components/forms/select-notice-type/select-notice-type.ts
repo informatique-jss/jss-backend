@@ -19,18 +19,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
     super(formBuild, userNoteService2);
   }
 
-  ngOnInit(){
-    this.initTypes();
-  }
-
-  initTypes(): void {
+   initTypes(): void {
     this.noticeTypeService.getNoticeTypes().subscribe(response => {
       this.types = response.sort((a, b) => a.label.localeCompare(b.label));
     });
   }
-  displayLabel(object: NoticeType): string {
-    if (object)
-      return object.label;
-    return "";
-  }
+
 }

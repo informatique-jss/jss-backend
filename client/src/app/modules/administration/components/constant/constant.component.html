@@ -1329,7 +1329,7 @@
           <tr>
             <td>
               <select-notice-type [(model)]="constant.noticeOfNameChange" [form]="constantForm"
-              propertyName="noticeOfNameChange" [isDisabled]="!editMode"
+              propertyName="noticeOfNameChange" [isMandatory]="true" [isDisabled]="!editMode"
               label="Notice type - Changement nom"></select-notice-type>
             </td>
           </tr>
