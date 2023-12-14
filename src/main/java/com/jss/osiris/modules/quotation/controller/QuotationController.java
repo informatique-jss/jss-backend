@@ -1961,4 +1961,20 @@ public class QuotationController {
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
+  @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+  @GetMapping(inputEntryPoint + "/customer-order/invoicing/reinit")
+  public ResponseEntity<Boolean> reinitInvoicing(@RequestParam Integer customerOrderId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED) ||
+        customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED))
+      throw new OsirisValidationException("customerOrder status");
+
+    customerOrderService.reinitInvoicing(customerOrder);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
 }

@@ -210,6 +210,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return this.habilitationsService.canOfferCustomerOrder();
   }
 
+  canReinitInvoicing() {
+    return this.habilitationsService.canReinitInvoicing();
+  }
+
   setOpenStatus() {
     this.isStatusOpen = false;
     if (instanceOfCustomerOrder(this.quotation) && !this.quotation.customerOrderStatus || instanceOfQuotation(this.quotation) && !this.quotation.quotationStatus)
@@ -788,6 +792,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   generateQuotationMail() {
     this.quotationService.generateQuotationMail(this.quotation).subscribe(response => { });
+  }
+
+  reinitInvoicing() {
+    if (this.quotation && this.quotation.id && this.instanceOfCustomerOrderFn(this.quotation) && this.quotation.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_ABANDONED && this.quotation.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_BILLED)
+      this.customerOrderService.reinitInvoicing(this.quotation).subscribe(response => {
+        this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+      })
   }
 
   generateCustomerOrderCreationConfirmationToCustomer() {

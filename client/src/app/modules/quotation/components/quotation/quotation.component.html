@@ -266,6 +266,11 @@
   *ngIf="editMode==false && instanceOfQuotationFn(quotation) && quotation.id" (click)="generateQuotationMail()">
   <mat-icon>mail</mat-icon>
 </button>
+<button matTooltip="Réinitialiser la facturation" mat-fab color="accent" class="fifth-fab-button"
+  *ngIf="editMode==false && instanceOfCustomerOrderFn(quotation) && quotation.id && canReinitInvoicing()"
+  (click)="reinitInvoicing()">
+  <mat-icon>autorenew</mat-icon>
+</button>
 
 <button matTooltip="Recevoir un mail" mat-fab color="accent" class="fourth-fab-button mail-menu"
   *ngIf="editMode==false && instanceOfCustomerOrderFn(quotation) && quotation.id" [matMenuTriggerFor]="menuMail">

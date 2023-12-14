@@ -39,6 +39,10 @@ public interface CustomerOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
+        public void reinitInvoicing(CustomerOrder customerOrder)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
+
         public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode,
                         boolean isFromUser)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,

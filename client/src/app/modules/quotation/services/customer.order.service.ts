@@ -12,7 +12,6 @@ import { Quotation } from '../model/Quotation';
   providedIn: 'root'
 })
 export class CustomerOrderService extends AppRestService<IQuotation>{
-
   constructor(http: HttpClient) {
     super(http, "quotation");
   }
@@ -59,6 +58,10 @@ export class CustomerOrderService extends AppRestService<IQuotation>{
 
   generateCreditNoteForCustomerOrderInvoice(invoice: Invoice, customerOrder: CustomerOrder) {
     return this.get(new HttpParams().set("invoiceId", invoice.id).set("customerOrderId", customerOrder.id), "customer-order/credit-note");
+  }
+
+  reinitInvoicing(quotation: CustomerOrder) {
+    return this.get(new HttpParams().set("customerOrderId", quotation.id), "customer-order/invoicing/reinit", "Facturation réinitialisée");
   }
 
 }

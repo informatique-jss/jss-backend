@@ -138,6 +138,10 @@ export class HabilitationsService {
   canPutNegativePaymentIntoAccount() {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
   }
+
+  canReinitInvoicing() {
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+  }
 }
 
 

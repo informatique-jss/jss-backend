@@ -49,6 +49,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
+import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -162,6 +163,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     ActiveDirectoryHelper activeDirectoryHelper;
+
+    @Autowired
+    InvoiceItemService invoiceItemService;
 
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
@@ -453,6 +457,20 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         break;
                     }
             }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void reinitInvoicing(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+        customerOrder = getCustomerOrder(customerOrder.getId());
+        if (customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getInvoiceItems() != null)
+                            for (InvoiceItem invoiceItem : provision.getInvoiceItems())
+                                invoiceItemService.deleteInvoiceItem(invoiceItem);
     }
 
     @Override
