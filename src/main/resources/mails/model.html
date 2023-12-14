@@ -413,6 +413,46 @@
                                                                                 </td>
                                                                             </tr>
                                                                         </table>
+                                                                        <p style="margin-top: 10px;">&#160;</p>
+                                                                        <table th:if="${rff!=null}"
+                                                                            style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;   color: #233d56; width:100%">
+                                                                            <tr>
+                                                                                <td colspan="4"
+                                                                                    style="text-align: left">
+                                                                                    Remboursement forfaitaire de frais
+                                                                                </td>
+                                                                                <td
+                                                                                    style="text-align: right;white-space: nowrap;">
+                                                                                    <span
+                                                                                        th:text="${#numbers.formatDecimal(rff.rffTotal,1,2)}"></span>
+                                                                                    €
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr style="text-align: left">
+                                                                                <td colspan="4"> <span>
+                                                                                        TVA à 20% </span>€
+                                                                                </td>
+                                                                                <td
+                                                                                    style="text-align: right;white-space: nowrap;">
+                                                                                    <span
+                                                                                        th:text="${#numbers.formatDecimal(rff.rffTotal*0.2,1,2)}"></span>
+                                                                                    €
+                                                                                </td>
+                                                                            </tr>
+
+                                                                            <tr>
+                                                                                <td colspan="4"
+                                                                                    style="text-align: left">
+                                                                                    Total TTC
+                                                                                </td>
+                                                                                <td
+                                                                                    style="text-align: right;white-space: nowrap;">
+                                                                                    <span
+                                                                                        th:text="${#numbers.formatDecimal(rff.rffTotal*1.2,1,2)}"></span>
+                                                                                    €
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
                                                                         <p
                                                                             style="font-size: 14px; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; mso-line-height-alt: 16.8px; color: #233d56; line-height: 1.2;">
                                                                             &#160;</p>

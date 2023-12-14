@@ -29,8 +29,8 @@
                     </li>
                   </ul>
                 </li>
-                <li *ngIf="validation.validationObservation">Observations : {{validation.validationObservation |
-                  trustHtml}}</li>
+                <li *ngIf="validation.validationObservation"
+                  [innerHTML]="'Observations : '+validation.validationObservation| trustHtml"></li>
               </ul>
             </ul>
           </mat-step>

@@ -48,17 +48,15 @@ public interface RffRepository extends QueryCacheCrudRepository<Rff, Integer> {
                         "           date_range_year as ( " +
                         "         select " +
                         "             generate_series( " +
-                        "             '2023-01-01'\\:\\:date, " +
-                        "             '2083-12-31'\\:\\:date, " +
+                        "             '2022-12-01'\\:\\:date, " +
+                        "             '2083-11-30'\\:\\:date, " +
                         "             interval '1 year'     " +
                         "           )\\:\\:date as date " +
                         "         ), " +
                         "         year_dates as ( " +
                         "         select " +
-                        "             date_trunc('year', " +
-                        "             date)\\:\\:date as start_date, " +
-                        "             (lead( date_trunc('year', " +
-                        "             date)\\:\\:date) over (partition by 1)) -1 as end_date " +
+                        "              date as start_date, " +
+                        "             (lead( date  ) over (partition by 1)) -1 as end_date " +
                         "         from " +
                         "             date_range_year ), " +
                         "         lettering_date_time as ( " +

@@ -286,6 +286,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public BillingType getBillingTypeRff() throws OsirisException {
+        return getConstants().getBillingTypeRff();
+    }
+
+    @Override
     public BillingType getBillingTypeLogo() throws OsirisException {
         return getConstants().getBillingTypeLogo();
     }

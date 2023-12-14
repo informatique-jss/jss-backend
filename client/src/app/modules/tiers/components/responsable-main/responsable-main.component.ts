@@ -12,12 +12,14 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
+import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { RESPONSABLE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { Document } from "../../../miscellaneous/model/Document";
 import { EmployeeService } from '../../../profile/services/employee.service';
 import { ITiers } from '../../model/ITiers';
 import { Responsable } from '../../model/Responsable';
+import { RffSearch } from '../../model/RffSearch';
 import { SubscriptionPeriodType } from '../../model/SubscriptionPeriodType';
 import { Tiers } from '../../model/Tiers';
 import { SubscriptionPeriodTypeService } from '../../services/subscription.period.type.service';
@@ -57,6 +59,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   quotationSearch: QuotationSearch = {} as QuotationSearch;
   provisionSearch: AffaireSearch = {} as AffaireSearch;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
+  rffSearch: RffSearch | undefined;
   responsableAccountSearch: ITiers | undefined;
 
   displayedColumns: SortTableColumn[] = [];
@@ -165,6 +168,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
           this.quotationSearch.customerOrders = [];
           this.provisionSearch.customerOrders = [];
           this.invoiceSearch.customerOrders = [];
+          this.rffSearch = {} as RffSearch;
           this.responsableAccountSearch = undefined;
 
           setTimeout(() =>
@@ -177,6 +181,21 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
             this.invoiceSearch.customerOrders = [responsable], 0);
           setTimeout(() =>
             this.responsableAccountSearch = responsable, 0);
+          setTimeout(() => {
+            this.rffSearch = {} as RffSearch;
+            this.rffSearch.responsable = { entityId: responsable.id } as IndexEntity;
+            this.rffSearch.isHideCancelledRff = false;
+
+            let start = new Date();
+            let d = new Date(start.getTime());
+            d.setFullYear(d.getFullYear() - 1);
+            this.rffSearch.startDate = d;
+
+            let end = new Date();
+            let d2 = new Date(end.getTime());
+            d2.setFullYear(d2.getFullYear() + 1);
+            this.rffSearch.endDate = d2;
+          }, 0);
 
           this.tiersService.setCurrentViewedResponsable(responsable);
           this.toggleTabs();

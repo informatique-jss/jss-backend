@@ -214,6 +214,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	private AzureInvoice azureInvoice;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = { "invoices" }, allowSetters = true)
 	@JoinColumn(name = "id_rff")
 	private Rff rff;
 

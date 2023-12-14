@@ -1,0 +1,36 @@
+<div class=" full-width">
+  <table class="full-width table-fixed-layout" *ngIf=" rffSearch">
+    <tr>
+      <td>
+        <autocomplete-employee [(model)]="rffSearch.salesEmployee" label="Commercial" [form]="rffSearchForm"
+          propertyName="salesEmployee" [isMandatory]="false">
+        </autocomplete-employee>
+      </td>
+      <td>
+        <autocomplete-tiers-individual [(model)]="rffSearch.tiers" [form]="rffSearchForm" propertyName="tiers"
+          [isMandatory]="false" label="Tiers" [authorizeNonIndividualTiers]="true"></autocomplete-tiers-individual>
+      </td>
+      <td>
+        <autocomplete-responsable [(model)]="rffSearch.responsable" [form]="rffSearchForm" label='Responsable'
+          propertyName="responsable" [isMandatory]="false"></autocomplete-responsable>
+      </td>
+      <td>
+        <generic-date-range-picker [(modelStart)]="rffSearch.startDate" [(modelEnd)]="rffSearch.endDate"
+          label="Plage de recherche" [form]="rffSearchForm" propertyNameStart="startDate" propertyNameEnd="endDate">
+        </generic-date-range-picker>
+      </td>
+      <td>
+        <generic-toggle [(model)]="rffSearch.isHideCancelledRff" label="Masquer les RFF annulés" [form]="rffSearchForm"
+          propertyName="isHideCancelledRff"></generic-toggle>
+      </td>
+      <td class="fab-td-button">
+        <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchRff()" class="add-button">
+          <mat-icon>search</mat-icon>
+        </button>
+      </td>
+    </tr>
+  </table>
+  <sort-table [actions]="tableActionRff" [columns]="displayedColumnsRff" [values]="rff" tableName="RFF"
+    *ngIf="displayedColumnsRff && displayedColumnsRff.length>0 " [displayTotalLines]="true">
+  </sort-table>
+</div>

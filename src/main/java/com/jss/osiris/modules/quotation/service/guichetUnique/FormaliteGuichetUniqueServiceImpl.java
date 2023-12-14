@@ -279,7 +279,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 if (typeDocumentsToDownload.size() > 0) {
                     for (PiecesJointe piecesJointe : originalFormalite.getContent().getPiecesJointes())
                         if (typeDocumentsToDownload.contains(piecesJointe.getTypeDocument().getCode())) {
-                            downloadPieceJointeOnProvision(formalite.getProvision().get(0), piecesJointe);
+                            downloadPieceJointeOnProvision(
+                                    formaliteService.getFormalite(formalite.getId()).getProvision().get(0),
+                                    piecesJointe);
                         }
                 }
             }

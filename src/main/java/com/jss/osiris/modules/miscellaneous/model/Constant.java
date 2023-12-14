@@ -699,6 +699,10 @@ public class Constant implements Serializable, IId {
 	private BillingType billingTypeCorrespondenceFees;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_rff")
+	private BillingType billingTypeRff;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_customer_order_origin_website")
 	private CustomerOrderOrigin customerOrderOriginWebSite;
 
@@ -2138,5 +2142,13 @@ public class Constant implements Serializable, IId {
 
 	public void setRffFrequencyMonthly(RffFrequency rffFrequencyMonthly) {
 		this.rffFrequencyMonthly = rffFrequencyMonthly;
+	}
+
+	public BillingType getBillingTypeRff() {
+		return billingTypeRff;
+	}
+
+	public void setBillingTypeRff(BillingType billingTypeRff) {
+		this.billingTypeRff = billingTypeRff;
 	}
 }

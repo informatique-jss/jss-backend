@@ -7,11 +7,13 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
+import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
 import { InvoiceSearch } from '../../../invoicing/model/InvoiceSearch';
 import { Responsable } from '../../model/Responsable';
+import { RffSearch } from '../../model/RffSearch';
 import { Tiers } from '../../model/Tiers';
 import { TiersService } from '../../services/tiers.service';
 import { ResponsableMainComponent } from '../responsable-main/responsable-main.component';
@@ -37,6 +39,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
   provisionSearch: AffaireSearch = {} as AffaireSearch;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   responsableAccountSearch: Tiers | undefined;
+  rffSearch: RffSearch | undefined;
 
   saveObservableSubscription: Subscription = new Subscription;
 
@@ -92,6 +95,20 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.toggleTabs();
 
         this.loadQuotationFilter();
+
+        this.rffSearch = {} as RffSearch;
+        this.rffSearch.tiers = { entityId: this.tiers.id } as IndexEntity;
+        this.rffSearch.isHideCancelledRff = false;
+
+        let start = new Date();
+        let d = new Date(start.getTime());
+        d.setFullYear(d.getFullYear() - 1);
+        this.rffSearch.startDate = d;
+
+        let end = new Date();
+        let d2 = new Date(end.getTime());
+        d2.setFullYear(d2.getFullYear() + 1);
+        this.rffSearch.endDate = d2;
       })
     } else if (this.createMode == false) {
       // Blank page

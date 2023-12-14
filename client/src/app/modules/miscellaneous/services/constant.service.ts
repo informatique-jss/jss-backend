@@ -202,6 +202,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.billingTypeCentralPayFees;
   }
 
+  getBillingTypeRff() {
+    return this.constant.billingTypeRff;
+  }
+
   getBillingTypeLogo() {
     return this.constant.billingTypeLogo;
   }

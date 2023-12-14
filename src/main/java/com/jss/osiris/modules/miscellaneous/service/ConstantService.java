@@ -131,6 +131,8 @@ public interface ConstantService {
 
     public BillingType getBillingTypeCentralPayFees() throws OsirisException;
 
+    public BillingType getBillingTypeRff() throws OsirisException;
+
     public BillingType getBillingTypeLogo() throws OsirisException;
 
     public BillingType getBillingTypeRedactedByJss() throws OsirisException;

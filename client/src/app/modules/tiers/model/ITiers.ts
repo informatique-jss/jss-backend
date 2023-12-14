@@ -31,4 +31,7 @@ export interface ITiers extends IAttachment, IDocument {
   accountingAccountProvider: AccountingAccount;
   accountingAccountDeposit: AccountingAccount;
   rffFrequency: RffFrequency;
+  rffIban: string;
+  rffBic: string;
+  rffMail: string;
 }

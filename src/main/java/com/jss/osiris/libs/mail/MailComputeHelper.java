@@ -1,6 +1,7 @@
 package com.jss.osiris.libs.mail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Regie;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Confrere;
@@ -23,6 +25,7 @@ import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Service
@@ -36,6 +39,9 @@ public class MailComputeHelper {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    MailService mailService;
 
     public MailComputeResult computeMailForGenericDigitalDocument(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
@@ -90,6 +96,25 @@ public class MailComputeHelper {
     public MailComputeResult computeMailForBillingClosure(ITiers tiers)
             throws OsirisException, OsirisClientMessageException {
         return computeMailForITiers(tiers);
+    }
+
+    public MailComputeResult computeMailForRff(Rff rff)
+            throws OsirisException, OsirisClientMessageException {
+        if (rff == null)
+            throw new OsirisException(null, "Rff not provided");
+
+        // Compute recipients
+        MailComputeResult mailComputeResult = new MailComputeResult();
+        mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
+        mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
+        mailComputeResult.setIsSendToClient(false);
+        mailComputeResult.setIsSendToAffaire(false);
+
+        Mail mail = new Mail();
+        mail.setMail(rff.getRffMail());
+        mailComputeResult.getRecipientsMailTo().addAll(mailService.populateMailIds(Arrays.asList(mail)));
+
+        return mailComputeResult;
     }
 
     public MailComputeResult computeMailForSendAnnouncementToConfrere(Announcement announcement)

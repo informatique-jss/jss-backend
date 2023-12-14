@@ -117,6 +117,7 @@ export interface Constant {
   billingTypeVacationUpdateBeneficialOwners: BillingType;
   billingTypeFormalityAdditionalDeclaration: BillingType;
   billingTypeCorrespondenceFees: BillingType;
+  billingTypeRff: BillingType;
   stringNantissementDepositFormeJuridiqueCode: string;
   strinSocialShareNantissementRedactionFormeJuridiqueCode: string;
   stringBusinnessNantissementRedactionFormeJuridiqueCode: string;

@@ -340,6 +340,13 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeRff" label="Type de poste de facturation - RFF"
+                [form]="constantForm" propertyName="billingTypeRff" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeLogo"
                 label="Type de poste de facturation - Logo" [form]="constantForm" propertyName="billingTypeLogo"
                 [isMandatory]="true" [isDisabled]="!editMode">

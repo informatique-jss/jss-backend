@@ -203,7 +203,50 @@ public class TiersController {
     if (rff == null)
       throw new OsirisValidationException("Rff");
 
+    if (rff.getIsSent() == true || rff.getInvoices() != null && rff.getInvoices().size() > 0)
+      throw new OsirisValidationException("Rff");
+
     return new ResponseEntity<Rff>(rffService.cancelRff(rff), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/rff/invoice")
+  public ResponseEntity<Invoice> generateInvoiceForRff(@RequestParam Integer idRff)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+    if (idRff == null)
+      throw new OsirisValidationException("idRff");
+
+    Rff rff = rffService.getRff(idRff);
+    if (rff == null)
+      throw new OsirisValidationException("Rff");
+
+    if (rff.getRffTotal() == null || rff.getRffTotal() <= 0f)
+      throw new OsirisValidationException("Rff");
+
+    if (rff.getIsCancelled() == true || rff.getIsSent() == false
+        || rff.getInvoices() != null && rff.getInvoices().size() > 0)
+      throw new OsirisValidationException("Rff");
+
+    return new ResponseEntity<Invoice>(rffService.generateInvoiceForRff(rff), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/rff/send")
+  public ResponseEntity<Rff> sendRff(@RequestParam Integer idRff, @RequestParam Float amount,
+      @RequestParam boolean sendToMe)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+    if (idRff == null)
+      throw new OsirisValidationException("idRff");
+
+    Rff rff = rffService.getRff(idRff);
+    if (rff == null)
+      throw new OsirisValidationException("Rff");
+
+    if (amount == null || amount <= 0f || amount > (rff.getRffFormalite() + rff.getRffInsertion()))
+      throw new OsirisValidationException("Rff");
+
+    if (rff.getIsCancelled() == true || rff.getIsSent() || rff.getInvoices() != null && rff.getInvoices().size() > 0)
+      throw new OsirisValidationException("Rff");
+
+    return new ResponseEntity<Rff>(rffService.sendRff(rff, amount, sendToMe), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/competitors")
@@ -635,6 +678,11 @@ public class TiersController {
         !tiers.getTiersType().getId().equals(constantService.getTiersTypeProspect().getId()), "PaymentType");
     validationHelper.validateIban(tiers.getPaymentIban(), false, "PaymentIBAN");
     validationHelper.validateBic(tiers.getPaymentBic(), false, "PaymentBic");
+    validationHelper.validateIban(tiers.getRffIban(), false, "RffIBAN");
+    validationHelper.validateBic(tiers.getRffBic(), false, "RffBic");
+    if (tiers.getRffMail() != null && tiers.getRffMail().length() > 0
+        && !validationHelper.validateMail(tiers.getRffMail()))
+      throw new OsirisValidationException("Mails rff");
 
     if (tiers.getPaymentType() != null
         && tiers.getPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())) {
@@ -666,6 +714,11 @@ public class TiersController {
         validationHelper.validateString(responsable.getBuilding(), false, 20, "Building");
         validationHelper.validateString(responsable.getFloor(), false, 20, "Floor");
         validationHelper.validateReferential(responsable.getSubscriptionPeriodType(), false, "SubscriptionPeriodType");
+        validationHelper.validateIban(responsable.getRffIban(), false, "RffIBAN");
+        validationHelper.validateBic(responsable.getRffBic(), false, "RffBic");
+        if (responsable.getRffMail() != null && responsable.getRffMail().length() > 0
+            && !validationHelper.validateMail(responsable.getRffMail()))
+          throw new OsirisValidationException("Mails rff");
 
         boolean tiersGotRff = tiers.getRffFormaliteRate() != null && tiers.getRffFormaliteRate() > 0
             || tiers.getRffInsertionRate() != null && tiers.getRffInsertionRate() > 0;

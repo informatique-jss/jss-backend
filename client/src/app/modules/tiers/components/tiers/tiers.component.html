@@ -41,6 +41,11 @@
     <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id && !this.idResponsable">
       <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
     </mat-tab>
+    <mat-tab label="RFF" *ngIf="rffSearch && rffSearch.tiers  ">
+      <div class="mat-elevation-z2 form-div">
+        <rff-list [rffSearch]="rffSearch" [isForTiersIntegration]="true"></rff-list>
+      </div>
+    </mat-tab>
     <mat-tab label="Suivi" *ngIf="tiers.id!=null && tiers.id!=undefined">
       <tiers-followup [tiers]="tiers" [editMode]="editMode"></tiers-followup>
     </mat-tab>
