@@ -28,6 +28,7 @@
       <td *ngIf=" !affaire.isUnregistered">
         <autocomplete-siren [(model)]="affaire.siren" [form]="affaireForm" propertyName="siren" [isMandatory]="true"
           label="SIREN" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
+          [fieldToCheckAgainstForValidation]="'siren'"
           [conditionnalRequired]="!this.affaire.isIndividual && !affaire.isUnregistered && !this.affaire.siret && !this.affaire.rna"
           (onOptionSelected)="fillAffaire($event)">
         </autocomplete-siren>
@@ -35,6 +36,7 @@
       <td *ngIf=" !affaire.isUnregistered">
         <autocomplete-siret [(model)]="affaire.siret" [form]="affaireForm" propertyName="siret" [isMandatory]="true"
           label="SIRET" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
+          [fieldToCheckAgainstForValidation]="'siret'"
           [conditionnalRequired]="!this.affaire.isIndividual && !affaire.isUnregistered && !this.affaire.siren && !this.affaire.rna"
           (onOptionSelected)="fillAffaire($event)">
         </autocomplete-siret>
@@ -42,6 +44,7 @@
       <td *ngIf=" !affaire.isUnregistered">
         <autocomplete-rna [(model)]="affaire.rna" [form]="affaireForm" propertyName="rna" [isMandatory]="true"
           label="RNA" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
+          [fieldToCheckAgainstForValidation]="'rna'"
           [conditionnalRequired]="!this.affaire.isIndividual && !affaire.isUnregistered && !this.affaire.siren && !this.affaire.siret"
           (onOptionSelected)="fillAffaire($event)"></autocomplete-rna>
       </td>

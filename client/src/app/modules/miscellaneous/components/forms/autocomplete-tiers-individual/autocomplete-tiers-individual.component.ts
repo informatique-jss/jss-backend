@@ -44,11 +44,13 @@ export class AutocompleteTiersIndividualComponent extends GenericAutocompleteCom
     if ((tiers as any).denomination || (tiers as any).firstname) {
       return (tiers as any).denomination ? (tiers as any).denomination : ((tiers as any).firstname + ' ' + (tiers as any).lastname);
     }
-    let text = JSON.parse(tiers.text);
-    if (text.denomination)
-      return text.denomination!;
-    if (text.firstname)
-      return text.firstname + " " + text.lastname;
+    if (tiers && tiers.text) {
+      let text = JSON.parse(tiers.text);
+      if (text.denomination)
+        return text.denomination!;
+      if (text.firstname)
+        return text.firstname + " " + text.lastname;
+    }
     return "";
   }
 }

@@ -66,6 +66,13 @@ export class AffaireComponent implements OnInit {
 
   saveAffaire(): boolean {
     if (this.getFormsStatus() && this.affaire) {
+      if (this.affaire.siret)
+        if (((this.affaire.siret) as any).siret)
+          this.affaire.siret = ((this.affaire.siret) as any).siret;
+
+      if (this.affaire.siren)
+        if (((this.affaire.siren) as any).siren)
+          this.affaire.siren = ((this.affaire.siren) as any).siren;
       this.affaireService.addOrUpdateAffaire(this.affaire).subscribe(response => {
         this.affaire = response;
         this.editMode = false;
