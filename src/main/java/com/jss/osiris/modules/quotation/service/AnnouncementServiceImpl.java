@@ -592,7 +592,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         if (assoAffaireOrder.getProvisions() != null)
             for (Provision provision : assoAffaireOrder.getProvisions())
-                if (provision.getAnnouncement() != null) {
+                if (provision.getAnnouncement() != null && provision.getAnnouncement().getNotice() != null) {
                     Announcement announcement = provision.getAnnouncement();
 
                     if (affaire.getIsIndividual()) {
