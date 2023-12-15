@@ -12,7 +12,7 @@
       </td>
       <td>
         <autocomplete-responsable [(model)]="rffSearch.responsable" [form]="rffSearchForm" label='Responsable'
-          propertyName="responsable" [isMandatory]="false"></autocomplete-responsable>
+          propertyName="responsable" [isMandatory]="false" [onlyActive]="false"></autocomplete-responsable>
       </td>
       <td>
         <generic-date-range-picker [(modelStart)]="rffSearch.startDate" [(modelEnd)]="rffSearch.endDate"
