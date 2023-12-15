@@ -139,4 +139,9 @@ public class IndexEntityServiceImpl implements IndexEntityService {
         }
         return outObject;
     }
+
+    @Override
+    public void deleteIndexEntity(IndexEntity indexEntity) {
+        indexEntityRepository.delete(indexEntity);
+    }
 }

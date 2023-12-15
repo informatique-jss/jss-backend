@@ -17,6 +17,7 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.model.CustomerMail;
+import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
@@ -354,6 +355,11 @@ public class TiersServiceImpl implements TiersService {
         tiers.setAccountingAccountProvider(null);
 
         addOrUpdateTiers(tiers);
+
+        List<IndexEntity> entities = searchService.searchForEntities(tiers.getId() + "", Tiers.class.getSimpleName(),
+                true);
+        if (entities != null && entities.size() == 1)
+            indexEntityService.deleteIndexEntity(entities.get(0));
 
         tiersRepository.delete(tiers);
         return true;
