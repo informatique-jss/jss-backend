@@ -373,14 +373,13 @@ public class AffaireServiceImpl implements AffaireService {
                 || company.getFormality().getContent().getPersonneMorale() == null)
             return null;
 
-        if (siret == null || siret.length() == 0
-                || (company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal() != null
-                        && siret.equals(company.getFormality().getContent().getPersonneMorale()
-                                .getEtablissementPrincipal().getDescriptionEtablissement().getSiret()))) {
-            if (company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal()
-                    .getAdresse() != null)
-                return company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal().getAdresse();
-        } else {
+        if (siret == null || siret.length() == 0) {
+            if (company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal() == null) {
+                return company.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse();
+            } else {
+                company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal().getAdresse();
+            }
+        } else if (siret != null) {
             if (company.getFormality().getContent().getPersonneMorale().getAutresEtablissements() != null)
                 for (AutresEtablissement other : company.getFormality().getContent().getPersonneMorale()
                         .getAutresEtablissements()) {
@@ -389,6 +388,12 @@ public class AffaireServiceImpl implements AffaireService {
                             && other.getDescriptionEtablissement().getSiret().equals(siret))
                         return other.getAdresse();
                 }
+            if (company.getFormality().getContent().getPersonneMorale()
+                    .getEtablissementPrincipal() != null
+                    && siret.equals(company.getFormality().getContent().getPersonneMorale()
+                            .getEtablissementPrincipal().getDescriptionEtablissement().getSiret()))
+                return company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal().getAdresse();
+            return company.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse();
         }
         return null;
     }
