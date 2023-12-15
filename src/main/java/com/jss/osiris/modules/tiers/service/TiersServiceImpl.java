@@ -363,7 +363,7 @@ public class TiersServiceImpl implements TiersService {
     public List<ITiersSearchResult> searchTiers(TiersSearch tiersSearch) throws OsirisException {
         Integer tiersId = 0;
         if (tiersSearch.getTiers() != null)
-            tiersId = tiersSearch.getTiers().getId();
+            tiersId = tiersSearch.getTiers().getEntityId();
 
         Integer salesEmployeeId = 0;
         if (tiersSearch.getSalesEmployee() != null)

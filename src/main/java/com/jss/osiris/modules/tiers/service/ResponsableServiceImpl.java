@@ -78,11 +78,11 @@ public class ResponsableServiceImpl implements ResponsableService {
     public List<IResponsableSearchResult> searchResponsables(TiersSearch tiersSearch) throws OsirisException {
         Integer tiersId = 0;
         if (tiersSearch.getTiers() != null)
-            tiersId = tiersSearch.getTiers().getId();
+            tiersId = tiersSearch.getTiers().getEntityId();
 
         Integer responsableId = 0;
         if (tiersSearch.getResponsable() != null)
-            responsableId = 0;
+            responsableId = tiersSearch.getResponsable().getEntityId();
 
         Integer salesEmployeeId = 0;
         if (tiersSearch.getSalesEmployee() != null)

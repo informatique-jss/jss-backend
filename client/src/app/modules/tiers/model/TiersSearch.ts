@@ -1,10 +1,9 @@
+import { IndexEntity } from "src/app/routing/search/IndexEntity";
 import { Employee } from "../../profile/model/Employee";
-import { Responsable } from "./Responsable";
-import { Tiers } from "./Tiers";
 
 export interface TiersSearch {
-  tiers: Tiers;
-  responsable: Responsable;
+  tiers: IndexEntity;
+  responsable: IndexEntity;
   salesEmployee: Employee;
   startDate: Date;
   endDate: Date;
