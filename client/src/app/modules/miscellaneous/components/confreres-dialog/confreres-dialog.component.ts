@@ -99,20 +99,24 @@ export class ConfrereDialogComponent implements OnInit {
       return;
     });
 
-    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-      maxWidth: "400px",
-      data: {
-        title: "Confrère non autorisé !",
-        content: "Attention, ce confrère n'est pas censé être utilisé ! Rapprochez-vous du service des Annonces Légales avant de l'utiliser !",
-        closeActionText: "Annuler",
-        validationActionText: "Choisir"
-      }
-    });
+    if (outConfrere.doNotUse) {
+      const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Confrère non autorisé !",
+          content: "Attention, ce confrère n'est pas censé être utilisé ! Rapprochez-vous du service des Annonces Légales avant de l'utiliser !",
+          closeActionText: "Annuler",
+          validationActionText: "Choisir"
+        }
+      });
 
-    dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult)
-        this.confreresDialogRef.close(outConfrere!);
-    });
+      dialogRef.afterClosed().subscribe(dialogResult => {
+        if (dialogResult)
+          this.confreresDialogRef.close(outConfrere!);
+      });
+    } else {
+      this.confreresDialogRef.close(outConfrere!);
+    }
   }
 
   closeDialog() {
