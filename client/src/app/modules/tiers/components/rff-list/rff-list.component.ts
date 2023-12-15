@@ -64,9 +64,9 @@ export class RffListComponent implements OnInit {
       this.displayedColumnsRff.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn);
       this.displayedColumnsRff.push({ id: "startDate", fieldName: "startDate", label: "Début", valueFonction: formatDateForSortTable } as SortTableColumn);
       this.displayedColumnsRff.push({ id: "endDate", fieldName: "endDate", label: "Fin", valueFonction: formatDateForSortTable } as SortTableColumn);
-      this.displayedColumnsRff.push({ id: "rffInsertion", fieldName: "rffInsertion", label: "RFF AL", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.turnoverAmountWithoutDebourWithTax) } } as SortTableColumn);
-      this.displayedColumnsRff.push({ id: "rffFormalite", fieldName: "rffFormalite", label: "RFF Formalités", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.turnoverAmountWithoutDebourWithTax) } } as SortTableColumn);
-      this.displayedColumnsRff.push({ id: "rffTotal", fieldName: "rffTotal", label: "Total HT", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.turnoverAmountWithoutDebourWithTax) } } as SortTableColumn);
+      this.displayedColumnsRff.push({ id: "rffInsertion", fieldName: "rffInsertion", label: "RFF AL", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.rffInsertion) } } as SortTableColumn);
+      this.displayedColumnsRff.push({ id: "rffFormalite", fieldName: "rffFormalite", label: "RFF Formalités", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.rffFormalite) } } as SortTableColumn);
+      this.displayedColumnsRff.push({ id: "rffTotal", fieldName: "rffTotal", label: "Total HT", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.rffTotal) } } as SortTableColumn);
       this.displayedColumnsRff.push({ id: "rib", fieldName: "rib", label: "RIB", valueFonction: (element: Rff) => { return (element.rffIban) ? (element.rffIban + "/" + element.rffBic) : "" } } as SortTableColumn);
       this.displayedColumnsRff.push({ id: "rffMail", fieldName: "rffMail", label: "Mail" } as SortTableColumn);
       this.displayedColumnsRff.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé ?", valueFonction: (element: Rff) => { return element.isCancelled ? 'Oui' : 'Non' } } as SortTableColumn);

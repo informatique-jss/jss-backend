@@ -171,9 +171,9 @@ public interface RffRepository extends QueryCacheCrudRepository<Rff, Integer> {
                         "         select " +
                         "             r.id as tiersId, " +
                         "             r2.id as responsableId,  " +
-                        "             sum(case when ii.id_al is not null and r.rff_insertion_rate is not null and r.rff_insertion_rate>0 then r.rff_insertion_rate else 0 end / 100 * ii.pre_tax_price) as rffAl , "
+                        "             sum(case when ii.id_al is not null and r2.rff_insertion_rate is not null and r2.rff_insertion_rate>0 then r2.rff_insertion_rate else 0 end / 100 * ii.pre_tax_price) as rffAl , "
                         +
-                        "             sum(case when ii.id_for is not null and r.rff_formalite_rate is not null and r.rff_formalite_rate>0 then r.rff_formalite_rate else 0 end / 100 * ii.pre_tax_price) as rffFor, "
+                        "             sum(case when ii.id_for is not null and r2.rff_formalite_rate is not null and r2.rff_formalite_rate>0 then r2.rff_formalite_rate else 0 end / 100 * ii.pre_tax_price) as rffFor, "
                         +
                         "              yd.start_date as startDate, " +
                         "             yd.end_date as endDate, rff.id as rffId " +
@@ -187,7 +187,7 @@ public interface RffRepository extends QueryCacheCrudRepository<Rff, Integer> {
                         "             (r.id_rff_frequency = :rffFrequencyAnnual " +
                         "                 or r.id_rff_frequency is null) " +
                         "             and ii.lettering_date_time between yd.start_date and yd.end_date " +
-                        "           left join rff on rff.id_tiers = r.id and rff.id_responsable =r2.id and rff.start_date =\t yd.start_date and rff.end_date =  yd.end_date"
+                        "           left join rff on rff.id_tiers = r.id and rff.id_responsable =r2.id and rff.start_date = yd.start_date and rff.end_date =  yd.end_date"
                         +
                         "         where " +
                         "             coalesce (r2.rff_formalite_rate, " +
