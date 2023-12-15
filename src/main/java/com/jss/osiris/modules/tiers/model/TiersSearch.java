@@ -2,31 +2,16 @@ package com.jss.osiris.modules.tiers.model;
 
 import java.time.LocalDate;
 
+import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.modules.profile.model.Employee;
 
 public class TiersSearch {
-    private Tiers tiers;
-    private Responsable responsable;
+    private IndexEntity tiers;
+    private IndexEntity responsable;
     private Employee salesEmployee;
     private LocalDate startDate;
     private LocalDate endDate;
     private String label;
-
-    public Tiers getTiers() {
-        return tiers;
-    }
-
-    public void setTiers(Tiers tiers) {
-        this.tiers = tiers;
-    }
-
-    public Responsable getResponsable() {
-        return responsable;
-    }
-
-    public void setResponsable(Responsable responsable) {
-        this.responsable = responsable;
-    }
 
     public LocalDate getStartDate() {
         return startDate;
@@ -58,6 +43,22 @@ public class TiersSearch {
 
     public void setSalesEmployee(Employee salesEmployee) {
         this.salesEmployee = salesEmployee;
+    }
+
+    public IndexEntity getTiers() {
+        return tiers;
+    }
+
+    public void setTiers(IndexEntity tiers) {
+        this.tiers = tiers;
+    }
+
+    public IndexEntity getResponsable() {
+        return responsable;
+    }
+
+    public void setResponsable(IndexEntity responsable) {
+        this.responsable = responsable;
     }
 
 }

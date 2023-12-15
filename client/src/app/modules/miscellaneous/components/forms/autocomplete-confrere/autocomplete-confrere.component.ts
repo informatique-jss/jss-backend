@@ -58,21 +58,25 @@ export class AutocompleteConfrereComponent extends GenericAutocompleteComponent<
 
   override optionSelected(type: Confrere): void {
 
-    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-      maxWidth: "400px",
-      data: {
-        title: "Confrère non autorisé !",
-        content: "Attention, ce confrère n'est pas censé être utilisé ! Rapprochez-vous du service des Annonces Légales avant de l'utiliser !",
-        closeActionText: "Annuler",
-        validationActionText: "Choisir"
-      }
-    });
+    if (type.doNotUse) {
+      const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Confrère non autorisé !",
+          content: "Attention, ce confrère n'est pas censé être utilisé ! Rapprochez-vous du service des Annonces Légales avant de l'utiliser !",
+          closeActionText: "Annuler",
+          validationActionText: "Choisir"
+        }
+      });
 
-    dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult)
-        super.optionSelected(type);
-      else
-        super.clearField();
-    });
+      dialogRef.afterClosed().subscribe(dialogResult => {
+        if (dialogResult)
+          super.optionSelected(type);
+        else
+          super.clearField();
+      });
+    } else {
+      super.optionSelected(type);
+    }
   }
 }
