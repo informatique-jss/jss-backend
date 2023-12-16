@@ -1,0 +1,105 @@
+.dashboard-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.dashboard-box {
+  width: var(--box-width);
+  height: var(--box-height);
+  padding-top: 25px;
+  border: solid 1px #ccc;
+  display: flex;
+  justify-content: center;
+  border-radius: 4px;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: auto;
+  z-index: 1;
+  transition: box-shadow 200ms cubic-bezier(0, 0, 0.2, 1);
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drop-list {
+  display: flex;
+  padding-right: 10px;
+  padding-bottom: 10px;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drop-list-dragging {
+  cursor: grabbing !important;
+}
+
+.dashboard-box-handle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: move;
+  width: 24px;
+  height: 24px;
+}
+
+.dashboard-box-delete {
+  position: absolute;
+  top: 10px;
+  right: 37px;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+}
+
+.dashboard-box-settings {
+  text-align: right;
+  padding-right: 4px;
+}
+
+.dashboard-box-component {
+  width: 100%;
+  height: 100%;
+}
+
+.dashboard-title {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 15px;
+  text-transform: uppercase;
+}
+
+::ng-deep.mat-mdc-menu-panel {
+  max-width: none !important;
+}
+
+.icon-status {
+  font-size: 154px;
+  width: 100%;
+  height: 50%;
+  padding-top: 50px;
+}
+
+.color-ko {
+  color: #e74c3c !important;
+}
+
+.color-ok {
+  color: #27ae60 !important;
+}
+
+.color-warn {
+  color: #f1c40f !important;
+}

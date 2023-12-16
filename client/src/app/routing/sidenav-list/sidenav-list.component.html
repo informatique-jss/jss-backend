@@ -57,6 +57,10 @@
   <a mat-list-item routerLink="/my-profil" [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/my-profil' )>=0}">
     <mat-icon>manage_accounts</mat-icon> <span>Mon profil</span>
   </a>
+  <a mat-list-item routerLink="/monitoring"
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/monitoring' )>=0}">
+    <mat-icon>bar_chart_4_bars</mat-icon> <span>Supervision</span>
+  </a>
 </mat-nav-list>
 <button mat-mini-fab color="accent" class="light" (click)="toggleDarkTheme()" matTooltip="Ca va être tout noir ...">
   <mat-icon>lightbulb</mat-icon>

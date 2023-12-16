@@ -145,12 +145,12 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     partnerCenterRepository.save(validationRequest.getPartnerCenter());
             }
 
-        if (formaliteGuichetUnique.getFormaliteStatusHistoryItems() != null)
-            for (FormaliteStatusHistoryItem statusHistoryItem : formaliteGuichetUnique
-                    .getFormaliteStatusHistoryItems()) {
-                // if (statusHistoryItem.getPartnerCenter() != null)
-                // partnerCenterRepository.save(statusHistoryItem.getPartnerCenter());
-            }
+        // if (formaliteGuichetUnique.getFormaliteStatusHistoryItems() != null)
+        // for (FormaliteStatusHistoryItem statusHistoryItem : formaliteGuichetUnique
+        // .getFormaliteStatusHistoryItems()) {
+        // if (statusHistoryItem.getPartnerCenter() != null)
+        // partnerCenterRepository.save(statusHistoryItem.getPartnerCenter());
+        // }
 
         FormaliteGuichetUnique originalFormalite = getFormaliteGuichetUnique(inFormaliteGuichetUnique.getId());
 

@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -151,6 +153,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     DocumentService documentService;
 
+    @Autowired
+    BatchService batchService;
+
     @Override
     public Payment getPayment(Integer id) {
         Optional<Payment> payment = paymentRepository.findById(id);
@@ -209,7 +214,7 @@ public class PaymentServiceImpl implements PaymentService {
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
 
         for (Payment payment : payments) {
-            automatchPayment(payment);
+            batchService.declareNewBatch(Batch.AUTOMATCH_PAYMENT, payment.getId());
         }
     }
 
@@ -249,17 +254,10 @@ public class PaymentServiceImpl implements PaymentService {
                 }
                 Payment payment = paymentRepository.findByBankId(transaction.id());
                 if (payment != null && (payment.getIsCancelled() == null || payment.getIsCancelled() == false))
-                    automatchPayment(payment);
+                    batchService.declareNewBatch(Batch.AUTOMATCH_PAYMENT, payment.getId());
             }
 
         return null;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void automatchPaymentFromUser(Payment payment)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        automatchPayment(payment);
     }
 
     @Override
@@ -733,7 +731,7 @@ public class PaymentServiceImpl implements PaymentService {
         checkPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
         addOrUpdatePayment(checkPayment);
         accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(checkPayment, false);
-        automatchPayment(checkPayment);
+        batchService.declareNewBatch(Batch.AUTOMATCH_PAYMENT, checkPayment.getId());
     }
 
     @Override

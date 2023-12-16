@@ -65,7 +65,6 @@ export class AutomaticMailListComponent implements OnInit {
 
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "createdDateTime", fieldName: "createdDateTime", label: "Créé le", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "hasErrors", fieldName: "hasErrors", label: "En erreur ?", valueFonction: (element: any) => { return element.hasErrors ? "Oui" : "Non" } } as SortTableColumn);
     this.displayedColumns.push({ id: "isSent", fieldName: "isSent", label: "Envoyé ?", valueFonction: (element: any) => { return element.isSent ? "Oui" : "Non" } } as SortTableColumn);
     this.displayedColumns.push({ id: "sentTo", fieldName: "sentTo", label: "Envoyé à", valueFonction: this.getSentToLabel } as SortTableColumn);
     this.displayedColumns.push({ id: "sentCc", fieldName: "sentCc", label: "Copie à", valueFonction: this.getSentCcLabel } as SortTableColumn);

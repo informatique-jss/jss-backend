@@ -1922,16 +1922,6 @@ public class QuotationController {
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
-  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-  @GetMapping(inputEntryPoint + "/formalite/refresh")
-  public ResponseEntity<Boolean> refreshFormaliteGuichetUnique(@RequestParam Integer idFormaliteGuichetUnique)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-    FormaliteGuichetUnique formalite = formaliteGuichetUniqueService
-        .getFormaliteGuichetUnique(idFormaliteGuichetUnique);
-    formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formalite, formalite.getFormalite(), false);
-    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-  }
-
   @GetMapping(inputEntryPoint + "/formalite-guichet-unique/search")
   public ResponseEntity<List<FormaliteGuichetUnique>> findFormaliteGuichetUniqueServiceByReference(
       @RequestParam String value)

@@ -24,7 +24,10 @@ import org.springframework.web.client.RestTemplate;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.SSLHelper;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.profile.service.EmployeeService;
@@ -62,6 +65,9 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
 
     @Autowired
     FormaliteGuichetUniqueRepository formaliteGuichetUniqueRepository;
+
+    @Autowired
+    BatchService batchService;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
@@ -601,16 +607,13 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
 
     @Override
     public void refreshFormalitiesFromLastHour()
-            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-        List<FormaliteGuichetUnique> formalites = getAllFormalitiesByDate(LocalDateTime.now().minusYears(10),
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+        List<FormaliteGuichetUnique> formalitesGuichetUnique = getAllFormalitiesByDate(
+                LocalDateTime.now().minusYears(10),
                 LocalDateTime.now().minusHours(1));
-        if (formalites != null && formalites.size() > 0) {
-            for (FormaliteGuichetUnique formalite : formalites) {
-                try {
-                    formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formalite, null, true);
-                } catch (Exception e) {
-                    globalExceptionHandler.handleExceptionOsiris(e);
-                }
+        if (formalitesGuichetUnique != null && formalitesGuichetUnique.size() > 0) {
+            for (FormaliteGuichetUnique formaliteGuichetUnique : formalitesGuichetUnique) {
+                batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE, formaliteGuichetUnique.getId());
             }
         }
     }
@@ -625,12 +628,8 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
                 if (formalite.getFormalitesGuichetUnique() != null
                         && formalite.getFormalitesGuichetUnique().size() > 0)
                     for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique())
-                        try {
-                            formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formaliteGuichetUnique,
-                                    formalite, true);
-                        } catch (Exception e) {
-                            globalExceptionHandler.handleExceptionOsiris(e);
-                        }
+                        batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE,
+                                formaliteGuichetUnique.getId());
         }
     }
 }

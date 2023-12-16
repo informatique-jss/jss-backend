@@ -23,6 +23,9 @@ public class Status implements Serializable, ICode {
     @Column(columnDefinition = "TEXT")
     private String label;
 
+    @Column(nullable = false)
+    private Boolean isCloseState;
+
     public String getCode() {
         return code;
     }
@@ -37,6 +40,14 @@ public class Status implements Serializable, ICode {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public Boolean getIsCloseState() {
+        return isCloseState;
+    }
+
+    public void setIsCloseState(Boolean isCloseState) {
+        this.isCloseState = isCloseState;
     }
 
 }

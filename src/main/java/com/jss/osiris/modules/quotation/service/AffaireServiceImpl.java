@@ -5,15 +5,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -64,9 +63,6 @@ public class AffaireServiceImpl implements AffaireService {
     @Autowired
     ConstantService constantService;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Autowired
     FormeJuridiqueService formeJuridiqueService;
 
@@ -78,6 +74,9 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Autowired
     GlobalExceptionHandler globalExceptionHandler;
+
+    @Autowired
+    BatchService batchService;
 
     @Override
     public List<Affaire> getAffaires() {
@@ -473,27 +472,27 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateAffaireFromRne() throws OsirisException, OsirisClientMessageException {
+    public void updateAffairesFromRne() throws OsirisException, OsirisClientMessageException {
         List<Affaire> affaires = getAffaires();
         if (affaires != null)
             for (Affaire affaire : affaires) {
-                System.out.println(affaires.indexOf(affaire) + "/" + affaires.size());
-                List<RneCompany> rneCompanies = new ArrayList<RneCompany>();
-                if (affaire.getSiret() != null && affaire.getSiret().length() > 0)
-                    rneCompanies = rneDelegateService.getCompanyBySiret(affaire.getSiret());
-                else if (affaire.getSiren() != null && affaire.getSiren().length() > 0)
-                    rneCompanies = rneDelegateService.getCompanyBySiren(affaire.getSiren());
-
-                if (rneCompanies != null && rneCompanies.size() == 1)
-                    try {
-                        updateAffaireFromRneCompany(affaire, rneCompanies.get(0), false);
-                    } catch (Exception e) {
-                        globalExceptionHandler.handleExceptionOsiris(e);
-                    }
-
-                entityManager.flush();
-                entityManager.clear();
+                batchService.declareNewBatch(Batch.UPDATE_AFFAIRE_FROM_RNE, affaire.getId());
             }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateAffaireFromRne(Affaire affaire) throws OsirisException, OsirisClientMessageException {
+        if (affaire != null) {
+            List<RneCompany> rneCompanies = new ArrayList<RneCompany>();
+            if (affaire.getSiret() != null && affaire.getSiret().length() > 0)
+                rneCompanies = rneDelegateService.getCompanyBySiret(affaire.getSiret());
+            else if (affaire.getSiren() != null && affaire.getSiren().length() > 0)
+                rneCompanies = rneDelegateService.getCompanyBySiren(affaire.getSiren());
+
+            if (rneCompanies != null && rneCompanies.size() == 1)
+                updateAffaireFromRneCompany(affaire, rneCompanies.get(0), false);
+        }
     }
 
 }

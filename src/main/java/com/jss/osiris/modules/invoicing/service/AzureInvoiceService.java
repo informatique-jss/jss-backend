@@ -7,6 +7,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.AzureInvoice;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.quotation.model.Provision;
 
@@ -17,7 +18,7 @@ public interface AzureInvoiceService {
 
         public List<AzureInvoice> searchAzureInvoicesByInvoiceId(String invoiceId);
 
-        public void checkInvoiceToAnalyse()
+        public void analyseInvoice(Attachment attachment)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public AzureInvoice getAzureInvoiceByInvoiceId(String invoiceId);

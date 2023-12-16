@@ -11,6 +11,10 @@ export class HabilitationsService {
   ) {
   }
 
+  canDisplayExtendentMonitoring() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
   canViewDashboardModule() {
     return true;
   }

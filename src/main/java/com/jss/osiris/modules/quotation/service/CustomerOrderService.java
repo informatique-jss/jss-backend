@@ -74,7 +74,9 @@ public interface CustomerOrderService {
         public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public void sendRemindersForCustomerOrderDeposit()
+        public void sendRemindersForCustomerOrderDeposit() throws OsirisException;
+
+        public void sendReminderForCustomerOrderDeposit(CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 

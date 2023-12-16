@@ -3,7 +3,6 @@ package com.jss.osiris.modules.invoicing.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -11,7 +10,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -257,39 +255,6 @@ public class InvoicingController {
 
     @Autowired
     AccountingRecordGenerationService accountingRecordGenerationService;
-
-    // TODO remove !
-    @GetMapping(inputEntryPoint + "/payment/add")
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-    public ResponseEntity<Payment> addPayment(@RequestParam Float amount, @RequestParam Integer paymentWayId,
-            @RequestParam String label)
-            throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-        Payment payment = new Payment();
-        payment.setIsExternallyAssociated(false);
-        payment.setIsCancelled(false);
-        payment.setLabel(label);
-        payment.setPaymentAmount(amount);
-        payment.setPaymentDate(LocalDateTime.now());
-        payment.setPaymentType(constantService.getPaymentTypeVirement());
-        payment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
-        payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
-        paymentService.addOrUpdatePayment(payment);
-        if (payment.getPaymentAmount() > 0)
-            accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment, false);
-        else
-            accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
-        paymentService.automatchPaymentFromUser(payment);
-        return new ResponseEntity<Payment>(payment, HttpStatus.OK);
-    }
-
-    // TODO remove !
-    @GetMapping(inputEntryPoint + "/payment/automatch")
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-    public ResponseEntity<Payment> automatchPayment()
-            throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-        paymentService.paymentGrab();
-        return new ResponseEntity<Payment>(new Payment(), HttpStatus.OK);
-    }
 
     @GetMapping(inputEntryPoint + "/payment/waiting")
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
@@ -1058,18 +1023,5 @@ public class InvoicingController {
             @RequestBody CustomerOrder customerOrder) throws OsirisException, OsirisClientMessageException {
         return new ResponseEntity<InvoiceLabelResult>(mailComputeHelper.computePaperLabelResult(customerOrder),
                 HttpStatus.OK);
-    }
-
-    // TODO : remove
-    @GetMapping(inputEntryPoint + "/invoice/reminder")
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-    public ResponseEntity<Boolean> sendRemindersForInvoices(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam Integer billingLabelTypeId)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        BillingLabelType billingLabelType = billingLabelTypeService.getBillingLabelType(billingLabelTypeId);
-        invoiceService.sendRemindersForInvoices(startDate, endDate, billingLabelType);
-        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 }

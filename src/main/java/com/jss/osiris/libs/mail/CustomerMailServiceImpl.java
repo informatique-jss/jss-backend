@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.repository.CustomerMailRepository;
@@ -52,6 +54,9 @@ public class CustomerMailServiceImpl implements CustomerMailService {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    BatchService batchService;
 
     @Override
     public CustomerMail getMail(Integer id) {
@@ -87,9 +92,8 @@ public class CustomerMailServiceImpl implements CustomerMailService {
     }
 
     @Override
-    public void addMailToQueue(CustomerMail mail) {
+    public void addMailToQueue(CustomerMail mail) throws OsirisException {
         mail.setCreatedDateTime(LocalDateTime.now());
-        mail.setHasErrors(false);
         mail.setIsSent(false);
         mail.setSendToMeEmployee(employeeService.getCurrentEmployee());
         customerMailRepository.save(mail);
@@ -107,25 +111,14 @@ public class CustomerMailServiceImpl implements CustomerMailService {
                 newAttachment.setParentAttachment(attachment);
                 attachmentService.addOrUpdateAttachment(newAttachment);
             }
+        batchService.declareNewBatch(Batch.SEND_MAIL, mail.getId());
     }
 
     @Transactional
     @Override
-    public void sendNextMail() throws OsirisException {
-        List<CustomerMail> mails = customerMailRepository.findAllByOrderByCreatedDateTimeAsc();
-
-        if (mails != null && mails.size() > 0) {
-            CustomerMail mail = mails.get(0);
-
-            try {
-                prepareAndSendMail(mail);
-            } catch (Exception e) {
-                mail.setHasErrors(true);
-                customerMailRepository.save(mail);
-                if (e instanceof OsirisException)
-                    throw e;
-                throw new OsirisException(e, "Error when generating mail n°" + mail.getId());
-            }
+    public void sendMail(CustomerMail mail) throws OsirisException {
+        if (mail != null) {
+            prepareAndSendMail(mail);
 
             if (!mail.getSendToMe()) {
                 File mailPdf = null;
@@ -177,11 +170,9 @@ public class CustomerMailServiceImpl implements CustomerMailService {
                                 attachmentService.addOrUpdateAttachment(attachment);
                             }
                 } catch (FileNotFoundException e) {
-                    mail.setHasErrors(true);
                     customerMailRepository.save(mail);
                     throw new OsirisException(e, "Impossible to read invoice PDF temp file");
                 } catch (Exception e) {
-                    mail.setHasErrors(true);
                     customerMailRepository.save(mail);
                     throw new OsirisException(e, "Impossible to generate mail PDF for mail " + mail.getId());
                 } finally {
@@ -230,18 +221,6 @@ public class CustomerMailServiceImpl implements CustomerMailService {
 
         if (canSend)
             mailHelper.getMailSender().send(message);
-    }
-
-    // TODO : remove it and replace with strong processus !
-    @Override
-    public List<CustomerMail> getReceiptMailsForResponsable(Responsable responsable) {
-        return customerMailRepository.findReceiptMailsForResponsable(responsable.getId());
-    }
-
-    // TODO : remove it and replace with strong processus !
-    @Override
-    public List<CustomerMail> getReceiptMailsForTiers(Tiers tiers) {
-        return customerMailRepository.findReceiptMailsForTiers(tiers.getId());
     }
 
 }

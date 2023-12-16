@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -118,6 +120,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     CharacterPriceService characterPriceService;
+
+    @Autowired
+    BatchService batchService;
 
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
@@ -244,8 +249,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 if (formalite.getFormalitesGuichetUnique() != null) {
                     for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique()) {
-                        formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formaliteGuichetUnique,
-                                formalite, true);
+                        if (formaliteGuichetUnique.getStatus() == null
+                                || !formaliteGuichetUnique.getStatus().getIsCloseState())
+                            batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE,
+                                    formaliteGuichetUnique.getId());
                     }
                 }
 

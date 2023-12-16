@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -124,6 +126,9 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     CustomerOrderStatusService customerOrderStatusService;
+
+    @Autowired
+    BatchService batchService;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -255,6 +260,24 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachment.setCustomerMail(mail);
         }
         addOrUpdateAttachment(attachment);
+        attachment = getAttachment(attachment.getId());
+
+        // Batchs
+        if (entityType.equals(CompetentAuthority.class.getSimpleName()) && attachment.getAttachmentType().getId()
+                .equals(constantService.getAttachmentTypeBillingClosure().getId())) {
+            batchService.declareNewBatch(Batch.DO_OCR_ON_RECEIPT, attachment.getId());
+        } else if (entityType.equals(Provision.class.getSimpleName())
+                && (attachment.getDescription() == null || attachment.getDescription().toLowerCase().endsWith(".pdf"))
+                && attachment.getAttachmentType().getId()
+                        .equals(constantService.getAttachmentTypeProviderInvoice().getId())) {
+            if (attachment.getProvision() != null && attachment.getProvision().getAssoAffaireOrder() != null
+                    && attachment.getProvision().getAssoAffaireOrder().getCustomerOrder() != null) {
+                CustomerOrder customerOrder = attachment.getProvision().getAssoAffaireOrder().getCustomerOrder();
+                if (!customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)
+                        && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED))
+                    batchService.declareNewBatch(Batch.DO_OCR_ON_INVOICE, attachment.getId());
+            }
+        }
 
         return getAttachmentForEntityType(entityType, idEntity);
     }
@@ -346,21 +369,5 @@ public class AttachmentServiceImpl implements AttachmentService {
         newAttachment.setTiers(attachment.getTiers());
         newAttachment.setUploadedFile(attachment.getUploadedFile());
         return newAttachment;
-    }
-
-    @Override
-    public List<Attachment> getInvoiceAttachmentOnProvisionToAnalyse() throws OsirisException {
-        return attachmentRepository
-                .findInvoiceAttachmentOnProvisionToAnalyse(constantService.getAttachmentTypeProviderInvoice().getId(),
-                        Arrays.asList(
-                                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED),
-                                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BILLED)));
-    }
-
-    @Override
-    public List<Attachment> getReceiptAttachmentOnCompetentAuthorityToAnalyse() throws OsirisException {
-        return attachmentRepository
-                .findReceiptAttachmentOnCompetentAuthorityToAnalyse(
-                        constantService.getAttachmentTypeBillingClosure().getId());
     }
 }

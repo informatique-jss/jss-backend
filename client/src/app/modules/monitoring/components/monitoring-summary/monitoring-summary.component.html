@@ -1,0 +1,27 @@
+<div class="mat-elevation-z2 form-div">
+  <div class="dashboard-container" cdkDropListGroup [ngStyle]="{ '--box-width': boxWidth, '--box-height': boxHeight }">
+    <div cdkDropList (cdkDropListEntered)="onDropListEntered($event)" (cdkDropListDropped)="onDropListDropped()">
+    </div>
+    <div cdkDropList (cdkDropListEntered)="onDropListEntered($event)" (cdkDropListDropped)="onDropListDropped()"
+      *ngFor="let item of items">
+      <div cdkDrag class="dashboard-box">
+        <div class="dashboard-toolbar">
+          <div class="dashboard-title">{{item.label}}</div>
+          <div class="dashboard-box-handle" cdkDragHandle>
+            <mat-icon color="accent" matTooltip="Déplacer le widget">zoom_out_map</mat-icon>
+          </div>
+        </div>
+        <div [ngClass]="{'pointer':canDisplayExtendentMonitoring()}"
+          *ngIf="statistics[item.id] && statistics[item.id].error==0 &&!isItWarn(statistics[item.id])"> <mat-icon
+            class="icon-status color-ok" [matTooltip]="getTooltipStatistics(statistics[item.id])">done</mat-icon></div>
+        <div [ngClass]="{'pointer':canDisplayExtendentMonitoring()}"
+          *ngIf="statistics[item.id] && statistics[item.id].error==0 && isItWarn(statistics[item.id])"> <mat-icon
+            class="icon-status color-warn" [matTooltip]="getTooltipStatistics(statistics[item.id])">warning</mat-icon>
+        </div>
+        <div [ngClass]="{'pointer':canDisplayExtendentMonitoring()}"
+          *ngIf="statistics[item.id] && statistics[item.id].error>0"> <mat-icon class="icon-status color-ko"
+            [matTooltip]="getTooltipStatistics(statistics[item.id])">error</mat-icon></div>
+      </div>
+    </div>
+  </div>
+</div>

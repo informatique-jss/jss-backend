@@ -60,4 +60,7 @@ public interface InvoiceService {
         public void sendRemindersForInvoices(LocalDate startDate, LocalDate endDate, BillingLabelType billingLabelType)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
+        public void remindInvoice(Invoice invoice)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
 }
