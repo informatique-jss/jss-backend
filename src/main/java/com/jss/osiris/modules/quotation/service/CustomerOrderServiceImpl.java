@@ -568,7 +568,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeInvoice(),
                     "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                    false, "Facture n°" + invoice.getId(), null);
+                    false, "Facture n°" + invoice.getId(), null, null, null);
 
             for (Attachment attachment : attachments)
                 if (attachment.getDescription().contains(invoice.getId() + "")) {

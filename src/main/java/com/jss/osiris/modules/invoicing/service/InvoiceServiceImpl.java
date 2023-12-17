@@ -399,7 +399,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         CustomerOrder.class.getSimpleName(),
                         constantService.getAttachmentTypeCreditNote(),
                         "Credit_note_" + creditNote.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                        false, "Avoir n°" + creditNote.getId(), null);
+                        false, "Avoir n°" + creditNote.getId(), null, null, null);
 
                 for (Attachment attachment : attachments)
                     if (attachment.getDescription().contains(creditNote.getId() + "")) {

@@ -1037,7 +1037,8 @@ public class MiscellaneousController {
     public ResponseEntity<List<Attachment>> uploadAttachment(@RequestParam MultipartFile file,
             @RequestParam Integer idEntity, @RequestParam String entityType,
             @RequestParam Integer idAttachmentType,
-            @RequestParam String filename, @RequestParam Boolean replaceExistingAttachementType)
+            @RequestParam String filename, @RequestParam Boolean replaceExistingAttachementType,
+            @RequestParam Integer fromPage, @RequestParam Integer toPage)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         if (idAttachmentType == null)
             throw new OsirisValidationException("idAttachmentType");
@@ -1070,7 +1071,7 @@ public class MiscellaneousController {
 
         return new ResponseEntity<List<Attachment>>(
                 attachmentService.addAttachment(file, idEntity, entityType, attachmentType, filename,
-                        replaceExistingAttachementType),
+                        replaceExistingAttachementType, fromPage, toPage),
                 HttpStatus.OK);
     }
 

@@ -314,5 +314,4 @@ public class Attachment implements Serializable, IId {
 	public void setAffaire(Affaire affaire) {
 		this.affaire = affaire;
 	}
-
 }

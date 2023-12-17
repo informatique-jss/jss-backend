@@ -22,12 +22,6 @@ public class IndexTiersThread extends IndexThread {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public IId getEntity(Integer entityId) {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         return tiersService.getTiers(entityId);
     }
 
