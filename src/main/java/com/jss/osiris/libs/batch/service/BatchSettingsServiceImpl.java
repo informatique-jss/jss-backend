@@ -27,7 +27,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
     }
 
     @Override
-    public BatchSettings getById(Integer id) {
+    public BatchSettings getBatchSettings(Integer id) {
         Optional<BatchSettings> batchSettings = batchSettingsRepository.findById(id);
         if (batchSettings.isPresent())
             return batchSettings.get();
@@ -35,7 +35,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
     }
 
     @Override
-    public BatchSettings addOrUpdBatchSettings(BatchSettings batchSettings) {
+    public BatchSettings addOrUpdateBatchSettings(BatchSettings batchSettings) {
         return batchSettingsRepository.save(batchSettings);
     }
 
@@ -55,7 +55,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.DAILY_ACCOUNT_CLOSING) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -65,7 +65,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.ACTIVE_DIRECTORY_USER_UPDATE) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -75,7 +75,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_MAIL) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -85,7 +85,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(1);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.PURGE_NOTIFICATION) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -95,7 +95,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.PURGE_LOGS) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -105,7 +105,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.CLEAN_AUDIT) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -115,7 +115,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.CHECK_CENTRAL_PAY_PAYMENT_REQUEST) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -125,7 +125,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(3);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_REMINDER_FOR_QUOTATION) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -135,7 +135,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_REMINDER_FOR_CUSTOMER_ORDER_DEPOSITS) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -145,7 +145,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_REMINDER_FOR_INVOICES) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -155,7 +155,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_REMINDER_TO_CONFRERE_FOR_ANNOUNCEMENTS) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -165,7 +165,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_PROOF_READING) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -175,7 +175,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.PUBLISH_ANNOUNCEMENT_TO_ACTU_LEGALE) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -185,7 +185,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_PUBLICATION_FLAG) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -195,7 +195,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.UPDATE_COMPETENT_AUTHORITY) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -205,7 +205,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.DO_OCR_ON_INVOICE) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -215,7 +215,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(1);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.DO_OCR_ON_RECEIPT) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -225,7 +225,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(1);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.UPDATE_AFFAIRE_FROM_RNE) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -235,7 +235,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(4);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.AUTOMATCH_PAYMENT) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -245,7 +245,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(10);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_BILLING_CLOSURE_RECEIPT) == null) {
             BatchSettings batchSettings = new BatchSettings();
@@ -255,7 +255,117 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            addOrUpdBatchSettings(batchSettings);
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.REINDEX_DIRECT_DEBIT_BANK_TRANSFERT) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REINDEX_DIRECT_DEBIT_BANK_TRANSFERT);
+            batchSettings.setLabel("Indexation - Prélèvements");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.REINDEX_INVOICE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REINDEX_INVOICE);
+            batchSettings.setLabel("Indexation - Factures");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.REINDEX_PAYMENT) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REINDEX_PAYMENT);
+            batchSettings.setLabel("Indexation - Paiments");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.REINDEX_REFUND) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REINDEX_REFUND);
+            batchSettings.setLabel("Indexation - Remboursements");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.REINDEX_AFFAIRE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REINDEX_AFFAIRE);
+            batchSettings.setLabel("Indexation - Affaires");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.REINDEX_ASSO_AFFAIRE_ORDER) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REINDEX_ASSO_AFFAIRE_ORDER);
+            batchSettings.setLabel("Indexation - Associations Affaire/Prestations");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.REINDEX_BANK_TRANSFERT) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REINDEX_BANK_TRANSFERT);
+            batchSettings.setLabel("Indexation - Virements");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.REINDEX_CUSTOMER_ORDER) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REINDEX_CUSTOMER_ORDER);
+            batchSettings.setLabel("Indexation - Commandes");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.REINDEX_QUOTATION) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REINDEX_QUOTATION);
+            batchSettings.setLabel("Indexation - Devis");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.REINDEX_RESPONSABLE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REINDEX_RESPONSABLE);
+            batchSettings.setLabel("Indexation - Responsables");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.REINDEX_TIERS) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REINDEX_TIERS);
+            batchSettings.setLabel("Indexation - Tiers");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            addOrUpdateBatchSettings(batchSettings);
         }
     }
 }

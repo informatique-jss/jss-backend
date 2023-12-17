@@ -279,7 +279,7 @@ public class InvoicingController {
     @PostMapping(inputEntryPoint + "/payment/comment")
     public ResponseEntity<Payment> addOrUpdatePaymentComment(@RequestBody String comment,
             @RequestParam Integer idPayment)
-            throws OsirisValidationException {
+            throws OsirisValidationException, OsirisException {
 
         Payment payment = paymentService.getPayment(idPayment);
 

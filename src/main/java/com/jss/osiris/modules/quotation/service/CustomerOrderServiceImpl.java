@@ -46,7 +46,6 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
@@ -90,9 +89,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     CustomerOrderRepository customerOrderRepository;
-
-    @Autowired
-    IndexEntityService indexEntityService;
 
     @Autowired
     PhoneService phoneService;
@@ -250,7 +246,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (checkAllProvisionEnded)
             checkAllProvisionEnded(customerOrder);
 
-        indexEntityService.indexEntity(customerOrder);
+        batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
         return customerOrder;
     }
 
@@ -651,11 +647,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexCustomerOrder() {
+    public void reindexCustomerOrder() throws OsirisException {
         List<CustomerOrder> customerOrders = IterableUtils.toList(customerOrderRepository.findAll());
         if (customerOrders != null)
             for (CustomerOrder customerOrder : customerOrders)
-                indexEntityService.indexEntity(customerOrder);
+                batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
     }
 
     @Override

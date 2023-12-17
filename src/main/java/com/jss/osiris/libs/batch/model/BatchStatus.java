@@ -6,8 +6,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.jss.osiris.modules.miscellaneous.model.IId;
+
 @Entity
-public class BatchStatus {
+public class BatchStatus implements IId {
     public static String NEW = "NEW";
     public static String WAITING = "WAITING";
     public static String RUNNING = "RUNNING";

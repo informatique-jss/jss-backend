@@ -1,8 +1,11 @@
 package com.jss.osiris.libs.batch.service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.model.BatchSearch;
 import com.jss.osiris.libs.batch.model.BatchSettings;
 import com.jss.osiris.libs.batch.model.BatchStatus;
 import com.jss.osiris.libs.batch.model.IBatchStatistics;
+import com.jss.osiris.libs.batch.model.IBatchTimeStatistics;
 import com.jss.osiris.libs.batch.repository.BatchRepository;
 import com.jss.osiris.libs.batch.service.threads.IOsirisThread;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -54,7 +59,14 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    public Batch getBatch(Integer id) {
+        Optional<Batch> batch = batchRepository.findById(id);
+        if (batch.isPresent())
+            return batch.get();
+        return null;
+    }
+
+    @Override
     public void checkBatch() throws OsirisException {
         List<BatchSettings> allBatchSettings = batchSettingsService.getAllBatchSettings();
         if (!isShutingDown && shouldIBatch() && allBatchSettings != null && allBatchSettings.size() > 0)
@@ -70,21 +82,15 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
                         lastBatchCheck.put(batchSetting.getId(), LocalDateTime.now());
                         int numberAdded = 0;
 
-                        List<Batch> batchs = batchRepository.findTop1ByBatchSettingsAndBatchStatusOrderByCreatedDate(
-                                batchSetting,
+                        List<Batch> batchs = batchRepository.findByBatchSettingsAndBatchStatus(batchSetting,
                                 batchStatusService.getBatchStatusByCode(BatchStatus.NEW));
-
-                        do {
-                            if (batchs != null && batchs.size() == 1)
-                                addBatchToQueue(batchs.get(0));
-                            batchs = batchRepository.findTop1ByBatchSettingsAndBatchStatusOrderByCreatedDate(
-                                    batchSetting,
-                                    batchStatusService.getBatchStatusByCode(BatchStatus.NEW));
-                            numberAdded++;
-                        } while (batchs != null && batchs.size() == 1
-                                && (batchSetting.getMaxAddedNumberPerIteration() <= 0
-                                        || batchSetting.getMaxAddedNumberPerIteration() < numberAdded));
-
+                        if (batchs != null && batchs.size() > 0)
+                            for (Batch batch : batchs)
+                                if (numberAdded < 1000 && (batchSetting.getMaxAddedNumberPerIteration() <= 0
+                                        || batchSetting.getMaxAddedNumberPerIteration() < numberAdded)) {
+                                    addBatchToQueue(batch);
+                                    numberAdded++;
+                                }
                     }
                 }
             }
@@ -121,7 +127,7 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
         if (queues != null && queues.size() > 0) {
             for (Integer batchId : queues.keySet()) {
                 ThreadPoolTaskExecutor executor = queues.get(batchId);
-                BatchSettings batchSettings = batchSettingsService.getById(batchId);
+                BatchSettings batchSettings = batchSettingsService.getBatchSettings(batchId);
                 executor.shutdown();
 
                 // Reset batch that still running or waiting
@@ -133,10 +139,10 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
                 }
 
                 List<Batch> batchsRunning = batchRepository.findByBatchSettingsAndBatchStatusAndNode(
-                        batchSettingsService.getById(batchId),
+                        batchSettingsService.getBatchSettings(batchId),
                         batchStatusService.getBatchStatusByCode(BatchStatus.RUNNING), currentNode);
                 List<Batch> batchsWaiting = batchRepository.findByBatchSettingsAndBatchStatusAndNode(
-                        batchSettingsService.getById(batchId),
+                        batchSettingsService.getBatchSettings(batchId),
                         batchStatusService.getBatchStatusByCode(BatchStatus.WAITING), currentNode);
 
                 System.out.println("Shuting down " + batchSettings.getCode() + " batch. Reset "
@@ -165,6 +171,7 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
 
     private Future<?> addBatchToQueue(Batch batch) throws OsirisException {
         batch.setBatchStatus(batchStatusService.getBatchStatusByCode(BatchStatus.WAITING));
+        batch.setNode(nodeService.getCurrentNodeCached());
         addOrUpdateBatch(batch);
         ThreadPoolTaskExecutor executor = queues.get(batch.getBatchSettings().getId());
 
@@ -176,14 +183,24 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
         throw new OsirisException(null, "Nothing declared for batch " + batch.getBatchSettings().getCode());
     }
 
+    private BatchStatus batchStatusNew = null;
+    private HashMap<String, BatchSettings> batchSettings = new HashMap<String, BatchSettings>();
+
     @Override
     public Batch declareNewBatch(String batchCode, Integer entityId) throws OsirisException {
         Batch batch = new Batch();
-        batch.setBatchSettings(batchSettingsService.getByCode(batchCode));
-        batch.setBatchStatus(batchStatusService.getBatchStatusByCode(BatchStatus.NEW));
+
+        if (batchSettings.get(batchCode) == null)
+            batchSettings.put(batchCode, batchSettingsService.getByCode(batchCode));
+        batch.setBatchSettings(batchSettings.get(batchCode));
+
+        if (batchStatusNew == null)
+            batchStatusNew = batchStatusService.getBatchStatusByCode(BatchStatus.NEW);
+        batch.setBatchStatus(batchStatusNew);
+
         batch.setCreatedDate(LocalDateTime.now());
         batch.setEntityId(entityId);
-        batch.setNode(nodeService.getCurrentNode());
+        batch.setNode(nodeService.getCurrentNodeCached());
         return addOrUpdateBatch(batch);
     }
 
@@ -210,5 +227,19 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
     public List<IBatchStatistics> getBatchStatistics() {
         return batchRepository.getStatisticsOfBatch(BatchStatus.SUCCESS, BatchStatus.WAITING, BatchStatus.RUNNING,
                 BatchStatus.ERROR, BatchStatus.ACKNOWLEDGE);
+    }
+
+    @Override
+    public List<IBatchTimeStatistics> getTimeStatisticsOfBatch(BatchSettings batchSettings) {
+        return batchRepository.getTimeStatisticsOfBatch(batchSettings.getId(), BatchStatus.ERROR);
+    }
+
+    @Override
+    public List<Batch> searchBatchs(BatchSearch batchSearch) {
+        return batchRepository.searchBatchs(
+                Date.from(batchSearch.getStartDate().atZone(ZoneId.systemDefault()).toInstant()),
+                Date.from(batchSearch.getEndDate().atZone(ZoneId.systemDefault()).toInstant()),
+                batchSearch.getBatchSettings(), batchSearch.getBatchStatus(), batchSearch.getEntityId(),
+                batchSearch.getNodes());
     }
 }

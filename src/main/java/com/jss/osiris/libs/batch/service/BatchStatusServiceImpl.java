@@ -39,6 +39,7 @@ public class BatchStatusServiceImpl implements BatchStatusService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateStatusReferential() throws OsirisException {
+        updateStatus(BatchStatus.NEW, "Nouveau");
         updateStatus(BatchStatus.WAITING, "En attente");
         updateStatus(BatchStatus.RUNNING, "En cours");
         updateStatus(BatchStatus.SUCCESS, "Succès");

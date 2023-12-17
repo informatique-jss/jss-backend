@@ -1,13 +1,3 @@
-<ng-template #accordionTools>
-  <mat-panel-description>
-    <mat-icon color="accent" matTooltip="Ouvrir tous les onglets"
-      (click)="accordion!.openAll();$event.stopPropagation();" class="pointer">
-      unfold_more_double</mat-icon>
-    <mat-icon color="accent" matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();"
-      class="pointer">
-      unfold_less_double</mat-icon>
-  </mat-panel-description>
-</ng-template>
 <div class="mat-elevation-z2 form-div">
   <div *ngIf="!this.idConfrere">
     <mat-form-field class="full-width">

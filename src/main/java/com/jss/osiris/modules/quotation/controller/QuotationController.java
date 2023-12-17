@@ -357,7 +357,7 @@ public class QuotationController {
   @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
   @GetMapping(inputEntryPoint + "/bank-transfert/cancel")
   public ResponseEntity<BankTransfert> cancelBankTransfer(@RequestParam Integer idBankTranfert)
-      throws OsirisValidationException {
+      throws OsirisValidationException, OsirisException {
     BankTransfert bankTransfert = bankTransfertService.getBankTransfert(idBankTranfert);
     if (bankTransfert == null)
       throw new OsirisValidationException("bankTransfert");
@@ -368,7 +368,7 @@ public class QuotationController {
   @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
   @GetMapping(inputEntryPoint + "/direct-debit-transfert/cancel")
   public ResponseEntity<DirectDebitTransfert> cancelDirectDebitTransfert(@RequestParam Integer idDirectDebitTranfert)
-      throws OsirisValidationException {
+      throws OsirisValidationException, OsirisException {
     DirectDebitTransfert directDebitTransfert = directDebitTransfertService
         .getDirectDebitTransfert(idDirectDebitTranfert);
     if (directDebitTransfert == null)
@@ -380,7 +380,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/bank-transfert/export/select")
   public ResponseEntity<BankTransfert> selectBankTransfertForExport(@RequestParam Integer idBankTranfert)
-      throws OsirisValidationException {
+      throws OsirisValidationException, OsirisException {
     BankTransfert bankTransfert = bankTransfertService.getBankTransfert(idBankTranfert);
     if (bankTransfert == null)
       throw new OsirisValidationException("bankTransfert");
@@ -391,7 +391,7 @@ public class QuotationController {
   @PostMapping(inputEntryPoint + "/bank-transfert/comment")
   public ResponseEntity<BankTransfert> addOrUpdateTransfertComment(@RequestBody String comment,
       @RequestParam Integer idBankTransfert)
-      throws OsirisValidationException {
+      throws OsirisValidationException, OsirisException {
 
     BankTransfert bankTransfert = bankTransfertService.getBankTransfert(idBankTransfert);
 
@@ -404,7 +404,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/bank-transfert/export/unselect")
   public ResponseEntity<BankTransfert> unselectBankTransfertForExport(@RequestParam Integer idBankTranfert)
-      throws OsirisValidationException {
+      throws OsirisValidationException, OsirisException {
     BankTransfert bankTransfert = bankTransfertService.getBankTransfert(idBankTranfert);
     if (bankTransfert == null)
       throw new OsirisValidationException("bankTransfert");
@@ -670,7 +670,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/asso/affaire/order/assignedTo")
   public ResponseEntity<Boolean> updateAssignedToForAsso(@RequestParam Integer assoId,
-      @RequestParam Integer employeeId) throws OsirisValidationException {
+      @RequestParam Integer employeeId) throws OsirisValidationException, OsirisException {
     AssoAffaireOrder asso = assoAffaireOrderService.getAssoAffaireOrder(assoId);
     if (asso == null)
       throw new OsirisValidationException("asso");

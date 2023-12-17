@@ -5,6 +5,7 @@ export const SEARCH_KEY_CODE: string = "F8";
 export const NOTIFICATION_KEY_CODE: string = "F9";
 export const SAVE_KEY_CODE: string = "F2";
 export const NOTIFICATION_REFRESH_INTERVAL: number = 30 * 1000;
+export const SUPERVISION_REFRESH_INTERVAL: number = 5 * 1000;
 export const MAX_SIZE_UPLOAD_FILES = 10485760;
 export const AZURE_CONFIDENT_THRESHOLD: number = 0.95;
 export const INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = 2;
@@ -56,6 +57,10 @@ export const AGGREGATE_STATUS_DONE = "AGGREGATE_STATUS_DONE";
 
 // Notification types
 export const PERSONNAL = "PERSONNAL";
+
+// Batch status
+export const BATCH_STATUS_ACKNOWLEDGE_CODE = "ACKNOWLEDGE";
+export const BATCH_STATUS_ERROR_CODE = "ERROR";
 
 export const QUOTATION_CREATE = "QUOTATION_CREATE";
 export const QUOTATION_SENT = "QUOTATION_SENT";

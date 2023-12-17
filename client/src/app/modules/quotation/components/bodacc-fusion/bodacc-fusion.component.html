@@ -1,14 +1,3 @@
-<ng-template #accordionTools>
-  <mat-panel-description>
-    <mat-icon color="accent" matTooltip="Ouvrir tous les onglets"
-      (click)="accordion!.openAll();$event.stopPropagation();" class="pointer">
-      unfold_more_double</mat-icon>
-    <mat-icon color="accent" matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();"
-      class="pointer">
-      unfold_less_double</mat-icon>
-  </mat-panel-description>
-</ng-template>
-
 <form [formGroup]="bodaccFusionForm" *ngIf="bodaccFusion">
   <div class="mat-accordion-container full-width">
     <fieldset [disabled]="editMode==false" class="fieldset-no-border">
@@ -18,7 +7,7 @@
             <mat-panel-title>
               Société absorbante
             </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            <ng-template></ng-template>
           </mat-expansion-panel-header>
           <table class="full-width"
             *ngFor="let mergedCompany of bodaccFusion.bodaccFusionMergingCompanies; let i = index ">
@@ -89,7 +78,7 @@
             <mat-panel-title>
               Société absorbée
             </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            <ng-template></ng-template>
           </mat-expansion-panel-header>
           <table class="full-width"
             *ngFor="let absorbedCompany of bodaccFusion.bodaccFusionAbsorbedCompanies; let i = index ">
@@ -160,7 +149,7 @@
             <mat-panel-title>
               Fusion
             </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            <ng-template></ng-template>
           </mat-expansion-panel-header>
           <table class="full-width">
             <tr>

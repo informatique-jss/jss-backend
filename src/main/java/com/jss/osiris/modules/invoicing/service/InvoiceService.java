@@ -25,13 +25,13 @@ public interface InvoiceService {
         public List<Invoice> findByCompetentAuthorityAndManualDocumentNumberContains(
                         CompetentAuthority competentAuthority, String manualDocumentNumber);
 
-        public Invoice addOrUpdateInvoice(Invoice invoice);
+        public Invoice addOrUpdateInvoice(Invoice invoice) throws OsirisException;
 
         public List<InvoiceSearchResult> getInvoiceForCustomerOrder(Integer customerOrderId) throws OsirisException;
 
         public List<InvoiceSearchResult> searchInvoices(InvoiceSearch invoiceSearch) throws OsirisException;
 
-        public void reindexInvoices();
+        public void reindexInvoices() throws OsirisException;
 
         public Invoice addOrUpdateInvoiceFromUser(Invoice invoice)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,

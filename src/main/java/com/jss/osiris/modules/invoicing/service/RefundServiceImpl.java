@@ -19,10 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.transfer.CstmrCdtTrfInitnBean;
 import com.jss.osiris.libs.transfer.DocumentBean;
 import com.jss.osiris.libs.transfer.GrpHdrBean;
@@ -64,9 +65,6 @@ public class RefundServiceImpl implements RefundService {
     @Autowired
     DocumentService documentService;
 
-    @Autowired
-    IndexEntityService indexEntityService;
-
     @Value("${jss.iban}")
     private String ibanJss;
 
@@ -81,6 +79,9 @@ public class RefundServiceImpl implements RefundService {
 
     @Autowired
     PaymentService paymentService;
+
+    @Autowired
+    BatchService batchService;
 
     @Override
     public List<Refund> getRefunds() {
@@ -97,19 +98,19 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     public Refund addOrUpdateRefund(
-            Refund refund) {
+            Refund refund) throws OsirisException {
         refundRepository.save(refund);
-        indexEntityService.indexEntity(refund);
+        batchService.declareNewBatch(Batch.REINDEX_REFUND, refund.getId());
         return refund;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexRefunds() {
+    public void reindexRefunds() throws OsirisException {
         List<Refund> refunds = getRefunds();
         if (refunds != null)
             for (Refund refund : refunds)
-                indexEntityService.indexEntity(refund);
+                batchService.declareNewBatch(Batch.REINDEX_REFUND, refund.getId());
     }
 
     @Override

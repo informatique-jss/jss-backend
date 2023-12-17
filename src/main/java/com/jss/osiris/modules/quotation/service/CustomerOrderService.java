@@ -55,7 +55,7 @@ public interface CustomerOrderService {
 
         public List<OrderingSearchResult> searchOrders(OrderingSearch orderingSearch);
 
-        public void reindexCustomerOrder();
+        public void reindexCustomerOrder() throws OsirisException;
 
         public CustomerOrder createNewCustomerOrderFromQuotation(Quotation quotation)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,

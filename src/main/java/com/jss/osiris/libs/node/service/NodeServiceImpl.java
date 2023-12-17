@@ -21,7 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
+import com.jss.osiris.OsirisApplication;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.node.model.Node;
 import com.jss.osiris.libs.node.repository.NodeRepository;
@@ -34,6 +37,16 @@ public class NodeServiceImpl implements NodeService {
 
     @Value("${schedulling.node.priority}")
     private Integer nodeSchedullingPriority;
+
+    private Node currentNode = null;
+
+    @Override
+    public Node getNode(Integer id) {
+        Optional<Node> node = nodeRepository.findById(id);
+        if (node.isPresent())
+            return node.get();
+        return null;
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -48,7 +61,15 @@ public class NodeServiceImpl implements NodeService {
 
     @Override
     public Node getCurrentNode() throws OsirisException {
-        return nodeRepository.findByHostname(getHostname());
+        currentNode = nodeRepository.findByHostname(getHostname());
+        return currentNode;
+    }
+
+    @Override
+    public Node getCurrentNodeCached() throws OsirisException {
+        if (currentNode == null)
+            getCurrentNode();
+        return currentNode;
     }
 
     @Override
@@ -103,6 +124,42 @@ public class NodeServiceImpl implements NodeService {
             throw new OsirisException(e, "");
         }
         return hostname;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void performGc(Node node) throws RestClientException, OsirisException {
+        node = getNode(node.getId());
+        if (getCurrentNode().getId().equals(node.getId())) {
+            System.gc();
+        } else {
+            new RestTemplate().getForEntity(
+                    "http://" + node.getHostname() + ".jss.fr:8080/node/gc/nodeId" + node.getId(), Boolean.class);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void stopNode(Node node) throws RestClientException, OsirisException {
+        node = getNode(node.getId());
+        if (getCurrentNode().getId().equals(node.getId())) {
+            OsirisApplication.stop();
+        } else {
+            new RestTemplate().getForEntity(
+                    "http://" + node.getHostname() + ".jss.fr:8080/node/stop/nodeId" + node.getId(), Boolean.class);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void restartNode(Node node) throws RestClientException, OsirisException {
+        node = getNode(node.getId());
+        if (getCurrentNode().getId().equals(node.getId())) {
+            OsirisApplication.restart();
+        } else {
+            new RestTemplate().getForEntity(
+                    "http://" + node.getHostname() + ".jss.fr:8080/node/restart/nodeId" + node.getId(), Boolean.class);
+        }
     }
 
 }

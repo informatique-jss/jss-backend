@@ -1,0 +1,35 @@
+<div class=" full-width" *ngIf="batchSearch">
+  <table class="full-width table-fixed-layout">
+    <tr>
+      <td>
+        <select-batch-status [(model)]="batchSearch.batchStatus" label="Statut" [form]="batchSearchForm"
+          propertyName="batchStatus" [isMandatory]="false" [isDisabled]="false"></select-batch-status>
+      </td>
+      <td>
+        <select-batch-settings [(model)]="batchSearch.batchSettings" label="Batch" [form]="batchSearchForm"
+          propertyName="batchSettings" [isMandatory]="false" [isDisabled]="false"></select-batch-settings>
+      </td>
+      <td>
+        <select-node [(model)]="batchSearch.nodes" label="Batch" [form]="batchSearchForm" propertyName="nodes"
+          [isMandatory]="false" [isDisabled]="false"></select-node>
+      </td>
+      <td>
+        <generic-input [(model)]="batchSearch.entityId" label="N° de l'entité" [form]="batchSearchForm"
+          propertyName="entityId" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+      </td>
+      <td>
+        <generic-date-range-picker [(modelStart)]="batchSearch.startDate" [(modelEnd)]="batchSearch.endDate"
+          label="Période" [form]="batchSearchForm" propertyNameStart="startDate" propertyNameEnd="endDate"
+          [isMandatory]="false" [isDisabled]="false"></generic-date-range-picker>
+      </td>
+      <td class="fab-td-button">
+        <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchBatchs()" class="add-button">
+          <mat-icon>search</mat-icon>
+        </button>
+      </td>
+    </tr>
+  </table>
+  <sort-table [actions]="batchDetailsActions" [columns]="batchDetailsColomns" [values]="batchDetails"
+    tableName="Détails des batch" *ngIf="batchDetailsColomns && batchDetailsColomns.length>0 ">
+  </sort-table>
+</div>

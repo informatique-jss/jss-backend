@@ -16,7 +16,6 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
@@ -57,9 +56,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     AssoAffaireOrderRepository assoAffaireOrderRepository;
-
-    @Autowired
-    IndexEntityService indexEntityService;
 
     @Autowired
     EmployeeService employeeService;
@@ -160,28 +156,28 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         assoAffaireOrder.setCustomerOrder(assoAffaireOrder.getCustomerOrder());
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
         if (affaireSaved.getCustomerOrder() != null)
-            indexEntityService.indexEntity(affaireSaved);
+            batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, affaireSaved.getId());
         customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
         return affaireSaved;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee) {
+    public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee) throws OsirisException {
         asso.setAssignedTo(employee);
         assoAffaireOrderRepository.save(asso);
         if (asso.getCustomerOrder() != null)
-            indexEntityService.indexEntity(asso);
+            batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, asso.getId());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexAffaires() {
+    public void reindexAffaires() throws OsirisException {
         List<AssoAffaireOrder> affaires = getAssoAffaireOrders();
         if (affaires != null)
-            for (AssoAffaireOrder affaire : affaires)
-                if (affaire.getCustomerOrder() != null)
-                    indexEntityService.indexEntity(affaire);
+            for (AssoAffaireOrder asso : affaires)
+                if (asso.getCustomerOrder() != null)
+                    batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, asso.getId());
     }
 
     @Override

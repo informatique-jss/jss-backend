@@ -12,9 +12,9 @@ public interface AffaireService {
 
     public Affaire getAffaire(Integer id);
 
-    public Affaire addOrUpdateAffaire(Affaire affaire) throws OsirisDuplicateException;
+    public Affaire addOrUpdateAffaire(Affaire affaire) throws OsirisDuplicateException, OsirisException;
 
-    public void reindexAffaire();
+    public void reindexAffaire() throws OsirisException;
 
     public Affaire getAffaireBySiret(String siret);
 

@@ -16,7 +16,6 @@ import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.service.CityService;
@@ -117,12 +116,9 @@ public class AffaireServiceImpl implements AffaireService {
         return affaire;
     }
 
-    @Autowired
-    IndexEntityService indexEntityService;
-
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Affaire addOrUpdateAffaire(Affaire affaire) throws OsirisDuplicateException {
+    public Affaire addOrUpdateAffaire(Affaire affaire) throws OsirisDuplicateException, OsirisException {
         if (affaire.getRna() != null)
             affaire.setRna(affaire.getRna().toUpperCase().replaceAll(" ", ""));
         if (affaire.getSiren() != null)
@@ -172,17 +168,17 @@ public class AffaireServiceImpl implements AffaireService {
         }
 
         Affaire affaireSaved = affaireRepository.save(affaire);
-        indexEntityService.indexEntity(affaire);
+        batchService.declareNewBatch(Batch.REINDEX_AFFAIRE, affaire.getId());
         return affaireSaved;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexAffaire() {
+    public void reindexAffaire() throws OsirisException {
         List<Affaire> affaires = IterableUtils.toList(affaireRepository.findAll());
         if (affaires != null)
             for (Affaire affaire : affaires)
-                indexEntityService.indexEntity(affaire);
+                batchService.declareNewBatch(Batch.REINDEX_AFFAIRE, affaire.getId());
     }
 
     @Override

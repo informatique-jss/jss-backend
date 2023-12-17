@@ -11,16 +11,31 @@
             <mat-icon color="accent" matTooltip="Déplacer le widget">zoom_out_map</mat-icon>
           </div>
         </div>
-        <div [ngClass]="{'pointer':canDisplayExtendentMonitoring()}"
-          *ngIf="statistics[item.id] && statistics[item.id].error==0 &&!isItWarn(statistics[item.id])"> <mat-icon
-            class="icon-status color-ok" [matTooltip]="getTooltipStatistics(statistics[item.id])">done</mat-icon></div>
-        <div [ngClass]="{'pointer':canDisplayExtendentMonitoring()}"
-          *ngIf="statistics[item.id] && statistics[item.id].error==0 && isItWarn(statistics[item.id])"> <mat-icon
-            class="icon-status color-warn" [matTooltip]="getTooltipStatistics(statistics[item.id])">warning</mat-icon>
+        <div class="div-icon">
+          <mat-icon *ngIf="statistics[item.id] && statistics[item.id].error==0 &&!isItWarn(statistics[item.id])"
+            [ngClass]="{'pointer':canDisplayExtendentMonitoring()}" (click)="selectNewBatchSetting(item)"
+            class="icon-status color-ok">done</mat-icon>
+          <mat-icon class="icon-status color-warn" [ngClass]="{'pointer':canDisplayExtendentMonitoring()}"
+            (click)="selectNewBatchSetting(item)"
+            *ngIf="statistics[item.id] && statistics[item.id].error==0 && isItWarn(statistics[item.id])">warning</mat-icon>
+          <mat-icon class="icon-status color-ko" *ngIf="statistics[item.id] && statistics[item.id].error>0"
+            [ngClass]="{'pointer':canDisplayExtendentMonitoring()}"
+            (click)="selectNewBatchSetting(item)">error</mat-icon>
+          <span *ngIf="statistics[item.id] && showStatistics && showStatistics[item.id]">
+            <span>Erreurs : {{statistics[item.id].error}}</span><br>
+            <span>Acquités : {{statistics[item.id].acknowledge}}</span><br>
+            <span>En attente : {{statistics[item.id].waiting }}</span><br>
+            <span>En cours : {{statistics[item.id].running }}</span><br>
+            <span>Terminés avec succès : {{statistics[item.id].success}}</span><br>
+            <span [ngClass]="{'color-ko': isItWarn(statistics[item.id])}">Temps moyen aujourd'hui :
+              {{(statistics[item.id].currentMeanTime * 10) / 10 | number: '1.0-1'}}s </span><br>
+            <span>Temps moyen : {{(statistics[item.id].standardMeanTime * 10) /10| number: '1.0-1'}}s</span><br>
+          </span>
+          <span *ngIf="statistics[item.id] && showStatistics && !showStatistics[item.id]">
+            <mat-icon color="accent" class="icon-info pointer" matTooltip="Voir les détails"
+              (click)="showStatistics[item.id]=true">info</mat-icon>
+          </span>
         </div>
-        <div [ngClass]="{'pointer':canDisplayExtendentMonitoring()}"
-          *ngIf="statistics[item.id] && statistics[item.id].error>0"> <mat-icon class="icon-status color-ko"
-            [matTooltip]="getTooltipStatistics(statistics[item.id])">error</mat-icon></div>
       </div>
     </div>
   </div>

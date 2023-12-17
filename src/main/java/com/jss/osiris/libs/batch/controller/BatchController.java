@@ -16,10 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.model.BatchSearch;
 import com.jss.osiris.libs.batch.model.BatchSettings;
+import com.jss.osiris.libs.batch.model.BatchStatus;
 import com.jss.osiris.libs.batch.model.IBatchStatistics;
+import com.jss.osiris.libs.batch.model.IBatchTimeStatistics;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.batch.service.BatchSettingsService;
+import com.jss.osiris.libs.batch.service.BatchStatusService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -45,16 +50,68 @@ public class BatchController {
 	BatchService batchService;
 
 	@Autowired
+	BatchStatusService batchStatusService;
+
+	@Autowired
 	ValidationHelper validationHelper;
+
+	@GetMapping(inputEntryPoint + "/batch-status")
+	public ResponseEntity<List<BatchStatus>> getBatchStatus() {
+		return new ResponseEntity<List<BatchStatus>>(batchStatusService.getBatchStatus(), HttpStatus.OK);
+	}
 
 	@GetMapping(inputEntryPoint + "/statistics")
 	public ResponseEntity<List<IBatchStatistics>> getBatchStatistics() {
 		return new ResponseEntity<List<IBatchStatistics>>(batchService.getBatchStatistics(), HttpStatus.OK);
 	}
 
+	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+	@GetMapping(inputEntryPoint + "/statistics/time")
+	public ResponseEntity<List<IBatchTimeStatistics>> getBatchTimeStatistics(@RequestParam Integer batchSettingsId)
+			throws OsirisValidationException {
+		BatchSettings batchSettings = batchSettingsService.getBatchSettings(batchSettingsId);
+
+		if (batchSettings == null)
+			throw new OsirisValidationException("batchSettingsId");
+
+		return new ResponseEntity<List<IBatchTimeStatistics>>(batchService.getTimeStatisticsOfBatch(batchSettings),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/settings")
 	public ResponseEntity<List<BatchSettings>> getBatchSettings() {
 		return new ResponseEntity<List<BatchSettings>>(batchSettingsService.getAllBatchSettings(), HttpStatus.OK);
+	}
+
+	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+	@PostMapping(inputEntryPoint + "/batch/search")
+	public ResponseEntity<List<Batch>> searchBatchs(@RequestBody BatchSearch batchSearch)
+			throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+		return new ResponseEntity<List<Batch>>(batchService.searchBatchs(batchSearch),
+				HttpStatus.OK);
+	}
+
+	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+	@PostMapping(inputEntryPoint + "/batch/status")
+	public ResponseEntity<Batch> addOrUpdateBatchStatus(@RequestBody Batch batch)
+			throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+		BatchStatus status = batch.getBatchStatus();
+		batch = (Batch) validationHelper.validateReferential(batch, true, "batch");
+		batch.setBatchStatus(status);
+		return new ResponseEntity<Batch>(batchService.addOrUpdateBatch(batch),
+				HttpStatus.OK);
+	}
+
+	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+	@PostMapping(inputEntryPoint + "/batch/new")
+	public ResponseEntity<Batch> declareNewBatch(@RequestParam Integer batchSettingsId,
+			@RequestParam(name = "entityId", required = false) Integer entityId)
+			throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+		BatchSettings batchSettings = batchSettingsService.getBatchSettings(batchSettingsId);
+		if (batchSettings == null)
+			throw new OsirisValidationException("batchSettingsId");
+		return new ResponseEntity<Batch>(batchService.declareNewBatch(batchSettings.getCode(), entityId),
+				HttpStatus.OK);
 	}
 
 	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
@@ -71,10 +128,11 @@ public class BatchController {
 				"MaxAddedNumberPerIteration");
 		validationHelper.validateInteger(batchSetting.getQueueSize(), true, "QueueSize");
 
-		return new ResponseEntity<BatchSettings>(batchSettingsService.addOrUpdBatchSettings(batchSetting),
+		return new ResponseEntity<BatchSettings>(batchSettingsService.addOrUpdateBatchSettings(batchSetting),
 				HttpStatus.OK);
 	}
 
+	// TODO
 	@GetMapping(inputEntryPoint + "/invoice/reminder")
 	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
 	public ResponseEntity<Boolean> sendRemindersForInvoices(

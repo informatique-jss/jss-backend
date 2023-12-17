@@ -33,7 +33,7 @@ public interface QuotationService {
 
         public List<QuotationSearchResult> searchQuotations(QuotationSearch orderingSearch);
 
-        public void reindexQuotation();
+        public void reindexQuotation() throws OsirisException;
 
         public String getCardPaymentLinkForQuotationDeposit(Quotation quotation, String mail,
                         String subject)

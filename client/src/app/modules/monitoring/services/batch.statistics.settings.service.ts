@@ -14,6 +14,6 @@ export class BatchStatisticsService extends AppRestService<BatchStatistics>{
   }
 
   getBatchStatistics(): Observable<BatchStatistics[]> {
-    return this.getListCached(new HttpParams(), "statistics");
+    return this.getList(new HttpParams(), "statistics");
   }
 }

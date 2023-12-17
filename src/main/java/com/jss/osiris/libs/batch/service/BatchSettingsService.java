@@ -7,7 +7,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 
 public interface BatchSettingsService {
 
-    public BatchSettings getById(Integer id);
+    public BatchSettings getBatchSettings(Integer id);
 
     public BatchSettings getByCode(String code);
 
@@ -15,5 +15,5 @@ public interface BatchSettingsService {
 
     public List<BatchSettings> getAllBatchSettings();
 
-    public BatchSettings addOrUpdBatchSettings(BatchSettings batchSettings);
+    public BatchSettings addOrUpdateBatchSettings(BatchSettings batchSettings);
 }

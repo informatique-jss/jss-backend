@@ -43,13 +43,24 @@ public class Batch implements IId {
     public static String UPDATE_AFFAIRE_FROM_RNE = "UPDATE_AFFAIRE_FROM_RNE";
     public static String AUTOMATCH_PAYMENT = "AUTOMATCH_PAYMENT";
     public static String SEND_BILLING_CLOSURE_RECEIPT = "SEND_BILLING_CLOSURE_RECEIPT";
+    public static String REINDEX_DIRECT_DEBIT_BANK_TRANSFERT = "REINDEX_DIRECT_DEBIT_BANK_TRANSFERT";
+    public static String REINDEX_INVOICE = "REINDEX_INVOICE";
+    public static String REINDEX_PAYMENT = "REINDEX_PAYMENT";
+    public static String REINDEX_REFUND = "REINDEX_REFUND";
+    public static String REINDEX_AFFAIRE = "REINDEX_AFFAIRE";
+    public static String REINDEX_ASSO_AFFAIRE_ORDER = "REINDEX_ASSO_AFFAIRE_ORDER";
+    public static String REINDEX_BANK_TRANSFERT = "REINDEX_BANK_TRANSFERT";
+    public static String REINDEX_CUSTOMER_ORDER = "REINDEX_CUSTOMER_ORDER";
+    public static String REINDEX_QUOTATION = "REINDEX_QUOTATION";
+    public static String REINDEX_RESPONSABLE = "REINDEX_RESPONSABLE";
+    public static String REINDEX_TIERS = "REINDEX_TIERS";
 
     @Id
     @SequenceGenerator(name = "batch_sequence", sequenceName = "batch_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "batch_sequence")
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_batch_settings")
     private BatchSettings batchSettings;
 
@@ -59,11 +70,11 @@ public class Batch implements IId {
     private LocalDateTime endDate;
     private Integer entityId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_batch_status")
     private BatchStatus batchStatus;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_node")
     private Node node;
 

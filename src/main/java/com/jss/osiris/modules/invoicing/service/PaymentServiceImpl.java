@@ -25,7 +25,6 @@ import com.jss.osiris.libs.ofx.OFXParser;
 import com.jss.osiris.libs.ofx.OFXStatement;
 import com.jss.osiris.libs.ofx.StatementTransaction;
 import com.jss.osiris.libs.search.model.IndexEntity;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
@@ -145,9 +144,6 @@ public class PaymentServiceImpl implements PaymentService {
     private String payementLimitRefundInEuros;
 
     @Autowired
-    IndexEntityService indexEntityService;
-
-    @Autowired
     DirectDebitTransfertService debitTransfertService;
 
     @Autowired
@@ -166,7 +162,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment addOrUpdatePayment(
-            Payment payment) {
+            Payment payment) throws OsirisException {
         if (payment.getIsCancelled() == null)
             payment.setIsCancelled(false);
         if (payment.getIsAppoint() == null)
@@ -176,17 +172,17 @@ public class PaymentServiceImpl implements PaymentService {
         if (payment.getIsExternallyAssociated() == null)
             payment.setIsExternallyAssociated(false);
         paymentRepository.save(payment);
-        indexEntityService.indexEntity(payment);
+        batchService.declareNewBatch(Batch.REINDEX_PAYMENT, payment.getId());
         return payment;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexPayments() {
+    public void reindexPayments() throws OsirisException {
         List<Payment> payments = IterableUtils.toList(paymentRepository.findAll());
         if (payments != null)
             for (Payment payment : payments)
-                indexEntityService.indexEntity(payment);
+                batchService.declareNewBatch(Batch.REINDEX_PAYMENT, payment.getId());
     }
 
     @Override

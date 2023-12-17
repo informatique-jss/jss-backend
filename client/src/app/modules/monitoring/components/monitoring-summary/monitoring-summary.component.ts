@@ -1,5 +1,7 @@
 import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Observable, Subject, retry, share, switchMap, takeUntil, tap, timer } from 'rxjs';
+import { SUPERVISION_REFRESH_INTERVAL } from 'src/app/libs/Constants';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { BatchSettings } from '../../model/BatchSettings';
@@ -24,12 +26,32 @@ export class MonitoringSummaryComponent implements OnInit {
   items: Array<BatchSettings> = [];
   settings: BatchSettings[] | undefined;
   statistics: BatchStatistics[] = [];
+  showStatistics: boolean[] = [];
+  @Output() selectBatchSetting: EventEmitter<BatchSettings> = new EventEmitter();
+  statisticsNotifications: Observable<BatchStatistics[]> | undefined;
+  private stopPolling = new Subject();
 
   constructor(private appService: AppService,
     private batchSettingsService: BatchSettingsService,
     private batchStatisticsService: BatchStatisticsService,
     private habilitationsService: HabilitationsService
-  ) { }
+  ) {
+    this.statisticsNotifications = timer(1, SUPERVISION_REFRESH_INTERVAL).pipe(
+      switchMap(() => this.batchStatisticsService.getBatchStatistics()),
+      retry(),
+      tap((value) => {
+        if (value)
+          for (let val of value)
+            this.statistics[val.idBatchSettings] = val;
+      }),
+      share(),
+      takeUntil(this.stopPolling)
+    );
+  }
+
+  ngOnDestroy() {
+    this.stopPolling.next(false);
+  }
 
   ngOnInit() {
     this.appService.changeHeaderTitle("Supervision");
@@ -39,27 +61,22 @@ export class MonitoringSummaryComponent implements OnInit {
         for (let setting of this.settings)
           this.items.push(setting);
     })
-    this.batchStatisticsService.getBatchStatistics().subscribe(response => {
-      this.statistics = [];
-      if (response)
-        for (let stat of response)
-          this.statistics[stat.idBatchSettings] = stat;
-    })
+    this.statisticsNotifications!.subscribe();
   }
 
-  isItWarn(statistics: BatchStatistics): boolean {
+  static isItWarn(statistics: BatchStatistics): boolean {
     if (statistics) {
-      if (statistics.standardMeanTime < statistics.currentMeanTime * 0.75)
+      if (statistics.standardMeanTime > 0 && statistics.standardMeanTime < statistics.currentMeanTime * 0.75)
         return true;
     }
     return false;
   }
 
-  getTooltipStatistics(statistics: BatchStatistics): string {
-    if (statistics) {
-      return "Erreurs : " + statistics.error + " / Acquités : " + statistics.acknowledge + " / En attente : " + statistics.waiting + " / En cours : " + statistics.running + " / Terminés avec succès : " + statistics.success + " / Temps moyen aujourd'hui : " + Math.round(statistics.currentMeanTime * 10) / 10 + "s / Temps moyen : " + Math.round(statistics.standardMeanTime * 10) / 10 + "s";
-    }
-    return "";
+  isItWarn = MonitoringSummaryComponent.isItWarn;
+
+  selectNewBatchSetting(batchSetting: BatchSettings) {
+    if (this.canDisplayExtendentMonitoring())
+      this.selectBatchSetting.emit(batchSetting);
   }
 
   canDisplayExtendentMonitoring() {
@@ -68,7 +85,7 @@ export class MonitoringSummaryComponent implements OnInit {
 
   /* Drag & drop functions */
 
-  boxWidth = '400px';
+  boxWidth = '390px';
   boxHeight = '300px';
 
   ngAfterViewInit() {

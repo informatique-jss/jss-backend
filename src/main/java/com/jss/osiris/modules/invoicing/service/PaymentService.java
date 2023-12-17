@@ -28,9 +28,9 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 public interface PaymentService {
         public Payment getPayment(Integer id);
 
-        public Payment addOrUpdatePayment(Payment payment);
+        public Payment addOrUpdatePayment(Payment payment) throws OsirisException;
 
-        public void reindexPayments();
+        public void reindexPayments() throws OsirisException;
 
         public List<PaymentSearchResult> searchPayments(PaymentSearch payemntSearch);
 

@@ -24,7 +24,6 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordGenerationService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
@@ -70,9 +69,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     ConstantService constantService;
-
-    @Autowired
-    IndexEntityService indexEntityService;
 
     @Autowired
     AccountingRecordGenerationService accountingRecordGenerationService;
@@ -482,7 +478,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Invoice addOrUpdateInvoice(Invoice invoice) {
+    public Invoice addOrUpdateInvoice(Invoice invoice) throws OsirisException {
         if (invoice.getIsCreditNote() == null)
             invoice.setIsCreditNote(false);
         if (invoice.getIsInvoiceFromProvider() == null)
@@ -491,7 +487,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoice.setIsProviderCreditNote(false);
 
         invoiceRepository.save(invoice);
-        indexEntityService.indexEntity(invoice);
+        batchService.declareNewBatch(Batch.REINDEX_INVOICE, invoice.getId());
         return invoice;
     }
 
@@ -554,11 +550,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexInvoices() {
+    public void reindexInvoices() throws OsirisException {
         List<Invoice> invoices = getAllInvoices();
         if (invoices != null)
             for (Invoice invoice : invoices)
-                indexEntityService.indexEntity(invoice);
+                batchService.declareNewBatch(Batch.REINDEX_INVOICE, invoice.getId());
     }
 
     private boolean hasAtLeastOneInvoiceItemNotNull(Invoice invoice) {

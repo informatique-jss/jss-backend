@@ -21,7 +21,6 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
@@ -54,9 +53,6 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     QuotationRepository quotationRepository;
-
-    @Autowired
-    IndexEntityService indexEntityService;
 
     @Autowired
     PhoneService phoneService;
@@ -225,7 +221,7 @@ public class QuotationServiceImpl implements QuotationService {
 
         quotation = getQuotation(quotation.getId());
 
-        indexEntityService.indexEntity(quotation);
+        batchService.declareNewBatch(Batch.REINDEX_QUOTATION, quotation.getId());
 
         if (isNewQuotation) {
             notificationService.notifyNewQuotation(quotation);
@@ -361,11 +357,11 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexQuotation() {
+    public void reindexQuotation() throws OsirisException {
         List<Quotation> quotations = IterableUtils.toList(quotationRepository.findAll());
         if (quotations != null)
             for (Quotation quotation : quotations)
-                indexEntityService.indexEntity(quotation);
+                batchService.declareNewBatch(Batch.REINDEX_QUOTATION, quotation.getId());
     }
 
     @Override
