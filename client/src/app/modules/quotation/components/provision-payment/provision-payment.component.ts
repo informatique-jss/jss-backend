@@ -124,7 +124,7 @@ export class ProvisionPaymentComponent implements OnInit {
     let attachments = [];
     if (this.provision && this.provision.attachments)
       for (let attachment of this.provision.attachments)
-        if (attachment.azureInvoice && !attachment.invoice && (!attachment.azureInvoice.invoices || attachment.azureInvoice.invoices.length == 0))
+        if (attachment.azureInvoice && (!attachment.azureInvoice.invoices || attachment.azureInvoice.invoices.length == 0))
           attachments.push(attachment)
     return attachments;
   }
