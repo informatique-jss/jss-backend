@@ -32,6 +32,8 @@ public interface AnnouncementReportingRepository extends CrudRepository<Quotatio
                         " 	sum(pre_tax_price)  as preTaxPrice, " +
                         " 	(select STRING_AGG(DISTINCT nt.label ,', '  ) from    asso_announcement_notice_type nta   left join notice_type nt on nt.id = nta.id_notice_type  where nta.id_announcement = a.id )  as noticeTypeLabel, "
                         +
+                        " 	ntf.label as noticeTypeFamilyLabel, "
+                        +
                         " 	jt.label as journalTypeLabel " +
                         " from " +
                         " 	announcement a " +
@@ -49,7 +51,8 @@ public interface AnnouncementReportingRepository extends CrudRepository<Quotatio
                         " 	d.id = a.id_department  " +
                         " left join invoice_item ii on ii.id_provision = p.id and p.id_provision_type  in (select id from provision_type pt where label like 'Annonce%')  "
                         +
-                        " left join journal_type jt on jt.id = c.id_journal_type  " +
+                        " left join journal_type jt on jt.id = c.id_journal_type left join notice_type_family ntf on ntf.if = a.id_notice_type_family  "
+                        +
                         " where " +
                         " 	co.id_customer_order_status not in :customerOrderStatusIdExcluded " +
                         " group by " +

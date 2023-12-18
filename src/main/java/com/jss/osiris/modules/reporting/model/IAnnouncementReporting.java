@@ -21,5 +21,7 @@ public interface IAnnouncementReporting {
 
     String getNoticeTypeLabel();
 
+    String getNoticeTypeFamilyLabel();
+
     String getJournalTypeLabel();
 }

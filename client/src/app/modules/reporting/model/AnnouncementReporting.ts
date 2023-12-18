@@ -10,4 +10,5 @@ export interface AnnouncementReporting {
   preTaxPrice: number;
   noticeTypeLabel: string;
   journalTypeLabel: string;
+  noticeTypeFamilyLabel: string;
 }
