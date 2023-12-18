@@ -84,6 +84,8 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("azure.form.recognizer.model.receipts.name");
         isOk = isOk && checkProperty("azure.form.recognizer.confidence.threshold");
         isOk = isOk && checkProperty("schedulling.audit.clean");
+        isOk = isOk && checkProperty("schedulling.log.purge");
+        isOk = isOk && checkProperty("schedulling.node.priority");
 
         isOk = isOk && checkAccountingParams();
 
