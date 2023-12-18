@@ -275,7 +275,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         // Associate attachment for azure invoice
         if (invoice.getAzureInvoice() != null) {
-            Attachment attachment = invoice.getAzureInvoice().getAttachments().get(0);
+            Attachment attachment = attachmentService
+                    .getAttachment(invoice.getAzureInvoice().getAttachments().get(0).getId());
             attachment.setInvoice(invoice);
             attachmentService.addOrUpdateAttachment(attachment);
         }
