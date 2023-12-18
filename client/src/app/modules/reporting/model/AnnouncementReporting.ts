@@ -11,4 +11,5 @@ export interface AnnouncementReporting {
   noticeTypeLabel: string;
   journalTypeLabel: string;
   noticeTypeFamilyLabel: string;
+  provisionTypeLabel: string;
 }
