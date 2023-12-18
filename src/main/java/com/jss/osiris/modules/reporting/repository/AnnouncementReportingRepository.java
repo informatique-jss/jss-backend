@@ -51,7 +51,7 @@ public interface AnnouncementReportingRepository extends CrudRepository<Quotatio
                         " 	d.id = a.id_department  " +
                         " left join invoice_item ii on ii.id_provision = p.id and p.id_provision_type  in (select id from provision_type pt where label like 'Annonce%')  "
                         +
-                        " left join journal_type jt on jt.id = c.id_journal_type left join notice_type_family ntf on ntf.if = a.id_notice_type_family  "
+                        " left join journal_type jt on jt.id = c.id_journal_type left join notice_type_family ntf on ntf.id = a.id_notice_type_family  "
                         +
                         " where " +
                         " 	co.id_customer_order_status not in :customerOrderStatusIdExcluded " +
@@ -68,7 +68,7 @@ public interface AnnouncementReportingRepository extends CrudRepository<Quotatio
                         " 	to_char(date_trunc('day', " +
                         " 	a.publication_date), " +
                         " 	'YYYY-MM-DD'), " +
-                        " 	as2.label, " +
+                        " 	as2.label, ntf.label, " +
                         " 	c.label ,d.code , jt.label ,a.character_number, a.id " +
                         "")
         List<IAnnouncementReporting> getAnnouncementReporting(
