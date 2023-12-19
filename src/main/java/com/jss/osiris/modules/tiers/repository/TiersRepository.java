@@ -105,7 +105,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "  left join customer_order co1 on " +
                         "          co1.id_tiers= t.id " +
                         "  left join customer_order co2 on " +
-                        "          co2.id_responsable = r.id " +
+                        "          co2.id_responsable = r.id   co2.created_date>=:startDate and co2.created_date<=:endDate  "
+                        +
                         "  left join audit a1 on " +
                         "          a1.field_name = 'id' " +
                         "          and a1.entity = 'Tiers' " +
@@ -128,8 +129,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          bt.id = bi.id_billing_type " +
                         "  left join nbr_for on " +
                         "          nbr_for.id_customer_order = coalesce(co2.id, co1.id) " +
-                        " where  co2.created_date>=:startDate and co2.created_date<=:endDate " +
-                        " and  ( :tiersId =0 or t.id = :tiersId) " +
+                        " where " +
+                        "    ( :tiersId =0 or t.id = :tiersId) " +
                         " and  ( :salesEmployeeId =0 or e1.id = :salesEmployeeId) " +
                         " and (CAST(:label as text) ='' or CAST(r.id as text) = upper(CAST(:label as text)) or  upper(concat(r.firstname, ' ',r.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(t.denomination)  like '%' || trim(upper(CAST(:label as text)))  || '%'  ) "
                         +
