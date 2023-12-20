@@ -1621,9 +1621,8 @@ public class MailHelper {
 
         mail.setHeaderPicture("images/billing-receipt-header.png");
         mail.setTitle("Vos remboursements forfaitaires de frais");
-        String explainationText = "Afin de nous permettre de procéder au règlement de vos remboursements forfaitaires de frais (RFF), nous vous remercions de nous faire parvenir avant la fin de l’année, une facture avec les montants ci-dessous correspondant à la période "
-                + rff.getStartDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " au "
-                + rff.getEndDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        String explainationText = "Bonjour, afin de nous permettre de procéder au règlement de vos remboursements forfaitaires de frais (RFF), nous vous remercions de nous faire parvenir avant la fin de l’année, une facture avec les montants ci-dessous correspondant à l'année "
+                + rff.getStartDate().getYear();
         mail.setExplaination(explainationText);
 
         mail.setGreetings("A très bientôt !");
@@ -1635,7 +1634,9 @@ public class MailHelper {
         mail.setSubject("Vos remboursements forfaitaires de frais (" + rff.getTiers().getId() + ")");
 
         mail.setExplaination3("Cette facture doit obligatoirement être datée de "
-                + LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM yyyy")) + ".");
+                + LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+                + ". Le paiement sera effectué à compter de réception de la facture et versé sur le RIB "
+                + rff.getRffBic() + " / " + rff.getRffIban());
 
         mail.setRff(rff);
 
