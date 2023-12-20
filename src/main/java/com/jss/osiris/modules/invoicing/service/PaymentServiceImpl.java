@@ -545,8 +545,7 @@ public class PaymentServiceImpl implements PaymentService {
             remainingMoney -= effectivePayment;
 
             // Unlocked customer order if necessary
-            if (remainingToPayForCustomerOrder <= effectivePayment)
-                customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
+            customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
 
             if (Math.round(remainingMoney * 100f) / 100f == 0f)
                 return 0f;
