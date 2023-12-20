@@ -52,6 +52,6 @@
 </button>
 <button *ngIf="!isForDashboard && canAddCheckPayment() && overrideIconAction==''"
   matTooltip="Ajouter un paiement par chèque" mat-fab color="accent" class="second-fab-button"
-  (click)="openRoute($event,'/invoicing/payment/add/')" (auxclick)="openRoute($event,'/invoicing/payment/add/')">
+  (click)="openRoute($event,'/invoicing/payment/add/new/')" (auxclick)="openRoute($event,'/invoicing/payment/add/new')">
   <mat-icon>attach_money</mat-icon>
 </button>

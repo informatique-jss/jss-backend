@@ -41,13 +41,13 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " left join tiers t on t.id = c.id_tiers" +
                         " left join responsable r on r.id = c.id_responsable" +
                         " left join tiers t2 on r.id_tiers = t2.id" +
-                        " left join confrere cf on cf.id = c.id_confrere" +
                         " left join employee e1 on e1.id = asso.id_employee" +
                         " left join employee e2 on e2.id = p.id_employee" +
                         " left join provision_type pt on pt.id = p.id_provision_type" +
                         " left join provision_family_type pf on pf.id = pt.id_provision_family_type" +
                         " left join announcement an on an.id = p.id_announcement " +
                         " left join announcement_status ans on an.id_announcement_status = ans.id" +
+                        " left join confrere cf on cf.id = a.id_confrere" +
                         " left join formalite fo on fo.id = p.id_formalite" +
                         " left join formalite_status fs on fs.id = fo.id_formalite_status" +
                         " left join domiciliation dom on dom.id = p.id_domiciliation" +
@@ -73,7 +73,7 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         "  audit2.entity_id=an.id and audit2.entity in ('Announcement','Formalite','Domiciliation','SimpleProvision','Bodacc') and audit2.field_name = 'id' "
                         +
                         " where cs.code not in (:excludedCustomerOrderStatusCode) and (COALESCE(:responsible)=0 or asso.id_employee in (:responsible))"
-                        + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder))"
+                        + " and ( COALESCE(:customerOrder)=0 or r.id in (:customerOrder) or t.id in (:customerOrder))"
                         +
                         " and ( :waitedCompetentAuthorityId =0 or sp.id_waited_competent_authority =:waitedCompetentAuthorityId) "
                         +

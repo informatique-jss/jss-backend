@@ -309,12 +309,6 @@
           [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
         </ordering-list>
       </mat-tab>
-      <mat-tab label="Prestations" *ngIf="selectedConfrere.id!=null && selectedConfrere.id!=undefined">
-        <provision-list class="integration-component"
-          *ngIf="this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0"
-          [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
-        </provision-list>
-      </mat-tab>
       <mat-tab label="Annonces" *ngIf="selectedConfrere.id!=null && selectedConfrere.id!=undefined">
         <announcement-list [confrere]="selectedConfrere"></announcement-list>
       </mat-tab>
