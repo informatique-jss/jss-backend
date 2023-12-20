@@ -193,6 +193,14 @@
           </td>
         </ng-container>
       </tr>
+      <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let refund of quotation.refunds">
+        <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="refund.label">
+          Remboursement n°{{refund.id}} - {{refund.label}}
+        </td>
+        <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+          - {{refund.refundAmount|number}} €
+        </td>
+      </tr>
     </ng-container>
     <tr class="mat-mdc-row mdc-data-table__row ">
       <td class="mat-mdc-cell mdc-data-table__cell ">Reste à payer
