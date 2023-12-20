@@ -134,12 +134,6 @@ public class RffServiceImpl implements RffService {
                             && currentRff.getTiers().getRffIban().length() > 0) {
                         iban = currentRff.getTiers().getRffIban();
                         bic = currentRff.getTiers().getRffBic();
-                    } else if (currentRff.getTiers().getPaymentBic() != null
-                            && currentRff.getTiers().getPaymentIban() != null
-                            && currentRff.getTiers().getPaymentBic().length() > 0
-                            && currentRff.getTiers().getPaymentIban().length() > 0) {
-                        iban = currentRff.getTiers().getPaymentIban();
-                        bic = currentRff.getTiers().getPaymentBic();
                     }
                     if (iban != null && bic != null) {
                         currentRff.setRffBic(bic);
