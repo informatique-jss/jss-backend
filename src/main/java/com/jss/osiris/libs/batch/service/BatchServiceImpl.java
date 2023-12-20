@@ -87,7 +87,7 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
                         if (batchs != null && batchs.size() > 0)
                             for (Batch batch : batchs)
                                 if (numberAdded < 1000 && (batchSetting.getMaxAddedNumberPerIteration() <= 0
-                                        || batchSetting.getMaxAddedNumberPerIteration() < numberAdded)) {
+                                        || batchSetting.getMaxAddedNumberPerIteration() > numberAdded)) {
                                     addBatchToQueue(batch);
                                     numberAdded++;
                                 }
