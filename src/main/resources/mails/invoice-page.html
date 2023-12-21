@@ -18,6 +18,10 @@
             page-break-before: always;
         }
 
+        .page-break-inside {
+            page-break-inside: avoid;
+        }
+
         .cgv {
             width: 297px;
         }
@@ -166,7 +170,7 @@
         </th:block>
     </table>
     <p style="margin-top: 10px;">&#160;</p>
-    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
+    <table class="page-break" style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
         <tr>
             <td>
                 Prix total HT
