@@ -266,7 +266,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
       return;
     }
     if (payment) {
-      if (payment.paymentAmount < 0 && !this.habilitationService.canPutNegativePaymentIntoAccount()) {
+      if (payment.paymentAmount < 0 && this.habilitationService.canPutNegativePaymentIntoAccount()) {
         this.appService.displaySnackBar("Non autorisé", true, 10);
         return;
       }

@@ -29,13 +29,4 @@ export class SelectRffFrequencyComponent extends GenericSelectComponent<RffFrequ
     })
   }
 
-  compareWithId = this.compareWithLabel;
-
-  compareWithLabel(o1: any, o2: any): boolean {
-    if (o1 == null && o2 != null || o1 != null && o2 == null)
-      return false;
-    if (o1 && o2)
-      return o1 == o2;
-    return false
-  }
 }

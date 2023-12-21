@@ -44,7 +44,7 @@ const routes: Routes = [
   { path: 'invoicing/add/:id', component: AddInvoiceComponent },
   { path: 'invoicing/azure/add/:id/:idProvision', component: AddInvoiceComponent },
   { path: 'invoicing/credit-note/:idInvoice', component: AddInvoiceComponent },
-  { path: 'invoicing/payment/add', component: AddPaymentComponent },
+  { path: 'invoicing/payment/add/new', component: AddPaymentComponent },
 ];
 
 @NgModule({

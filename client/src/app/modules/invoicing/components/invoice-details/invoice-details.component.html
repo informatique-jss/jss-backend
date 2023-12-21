@@ -16,6 +16,9 @@
         <p>
           Echéance de paiement : {{invoice.dueDate | date:'dd/MM/yyyy'}}
         </p>
+        <p *ngIf="invoice.manualPaymentType">
+          Type de paiement : {{invoice.manualPaymentType.label}}
+        </p>
         <div class="invoice-title" *ngIf="invoice.creditNote">
           <span>Avoir n°{{invoice.creditNote.id}} émis à Paris, le
             {{invoice.creditNote.createdDate|date:'dd/MM/yyyy à HH:mm'}}</span>

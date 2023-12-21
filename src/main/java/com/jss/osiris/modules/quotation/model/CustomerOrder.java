@@ -27,6 +27,7 @@ import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
+import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -160,6 +161,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	@JsonIgnore // For client-side performance purpose
 	private List<Invoice> providerInvoices;
+
+	@OneToMany(targetEntity = Refund.class, mappedBy = "customerOrder")
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	private List<Refund> refunds;
 
 	@Column(columnDefinition = "TEXT")
 	private String customerMailCustomMessage;
@@ -384,6 +389,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setInstructions(String instructions) {
 		this.instructions = instructions;
+	}
+
+	public List<Refund> getRefunds() {
+		return refunds;
+	}
+
+	public void setRefunds(List<Refund> refunds) {
+		this.refunds = refunds;
 	}
 
 }

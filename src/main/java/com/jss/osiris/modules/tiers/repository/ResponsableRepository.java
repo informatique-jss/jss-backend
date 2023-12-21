@@ -83,7 +83,8 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " left join employee e2 on " +
                         " 	e2.id = r.id_commercial " +
                         " left join customer_order co2 on " +
-                        " 	co2.id_responsable = r.id " +
+                        " 	co2.id_responsable = r.id and  co2.created_date>=:startDate and co2.created_date<=:endDate "
+                        +
                         " left join audit a1 on " +
                         " 	a1.field_name = 'id' " +
                         " 	and a1.entity = 'Tiers' " +
@@ -106,8 +107,8 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	bt.id = bi.id_billing_type " +
                         " left join nbr_for on " +
                         " 	nbr_for.id_customer_order = co2.id " +
-                        " where  co2.created_date>=:startDate and co2.created_date<=:endDate " +
-                        " and  ( :tiersId =0 or t.id = :tiersId) " +
+                        " where  " +
+                        "  ( :tiersId =0 or t.id = :tiersId) " +
                         " and  ( :salesEmployeeId =0 or e2.id = :salesEmployeeId) " +
                         " and  ( :responsableId =0 or r.id = :responsableId) " +
                         " and (CAST(:label as text) ='' or CAST(r.id as text) = upper(CAST(:label as text)) or  upper(concat(r.firstname, ' ',r.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(t.denomination)  like '%' || trim(upper(CAST(:label as text)))  || '%'  ) "

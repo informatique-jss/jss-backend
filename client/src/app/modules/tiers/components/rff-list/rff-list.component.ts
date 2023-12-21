@@ -60,6 +60,7 @@ export class RffListComponent implements OnInit {
       }
 
       this.displayedColumnsRff.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn);
+      this.displayedColumnsRff.push({ id: "tiersId", fieldName: "tiersId", label: "N° Tiers" } as SortTableColumn);
       this.displayedColumnsRff.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers" } as SortTableColumn);
       this.displayedColumnsRff.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn);
       this.displayedColumnsRff.push({ id: "startDate", fieldName: "startDate", label: "Début", valueFonction: formatDateForSortTable } as SortTableColumn);
