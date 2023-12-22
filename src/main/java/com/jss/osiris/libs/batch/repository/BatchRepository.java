@@ -19,7 +19,7 @@ public interface BatchRepository extends CrudRepository<Batch, Integer> {
         List<Batch> findTop1ByBatchSettingsAndBatchStatusOrderByCreatedDate(BatchSettings batchSetting,
                         BatchStatus batchStatusByCode);
 
-        List<Batch> findByBatchSettingsAndBatchStatus(BatchSettings batchSetting, BatchStatus batchStatusByCode);
+        List<Batch> findByBatchSettingsAndBatchStatus(BatchSettings batchSetting, BatchStatus batchStatus);
 
         List<Batch> findByBatchSettingsAndBatchStatusAndNode(BatchSettings byId, BatchStatus batchStatusByCode,
                         Node currentNode);

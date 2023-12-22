@@ -11,6 +11,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
 
 public interface GuichetUniqueDelegateService {
         public List<FormaliteGuichetUnique> getAllFormalitiesByDate(LocalDateTime createdAfter,
@@ -54,7 +55,18 @@ public interface GuichetUniqueDelegateService {
         public void refreshAllOpenFormalities()
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException;
 
-        public File getAttachmentById(String attachmentId)
+        public File getAttachmentById(String attachmentId, String customPrefix)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public PiecesJointe uploadAttachment(FormaliteGuichetUnique formaliteGuichetUnique, File file,
+                        TypeDocument typeDocument, String name) throws OsirisException, OsirisClientMessageException;
+
+        public void signeFormality(FormaliteGuichetUnique formaliteGuichetUnique,
+                        PiecesJointe signedSynthesis,
+                        PiecesJointe signedBe)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public void payFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique)
                         throws OsirisException, OsirisClientMessageException;
 
 }

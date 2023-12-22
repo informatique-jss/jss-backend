@@ -5,16 +5,26 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
-public class Status implements Serializable, ICode {
-    public Status(String code) {
+@Table(name = "STATUS")
+public class FormaliteGuichetUniqueStatus implements Serializable, ICode {
+    public static String SIGNATURE_PENDING = "SIGNATURE_PENDING";
+    public static String AMENDMENT_SIGNATURE_PENDING = "AMENDMENT_SIGNATURE_PENDING";
+    public static String SIGNED = "SIGNED";
+    public static String PAYMENT_PENDING = "PAYMENT_PENDING";
+    public static String PAYMENT_VALIDATION_PENDING = "PAYMENT_VALIDATION_PENDING";
+    public static String AMENDMENT_PAYMENT_PENDING = "AMENDMENT_PAYMENT_PENDING";
+    public static String AMENDMENT_PAYMENT_VALIDATION_PENDING = "AMENDMENT_PAYMENT_VALIDATION_PENDING";
+
+    public FormaliteGuichetUniqueStatus(String code) {
         this.code = code;
     }
 
-    public Status() {
+    public FormaliteGuichetUniqueStatus() {
     }
 
     @Id

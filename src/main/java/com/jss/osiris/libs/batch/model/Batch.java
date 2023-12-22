@@ -23,6 +23,9 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
         @Index(name = "idx_batch_settings_status", columnList = "id_batch_status,id_batch_settings") })
 public class Batch implements IId {
     public static String REFRESH_FORMALITE_GUICHET_UNIQUE = "REFRESH_FORMALITE_GUICHET_UNIQUE";
+    public static String SIGN_FORMALITE_GUICHET_UNIQUE = "SIGN_FORMALITE_GUICHET_UNIQUE";
+    public static String DECLARE_NEW_ACTE_DEPOSIT_ON_GUICHET_UNIQUE = "DECLARE_NEW_ACTE_DEPOSIT_ON_GUICHET_UNIQUE";
+    public static String PAY_FORMALITE_GUICHET_UNIQUE = "PAY_FORMALITE_GUICHET_UNIQUE";
     public static String DAILY_ACCOUNT_CLOSING = "DAILY_ACCOUNT_CLOSING";
     public static String ACTIVE_DIRECTORY_USER_UPDATE = "ACTIVE_DIRECTORY_USER_UPDATE";
     public static String PURGE_NOTIFICATION = "PURGE_NOTIFICATION";

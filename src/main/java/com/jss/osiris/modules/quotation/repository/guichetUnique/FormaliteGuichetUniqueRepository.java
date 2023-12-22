@@ -7,10 +7,18 @@ import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
 
 public interface FormaliteGuichetUniqueRepository extends QueryCacheCrudRepository<FormaliteGuichetUnique, Integer> {
 
     @Query(nativeQuery = true, value = "select * from formalite_guichet_unique where reference_mandataire like concat('%',trim(:referenceMandataire),'%') ")
     List<FormaliteGuichetUnique> findByRefenceMandataire(@Param("referenceMandataire") String reference);
+
+    @Query("select f from FormaliteGuichetUnique f where status in (:statusSignaturePending,:statusAmendmentSignaturePending) and formalite is not null ")
+    List<FormaliteGuichetUnique> findFormaliteToSign(
+            @Param("statusSignaturePending") FormaliteGuichetUniqueStatus statusSignaturePending,
+            @Param("statusAmendmentSignaturePending") FormaliteGuichetUniqueStatus statusAmendmentSignaturePending);
+
+    List<FormaliteGuichetUnique> findByLiasseNumber(String value);
 
 }

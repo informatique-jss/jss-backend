@@ -1,9 +1,11 @@
 import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { Observable, Subject, retry, share, switchMap, takeUntil, tap, timer } from 'rxjs';
 import { SUPERVISION_REFRESH_INTERVAL } from 'src/app/libs/Constants';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
+import { BatchCategory } from '../../model/BatchCategory';
 import { BatchSettings } from '../../model/BatchSettings';
 import { BatchStatistics } from '../../model/BatchStatictics';
 import { BatchSettingsService } from '../../services/batch.settings.service';
@@ -25,16 +27,23 @@ export class MonitoringSummaryComponent implements OnInit {
   private dragRef: DragRef | null = null;
   items: Array<BatchSettings> = [];
   settings: BatchSettings[] | undefined;
+  selectedCategory: BatchCategory | undefined;
   statistics: BatchStatistics[] = [];
   showStatistics: boolean[] = [];
   @Output() selectBatchSetting: EventEmitter<BatchSettings> = new EventEmitter();
   statisticsNotifications: Observable<BatchStatistics[]> | undefined;
   private stopPolling = new Subject();
 
+  boxWidth = '390px';
+  boxHeight = '300px';
+
+  summaryForm = this.formBuilder.group({});
+
   constructor(private appService: AppService,
     private batchSettingsService: BatchSettingsService,
     private batchStatisticsService: BatchStatisticsService,
-    private habilitationsService: HabilitationsService
+    private habilitationsService: HabilitationsService,
+    private formBuilder: FormBuilder
   ) {
     this.statisticsNotifications = timer(1, SUPERVISION_REFRESH_INTERVAL).pipe(
       switchMap(() => this.batchStatisticsService.getBatchStatistics()),
@@ -56,10 +65,11 @@ export class MonitoringSummaryComponent implements OnInit {
   ngOnInit() {
     this.appService.changeHeaderTitle("Supervision");
     this.batchSettingsService.getBatchSettings().subscribe(response => {
-      this.settings = response;
+      this.settings = response.sort((a, b) => (a.batchCategory.label + a.label).localeCompare(b.batchCategory.label + b.label));
       if (this.settings)
         for (let setting of this.settings)
           this.items.push(setting);
+
     })
     this.statisticsNotifications!.subscribe();
   }
@@ -82,11 +92,6 @@ export class MonitoringSummaryComponent implements OnInit {
   canDisplayExtendentMonitoring() {
     return this.habilitationsService.canDisplayExtendentMonitoring();
   }
-
-  /* Drag & drop functions */
-
-  boxWidth = '390px';
-  boxHeight = '300px';
 
   ngAfterViewInit() {
     const placeholderElement = this.placeholder.element.nativeElement;

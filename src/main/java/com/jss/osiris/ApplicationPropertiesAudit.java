@@ -77,6 +77,12 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("guichet.unique.entry.point");
         isOk = isOk && checkProperty("guichet.unique.login");
         isOk = isOk && checkProperty("guichet.unique.password");
+        isOk = isOk && checkProperty("guichet.unique.signature.path.jar");
+        isOk = isOk && checkProperty("guichet.unique.signature.path.configuration");
+        isOk = isOk && checkProperty("guichet.unique.signature.path.input");
+        isOk = isOk && checkProperty("guichet.unique.signature.path.output");
+        isOk = isOk && checkProperty("guichet.unique.wallet.login");
+        isOk = isOk && checkProperty("guichet.unique.wallet.password");
         isOk = isOk && checkProperty("schedulling.payment.automatch");
         isOk = isOk && checkProperty("azure.form.recognizer.endpoint");
         isOk = isOk && checkProperty("azure.form.recognizer.api.key");

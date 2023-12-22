@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -41,12 +44,14 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.CartRate;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.quotation.model.guichetUnique.ValidationRequest;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.quotation.repository.guichetUnique.FormaliteGuichetUniqueRepository;
 import com.jss.osiris.modules.quotation.repository.guichetUnique.PartnerCenterRepository;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
+import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.TypeDocumentService;
 
 @Service
@@ -94,6 +99,12 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     @Autowired
     AttachmentService attachmentService;
 
+    @Autowired
+    BatchService batchService;
+
+    @Autowired
+    FormaliteGuichetUniqueStatusService formaliteGuichetUniqueStatusService;
+
     private String cartStatusPayed = "PAID";
     private String cartStatusRefund = "REFUNDED";
 
@@ -108,6 +119,15 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         if (formaliteGuichetUnique.isPresent())
             return formaliteGuichetUnique.get();
         return null;
+    }
+
+    @Override
+    public List<FormaliteGuichetUnique> getFormaliteGuichetUniqueToSign() {
+        return formaliteGuichetUniqueRepository.findFormaliteToSign(
+                formaliteGuichetUniqueStatusService
+                        .getFormaliteGuichetUniqueStatus(FormaliteGuichetUniqueStatus.SIGNATURE_PENDING),
+                formaliteGuichetUniqueStatusService
+                        .getFormaliteGuichetUniqueStatus(FormaliteGuichetUniqueStatus.AMENDMENT_SIGNATURE_PENDING));
     }
 
     @Override
@@ -263,10 +283,18 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                             }
                     }
                 }
+
+                // Content field
+                originalFormalite.setContent(formaliteGuichetUnique.getContent());
             }
 
             // Download attachments
             originalFormalite.getContent().setPiecesJointes(getAttachmentOfFormaliteGuichetUnique(originalFormalite));
+            if (originalFormalite.getContent().getPiecesJointes() != null
+                    && originalFormalite.getContent().getPiecesJointes().size() > 0)
+                for (PiecesJointe piecesJointe : originalFormalite.getContent().getPiecesJointes())
+                    piecesJointe.setContent(originalFormalite.getContent());
+
             originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);
             List<Provision> provisions = formaliteService.getFormalite(formalite.getId()).getProvision();
 
@@ -310,6 +338,22 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 addOrUpdateFormaliteGuichetUnique(originalFormalite);
             }
         }
+
+        if (originalFormalite != null
+                && (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.SIGNATURE_PENDING)
+                        || originalFormalite.getStatus().getCode()
+                                .equals(FormaliteGuichetUniqueStatus.AMENDMENT_SIGNATURE_PENDING)))
+            batchService.declareNewBatch(Batch.SIGN_FORMALITE_GUICHET_UNIQUE, originalFormalite.getId());
+
+        if (originalFormalite != null
+                && (Arrays
+                        .asList(FormaliteGuichetUniqueStatus.PAYMENT_PENDING,
+                                FormaliteGuichetUniqueStatus.PAYMENT_VALIDATION_PENDING,
+                                FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_PENDING,
+                                FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_VALIDATION_PENDING)
+                        .contains(originalFormalite.getStatus().getCode())))
+            batchService.declareNewBatch(Batch.PAY_FORMALITE_GUICHET_UNIQUE, originalFormalite.getId());
+
         return originalFormalite;
     }
 
@@ -343,7 +387,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 TypeDocument typeDocument = typeDocumentService
                         .getTypeDocumentByCode(piecesJointe.getTypeDocument().getCode());
                 File file = guichetUniqueDelegateService
-                        .getAttachmentById(piecesJointe.getAttachmentId());
+                        .getAttachmentById(piecesJointe.getAttachmentId(), null);
                 try {
                     attachmentService.addAttachment(new FileInputStream(file), provision.getId(),
                             Provision.class.getSimpleName(),
@@ -571,5 +615,10 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     private boolean isVatEqual(Float vat1, Float vat2) {
         return Math.abs(vat1 - vat2) < 1;
+    }
+
+    @Override
+    public List<FormaliteGuichetUnique> getFormaliteGuichetUniqueByLiasseNumber(String value) {
+        return formaliteGuichetUniqueRepository.findByLiasseNumber(value);
     }
 }

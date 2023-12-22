@@ -1928,8 +1928,13 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
 
     List<FormaliteGuichetUnique> formalites = null;
-    if (value != null && value.length() > 2)
-      formalites = guichetUniqueDelegateService.getAllFormalitiesByRefenceMandataire(value);
+
+    if (value != null && value.length() > 2) {
+      formalites = formaliteGuichetUniqueService.getFormaliteGuichetUniqueByLiasseNumber(value.toUpperCase());
+
+      if (formalites == null || formalites.size() == 0)
+        formalites = guichetUniqueDelegateService.getAllFormalitiesByRefenceMandataire(value);
+    }
 
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
   }

@@ -2,6 +2,7 @@ package com.jss.osiris.libs.batch.service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -184,6 +185,7 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
     }
 
     private BatchStatus batchStatusNew = null;
+    private BatchStatus batchStatusWaiting = null;
     private HashMap<String, BatchSettings> batchSettings = new HashMap<String, BatchSettings>();
 
     @Override
@@ -192,15 +194,28 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
 
         if (batchSettings.get(batchCode) == null)
             batchSettings.put(batchCode, batchSettingsService.getByCode(batchCode));
-        batch.setBatchSettings(batchSettings.get(batchCode));
 
         if (batchStatusNew == null)
             batchStatusNew = batchStatusService.getBatchStatusByCode(BatchStatus.NEW);
+        if (batchStatusWaiting == null)
+            batchStatusWaiting = batchStatusService.getBatchStatusByCode(BatchStatus.WAITING);
+
+        batch.setBatchSettings(batchSettings.get(batchCode));
+
         batch.setBatchStatus(batchStatusNew);
 
         batch.setCreatedDate(LocalDateTime.now());
         batch.setEntityId(entityId);
         batch.setNode(nodeService.getCurrentNodeCached());
+
+        if (batch.getBatchSettings().getIsOnlyOneJob() == true) {
+            List<Batch> batchs = new ArrayList<Batch>();
+            batchs.addAll(batchRepository.findByBatchSettingsAndBatchStatus(batch.getBatchSettings(), batchStatusNew));
+            batchs.addAll(
+                    batchRepository.findByBatchSettingsAndBatchStatus(batch.getBatchSettings(), batchStatusWaiting));
+            if (batchs != null && batchs.size() > 1)
+                return null;
+        }
         return addOrUpdateBatch(batch);
     }
 

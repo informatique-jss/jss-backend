@@ -195,6 +195,7 @@ import { SelectAccountingAccountClassComponent } from '../forms/select-accountin
 import { SelectAccountingJournalComponent } from '../forms/select-accounting-journal/select-accounting-journal.component';
 import { SelectAssignationTypeComponent } from '../forms/select-assignation-type/select-assignation-type.component';
 import { SelectAttachmentTypeComponent } from '../forms/select-attachment-type/select-attachment-type.component';
+import { SelectBatchCategoryComponent } from '../forms/select-batch-category/select-batch-category.component';
 import { SelectBatchSettingsComponent } from '../forms/select-batch-settings/select-batch-settings.component';
 import { SelectBatchStatusComponent } from '../forms/select-batch-status/select-batch-status.component';
 import { SelectBillingItemsComponent } from '../forms/select-billing-items/select-billing-items.component';
@@ -508,6 +509,7 @@ const routes: Routes = [
     SelectNodeComponent,
     BarChartComponent,
     GaugeChartComponent,
+    SelectBatchCategoryComponent,
   ],
   exports: [
     HistoryComponent,
@@ -728,6 +730,7 @@ const routes: Routes = [
     SelectNodeComponent,
     BarChartComponent,
     GaugeChartComponent,
+    SelectBatchCategoryComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

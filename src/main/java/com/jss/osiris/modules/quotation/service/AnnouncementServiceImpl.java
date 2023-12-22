@@ -689,6 +689,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                         announcement.setNotice(
                                 announcement.getNotice().replaceAll("\\{ville\\}", affaire.getCity().getLabel()));
 
+                    if (affaire.getCity() != null)
+                        announcement.setNotice(
+                                announcement.getNotice().replaceAll("\\{departement\\}",
+                                        affaire.getCity().getDepartment().getLabel()));
+
                     if (affaire.getPostalCode() != null)
                         announcement.setNotice(
                                 announcement.getNotice().replaceAll("\\{codePostal\\}", affaire.getPostalCode()));

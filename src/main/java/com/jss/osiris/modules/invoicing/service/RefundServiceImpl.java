@@ -202,7 +202,8 @@ public class RefundServiceImpl implements RefundService {
         if (customerOrder == null) // If it's a payment / appoint refund
             paymentService.cancelAppoint(payment);
 
-        accountingRecordGenerationService.generateAccountingRecordsForRefundGeneration(refund);
+        if (payment.getIsAppoint() == false)
+            accountingRecordGenerationService.generateAccountingRecordsForRefundGeneration(refund);
 
         return this.addOrUpdateRefund(refund);
     }

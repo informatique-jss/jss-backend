@@ -17,11 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.model.BatchCategory;
 import com.jss.osiris.libs.batch.model.BatchSearch;
 import com.jss.osiris.libs.batch.model.BatchSettings;
 import com.jss.osiris.libs.batch.model.BatchStatus;
 import com.jss.osiris.libs.batch.model.IBatchStatistics;
 import com.jss.osiris.libs.batch.model.IBatchTimeStatistics;
+import com.jss.osiris.libs.batch.service.BatchCategoryService;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.batch.service.BatchSettingsService;
 import com.jss.osiris.libs.batch.service.BatchStatusService;
@@ -54,6 +56,14 @@ public class BatchController {
 
 	@Autowired
 	ValidationHelper validationHelper;
+
+	@Autowired
+	BatchCategoryService batchCategoryService;
+
+	@GetMapping(inputEntryPoint + "/batch-categories")
+	public ResponseEntity<List<BatchCategory>> getBatchCategories() {
+		return new ResponseEntity<List<BatchCategory>>(batchCategoryService.getBatchCategories(), HttpStatus.OK);
+	}
 
 	@GetMapping(inputEntryPoint + "/batch-status")
 	public ResponseEntity<List<BatchStatus>> getBatchStatus() {

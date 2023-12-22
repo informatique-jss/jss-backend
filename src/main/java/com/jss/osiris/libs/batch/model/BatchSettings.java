@@ -2,9 +2,12 @@ package com.jss.osiris.libs.batch.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -34,6 +37,12 @@ public class BatchSettings implements IId {
 
     @Column(nullable = false)
     private Integer maxAddedNumberPerIteration;
+
+    private Boolean isOnlyOneJob;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_batch_category")
+    private BatchCategory batchCategory;
 
     public Integer getId() {
         return id;
@@ -89,6 +98,22 @@ public class BatchSettings implements IId {
 
     public void setMaxAddedNumberPerIteration(Integer maxAddedNumberPerIteration) {
         this.maxAddedNumberPerIteration = maxAddedNumberPerIteration;
+    }
+
+    public Boolean getIsOnlyOneJob() {
+        return isOnlyOneJob;
+    }
+
+    public void setIsOnlyOneJob(Boolean isOnlyOneJob) {
+        this.isOnlyOneJob = isOnlyOneJob;
+    }
+
+    public BatchCategory getBatchCategory() {
+        return batchCategory;
+    }
+
+    public void setBatchCategory(BatchCategory batchCategory) {
+        this.batchCategory = batchCategory;
     }
 
 }

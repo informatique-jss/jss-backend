@@ -49,6 +49,7 @@ import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.repository.AssoAffaireOrderRepository;
 import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 @Service
@@ -119,6 +120,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     BatchService batchService;
+
+    @Autowired
+    FormaliteGuichetUniqueStatusService formaliteGuichetUniqueStatusService;
 
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
@@ -243,12 +247,18 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     formalite.setFormaliteStatus(
                             formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
 
-                if (formalite.getFormalitesGuichetUnique() != null) {
+                else if (formalite.getFormalitesGuichetUnique() != null) {
                     for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique()) {
                         if (formaliteGuichetUnique.getStatus() == null
-                                || !formaliteGuichetUnique.getStatus().getIsCloseState())
+                                || !formaliteGuichetUniqueStatusService
+                                        .getFormaliteGuichetUniqueStatus(formaliteGuichetUnique.getStatus().getCode())
+                                        .getIsCloseState()) {
+                            formaliteGuichetUnique.setFormalite(formalite);
+                            formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+
                             batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE,
                                     formaliteGuichetUnique.getId());
+                        }
                     }
                 }
 
@@ -267,7 +277,20 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 formaliteGuichetUniqueOrigin.setFormalite(null);
                             formaliteGuichetUniqueService
                                     .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUniqueOrigin);
+
+                            if (formalite.getFormaliteStatus().getIsCloseState()) {
+                                if (formaliteGuichetUniqueStatusService
+                                        .getFormaliteGuichetUniqueStatus(
+                                                formaliteGuichetUniqueOrigin.getStatus().getCode())
+                                        .getIsCloseState() == false)
+                                    throw new OsirisClientMessageException(
+                                            "Impossible de terminer la formalité, le dossier GU n'est pas terminé");
+                            }
                         }
+                }
+
+                if (formalite.getActeDeposit() != null && formalite.getActeDeposit().getId() == null) {
+                    batchService.declareNewBatch(Batch.DECLARE_NEW_ACTE_DEPOSIT_ON_GUICHET_UNIQUE, formalite.getId());
                 }
 
                 if (formalite.getFormaliteStatus().getIsCloseState()

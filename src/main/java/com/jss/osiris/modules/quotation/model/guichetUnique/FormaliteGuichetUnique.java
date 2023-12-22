@@ -20,9 +20,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DiffusionINSEE;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Status;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
 
@@ -109,7 +109,7 @@ public class FormaliteGuichetUnique implements IId {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_status")
-    private Status status;
+    private FormaliteGuichetUniqueStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_formalite")
@@ -128,11 +128,11 @@ public class FormaliteGuichetUnique implements IId {
     private Boolean isAnnualAccounts;
     private Boolean isActeDeposit;
 
-    public Status getStatus() {
+    public FormaliteGuichetUniqueStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(FormaliteGuichetUniqueStatus status) {
         this.status = status;
     }
 

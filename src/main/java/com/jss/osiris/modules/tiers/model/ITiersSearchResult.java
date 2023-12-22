@@ -11,6 +11,10 @@ public interface ITiersSearchResult {
 
     String getSalesEmployeeLabel();
 
+    String getformalisteLabel();
+
+    Integer getformalisteId();
+
     String getSalesEmployeeId();
 
     LocalDate getFirstOrderDay();

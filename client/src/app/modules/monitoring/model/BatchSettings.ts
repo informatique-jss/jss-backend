@@ -1,3 +1,5 @@
+import { BatchCategory } from "./BatchCategory";
+
 export interface BatchSettings {
   id: number;
   code: string;
@@ -6,4 +8,5 @@ export interface BatchSettings {
   fixedRate: number;
   maxAddedNumberPerIteration: number;
   isActive: boolean;
+  batchCategory: BatchCategory;
 }

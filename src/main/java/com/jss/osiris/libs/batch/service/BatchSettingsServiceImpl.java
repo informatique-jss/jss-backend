@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.model.BatchCategory;
 import com.jss.osiris.libs.batch.model.BatchSettings;
 import com.jss.osiris.libs.batch.repository.BatchSettingsRepository;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -20,6 +21,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
 
     @Autowired
     BatchStatusService batchStatusService;
+
+    @Autowired
+    BatchCategoryService batchCategoryService;
 
     @Override
     public BatchSettings getByCode(String code) {
@@ -47,6 +51,8 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
     @Override
     public void initializeBatchSettings() throws OsirisException {
         batchStatusService.updateStatusReferential();
+        batchCategoryService.updateCategoryReferential();
+
         if (getByCode(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE);
@@ -54,7 +60,33 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.GUICHET_UNIQUE));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.PAY_FORMALITE_GUICHET_UNIQUE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.PAY_FORMALITE_GUICHET_UNIQUE);
+            batchSettings.setLabel("Paiement des dossiers GU");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.GUICHET_UNIQUE));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.DECLARE_NEW_ACTE_DEPOSIT_ON_GUICHET_UNIQUE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.DECLARE_NEW_ACTE_DEPOSIT_ON_GUICHET_UNIQUE);
+            batchSettings.setLabel("Déclaration des dépôts d'actes sur le GU");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.GUICHET_UNIQUE));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.DAILY_ACCOUNT_CLOSING) == null) {
@@ -64,7 +96,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(5 * 60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.ACCOUNTING));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.ACTIVE_DIRECTORY_USER_UPDATE) == null) {
@@ -74,7 +108,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_MAIL) == null) {
@@ -84,7 +120,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(2 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(1);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.PURGE_NOTIFICATION) == null) {
@@ -94,7 +132,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(5 * 60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.SYSTEM));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.PURGE_LOGS) == null) {
@@ -104,7 +144,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(5 * 60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.SYSTEM));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.CLEAN_AUDIT) == null) {
@@ -114,7 +156,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(5 * 60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.SYSTEM));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.CHECK_CENTRAL_PAY_PAYMENT_REQUEST) == null) {
@@ -124,7 +168,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(3);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.ACCOUNTING));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_REMINDER_FOR_QUOTATION) == null) {
@@ -134,7 +180,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REMINDERS));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_REMINDER_FOR_CUSTOMER_ORDER_DEPOSITS) == null) {
@@ -144,7 +192,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REMINDERS));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_REMINDER_FOR_INVOICES) == null) {
@@ -154,7 +204,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REMINDERS));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_REMINDER_TO_CONFRERE_FOR_ANNOUNCEMENTS) == null) {
@@ -164,7 +216,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REMINDERS));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_PROOF_READING) == null) {
@@ -174,7 +228,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REMINDERS));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.PUBLISH_ANNOUNCEMENT_TO_ACTU_LEGALE) == null) {
@@ -184,7 +240,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_PUBLICATION_FLAG) == null) {
@@ -194,7 +252,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.UPDATE_COMPETENT_AUTHORITY) == null) {
@@ -204,7 +264,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REFERENTIALS));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.DO_OCR_ON_INVOICE) == null) {
@@ -214,7 +276,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(1);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.ACCOUNTING));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.DO_OCR_ON_RECEIPT) == null) {
@@ -224,7 +288,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(1);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.ACCOUNTING));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.UPDATE_AFFAIRE_FROM_RNE) == null) {
@@ -234,7 +300,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(4);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REFERENTIALS));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.AUTOMATCH_PAYMENT) == null) {
@@ -244,7 +312,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(10);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.ACCOUNTING));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.SEND_BILLING_CLOSURE_RECEIPT) == null) {
@@ -254,7 +324,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.REINDEX_DIRECT_DEBIT_BANK_TRANSFERT) == null) {
@@ -264,7 +336,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDEXATION));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.REINDEX_INVOICE) == null) {
@@ -274,7 +348,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDEXATION));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.REINDEX_PAYMENT) == null) {
@@ -284,7 +360,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDEXATION));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.REINDEX_REFUND) == null) {
@@ -294,7 +372,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDEXATION));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.REINDEX_AFFAIRE) == null) {
@@ -303,8 +383,10 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setLabel("Indexation - Affaires");
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(5);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setIsActive(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDEXATION));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.REINDEX_ASSO_AFFAIRE_ORDER) == null) {
@@ -314,7 +396,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDEXATION));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.REINDEX_BANK_TRANSFERT) == null) {
@@ -324,7 +408,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDEXATION));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.REINDEX_CUSTOMER_ORDER) == null) {
@@ -334,7 +420,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDEXATION));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.REINDEX_QUOTATION) == null) {
@@ -344,7 +432,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDEXATION));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.REINDEX_RESPONSABLE) == null) {
@@ -354,7 +444,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDEXATION));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.REINDEX_TIERS) == null) {
@@ -364,7 +456,21 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDEXATION));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.SIGN_FORMALITE_GUICHET_UNIQUE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.SIGN_FORMALITE_GUICHET_UNIQUE);
+            batchSettings.setLabel("Signature des dossiers GU");
+            batchSettings.setFixedRate(1000 * 60 * 2);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.GUICHET_UNIQUE));
             addOrUpdateBatchSettings(batchSettings);
         }
     }

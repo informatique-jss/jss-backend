@@ -22,6 +22,11 @@
                 <generic-input [(model)]="selectedBatchSetting.label" label="Libellé" [form]="batchDetailsForm"
                   propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
               </td>
+              <td>
+                <select-batch-category [(model)]="selectedBatchSetting.batchCategory" label="Catégorie"
+                  [form]="batchDetailsForm" propertyName="batchCategory" [isMandatory]="true"
+                  [isDisabled]="!editMode"></select-batch-category>
+              </td>
             </tr>
           </table>
           <table class="full-width">
