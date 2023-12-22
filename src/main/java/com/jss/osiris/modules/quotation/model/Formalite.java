@@ -56,10 +56,6 @@ public class Formalite implements IId {
     @JsonIgnore
     private List<Provision> provision;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_acte_deposit")
-    private ActeDeposit acteDeposit;
-
     public Integer getId() {
         return id;
     }
@@ -114,14 +110,6 @@ public class Formalite implements IId {
 
     public void setFormalitesGuichetUnique(List<FormaliteGuichetUnique> formalitesGuichetUnique) {
         this.formalitesGuichetUnique = formalitesGuichetUnique;
-    }
-
-    public ActeDeposit getActeDeposit() {
-        return acteDeposit;
-    }
-
-    public void setActeDeposit(ActeDeposit acteDeposit) {
-        this.acteDeposit = acteDeposit;
     }
 
 }
