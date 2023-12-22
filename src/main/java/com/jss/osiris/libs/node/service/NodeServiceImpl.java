@@ -73,6 +73,19 @@ public class NodeServiceImpl implements NodeService {
     }
 
     @Override
+    public boolean shouldIBatch() throws OsirisException {
+        List<Node> nodes = getAllNodes();
+        Node myself = getCurrentNode();
+        for (Node node : nodes) {
+            if (!node.getId().equals(myself.getId())
+                    && node.getLastAliveDatetime().plusSeconds(30).isAfter(LocalDateTime.now())
+                    && node.getBatchNodePriority() > myself.getBatchNodePriority())
+                return false;
+        }
+        return true;
+    }
+
+    @Override
     public void updateNodeStatus() throws OsirisException {
 
         Node node = nodeRepository.findByHostname(getHostname());

@@ -26,4 +26,6 @@ public interface NodeService {
 
     public Node getCurrentNodeCached() throws OsirisException;
 
+    public boolean shouldIBatch() throws OsirisException;
+
 }

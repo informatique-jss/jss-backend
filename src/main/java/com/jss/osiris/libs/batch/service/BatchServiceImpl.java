@@ -70,7 +70,7 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
     @Override
     public void checkBatch() throws OsirisException {
         List<BatchSettings> allBatchSettings = batchSettingsService.getAllBatchSettings();
-        if (!isShutingDown && shouldIBatch() && allBatchSettings != null && allBatchSettings.size() > 0)
+        if (!isShutingDown && nodeService.shouldIBatch() && allBatchSettings != null && allBatchSettings.size() > 0)
             for (BatchSettings batchSetting : allBatchSettings) {
                 if (batchSetting.getIsActive()) { // is active
                     addOrUpdateQueue(batchSetting);
@@ -95,18 +95,6 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
                     }
                 }
             }
-    }
-
-    private boolean shouldIBatch() throws OsirisException {
-        List<Node> nodes = nodeService.getAllNodes();
-        Node myself = nodeService.getCurrentNode();
-        for (Node node : nodes) {
-            if (!node.getId().equals(myself.getId())
-                    && node.getLastAliveDatetime().plusSeconds(30).isAfter(LocalDateTime.now())
-                    && node.getBatchNodePriority() > myself.getBatchNodePriority())
-                return false;
-        }
-        return true;
     }
 
     private void addOrUpdateQueue(BatchSettings batchSettings) {
