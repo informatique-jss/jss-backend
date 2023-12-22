@@ -258,7 +258,7 @@ public class OsirisScheduller {
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.opened}")
 	private void refreshAllOpenFormalities() {
 		try {
-			// guichetUniqueDelegateService.refreshAllOpenFormalities();
+			guichetUniqueDelegateService.refreshAllOpenFormalities();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
@@ -267,7 +267,7 @@ public class OsirisScheduller {
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.update.last.hour}")
 	private void refreshFormalitiesFromLastHour() {
 		try {
-			// guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
+			guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

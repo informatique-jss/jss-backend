@@ -14,4 +14,6 @@ export interface ProvisionType extends IReferential {
   defaultEmployee: Employee;
   assignationWeight: number;
   defaultCompetentAuthorityServiceProvider: CompetentAuthority;
+  isDisplayActeDepositScreen: boolean;
+  isDisplayAnnualAccountScreen: boolean;
 }

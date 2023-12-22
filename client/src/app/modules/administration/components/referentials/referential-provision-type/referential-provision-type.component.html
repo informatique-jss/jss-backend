@@ -72,6 +72,21 @@
           *ngIf="selectedEntity.provisionScreenType && selectedEntity.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE">
           <tr>
             <td>
+              <generic-toggle [(model)]="selectedEntity.isDisplayActeDepositScreen"
+                label="Afficher l'écran de dépôt d'actes ?" [form]="entityForm"
+                propertyName="isDisplayActeDepositScreen"></generic-toggle>
+            </td>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isDisplayAnnualAccountScreen"
+                label="Afficher l'écran de dépôt de comptes ?" [form]="entityForm"
+                propertyName="isDisplayAnnualAccountScreen"></generic-toggle>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width"
+          *ngIf="selectedEntity.provisionScreenType && selectedEntity.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE">
+          <tr>
+            <td>
               <autocomplete-competent-authority [(model)]="selectedEntity.defaultCompetentAuthorityServiceProvider"
                 [form]="entityForm" propertyName="defaultCompetentAuthorityServiceProvider" [isMandatory]="false"
                 [isDisabled]="!editMode" label="Fournisseur de service par défaut"></autocomplete-competent-authority>
