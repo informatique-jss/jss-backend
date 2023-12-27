@@ -13,7 +13,26 @@ import com.jss.osiris.modules.tiers.model.Rff;
 public interface RffRepository extends QueryCacheCrudRepository<Rff, Integer> {
 
         @Query(nativeQuery = true, value = "" +
-                        "     with date_range_quarter as ( " +
+                        "        with RECURSIVE payment_parent AS ( " +
+                        " 	SELECT " +
+                        " 		p.id, p.payment_date, p.id_invoice, p.id_origin_payment " +
+                        " 	FROM " +
+                        " 		payment p " +
+                        " 	WHERE " +
+                        " 		p.id_invoice is not null and p.payment_amount>0 and p.is_cancelled = false " +
+                        " 	UNION " +
+                        " 		SELECT " +
+                        " 			p2.id, p2.payment_date, s.id_invoice,p2.id_origin_payment " +
+                        " 		FROM " +
+                        " 		payment p2 " +
+                        " 		INNER JOIN payment_parent s ON s.id_origin_payment  = p2.id " +
+                        " ), lettering_date_time as (   " +
+                        "  SELECT " +
+                        " 	max(payment_date) as lettering_date_time, id_invoice " +
+                        " FROM " +
+                        " 	payment_parent where id_origin_payment is null " +
+                        " 	group by id_invoice),  " +
+                        "     date_range_quarter as ( " +
                         "         select " +
                         "             generate_series( " +
                         "             '2023-01-01'\\:\\:date, " +
@@ -59,17 +78,6 @@ public interface RffRepository extends QueryCacheCrudRepository<Rff, Integer> {
                         "             (lead( date  ) over (partition by 1)) -1 as end_date " +
                         "         from " +
                         "             date_range_year ), " +
-                        "         lettering_date_time as ( " +
-                        "         select " +
-                        "             id_invoice, " +
-                        "             max(lettering_date_time) as lettering_date_time " +
-                        "         from " +
-                        "             accounting_record ar " +
-                        "         where " +
-                        "             id_invoice is not null " +
-                        "             and lettering_number is not null " +
-                        "         group by " +
-                        "             id_invoice), " +
                         "         ii as ( " +
                         "         select " +
                         "             i.id_tiers, " +
