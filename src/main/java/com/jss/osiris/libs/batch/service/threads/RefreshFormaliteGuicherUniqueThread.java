@@ -28,7 +28,8 @@ public class RefreshFormaliteGuicherUniqueThread implements IOsirisThread {
                         OsirisDuplicateException {
                 FormaliteGuichetUnique formaliteGuichetUnique = formaliteGuichetUniqueService
                                 .getFormaliteGuichetUnique(entityId);
-                formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formaliteGuichetUnique,
-                                formaliteGuichetUnique.getFormalite(), true);
+                if (formaliteGuichetUnique != null)
+                        formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formaliteGuichetUnique,
+                                        formaliteGuichetUnique.getFormalite(), true);
         }
 }
