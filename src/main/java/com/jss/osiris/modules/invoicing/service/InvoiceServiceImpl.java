@@ -16,13 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordGenerationService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
@@ -68,9 +69,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     ConstantService constantService;
-
-    @Autowired
-    IndexEntityService indexEntityService;
 
     @Autowired
     AccountingRecordGenerationService accountingRecordGenerationService;
@@ -119,6 +117,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     DirectDebitTransfertService directDebitTransfertService;
+
+    @Autowired
+    BatchService batchService;
 
     @Override
     public List<Invoice> getAllInvoices() {
@@ -399,7 +400,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         CustomerOrder.class.getSimpleName(),
                         constantService.getAttachmentTypeCreditNote(),
                         "Credit_note_" + creditNote.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                        false, "Avoir n°" + creditNote.getId(), null);
+                        false, "Avoir n°" + creditNote.getId(), null, null, null);
 
                 for (Attachment attachment : attachments)
                     if (attachment.getDescription().contains(creditNote.getId() + "")) {
@@ -478,7 +479,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Invoice addOrUpdateInvoice(Invoice invoice) {
+    public Invoice addOrUpdateInvoice(Invoice invoice) throws OsirisException {
         if (invoice.getIsCreditNote() == null)
             invoice.setIsCreditNote(false);
         if (invoice.getIsInvoiceFromProvider() == null)
@@ -487,7 +488,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoice.setIsProviderCreditNote(false);
 
         invoiceRepository.save(invoice);
-        indexEntityService.indexEntity(invoice);
+        batchService.declareNewBatch(Batch.REINDEX_INVOICE, invoice.getId());
         return invoice;
     }
 
@@ -550,11 +551,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexInvoices() {
+    public void reindexInvoices() throws OsirisException {
         List<Invoice> invoices = getAllInvoices();
         if (invoices != null)
             for (Invoice invoice : invoices)
-                indexEntityService.indexEntity(invoice);
+                batchService.declareNewBatch(Batch.REINDEX_INVOICE, invoice.getId());
     }
 
     private boolean hasAtLeastOneInvoiceItemNotNull(Invoice invoice) {
@@ -631,7 +632,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         if (invoices != null && invoices.size() > 0)
             for (Invoice invoice : invoices) {
-                remindInvoice(invoice);
+                batchService.declareNewBatch(Batch.SEND_REMINDER_FOR_INVOICES, invoice.getId());
             }
     }
 
@@ -649,45 +650,48 @@ public class InvoiceServiceImpl implements InvoiceService {
             }
     }
 
-    private void remindInvoice(Invoice invoice)
+    @Override
+    @Transactional
+    public void remindInvoice(Invoice invoice)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         boolean toSend = false;
 
         // Do not remind on direct debit transfert
-        if (invoice.getManualPaymentType() == null
-                || !invoice.getManualPaymentType().getId()
-                        .equals(constantService.getPaymentTypePrelevement().getId())) {
-            if (invoice.getFirstReminderDateTime() == null
-                    && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8))) {
-                toSend = true;
-                invoice.setFirstReminderDateTime(LocalDateTime.now());
+        if (invoice != null)
+            if (invoice.getManualPaymentType() == null
+                    || !invoice.getManualPaymentType().getId()
+                            .equals(constantService.getPaymentTypePrelevement().getId())) {
+                if (invoice.getFirstReminderDateTime() == null
+                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8))) {
+                    toSend = true;
+                    invoice.setFirstReminderDateTime(LocalDateTime.now());
 
-                IGenericTiers customerOrderToSetProvision = invoiceHelper.getCustomerOrder(invoice);
-                if (customerOrderToSetProvision instanceof Tiers)
-                    notificationService.notifyTiersDepositMandatory((Tiers) customerOrderToSetProvision, null,
-                            invoice);
-                else if (customerOrderToSetProvision instanceof Responsable)
-                    notificationService.notifyTiersDepositMandatory(null,
-                            (Responsable) customerOrderToSetProvision,
-                            invoice);
-            } else if (invoice.getSecondReminderDateTime() == null
-                    && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))) {
-                toSend = true;
-                invoice.setSecondReminderDateTime(LocalDateTime.now());
-            } else if (invoice.getThirdReminderDateTime() == null
-                    && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15 + 15))) {
-                toSend = true;
-                invoice.setThirdReminderDateTime(LocalDateTime.now());
-                notificationService.notifyInvoiceToReminder(invoice);
-            }
+                    IGenericTiers customerOrderToSetProvision = invoiceHelper.getCustomerOrder(invoice);
+                    if (customerOrderToSetProvision instanceof Tiers)
+                        notificationService.notifyTiersDepositMandatory((Tiers) customerOrderToSetProvision, null,
+                                invoice);
+                    else if (customerOrderToSetProvision instanceof Responsable)
+                        notificationService.notifyTiersDepositMandatory(null,
+                                (Responsable) customerOrderToSetProvision,
+                                invoice);
+                } else if (invoice.getSecondReminderDateTime() == null
+                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))) {
+                    toSend = true;
+                    invoice.setSecondReminderDateTime(LocalDateTime.now());
+                } else if (invoice.getThirdReminderDateTime() == null
+                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15 + 15))) {
+                    toSend = true;
+                    invoice.setThirdReminderDateTime(LocalDateTime.now());
+                    notificationService.notifyInvoiceToReminder(invoice);
+                }
 
-            if (toSend) {
-                mailHelper.sendCustomerOrderFinalisationToCustomer(
-                        customerOrderService.getCustomerOrder(invoice.getCustomerOrder().getId()), false, true,
-                        invoice.getThirdReminderDateTime() != null);
-                addOrUpdateInvoice(invoice);
+                if (toSend) {
+                    mailHelper.sendCustomerOrderFinalisationToCustomer(
+                            customerOrderService.getCustomerOrder(invoice.getCustomerOrder().getId()), false, true,
+                            invoice.getThirdReminderDateTime() != null);
+                    addOrUpdateInvoice(invoice);
+                }
             }
-        }
     }
 
     @Override

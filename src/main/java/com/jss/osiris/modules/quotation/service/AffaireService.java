@@ -12,9 +12,9 @@ public interface AffaireService {
 
     public Affaire getAffaire(Integer id);
 
-    public Affaire addOrUpdateAffaire(Affaire affaire) throws OsirisDuplicateException;
+    public Affaire addOrUpdateAffaire(Affaire affaire) throws OsirisDuplicateException, OsirisException;
 
-    public void reindexAffaire();
+    public void reindexAffaire() throws OsirisException;
 
     public Affaire getAffaireBySiret(String siret);
 
@@ -26,7 +26,9 @@ public interface AffaireService {
 
     public List<Affaire> getAffairesFromRna(String rna) throws OsirisException, OsirisClientMessageException;
 
-    public void updateAffaireFromRne() throws OsirisException, OsirisClientMessageException;
+    public void updateAffairesFromRne() throws OsirisException, OsirisClientMessageException;
+
+    public void updateAffaireFromRne(Affaire affaire) throws OsirisException, OsirisClientMessageException;
 
     public Affaire refreshAffaireFromRne(Affaire affaire)
             throws OsirisException, OsirisClientMessageException, OsirisDuplicateException;

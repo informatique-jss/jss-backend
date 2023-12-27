@@ -25,11 +25,11 @@ public class FormaliteStatusHistoryItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_source_status")
-    private Status sourceStatus;
+    private FormaliteGuichetUniqueStatus sourceStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_status")
-    private Status status;
+    private FormaliteGuichetUniqueStatus status;
 
     private String created;
 
@@ -61,19 +61,19 @@ public class FormaliteStatusHistoryItem {
         this.formaliteGuichetUnique = formaliteGuichetUnique;
     }
 
-    public Status getSourceStatus() {
+    public FormaliteGuichetUniqueStatus getSourceStatus() {
         return sourceStatus;
     }
 
-    public void setSourceStatus(Status sourceStatus) {
+    public void setSourceStatus(FormaliteGuichetUniqueStatus sourceStatus) {
         this.sourceStatus = sourceStatus;
     }
 
-    public Status getStatus() {
+    public FormaliteGuichetUniqueStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(FormaliteGuichetUniqueStatus status) {
         this.status = status;
     }
 

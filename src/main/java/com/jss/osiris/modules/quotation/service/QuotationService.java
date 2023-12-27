@@ -33,7 +33,7 @@ public interface QuotationService {
 
         public List<QuotationSearchResult> searchQuotations(QuotationSearch orderingSearch);
 
-        public void reindexQuotation();
+        public void reindexQuotation() throws OsirisException;
 
         public String getCardPaymentLinkForQuotationDeposit(Quotation quotation, String mail,
                         String subject)
@@ -44,7 +44,9 @@ public interface QuotationService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public void sendRemindersForQuotation()
+        public void sendRemindersForQuotation() throws OsirisException;
+
+        public void sendReminderForQuotation(Quotation quotation)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void updateAssignedToForQuotation(Quotation quotation, Employee employee)

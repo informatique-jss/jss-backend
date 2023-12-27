@@ -161,7 +161,6 @@ public class CustomerMail {
     @JsonIgnoreProperties(value = { "customerMail" }, allowSetters = true)
     private List<Attachment> attachments;
 
-    private Boolean hasErrors;
     private Boolean isSent;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -422,14 +421,6 @@ public class CustomerMail {
 
     public void setAttachments(List<Attachment> attachments) {
         this.attachments = attachments;
-    }
-
-    public Boolean getHasErrors() {
-        return hasErrors;
-    }
-
-    public void setHasErrors(Boolean hasErrors) {
-        this.hasErrors = hasErrors;
     }
 
     public Boolean getIsSent() {

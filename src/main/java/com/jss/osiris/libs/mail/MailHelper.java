@@ -1632,6 +1632,7 @@ public class MailHelper {
                 + rff.getRffBic() + " / " + rff.getRffIban());
 
         mail.setRff(rff);
+        mail.setTiers(rff.getTiers());
 
         mailService.addMailToQueue(mail);
     }

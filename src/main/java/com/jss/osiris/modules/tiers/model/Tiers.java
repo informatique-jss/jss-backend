@@ -226,8 +226,6 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 	private Integer idAs400;
 	private Integer newIdAs400;
 
-	private Boolean isReceipSent;
-
 	public List<Competitor> getCompetitors() {
 		return competitors;
 	}
@@ -594,14 +592,6 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 
 	public void setDefaultCustomerOrderEmployee(Employee defaultCustomerOrderEmployee) {
 		this.defaultCustomerOrderEmployee = defaultCustomerOrderEmployee;
-	}
-
-	public Boolean getIsReceipSent() {
-		return isReceipSent;
-	}
-
-	public void setIsReceipSent(Boolean isReceipSent) {
-		this.isReceipSent = isReceipSent;
 	}
 
 	@Override

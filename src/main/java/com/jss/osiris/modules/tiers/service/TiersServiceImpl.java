@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -57,9 +59,6 @@ public class TiersServiceImpl implements TiersService {
     PhoneService phoneService;
 
     @Autowired
-    IndexEntityService indexEntityService;
-
-    @Autowired
     SearchService searchService;
 
     @Autowired
@@ -79,6 +78,12 @@ public class TiersServiceImpl implements TiersService {
 
     @Autowired
     QuotationService quotationService;
+
+    @Autowired
+    BatchService batchService;
+
+    @Autowired
+    IndexEntityService indexEntityService;
 
     @Override
     @Transactional
@@ -223,12 +228,12 @@ public class TiersServiceImpl implements TiersService {
 
         tiers = tiersRepository.save(tiers);
 
-        indexEntityService.indexEntity(tiers);
+        batchService.declareNewBatch(Batch.REINDEX_TIERS, tiers.getId());
         if (tiers.getResponsables() != null)
             for (Responsable responsable : tiers.getResponsables()) {
                 if (responsable.getLoginWeb() == null)
                     responsable.setLoginWeb(responsable.getId() + "");
-                indexEntityService.indexEntity(responsable);
+                batchService.declareNewBatch(Batch.REINDEX_RESPONSABLE, responsable.getId());
             }
 
         // Set default customer order assignation to sales employee if not set
@@ -251,11 +256,11 @@ public class TiersServiceImpl implements TiersService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexTiers() {
+    public void reindexTiers() throws OsirisException {
         List<Tiers> tiers = IterableUtils.toList(tiersRepository.findAll());
         if (tiers != null)
             for (Tiers tier : tiers)
-                indexEntityService.indexEntity(tier);
+                batchService.declareNewBatch(Batch.REINDEX_TIERS, tier.getId());
     }
 
     @Override

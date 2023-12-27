@@ -1,4 +1,4 @@
-package com.jss.osiris;
+package com.jss.osiris.libs.batch.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,8 +10,13 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.audit.service.AuditService;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
+import com.jss.osiris.libs.node.service.NodeService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.service.AzureInvoiceService;
 import com.jss.osiris.modules.invoicing.service.AzureReceiptService;
@@ -121,6 +126,15 @@ public class OsirisScheduller {
 	@Autowired
 	AuditService auditService;
 
+	@Autowired
+	BatchSettingsService batchSettingsService;
+
+	@Autowired
+	BatchService batchService;
+
+	@Autowired
+	NodeService nodeService;
+
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
 		ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
@@ -129,36 +143,35 @@ public class OsirisScheduller {
 	}
 
 	@Scheduled(cron = "${schedulling.account.daily.close}")
-	private void dailyAccountClosing() {
-		try {
-			accountingRecordService.dailyAccountClosing();
-		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e);
-		}
+	private void dailyAccountClosing() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.DAILY_ACCOUNT_CLOSING, null);
 	}
 
 	@Scheduled(cron = "${schedulling.active.directory.user.update}")
-	private void activeDirectoryUserUpdate() {
-		try {
-			employeeService.updateUserFromActiveDirectory();
-		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e);
-		}
-	}
-
-	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.mail.sender}")
-	private void mailSender() {
-		try {
-			customerMailService.sendNextMail();
-		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e);
-		}
+	private void activeDirectoryUserUpdate() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.ACTIVE_DIRECTORY_USER_UPDATE, null);
 	}
 
 	@Scheduled(cron = "${schedulling.notification.purge}")
-	private void purgeNotidication() {
+	private void purgeNotidication() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.PURGE_NOTIFICATION, null);
+	}
+
+	@Scheduled(cron = "${schedulling.log.purge}")
+	private void purgeLogs() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.PURGE_LOGS, null);
+	}
+
+	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.central.pay.payment.request.validation.check}")
+	private void checkAllCentralPayPaymentRequests()
+			throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 		try {
-			notificationService.purgeNotification();
+			if (nodeService.shouldIBatch())
+				centralPayPaymentRequestService.checkAllPaymentRequests();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
@@ -167,7 +180,8 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.log.osiris.quotation.reminder}")
 	private void reminderQuotation() {
 		try {
-			quotationService.sendRemindersForQuotation();
+			if (nodeService.shouldIBatch())
+				quotationService.sendRemindersForQuotation();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
@@ -176,7 +190,8 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.log.osiris.customerOrder.deposit.reminder}")
 	private void reminderCustomerOrderDeposit() {
 		try {
-			customerOrderService.sendRemindersForCustomerOrderDeposit();
+			if (nodeService.shouldIBatch())
+				customerOrderService.sendRemindersForCustomerOrderDeposit();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
@@ -185,7 +200,8 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.log.osiris.customerOrder.invoice.reminder}")
 	private void reminderCustomerOrderInvoice() {
 		try {
-			invoiceService.sendRemindersForInvoices();
+			if (nodeService.shouldIBatch())
+				invoiceService.sendRemindersForInvoices();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
@@ -194,7 +210,8 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.log.osiris.announcement.confrere.query.reminder}")
 	private void reminderConfrereForAnnouncementQuery() {
 		try {
-			announcementService.sendRemindersToConfrereForAnnouncement();
+			if (nodeService.shouldIBatch())
+				announcementService.sendRemindersToConfrereForAnnouncement();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
@@ -203,17 +220,9 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.log.osiris.customer.proof.reading.reminder}")
 	private void reminderClientReviewQuery() {
 		try {
-			announcementService.sendRemindersToCustomerForProofReading();
+			if (nodeService.shouldIBatch())
+				announcementService.sendRemindersToCustomerForProofReading();
 
-		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e);
-		}
-	}
-
-	@Scheduled(cron = "${schedulling.account.receipt.generation.sender}")
-	private void sendBillingClosureReceipt() {
-		try {
-			accountingRecordService.sendBillingClosureReceipt();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
@@ -222,7 +231,8 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.announcement.publish.actu.legale}")
 	private void publishAnnouncementToActuLegale() {
 		try {
-			announcementService.publishAnnouncementsToActuLegale();
+			if (nodeService.shouldIBatch())
+				announcementService.publishAnnouncementsToActuLegale();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
@@ -231,34 +241,30 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.announcement.publication.flag}")
 	private void sendPublicationFlagNotSent() {
 		try {
-			announcementService.sendPublicationFlagNotSent();
+			if (nodeService.shouldIBatch())
+				announcementService.sendPublicationFlagsNotSent();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
-	@Scheduled(cron = "${schedulling.payment.automatch}")
-	private void automatchPayments() {
-		try {
-			paymentService.paymentGrab();
-		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e);
-		}
+	@Scheduled(cron = "${schedulling.audit.clean}")
+	private void cleanAudit() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.CLEAN_AUDIT, null);
 	}
 
 	@Scheduled(cron = "${schedulling.competant.authorities.update}")
-	private void updateCompetentAuthorities() {
-		try {
-			etablissementPublicsDelegate.updateCompetentAuthorities();
-		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e);
-		}
+	private void updateCompetentAuthorities() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.UPDATE_COMPETENT_AUTHORITY, null);
 	}
 
 	@Scheduled(cron = "${schedulling.affaire.rne.update}")
 	private void updateAffaireFromRne() {
 		try {
-			affaireService.updateAffaireFromRne();
+			if (nodeService.shouldIBatch())
+				affaireService.updateAffairesFromRne();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
@@ -267,7 +273,8 @@ public class OsirisScheduller {
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.opened}")
 	private void refreshAllOpenFormalities() {
 		try {
-			guichetUniqueDelegateService.refreshAllOpenFormalities();
+			if (nodeService.shouldIBatch())
+				guichetUniqueDelegateService.refreshAllOpenFormalities();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
@@ -276,41 +283,34 @@ public class OsirisScheduller {
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.update.last.hour}")
 	private void refreshFormalitiesFromLastHour() {
 		try {
-			guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
+			if (nodeService.shouldIBatch())
+				guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
-	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.central.pay.payment.request.validation.check}")
-	private void checkAllCentralPayPaymentRequests() throws OsirisException {
+	@Scheduled(cron = "${schedulling.payment.automatch}")
+	private void automatchPayments() {
 		try {
-			centralPayPaymentRequestService.checkAllPaymentRequests();
+			if (nodeService.shouldIBatch())
+				paymentService.paymentGrab();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
-	@Scheduled(initialDelay = 500, fixedDelayString = "${azure.form.recognizer.invoice.check}")
-	private void checkInvoiceToAnalyse() {
+	@Scheduled(cron = "${schedulling.account.receipt.generation.sender}")
+	private void sendBillingClosureReceipt() {
 		try {
-			azureInvoiceService.checkInvoiceToAnalyse();
-			azureReceiptService.checkReceiptToAnalyse();
+			if (nodeService.shouldIBatch())
+				accountingRecordService.sendBillingClosureReceipt();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
 
-	@Scheduled(cron = "${schedulling.audit.clean}")
-	private void cleanAudit() {
-		try {
-			auditService.cleanAudit();
-		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e);
-		}
-	}
-
-	@Scheduled(initialDelay = 1000, fixedDelay = 1000000000)
+	@Scheduled(initialDelay = 1000, fixedDelay = Long.MAX_VALUE)
 	private void updateAllStatusEntityReferentials() {
 		try {
 			quotationStatusService.updateStatusReferential();
@@ -322,6 +322,33 @@ public class OsirisScheduller {
 			bodaccStatusService.updateBodaccStatusReferential();
 			assignationTypeService.updateAssignationTypes();
 			provisionScreenTypeService.updateScreenTypes();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(initialDelay = 1000, fixedDelay = Long.MAX_VALUE)
+	private void initializeBatchSettings() {
+		try {
+			batchSettingsService.initializeBatchSettings();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(initialDelay = 1, fixedDelay = 1000)
+	private void checkBatch() {
+		try {
+			batchService.checkBatch();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(initialDelay = 1000, fixedDelay = 5000)
+	private void updateNodeStatus() {
+		try {
+			nodeService.updateNodeStatus();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

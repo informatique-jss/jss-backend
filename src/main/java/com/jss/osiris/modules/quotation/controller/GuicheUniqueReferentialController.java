@@ -33,6 +33,7 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Diffusi
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DocumentExtension;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Events;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.ExerciceActivite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeExercice;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeExerciceActivitePrincipal;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
@@ -81,7 +82,6 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.RolePou
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.SecondRoleEntreprise;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.SituationMatrimoniale;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.SituationVisAVisMsa;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Status;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutContrat;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutDomaine;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutExerciceActiviteSimultan;
@@ -128,6 +128,7 @@ import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.Diffu
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.DocumentExtensionService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.EventsService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.ExerciceActiviteService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.FormeExerciceActivitePrincipalService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.FormeExerciceService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.FormeJuridiqueService;
@@ -176,7 +177,6 @@ import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.RoleS
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.SecondRoleEntrepriseService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.SituationMatrimonialeService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.SituationVisAVisMsaService;
-import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.StatusService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.StatutContratService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.StatutDomaineService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.StatutExerciceActiviteSimultanService;
@@ -795,11 +795,12 @@ public class GuicheUniqueReferentialController {
     }
 
     @Autowired
-    StatusService statusService;
+    FormaliteGuichetUniqueStatusService statusService;
 
     @GetMapping(inputEntryPoint + "/status")
-    public ResponseEntity<List<Status>> getStatus() {
-        return new ResponseEntity<List<Status>>(statusService.getStatus(), HttpStatus.OK);
+    public ResponseEntity<List<FormaliteGuichetUniqueStatus>> getStatus() {
+        return new ResponseEntity<List<FormaliteGuichetUniqueStatus>>(statusService.getFormaliteGuichetUniqueStatus(),
+                HttpStatus.OK);
     }
 
     @Autowired

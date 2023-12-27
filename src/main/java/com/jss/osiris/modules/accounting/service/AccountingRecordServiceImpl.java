@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -33,7 +35,6 @@ import com.jss.osiris.modules.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
-import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.TiersService;
@@ -67,6 +68,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   CustomerMailService customerMailService;
+
+  @Autowired
+  BatchService batchService;
 
   @Override
   public AccountingRecord getAccountingRecord(Integer id) {
@@ -390,26 +394,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     List<Tiers> tiers = tiersService.findAllTiersForBillingClosureReceiptSend();
     if (tiers != null && tiers.size() > 0)
       for (Tiers tier : tiers) {
-        System.out.println(tiers.indexOf(tier) + "/" + tiers.size());
-        try {
-          getBillingClosureReceiptFile(tier.getId(), false);
-        } catch (Exception e) {
-          if (e instanceof OsirisException || e instanceof OsirisClientMessageException
-              || e instanceof OsirisValidationException)
-            throw e;
-          else
-            throw new OsirisException(e, "Error when sending receipt for tiers " + tier.getId());
-        } finally {
-          tier.setIsReceipSent(true);
-          tiersService.addOrUpdateTiers(tier);
-        }
-      }
-
-    List<Confrere> confreres = confrereService.getConfreres();
-    if (confreres != null && confreres.size() > 0)
-      for (Confrere confrere : confreres) {
-        System.out.println(confreres.indexOf(confrere) + "/" + confreres.size());
-        // getBillingClosureReceiptFile(confrere.getId(), false); TODO : remettre
+        batchService.declareNewBatch(Batch.SEND_BILLING_CLOSURE_RECEIPT, tier.getId());
       }
   }
 

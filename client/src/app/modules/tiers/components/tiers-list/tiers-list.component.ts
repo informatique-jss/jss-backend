@@ -124,6 +124,18 @@ export class TiersListComponent implements OnInit {
         }
       } as SortTableColumn);
 
+      this.displayedColumnsTiers.push({
+        id: "formalisteId", fieldName: "formalisteId", label: "Formaliste", displayAsEmployee: true, valueFonction: (element: any) => {
+          if (element && this.allEmployees) {
+            for (let employee of this.allEmployees)
+              if (employee.id == element.formalisteId)
+                return employee;
+          }
+          return undefined;
+        }
+      } as SortTableColumn);
+
+
       this.displayedColumnsTiers.push({ id: "firstOrderDay", fieldName: "firstOrderDay", label: "1ère commande", valueFonction: formatDateForSortTable } as SortTableColumn);
       this.displayedColumnsTiers.push({ id: "lastOrderDay", fieldName: "lastOrderDay", label: "Dernière commande", valueFonction: formatDateForSortTable } as SortTableColumn);
       this.displayedColumnsTiers.push({ id: "createdDateDay", fieldName: "createdDateDay", label: "Création", valueFonction: formatDateForSortTable } as SortTableColumn);

@@ -14,6 +14,13 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class TypeDocument implements Serializable, ICode {
+
+    public static String UNSIGNED_SYNTHESES_DOCUMENT_CODE = "PJ_99";
+    public static String SIGNED_SYNTHESES_DOCUMENT_CODE = "PJ_115";
+
+    public static String UNSIGNED_BE_DOCUMENT_CODE = "PJ_119";
+    public static String SIGNED_BE_DOCUMENT_CODE = "PJ_120";
+
     public TypeDocument(String code) {
         this.code = code;
     }

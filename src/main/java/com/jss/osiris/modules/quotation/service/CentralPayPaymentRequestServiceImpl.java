@@ -1,12 +1,15 @@
 package com.jss.osiris.modules.quotation.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -27,6 +30,17 @@ public class CentralPayPaymentRequestServiceImpl implements CentralPayPaymentReq
 
     @Autowired
     CustomerOrderService customerOrderService;
+
+    @Autowired
+    BatchService batchService;
+
+    @Override
+    public CentralPayPaymentRequest getCentralPayPaymentRequest(Integer id) {
+        Optional<CentralPayPaymentRequest> centralPayPaymentRequest = centralPayPaymentRequestRepository.findById(id);
+        if (centralPayPaymentRequest.isPresent())
+            return centralPayPaymentRequest.get();
+        return null;
+    }
 
     @Override
     public List<CentralPayPaymentRequest> getCentralPayPaymentRequests() {
@@ -73,15 +87,24 @@ public class CentralPayPaymentRequestServiceImpl implements CentralPayPaymentReq
         List<CentralPayPaymentRequest> requests = getCentralPayPaymentRequests();
         if (requests != null && requests.size() > 0) {
             for (CentralPayPaymentRequest request : requests) {
-                if (request.getCustomerOrder() != null) {
-                    if (customerOrderService.validateCardPaymentLinkForCustomerOrder(request.getCustomerOrder(),
-                            request))
-                        deleteCentralPayPaymentRequest(request);
-                } else if (request.getQuotation() != null) {
-                    if (quotationService.validateCardPaymentLinkForQuotationDeposit(request.getQuotation(),
-                            request))
-                        deleteCentralPayPaymentRequest(request);
-                }
+                batchService.declareNewBatch(Batch.CHECK_CENTRAL_PAY_PAYMENT_REQUEST, request.getId());
+            }
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void checkPaymentRequest(CentralPayPaymentRequest request)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+        if (request != null) {
+            if (request.getCustomerOrder() != null) {
+                if (customerOrderService.validateCardPaymentLinkForCustomerOrder(request.getCustomerOrder(),
+                        request))
+                    deleteCentralPayPaymentRequest(request);
+            } else if (request.getQuotation() != null) {
+                if (quotationService.validateCardPaymentLinkForQuotationDeposit(request.getQuotation(),
+                        request))
+                    deleteCentralPayPaymentRequest(request);
             }
         }
     }

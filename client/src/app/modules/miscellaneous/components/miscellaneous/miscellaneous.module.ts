@@ -36,6 +36,7 @@ import { AttachmentsComponent } from '../attachments/attachments.component';
 import { AutomaticMailListComponent } from '../automatic-mail-list/automatic-mail-list.component';
 import { AvatarChipComponent } from '../avatar-chip/avatar-chip.component';
 import { AvatarComponent } from '../avatar/avatar.component';
+import { BarChartComponent } from '../bar-chart/bar-chart.component';
 import { ChipsStatusComponent } from '../chips-status/chips-status.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
@@ -194,6 +195,9 @@ import { SelectAccountingAccountClassComponent } from '../forms/select-accountin
 import { SelectAccountingJournalComponent } from '../forms/select-accounting-journal/select-accounting-journal.component';
 import { SelectAssignationTypeComponent } from '../forms/select-assignation-type/select-assignation-type.component';
 import { SelectAttachmentTypeComponent } from '../forms/select-attachment-type/select-attachment-type.component';
+import { SelectBatchCategoryComponent } from '../forms/select-batch-category/select-batch-category.component';
+import { SelectBatchSettingsComponent } from '../forms/select-batch-settings/select-batch-settings.component';
+import { SelectBatchStatusComponent } from '../forms/select-batch-status/select-batch-status.component';
 import { SelectBillingItemsComponent } from '../forms/select-billing-items/select-billing-items.component';
 import { SelectBillingTypeDebourComponent } from '../forms/select-billing-type-debour/select-billing-type-debour.component';
 import { SelectBodaccPublicationTypeComponent } from '../forms/select-bodacc-publication-type/select-bodacc-publication-type.component';
@@ -215,6 +219,7 @@ import { SelectInvoiceStatusComponent } from '../forms/select-invoice-status/sel
 import { SelectJournalTypeOneComponent } from '../forms/select-journal-type-one/select-journal-type-one.component';
 import { SelectJournalTypeComponent } from '../forms/select-journal-type/select-journal-type.component';
 import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection/select-mail-redirection.component';
+import { SelectNodeComponent } from '../forms/select-node/select-node.component';
 import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/select-notice-family.component';
 import { SelectPaymentDeadlineComponent } from '../forms/select-payment-deadline/select-payment-deadline.component';
 import { SelectPaymentTypesComponent } from '../forms/select-payment-types/select-payment-types.component';
@@ -234,6 +239,7 @@ import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/sel
 import { SelectTiersTypeComponent } from '../forms/select-tiers-type/select-tiers-type.component';
 import { SelectVatCollectionTypeComponent } from '../forms/select-vat-collection-type/select-vat-collection-type.component';
 import { SelectVatComponent } from '../forms/select-vat/select-vat.component';
+import { GaugeChartComponent } from '../gauge-chart/gauge-chart.component';
 import { GradeComponent } from '../grade/grade.component';
 import { HistoryComponent } from '../history/history.component';
 import { NotificationDialogComponent } from '../notification-dialog/notification-dialog.component';
@@ -498,6 +504,12 @@ const routes: Routes = [
     AutocompleteGuichetUniqueFormaliteComponent,
     ChipsFormaliteGuichetUniqueComponent,
     SelectRffFrequencyComponent,
+    SelectBatchStatusComponent,
+    SelectBatchSettingsComponent,
+    SelectNodeComponent,
+    BarChartComponent,
+    GaugeChartComponent,
+    SelectBatchCategoryComponent,
   ],
   exports: [
     HistoryComponent,
@@ -713,6 +725,12 @@ const routes: Routes = [
     ChipsFormaliteGuichetUniqueComponent,
     SelectCustomerOrderOriginComponent,
     SelectRffFrequencyComponent,
+    SelectBatchStatusComponent,
+    SelectBatchSettingsComponent,
+    SelectNodeComponent,
+    BarChartComponent,
+    GaugeChartComponent,
+    SelectBatchCategoryComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

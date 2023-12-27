@@ -31,6 +31,8 @@ public interface AnnouncementService {
 
         public void publishAnnouncementsToActuLegale() throws OsirisException;
 
+        public void publishAnnouncementToActuLegale(Announcement announcement) throws OsirisException;
+
         public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder, Announcement announcement)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
@@ -53,7 +55,9 @@ public interface AnnouncementService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public void sendPublicationFlagNotSent()
+        public void sendPublicationFlagsNotSent() throws OsirisException;
+
+        public void sendPublicationFlagNotSent(Announcement announcement)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
@@ -65,10 +69,15 @@ public interface AnnouncementService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public void sendRemindersToConfrereForAnnouncement()
+        public void sendRemindersToConfrereForAnnouncement() throws OsirisException;
+
+        public void sendReminderToConfrereForAnnouncement(Announcement announcement)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void sendRemindersToCustomerForProofReading() throws OsirisException, OsirisClientMessageException;
+
+        public void sendReminderToCustomerForProofReading(Announcement announcement)
+                        throws OsirisException, OsirisClientMessageException;
 
         public Confrere getConfrereForAnnouncement(Integer idAnnouncement);
 

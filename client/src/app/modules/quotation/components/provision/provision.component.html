@@ -1,10 +1,3 @@
-<ng-template #accordionTools>
-  <mat-icon color="accent" matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
-    class="pointer">
-    unfold_more_double</mat-icon>
-  <mat-icon color="accent" matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
-    unfold_less_double</mat-icon>
-</ng-template>
 <div class="mat-accordion-container full-width" *ngIf="asso && asso.affaire">
   <mat-accordion multi>
     <mat-expansion-panel expanded="false">
@@ -17,7 +10,7 @@
           <mat-icon color="accent" matTooltip="Voir/éditer la commande" (click)="displayCustomerOrder($event)"
             (auxclick)="displayCustomerOrder($event)" class="pointer status-text">
             shopping_cart</mat-icon>
-          <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+          <ng-template></ng-template>
         </mat-panel-description>
       </mat-expansion-panel-header>
       <ordering-customer [quotation]="asso.customerOrder" [editMode]="false">
@@ -42,7 +35,7 @@
             (click)="displayAffaire($event);$event.stopPropagation();"
             (auxclick)="displayAffaire($event);$event.stopPropagation();" class="pointer status-text">
             edit</mat-icon>
-          <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+          <ng-template></ng-template>
         </mat-panel-description>
       </mat-expansion-panel-header>
       <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
@@ -69,7 +62,7 @@
           <avatar-chip *ngIf="asso.assignedTo" [employee]="provision.assignedTo"
             (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
           </avatar-chip>
-          <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+          <ng-template></ng-template>
         </mat-panel-description>
         <mat-panel-description *ngIf="editMode">
           <mat-icon color="accent" matTooltip="Supprimer la prestation" (click)="deleteProvision(asso,provision)"

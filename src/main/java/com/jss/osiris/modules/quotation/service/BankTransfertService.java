@@ -17,14 +17,14 @@ import com.jss.osiris.modules.quotation.model.BankTransfert;
 public interface BankTransfertService {
         public List<BankTransfert> getBankTransfers();
 
-        public void reindexBankTransfert();
+        public void reindexBankTransfert() throws OsirisException;
 
         public List<BankTransfertSearchResult> searchBankTransfert(BankTransfertSearch bankTransfertSearch);
 
         public BankTransfert getBankTransfert(Integer id);
-
-        public BankTransfert addOrUpdateBankTransfert(BankTransfert bankTransfert);
  
+        public BankTransfert addOrUpdateBankTransfert(BankTransfert bankTransfert) throws OsirisException; 
+  
         public BankTransfert generateBankTransfertForManualInvoice(Invoice invoice)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
@@ -32,9 +32,10 @@ public interface BankTransfertService {
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException,
                         OsirisDuplicateException;
 
-        public BankTransfert cancelBankTransfert(BankTransfert bankTransfert);
+        public BankTransfert cancelBankTransfert(BankTransfert bankTransfert) throws OsirisException;
 
-        public BankTransfert selectBankTransfertForExport(BankTransfert bankTransfert, boolean isSelected);
+        public BankTransfert selectBankTransfertForExport(BankTransfert bankTransfert, boolean isSelected)
+                        throws OsirisException;
 
         public PmtInfBean generateBodyForBankTransfert(String headerLabel, Float transfertAmount,
                         LocalDate executionDate,

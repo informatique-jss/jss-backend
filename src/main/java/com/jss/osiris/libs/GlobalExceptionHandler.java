@@ -103,15 +103,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.internalServerError().headers(header).build();
     }
 
-    public void persistLog(Exception exception, String logType) {
+    public OsirisLog persistLog(Exception exception, String logType) {
+        OsirisLog osirisLog = null;
         try {
             if (devMode) {
                 exception.printStackTrace();
                 if (exception instanceof OsirisException && ((OsirisException) exception).getCauseException() != null)
                     ((OsirisException) exception).getCauseException().printStackTrace();
-                return;
+                return null;
             }
-            OsirisLog osirisLog = new OsirisLog();
+            osirisLog = new OsirisLog();
             osirisLog.setClassName(exception.getStackTrace()[0].getFileName().replace(".java", ""));
             osirisLog.setMethodName(exception.getStackTrace()[0].getMethodName());
             osirisLog.setStackTrace(ExceptionUtils.getStackTrace(exception));
@@ -132,6 +133,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             // Avoid to catch log with Handler here : that will cause infinite recursion ...
             e.printStackTrace();
         }
+        return osirisLog;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -153,6 +155,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @Transactional(rollbackFor = Exception.class)
     public OsirisLog addOrUpdateLog(OsirisLog log) {
         return osirisLogRepository.save(log);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void purgeLogs() {
+        osirisLogRepository.deleteAll(osirisLogRepository.findLogOlderThanMonths(6));
     }
 
 }

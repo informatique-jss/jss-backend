@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.invoicing.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -9,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.azure.FormRecognizerService;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.AzureReceipt;
@@ -36,6 +36,9 @@ public class AzureReceiptServiceImpl implements AzureReceiptService {
 
     @Autowired
     AzureReceiptInvoiceService azureReceiptInvoiceService;
+
+    @Autowired
+    BatchService batchService;
 
     @Override
     public AzureReceipt getAzureReceipt(Integer id) {
@@ -72,17 +75,15 @@ public class AzureReceiptServiceImpl implements AzureReceiptService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public void checkReceiptToAnalyse() throws OsirisException, OsirisClientMessageException {
-        List<Attachment> attachments = attachmentService.getReceiptAttachmentOnCompetentAuthorityToAnalyse();
-        if (attachments != null && attachments.size() > 0) {
-            for (Attachment attachment : attachments)
-                try {
-                    formRecognizerService.recongnizeRecipts(attachment);
-                } catch (Exception e) {
-                    attachmentService.disableDocument(attachment);
-                    throw new OsirisException(e,
-                            "Erreur while recongnize receipt with Azure fot attachment " + attachment.getId());
-                }
+    public void analyseReceipt(Attachment attachment) throws OsirisException, OsirisClientMessageException {
+        if (attachment != null) {
+            try {
+                formRecognizerService.recongnizeRecipts(attachment);
+            } catch (Exception e) {
+                attachmentService.disableDocument(attachment);
+                throw new OsirisException(e,
+                        "Erreur while recongnize receipt with Azure fot attachment " + attachment.getId());
+            }
         }
     }
 
