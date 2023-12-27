@@ -119,7 +119,7 @@ public class RffServiceImpl implements RffService {
                     currentRff.setResponsableId(currentRff.getResponsable().getId());
                 }
 
-                if (currentRff.getIsCancelled() == false && currentRff.getIsSent() == false) {
+                if (currentRff.getIsCancelled() == false) {
                     String iban = null;
                     String bic = null;
                     if (currentRff.getResponsable() != null && currentRff.getResponsable().getRffBic() != null
