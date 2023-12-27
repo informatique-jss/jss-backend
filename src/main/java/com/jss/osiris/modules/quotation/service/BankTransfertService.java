@@ -22,9 +22,9 @@ public interface BankTransfertService {
         public List<BankTransfertSearchResult> searchBankTransfert(BankTransfertSearch bankTransfertSearch);
 
         public BankTransfert getBankTransfert(Integer id);
-
-        public BankTransfert addOrUpdateBankTransfert(BankTransfert bankTransfert) throws OsirisException;
-
+ 
+        public BankTransfert addOrUpdateBankTransfert(BankTransfert bankTransfert) throws OsirisException; 
+  
         public BankTransfert generateBankTransfertForManualInvoice(Invoice invoice)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
@@ -41,4 +41,5 @@ public interface BankTransfertService {
                         LocalDate executionDate,
                         String recipientLabel,
                         String iban, String bic, String transfertLabel);
+ 
 }

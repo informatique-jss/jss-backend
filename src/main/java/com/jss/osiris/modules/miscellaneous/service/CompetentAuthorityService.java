@@ -22,11 +22,11 @@ public interface CompetentAuthorityService {
     public CompetentAuthority getCompetentAuthorityByApiId(String apiId);
 
     public List<CompetentAuthority> getCompetentAuthorityByAuthorityType(Integer competentAuthorityTypeId);
-
+ 
     public CompetentAuthority getCompetentAuthorityByIntercommunityVat(String intercommunityVat);
 
     public CompetentAuthority getCompetentAuthorityByAzureCustomReference(String azureCustomReference);
-
+ 
     public List<CompetentAuthority> getCompetentAuthorityByInpiReference(String inpiReference);
 
     public List<CompetentAuthority> getCompetentAuthorityByCityAndAuthorityType(City city,

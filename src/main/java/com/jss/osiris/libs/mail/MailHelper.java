@@ -1043,12 +1043,8 @@ public class MailHelper {
         mail.setExplaination(explainationText);
 
         if (remainingToPay > 0 && !isPaymentTypePrelevement) {
-            mail.setPaymentExplaination(
-                    "Vous pouvez régler cette facture d'un montant de " + remainingToPay
-                            + " € par virement à l'aide des informations suivantes");
 
             mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
-
             if (!disableCbLink) {
                 mail.setCbExplanation(
                         "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
@@ -1620,7 +1616,7 @@ public class MailHelper {
         mail.setTitle("Vos remboursements forfaitaires de frais");
         String explainationText = "Bonjour, afin de nous permettre de procéder au règlement de vos remboursements forfaitaires de frais (RFF), nous vous remercions de nous faire parvenir avant la fin de l’année, une facture avec les montants ci-dessous correspondant à l'année "
                 + rff.getEndDate().getYear();
-        mail.setExplaination(explainationText);
+       mail.setExplaination(explainationText);
 
         mail.setGreetings("A très bientôt !");
 

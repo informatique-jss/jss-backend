@@ -2110,7 +2110,7 @@ public class Constant implements Serializable, IId {
 
 	public void setAccountingAccountProfit(AccountingAccount accountingAccountProfit) {
 		this.accountingAccountProfit = accountingAccountProfit;
-	}
+	} 
 
 	public TiersCategory getTiersCategoryPresse() {
 		return tiersCategoryPresse;
@@ -2150,5 +2150,5 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeRff(BillingType billingTypeRff) {
 		this.billingTypeRff = billingTypeRff;
-	}
+	} 
 }

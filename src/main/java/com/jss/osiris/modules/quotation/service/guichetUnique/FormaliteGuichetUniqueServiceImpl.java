@@ -241,7 +241,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 currentCart.setFormaliteGuichetUnique(originalFormalite);
                             }
                         }
-
+ 
                         if (cartsToReplace != null) {
                             ArrayList<Cart> finalCarts = new ArrayList<Cart>();
                             boolean found = false;
@@ -257,8 +257,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                             originalFormalite.setCarts(finalCarts);
                             for (Cart cart : originalFormalite.getCarts())
                                 cart.setFormaliteGuichetUnique(originalFormalite);
-                        }
-
+                        } 
+                      
                         originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);
 
                         if (generateInvoices)
@@ -281,7 +281,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                         }
                                 }
                             }
-                    }
+                    } 
                 }
 
                 // Content field

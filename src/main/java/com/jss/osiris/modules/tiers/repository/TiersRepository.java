@@ -106,8 +106,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          e1.id = t.id_commercial " +
                         "  left join customer_order co1 on " +
                         "          co1.id_tiers= t.id " +
-                        "  left join customer_order co2 on " +
-                        "          co2.id_responsable = r.id and  co2.created_date>=:startDate and co2.created_date<=:endDate  "
+                        "  left join customer_order co2 on " + 
+                        "          co2.id_responsable = r.id and  co2.created_date>=:startDate and co2.created_date<=:endDate  " 
                         +
                         "  left join audit a1 on " +
                         "          a1.field_name = 'id' " +

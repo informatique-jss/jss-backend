@@ -209,9 +209,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrder.setIsGifted(false);
 
         customerOrder.setIsQuotation(false);
-
+ 
         findDuplicatesForCustomerOrder(customerOrder);
-
+ 
         if (customerOrder.getDocuments() != null)
             for (Document document : customerOrder.getDocuments()) {
                 mailService.populateMailIds(document.getMailsAffaire());
