@@ -8,6 +8,7 @@ import { AppService } from '../../../../services/app.service';
 import { Employee } from '../../../profile/model/Employee';
 import { SortTableAction } from '../../model/SortTableAction';
 import { SortTableColumn } from '../../model/SortTableColumn';
+import { SortTableElement, SortTableElementActions, SortTableElementColumns, SortTableElementColumnsLink, SortTableElementColumnsStatus, SortTableElementWarn } from '../../model/SortTableElement';
 
 @Component({
   selector: 'sort-table',
@@ -16,27 +17,28 @@ import { SortTableColumn } from '../../model/SortTableColumn';
   styleUrls: ['./sort-table.component.css']
 })
 
-export class SortTableComponent implements OnInit {
-  @Input() columns: SortTableColumn[] | undefined;
-  @Input() values: any[] | undefined;
-  @Input() actions: SortTableAction[] | undefined;
+export class SortTableComponent<T> implements OnInit {
+  @Input() columns: SortTableColumn<T>[] | undefined;
+  displayedColumns: string[] | undefined;
+  @Input() values: T[] | undefined;
+  @Input() actions: SortTableAction<T>[] | undefined;
   @Input() filterText: string | undefined;
   @Input() tableName: string = "table";
   @Input() idRowSelected: number | undefined;
-  @Input() filterPredicate: any;
+  @Input() filterPredicate: ((record: SortTableElement, filter: string) => boolean) | undefined;
   @Input() displayTotalLines: boolean = false;
   /**
  * Fired when row is clicked is modified by user
  */
-  @Output() onRowClick: EventEmitter<any> = new EventEmitter();
+  @Output() onRowClick: EventEmitter<T> = new EventEmitter();
 
   @Input() refreshTable: Observable<void> | undefined;
   private refreshTableSubscription: Subscription | undefined;
 
-  dataSource = new MatTableDataSource<any>();
+  dataSource = new MatTableDataSource<SortTableElement>();
   @ViewChild(MatSort) sort!: MatSort;
 
-  internalActions: SortTableAction[] | undefined = [] as Array<SortTableAction>;
+  internalActions: SortTableAction<T>[] | undefined = [] as Array<SortTableAction<T>>;
 
   constructor(protected userPreferenceService: UserPreferenceService,
     private appService: AppService,
@@ -46,13 +48,12 @@ export class SortTableComponent implements OnInit {
     if (this.refreshTable)
       this.refreshTableSubscription = this.refreshTable.subscribe(() => {
         if (this.values) {
-          this.dataSource.data = this.values;
+          this.dataSource.data = this.getSortTableElementsFromValues(this.values);
           this.internalActions = this.actions;
         }
       });
     this.internalActions = this.actions;
-    if (this.values)
-      this.dataSource.data = this.values;
+    this.refreshValues();
 
     // Restore displayed columns
     let prefColumns = this.userPreferenceService.getUserDisplayColumnsForTable(this.tableName);
@@ -66,24 +67,72 @@ export class SortTableComponent implements OnInit {
         }
   }
 
+  refreshValues() {
+    this.setDisplayedColumns();
+    if (this.values)
+      this.dataSource.data = this.getSortTableElementsFromValues(this.values);
+  }
+
+  getSortTableElementsFromValues(values: T[]): SortTableElement[] {
+    let outValues = [] as Array<SortTableElement>;
+    if (values)
+      for (let value of values)
+        outValues.push(this.getSortTableElementFromValue(value));
+    return outValues;
+  }
+
+  getSortTableElementFromValue(value: T): SortTableElement {
+    let outValue = {} as SortTableElement;
+    if (value) {
+      outValue.columns = {} as SortTableElementColumns;
+      outValue.isElementWarn = {} as SortTableElementWarn;
+      outValue.actionsLink = {} as SortTableElementActions;
+      outValue.columnsLink = {} as SortTableElementColumnsLink;
+      outValue.columnsStatus = {} as SortTableElementColumnsStatus;
+      if (this.columns) {
+        for (let column of this.columns) {
+          outValue.columns[column.id] = this.getColumnValue(column, value);
+          if (column.colorWarnFunction) {
+            outValue.isElementWarn[column.id] = column.colorWarnFunction(value);
+          } else {
+            outValue.isElementWarn[column.id] = false;
+          }
+          let actionLink = this.getColumnLink(column, value);
+          if (actionLink)
+            outValue.columnsLink[column.id] = actionLink;
+          let columnStatus = this.getColumnStatus(column, value);
+          if (columnStatus)
+            outValue.columnsStatus[column.id] = columnStatus;
+        }
+      }
+      if (this.actions) {
+        for (let action of this.actions) {
+          let link = this.getActionLink(action, value);
+          if (link)
+            outValue.actionsLink[action.actionName] = link;
+        }
+      }
+    }
+    return outValue;
+  }
+
   ngOnDestroy() {
     if (this.refreshTableSubscription)
       this.refreshTableSubscription.unsubscribe();
   }
 
-  actionTrigger(action: SortTableAction, element: any, event: any) {
+  actionTrigger(action: SortTableAction<T>, element: T, event: any) {
     // find in internal
     if (this.internalActions) {
       for (let internalAction of this.internalActions)
-        if (action == internalAction) {
+        if (action == internalAction && internalAction.actionClick) {
           internalAction.actionClick(action, element, event);
-          if (this.values)
-            this.dataSource.data = this.values;
+          this.refreshValues();
         }
     }
   }
 
-  columnActionTrigger(column: SortTableColumn, element: any) {
+  columnActionTrigger(column: SortTableColumn<T>, element: T) {
     // find in internal
     if (column && column.actionFunction) {
       column.actionFunction(element);
@@ -100,7 +149,7 @@ export class SortTableComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.values != undefined && this.values) {
-      this.dataSource.data = this.values;
+      this.refreshValues();
       this.setSorter();
     }
     if (changes.filterText != undefined && this.values) {
@@ -109,66 +158,30 @@ export class SortTableComponent implements OnInit {
   }
 
   setSorter() {
-    let a = {} as Employee;
     setTimeout(() => {
       this.dataSource.sort = this.sort;
-      this.dataSource.sortingDataAccessor = (item: any, property) => {
+      this.dataSource.sortingDataAccessor = (item: SortTableElement, property) => {
         if (this.columns) {
           for (let column of this.columns) {
             if (column.id && column.id == property) {
-              if (column.sortFonction)
-                return column.sortFonction(item, this.values, column, this.columns);
-
-              let columnValue = this.getColumnValue(column, item);
-
-              if (!isNaN(columnValue))
-                columnValue = parseFloat(columnValue);
-
-              // Handle date or date string
-              if (columnValue && columnValue.indexOf && columnValue.indexOf("/") > 0) {
-                let dateTimeSplit = columnValue.split(" ");
-                if (dateTimeSplit.length == 1) {
-                  // Date
-                  let dateSplit = dateTimeSplit[0].split("/");
-                  if (dateSplit.length == 3) {
-                    let dateTest = new Date(dateSplit[2], dateSplit[1] - 1, dateSplit[0]) as any;
-                    if (dateTest != "Invalid Date") {
-                      return dateTest.getTime();
-                    }
-                  }
-                } else if (dateTimeSplit.length == 2) {
-                  // Date time
-                  let dateSplit = dateTimeSplit[0].split("/");
-                  if (dateSplit.length == 3) {
-                    let dateTest = new Date(dateSplit[2], dateSplit[1] - 1, dateSplit[0]) as any;
-                    if (dateTest != "Invalid Date") {
-                      let timeSplit = dateTimeSplit[1].split(":");
-                      if (dateSplit.length == 3) {
-                        dateTest = new Date(dateSplit[2], dateSplit[1] - 1, dateSplit[0], timeSplit[0], timeSplit[1], timeSplit[2]) as any;
-                        if (dateTest != "Invalid Date") {
-                          return dateTest.getTime();
-                        }
-                      } else if (dateSplit.length == 2) {
-                        dateTest = new Date(dateSplit[2], dateSplit[1] - 1, dateSplit[0], timeSplit[0], timeSplit[1]) as any;
-                        if (dateTest != "Invalid Date") {
-                          return dateTest.getTime();
-                        }
-                      }
-                    }
-                  }
-                }
+              if (column.sortFonction) {
+                let sortValue: string | Date | Employee | number = column.sortFonction(item, column);
+                if (sortValue instanceof Date)
+                  return sortValue.getTime();
+                if (((sortValue as unknown) as any).firstname)
+                  return (sortValue as Employee).firstname + (sortValue as Employee).lastname;
+                if (typeof sortValue === "number")
+                  return sortValue;
+                return sortValue + '';
               }
-
-              // Handle employees
-              if (columnValue && columnValue instanceof Object && columnValue.firstname && columnValue.lastname)
-                return columnValue.firstname + columnValue.lastname;
-              return columnValue;
+              return item.columns[property];
             }
           }
         }
+        return "";
       };
 
-      this.dataSource.filterPredicate = (data: any, filter) => {
+      this.dataSource.filterPredicate = (data: SortTableElement, filter) => {
         if (!this.filterPredicate) {
           const dataStr = JSON.stringify(data).toLowerCase();
           return dataStr.indexOf(filter) != -1;
@@ -179,16 +192,10 @@ export class SortTableComponent implements OnInit {
     });
   }
 
-  getColumnLabel(column: SortTableColumn): string {
-    if (column && column.label)
-      return column.label;
-    return "Not found";
-  }
-
-  getColumnValue(column: SortTableColumn, element: any): any {
+  getColumnValue(column: SortTableColumn<T>, element: T): any {
     if (column) {
       if (column.valueFonction) {
-        return column.valueFonction(element, this.values, column, this.columns);
+        return column.valueFonction(element, column);
       }
       if (column.fieldName) {
         if (column.fieldName.indexOf(".") >= 0)
@@ -196,45 +203,37 @@ export class SortTableComponent implements OnInit {
             return this.getObjectPropertybyString(element, column.fieldName);
           } catch {
           }
-        return element[column.fieldName];
+
+        type ObjectKey = keyof typeof element;
+        return element[column.fieldName as ObjectKey];
       }
     }
     return "Not found";
   }
 
-  getColumnStatus(column: SortTableColumn, element: any): any {
+  getColumnStatus(column: SortTableColumn<T>, element: T): string {
     if (column) {
       if (column.statusFonction) {
-        return column.statusFonction(element, this.values, column, this.columns);
+        return column.statusFonction(element);
       }
     }
     return "Not found";
   }
 
-  getIsElementWarnColor(column: SortTableColumn, element: any): any {
-    if (column) {
-      if (column.colorWarnFunction) {
-        return column.colorWarnFunction(element);
-      }
-    }
-    return false;
-  }
-
-  getDisplayedColumns() {
-    let columnList = [];
+  setDisplayedColumns() {
+    this.displayedColumns = [];
     if (this.columns)
       for (let column of this.columns) {
         if (column.display == undefined)
           column.display = true;
         if (column.display)
-          columnList.push(column.id);
+          this.displayedColumns.push(column.id);
       }
     if (this.internalActions)
-      columnList.push('actions');
-    return columnList;
+      this.displayedColumns.push('actions');
   }
 
-  selectColumn(column: SortTableColumn, $event: any) {
+  selectColumn(column: SortTableColumn<T>, $event: any) {
     $event.stopPropagation();
     $event.preventDefault();
 
@@ -273,22 +272,28 @@ export class SortTableComponent implements OnInit {
 
   getObjectPropertybyString = getObjectPropertybyString;
 
-  getActionLink(action: SortTableAction, element: any) {
+  getActionLink(action: SortTableAction<T>, element: T): string | undefined {
     if (action.actionLinkFunction)
-      return action.actionLinkFunction(action, element);
+      return action.actionLinkFunction(action, element).join("/");
+    return undefined;
   }
 
-  getColumnLink(column: SortTableColumn, element: any) {
+  getColumnLink(column: SortTableColumn<T>, element: T): string | undefined {
     if (column.actionLinkFunction)
-      return column.actionLinkFunction(column, element);
+      return column.actionLinkFunction(column, element).join("/");
+    return undefined;
   }
 
-  openColumnLink(event: any, column: SortTableColumn, element: any,) {
-    this.appService.openRoute(event, this.getColumnLink(column, element).join("/"), null);
+  openColumnLink(event: any, column: SortTableColumn<T>, element: T,) {
+    let link = this.getColumnLink(column, element);
+    if (link)
+      this.appService.openRoute(event, link, null);
   }
 
-  openActionLink(event: any, action: SortTableAction, element: any,) {
-    this.appService.openRoute(event, this.getActionLink(action, element).join("/"), null);
+  openActionLink(event: any, action: SortTableAction<T>, element: SortTableElement) {
+    let link = element.actionsLink[action.actionName];
+    if (link)
+      this.appService.openRoute(event, link, null);
   }
 
 }

@@ -43,16 +43,16 @@ export class UserPreferenceService {
   }
 
   // User column display
-  setUserDisplayColumnsForTable(columns: SortTableColumn[], tableName: string) {
+  setUserDisplayColumnsForTable<T>(columns: SortTableColumn<T>[], tableName: string) {
     if (columns && tableName)
       localStorage.setItem('table-columns' + tableName, JSON.stringify(columns));
   }
 
-  getUserDisplayColumnsForTable(tableName: string): SortTableColumn[] {
+  getUserDisplayColumnsForTable<T>(tableName: string): SortTableColumn<T>[] {
     if (tableName) {
       let value = localStorage.getItem('table-columns' + tableName);
       if (value) {
-        let list = JSON.parse(value!) as SortTableColumn[];
+        let list = JSON.parse(value!) as SortTableColumn<T>[];
         if (list)
           return list;
       }

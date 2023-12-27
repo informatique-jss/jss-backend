@@ -1,4 +1,7 @@
-export interface SortTableColumn {
+import { Employee } from "../../profile/model/Employee";
+import { SortTableElement } from "./SortTableElement";
+
+export interface SortTableColumn<T> {
   id: string;
   fieldName: string;
   label: string;
@@ -7,23 +10,23 @@ export interface SortTableColumn {
    * The raw element and element list is provided as input
    * If not provided, field value is used
    */
-  valueFonction: any | undefined;
+  valueFonction: ((element: T, column: SortTableColumn<T>) => string | Date | Employee | number) | undefined;
   /**
    * Function that return a string of the status to display
    * The raw element and element list is provided as input
    */
-  statusFonction: any | undefined;
+  statusFonction: ((element: T) => string) | undefined;
   /**
    * Function that return a string of the value to order items
    * The raw element and element list is provided as input
    * If not provided, label field is used
    */
-  sortFonction: any | undefined;
+  sortFonction: ((element: SortTableElement, column: SortTableColumn<T>) => string | Date | Employee | number) | undefined;
   /**
    * Function to display line as warn color
    * Return true or false
    */
-  colorWarnFunction: any | undefined;
+  colorWarnFunction: ((element: T) => boolean) | undefined;
   display: boolean | undefined;
   /**
    * Display element as star
@@ -44,11 +47,11 @@ export interface SortTableColumn {
   /**
    * Link function : link function to call on link icon click
    */
-  actionLinkFunction: any | undefined;
+  actionLinkFunction: ((column: SortTableColumn<T>, element: T) => string[]) | undefined
   /**
    * Action function : action function to call on link icon click
    */
-  actionFunction: any | undefined;
+  actionFunction: ((element: T) => void) | undefined
   /**
    * Link icon to display
    */
