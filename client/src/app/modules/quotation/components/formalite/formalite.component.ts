@@ -5,6 +5,7 @@ import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
+import { Affaire } from '../../model/Affaire';
 import { Formalite } from '../../model/Formalite';
 import { FormaliteStatus } from '../../model/FormaliteStatus';
 import { IQuotation } from '../../model/IQuotation';
@@ -20,6 +21,7 @@ export class FormaliteComponent implements OnInit {
 
   @Input() formalite: Formalite = {} as Formalite;
   @Input() provision: Provision | undefined;
+  @Input() affaire: Affaire | undefined;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;

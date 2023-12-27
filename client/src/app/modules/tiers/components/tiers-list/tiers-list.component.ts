@@ -63,6 +63,7 @@ export class TiersListComponent implements OnInit {
         this.responsableSearch.endDate = this.bookmark.endDate;
       }
 
+      this.displayedColumnsResponsables.push({ id: "tiersId", fieldName: "tiersId", label: "N°" } as SortTableColumn);
       this.displayedColumnsResponsables.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers" } as SortTableColumn);
       this.displayedColumnsResponsables.push({ id: "tiersCategory", fieldName: "tiersCategory", label: "Catégorie du tiers" } as SortTableColumn);
       this.displayedColumnsResponsables.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn);
@@ -109,6 +110,7 @@ export class TiersListComponent implements OnInit {
         }, display: true,
       } as SortTableAction);
 
+      this.displayedColumnsTiers.push({ id: "tiersId", fieldName: "tiersId", label: "N°" } as SortTableColumn);
       this.displayedColumnsTiers.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers" } as SortTableColumn);
       this.displayedColumnsTiers.push({ id: "tiersCategory", fieldName: "tiersCategory", label: "Catégorie du tiers" } as SortTableColumn);
       this.displayedColumnsTiers.push({
@@ -121,6 +123,18 @@ export class TiersListComponent implements OnInit {
           return undefined;
         }
       } as SortTableColumn);
+
+      this.displayedColumnsTiers.push({
+        id: "formalisteId", fieldName: "formalisteId", label: "Formaliste", displayAsEmployee: true, valueFonction: (element: any) => {
+          if (element && this.allEmployees) {
+            for (let employee of this.allEmployees)
+              if (employee.id == element.formalisteId)
+                return employee;
+          }
+          return undefined;
+        }
+      } as SortTableColumn);
+
 
       this.displayedColumnsTiers.push({ id: "firstOrderDay", fieldName: "firstOrderDay", label: "1ère commande", valueFonction: formatDateForSortTable } as SortTableColumn);
       this.displayedColumnsTiers.push({ id: "lastOrderDay", fieldName: "lastOrderDay", label: "Dernière commande", valueFonction: formatDateForSortTable } as SortTableColumn);

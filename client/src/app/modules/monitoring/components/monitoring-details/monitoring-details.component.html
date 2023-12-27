@@ -1,0 +1,99 @@
+<div class="mat-elevation-z2 form-div">
+  <div class="mat-accordion-container full-width" *ngIf="selectedBatchSetting">
+    <mat-accordion multi>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Paramètres
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedBatchSetting.id" label="Identifiant" [form]="batchDetailsForm"
+                  propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="selectedBatchSetting.code" label="Code" [form]="batchDetailsForm"
+                  propertyName="Code" [isMandatory]="true" [isDisabled]="true"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="selectedBatchSetting.label" label="Libellé" [form]="batchDetailsForm"
+                  propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+              </td>
+              <td>
+                <select-batch-category [(model)]="selectedBatchSetting.batchCategory" label="Catégorie"
+                  [form]="batchDetailsForm" propertyName="batchCategory" [isMandatory]="true"
+                  [isDisabled]="!editMode"></select-batch-category>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedBatchSetting.queueSize" label="Nombre de traitements en parallèle"
+                  [form]="batchDetailsForm" propertyName="queueSize" [isMandatory]="true" [isDisabled]="!editMode"
+                  type="number"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="selectedBatchSetting.fixedRate" label="Délai avant l'ajout des jobs"
+                  [form]="batchDetailsForm" propertyName="fixedRate" [isMandatory]="true" [isDisabled]="!editMode"
+                  type="number"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="selectedBatchSetting.maxAddedNumberPerIteration"
+                  label="Jobs ajoutés à chaque itération (0 = illimité)" [form]="batchDetailsForm"
+                  propertyName="maxAddedNumberPerIteration" [isMandatory]="true" [isDisabled]="!editMode"
+                  type="number"></generic-input>
+              </td>
+              <td>
+                <generic-toggle [(model)]="selectedBatchSetting.isActive" label="File active ?"
+                  [form]="batchDetailsForm" propertyName="isActive" [isDisabled]="!editMode"></generic-toggle>
+              </td>
+            </tr>
+          </table>
+        </fieldset>
+      </mat-expansion-panel>
+      <mat-expansion-panel expanded="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Statistiques
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <bar-chart *ngIf="batchTimeStatistics" [firstSerieData]="timeFirstSerieData"
+          [secondSerieData]="timeSecondSerieData" firstSerieName="Nombre d'exécutions"
+          secondSerieName="Durée moyenne (sec)" [firstSerieColors]="timeFirstSerieColors"
+          [title]="selectedBatchSetting.label">
+        </bar-chart>
+        <span *ngIf="batchStatistics" class="div-align">
+          <span><strong>Indicateurs sur une semaine</strong></span><br>
+          <span>Erreurs : {{batchStatistics.error}}</span><br>
+          <span>Acquités : {{batchStatistics.acknowledge}}</span><br>
+          <span>En attente : {{batchStatistics.waiting }}</span><br>
+          <span>En cours : {{batchStatistics.running }}</span><br>
+          <span>Terminés avec succès : {{batchStatistics.success}}</span><br>
+          <span [ngClass]="{'color-ko': isItWarn(batchStatistics)}">Temps moyen aujourd'hui :
+            {{(batchStatistics.currentMeanTime * 10) / 10 | number: '1.0-1'}}s </span><br>
+          <span>Temps moyen : {{(batchStatistics.standardMeanTime * 10) /10| number: '1.0-1'}}s</span><br>
+        </span>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Détails
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <batch-list [batchSearch]="batchSearch" *ngIf="batchSearch"></batch-list>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</div>
+<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true"
+  (click)="saveBatchSettings()">
+  <mat-icon>save</mat-icon>
+</button>
+<button matTooltip="Modifier l'affaire" mat-fab color="accent" class="fab-button" *ngIf="editMode==false  "
+  (click)="editBatchSettings()">
+  <mat-icon>edit</mat-icon>
+</button>

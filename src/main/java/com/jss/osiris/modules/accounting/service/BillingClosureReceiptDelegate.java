@@ -25,7 +25,6 @@ import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.invoicing.model.ICreatedDate;
@@ -147,12 +146,6 @@ public class BillingClosureReceiptDelegate {
                             || billingClosureDocument.getBillingClosureRecipientType().getId()
                                     .equals(constantService.getBillingClosureRecipientTypeOther().getId()))) {
 
-                if (tier instanceof Tiers) {
-                    List<CustomerMail> mails = customerMailService.getReceiptMailsForTiers((Tiers) tier);
-                    if (mails != null && mails.size() > 0)
-                        return null;
-                }
-
                 ArrayList<ITiers> tiers = new ArrayList<ITiers>();
                 if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
                     tiers.addAll(((Tiers) tier).getResponsables());
@@ -180,10 +173,6 @@ public class BillingClosureReceiptDelegate {
                 // Send to each responsable
                 if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
                     for (Responsable responsable : ((Tiers) tier).getResponsables()) {
-
-                        List<CustomerMail> mails = customerMailService.getReceiptMailsForResponsable(responsable);
-                        if (mails != null && mails.size() > 0)
-                            continue;
 
                         ArrayList<ITiers> tiers = new ArrayList<ITiers>();
                         tiers.add(responsable);
@@ -555,7 +544,7 @@ public class BillingClosureReceiptDelegate {
                     new FileInputStream(billingClosureReceipt), tiers.getId(),
                     tiersType, constantService.getAttachmentTypeBillingClosure(),
                     "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".pdf", false,
-                    "Relevé de compte du " + LocalDateTime.now().format(formatter), null);
+                    "Relevé de compte du " + LocalDateTime.now().format(formatter), null, null, null);
 
             for (Attachment attachment : attachmentsList)
                 if (attachment.getUploadedFile().getFilename()

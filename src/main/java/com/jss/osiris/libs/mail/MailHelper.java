@@ -104,9 +104,6 @@ public class MailHelper {
     @Value("${jss.bic}")
     private String bicJss;
 
-    @Value("${invoicing.payment.limit.refund.euros}")
-    private String payementLimitRefundInEuros;
-
     private JavaMailSender javaMailSender;
 
     public static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
@@ -1618,8 +1615,8 @@ public class MailHelper {
         mail.setHeaderPicture("images/billing-receipt-header.png");
         mail.setTitle("Vos remboursements forfaitaires de frais");
         String explainationText = "Bonjour, afin de nous permettre de procéder au règlement de vos remboursements forfaitaires de frais (RFF), nous vous remercions de nous faire parvenir avant la fin de l’année, une facture avec les montants ci-dessous correspondant à l'année "
-                + rff.getStartDate().getYear();
-        mail.setExplaination(explainationText);
+                + rff.getEndDate().getYear();
+       mail.setExplaination(explainationText);
 
         mail.setGreetings("A très bientôt !");
 
@@ -1635,6 +1632,7 @@ public class MailHelper {
                 + rff.getRffBic() + " / " + rff.getRffIban());
 
         mail.setRff(rff);
+        mail.setTiers(rff.getTiers());
 
         mailService.addMailToQueue(mail);
     }

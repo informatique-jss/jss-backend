@@ -88,6 +88,10 @@ public class PiecesJointe implements Serializable {
     @Column(length = 255)
     private String codePostalLieuDelivrance;
 
+    private Boolean isAlreadySigned;
+
+    private String created;
+
     public String getNomDocument() {
         return nomDocument;
     }
@@ -238,6 +242,22 @@ public class PiecesJointe implements Serializable {
 
     public void setContent(Content content) {
         this.content = content;
+    }
+
+    public Boolean getIsAlreadySigned() {
+        return isAlreadySigned;
+    }
+
+    public void setIsAlreadySigned(Boolean isAlreadySigned) {
+        this.isAlreadySigned = isAlreadySigned;
+    }
+
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
     }
 
 }

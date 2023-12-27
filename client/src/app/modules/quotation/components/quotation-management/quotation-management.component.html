@@ -1,13 +1,3 @@
-<ng-template #accordionTools>
-  <mat-panel-description>
-    <mat-icon color="accent" matTooltip="Ouvrir tous les onglets"
-      (click)="accordion!.openAll();$event.stopPropagation();" class="pointer">
-      unfold_more_double</mat-icon>
-    <mat-icon color="accent" matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();"
-      class="pointer">
-      unfold_less_double</mat-icon>
-  </mat-panel-description>
-</ng-template>
 <div class="mat-elevation-z2 form-div">
   <fieldset [disabled]="editMode==false" class="fieldset-no-border">
     <form [formGroup]="quotationManagementForm" *ngIf="quotation">
@@ -20,7 +10,7 @@
                   Facture
                 </mat-panel-title>
                 <mat-panel-description>
-                  <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+                  <ng-template></ng-template>
                 </mat-panel-description>
               </mat-expansion-panel-header>
               <table class="full-width">
@@ -190,7 +180,7 @@
                 <mat-panel-title>
                   Documents numériques
                 </mat-panel-title>
-                <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+                <ng-template></ng-template>
               </mat-expansion-panel-header>
               <addressing [editMode]="editMode" [document]="digitalDocument" [displayOverrideMail]="false"
                 (documentChange)="updateAdressing($event)" [displayOverrideEMail]="true">
@@ -241,7 +231,7 @@
                 <mat-panel-title>
                   Documents papiers
                 </mat-panel-title>
-                <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+                <ng-template></ng-template>
               </mat-expansion-panel-header>
               <addressing [editMode]=" editMode" [document]="paperDocument" [displayOverrideMail]="true"
                 [displayNumberMailing]="true" (documentChange)="updateAdressing($event)" [displayOverrideEMail]="false">

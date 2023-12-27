@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -23,7 +25,6 @@ import com.jss.osiris.libs.ofx.OFXParser;
 import com.jss.osiris.libs.ofx.OFXStatement;
 import com.jss.osiris.libs.ofx.StatementTransaction;
 import com.jss.osiris.libs.search.model.IndexEntity;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
@@ -143,13 +144,13 @@ public class PaymentServiceImpl implements PaymentService {
     private String payementLimitRefundInEuros;
 
     @Autowired
-    IndexEntityService indexEntityService;
-
-    @Autowired
     DirectDebitTransfertService debitTransfertService;
 
     @Autowired
     DocumentService documentService;
+
+    @Autowired
+    BatchService batchService;
 
     @Override
     public Payment getPayment(Integer id) {
@@ -161,7 +162,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment addOrUpdatePayment(
-            Payment payment) {
+            Payment payment) throws OsirisException {
         if (payment.getIsCancelled() == null)
             payment.setIsCancelled(false);
         if (payment.getIsAppoint() == null)
@@ -171,17 +172,17 @@ public class PaymentServiceImpl implements PaymentService {
         if (payment.getIsExternallyAssociated() == null)
             payment.setIsExternallyAssociated(false);
         paymentRepository.save(payment);
-        indexEntityService.indexEntity(payment);
+        batchService.declareNewBatch(Batch.REINDEX_PAYMENT, payment.getId());
         return payment;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexPayments() {
+    public void reindexPayments() throws OsirisException {
         List<Payment> payments = IterableUtils.toList(paymentRepository.findAll());
         if (payments != null)
             for (Payment payment : payments)
-                indexEntityService.indexEntity(payment);
+                batchService.declareNewBatch(Batch.REINDEX_PAYMENT, payment.getId());
     }
 
     @Override
@@ -209,7 +210,7 @@ public class PaymentServiceImpl implements PaymentService {
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
 
         for (Payment payment : payments) {
-            automatchPayment(payment);
+            batchService.declareNewBatch(Batch.AUTOMATCH_PAYMENT, payment.getId());
         }
     }
 
@@ -249,17 +250,10 @@ public class PaymentServiceImpl implements PaymentService {
                 }
                 Payment payment = paymentRepository.findByBankId(transaction.id());
                 if (payment != null && (payment.getIsCancelled() == null || payment.getIsCancelled() == false))
-                    automatchPayment(payment);
+                    batchService.declareNewBatch(Batch.AUTOMATCH_PAYMENT, payment.getId());
             }
 
         return null;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void automatchPaymentFromUser(Payment payment)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        automatchPayment(payment);
     }
 
     @Override
@@ -545,8 +539,7 @@ public class PaymentServiceImpl implements PaymentService {
             remainingMoney -= effectivePayment;
 
             // Unlocked customer order if necessary
-            if (remainingToPayForCustomerOrder <= effectivePayment)
-                customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
+            customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
 
             if (Math.round(remainingMoney * 100f) / 100f == 0f)
                 return 0f;
@@ -733,7 +726,7 @@ public class PaymentServiceImpl implements PaymentService {
         checkPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
         addOrUpdatePayment(checkPayment);
         accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(checkPayment, false);
-        automatchPayment(checkPayment);
+        batchService.declareNewBatch(Batch.AUTOMATCH_PAYMENT, checkPayment.getId());
     }
 
     @Override

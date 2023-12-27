@@ -46,8 +46,8 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " left join provision_type pt on pt.id = p.id_provision_type" +
                         " left join provision_family_type pf on pf.id = pt.id_provision_family_type" +
                         " left join announcement an on an.id = p.id_announcement " +
-                        " left join announcement_status ans on an.id_announcement_status = ans.id" +
-                        " left join confrere cf on cf.id = a.id_confrere" +
+                        " left join announcement_status ans on an.id_announcement_status = ans.id" + 
+                        " left join confrere cf on cf.id = an.id_confrere"  
                         " left join formalite fo on fo.id = p.id_formalite" +
                         " left join formalite_status fs on fs.id = fo.id_formalite_status" +
                         " left join domiciliation dom on dom.id = p.id_domiciliation" +

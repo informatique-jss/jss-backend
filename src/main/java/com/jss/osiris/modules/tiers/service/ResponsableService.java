@@ -14,7 +14,7 @@ public interface ResponsableService {
 
     public Responsable getResponsable(Integer id);
 
-    public void reindexResponsable();
+    public void reindexResponsable() throws OsirisException;
 
     public Responsable getResponsableByLoginWeb(String loginWeb);
 

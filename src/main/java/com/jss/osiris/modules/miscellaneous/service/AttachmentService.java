@@ -19,13 +19,14 @@ public interface AttachmentService {
         public Attachment getAttachment(Integer id);
 
         public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String entityType,
-                        AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType)
+                        AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType,
+                        Integer fromPage, Integer toPage)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
         public List<Attachment> addAttachment(InputStream file, Integer idEntity, String entityType,
                         AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType,
-                        String description, PiecesJointe piecesJointe)
+                        String description, PiecesJointe piecesJointe, Integer fromPage, Integer toPage)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
@@ -38,9 +39,5 @@ public interface AttachmentService {
         public List<Attachment> sortAttachmentByDateDesc(List<Attachment> attachments);
 
         public Attachment cloneAttachment(Attachment attachment) throws OsirisException;
-
-        public List<Attachment> getInvoiceAttachmentOnProvisionToAnalyse() throws OsirisException;
-
-        public List<Attachment> getReceiptAttachmentOnCompetentAuthorityToAnalyse() throws OsirisException;
 
 }

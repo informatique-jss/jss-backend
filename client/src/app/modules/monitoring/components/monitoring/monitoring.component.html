@@ -1,0 +1,15 @@
+<div>
+  <monitoring-summary *ngIf="!canDisplayExtendentMonitoring()"></monitoring-summary>
+  <mat-tab-group animationDuration="0ms" #tabs *ngIf="canDisplayExtendentMonitoring()"
+    [(selectedIndex)]="selectedTabIndex">
+    <mat-tab label="Synthèse">
+      <monitoring-summary (selectBatchSetting)="selectBatchSetting($event)"></monitoring-summary>
+    </mat-tab>
+    <mat-tab [label]="'Détails - '+batchSettingsSelected.label" *ngIf="batchSettingsSelected">
+      <monitoring-details [selectedBatchSetting]="batchSettingsSelected"></monitoring-details>
+    </mat-tab>
+    <mat-tab label="Noeuds" *ngIf="canDisplayExtendentMonitoring()">
+      <monitoring-nodes></monitoring-nodes>
+    </mat-tab>
+  </mat-tab-group>
+</div>

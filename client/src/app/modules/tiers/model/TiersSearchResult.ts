@@ -4,6 +4,8 @@ export interface TiersSearchResult {
   tiersId: number;
   salesEmployeeLabel: string;
   salesEmployeeId: number;
+  formalisteLabel: string;
+  formalisteId: number;
   firstOrderDay: Date;
   lastOrderDay: Date;
   createdDateDay: Date;

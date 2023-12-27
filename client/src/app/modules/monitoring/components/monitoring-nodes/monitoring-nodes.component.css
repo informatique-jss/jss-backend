@@ -1,0 +1,19 @@
+.gauge {
+  display: block;
+  width: 360px;
+}
+
+.gauge-wrapper {
+  display: flex;
+  flex-direction: row;
+  overflow: visible;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.row-field-container {
+  padding-top: 15px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}

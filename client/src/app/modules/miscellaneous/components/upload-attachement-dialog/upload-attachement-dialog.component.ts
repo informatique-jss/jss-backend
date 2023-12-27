@@ -18,6 +18,8 @@ export class UploadAttachementDialogComponent implements OnInit {
 
   entity: IAttachment = {} as IAttachment;
   entityType: string = "";
+  fromPage: number | null = null;
+  toPage: number | null = null;
   file: any = null;
   progress: number = 0;
   isSending = false;
@@ -78,7 +80,7 @@ export class UploadAttachementDialogComponent implements OnInit {
   checkFile() {
     if (this.file != null && this.file.size > MAX_SIZE_UPLOAD_FILES) {
       this.deleteFile();
-      this.appService.displaySnackBar("Taille maximale d'import limitée à 5 Mo", true, 15);
+      this.appService.displaySnackBar("Taille maximale d'import limitée à 10 Mo", true, 15);
     }
     if (this.forcedFileExtension) {
       var extensionRegexp = /(?:\.([^.]+))?$/;
@@ -104,7 +106,7 @@ export class UploadAttachementDialogComponent implements OnInit {
 
       if (this.attachmentType != null && !found) {
         this.isSending = true;
-        this.uploadAttachmentService.uploadAttachment(this.file, this.entity, this.entityType, this.attachmentType, this.filename, this.replaceExistingAttachementType).subscribe(event => {
+        this.uploadAttachmentService.uploadAttachment(this.file, this.entity, this.entityType, this.attachmentType, this.filename, this.replaceExistingAttachementType, this.fromPage, this.toPage).subscribe(event => {
           if (event.type === HttpEventType.UploadProgress && event.total != undefined) {
             this.progress = Math.round(100 * event.loaded / event.total);
           } else if (event instanceof HttpResponse) {

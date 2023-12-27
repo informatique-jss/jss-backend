@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.azure.FormRecognizerService;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -70,6 +71,9 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
     @Autowired
     VatService vatService;
 
+    @Autowired
+    BatchService batchService;
+
     @Override
     public AzureInvoice getAzureInvoice(Integer id) {
         Optional<AzureInvoice> azureInvoice = azureInvoiceRepository.findById(id);
@@ -95,18 +99,16 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public void checkInvoiceToAnalyse()
+    public void analyseInvoice(Attachment attachment)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        List<Attachment> attachments = attachmentService.getInvoiceAttachmentOnProvisionToAnalyse();
-        if (attachments != null && attachments.size() > 0) {
-            for (Attachment attachment : attachments)
-                try {
-                    formRecognizerService.recongnizeInvoice(attachment);
-                } catch (Exception e) {
-                    attachmentService.disableDocument(attachment);
-                    throw new OsirisException(e,
-                            "Erreur while recongnize invoice with Azure for attachment " + attachment.getId());
-                }
+        if (attachment != null) {
+            try {
+                formRecognizerService.recongnizeInvoice(attachment);
+            } catch (Exception e) {
+                attachmentService.disableDocument(attachment);
+                throw new OsirisException(e,
+                        "Erreur while recongnize invoice with Azure for attachment " + attachment.getId());
+            }
         }
     }
 

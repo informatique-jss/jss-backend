@@ -1,14 +1,3 @@
-<ng-template #accordionTools>
-  <mat-panel-description>
-    <mat-icon color="accent" matTooltip="Ouvrir tous les onglets"
-      (click)="accordion!.openAll();$event.stopPropagation();" class="pointer">
-      unfold_more_double</mat-icon>
-    <mat-icon color="accent" matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();"
-      class="pointer">
-      unfold_less_double</mat-icon>
-  </mat-panel-description>
-</ng-template>
-
 <form [formGroup]="bodaccSaleForm" *ngIf="bodaccSale">
   <div class="mat-accordion-container full-width">
     <fieldset [disabled]="editMode==false" class="fieldset-no-border">
@@ -18,7 +7,7 @@
             <mat-panel-title>
               Fonds cédé
             </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            <ng-template></ng-template>
           </mat-expansion-panel-header>
           <table class="full-width">
             <tr>
@@ -51,7 +40,7 @@
             <mat-panel-title>
               Propriétaire / cédant
             </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            <ng-template></ng-template>
           </mat-expansion-panel-header>
           <table class="full-width">
             <tr>
@@ -95,7 +84,7 @@
             <mat-panel-title>
               Acquéreur / cessionnaire
             </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            <ng-template></ng-template>
           </mat-expansion-panel-header>
           <table class="full-width">
             <tr>
@@ -121,7 +110,7 @@
             <mat-panel-title>
               Personne
             </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            <ng-template></ng-template>
           </mat-expansion-panel-header>
           <table class="full-width">
             <tr>
@@ -178,7 +167,7 @@
             <mat-panel-title>
               Propriétaire / cédant
             </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            <ng-template></ng-template>
           </mat-expansion-panel-header>
           <table class="full-width">
             <tr>
@@ -253,7 +242,7 @@
             <mat-panel-title>
               Résiliation
             </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            <ng-template></ng-template>
           </mat-expansion-panel-header>
           <table class="full-width">
             <tr>
@@ -285,7 +274,7 @@
             <mat-panel-title>
               Ancien locataire
             </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            <ng-template></ng-template>
           </mat-expansion-panel-header>
           <table class="full-width">
             <tr>
@@ -360,7 +349,7 @@
             <mat-panel-title>
               Acte de vente du fonds et informations fiscales
             </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            <ng-template></ng-template>
           </mat-expansion-panel-header>
           <table class="full-width">
             <tr>
@@ -432,7 +421,7 @@
             <mat-panel-title>
               Oppositions
             </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            <ng-template></ng-template>
           </mat-expansion-panel-header>
           <table class="full-width">
             <tr>

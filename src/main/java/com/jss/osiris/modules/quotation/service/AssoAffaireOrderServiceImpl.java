@@ -9,12 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
@@ -48,6 +49,7 @@ import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.repository.AssoAffaireOrderRepository;
 import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 @Service
@@ -55,9 +57,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     AssoAffaireOrderRepository assoAffaireOrderRepository;
-
-    @Autowired
-    IndexEntityService indexEntityService;
 
     @Autowired
     EmployeeService employeeService;
@@ -119,6 +118,12 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     CharacterPriceService characterPriceService;
 
+    @Autowired
+    BatchService batchService;
+
+    @Autowired
+    FormaliteGuichetUniqueStatusService formaliteGuichetUniqueStatusService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -155,28 +160,28 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         assoAffaireOrder.setCustomerOrder(assoAffaireOrder.getCustomerOrder());
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
         if (affaireSaved.getCustomerOrder() != null)
-            indexEntityService.indexEntity(affaireSaved);
+            batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, affaireSaved.getId());
         customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
         return affaireSaved;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee) {
+    public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee) throws OsirisException {
         asso.setAssignedTo(employee);
         assoAffaireOrderRepository.save(asso);
         if (asso.getCustomerOrder() != null)
-            indexEntityService.indexEntity(asso);
+            batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, asso.getId());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexAffaires() {
+    public void reindexAffaires() throws OsirisException {
         List<AssoAffaireOrder> affaires = getAssoAffaireOrders();
         if (affaires != null)
-            for (AssoAffaireOrder affaire : affaires)
-                if (affaire.getCustomerOrder() != null)
-                    indexEntityService.indexEntity(affaire);
+            for (AssoAffaireOrder asso : affaires)
+                if (asso.getCustomerOrder() != null)
+                    batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, asso.getId());
     }
 
     @Override
@@ -242,10 +247,18 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     formalite.setFormaliteStatus(
                             formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
 
-                if (formalite.getFormalitesGuichetUnique() != null) {
+                else if (formalite.getFormalitesGuichetUnique() != null) {
                     for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique()) {
-                        formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formaliteGuichetUnique,
-                                formalite, true);
+                        if (formaliteGuichetUnique.getStatus() == null
+                                || !formaliteGuichetUniqueStatusService
+                                        .getFormaliteGuichetUniqueStatus(formaliteGuichetUnique.getStatus().getCode())
+                                        .getIsCloseState()) {
+                            formaliteGuichetUnique.setFormalite(formalite);
+                            formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+
+                            batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE,
+                                    formaliteGuichetUnique.getId());
+                        }
                     }
                 }
 
@@ -264,6 +277,15 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 formaliteGuichetUniqueOrigin.setFormalite(null);
                             formaliteGuichetUniqueService
                                     .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUniqueOrigin);
+
+                            if (formalite.getFormaliteStatus().getIsCloseState()) {
+                                if (formaliteGuichetUniqueStatusService
+                                        .getFormaliteGuichetUniqueStatus(
+                                                formaliteGuichetUniqueOrigin.getStatus().getCode())
+                                        .getIsCloseState() == false)
+                                    throw new OsirisClientMessageException(
+                                            "Impossible de terminer la formalité, le dossier GU n'est pas terminé");
+                            }
                         }
                 }
 

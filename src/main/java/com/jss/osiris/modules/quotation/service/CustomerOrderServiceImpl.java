@@ -37,6 +37,8 @@ import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.PrintDelegate;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -44,7 +46,6 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
@@ -88,9 +89,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     CustomerOrderRepository customerOrderRepository;
-
-    @Autowired
-    IndexEntityService indexEntityService;
 
     @Autowired
     PhoneService phoneService;
@@ -166,6 +164,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     InvoiceItemService invoiceItemService;
+
+    @Autowired
+    BatchService batchService;
 
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
@@ -245,7 +246,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (checkAllProvisionEnded)
             checkAllProvisionEnded(customerOrder);
 
-        indexEntityService.indexEntity(customerOrder);
+        batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
         return customerOrder;
     }
 
@@ -567,7 +568,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeInvoice(),
                     "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                    false, "Facture n°" + invoice.getId(), null);
+                    false, "Facture n°" + invoice.getId(), null, null, null);
 
             for (Attachment attachment : attachments)
                 if (attachment.getDescription().contains(invoice.getId() + "")) {
@@ -646,11 +647,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexCustomerOrder() {
+    public void reindexCustomerOrder() throws OsirisException {
         List<CustomerOrder> customerOrders = IterableUtils.toList(customerOrderRepository.findAll());
         if (customerOrders != null)
             for (CustomerOrder customerOrder : customerOrders)
-                indexEntityService.indexEntity(customerOrder);
+                batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
     }
 
     @Override
@@ -897,32 +898,40 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional
-    public void sendRemindersForCustomerOrderDeposit()
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+    public void sendRemindersForCustomerOrderDeposit() throws OsirisException {
         List<CustomerOrder> customerOrders = customerOrderRepository.findCustomerOrderForReminder(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT));
 
         if (customerOrders != null && customerOrders.size() > 0)
             for (CustomerOrder customerOrder : customerOrders) {
-                boolean toSend = false;
-                if (customerOrder.getFirstReminderDateTime() == null
-                        && customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
-                    toSend = true;
-                    customerOrder.setFirstReminderDateTime(LocalDateTime.now());
-                } else if (customerOrder.getSecondReminderDateTime() == null
-                        && customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(3 * 7))) {
-                    toSend = true;
-                    customerOrder.setSecondReminderDateTime(LocalDateTime.now());
-                } else if (customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(6 * 7))) {
-                    toSend = true;
-                    customerOrder.setThirdReminderDateTime(LocalDateTime.now());
-                }
-
-                if (toSend) {
-                    mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, false, true);
-                    addOrUpdateCustomerOrder(customerOrder, false, true);
-                }
+                batchService.declareNewBatch(Batch.SEND_REMINDER_FOR_CUSTOMER_ORDER_DEPOSITS, customerOrder.getId());
             }
+    }
+
+    @Override
+    @Transactional
+    public void sendReminderForCustomerOrderDeposit(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+        if (customerOrder != null) {
+            boolean toSend = false;
+            if (customerOrder.getFirstReminderDateTime() == null
+                    && customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                toSend = true;
+                customerOrder.setFirstReminderDateTime(LocalDateTime.now());
+            } else if (customerOrder.getSecondReminderDateTime() == null
+                    && customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(3 * 7))) {
+                toSend = true;
+                customerOrder.setSecondReminderDateTime(LocalDateTime.now());
+            } else if (customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(6 * 7))) {
+                toSend = true;
+                customerOrder.setThirdReminderDateTime(LocalDateTime.now());
+            }
+
+            if (toSend) {
+                mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, false, true);
+                addOrUpdateCustomerOrder(customerOrder, false, true);
+            }
+        }
     }
 
     @Override

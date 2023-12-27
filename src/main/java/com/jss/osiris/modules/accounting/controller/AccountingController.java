@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
-import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
@@ -207,15 +206,6 @@ public class AccountingController {
     public ResponseEntity<List<AccountingAccount>> getAccountingAccountByLabel(@RequestParam String label) {
         return new ResponseEntity<List<AccountingAccount>>(
                 accountingAccountService.getAccountingAccountByLabelOrCode(label), HttpStatus.OK);
-    }
-
-    // TODO delete
-    @GetMapping(inputEntryPoint + "/billing-closure-receipt/trigger")
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-    public ResponseEntity<Boolean> triggerBillingClosureReceipt()
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        accountingRecordService.sendBillingClosureReceipt();
-        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)

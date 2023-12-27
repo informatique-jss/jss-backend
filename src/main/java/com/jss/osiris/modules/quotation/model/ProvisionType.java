@@ -50,6 +50,9 @@ public class ProvisionType implements Serializable, IId {
 	@JoinColumn(name = "id_provision_screen_type")
 	private ProvisionScreenType provisionScreenType;
 
+	private Boolean isDisplayActeDepositScreen;
+	private Boolean isDisplayAnnualAccountScreen;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_assignation_type")
 	private AssignationType assignationType;
@@ -143,6 +146,22 @@ public class ProvisionType implements Serializable, IId {
 	public void setDefaultCompetentAuthorityServiceProvider(
 			CompetentAuthority defaultCompetentAuthorityServiceProvider) {
 		this.defaultCompetentAuthorityServiceProvider = defaultCompetentAuthorityServiceProvider;
+	}
+
+	public Boolean getIsDisplayActeDepositScreen() {
+		return isDisplayActeDepositScreen;
+	}
+
+	public void setIsDisplayActeDepositScreen(Boolean isDisplayActeDepositScreen) {
+		this.isDisplayActeDepositScreen = isDisplayActeDepositScreen;
+	}
+
+	public Boolean getIsDisplayAnnualAccountScreen() {
+		return isDisplayAnnualAccountScreen;
+	}
+
+	public void setIsDisplayAnnualAccountScreen(Boolean isDisplayAnnualAccountScreen) {
+		this.isDisplayAnnualAccountScreen = isDisplayAnnualAccountScreen;
 	}
 
 }

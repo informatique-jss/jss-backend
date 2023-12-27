@@ -463,6 +463,9 @@ public class GeneratePdfDelegate {
         if (invoicePayment.size() > 0)
             ctx.setVariable("payments", invoicePayment);
 
+        if (invoice.getCustomerOrder() != null && invoice.getCustomerOrder().getRefunds() != null)
+            ctx.setVariable("refunds", invoice.getCustomerOrder().getRefunds());
+
         if (remainingToPay != null && remainingToPay > 0
                 && remainingToPay > Float.parseFloat(payementLimitRefundInEuros))
             ctx.setVariable("remainingToPay", remainingToPay);

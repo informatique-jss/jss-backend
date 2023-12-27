@@ -1,14 +1,3 @@
-<ng-template #accordionTools>
-  <mat-panel-description>
-    <mat-icon color="accent" matTooltip="Ouvrir tous les onglets"
-      (click)="accordion!.openAll();$event.stopPropagation();" class="pointer">
-      unfold_more_double</mat-icon>
-    <mat-icon color="accent" matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();"
-      class="pointer">
-      unfold_less_double</mat-icon>
-  </mat-panel-description>
-</ng-template>
-
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #sidenav mode="side" position="end" [fixedInViewport]="true" class="sidenav-facture">
     <div class="scrollable-table">
@@ -142,7 +131,7 @@
                               (auxclick)="displayAffaire($event, asso.affaire);$event.stopPropagation();"
                               class="pointer">
                               edit</mat-icon>
-                            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+                            <ng-template></ng-template>
                           </mat-panel-description>
                         </mat-expansion-panel-header>
                         <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
@@ -168,7 +157,7 @@
                           <avatar-chip *ngIf="asso.assignedTo" [employee]="provision.assignedTo"
                             (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
                           </avatar-chip>
-                          <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+                          <ng-template></ng-template>
                           <mat-panel-description>
                             <mat-icon color="accent"
                               *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.id && !editMode"

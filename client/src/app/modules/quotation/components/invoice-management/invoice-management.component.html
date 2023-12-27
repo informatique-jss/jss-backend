@@ -168,8 +168,8 @@
       </td>
     </tr>
     <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()==undefined">
-      <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let deposit of quotation.payments">
-        <ng-container *ngIf="!deposit.isCancelled">
+      <ng-container *ngFor="let deposit of quotation.payments">
+        <tr class="mat-mdc-row mdc-data-table__row " *ngIf="!deposit.isCancelled">
           <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="deposit.label">
             <button matTooltip="Actions" mat-button color="accent" [matMenuTriggerFor]="menu">
               <mat-icon>more_vert</mat-icon>
@@ -189,9 +189,17 @@
             N°{{deposit.id}} du {{formatDate(deposit.paymentDate)}} - {{deposit.label}}
           </td>
           <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-            - {{deposit.paymentAmount|number}} €
-          </td> 
-        </ng-container> 
+            - {{deposit.paymentAmount|number}} € 
+          </td>
+        </tr>
+      </ng-container>
+      <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let refund of quotation.refunds">
+        <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="refund.label">
+          Remboursement n°{{refund.id}} - {{refund.label}}
+        </td>
+        <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+          - {{refund.refundAmount|number}} €
+        </td> 
       </tr>
     </ng-container>
     <tr class="mat-mdc-row mdc-data-table__row ">

@@ -10,8 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -33,10 +34,10 @@ public class ResponsableServiceImpl implements ResponsableService {
     InvoiceService invoiceService;
 
     @Autowired
-    IndexEntityService indexEntityService;
+    ConstantService constantService;
 
     @Autowired
-    ConstantService constantService;
+    BatchService batchService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -62,11 +63,11 @@ public class ResponsableServiceImpl implements ResponsableService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexResponsable() {
+    public void reindexResponsable() throws OsirisException {
         List<Responsable> responsables = IterableUtils.toList(responsableRepository.findAll());
         if (responsables != null)
             for (Responsable responsable : responsables)
-                indexEntityService.indexEntity(responsable);
+                batchService.declareNewBatch(Batch.REINDEX_RESPONSABLE, responsable.getId());
     }
 
     @Override

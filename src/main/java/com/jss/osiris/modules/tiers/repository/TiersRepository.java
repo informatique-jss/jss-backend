@@ -33,7 +33,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         " left join payment d1 on d1.id_customer_order = c1.id and d1.is_cancelled = false " +
                         " left join payment d2 on d2.id_customer_order = c2.id and d2.is_cancelled = false  " +
                         " where t.id_tiers_type = :tiersTypeClientId " +
-                        " and coalesce(i1.id, i2.id, d1.id, d2.id) is not null and coalesce(is_receip_sent,false)=false limit 50  ")
+                        " and coalesce(i1.id, i2.id, d1.id, d2.id) is not null and coalesce(is_receip_sent,false)=false   ")
         List<Tiers> findAllTiersForBillingClosureReceiptSend(@Param("invoiceStatusSendId") Integer invoiceStatusSendId,
                         @Param("tiersTypeClientId") Integer tiersTypeClientId);
 
@@ -85,6 +85,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          sum(nbr_for.announcementJssNbr) as announcementConfrereNbr, " +
                         "          sum(nbr_for.announcementJssNbr) as announcementNbr, " +
                         "          sum(nbr_for.announcementJssNbr) as formalityNbr, " +
+                        "          concat(e2.firstname,' ',e2.lastname) as formalisteLabel, " +
+                        "          e2.id as formalisteId, " +
                         "          blt.label as billingLabelType, " +
                         "          sum( (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutTax, "
                         +
@@ -97,15 +99,15 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "  from " +
                         "          tiers t " +
                         "  left join tiers_category tc on " +
-                        "          tc.id = t.id_tiers_category " +
+                        "          tc.id = t.id_tiers_category  left join employee e2.id = t.id_formaliste   " +
                         "  left join responsable r on " +
                         "          r.id_tiers = t.id " +
                         "  left join employee e1 on " +
                         "          e1.id = t.id_commercial " +
                         "  left join customer_order co1 on " +
                         "          co1.id_tiers= t.id " +
-                        "  left join customer_order co2 on " +
-                        "          co2.id_responsable = r.id   co2.created_date>=:startDate and co2.created_date<=:endDate  "
+                        "  left join customer_order co2 on " + 
+                        "          co2.id_responsable = r.id and  co2.created_date>=:startDate and co2.created_date<=:endDate  " 
                         +
                         "  left join audit a1 on " +
                         "          a1.field_name = 'id' " +

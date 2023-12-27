@@ -18,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.PdfTools;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -125,6 +128,12 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     CustomerOrderStatusService customerOrderStatusService;
 
+    @Autowired
+    BatchService batchService;
+
+    @Autowired
+    PdfTools pdfTools;
+
     @Override
     public List<Attachment> getAttachments() {
         return IterableUtils.toList(attachmentRepository.findAll());
@@ -141,12 +150,12 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String entityType,
-            AttachmentType attachmentType,
-            String filename, Boolean replaceExistingAttachementType)
+            AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType, Integer fromPage,
+            Integer toPage)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         try {
             return addAttachment(file.getInputStream(), idEntity, entityType, attachmentType, filename,
-                    replaceExistingAttachementType, filename, null);
+                    replaceExistingAttachementType, filename, null, fromPage, toPage);
         } catch (IOException e) {
             throw new OsirisException(e, "Error when reading file");
         }
@@ -154,8 +163,8 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     public List<Attachment> addAttachment(InputStream file, Integer idEntity, String entityType,
-            AttachmentType attachmentType,
-            String filename, Boolean replaceExistingAttachementType, String description, PiecesJointe piecesJointe)
+            AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType, String description,
+            PiecesJointe piecesJointe, Integer fromPage, Integer toPage)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         if (entityType.equals("Ofx"))
@@ -164,6 +173,12 @@ public class AttachmentServiceImpl implements AttachmentService {
                 return this.paymentService.uploadOfxFile(file);
             else
                 return null;
+
+        if (filename.toLowerCase().endsWith(".pdf")) {
+            if (fromPage != null && toPage != null)
+                file = pdfTools.keepPages(file, fromPage, toPage);
+            file = pdfTools.optimizePdf(file);
+        }
 
         String absoluteFilePath = storageFileService.saveFile(file, filename,
                 entityType + File.separator + idEntity);
@@ -255,6 +270,24 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachment.setCustomerMail(mail);
         }
         addOrUpdateAttachment(attachment);
+        attachment = getAttachment(attachment.getId());
+
+        // Batchs
+        if (entityType.equals(CompetentAuthority.class.getSimpleName()) && attachment.getAttachmentType().getId()
+                .equals(constantService.getAttachmentTypeBillingClosure().getId())) {
+            batchService.declareNewBatch(Batch.DO_OCR_ON_RECEIPT, attachment.getId());
+        } else if (entityType.equals(Provision.class.getSimpleName())
+                && (attachment.getDescription() == null || attachment.getDescription().toLowerCase().endsWith(".pdf"))
+                && attachment.getAttachmentType().getId()
+                        .equals(constantService.getAttachmentTypeProviderInvoice().getId())) {
+            if (attachment.getProvision() != null && attachment.getProvision().getAssoAffaireOrder() != null
+                    && attachment.getProvision().getAssoAffaireOrder().getCustomerOrder() != null) {
+                CustomerOrder customerOrder = attachment.getProvision().getAssoAffaireOrder().getCustomerOrder();
+                if (!customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)
+                        && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED))
+                    batchService.declareNewBatch(Batch.DO_OCR_ON_INVOICE, attachment.getId());
+            }
+        }
 
         return getAttachmentForEntityType(entityType, idEntity);
     }
@@ -346,21 +379,5 @@ public class AttachmentServiceImpl implements AttachmentService {
         newAttachment.setTiers(attachment.getTiers());
         newAttachment.setUploadedFile(attachment.getUploadedFile());
         return newAttachment;
-    }
-
-    @Override
-    public List<Attachment> getInvoiceAttachmentOnProvisionToAnalyse() throws OsirisException {
-        return attachmentRepository
-                .findInvoiceAttachmentOnProvisionToAnalyse(constantService.getAttachmentTypeProviderInvoice().getId(),
-                        Arrays.asList(
-                                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED),
-                                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BILLED)));
-    }
-
-    @Override
-    public List<Attachment> getReceiptAttachmentOnCompetentAuthorityToAnalyse() throws OsirisException {
-        return attachmentRepository
-                .findReceiptAttachmentOnCompetentAuthorityToAnalyse(
-                        constantService.getAttachmentTypeBillingClosure().getId());
     }
 }

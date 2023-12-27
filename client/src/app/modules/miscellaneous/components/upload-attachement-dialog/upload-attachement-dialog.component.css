@@ -47,3 +47,7 @@
 .max-size {
   padding-top: 20px
 }
+
+.list-div {
+  display: flex;
+}
