@@ -43,6 +43,10 @@
                 <select-payment-types [(model)]="selectedPayment.paymentType" label="Type" [form]="paymentForm"
                   propertyName="paymentType" [isMandatory]="false" [isDisabled]="true"></select-payment-types>
               </td>
+              <td *ngIf="selectedPayment.paymentType && selectedPayment.paymentType.id == paymentTypeCheck.id">
+                <generic-input [(model)]="selectedPayment.checkNumber" label="N° de chèque" [form]="paymentForm"
+                  propertyName="checkNumber" [isMandatory]="false" [isDisabled]="true"></generic-input>
+              </td>
               <td>
                 <generic-input [(model)]="selectedPayment.paymentAmount" label="Montant" [form]="paymentForm"
                   propertyName="paymentAmount" [isMandatory]="false" [isDisabled]="true" type="number"></generic-input>

@@ -292,7 +292,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                 Provision.class.getSimpleName(),
                                 constantService.getAttachmentTypePublicationReceipt(),
                                 "Publication_receipt_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                false, "Attestation de parution n°" + announcement.getId(), null, null, null));
+                                false, "Attestation de parution n°" + announcement.getId(), null, null));
             } catch (FileNotFoundException e) {
                 throw new OsirisException(e, "Impossible to read invoice PDF temp file");
             } finally {
@@ -351,7 +351,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                 Provision.class.getSimpleName(),
                                 constantService.getAttachmentTypePublicationFlag(),
                                 "Publication_flag_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                false, "Témoin de publication n°" + announcement.getId(), null, null, null));
+                                false, "Témoin de publication n°" + announcement.getId(), null, null));
             } catch (FileNotFoundException e) {
                 throw new OsirisException(e, "Impossible to read invoice PDF temp file");
             } finally {
@@ -425,7 +425,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                 Provision.class.getSimpleName(),
                                 constantService.getAttachmentTypeProofReading(),
                                 "Proof_reading_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                false, "Bon à tirer n°" + announcement.getId(), null, null, null));
+                                false, "Bon à tirer n°" + announcement.getId(), null, null));
             } catch (FileNotFoundException e) {
                 throw new OsirisException(e, "Impossible to read invoice PDF temp file");
             } finally {
@@ -476,7 +476,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                     "announcement_" + announcement.getId()
                                             + DateTimeFormatter.ofPattern("yyyyMMdd HHmm").format(LocalDateTime.now())
                                             + ".docx",
-                                    false, "Annonce n°" + announcement.getId(), null, null, null));
+                                    false, "Annonce n°" + announcement.getId(), null, null));
                 } catch (FileNotFoundException e) {
                     throw new OsirisException(e, "Impossible to read announcement Word temp file");
                 } finally {

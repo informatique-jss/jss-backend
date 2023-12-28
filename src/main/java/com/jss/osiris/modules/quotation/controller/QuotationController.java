@@ -102,6 +102,7 @@ import com.jss.osiris.modules.quotation.model.RecordType;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.guichetUnique.ValidationRequest;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementNoticeTemplateService;
@@ -1178,7 +1179,7 @@ public class QuotationController {
     if (provisionType.getId() != null)
       validationHelper.validateReferential(provisionType, true, "provisionType");
     validationHelper.validateString(provisionType.getCode(), true, 20, "Code");
-    validationHelper.validateString(provisionType.getLabel(), true, 100, "Label");
+    validationHelper.validateString(provisionType.getLabel(), true, 255, "Label");
     validationHelper.validateReferential(provisionType.getProvisionScreenType(), true, "ProvisionScreenType");
     validationHelper.validateReferential(provisionType.getAssignationType(), true, "AssignationType");
     validationHelper.validateReferential(provisionType.getDefaultCompetentAuthorityServiceProvider(), false,
@@ -1934,6 +1935,14 @@ public class QuotationController {
 
       if (formalites == null || formalites.size() == 0)
         formalites = guichetUniqueDelegateService.getAllFormalitiesByRefenceMandataire(value);
+
+      // Put empty partner center when id is set to null
+      if (formalites != null && formalites.size() > 0)
+        for (FormaliteGuichetUnique formalite : formalites)
+          if (formalite.getValidationsRequests() != null && formalite.getValidationsRequests().size() > 0)
+            for (ValidationRequest validationRequest : formalite.getValidationsRequests())
+              if (validationRequest.getPartnerCenter() != null && validationRequest.getPartner().getId() == null)
+                validationRequest.setPartnerCenter(null);
     }
 
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);

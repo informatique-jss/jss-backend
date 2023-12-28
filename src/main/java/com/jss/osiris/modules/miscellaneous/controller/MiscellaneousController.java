@@ -682,7 +682,7 @@ public class MiscellaneousController {
         if (billingType.getId() != null)
             validationHelper.validateReferential(billingType, true, "billingType");
         validationHelper.validateString(billingType.getCode(), true, 20, "code");
-        validationHelper.validateString(billingType.getLabel(), true, 100, "label");
+        validationHelper.validateString(billingType.getLabel(), true, 255, "label");
         validationHelper.validateReferential(billingType.getVat(), billingType.getIsOverrideVat(), "Vat");
 
         if (billingType.getIsUsedForFormaliteRff() == null)
@@ -1038,7 +1038,7 @@ public class MiscellaneousController {
             @RequestParam Integer idEntity, @RequestParam String entityType,
             @RequestParam Integer idAttachmentType,
             @RequestParam String filename, @RequestParam Boolean replaceExistingAttachementType,
-            @RequestParam Integer fromPage, @RequestParam Integer toPage)
+            @RequestParam(name = "pageSelection", required = false) String pageSelection)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         if (idAttachmentType == null)
             throw new OsirisValidationException("idAttachmentType");
@@ -1071,7 +1071,7 @@ public class MiscellaneousController {
 
         return new ResponseEntity<List<Attachment>>(
                 attachmentService.addAttachment(file, idEntity, entityType, attachmentType, filename,
-                        replaceExistingAttachementType, fromPage, toPage),
+                        replaceExistingAttachementType, pageSelection),
                 HttpStatus.OK);
     }
 

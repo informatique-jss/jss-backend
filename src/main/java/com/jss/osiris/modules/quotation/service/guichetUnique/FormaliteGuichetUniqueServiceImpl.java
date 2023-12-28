@@ -392,7 +392,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     attachmentService.addAttachment(new FileInputStream(file), provision.getId(),
                             Provision.class.getSimpleName(),
                             typeDocument.getAttachmentType(), piecesJointe.getNomDocument(), false,
-                            piecesJointe.getNomDocument(), piecesJointe, null, null);
+                            piecesJointe.getNomDocument(), piecesJointe, null);
                     file.delete();
                 } catch (FileNotFoundException e) {
                     throw new OsirisException(e, "erreur when reading file");

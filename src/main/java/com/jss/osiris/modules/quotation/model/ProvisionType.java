@@ -30,7 +30,7 @@ public class ProvisionType implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "provision_type_sequence")
 	private Integer id;
 
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false, length = 255)
 	@IndexedField
 	private String label;
 

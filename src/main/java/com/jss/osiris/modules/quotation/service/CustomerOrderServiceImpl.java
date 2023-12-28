@@ -209,9 +209,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrder.setIsGifted(false);
 
         customerOrder.setIsQuotation(false);
- 
+
         findDuplicatesForCustomerOrder(customerOrder);
- 
+
         if (customerOrder.getDocuments() != null)
             for (Document document : customerOrder.getDocuments()) {
                 mailService.populateMailIds(document.getMailsAffaire());
@@ -568,7 +568,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeInvoice(),
                     "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                    false, "Facture n°" + invoice.getId(), null, null, null);
+                    false, "Facture n°" + invoice.getId(), null, null);
 
             for (Attachment attachment : attachments)
                 if (attachment.getDescription().contains(invoice.getId() + "")) {

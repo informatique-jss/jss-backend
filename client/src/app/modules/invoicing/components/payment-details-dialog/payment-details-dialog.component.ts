@@ -6,6 +6,7 @@ import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree'
 import { AccountingRecordSearch } from 'src/app/modules/accounting/model/AccountingRecordSearch';
 import { CompetentAuthority } from 'src/app/modules/miscellaneous/model/CompetentAuthority';
 import { Provider } from 'src/app/modules/miscellaneous/model/Provider';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { BankTransfert } from 'src/app/modules/quotation/model/BankTransfert';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
@@ -32,13 +33,16 @@ export class PaymentDetailsDialogComponent implements OnInit, AfterContentChecke
     private paymentService: PaymentService,
     private formBuilder: FormBuilder,
     private changeDetectorRef: ChangeDetectorRef,
-    private bankTransfertService: BankTransfertService
+    private bankTransfertService: BankTransfertService,
+    private constantService: ConstantService
   ) { }
 
   @ViewChild('tree') tree: any;
   @Input() payment: Payment | undefined;
   selectedPayment: Payment | undefined;
   paymentForm = this.formBuilder.group({});
+
+  paymentTypeCheck = this.constantService.getPaymentTypeCheques();
 
   currentCustomerOrder: CustomerOrder | undefined;
   currentInvoice: Invoice | undefined;
@@ -243,7 +247,7 @@ export class PaymentDetailsDialogComponent implements OnInit, AfterContentChecke
 
   selectPayment(node: PaymentTreeNode, payment: Payment) {
     if (payment)
-      if (node.name.indexOf(this.getNodeName(payment, node.level == 0)) >= 0) {
+      if (node.name.indexOf(this.getNodeName(payment, node.level == 0 || !payment.childrenPayments || payment.childrenPayments.length == 0)) >= 0) {
         this.setSelectedPayment(payment);
         return;
       }
