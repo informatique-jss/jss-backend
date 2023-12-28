@@ -11,6 +11,10 @@ export class HabilitationsService {
   ) {
   }
 
+  isAdministrator() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
   canDisplayExtendentMonitoring() {
     return this.loginService.hasGroup([ADMINISTRATEURS])
   }

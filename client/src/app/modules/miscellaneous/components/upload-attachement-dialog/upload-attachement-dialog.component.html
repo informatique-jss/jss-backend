@@ -11,7 +11,7 @@
     <select-attachment-type *ngIf="file!=null" [(model)]="attachmentType" label="Type de fichier"
       [form]="attachmentForm" propertyName="attachmentType" [isMandatory]="true"
       [isDisabled]="forcedAttachmentType!=undefined"></select-attachment-type>
-    <table>
+    <table class="full-width">
       <tr>
         <td>
           <generic-input *ngIf="file!=null" [(model)]="filename" label="Nom du fichier" [form]="attachmentForm"
@@ -19,13 +19,9 @@
         </td>
         <td>
           <generic-input *ngIf="file!=null && filename &&  filename.toLowerCase().substring(filename.length-3)=='pdf'"
-            [(model)]="fromPage" label="Commencer à la page" [form]="attachmentForm" propertyName="fromPage"
-            [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
-        </td>
-        <td>
-          <generic-input *ngIf="file!=null && filename &&  filename.toLowerCase().substring(filename.length-3)=='pdf'"
-            [(model)]="toPage" label="Terminer à la page" [form]="attachmentForm" propertyName="toPage"
-            [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+            [(model)]="pageSelection" label="Plage de page" [form]="attachmentForm" propertyName="pageSelection"
+            [isMandatory]="false" [isDisabled]="false"
+            hint="Plage de pages au format 1-3,4-6 (seulement pour les fichiers non signés)"></generic-input>
         </td>
       </tr>
     </table>

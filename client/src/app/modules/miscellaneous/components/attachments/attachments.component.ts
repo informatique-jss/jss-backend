@@ -101,6 +101,7 @@ export class AttachmentsComponent implements OnInit {
 
   uploadFile() {
     this.uploadAttachementDialogRef = this.uploadAttachementDialog.open(UploadAttachementDialogComponent, {
+      width: '50%'
     });
     this.uploadAttachementDialogRef.componentInstance.entity = this.entity;
     this.uploadAttachementDialogRef.componentInstance.entityType = this.entityType;

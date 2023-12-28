@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.quotation.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,8 +18,11 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
+import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
@@ -123,6 +127,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     FormaliteGuichetUniqueStatusService formaliteGuichetUniqueStatusService;
+
+    @Autowired
+    PaymentService paymentService;
 
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
@@ -264,7 +271,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 if (formalite.getId() != null) {
                     Formalite originalFormalite = formaliteService.getFormalite(formalite.getId());
-                    if (originalFormalite != null && originalFormalite.getFormalitesGuichetUnique() != null)
+                    if (originalFormalite != null && originalFormalite.getFormalitesGuichetUnique() != null
+                            && originalFormalite.getFormalitesGuichetUnique().size() > 0) {
                         for (FormaliteGuichetUnique formaliteGuichetUniqueOrigin : originalFormalite
                                 .getFormalitesGuichetUnique()) {
                             Boolean found = false;
@@ -287,6 +295,14 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                             "Impossible de terminer la formalité, le dossier GU n'est pas terminé");
                             }
                         }
+                    }
+                    if (formalite.getFormalitesGuichetUnique() != null
+                            && formalite.getFormalitesGuichetUnique().size() > 0)
+                        for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique()) {
+                            formaliteGuichetUnique.setFormalite(formalite);
+                            formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+                        }
+
                 }
 
                 if (formalite.getActeDeposit() != null && formalite.getActeDeposit().getId() == null) {
@@ -406,6 +422,32 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 if (customerOrder.getId() == null || simpleProvision.getSimpleProvisionStatus() == null)
                     simpleProvision.setSimpleProvisionStatus(simpleProvisionStatusService
                             .getSimpleProvisionStatusByCode(SimpleProvisionStatus.SIMPLE_PROVISION_NEW));
+            }
+
+            // Auto associate payment and provider invoice if only one match is found
+            if (customerOrder instanceof CustomerOrder && provision.getPayments() != null
+                    && provision.getPayments().size() > 0 && provision.getProviderInvoices() != null
+                    && provision.getProviderInvoices().size() > 0) {
+                outerloop: for (Payment payment : provision.getPayments()) {
+                    Invoice invoiceFound = null;
+                    if (payment.getIsCancelled() == false) {
+                        for (Invoice invoice : provision.getProviderInvoices()) {
+                            if (invoice.getInvoiceStatus().getId()
+                                    .equals(constantService.getInvoiceStatusReceived().getId())) {
+                                if (Math.round(
+                                        invoice.getTotalPrice()
+                                                * 100f) == (Math.round(-payment.getPaymentAmount() * 100f))) {
+                                    if (invoiceFound != null)
+                                        continue outerloop;
+                                    invoiceFound = invoice;
+                                }
+                            }
+                        }
+                        if (invoiceFound != null)
+                            paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment,
+                                    Arrays.asList(invoiceFound), null, null, null, null, null, null);
+                    }
+                }
             }
 
             // Set proper assignation regarding provision item configuration

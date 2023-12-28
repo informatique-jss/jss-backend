@@ -72,19 +72,25 @@ export class ProvisionPaymentComponent implements OnInit {
     } as SortTableAction);
 
     this.paymentsDisplayedColumns = [];
-    this.paymentsDisplayedColumns.push({ id: "id", fieldName: "id", label: "N°", actionFunction: (element: any) => this.paymentDetailsDialogService.displayPaymentDetailsDialog(element), actionIcon: "visibility", actionTooltip: "Voir le détail du paiement" } as SortTableColumn);
+    this.paymentsDisplayedColumns.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn);
     this.paymentsDisplayedColumns.push({ id: "paymentDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.paymentsDisplayedColumns.push({ id: "paymentAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.paymentAmount) } } as SortTableColumn);
     this.paymentsDisplayedColumns.push({ id: "paymentTypeLabel", fieldName: "paymentType.label", label: "Type" } as SortTableColumn);
     this.paymentsDisplayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
     this.paymentsDisplayedColumns.push({ id: "checkNumber", fieldName: "checkNumber", label: "Numéro de chèque" } as SortTableColumn);
-    this.paymentsDisplayedColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Est annulé ?" } as SortTableColumn);
+    if (this.habilitationsService.isAdministrator())
+      this.paymentsDisplayedColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Est annulé ?" } as SortTableColumn);
     this.paymentsDisplayedColumns.push({ id: "invoice", fieldName: "invoice.manualAccountingDocumentNumber", label: "Facture associée" } as SortTableColumn);
 
     this.paymentsTableActions.push({
       actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (action: SortTableAction, element: any) => {
         if ((!element.invoice && !element.isCancelled))
           this.openAssociationDialog(element);
+      }, display: true,
+    } as SortTableAction);
+    this.paymentsTableActions.push({
+      actionIcon: "visibility", actionName: "Voir le détail du paiement", actionClick: (action: SortTableAction, element: any) => {
+        this.paymentDetailsDialogService.displayPaymentDetailsDialog(element)
       }, display: true,
     } as SortTableAction);
   }

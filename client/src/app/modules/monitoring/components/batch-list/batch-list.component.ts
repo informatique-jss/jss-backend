@@ -32,6 +32,9 @@ export class BatchListComponent implements OnInit {
   batchSearchForm = this.formBuilder.group({});
 
   ngOnInit() {
+
+    this.batchStatusService.getBatchStatus().subscribe(response => this.batchStatus = response);
+
     this.batchDetailsColomns = [];
     this.batchDetailsColomns.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn);
     this.batchDetailsColomns.push({ id: "batchSettings", fieldName: "batchSettings.label", label: "Batch" } as SortTableColumn);

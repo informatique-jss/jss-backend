@@ -150,12 +150,12 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String entityType,
-            AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType, Integer fromPage,
-            Integer toPage)
+            AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType,
+            String pageSelection)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         try {
             return addAttachment(file.getInputStream(), idEntity, entityType, attachmentType, filename,
-                    replaceExistingAttachementType, filename, null, fromPage, toPage);
+                    replaceExistingAttachementType, filename, null, pageSelection);
         } catch (IOException e) {
             throw new OsirisException(e, "Error when reading file");
         }
@@ -164,7 +164,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     public List<Attachment> addAttachment(InputStream file, Integer idEntity, String entityType,
             AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType, String description,
-            PiecesJointe piecesJointe, Integer fromPage, Integer toPage)
+            PiecesJointe piecesJointe, String pageSelection)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         if (entityType.equals("Ofx"))
@@ -175,8 +175,8 @@ public class AttachmentServiceImpl implements AttachmentService {
                 return null;
 
         if (filename.toLowerCase().endsWith(".pdf")) {
-            if (fromPage != null && toPage != null)
-                file = pdfTools.keepPages(file, fromPage, toPage);
+            if (pageSelection != null && !pageSelection.equals("") && !pageSelection.equals("null"))
+                file = pdfTools.keepPages(file, pageSelection);
             file = pdfTools.optimizePdf(file);
         }
 

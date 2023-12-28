@@ -22,7 +22,7 @@ public class BillingType implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "billing_type_sequence")
 	private Integer id;
 
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false, length = 255)
 	private String label;
 
 	@Column(nullable = false, length = 20)

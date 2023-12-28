@@ -99,7 +99,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "  from " +
                         "          tiers t " +
                         "  left join tiers_category tc on " +
-                        "          tc.id = t.id_tiers_category  left join employee e2.id = t.id_formaliste   " +
+                        "          tc.id = t.id_tiers_category  left join employee e2 on e2.id = t.id_formaliste   " +
                         "  left join responsable r on " +
                         "          r.id_tiers = t.id " +
                         "  left join employee e1 on " +
@@ -144,7 +144,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         " 	tc.label, " +
                         " 	coalesce(concat(e1.firstname, " +
                         " 	' ', " +
-                        " 	e1.lastname))," +
+                        " 	e1.lastname)), concat(e2.firstname,' ',e2.lastname),e2.id," +
                         " 	 e1.id, " +
                         " 	blt.label ,t.id " +
                         "")

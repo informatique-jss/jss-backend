@@ -15,14 +15,13 @@ export class UploadAttachmentService extends AppRestService<IAttachment>{
     super(http, "miscellaneous");
   }
 
-  uploadAttachment(file: File, entity: IAttachment, entityType: string, attachmentType: AttachmentType, filename: string, replaceExistingAttachementType: boolean, fromPage: number | null, toPage: number | null): Observable<HttpEvent<any>> {
+  uploadAttachment(file: File, entity: IAttachment, entityType: string, attachmentType: AttachmentType, filename: string, replaceExistingAttachementType: boolean, pageSelection: string | null): Observable<HttpEvent<any>> {
     let formData = new FormData();
     formData.append("idEntity", entity.id + "");
     formData.append("entityType", entityType);
     formData.append("idAttachmentType", attachmentType.id + "");
     formData.append("filename", filename);
-    formData.append("fromPage", fromPage + "");
-    formData.append("toPage", toPage + "");
+    formData.append("pageSelection", pageSelection + "");
     formData.append("replaceExistingAttachementType", replaceExistingAttachementType ? "true" : "false");
     return this.uploadPost('attachment/upload', file, formData);
   }

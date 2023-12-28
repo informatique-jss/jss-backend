@@ -2,7 +2,6 @@ package com.jss.osiris.modules.quotation.model;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -48,7 +47,7 @@ public class Formalite implements IId {
     @JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
     private CompetentAuthority competentAuthorityServiceProvider;
 
-    @OneToMany(mappedBy = "formalite", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "formalite")
     @JsonIgnoreProperties(value = { "content" })
     private List<FormaliteGuichetUnique> formalitesGuichetUnique;
 

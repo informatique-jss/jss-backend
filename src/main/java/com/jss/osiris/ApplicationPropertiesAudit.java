@@ -77,6 +77,8 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("guichet.unique.entry.point");
         isOk = isOk && checkProperty("guichet.unique.login");
         isOk = isOk && checkProperty("guichet.unique.password");
+        isOk = isOk && checkProperty("guichet.unique.rne.login");
+        isOk = isOk && checkProperty("guichet.unique.rne.password");
         isOk = isOk && checkProperty("guichet.unique.signature.path.jar");
         isOk = isOk && checkProperty("guichet.unique.signature.path.configuration");
         isOk = isOk && checkProperty("guichet.unique.signature.path.input");

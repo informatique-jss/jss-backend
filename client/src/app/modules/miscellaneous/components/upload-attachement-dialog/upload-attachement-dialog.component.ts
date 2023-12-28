@@ -18,7 +18,7 @@ export class UploadAttachementDialogComponent implements OnInit {
 
   entity: IAttachment = {} as IAttachment;
   entityType: string = "";
-  fromPage: number | null = null;
+  pageSelection: string | null = null;
   toPage: number | null = null;
   file: any = null;
   progress: number = 0;
@@ -106,7 +106,7 @@ export class UploadAttachementDialogComponent implements OnInit {
 
       if (this.attachmentType != null && !found) {
         this.isSending = true;
-        this.uploadAttachmentService.uploadAttachment(this.file, this.entity, this.entityType, this.attachmentType, this.filename, this.replaceExistingAttachementType, this.fromPage, this.toPage).subscribe(event => {
+        this.uploadAttachmentService.uploadAttachment(this.file, this.entity, this.entityType, this.attachmentType, this.filename, this.replaceExistingAttachementType, this.pageSelection).subscribe(event => {
           if (event.type === HttpEventType.UploadProgress && event.total != undefined) {
             this.progress = Math.round(100 * event.loaded / event.total);
           } else if (event instanceof HttpResponse) {

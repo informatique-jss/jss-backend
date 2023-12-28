@@ -32,10 +32,10 @@ public class RneDelegateServiceImpl implements RneDelegateService {
     @Value("${guichet.unique.rne.entry.point}")
     private String rneEntryPoint;
 
-    @Value("${guichet.unique.password}")
+    @Value("${guichet.unique.rne.password}")
     private String rneUniquePassword;
 
-    @Value("${guichet.unique.login}")
+    @Value("${guichet.unique.rne.login}")
     private String rneLogin;
 
     private String loginRequestUrl = "/login";
