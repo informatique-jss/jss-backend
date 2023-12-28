@@ -425,7 +425,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             }
 
             // Auto associate payment and provider invoice if only one match is found
-            if (customerOrder instanceof CustomerOrder && provision.getPayments() != null
+            if (customerOrder instanceof CustomerOrder
+                    && ((CustomerOrder) customerOrder).getCustomerOrderStatus().getCode()
+                            .equals(CustomerOrderStatus.BILLED)
+                    && provision.getPayments() != null
                     && provision.getPayments().size() > 0 && provision.getProviderInvoices() != null
                     && provision.getProviderInvoices().size() > 0) {
                 outerloop: for (Payment payment : provision.getPayments()) {
