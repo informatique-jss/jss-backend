@@ -384,7 +384,6 @@ public class BillingClosureReceiptDelegate {
             if (!hadSomeValues)
                 values.remove(values.size() - 1);
         }
-
         return values;
     }
 
