@@ -288,36 +288,52 @@
         <settlement-billing [tiers]="selectedConfrere" [editMode]="editMode"></settlement-billing>
       </mat-tab>
       <mat-tab label="Devis" *ngIf="selectedConfrere.id">
-        <quotation-list class="integration-component"
-          *ngIf="this.quotationSearch.customerOrders && this.quotationSearch.customerOrders.length>0"
-          [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
-        </quotation-list>
+        <ng-template matTabContent>
+          <quotation-list class="integration-component"
+            *ngIf="this.quotationSearch.customerOrders && this.quotationSearch.customerOrders.length>0"
+            [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
+          </quotation-list>
+        </ng-template>
       </mat-tab>
       <mat-tab label="Commandes" *ngIf="selectedConfrere.id">
-        <ordering-list class="integration-component"
-          *ngIf="this.orderingSearch.customerOrders && this.orderingSearch.customerOrders.length>0"
-          [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
-        </ordering-list>
+        <ng-template matTabContent>
+          <ordering-list class="integration-component"
+            *ngIf="this.orderingSearch.customerOrders && this.orderingSearch.customerOrders.length>0"
+            [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
+          </ordering-list>
+        </ng-template>
       </mat-tab>
       <mat-tab label="Annonces" *ngIf="selectedConfrere.id!=null && selectedConfrere.id!=undefined">
-        <announcement-list [confrere]="selectedConfrere"></announcement-list>
+        <ng-template matTabContent>
+          <announcement-list [confrere]="selectedConfrere"></announcement-list>
+        </ng-template>
       </mat-tab>
       <mat-tab label="Factures" *ngIf="selectedConfrere.id!=null && selectedConfrere.id!=undefined">
-        <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
-          [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+        <ng-template matTabContent>
+          <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
+            [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+        </ng-template>
       </mat-tab>
       <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id && !this.idConfrere">
-        <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
+        <ng-template matTabContent>
+          <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
+        </ng-template>
       </mat-tab>
       <mat-tab label="Mails" *ngIf="selectedConfrere.id">
-        <automatic-mail-list [confrere]="selectedConfrere">
-        </automatic-mail-list>
+        <ng-template matTabContent>
+          <automatic-mail-list [confrere]="selectedConfrere">
+          </automatic-mail-list>
+        </ng-template>
       </mat-tab>
       <mat-tab label="Suivi" *ngIf="selectedConfrere.id">
-        <tiers-followup [tiers]="selectedConfrere" [editMode]="editMode"></tiers-followup>
+        <ng-template matTabContent>
+          <tiers-followup [tiers]="selectedConfrere" [editMode]="editMode"></tiers-followup>
+        </ng-template>
       </mat-tab>
       <mat-tab label="Historique" *ngIf="selectedConfrere.id">
-        <history [entity]="selectedConfrere" [entityType]="CONFRERE_ENTITY_TYPE"></history>
+        <ng-template matTabContent>
+          <history [entity]="selectedConfrere" [entityType]="CONFRERE_ENTITY_TYPE"></history>
+        </ng-template>
       </mat-tab>
     </mat-tab-group>
   </div>

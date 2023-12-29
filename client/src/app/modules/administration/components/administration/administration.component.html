@@ -306,7 +306,9 @@
       </div>
     </mat-tab>
     <mat-tab label="Constantes">
-      <constant></constant>
+      <ng-template matTabContent>
+        <constant></constant>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Logs" *ngIf="canViewLogdModule()">
       <log></log>

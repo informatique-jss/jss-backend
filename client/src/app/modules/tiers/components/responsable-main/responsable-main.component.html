@@ -218,41 +218,57 @@
           </attachments>
         </mat-tab>
         <mat-tab label="Mails" *ngIf="selectedResponsable.id">
-          <automatic-mail-list [responsable]="selectedResponsable">
-          </automatic-mail-list>
+          <ng-template matTabContent>
+            <automatic-mail-list [responsable]="selectedResponsable">
+            </automatic-mail-list>
+          </ng-template>
         </mat-tab>
         <mat-tab label="Devis" *ngIf="tiers.id!=null && tiers.id!=undefined">
-          <quotation-list class="integration-component"
-            *ngIf="this.quotationSearch.customerOrders && this.quotationSearch.customerOrders.length>0"
-            [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
-          </quotation-list>
+          <ng-template matTabContent>
+            <quotation-list class="integration-component"
+              *ngIf="this.quotationSearch.customerOrders && this.quotationSearch.customerOrders.length>0"
+              [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
+            </quotation-list>
+          </ng-template>
         </mat-tab>
         <mat-tab label="Commandes" *ngIf="tiers.id!=null && tiers.id!=undefined">
-          <ordering-list class="integration-component"
-            *ngIf="this.orderingSearch.customerOrders && this.orderingSearch.customerOrders.length>0"
-            [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
-          </ordering-list>
+          <ng-template matTabContent>
+            <ordering-list class="integration-component"
+              *ngIf="this.orderingSearch.customerOrders && this.orderingSearch.customerOrders.length>0"
+              [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
+            </ordering-list>
+          </ng-template>
         </mat-tab>
         <mat-tab label="Prestations" *ngIf="tiers.id!=null && tiers.id!=undefined">
-          <provision-list class="integration-component"
-            *ngIf="this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0"
-            [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
-          </provision-list>
+          <ng-template matTabContent>
+            <provision-list class="integration-component"
+              *ngIf="this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0"
+              [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
+            </provision-list>
+          </ng-template>
         </mat-tab>
         <mat-tab label="Factures" *ngIf="tiers.id!=null && tiers.id!=undefined">
-          <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
-            [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+          <ng-template matTabContent>
+            <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
+              [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+          </ng-template>
         </mat-tab>
         <mat-tab label="RFF" *ngIf="rffSearch && rffSearch.responsable  ">
-          <div class="mat-elevation-z2 form-div">
-            <rff-list [rffSearch]="rffSearch" [isForTiersIntegration]="true"></rff-list>
-          </div>
+          <ng-template matTabContent>
+            <div class="mat-elevation-z2 form-div">
+              <rff-list [rffSearch]="rffSearch" [isForTiersIntegration]="true"></rff-list>
+            </div>
+          </ng-template>
         </mat-tab>
         <mat-tab label="Suivi" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
-          <tiers-followup [tiers]="selectedResponsable!" [editMode]="editMode"></tiers-followup>
+          <ng-template matTabContent>
+            <tiers-followup [tiers]="selectedResponsable!" [editMode]="editMode"></tiers-followup>
+          </ng-template>
         </mat-tab>
         <mat-tab label="Historique" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
-          <history [entity]="selectedResponsable" [entityType]="RESPONSABLE_ENTITY_TYPE"></history>
+          <ng-template matTabContent>
+            <history [entity]="selectedResponsable" [entityType]="RESPONSABLE_ENTITY_TYPE"></history>
+          </ng-template>
         </mat-tab>
       </mat-tab-group>
     </form>

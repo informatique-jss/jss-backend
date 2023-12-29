@@ -26,6 +26,9 @@ export function getColumnLink(column: SortTableColumn<InvoiceSearchResult>, elem
     if (element.tiersId)
       return ['/tiers', element.tiersId];
   }
+  if (element && column.id == "customerOrderId" && element.customerOrderId) {
+    return ['/order/', element.customerOrderId];
+  }
   return null;
 }
 

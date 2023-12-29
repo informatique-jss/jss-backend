@@ -8,11 +8,11 @@
           <ng-container *ngFor="let action of actions">
             <mat-icon color="accent" [matTooltip]="action.actionName" *ngIf="action.display && action.actionClick"
               color="accent" class="pointer  column-content-icon"
-              (click)="actionTrigger(action, element,$event)">{{action.actionIcon}}
+              (click)="actionTrigger(action, element.rawValue,$event)">{{action.actionIcon}}
             </mat-icon>
             <mat-icon color="accent" [matTooltip]="action.actionName"
               *ngIf="action.display && element.actionsLink && element.actionsLink[action.actionName]"
-              (click)="openActionLink($event, action, element)" (auxclick)="openActionLink($event, action, element)"
+              (click)="openActionLink($event, action, element)" (auxclick)="openActionLink($event, action,  element)"
               color="accent" class="pointer column-content-icon">
               {{action.actionIcon}}
             </mat-icon>
@@ -23,12 +23,12 @@
             <mat-icon>more_vert</mat-icon>
             <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
               <ng-container *ngFor="let action of actions">
-                <button mat-menu-item (click)="actionTrigger(action, element,$event)"
+                <button mat-menu-item (click)="actionTrigger(action,  element.rawValue,$event)"
                   *ngIf="action.display && action.actionClick">
                   <mat-icon>{{action.actionIcon}}</mat-icon><span>{{action.actionName}}</span>
                 </button>
-                <button mat-menu-item (click)="openActionLink($event, action, element)"
-                  (auxclick)="openActionLink($event, action, element)"
+                <button mat-menu-item (click)="openActionLink($event, action,  element)"
+                  (auxclick)="openActionLink($event, action,  element)"
                   *ngIf="action.display && element.actionsLink && element.actionsLink[action.actionName]">
                   <mat-icon>{{action.actionIcon}}</mat-icon><span>{{action.actionName}}</span>
                 </button>
@@ -43,18 +43,18 @@
         <span *ngIf="column.label">{{column.label}}</span>
       </th>
       <ng-container *ngIf="!column.displayAsGrade && !column.displayAsEmployee && !column.displayAsStatus">
-        <td mat-cell *matCellDef="let element" [matTooltip]="column.isShrinkColumn?element.columns[column.id]+'':''"
+        <td mat-cell *matCellDef="let element " [matTooltip]="column.isShrinkColumn?element.columns[column.id]+'':''"
           [ngClass]="{'td-label':column.isShrinkColumn}">
           <span [ngClass]="{'color-warn':element.isElementWarn[column.id]}"
             class="nowrap">{{element.columns[column.id]}}
             <mat-icon color="accent" [matTooltip]="column.actionTooltip" color="accent"
               class="pointer column-content-icon" (click)="openColumnLink($event, column, element)"
-              (auxclick)="openColumnLink($event, column, element)"
+              (auxclick)="openColumnLink($event, column,  element)"
               *ngIf=" column.actionLinkFunction && element.columnsLink[column.id]  && element.columns[column.id] ">
               {{column.actionIcon}}
             </mat-icon>
             <mat-icon color="accent" [matTooltip]="column.actionTooltip" color="accent"
-              class="pointer column-content-icon" (click)="columnActionTrigger( column, element)"
+              class="pointer column-content-icon" (click)="columnActionTrigger( column,  element.rawValue)"
               *ngIf=" column.actionFunction && element.columns[column.id] ">
               {{column.actionIcon}}
             </mat-icon>

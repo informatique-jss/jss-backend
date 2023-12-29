@@ -27,7 +27,10 @@ export class MonitoringComponent implements OnInit {
   }
 
   selectBatchSetting(batchSetting: BatchSettings) {
-    this.batchSettingsSelected = batchSetting;
-    this.selectedTabIndex = 1;
+    this.batchSettingsSelected = undefined;
+    setTimeout(() => {
+      this.batchSettingsSelected = batchSetting;
+      this.selectedTabIndex = 1;
+    }, 0);
   }
 }

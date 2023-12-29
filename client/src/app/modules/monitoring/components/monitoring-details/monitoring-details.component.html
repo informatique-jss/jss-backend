@@ -84,7 +84,9 @@
             Détails
           </mat-panel-title>
         </mat-expansion-panel-header>
-        <batch-list [batchSearch]="batchSearch" *ngIf="batchSearch"></batch-list>
+        <ng-template matExpansionPanelContent>
+          <batch-list [batchSearch]="batchSearch" *ngIf="batchSearch"></batch-list>
+        </ng-template>
       </mat-expansion-panel>
     </mat-accordion>
   </div>

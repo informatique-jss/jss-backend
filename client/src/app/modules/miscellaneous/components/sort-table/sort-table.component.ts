@@ -91,6 +91,7 @@ export class SortTableComponent<T> implements OnInit {
   getSortTableElementFromValue(value: T): SortTableElement {
     let outValue = {} as SortTableElement;
     if (value) {
+      outValue.rawValue = value;
       outValue.columns = {} as SortTableElementColumns;
       outValue.rawColumns = {} as SortTableElementColumns;
       outValue.isElementWarn = {} as SortTableElementWarn;
@@ -260,7 +261,7 @@ export class SortTableComponent<T> implements OnInit {
         if (column.display)
           this.displayedColumns.push(column.id);
       }
-    if (this.internalActions)
+    if (this.internalActions && this.internalActions.length > 0)
       this.displayedColumns.push('actions');
   }
 
@@ -298,20 +299,26 @@ export class SortTableComponent<T> implements OnInit {
   }
 
   rowClicked(element: any) {
-    this.onRowClick.emit(element);
+    this.onRowClick.emit(element.rawValue);
   }
 
   getObjectPropertybyString = getObjectPropertybyString;
 
   getActionLink(action: SortTableAction<T>, element: T): string | undefined {
-    if (action.actionLinkFunction)
-      return action.actionLinkFunction(action, element).join("/");
+    if (action.actionLinkFunction) {
+      let link = action.actionLinkFunction(action, element);
+      if (link)
+        return action.actionLinkFunction(action, element).join("/");
+    }
     return undefined;
   }
 
   getColumnLink(column: SortTableColumn<T>, element: T): string | undefined {
-    if (column.actionLinkFunction)
-      return column.actionLinkFunction(column, element).join("/");
+    if (column.actionLinkFunction) {
+      let link = column.actionLinkFunction(column, element);
+      if (link)
+        return column.actionLinkFunction(column, element).join("/");
+    }
     return undefined;
   }
 

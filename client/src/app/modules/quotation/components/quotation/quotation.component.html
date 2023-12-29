@@ -113,78 +113,81 @@
                       color="accent" matTooltip="Supprimer l'affaire" *ngIf="editMode"
                       (click)="deleteAffaire(asso.affaire);$event.stopPropagation();" class="pointer">delete</mat-icon>
                   </ng-template>
-                  <div class="mat-accordion-container full-width">
-                    <mat-accordion multi>
-                      <mat-expansion-panel expanded="false">
-                        <mat-expansion-panel-header>
-                          <mat-panel-title>Détails de l'affaire
-                            {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' '
-                            +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
-                            {{asso.affaire.city.label}}
-                          </mat-panel-title>
-                          <mat-panel-description>
-                            <avatar-chip *ngIf="asso.assignedTo && asso.id" [employee]="asso.assignedTo"
-                              (onChangeAssigne)="updateAssignedToForAffaire($event,asso)">
+                  <ng-template matTabContent>
+                    <div class="mat-accordion-container full-width">
+                      <mat-accordion multi>
+                        <mat-expansion-panel expanded="false">
+                          <mat-expansion-panel-header>
+                            <mat-panel-title>Détails de l'affaire
+                              {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' '
+                              +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
+                              {{asso.affaire.city.label}}
+                            </mat-panel-title>
+                            <mat-panel-description>
+                              <avatar-chip *ngIf="asso.assignedTo && asso.id" [employee]="asso.assignedTo"
+                                (onChangeAssigne)="updateAssignedToForAffaire($event,asso)">
+                              </avatar-chip>
+                              <mat-icon color="accent" matTooltip="Voir/éditer l'affaire"
+                                (click)="displayAffaire($event, asso.affaire);$event.stopPropagation();"
+                                (auxclick)="displayAffaire($event, asso.affaire);$event.stopPropagation();"
+                                class="pointer">
+                                edit</mat-icon>
+                              <ng-template></ng-template>
+                            </mat-panel-description>
+                          </mat-expansion-panel-header>
+                          <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
+                          <div *ngIf="asso && asso.id && instanceOfCustomerOrder">
+                            <autocomplete-employee [(model)]="asso.assignedTo" [form]="quotationForm"
+                              propertyName="assignedTo" [isMandatory]="true" [isDisabled]="false"
+                              label="Affaire assignée à" (onOptionSelected)="updateAssignedToForAffaire($event,asso)">
+                            </autocomplete-employee>
+                          </div>
+                        </mat-expansion-panel>
+                      </mat-accordion>
+                    </div>
+                    <div class="mat-accordion-container full-width">
+                      <mat-accordion multi class="mat-accordion-container">
+                        <mat-expansion-panel *ngFor="let provision of asso.provisions"
+                          [expanded]="!provision.id || inputProvision && provision.id==inputProvision.id">
+                          <mat-expansion-panel-header>
+                            <mat-panel-title>
+                              {{getProvisionLabel(provision)}}
+                            </mat-panel-title>
+                            <span class="status-text"
+                              *ngIf="instanceOfCustomerOrderFn(quotation) && getActiveWorkflowElementsForProvision(provision)">{{getActiveWorkflowElementsForProvision(provision).label}}</span>
+                            <avatar-chip *ngIf="asso.assignedTo" [employee]="provision.assignedTo"
+                              (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
                             </avatar-chip>
-                            <mat-icon color="accent" matTooltip="Voir/éditer l'affaire"
-                              (click)="displayAffaire($event, asso.affaire);$event.stopPropagation();"
-                              (auxclick)="displayAffaire($event, asso.affaire);$event.stopPropagation();"
-                              class="pointer">
-                              edit</mat-icon>
                             <ng-template></ng-template>
-                          </mat-panel-description>
-                        </mat-expansion-panel-header>
-                        <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
-                        <div *ngIf="asso && asso.id && instanceOfCustomerOrder">
-                          <autocomplete-employee [(model)]="asso.assignedTo" [form]="quotationForm"
-                            propertyName="assignedTo" [isMandatory]="true" [isDisabled]="false"
-                            label="Affaire assignée à" (onOptionSelected)="updateAssignedToForAffaire($event,asso)">
-                          </autocomplete-employee>
-                        </div>
-                      </mat-expansion-panel>
-                    </mat-accordion>
-                  </div>
-                  <div class="mat-accordion-container full-width">
-                    <mat-accordion multi class="mat-accordion-container">
-                      <mat-expansion-panel *ngFor="let provision of asso.provisions"
-                        [expanded]="!provision.id || inputProvision && provision.id==inputProvision.id">
-                        <mat-expansion-panel-header>
-                          <mat-panel-title>
-                            {{getProvisionLabel(provision)}}
-                          </mat-panel-title>
-                          <span class="status-text"
-                            *ngIf="instanceOfCustomerOrderFn(quotation) && getActiveWorkflowElementsForProvision(provision)">{{getActiveWorkflowElementsForProvision(provision).label}}</span>
-                          <avatar-chip *ngIf="asso.assignedTo" [employee]="provision.assignedTo"
-                            (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
-                          </avatar-chip>
-                          <ng-template></ng-template>
-                          <mat-panel-description>
-                            <mat-icon color="accent"
-                              *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.id && !editMode"
-                              matTooltip="Voir/éditer la prestation" (click)="displayProvision($event, asso,provision)"
-                              (auxclick)="displayProvision($event, asso,provision)" class="pointer">
-                              work</mat-icon>
-                            <mat-icon color="accent" *ngIf="editMode" matTooltip="Supprimer la prestation"
-                              (click)="deleteProvision(asso,provision)" class="pointer">
-                              delete</mat-icon>
-                          </mat-panel-description>
-                        </mat-expansion-panel-header>
-                        <provision-item [quotation]="quotation" *ngIf="asso.affaire && asso.affaire.id"
-                          [editMode]="editMode" [provision]="provision" [affaire]="asso.affaire"
-                          (selectedProvisionTypeChange)="changeSelectedProvisionType($event)"
-                          [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen">
-                        </provision-item>
-                      </mat-expansion-panel>
-                    </mat-accordion>
-                  </div>
-                  <div class="row-field-container">
-                    <button mat-raised-button *ngIf="editMode" (click)="createProvision(asso)" color="primary"
-                      class="mini-fab-add">
-                      Ajouter une prestation pour
-                      {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + '
-                      '+asso.affaire.lastname)}}
-                    </button>
-                  </div>
+                            <mat-panel-description>
+                              <mat-icon color="accent"
+                                *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.id && !editMode"
+                                matTooltip="Voir/éditer la prestation"
+                                (click)="displayProvision($event, asso,provision)"
+                                (auxclick)="displayProvision($event, asso,provision)" class="pointer">
+                                work</mat-icon>
+                              <mat-icon color="accent" *ngIf="editMode" matTooltip="Supprimer la prestation"
+                                (click)="deleteProvision(asso,provision)" class="pointer">
+                                delete</mat-icon>
+                            </mat-panel-description>
+                          </mat-expansion-panel-header>
+                          <provision-item [quotation]="quotation" *ngIf="asso.affaire && asso.affaire.id"
+                            [editMode]="editMode" [provision]="provision" [affaire]="asso.affaire"
+                            (selectedProvisionTypeChange)="changeSelectedProvisionType($event)"
+                            [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen">
+                          </provision-item>
+                        </mat-expansion-panel>
+                      </mat-accordion>
+                    </div>
+                    <div class="row-field-container">
+                      <button mat-raised-button *ngIf="editMode" (click)="createProvision(asso)" color="primary"
+                        class="mini-fab-add">
+                        Ajouter une prestation pour
+                        {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + '
+                        '+asso.affaire.lastname)}}
+                      </button>
+                    </div>
+                  </ng-template>
                 </mat-tab>
               </mat-tab-group>
             </div>
@@ -206,20 +209,28 @@
           </attachments>
         </mat-tab>
         <mat-tab label="Mails" *ngIf="quotation.id && instanceOfQuotationFn(quotation)">
-          <automatic-mail-list [quotation]="quotation">
-          </automatic-mail-list>
+          <ng-template matTabContent>
+            <automatic-mail-list [quotation]="quotation">
+            </automatic-mail-list>
+          </ng-template>
         </mat-tab>
         <mat-tab label="Mails" *ngIf="quotation.id && instanceOfCustomerOrderFn(quotation)">
-          <automatic-mail-list [customerOrder]="quotation">
-          </automatic-mail-list>
+          <ng-template matTabContent>
+            <automatic-mail-list [customerOrder]="quotation">
+            </automatic-mail-list>
+          </ng-template>
         </mat-tab>
         <mat-tab label="Associer un paiement"
           *ngIf="  instanceOfCustomerOrderFn(quotation) && quotation.customerOrderStatus && quotation.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_BILLED  && quotation.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_ABANDONED">
-          <customer-order-payment (stateChanged)="onStateChange()" [customerOrder]="quotation">
-          </customer-order-payment>
+          <ng-template matTabContent>
+            <customer-order-payment (stateChanged)="onStateChange()" [customerOrder]="quotation">
+            </customer-order-payment>
+          </ng-template>
         </mat-tab>
         <mat-tab label="Historique" *ngIf="quotation.id!=null && quotation.id!=undefined">
-          <history [entity]="quotation" [entityType]="getEntityType()" [parseTypeList]="getParseTypeList()"></history>
+          <ng-template matTabContent>
+            <history [entity]="quotation" [entityType]="getEntityType()" [parseTypeList]="getParseTypeList()"></history>
+          </ng-template>
         </mat-tab>
       </mat-tab-group>
     </div>

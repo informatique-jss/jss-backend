@@ -23,4 +23,5 @@ export interface SortTableElement {
   columnsLink: SortTableElementColumnsLink;
   columnsStatus: SortTableElementColumnsStatus;
   isElementWarn: SortTableElementWarn;
+  rawValue: any;
 }
