@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { BatchSettings } from '../../model/BatchSettings';
 
@@ -10,13 +11,15 @@ import { BatchSettings } from '../../model/BatchSettings';
 export class MonitoringComponent implements OnInit {
 
   constructor(
-    private habilitationsService: HabilitationsService
+    private habilitationsService: HabilitationsService,
+    private appService: AppService
   ) { }
 
   batchSettingsSelected: BatchSettings | undefined;
   selectedTabIndex = 0;
 
   ngOnInit() {
+    this.appService.changeHeaderTitle("Supervision");
   }
 
   canDisplayExtendentMonitoring() {

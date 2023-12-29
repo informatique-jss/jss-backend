@@ -425,30 +425,33 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             }
 
             // Auto associate payment and provider invoice if only one match is found
-            if (customerOrder instanceof CustomerOrder
-                    && ((CustomerOrder) customerOrder).getCustomerOrderStatus().getCode()
-                            .equals(CustomerOrderStatus.BILLED)
-                    && provision.getPayments() != null
-                    && provision.getPayments().size() > 0 && provision.getProviderInvoices() != null
-                    && provision.getProviderInvoices().size() > 0) {
-                outerloop: for (Payment payment : provision.getPayments()) {
-                    Invoice invoiceFound = null;
-                    if (payment.getIsCancelled() == false) {
-                        for (Invoice invoice : provision.getProviderInvoices()) {
-                            if (invoice.getInvoiceStatus().getId()
-                                    .equals(constantService.getInvoiceStatusReceived().getId())) {
-                                if (Math.round(
-                                        invoice.getTotalPrice()
-                                                * 100f) == (Math.round(-payment.getPaymentAmount() * 100f))) {
-                                    if (invoiceFound != null)
-                                        continue outerloop;
-                                    invoiceFound = invoice;
+            if (provision != null && provision.getId() != null) {
+                Provision originalProvision = provisionService.getProvision(provision.getId());
+                if (customerOrder instanceof CustomerOrder
+                        && ((CustomerOrder) customerOrder).getCustomerOrderStatus().getCode()
+                                .equals(CustomerOrderStatus.BILLED)
+                        && originalProvision.getPayments() != null
+                        && originalProvision.getPayments().size() > 0 && originalProvision.getProviderInvoices() != null
+                        && originalProvision.getProviderInvoices().size() > 0) {
+                    outerloop: for (Payment payment : originalProvision.getPayments()) {
+                        Invoice invoiceFound = null;
+                        if (payment.getIsCancelled() == false) {
+                            for (Invoice invoice : originalProvision.getProviderInvoices()) {
+                                if (invoice.getInvoiceStatus().getId()
+                                        .equals(constantService.getInvoiceStatusReceived().getId())) {
+                                    if (Math.round(
+                                            invoice.getTotalPrice()
+                                                    * 100f) == (Math.round(-payment.getPaymentAmount() * 100f))) {
+                                        if (invoiceFound != null)
+                                            continue outerloop;
+                                        invoiceFound = invoice;
+                                    }
                                 }
                             }
+                            if (invoiceFound != null)
+                                paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment,
+                                        Arrays.asList(invoiceFound), null, null, null, null, null, null);
                         }
-                        if (invoiceFound != null)
-                            paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment,
-                                    Arrays.asList(invoiceFound), null, null, null, null, null, null);
                     }
                 }
             }
