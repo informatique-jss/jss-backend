@@ -6,6 +6,7 @@ import { getObjectPropertybyString } from 'src/app/libs/FormatHelper';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { AppService } from '../../../../services/app.service';
 import { Employee } from '../../../profile/model/Employee';
+import { EmployeeService } from '../../../profile/services/employee.service';
 import { SortTableAction } from '../../model/SortTableAction';
 import { SortTableColumn } from '../../model/SortTableColumn';
 import { SortTableElement, SortTableElementActions, SortTableElementColumns, SortTableElementColumnsLink, SortTableElementColumnsStatus, SortTableElementWarn } from '../../model/SortTableElement';
@@ -39,9 +40,11 @@ export class SortTableComponent<T> implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   internalActions: SortTableAction<T>[] | undefined = [] as Array<SortTableAction<T>>;
+  allEmployees: Employee[] | undefined;
 
   constructor(protected userPreferenceService: UserPreferenceService,
     private appService: AppService,
+    private employeeService: EmployeeService
   ) { }
 
   ngOnInit() {
@@ -53,7 +56,11 @@ export class SortTableComponent<T> implements OnInit {
         }
       });
     this.internalActions = this.actions;
-    this.refreshValues();
+
+    this.employeeService.getEmployees().subscribe(res => {
+      this.allEmployees = res;
+      this.refreshValues();
+    })
 
     // Restore displayed columns
     let prefColumns = this.userPreferenceService.getUserDisplayColumnsForTable(this.tableName);
@@ -85,13 +92,23 @@ export class SortTableComponent<T> implements OnInit {
     let outValue = {} as SortTableElement;
     if (value) {
       outValue.columns = {} as SortTableElementColumns;
+      outValue.rawColumns = {} as SortTableElementColumns;
       outValue.isElementWarn = {} as SortTableElementWarn;
       outValue.actionsLink = {} as SortTableElementActions;
       outValue.columnsLink = {} as SortTableElementColumnsLink;
       outValue.columnsStatus = {} as SortTableElementColumnsStatus;
       if (this.columns) {
         for (let column of this.columns) {
-          outValue.columns[column.id] = this.getColumnValue(column, value);
+          outValue.columns[column.id] = this.getColumnValue(column, value, false);
+
+          if (column.displayAsEmployee) {
+            let employee = this.getEmployee(column, value);
+            if (employee)
+              outValue.columns[column.id] = employee;
+          }
+
+
+          outValue.rawColumns[column.id] = this.getColumnValue(column, value, true);
           if (column.colorWarnFunction) {
             outValue.isElementWarn[column.id] = column.colorWarnFunction(value);
           } else {
@@ -164,17 +181,22 @@ export class SortTableComponent<T> implements OnInit {
         if (this.columns) {
           for (let column of this.columns) {
             if (column.id && column.id == property) {
-              if (column.sortFonction) {
-                let sortValue: string | Date | Employee | number = column.sortFonction(item, column);
-                if (sortValue instanceof Date)
-                  return sortValue.getTime();
-                if (((sortValue as unknown) as any).firstname)
-                  return (sortValue as Employee).firstname + (sortValue as Employee).lastname;
-                if (typeof sortValue === "number")
-                  return sortValue;
-                return sortValue + '';
-              }
-              return item.columns[property];
+              let sortValue: string | Date | Employee | number;
+
+              if (column.sortFonction)
+                sortValue = column.sortFonction(item, column, item.rawColumns[column.id]);
+              else if (item.rawColumns[column.id])
+                sortValue = item.rawColumns[column.id];
+              else
+                sortValue = item.columns[column.id];
+
+              if (sortValue instanceof Date)
+                return sortValue.getTime();
+              if (sortValue && column.displayAsEmployee)
+                return (item.columns[column.id] as Employee).firstname + (item.columns[column.id] as Employee).lastname;
+              if (typeof sortValue === "number")
+                return parseFloat(sortValue + "");
+              return sortValue + '';
             }
           }
         }
@@ -192,9 +214,9 @@ export class SortTableComponent<T> implements OnInit {
     });
   }
 
-  getColumnValue(column: SortTableColumn<T>, element: T): any {
+  getColumnValue(column: SortTableColumn<T>, element: T, byPassValueFunction: boolean): any {
     if (column) {
-      if (column.valueFonction) {
+      if (column.valueFonction && !byPassValueFunction) {
         return column.valueFonction(element, column);
       }
       if (column.fieldName) {
@@ -209,6 +231,15 @@ export class SortTableComponent<T> implements OnInit {
       }
     }
     return "Not found";
+  }
+
+  getEmployee(column: SortTableColumn<T>, element: T): Employee | null {
+    let employeeId = this.getColumnValue(column, element, false);
+    if (employeeId && this.allEmployees)
+      for (let employee of this.allEmployees)
+        if (employee.id == employeeId)
+          return employee;
+    return null;
   }
 
   getColumnStatus(column: SortTableColumn<T>, element: T): string {

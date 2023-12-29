@@ -15,8 +15,8 @@ import { AFFAIRE_ENTITY_TYPE } from '../../../../routing/search/search.component
 })
 export class AffaireListComponent implements OnInit {
   affaires: IndexEntity[] | undefined;
-  displayedColumns: SortTableColumn[] = [];
-  tableAction: SortTableAction[] = [];
+  displayedColumns: SortTableColumn<IndexEntity>[] = [];
+  tableAction: SortTableAction<IndexEntity>[] = [];
   textSearch: string = "";
   searchObservableRef: Subscription | undefined;
 
@@ -28,21 +28,21 @@ export class AffaireListComponent implements OnInit {
 
   ngOnInit() {
     this.appService.changeHeaderTitle("Affaires");
-    this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire", valueFonction: (element: any) => { return element.text.denomination ? element.text.denomination : element.text.firstname + ' ' + element.text.lastname } } as SortTableColumn);
-    this.displayedColumns.push({ id: "siren", fieldName: "siren", label: "Siren", valueFonction: (element: any) => { return element.text.siren } } as SortTableColumn);
-    this.displayedColumns.push({ id: "siret", fieldName: "siret", label: "Siret", valueFonction: (element: any) => { return element.text.siret } } as SortTableColumn);
-    this.displayedColumns.push({ id: "rna", fieldName: "rna", label: "Rna", valueFonction: (element: any) => { return element.text.rna } } as SortTableColumn);
-    this.displayedColumns.push({ id: "address", fieldName: "address", label: "Adresse", valueFonction: (element: any) => { return element.text.address } } as SortTableColumn);
-    this.displayedColumns.push({ id: "postalCode", fieldName: "postalCode", label: "Code postal", valueFonction: (element: any) => { return element.text.postalCode } } as SortTableColumn);
-    this.displayedColumns.push({ id: "city", fieldName: "city", label: "Ville", valueFonction: (element: any) => { return element.text.city ? element.text.city.label : "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire", valueFonction: (element: IndexEntity, column: SortTableColumn<IndexEntity>) => { return element.text.denomination ? element.text.denomination : element.text.firstname + ' ' + element.text.lastname } } as SortTableColumn<IndexEntity>);
+    this.displayedColumns.push({ id: "siren", fieldName: "siren", label: "Siren", valueFonction: (element: IndexEntity, column: SortTableColumn<IndexEntity>) => { return element.text.siren } } as SortTableColumn<IndexEntity>);
+    this.displayedColumns.push({ id: "siret", fieldName: "siret", label: "Siret", valueFonction: (element: IndexEntity, column: SortTableColumn<IndexEntity>) => { return element.text.siret } } as SortTableColumn<IndexEntity>);
+    this.displayedColumns.push({ id: "rna", fieldName: "rna", label: "Rna", valueFonction: (element: IndexEntity, column: SortTableColumn<IndexEntity>) => { return element.text.rna } } as SortTableColumn<IndexEntity>);
+    this.displayedColumns.push({ id: "address", fieldName: "address", label: "Adresse", valueFonction: (element: IndexEntity, column: SortTableColumn<IndexEntity>) => { return element.text.address } } as SortTableColumn<IndexEntity>);
+    this.displayedColumns.push({ id: "postalCode", fieldName: "postalCode", label: "Code postal", valueFonction: (element: IndexEntity, column: SortTableColumn<IndexEntity>) => { return element.text.postalCode } } as SortTableColumn<IndexEntity>);
+    this.displayedColumns.push({ id: "city", fieldName: "city", label: "Ville", valueFonction: (element: IndexEntity, column: SortTableColumn<IndexEntity>) => { return element.text.city ? element.text.city.label : "" } } as SortTableColumn<IndexEntity>);
 
     this.tableAction.push({
-      actionIcon: "edit", actionName: "Editer l'affaire", actionLinkFunction: (action: SortTableAction, element: any) => {
+      actionIcon: "edit", actionName: "Editer l'affaire", actionLinkFunction: (action: SortTableAction<IndexEntity>, element: IndexEntity) => {
         if (element)
           return ['/affaire', element.entityId];
         return undefined;
       }, display: true,
-    } as SortTableAction);
+    } as SortTableAction<IndexEntity>);
   }
 
   affaireSearchForm = this.formBuilder.group({

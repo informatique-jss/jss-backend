@@ -19,8 +19,8 @@ import { ReportingComponent } from '../reporting/reporting.component';
 })
 export class ReportingListComponent implements OnInit {
 
-  displayedColumns: SortTableColumn[] = [];
-  tableAction: SortTableAction[] = [];
+  displayedColumns: SortTableColumn<UserReporting>[] = [];
+  tableAction: SortTableAction<UserReporting>[] = [];
   userReportings: UserReporting[] | undefined;
   filteredUserReportings: UserReporting[] | undefined;
   currentUserReporting: UserReporting | undefined;
@@ -46,15 +46,15 @@ export class ReportingListComponent implements OnInit {
     this.appService.changeHeaderTitle("Reporting");
 
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn);
-    this.displayedColumns.push({ id: "dataset", fieldName: "dataset", label: "Jeu de données" } as SortTableColumn);
-    this.displayedColumns.push({ id: "name", fieldName: "name", label: "Nom" } as SortTableColumn);
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn<UserReporting>);
+    this.displayedColumns.push({ id: "dataset", fieldName: "dataset", label: "Jeu de données" } as SortTableColumn<UserReporting>);
+    this.displayedColumns.push({ id: "name", fieldName: "name", label: "Nom" } as SortTableColumn<UserReporting>);
 
     this.tableAction.push({
-      actionIcon: "edit", actionName: "Modifier le rapport", actionClick: (action: SortTableAction, element: any, event: any) => {
+      actionIcon: "edit", actionName: "Modifier le rapport", actionClick: (action: SortTableAction<UserReporting>, element: any, event: any) => {
         this.appService.openRoute(event, "reporting/add/" + element.id + "/false", undefined);
       }, display: true,
-    } as SortTableAction);
+    } as SortTableAction<UserReporting>);
 
     this.employeeService.getCurrentEmployee().subscribe(employee => {
       this.userReportingService.getUserReportings(employee).subscribe(reportings => {

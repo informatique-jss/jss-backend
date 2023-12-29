@@ -37,7 +37,7 @@ export class CompetentAuthorityComponent implements OnInit {
   searchText: string = "";
   selectedcompetentAuthority: CompetentAuthority | undefined;
   selectedCompetentAuthorityType: CompetentAuthorityType | undefined;
-  displayedColumns: SortTableColumn[] = [];
+  displayedColumns: SortTableColumn<CompetentAuthority>[] = [];
   editMode: boolean = false;
   selectedCompetentAuthorityId: number | undefined;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
@@ -62,10 +62,10 @@ export class CompetentAuthorityComponent implements OnInit {
     }
 
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);
-    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle" } as SortTableColumn);
-    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
-    this.displayedColumns.push({ id: "competentAuthorityType", fieldName: "competentAuthorityType.label", label: "Type" } as SortTableColumn);
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn<CompetentAuthority>);
+    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle" } as SortTableColumn<CompetentAuthority>);
+    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn<CompetentAuthority>);
+    this.displayedColumns.push({ id: "competentAuthorityType", fieldName: "competentAuthorityType.label", label: "Type" } as SortTableColumn<CompetentAuthority>);
 
     this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
       if (response)

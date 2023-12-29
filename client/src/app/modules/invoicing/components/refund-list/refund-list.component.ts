@@ -19,10 +19,10 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
   @Input() refundSearch: RefundSearch = {} as RefundSearch;
   @Input() isForDashboard: boolean = false;
   refunds: RefundSearchResult[] | undefined;
-  availableColumns: SortTableColumn[] = [];
-  displayedColumns: SortTableColumn[] = [];
+  availableColumns: SortTableColumn<RefundSearchResult>[] = [];
+  displayedColumns: SortTableColumn<RefundSearchResult>[] = [];
   columnToDisplayOnDashboard: string[] = ["refundDate", "refundAmount", "refundLabel"];
-  tableAction: SortTableAction[] = [];
+  tableAction: SortTableAction<RefundSearchResult>[] = [];
 
   constructor(
     private refundSearchResultService: RefundSearchResultService,
@@ -38,14 +38,14 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
 
   ngOnInit() {
     this.availableColumns = [];
-    this.availableColumns.push({ id: "id", fieldName: "id", label: "N° du remboursement" } as SortTableColumn);
-    this.availableColumns.push({ id: "refundDate", fieldName: "refundDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "refundAmount", fieldName: "refundAmount", label: "Montant", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.refundAmount) } } as SortTableColumn);
-    this.availableColumns.push({ id: "refundTiersLabel", fieldName: "refundTiersLabel", label: "Tiers remboursé" } as SortTableColumn);
-    this.availableColumns.push({ id: "refundLabel", fieldName: "refundLabel", label: "Libellé" } as SortTableColumn);
-    this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire" } as SortTableColumn);
-    this.availableColumns.push({ id: "isMatched", fieldName: "isMatched", label: "Est rapproché", valueFonction: (element: any) => { return (element.isMatched) ? "Oui" : "Non" } } as SortTableColumn);
-    this.availableColumns.push({ id: "isAlreadyExported", fieldName: "isAlreadyExported", label: "A été exporté", valueFonction: (element: any) => { return (element.isAlreadyExported) ? "Oui" : "Non" } } as SortTableColumn);
+    this.availableColumns.push({ id: "id", fieldName: "id", label: "N° du remboursement" } as SortTableColumn<RefundSearchResult>);
+    this.availableColumns.push({ id: "refundDate", fieldName: "refundDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn<RefundSearchResult>);
+    this.availableColumns.push({ id: "refundAmount", fieldName: "refundAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn<RefundSearchResult>);
+    this.availableColumns.push({ id: "refundTiersLabel", fieldName: "refundTiersLabel", label: "Tiers remboursé" } as SortTableColumn<RefundSearchResult>);
+    this.availableColumns.push({ id: "refundLabel", fieldName: "refundLabel", label: "Libellé" } as SortTableColumn<RefundSearchResult>);
+    this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire" } as SortTableColumn<RefundSearchResult>);
+    this.availableColumns.push({ id: "isMatched", fieldName: "isMatched", label: "Est rapproché", valueFonction: (element: RefundSearchResult, column: SortTableColumn<RefundSearchResult>) => { return (element.isMatched) ? "Oui" : "Non" } } as SortTableColumn<RefundSearchResult>);
+    this.availableColumns.push({ id: "isAlreadyExported", fieldName: "isAlreadyExported", label: "A été exporté", valueFonction: (element: RefundSearchResult, column: SortTableColumn<RefundSearchResult>) => { return (element.isAlreadyExported) ? "Oui" : "Non" } } as SortTableColumn<RefundSearchResult>);
 
     this.setColumns();
 

@@ -38,7 +38,7 @@ export class ConfrereComponent implements OnInit {
   searchText: string = "";
   selectedConfrere: Confrere | undefined;
   selectedConfrereId: number | undefined;
-  displayedColumns: SortTableColumn[] = [];
+  displayedColumns: SortTableColumn<Confrere>[] = [];
   editMode: boolean = false;
   CONFRERE_ENTITY_TYPE = CONFRERE_ENTITY_TYPE;
 
@@ -70,14 +70,14 @@ export class ConfrereComponent implements OnInit {
     }
 
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);
-    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle" } as SortTableColumn);
-    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
-    this.displayedColumns.push({ id: "type", fieldName: "journalType.label", label: "Type" } as SortTableColumn);
-    this.displayedColumns.push({ id: "departments", fieldName: "departments", label: "Habilitations", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.departments) ? element.departments.map((e: { code: any; }) => e.code).join(", ") : "") } } as SortTableColumn);
-    this.displayedColumns.push({ id: "weekDays", fieldName: "weekDays", label: "Jours de parution", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.departments) ? element.weekDays.map((e: { label: any; }) => e.label).join(", ") : "") } } as SortTableColumn);
-    this.displayedColumns.push({ id: "mails", fieldName: "mails", label: "Mails", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.mails) ? element.mails.map((e: { mail: any; }) => e.mail).join(", ") : "") } } as SortTableColumn);
-    this.displayedColumns.push({ id: "phones", fieldName: "phones", label: "Téléphones", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.phones) ? element.phones.map((e: { phoneNumber: any; }) => e.phoneNumber).join(", ") : "") } } as SortTableColumn);
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn<Confrere>);
+    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle" } as SortTableColumn<Confrere>);
+    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn<Confrere>);
+    this.displayedColumns.push({ id: "type", fieldName: "journalType.label", label: "Type" } as SortTableColumn<Confrere>);
+    this.displayedColumns.push({ id: "departments", fieldName: "departments", label: "Habilitations", valueFonction: (element: Confrere, column: SortTableColumn<Confrere>) => { return ((element.departments) ? element.departments.map((e: { code: any; }) => e.code).join(", ") : "") } } as SortTableColumn<Confrere>);
+    this.displayedColumns.push({ id: "weekDays", fieldName: "weekDays", label: "Jours de parution", valueFonction: (element: Confrere, column: SortTableColumn<Confrere>) => { return ((element.departments) ? element.weekDays.map((e: { label: any; }) => e.label).join(", ") : "") } } as SortTableColumn<Confrere>);
+    this.displayedColumns.push({ id: "mails", fieldName: "mails", label: "Mails", valueFonction: (element: Confrere, column: SortTableColumn<Confrere>) => { return ((element.mails) ? element.mails.map((e: { mail: any; }) => e.mail).join(", ") : "") } } as SortTableColumn<Confrere>);
+    this.displayedColumns.push({ id: "phones", fieldName: "phones", label: "Téléphones", valueFonction: (element: Confrere, column: SortTableColumn<Confrere>) => { return ((element.phones) ? element.phones.map((e: { phoneNumber: any; }) => e.phoneNumber).join(", ") : "") } } as SortTableColumn<Confrere>);
 
     this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
       if (response)

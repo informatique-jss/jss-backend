@@ -20,10 +20,10 @@ import { AssoAffaireOrderSearchResultService } from '../../services/asso.affaire
 export class ProvisionListComponent implements OnInit {
   @Input() affaireSearch: AffaireSearch | undefined;
   affaires: AssoAffaireOrderSearchResult[] | undefined;
-  availableColumns: SortTableColumn[] = [];
+  availableColumns: SortTableColumn<AssoAffaireOrderSearchResult>[] = [];
   columnToDisplayOnDashboard: string[] = ["customerOrderId", "provisionCreatedDatetime", "provisionStatusDatetime", "affaireLabel", "provisionType", "status"];
-  displayedColumns: SortTableColumn[] = [];
-  tableAction: SortTableAction[] = [];
+  displayedColumns: SortTableColumn<AssoAffaireOrderSearchResult>[] = [];
+  tableAction: SortTableAction<AssoAffaireOrderSearchResult>[] = [];
 
   @Input() isForDashboard: boolean = false;
   @Input() isForTiersIntegration: boolean = false;
@@ -70,50 +70,34 @@ export class ProvisionListComponent implements OnInit {
       }
 
       this.availableColumns.push({
-        id: "customerOrderId", fieldName: "customerOrderId", label: "N° de commande", actionLinkFunction: (column: SortTableColumn, element: any) => {
+        id: "customerOrderId", fieldName: "customerOrderId", label: "N° de commande", actionLinkFunction: (column: SortTableColumn<AssoAffaireOrderSearchResult>, element: AssoAffaireOrderSearchResult) => {
           return ['/order/', element.customerOrderId];
         }, actionIcon: "visibility", actionTooltip: "Voir la commande associée"
-      } as SortTableColumn);
-      this.availableColumns.push({ id: "provisionCreatedDatetime", fieldName: "provisionCreatedDatetime", label: "Date de création", valueFonction: formatDateTimeForSortTable, colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
-      this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
-      this.availableColumns.push({ id: "affaireAddress", fieldName: "affaireAddress", label: "Adresse de l'affaire", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
-      this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
-      this.availableColumns.push({ id: "responsable", fieldName: "responsableLabel", label: "Responsable", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
-      this.availableColumns.push({ id: "confrere", fieldName: "confrereLabel", label: "Confrère", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
-      this.availableColumns.push({
-        id: "responsible", fieldName: "responsibleLabel", label: "Responsable de l'affaire", valueFonction: (element: any) => {
-          if (this.allEmployees)
-            for (let employee of this.allEmployees)
-              if (employee.id == element.responsibleId)
-                return employee;
-          return null;
-        }, displayAsEmployee: true
-      } as SortTableColumn);
-      this.availableColumns.push({
-        id: "assignedTo", fieldName: "assignedToLabel", label: "Assignée à", valueFonction: (element: any) => {
-          if (this.allEmployees)
-            for (let employee of this.allEmployees)
-              if (employee.id == element.assignedToId)
-                return employee;
-          return null;
-        }, displayAsEmployee: true
-      } as SortTableColumn);
-      this.availableColumns.push({ id: "provisionType", fieldName: "provisionTypeLabel", label: "Prestation", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
-      this.availableColumns.push({ id: "status", fieldName: "statusLabel", label: "Statut", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
-      this.availableColumns.push({ id: "provisionStatusDatetime", fieldName: "provisionStatusDatetime", label: "Date de mise à jour", valueFonction: formatDateTimeForSortTable, colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
-      this.availableColumns.push({ id: "competentAuthorityLabel", fieldName: "competentAuthorityLabel", label: "Autorité compétente" } as SortTableColumn);
-      this.availableColumns.push({ id: "waitedCompetentAuthorityLabel", fieldName: "waitedCompetentAuthorityLabel", label: "Autorité compétente en attente" } as SortTableColumn);
+      } as SortTableColumn<AssoAffaireOrderSearchResult>);
+      this.availableColumns.push({ id: "provisionCreatedDatetime", fieldName: "provisionCreatedDatetime", label: "Date de création", valueFonction: formatDateTimeForSortTable, colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
+      this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire", colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
+      this.availableColumns.push({ id: "affaireAddress", fieldName: "affaireAddress", label: "Adresse de l'affaire", colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
+      this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers", colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
+      this.availableColumns.push({ id: "responsable", fieldName: "responsableLabel", label: "Responsable", colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
+      this.availableColumns.push({ id: "confrere", fieldName: "confrereLabel", label: "Confrère", colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
+      this.availableColumns.push({ id: "responsible", fieldName: "responsibleId", label: "Responsable de l'affaire", displayAsEmployee: true } as SortTableColumn<AssoAffaireOrderSearchResult>);
+      this.availableColumns.push({ id: "assignedTo", fieldName: "assignedToId", label: "Assignée à", displayAsEmployee: true } as SortTableColumn<AssoAffaireOrderSearchResult>);
+      this.availableColumns.push({ id: "provisionType", fieldName: "provisionTypeLabel", label: "Prestation", colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
+      this.availableColumns.push({ id: "status", fieldName: "statusLabel", label: "Statut", colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
+      this.availableColumns.push({ id: "provisionStatusDatetime", fieldName: "provisionStatusDatetime", label: "Date de mise à jour", valueFonction: formatDateTimeForSortTable, colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
+      this.availableColumns.push({ id: "competentAuthorityLabel", fieldName: "competentAuthorityLabel", label: "Autorité compétente" } as SortTableColumn<AssoAffaireOrderSearchResult>);
+      this.availableColumns.push({ id: "waitedCompetentAuthorityLabel", fieldName: "waitedCompetentAuthorityLabel", label: "Autorité compétente en attente" } as SortTableColumn<AssoAffaireOrderSearchResult>);
       this.getCurrentEmployee();
 
       this.setColumns();
 
       this.tableAction.push({
-        actionIcon: "work", actionName: "Voir la prestation", actionLinkFunction: (action: SortTableAction, element: any) => {
+        actionIcon: "work", actionName: "Voir la prestation", actionLinkFunction: (action: SortTableAction<AssoAffaireOrderSearchResult>, element: AssoAffaireOrderSearchResult) => {
           if (element)
             return ['/provision', element.assoId, element.provisionId];
           return undefined;
         }, display: true,
-      } as SortTableAction);
+      } as SortTableAction<AssoAffaireOrderSearchResult>);
 
       if (this.isForDashboard && !this.affaires && this.affaireSearch || employeeId || this.isForTiersIntegration)
         this.searchAffaires();

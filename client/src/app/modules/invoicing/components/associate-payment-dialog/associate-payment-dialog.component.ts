@@ -42,8 +42,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
   invoice: Invoice | undefined;
   payment: Payment | undefined;
   associations: AssociationSummaryTable[] = [] as Array<AssociationSummaryTable>;
-  displayedColumns: SortTableColumn[] = [];
-  tableAction: SortTableAction[] = [];
+  displayedColumns: SortTableColumn<AssociationSummaryTable>[] = [];
+  tableAction: SortTableAction<AssociationSummaryTable>[] = [];
   selectedRefundTiers: Tiers | undefined;
   selectedRefundConfrere: Confrere | undefined;
   selectedRefundAffaire: Affaire | undefined;
@@ -83,14 +83,14 @@ export class AssociatePaymentDialogComponent implements OnInit {
 
   ngOnInit() {
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "payment", fieldName: "payment.id", label: "Paiement" } as SortTableColumn);
-    this.displayedColumns.push({ id: "customerOrder", fieldName: "customerOrder.id", label: "Commande" } as SortTableColumn);
-    this.displayedColumns.push({ id: "invoice", fieldName: "invoice.id", label: "Facture" } as SortTableColumn);
-    this.displayedColumns.push({ id: "initialAmount", fieldName: "invoice", label: "Montant TTC", valueFonction: (element: any): string => { return this.getInitialAmount(element) + " €"; } } as SortTableColumn);
-    this.displayedColumns.push({ id: "amountPayed", fieldName: "invoice", label: "Montant associé", valueFonction: (element: any): string => { return this.getAmountAssociated(element) + " €"; } } as SortTableColumn);
+    this.displayedColumns.push({ id: "payment", fieldName: "payment.id", label: "Paiement" } as SortTableColumn<AssociationSummaryTable>);
+    this.displayedColumns.push({ id: "customerOrder", fieldName: "customerOrder.id", label: "Commande" } as SortTableColumn<AssociationSummaryTable>);
+    this.displayedColumns.push({ id: "invoice", fieldName: "invoice.id", label: "Facture" } as SortTableColumn<AssociationSummaryTable>);
+    this.displayedColumns.push({ id: "initialAmount", fieldName: "invoice", label: "Montant TTC", valueFonction: (element: AssociationSummaryTable, column: SortTableColumn<AssociationSummaryTable>): string => { return this.getInitialAmount(element) + " €"; } } as SortTableColumn<AssociationSummaryTable>);
+    this.displayedColumns.push({ id: "amountPayed", fieldName: "invoice", label: "Montant associé", valueFonction: (element: AssociationSummaryTable, column: SortTableColumn<AssociationSummaryTable>): string => { return this.getAmountAssociated(element) + " €"; } } as SortTableColumn<AssociationSummaryTable>);
 
     this.tableAction.push({
-      actionIcon: "delete", actionName: "Supprimer l'association", actionClick: (action: SortTableAction, element: any): void => {
+      actionIcon: "delete", actionName: "Supprimer l'association", actionClick: (column: SortTableAction<AssociationSummaryTable>, element: AssociationSummaryTable, event: any): void => {
         if (element && this.associations)
           for (let asso of this.associations)
             if (asso.customerOrder && element.customerOrder && asso.customerOrder.id == element.customerOrder.id || asso.invoice && element.invoice && asso.invoice.id == element.invoice.id) {
@@ -99,7 +99,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
               return;
             }
       }, display: true,
-    } as SortTableAction);
+    } as SortTableAction<AssociationSummaryTable>);
 
     if (this.payment && this.invoice && !this.doNotInitializeAsso) {
       this.associateInvoice(this.invoice);
@@ -379,7 +379,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
     return affaires;
   }
 
-  getInitialAmount(element: any): number {
+  getInitialAmount(element: AssociationSummaryTable): number {
     let total = 0;
     if (element) {
       if (element.invoice)
@@ -390,7 +390,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
     return total;
   }
 
-  getAmountAssociated(element: any): number {
+  getAmountAssociated(element: AssociationSummaryTable): number {
     return element.amountUsed;
   }
 

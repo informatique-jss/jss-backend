@@ -17,8 +17,8 @@ import { PhoneSearch } from '../../model/PhoneSearch';
 export class SearchPhoneComponent {
   number: string = '';
   phoneSearchs: PhoneSearch[] | undefined;
-  displayedColumns: SortTableColumn[] = [];
-  tableAction: SortTableAction[] = [];
+  displayedColumns: SortTableColumn<PhoneSearch>[] = [];
+  tableAction: SortTableAction<PhoneSearch>[] = [];
 
   entityTypes: EntityType[] = [TIERS_ENTITY_TYPE, COMPETENT_AUTHORITY_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE, QUOTATION_ENTITY_TYPE, CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE, ASSO_AFFAIRE_ENTITY_TYPE, AFFAIRE_ENTITY_TYPE, PROVIDER_ENTITY_TYPE, CONFRERE_ENTITY_TYPE];
 
@@ -41,19 +41,19 @@ export class SearchPhoneComponent {
     }
 
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "entityId", fieldName: "entityId", label: "N°" } as SortTableColumn);
+    this.displayedColumns.push({ id: "entityId", fieldName: "entityId", label: "N°" } as SortTableColumn<PhoneSearch>);
     this.displayedColumns.push({
-      id: "entityType", fieldName: "entityType", label: "Type", valueFonction: (element: any) => {
+      id: "entityType", fieldName: "entityType", label: "Type", valueFonction: (element: PhoneSearch, column: SortTableColumn<PhoneSearch>) => {
         return this.getEntityType(element) ? this.getEntityType(element)?.tabName : ""
       }
-    } as SortTableColumn);
-    this.displayedColumns.push({ id: "entityLabel", fieldName: "entityLabel", label: "Libellé" } as SortTableColumn);
+    } as SortTableColumn<PhoneSearch>);
+    this.displayedColumns.push({ id: "entityLabel", fieldName: "entityLabel", label: "Libellé" } as SortTableColumn<PhoneSearch>);
 
     this.tableAction.push({
-      actionIcon: "visibility", actionName: "Ouvrir", actionClick: (action: SortTableAction, element: any, event: any) => {
+      actionIcon: "visibility", actionName: "Ouvrir", actionClick: (action: SortTableAction<PhoneSearch>, element: any, event: any) => {
         this.openEntity(element, event);
       }, display: true,
-    } as SortTableAction);
+    } as SortTableAction<PhoneSearch>);
   }
 
   openEntity(phoneSearch: PhoneSearch, event: any) {

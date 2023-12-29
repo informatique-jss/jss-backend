@@ -33,10 +33,10 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
   @Input() paymentSearch: PaymentSearch = {} as PaymentSearch;
   @Input() isForDashboard: boolean = false;
   payments: PaymentSearchResult[] | undefined;
-  availableColumns: SortTableColumn[] = [];
-  displayedColumns: SortTableColumn[] = [];
+  availableColumns: SortTableColumn<PaymentSearchResult>[] = [];
+  displayedColumns: SortTableColumn<PaymentSearchResult>[] = [];
   columnToDisplayOnDashboard: string[] = ["payemntDate", "payemntAmount", "label"];
-  tableAction: SortTableAction[] = [];
+  tableAction: SortTableAction<PaymentSearchResult>[] = [];
   uploadAttachementDialogRef: MatDialogRef<UploadAttachementDialogComponent> | undefined;
   selectAccountingAccountDialogComponentRef: MatDialogRef<SelectAccountingAccountDialogComponent> | undefined;
 
@@ -81,46 +81,46 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
 
   ngOnInit() {
     this.availableColumns = [];
-    this.availableColumns.push({ id: "id", fieldName: "id", label: "N° du paiement" } as SortTableColumn);
-    this.availableColumns.push({ id: "originPaymentId", fieldName: "originPaymentId", label: "Paiement d'origine" } as SortTableColumn);
-    this.availableColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "payemntAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.paymentAmount) } } as SortTableColumn);
-    this.availableColumns.push({ id: "paymentTypeLabel", fieldName: "paymentTypeLabel", label: "Type" } as SortTableColumn);
-    this.availableColumns.push({ id: "label", fieldName: "paymentLabel", label: "Libellé" } as SortTableColumn);
-    this.availableColumns.push({ id: "isInternallyAssociated", fieldName: "isAssociated", label: "Associé dans Osiris", valueFonction: (element: any) => { return (element.isAssociated) ? "Oui" : "Non" } } as SortTableColumn);
-    this.availableColumns.push({ id: "isExternallyAssociated", fieldName: "isExternallyAssociated", label: "Associé hors Osiris", valueFonction: (element: any) => { return element.isExternallyAssociated ? "Oui" : "Non" } } as SortTableColumn);
-    this.availableColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé", valueFonction: (element: any) => { return element.isCancelled ? "Oui" : "Non" } } as SortTableColumn);
-    this.availableColumns.push({ id: "isAppoint", fieldName: "isAppoint", label: "Appoint", valueFonction: (element: any) => { return element.isAppoint ? "Oui" : "Non" } } as SortTableColumn);
-    this.availableColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture associée", actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
-    this.availableColumns.push({ id: "comment", fieldName: "comment", label: "Commentaire" } as SortTableColumn);
+    this.availableColumns.push({ id: "id", fieldName: "id", label: "N° du paiement" } as SortTableColumn<PaymentSearchResult>);
+    this.availableColumns.push({ id: "originPaymentId", fieldName: "originPaymentId", label: "Paiement d'origine" } as SortTableColumn<PaymentSearchResult>);
+    this.availableColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn<PaymentSearchResult>);
+    this.availableColumns.push({ id: "payemntAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn<PaymentSearchResult>);
+    this.availableColumns.push({ id: "paymentTypeLabel", fieldName: "paymentTypeLabel", label: "Type" } as SortTableColumn<PaymentSearchResult>);
+    this.availableColumns.push({ id: "label", fieldName: "paymentLabel", label: "Libellé" } as SortTableColumn<PaymentSearchResult>);
+    this.availableColumns.push({ id: "isInternallyAssociated", fieldName: "isAssociated", label: "Associé dans Osiris", valueFonction: (element: PaymentSearchResult, column: SortTableColumn<PaymentSearchResult>) => { return (element.isAssociated) ? "Oui" : "Non" } } as SortTableColumn<PaymentSearchResult>);
+    this.availableColumns.push({ id: "isExternallyAssociated", fieldName: "isExternallyAssociated", label: "Associé hors Osiris", valueFonction: (element: PaymentSearchResult, column: SortTableColumn<PaymentSearchResult>) => { return element.isExternallyAssociated ? "Oui" : "Non" } } as SortTableColumn<PaymentSearchResult>);
+    this.availableColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé", valueFonction: (element: PaymentSearchResult, column: SortTableColumn<PaymentSearchResult>) => { return element.isCancelled ? "Oui" : "Non" } } as SortTableColumn<PaymentSearchResult>);
+    this.availableColumns.push({ id: "isAppoint", fieldName: "isAppoint", label: "Appoint", valueFonction: (element: PaymentSearchResult, column: SortTableColumn<PaymentSearchResult>) => { return element.isAppoint ? "Oui" : "Non" } } as SortTableColumn<PaymentSearchResult>);
+    this.availableColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture associée", actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn<PaymentSearchResult>);
+    this.availableColumns.push({ id: "comment", fieldName: "comment", label: "Commentaire" } as SortTableColumn<PaymentSearchResult>);
 
     if (this.overrideIconAction == "") {
       if (this.habilitationService.canModifyPaymentAssociation()) {
         this.tableAction.push({
-          actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (action: SortTableAction, element: any) => {
-            if ((!element.invoice && !element.customerOrder && !element.isExternallyAssociated && !element.isCancelled && !element.isAssociated))
+          actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
+            if ((!element.isExternallyAssociated && !element.isCancelled && !element.isAssociated))
               this.openAssociationDialog(element);
           }, display: true,
-        } as SortTableAction);
+        } as SortTableAction<PaymentSearchResult>);
         this.tableAction.push({
-          actionIcon: "savings", actionName: "Rembourser le paiement", actionClick: (action: SortTableAction, element: PaymentSearchResult) => {
+          actionIcon: "savings", actionName: "Rembourser le paiement", actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
             if ((!element.invoiceId && !element.isExternallyAssociated && !element.isCancelled && !element.isAssociated && element.paymentAmount > 0))
               this.openRefundPaymentDialog(element);
           }, display: true,
-        } as SortTableAction);
+        } as SortTableAction<PaymentSearchResult>);
         this.tableAction.push({
-          actionIcon: "visibility", actionName: "Voir le détail du paiement", actionClick: (action: SortTableAction, element: PaymentSearchResult) => {
+          actionIcon: "visibility", actionName: "Voir le détail du paiement", actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
             this.paymentDetailsDialogService.displayPaymentDetailsDialog(element as any);
           }, display: true,
-        } as SortTableAction);
+        } as SortTableAction<PaymentSearchResult>);
         this.tableAction.push({
-          actionIcon: "account_balance", actionName: "Mettre en compte", actionClick: (action: SortTableAction, element: PaymentSearchResult) => {
+          actionIcon: "account_balance", actionName: "Mettre en compte", actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
             if (!element.isAssociated && !element.isCancelled)
               this.displayAccountingPaymentDetailsDialog(element as any);
           }, display: true,
-        } as SortTableAction);
+        } as SortTableAction<PaymentSearchResult>);
         this.tableAction.push({
-          actionIcon: 'mode_comment', actionName: 'Modifier le commentaire', actionClick: (action: SortTableAction, element: any) => {
+          actionIcon: 'mode_comment', actionName: 'Modifier le commentaire', actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
             let dialogRef = this.editCommentDialog.open(EditCommentDialogComponent, {
               width: '40%'
             });
@@ -132,14 +132,14 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
               }
             });
           }, display: true,
-        } as SortTableAction);
+        } as SortTableAction<PaymentSearchResult>);
       }
     } else {
       this.tableAction.push({
-        actionIcon: this.overrideIconAction, actionName: this.overrideTooltipAction, actionClick: (action: SortTableAction, element: any) => {
+        actionIcon: this.overrideIconAction, actionName: this.overrideTooltipAction, actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
           this.actionBypass.emit(element);
         }, display: true,
-      } as SortTableAction);
+      } as SortTableAction<PaymentSearchResult>);
     };
 
     this.setColumns();
@@ -179,9 +179,9 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
       this.displayedColumns.push(...this.availableColumns);
   }
 
-  getActionLink(action: SortTableColumn, element: any) {
-    if (element && action.id == "invoice" && element.invoices && element.invoices[0] && element.invoices.length == 1)
-      return ['/invoicing/view', element.invoices[0].id];
+  getActionLink(action: SortTableColumn<PaymentSearchResult>, element: PaymentSearchResult) {
+    if (element && action.id == "invoice" && element.invoiceId)
+      return ['/invoicing/view', element.invoiceId];
     return undefined;
   }
 

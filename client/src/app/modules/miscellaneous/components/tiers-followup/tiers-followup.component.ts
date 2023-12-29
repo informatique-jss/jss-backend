@@ -7,13 +7,13 @@ import { ICSEvent } from 'src/app/libs/ICSEvent';
 import { createEvent } from 'src/app/libs/ICSHelper';
 import { instanceOfConfrere, instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
 import { Gift } from 'src/app/modules/miscellaneous/model/Gift';
-import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { environment } from 'src/environments/environment';
 import { Invoice } from '../../../quotation/model/Invoice';
+import { SortTableColumn } from '../../model/SortTableColumn';
 import { TiersFollowup } from '../../model/TiersFollowup';
 import { TiersFollowupType } from '../../model/TiersFollowupType';
 import { ConstantService } from '../../services/constant.service';
@@ -45,7 +45,7 @@ export class TiersFollowupComponent implements OnInit {
 
   reminderDatetime: string = "";
 
-  displayedColumns: SortTableColumn[] = [];
+  displayedColumns: SortTableColumn<TiersFollowup>[] = [];
   searchText: string | undefined;
 
   constructor(private formBuilder: UntypedFormBuilder,
@@ -59,12 +59,12 @@ export class TiersFollowupComponent implements OnInit {
     })
 
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "followupDate", fieldName: "followupDate", label: "Date", valueFonction: formatDateForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "name", fieldName: "tiersFollowupType.label", label: "Type" } as SortTableColumn);
-    this.displayedColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Par", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { return (element && element.salesEmployee) ? element.salesEmployee.firstname + " " + element.salesEmployee.lastname : "" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "gift", fieldName: "gift.label", label: "Cadeau" } as SortTableColumn);
-    this.displayedColumns.push({ id: "giftNumber", fieldName: "giftNumber", label: "Nombre" } as SortTableColumn);
-    this.displayedColumns.push({ id: "observations", fieldName: "observations", label: "Observations" } as SortTableColumn);
+    this.displayedColumns.push({ id: "followupDate", fieldName: "followupDate", label: "Date", valueFonction: formatDateForSortTable } as SortTableColumn<TiersFollowup>);
+    this.displayedColumns.push({ id: "name", fieldName: "tiersFollowupType.label", label: "Type" } as SortTableColumn<TiersFollowup>);
+    this.displayedColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Par", valueFonction: (element: TiersFollowup, column: SortTableColumn<TiersFollowup>) => { return (element && element.salesEmployee) ? element.salesEmployee.firstname + " " + element.salesEmployee.lastname : "" } } as SortTableColumn<TiersFollowup>);
+    this.displayedColumns.push({ id: "gift", fieldName: "gift.label", label: "Cadeau" } as SortTableColumn<TiersFollowup>);
+    this.displayedColumns.push({ id: "giftNumber", fieldName: "giftNumber", label: "Nombre" } as SortTableColumn<TiersFollowup>);
+    this.displayedColumns.push({ id: "observations", fieldName: "observations", label: "Observations" } as SortTableColumn<TiersFollowup>);
   }
 
   formatDateForSortTable = formatDateForSortTable;

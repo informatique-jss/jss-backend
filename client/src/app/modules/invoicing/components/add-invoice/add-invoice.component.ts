@@ -66,8 +66,8 @@ export class AddInvoiceComponent implements OnInit {
   }
 
   invoiceForm = this.formBuilder.group({});
-  displayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
-  tableAction: SortTableAction[] = [] as Array<SortTableAction>;
+  displayedColumns: SortTableColumn<InvoiceItem>[] = [] as Array<SortTableColumn<InvoiceItem>>;
+  tableAction: SortTableAction<InvoiceItem>[] = [] as Array<SortTableAction<InvoiceItem>>;
   attachmentTypeInvoice = this.contantService.getAttachmentTypeInvoice();
   indexedCustomerOrder: IndexEntity | undefined;
   idInvoiceForCreditNote: string | undefined;
@@ -157,22 +157,21 @@ export class AddInvoiceComponent implements OnInit {
     // Column init
 
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", isShrinkColumn: true } as SortTableColumn);
-    this.displayedColumns.push({ id: "billingType", fieldName: "billingItem.billingType.label", label: "Poste de facturation" } as SortTableColumn);
-    this.displayedColumns.push({ id: "preTaxPrice", fieldName: "preTaxPrice", label: "Prix HT", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "preTaxPriceReinvoiced", fieldName: "preTaxPriceReinvoiced", label: "Prix HT refacturé", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "vat", fieldName: "vat.label", label: "TVA applicable" } as SortTableColumn);
-    this.displayedColumns.push({ id: "vatPrice", fieldName: "vatPrice", label: "Montant de la TVA", valueFonction: this.getVatPrice } as SortTableColumn);
-    this.displayedColumns.push({ id: "discountAmount", fieldName: "discountAmount", label: "Remise totale", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: (element: any) => { return this.getTotalPriceValue(element) + " €" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", isShrinkColumn: true } as SortTableColumn<InvoiceItem>);
+    this.displayedColumns.push({ id: "billingType", fieldName: "billingItem.billingType.label", label: "Poste de facturation" } as SortTableColumn<InvoiceItem>);
+    this.displayedColumns.push({ id: "preTaxPrice", fieldName: "preTaxPrice", label: "Prix HT", valueFonction: formatEurosForSortTable } as SortTableColumn<InvoiceItem>);
+    this.displayedColumns.push({ id: "preTaxPriceReinvoiced", fieldName: "preTaxPriceReinvoiced", label: "Prix HT refacturé", valueFonction: formatEurosForSortTable } as SortTableColumn<InvoiceItem>);
+    this.displayedColumns.push({ id: "vat", fieldName: "vat.label", label: "TVA applicable" } as SortTableColumn<InvoiceItem>);
+    this.displayedColumns.push({ id: "vatPrice", fieldName: "vatPrice", label: "Montant de la TVA", valueFonction: this.getVatPrice } as SortTableColumn<InvoiceItem>);
+    this.displayedColumns.push({ id: "discountAmount", fieldName: "discountAmount", label: "Remise totale", valueFonction: formatEurosForSortTable } as SortTableColumn<InvoiceItem>);
+    this.displayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: (element: InvoiceItem, column: SortTableColumn<InvoiceItem>) => { return this.getTotalPriceValue(element) + " €" } } as SortTableColumn<InvoiceItem>);
 
     this.tableAction.push({
-      actionIcon: "delete", actionName: "Supprimer la ligne de facturation", actionClick: (action: SortTableAction, element: any) => {
-        element.nonTaxableAmount = null;
+      actionIcon: "delete", actionName: "Supprimer la ligne de facturation", actionClick: (action: SortTableAction<InvoiceItem>, element: InvoiceItem, event: any) => {
         this.invoiceItems.splice(this.invoiceItems.indexOf(element), 1);
         this.refreshTable.next();
       }, display: true,
-    } as SortTableAction);
+    } as SortTableAction<InvoiceItem>);
 
     this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
       if (response)
@@ -184,7 +183,7 @@ export class AddInvoiceComponent implements OnInit {
     this.saveObservableSubscription.unsubscribe();
   }
 
-  getVatPrice(element: any) {
+  getVatPrice(element: InvoiceItem, column: SortTableColumn<InvoiceItem>) {
     if (element && element.vat && element.preTaxPrice)
       return Math.round(element.preTaxPrice * element.vat.rate / 100 * 100) / 100 + " €";
     return "0 €";

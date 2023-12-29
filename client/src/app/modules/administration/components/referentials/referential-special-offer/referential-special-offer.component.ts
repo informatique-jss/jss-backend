@@ -31,7 +31,7 @@ export class ReferentialSpecialOfferComponent implements OnInit {
 
   assoSpecialOfferBillingItems: AssoSpecialOfferBillingType[] | undefined;
 
-  displayedColumns: SortTableColumn[] = [];
+  displayedColumns: SortTableColumn<SpecialOffer>[] = [];
   searchText: string | undefined;
 
   constructor(
@@ -127,9 +127,9 @@ export class ReferentialSpecialOfferComponent implements OnInit {
 
   definedMatTableColumn() {
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);
-    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return this.getElementCode(element); return "" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return this.getElementLabel(element); return "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn<SpecialOffer>);
+    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle", valueFonction: (element: SpecialOffer, column: SortTableColumn<SpecialOffer>) => { if (element && column) return this.getElementCode(element); return "" } } as SortTableColumn<SpecialOffer>);
+    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", valueFonction: (element: SpecialOffer, column: SortTableColumn<SpecialOffer>) => { if (element && column) return this.getElementLabel(element); return "" } } as SortTableColumn<SpecialOffer>);
   }
 
   applyFilter(filterValue: any) {

@@ -19,9 +19,9 @@ export class DirectDebitTransfertListComponent implements OnInit, AfterContentCh
 
   @Input() transfertSearch: DirectDebitTransfertSearch = {} as DirectDebitTransfertSearch;
   transfers: DirectDebitTransfertSearchResult[] | undefined;
-  availableColumns: SortTableColumn[] = [];
-  displayedColumns: SortTableColumn[] = [];
-  tableAction: SortTableAction[] = [];
+  availableColumns: SortTableColumn<DirectDebitTransfertSearchResult>[] = [];
+  displayedColumns: SortTableColumn<DirectDebitTransfertSearchResult>[] = [];
+  tableAction: SortTableAction<DirectDebitTransfertSearchResult>[] = [];
 
   constructor(
     private directDebitTransfertSearchResultService: DirectDebitTransfertSearchResultService,
@@ -38,20 +38,20 @@ export class DirectDebitTransfertListComponent implements OnInit, AfterContentCh
 
   ngOnInit() {
     this.availableColumns = [];
-    this.availableColumns.push({ id: "id", fieldName: "id", label: "N° du prélèvement" } as SortTableColumn);
-    this.availableColumns.push({ id: "customerOrderLabel", fieldName: "customerOrderLabel", label: "Payeur" } as SortTableColumn);
-    this.availableColumns.push({ id: "transfertDate", fieldName: "transfertDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "transfertAmount", fieldName: "transfertAmount", label: "Montant", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.transfertAmount) } } as SortTableColumn);
-    this.availableColumns.push({ id: "transfertLabel", fieldName: "transfertLabel", label: "Libellé" } as SortTableColumn);
-    this.availableColumns.push({ id: "isAlreadyExported", fieldName: "isAlreadyExported", label: "A été exporté", valueFonction: (element: any) => { return (element.isAlreadyExported) ? "Oui" : "Non" } } as SortTableColumn);
+    this.availableColumns.push({ id: "id", fieldName: "id", label: "N° du prélèvement" } as SortTableColumn<DirectDebitTransfertSearchResult>);
+    this.availableColumns.push({ id: "customerOrderLabel", fieldName: "customerOrderLabel", label: "Payeur" } as SortTableColumn<DirectDebitTransfertSearchResult>);
+    this.availableColumns.push({ id: "transfertDate", fieldName: "transfertDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn<DirectDebitTransfertSearchResult>);
+    this.availableColumns.push({ id: "transfertAmount", fieldName: "transfertAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn<DirectDebitTransfertSearchResult>);
+    this.availableColumns.push({ id: "transfertLabel", fieldName: "transfertLabel", label: "Libellé" } as SortTableColumn<DirectDebitTransfertSearchResult>);
+    this.availableColumns.push({ id: "isAlreadyExported", fieldName: "isAlreadyExported", label: "A été exporté", valueFonction: (element: DirectDebitTransfertSearchResult, column: SortTableColumn<DirectDebitTransfertSearchResult>) => { return (element.isAlreadyExported) ? "Oui" : "Non" } } as SortTableColumn<DirectDebitTransfertSearchResult>);
 
     this.setColumns();
 
     this.tableAction.push({
-      actionIcon: 'delete', actionName: 'Supprimer ce prélèvement', actionClick: (action: SortTableAction, element: any) => {
-        this.directDebitTransfertService.cancelDirectDebitTransfert(element).subscribe(response => this.searchTransferts());
+      actionIcon: 'delete', actionName: 'Supprimer ce prélèvement', actionClick: (column: SortTableAction<DirectDebitTransfertSearchResult>, element: DirectDebitTransfertSearchResult, event: any) => {
+        this.directDebitTransfertService.cancelDirectDebitTransfert(element as any).subscribe(response => this.searchTransferts());
       }, display: true,
-    } as SortTableAction);
+    } as SortTableAction<DirectDebitTransfertSearchResult>);
 
 
     this.transfertSearch.isHideExportedDirectDebitTransfert = true;

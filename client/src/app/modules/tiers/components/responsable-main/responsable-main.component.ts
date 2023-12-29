@@ -62,8 +62,8 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   rffSearch: RffSearch | undefined;
   responsableAccountSearch: ITiers | undefined;
 
-  displayedColumns: SortTableColumn[] = [];
-  tableActions: SortTableAction[] = [] as Array<SortTableAction>;
+  displayedColumns: SortTableColumn<Responsable>[] = [];
+  tableActions: SortTableAction<Responsable>[] = [] as Array<SortTableAction<Responsable>>;
   searchText: string | undefined;
 
   tiersCategoryPresse = this.constantService.getTiersCategoryPresse();
@@ -115,18 +115,18 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
 
     // Table definition
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du responsable" } as SortTableColumn);
-    this.displayedColumns.push({ id: "lastname", fieldName: "lastname", label: "Nom" } as SortTableColumn);
-    this.displayedColumns.push({ id: "firstname", fieldName: "firstname", label: "Prénom" } as SortTableColumn);
-    this.displayedColumns.push({ id: "function", fieldName: "function", label: "Fonction" } as SortTableColumn);
-    this.displayedColumns.push({ id: "mails", fieldName: "mails", label: "Mails", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.mails) ? element.mails.map((e: { mail: any; }) => e.mail).join(", ") : "") } } as SortTableColumn);
-    this.displayedColumns.push({ id: "phones", fieldName: "phones", label: "Téléphones", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.phones) ? element.phones.map((e: { phoneNumber: any; }) => e.phoneNumber).join(", ") : "") } } as SortTableColumn);
-    this.displayedColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", valueFonction: (element: any) => { return (element && element.salesEmployee) ? element.salesEmployee.firstname + " " + element.salesEmployee.lastname : "" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "formalisteEmployee", fieldName: "formalisteEmployee", label: "Formaliste", valueFonction: (element: any) => { return (element && element.formalisteEmployee) ? element.formalisteEmployee.firstname + " " + element.formalisteEmployee.lastname : "" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "insertionEmployee", fieldName: "insertionEmployee", label: "Publiciste", valueFonction: (element: any) => { return (element && element.insertionEmployee) ? element.insertionEmployee.firstname + " " + element.insertionEmployee.lastname : "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du responsable" } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "lastname", fieldName: "lastname", label: "Nom" } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "firstname", fieldName: "firstname", label: "Prénom" } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "function", fieldName: "function", label: "Fonction" } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "mails", fieldName: "mails", label: "Mails", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.mails) ? element.mails.map((e: { mail: any; }) => e.mail).join(", ") : "") } } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "phones", fieldName: "phones", label: "Téléphones", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.phones) ? element.phones.map((e: { phoneNumber: any; }) => e.phoneNumber).join(", ") : "") } } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return (element && element.salesEmployee) ? element.salesEmployee.firstname + " " + element.salesEmployee.lastname : "" } } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "formalisteEmployee", fieldName: "formalisteEmployee", label: "Formaliste", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return (element && element.formalisteEmployee) ? element.formalisteEmployee.firstname + " " + element.formalisteEmployee.lastname : "" } } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "insertionEmployee", fieldName: "insertionEmployee", label: "Publiciste", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return (element && element.insertionEmployee) ? element.insertionEmployee.firstname + " " + element.insertionEmployee.lastname : "" } } as SortTableColumn<Responsable>);
 
     this.tableActions.push({
-      actionIcon: "delete", actionName: 'Supprimer le responsable', display: true, actionClick: (action: SortTableAction, element: any) => {
+      actionIcon: "delete", actionName: 'Supprimer le responsable', display: true, actionClick: (column: SortTableAction<Responsable>, element: Responsable, event: any) => {
         let hash = JSON.stringify(element).toLowerCase();
         for (let i = 0; i < this.tiers.responsables.length; i++) {
           let responsable = this.tiers.responsables[i];
@@ -139,7 +139,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
           }
         }
       }
-    } as SortTableAction);
+    } as SortTableAction<Responsable>);
   }
 
   toggleTabs() {

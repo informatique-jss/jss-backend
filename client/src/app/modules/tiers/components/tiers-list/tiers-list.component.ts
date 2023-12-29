@@ -3,7 +3,6 @@ import { FormBuilder } from '@angular/forms';
 import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { SortTableElement } from 'src/app/modules/miscellaneous/model/SortTableElement';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
@@ -69,16 +68,7 @@ export class TiersListComponent implements OnInit {
       this.displayedColumnsResponsables.push({ id: "tiersCategory", fieldName: "tiersCategory", label: "Catégorie du tiers" } as SortTableColumn<ResponsableSearchResult>);
       this.displayedColumnsResponsables.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn<ResponsableSearchResult>);
       this.displayedColumnsResponsables.push({ id: "responsableCategory", fieldName: "responsableCategory", label: "Catégorie du responsable" } as SortTableColumn<ResponsableSearchResult>);
-      this.displayedColumnsResponsables.push({
-        id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true, valueFonction: (element: ResponsableSearchResult, column: SortTableColumn<ResponsableSearchResult>) => {
-          if (element && this.allEmployees) {
-            for (let employee of this.allEmployees)
-              if (employee.id == element.salesEmployeeId)
-                return employee;
-          }
-          return undefined;
-        }
-      } as SortTableColumn<ResponsableSearchResult>);
+      this.displayedColumnsResponsables.push({ id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true } as SortTableColumn<ResponsableSearchResult>);
 
       this.displayedColumnsResponsables.push({ id: "firstOrderDay", fieldName: "firstOrderDay", label: "1ère commande", valueFonction: formatDateForSortTable } as SortTableColumn<ResponsableSearchResult>);
       this.displayedColumnsResponsables.push({ id: "lastOrderDay", fieldName: "lastOrderDay", label: "Dernière commande", valueFonction: formatDateForSortTable } as SortTableColumn<ResponsableSearchResult>);
@@ -114,27 +104,9 @@ export class TiersListComponent implements OnInit {
       this.displayedColumnsTiers.push({ id: "tiersId", fieldName: "tiersId", label: "N°" } as SortTableColumn<TiersSearchResult>);
       this.displayedColumnsTiers.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers" } as SortTableColumn<TiersSearchResult>);
       this.displayedColumnsTiers.push({ id: "tiersCategory", fieldName: "tiersCategory", label: "Catégorie du tiers" } as SortTableColumn<TiersSearchResult>);
-      this.displayedColumnsTiers.push({
-        id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true, valueFonction: (element: TiersSearchResult, column: SortTableColumn<TiersSearchResult>) => {
-          if (element && this.allEmployees) {
-            for (let employee of this.allEmployees)
-              if (employee.id == element.salesEmployeeId)
-                return employee;
-          }
-          return undefined;
-        }
-      } as SortTableColumn<TiersSearchResult>);
+      this.displayedColumnsTiers.push({ id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true } as SortTableColumn<TiersSearchResult>);
 
-      this.displayedColumnsTiers.push({
-        id: "formalisteId", fieldName: "formalisteId", label: "Formaliste", displayAsEmployee: true, valueFonction: (element: TiersSearchResult, column: SortTableColumn<TiersSearchResult>) => {
-          if (element && this.allEmployees) {
-            for (let employee of this.allEmployees)
-              if (employee.id == element.formalisteId)
-                return employee;
-          }
-          return undefined;
-        }
-      } as SortTableColumn<TiersSearchResult>);
+      this.displayedColumnsTiers.push({ id: "formalisteId", fieldName: "formalisteId", label: "Formaliste", displayAsEmployee: true } as SortTableColumn<TiersSearchResult>);
 
 
       this.displayedColumnsTiers.push({ id: "firstOrderDay", fieldName: "firstOrderDay", label: "1ère commande", valueFonction: formatDateForSortTable } as SortTableColumn<TiersSearchResult>);
@@ -148,10 +120,10 @@ export class TiersListComponent implements OnInit {
       this.displayedColumnsTiers.push({ id: "formalityNbr", fieldName: "formalityNbr", label: "Nbr formalités" } as SortTableColumn<TiersSearchResult>);
       this.displayedColumnsTiers.push({ id: "billingLabelType", fieldName: "billingLabelType", label: "Type de facturation" } as SortTableColumn<TiersSearchResult>);
 
-      this.displayedColumnsTiers.push({ id: "turnoverAmountWithoutTax", fieldName: "turnoverAmountWithoutTax", label: "CA HT", valueFonction: formatEurosForSortTable, sortFonction: (element: SortTableElement, column: SortTableColumn<TiersSearchResult>) => { return (parseFloat(element.columns[column.id])) } } as SortTableColumn<TiersSearchResult>);
-      this.displayedColumnsTiers.push({ id: "turnoverAmountWithTax", fieldName: "turnoverAmountWithTax", label: "CA TTC", valueFonction: formatEurosForSortTable, sortFonction: (element: SortTableElement, column: SortTableColumn<TiersSearchResult>) => { return (parseFloat(element.columns[column.id])) } } as SortTableColumn<TiersSearchResult>);
-      this.displayedColumnsTiers.push({ id: "turnoverAmountWithoutDebourWithoutTax", fieldName: "turnoverAmountWithoutDebourWithoutTax", label: "CA HT hors débours", valueFonction: formatEurosForSortTable, sortFonction: (element: SortTableElement, column: SortTableColumn<TiersSearchResult>) => { return (parseFloat(element.columns[column.id])) } } as SortTableColumn<TiersSearchResult>);
-      this.displayedColumnsTiers.push({ id: "turnoverAmountWithoutDebourWithTax", fieldName: "turnoverAmountWithoutDebourWithTax", label: "CA TTC hors débours", valueFonction: formatEurosForSortTable, sortFonction: (element: SortTableElement, column: SortTableColumn<TiersSearchResult>) => { return (parseFloat(element.columns[column.id])) } } as SortTableColumn<TiersSearchResult>);
+      this.displayedColumnsTiers.push({ id: "turnoverAmountWithoutTax", fieldName: "turnoverAmountWithoutTax", label: "CA HT", valueFonction: formatEurosForSortTable } as SortTableColumn<TiersSearchResult>);
+      this.displayedColumnsTiers.push({ id: "turnoverAmountWithTax", fieldName: "turnoverAmountWithTax", label: "CA TTC", valueFonction: formatEurosForSortTable } as SortTableColumn<TiersSearchResult>);
+      this.displayedColumnsTiers.push({ id: "turnoverAmountWithoutDebourWithoutTax", fieldName: "turnoverAmountWithoutDebourWithoutTax", label: "CA HT hors débours", valueFonction: formatEurosForSortTable } as SortTableColumn<TiersSearchResult>);
+      this.displayedColumnsTiers.push({ id: "turnoverAmountWithoutDebourWithTax", fieldName: "turnoverAmountWithoutDebourWithTax", label: "CA TTC hors débours", valueFonction: formatEurosForSortTable } as SortTableColumn<TiersSearchResult>);
 
       this.tableActionTiers.push({
         actionIcon: "visibility", actionName: "Voir le tiers", actionLinkFunction: (action: SortTableAction<TiersSearchResult>, element: any) => {

@@ -9,7 +9,6 @@ import { map, startWith } from 'rxjs/operators';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
-import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { ANNOUNCEMENT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { getDocument } from '../../../../libs/DocumentHelper';
@@ -307,12 +306,6 @@ export class AnnouncementComponent implements OnInit {
         map(value => this._filterNoticeType(value)),
       );
     }
-  }
-
-  getHistoryActions(): SortTableAction[] {
-    let historyActions = [] as Array<SortTableAction>;
-
-    return historyActions;
   }
 
   updateAttachments(attachments: Attachment[]) {

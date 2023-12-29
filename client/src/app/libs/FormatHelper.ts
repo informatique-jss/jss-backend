@@ -27,19 +27,19 @@ export function toIsoString(date: Date) {
     '.000Z';
 }
 
-export function formatEurosForSortTable<T>(element: any, column: SortTableColumn<T>): string {
+export function formatEurosForSortTable<T>(element: T, column: SortTableColumn<T>): string {
   if (element && column && (getObjectPropertybyString(element, column.fieldName) || getObjectPropertybyString(element, column.fieldName) == 0) && !isNaN(getObjectPropertybyString(element, column.fieldName)))
     return ((Math.round(getObjectPropertybyString(element, column.fieldName) * 100) / 100) + "").replace(".", ",") + " €";
   return "";
 }
 
-export function formatPercentForSortTable<T>(element: any, column: SortTableColumn<T>): string {
+export function formatPercentForSortTable<T>(element: T, column: SortTableColumn<T>): string {
   if (element && column && getObjectPropertybyString(element, column.fieldName) != null)
     return getObjectPropertybyString(element, column.fieldName) + " %";
   return "";
 }
 
-export function formatDateForSortTable<T>(element: any, column: SortTableColumn<T>): string {
+export function formatDateForSortTable<T>(element: T, column: SortTableColumn<T>): string {
   if (element && column && column.fieldName && getObjectPropertybyString(element, column.fieldName)) {
     let date = new Date(getObjectPropertybyString(element, column.fieldName));
     return formatDateFrance(date);
@@ -57,7 +57,7 @@ export function formatDateFrance(date: Date) {
   ].join('/');
 }
 
-export function formatDateTimeForSortTable<T>(element: any, column: SortTableColumn<T>): string {
+export function formatDateTimeForSortTable<T>(element: T, column: SortTableColumn<T>): string {
   if (element && column && column.fieldName && getObjectPropertybyString(element, column.fieldName)) {
     let date = new Date(getObjectPropertybyString(element, column.fieldName));
     return formatDateFrance(date) + " " + [

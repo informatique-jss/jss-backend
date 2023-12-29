@@ -21,7 +21,7 @@ export interface SortTableColumn<T> {
    * The raw element and element list is provided as input
    * If not provided, label field is used
    */
-  sortFonction: ((element: SortTableElement, column: SortTableColumn<T>) => string | Date | Employee | number) | undefined;
+  sortFonction: ((element: SortTableElement, column: SortTableColumn<T>, rawValue: string | Date | Employee | number) => string | Date | Employee | number) | undefined;
   /**
    * Function to display line as warn color
    * Return true or false

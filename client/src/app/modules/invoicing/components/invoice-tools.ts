@@ -5,6 +5,7 @@ import { Invoice } from "../../quotation/model/Invoice";
 import { IQuotation } from '../../quotation/model/IQuotation';
 import { ITiers } from "../../tiers/model/ITiers";
 import { Tiers } from "../../tiers/model/Tiers";
+import { InvoiceSearchResult } from "../model/InvoiceSearchResult";
 
 export function getRemainingToPay(invoice: Invoice) {
   if (invoice.isInvoiceFromProvider)
@@ -12,7 +13,7 @@ export function getRemainingToPay(invoice: Invoice) {
   return Math.round((invoice.totalPrice - getAmountPayed(invoice)) * 100) / 100;
 }
 
-export function getColumnLink(column: SortTableColumn, element: any) {
+export function getColumnLink(column: SortTableColumn<InvoiceSearchResult>, element: InvoiceSearchResult) {
   if (element && column.id == "customerOrderName") {
     if (element.confrereId)
       return ['/confrere', element.confrereId];
@@ -25,13 +26,6 @@ export function getColumnLink(column: SortTableColumn, element: any) {
     if (element.tiersId)
       return ['/tiers', element.tiersId];
   }
-  if (element && column.id == "customerOrderId" && element.customerOrderId) {
-    if (element.isQuotation)
-      return ['/quotation/', element.customerOrderId];
-    return ['/order/', element.customerOrderId];
-  }
-  if (element.customerOrder && element.customerOrder.tiers)
-    return ['/tiers', element.customerOrder.tiers.id];
   return null;
 }
 

@@ -32,7 +32,7 @@ export class ProviderComponent implements OnInit {
   searchText: string = "";
   selectedProvider: Provider | undefined;
   selectedProviderId: number | undefined;
-  displayedColumns: SortTableColumn[] = [];
+  displayedColumns: SortTableColumn<Provider>[] = [];
   editMode: boolean = false;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
 
@@ -54,9 +54,9 @@ export class ProviderComponent implements OnInit {
       this.selectedProviderId = this.idProvider;
 
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);
-    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle" } as SortTableColumn);
-    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn<Provider>);
+    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle" } as SortTableColumn<Provider>);
+    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn<Provider>);
 
     this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
       if (response)
