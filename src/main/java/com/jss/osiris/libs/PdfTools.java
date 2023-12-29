@@ -33,10 +33,10 @@ public class PdfTools {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         try {
-            out.write(file);
-            pdfReader = new PdfReader(file);
+            file.transferTo(out);
+            pdfReader = new PdfReader(new ByteArrayInputStream(out.toByteArray()));
             out.close();
-        } catch (Exception e) {
+        } catch (Exception | NoClassDefFoundError e) {
         }
 
         if (pdfReader != null) {
@@ -69,9 +69,9 @@ public class PdfTools {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         try {
-            out.write(file);
-            reader = new PdfReader(file);
-        } catch (Exception e) {
+            file.transferTo(out);
+            reader = new PdfReader(new ByteArrayInputStream(out.toByteArray()));
+        } catch (Exception | NoClassDefFoundError e) {
         }
 
         if (reader != null) {

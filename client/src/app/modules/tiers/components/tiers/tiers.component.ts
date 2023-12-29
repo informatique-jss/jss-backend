@@ -102,12 +102,12 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
         let start = new Date();
         let d = new Date(start.getTime());
-        d.setFullYear(d.getFullYear() - 1);
+        d.setFullYear(d.getFullYear() - 2);
         this.rffSearch.startDate = d;
 
         let end = new Date();
         let d2 = new Date(end.getTime());
-        d2.setFullYear(d2.getFullYear() + 1);
+        d2.setFullYear(d2.getFullYear() + 2);
         this.rffSearch.endDate = d2;
       })
     } else if (this.createMode == false) {

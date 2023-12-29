@@ -232,9 +232,9 @@ export class RffListComponent implements OnInit {
                 width: '60%'
               });
 
-              amountDialogRef.componentInstance.title = "Montant du RFF à verser";
+              amountDialogRef.componentInstance.title = "Montant HT du RFF à verser";
               amountDialogRef.componentInstance.label = "Indiquer le montant à verser au titre des RFF :";
-              amountDialogRef.componentInstance.maxAmount = Math.round((rff.rffTotal) * 100) / 100;
+              //amountDialogRef.componentInstance.maxAmount = Math.round((rff.rffTotal) * 100) / 100;
               amountDialogRef.afterClosed().subscribe(response => {
                 if (response != null) {
                   this.rffService.sendRff(rff, response, sendToMe).subscribe(res => this.searchRff());

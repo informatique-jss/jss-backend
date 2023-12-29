@@ -29,7 +29,7 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
                         + " p.id_origin_payment as originPaymentId"
                         + " from payment p "
                         + " join payment_type on payment_type.id = p.id_payment_type"
-                        + " where (:isHideAssociatedPayments=false OR ( p.id_invoice is null and p.id_customer_order is null and p.id_refund is null and p.id_bank_transfert is null and p.is_externally_associated=false and p.is_cancelled=false )) "
+                        + " where (:isHideAssociatedPayments=false OR ( p.id_invoice is null and p.id_customer_order is null and p.id_refund is null and p.id_bank_transfert is null and p.is_externally_associated=false and p.is_cancelled=false  and id_competent_authority is null  )) "
                         + " and (:isHideCancelledPayments=false or p.is_cancelled = false) "
                         + " and (:isHideAppoint=false or p.is_appoint = false) "
                         + " and (:idPayment=0 or p.id = :idPayment) "

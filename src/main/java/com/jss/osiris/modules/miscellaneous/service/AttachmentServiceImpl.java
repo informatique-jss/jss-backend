@@ -286,6 +286,8 @@ public class AttachmentServiceImpl implements AttachmentService {
                 if (!customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)
                         && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED))
                     batchService.declareNewBatch(Batch.DO_OCR_ON_INVOICE, attachment.getId());
+            } else {
+                batchService.declareNewBatch(Batch.DO_OCR_ON_INVOICE, attachment.getId());
             }
         }
 

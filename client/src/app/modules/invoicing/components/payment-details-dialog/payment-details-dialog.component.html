@@ -2,13 +2,13 @@
   <div class="left">
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" #tree class="tree">
       <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding
-        [ngClass]="{'selected':getNodeName(selectedPayment,node.level==0)==node.name,'payment-tree-active':getNodeName(selectedPayment,node.level==0)==node.name}"
+        [ngClass]="{'selected':getNodeName(selectedPayment)==node.name,'payment-tree-active':getNodeName(selectedPayment)==node.name}"
         class="pointer" (click)="selectNode(node)">
         <button mat-icon-button disabled></button>
         {{node.name}}
       </mat-tree-node>
       <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding
-        [ngClass]="{'selected':getNodeName(selectedPayment,node.level==0)==node.name,'payment-tree-active':getNodeName(selectedPayment,node.level==0)==node.name}"
+        [ngClass]="{'selected':getNodeName(selectedPayment)==node.name,'payment-tree-active':getNodeName(selectedPayment)==node.name}"
         class="pointer" (click)="selectNode(node)">
         <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name">
           <mat-icon class="mat-icon-rtl-mirror">
