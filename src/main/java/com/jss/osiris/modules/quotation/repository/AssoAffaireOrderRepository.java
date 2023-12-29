@@ -29,7 +29,7 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " p.is_emergency as isEmergency," +
                         " p.id as provisionId, " +
                         " max(audit.datetime) as provisionStatusDatetime, " +
-                        " coalesce(min(audit2.datetime),c.created_date) as provisionCreatedDatetime, " +
+                        " coalesce(min(audit2.created_date),c.created_date) as provisionCreatedDatetime, " +
                         " sp_ca.label as waitedCompetentAuthorityLabel, " +
                         " ca.label as competentAuthorityLabel " +
                         " from asso_affaire_order asso " +
@@ -69,8 +69,8 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         +
                         "  or audit.entity_id=bo.id and audit.entity = 'Bodacc' and audit.field_name = 'bodaccStatus' "
                         +
-                        " left join audit audit2 on " +
-                        "  audit2.entity_id=an.id and audit2.entity in ('Announcement','Formalite','Domiciliation','SimpleProvision','Bodacc') and audit2.field_name = 'id' "
+                        " left join index_entity audit2 on " +
+                        "  audit2.entity_id=an.id and audit2.entity_type in ('Announcement','Formalite','Domiciliation','SimpleProvision','Bodacc')  "
                         +
                         " where cs.code not in (:excludedCustomerOrderStatusCode) and (COALESCE(:responsible)=0 or asso.id_employee in (:responsible))"
                         + " and ( COALESCE(:customerOrder)=0 or r.id in (:customerOrder) or t.id in (:customerOrder))"
