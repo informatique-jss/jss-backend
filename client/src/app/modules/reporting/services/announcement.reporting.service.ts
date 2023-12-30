@@ -12,8 +12,8 @@ export class AnnouncementReportingService extends AppRestService<AnnouncementRep
     super(http, "reporting");
   }
 
-  getAnnouncementReporting() {
-    return this.getList(new HttpParams(), "announcement");
+  getAnnouncementReporting(columns: string[]) {
+    return this.getList(new HttpParams().set("columns", columns.join(",")), "announcement");
   }
 
 }

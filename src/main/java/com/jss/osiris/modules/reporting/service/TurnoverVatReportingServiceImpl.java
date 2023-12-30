@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.reporting.service;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,19 @@ public class TurnoverVatReportingServiceImpl implements TurnoverVatReportingServ
     @Autowired
     ConstantService constantService;
 
+    @Autowired
+    ReportingHelper<ITurnoverVatReporting> reportingHelper;
+
     @Override
-    public List<ITurnoverVatReporting> getTurnoverVatReporting() throws OsirisException {
-        return turnoverVatReportingRepository.getTurnoverVatReporting();
+    public ArrayList<HashMap<String, String>> getTurnoverVatReporting(ArrayList<String> columns)
+            throws OsirisException {
+        return reportingHelper.filterOutputColumns(turnoverVatReportingRepository.getTurnoverVatReporting(), columns,
+                ITurnoverVatReporting.class.getDeclaredMethods());
+    }
+
+    @Override
+    public ArrayList<HashMap<String, String>> getFakeData() {
+        return reportingHelper.getFakeData(ITurnoverVatReporting.class.getDeclaredMethods());
     }
 
 }

@@ -78,11 +78,12 @@ export class ReportingListComponent implements OnInit {
     this.refreshTable.next();
   }
 
-  selectReporting(userReporting: UserReporting) {
+  selectReporting(userReporting: UserReporting, columns: string[]) {
     this.currentUserReporting = userReporting;
-    this.reportingService.getDataset(userReporting.dataset, undefined).subscribe(data => {
+    this.reportingService.getDataset(userReporting.dataset, columns).subscribe(data => {
       this.dataToDisplay = data;
       this.appService.changeHeaderTitle("Reporting - " + userReporting.name);
+      this.reportingComponent?.refreshPivotWithData(this.dataToDisplay);
     })
   }
 

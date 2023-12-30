@@ -12,8 +12,8 @@ export class CustomerOrderReportingService extends AppRestService<CustomerOrderR
     super(http, "reporting");
   }
 
-  getCustomerOrderReporting() {
-    return this.getList(new HttpParams(), "customer-order");
+  getCustomerOrderReporting(columns: string[]) {
+    return this.getList(new HttpParams().set("columns", columns.join(",")), "customer-order");
   }
 
 }

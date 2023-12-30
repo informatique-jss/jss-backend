@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 
 //import 'pivottable/dist/pivot.css';
 import 'pivottable/dist/pivot.min.js';
@@ -16,25 +16,19 @@ export class ReportingComponent implements OnInit {
   data: any | undefined;
   targetElement: any | undefined;
 
-  @Input() dataToDisplay: any | undefined;
   @Input() settings: string | undefined;
   @Input() reportName: string = "report";
+  @Output() columnsChange: EventEmitter<string[]> = new EventEmitter<string[]>();
+  options: any;
+  restoreSettings = false;
+
+  currentColumns: string[] = [];
 
   constructor(@Inject(ElementRef) el: ElementRef) {
     this.el = el;
   }
 
   ngOnInit() {
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.dataToDisplay || changes.settings) {
-      this.data = [];
-      if (this.dataToDisplay) {
-        this.data = this.translateDataLabel(this.dataToDisplay);
-        this.loadPivot();
-      }
-    }
   }
 
   ngAfterViewInit() {
@@ -61,51 +55,118 @@ export class ReportingComponent implements OnInit {
     }
   }
 
-  loadPivot() {
-    if (this.data && this.data.length > 0) {
-      let options: any = {};
-      let restoreSettings = false;
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.settings)
+      this.loadPivot();
+  }
 
-      if (this.settings) {
-        options = JSON.parse(this.settings);
-        restoreSettings = true;
-      }
-      var renderersEn = $.extend($.pivotUtilities.renderers,
-        $.pivotUtilities.plotly_renderers);
-      var renderersFr: any = [];
-      renderersFr["Tableau"] = renderersEn["Table"];
-      renderersFr["Tableau avec histogramme"] = renderersEn["Table Barchart"];
-      renderersFr["Carte de chaleur"] = renderersEn["Heatmap"];
-      renderersFr["Carte de chaleur en lignes"] = renderersEn["Row Heatmap"];
-      renderersFr["Carte de chaleur en colonnes"] = renderersEn["Col Heatmap"];
-      renderersFr["Histogramme"] = renderersEn["Bar Chart"];
-      renderersFr["Histogramme empilé"] = renderersEn["Stacked Bar Chart"];
-      renderersFr["Histogramme horizontal"] = renderersEn["Horizontal Bar Chart"];
-      renderersFr["Histogramme horizontal empilé"] = renderersEn["Horizontal Stacked Bar Chart"];
-      renderersFr["Courbe"] = renderersEn["Line Chart"];
-      renderersFr["Graphique en aires"] = renderersEn["Area Chart"];
-      renderersFr["Nuage de points"] = renderersEn["Scatter Chart"];
-      renderersFr["Diagrammes circulaires multiples"] = renderersEn["Multiple Pie Chart"];
-
-      options['menuLimit'] = 50000;
-      options['renderers'] = renderersFr;
-      options['rendererOptions'] = {
-        plotly: {
-          width: 900,
-          height: 600,
-        },
-        plotlyConfig: {
-          locale: 'fr',
-          editable: "true",
-          showLink: true,
-          plotlyServerURL: "https://chart-studio.plotly.com",
-          linkText: 'Editer',
-          displaylogo: false
-        }
-      };
-
-      this.targetElement.pivotUI(this.data, options, restoreSettings, "fr");
+  refreshPivotWithData(data: any) {
+    if (!this.options)
+      this.loadPivot();
+    this.data = [];
+    if (data) {
+      this.data = this.translateDataLabel(data);
+      this.refreshPivot();
+      this.updateCurrentColumns();
     }
+  }
+
+  loadPivot() {
+    this.options = {};
+
+    if (this.settings) {
+      this.options = JSON.parse(this.settings);
+      this.restoreSettings = true;
+    }
+    var renderersEn = $.extend($.pivotUtilities.renderers,
+      $.pivotUtilities.plotly_renderers);
+    var renderersFr: any = [];
+    renderersFr["Tableau"] = renderersEn["Table"];
+    renderersFr["Tableau avec histogramme"] = renderersEn["Table Barchart"];
+    renderersFr["Carte de chaleur"] = renderersEn["Heatmap"];
+    renderersFr["Carte de chaleur en lignes"] = renderersEn["Row Heatmap"];
+    renderersFr["Carte de chaleur en colonnes"] = renderersEn["Col Heatmap"];
+    renderersFr["Histogramme"] = renderersEn["Bar Chart"];
+    renderersFr["Histogramme empilé"] = renderersEn["Stacked Bar Chart"];
+    renderersFr["Histogramme horizontal"] = renderersEn["Horizontal Bar Chart"];
+    renderersFr["Histogramme horizontal empilé"] = renderersEn["Horizontal Stacked Bar Chart"];
+    renderersFr["Courbe"] = renderersEn["Line Chart"];
+    renderersFr["Graphique en aires"] = renderersEn["Area Chart"];
+    renderersFr["Nuage de points"] = renderersEn["Scatter Chart"];
+    renderersFr["Diagrammes circulaires multiples"] = renderersEn["Multiple Pie Chart"];
+
+    this.options['menuLimit'] = 50000;
+    this.options['renderers'] = renderersFr;
+    this.options['rendererOptions'] = {
+      plotly: {
+        width: 900,
+        height: 600,
+      },
+      plotlyConfig: {
+        locale: 'fr',
+        editable: "true",
+        showLink: true,
+        plotlyServerURL: "https://chart-studio.plotly.com",
+        linkText: 'Editer',
+        displaylogo: false
+      }
+    };
+
+    this.options['onRefresh'] = (config: any) => {
+      if (this.updateCurrentColumns()) {
+        let untranslateColumns: string[] = [];
+        if (this.currentColumns)
+          for (let column of this.currentColumns)
+            untranslateColumns.push(this.untranslateDataLabel(column));
+        this.columnsChange.emit(untranslateColumns);
+      }
+    }
+
+  }
+
+  refreshPivot() {
+    if (this.targetElement)
+      this.targetElement.pivotUI(this.data, this.options, this.restoreSettings, "fr");
+  }
+
+  updateCurrentColumns(): boolean {
+    let hasChanged = false;
+    let settings = $("#output").data("pivotUIOptions");
+    if (settings) {
+      let settingsCopy = JSON.parse(JSON.stringify(settings));
+      let foundColumns = [];
+      if (settingsCopy.rows) {
+        for (let row of settingsCopy.rows) {
+          if (foundColumns.indexOf(row) < 0) {
+            foundColumns.push(row);
+          }
+        }
+      }
+      if (settingsCopy.cols) {
+        for (let col of settingsCopy.cols) {
+          if (foundColumns.indexOf(col) < 0) {
+            foundColumns.push(col);
+          }
+        }
+      }
+      if (settingsCopy.vals) {
+        for (let val of settingsCopy.vals) {
+          if (foundColumns.indexOf(val) < 0) {
+            foundColumns.push(val);
+          }
+        }
+      }
+
+      if (foundColumns && foundColumns.length > 0 && this.currentColumns && this.currentColumns.length == 0)
+        hasChanged = true;
+      else if (this.currentColumns && foundColumns)
+        for (let current of this.currentColumns)
+          for (let found of foundColumns)
+            if (this.currentColumns.indexOf(found) < 0 || foundColumns.indexOf(current) < 0)
+              hasChanged = true;
+      this.currentColumns = foundColumns;
+    }
+    return hasChanged;
   }
 
   translateDataLabel(data: any[]): any[] {
@@ -124,6 +185,17 @@ export class ReportingComponent implements OnInit {
       }
     }
     return outData;
+  }
+
+  untranslateDataLabel(label: string): string {
+    let dictionnary = Dictionnary as any;
+    if (label) {
+      for (let key in dictionnary) {
+        if (dictionnary[key] == label)
+          return key;
+      }
+    }
+    return '';
   }
 
   getCurrentSettings() {

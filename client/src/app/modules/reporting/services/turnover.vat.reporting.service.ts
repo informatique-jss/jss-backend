@@ -12,8 +12,8 @@ export class TurnoverVatReportingService extends AppRestService<TurnoverVatRepor
     super(http, "reporting");
   }
 
-  getTurnoverVatReporting() {
-    return this.getList(new HttpParams(), "turnover-vat");
+  getTurnoverVatReporting(columns: string[]) {
+    return this.getList(new HttpParams().set("columns", columns.join(",")), "turnover-vat");
   }
 
 }

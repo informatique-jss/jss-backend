@@ -12,8 +12,8 @@ export class RecoveryReportingService extends AppRestService<RecoveryReporting>{
     super(http, "reporting");
   }
 
-  getRecoveryReporting() {
-    return this.getList(new HttpParams(), "recovery");
+  getRecoveryReporting(columns: string[]) {
+    return this.getList(new HttpParams().set("columns", columns.join(",")), "recovery");
   }
 
 }
