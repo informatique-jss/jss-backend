@@ -37,8 +37,6 @@ import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
-import com.jss.osiris.modules.quotation.model.Bodacc;
-import com.jss.osiris.modules.quotation.model.BodaccStatus;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
@@ -67,9 +65,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     FormaliteStatusService formaliteStatusService;
-
-    @Autowired
-    BodaccStatusService bodaccStatusService;
 
     @Autowired
     AnnouncementStatusService announcementStatusService;
@@ -319,13 +314,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             "Merci de compléter le nom du dossier GU avant de clôturer la formalité");
             }
 
-            if (provision.getBodacc() != null) {
-                Bodacc bodacc = provision.getBodacc();
-                if (customerOrder.getId() == null || bodacc.getBodaccStatus() == null)
-                    bodacc.setBodaccStatus(bodaccStatusService.getBodaccStatusByCode(BodaccStatus.BODACC_NEW));
-
-            }
-
             if (provision.getAnnouncement() != null) {
                 Announcement announcement = provision.getAnnouncement();
 
@@ -507,7 +495,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (nbrAssignation == 1 && assoAffaireOrder.getAssignedTo() == null)
             assoAffaireOrder.setAssignedTo(currentEmployee);
 
-        if (maxWeightEmployee != null) {
+        if (maxWeightEmployee != null)
+
+        {
             if (assoAffaireOrder.getAssignedTo() == null)
                 assoAffaireOrder.setAssignedTo(maxWeightEmployee);
 

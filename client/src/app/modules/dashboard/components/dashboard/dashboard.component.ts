@@ -11,7 +11,6 @@ import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { AnnouncementStatus } from 'src/app/modules/quotation/model/AnnouncementStatus';
-import { BodaccStatus } from 'src/app/modules/quotation/model/BodaccStatus';
 import { CustomerOrderStatus } from 'src/app/modules/quotation/model/CustomerOrderStatus';
 import { DomiciliationStatus } from 'src/app/modules/quotation/model/DomiciliationStatus';
 import { FormaliteStatus } from 'src/app/modules/quotation/model/FormaliteStatus';
@@ -20,7 +19,6 @@ import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch
 import { QuotationStatus } from 'src/app/modules/quotation/model/QuotationStatus';
 import { SimpleProvisionStatus } from 'src/app/modules/quotation/model/SimpleProvisonStatus';
 import { AnnouncementStatusService } from 'src/app/modules/quotation/services/announcement.status.service';
-import { BodaccStatusService } from 'src/app/modules/quotation/services/bodacc.status.service';
 import { CustomerOrderStatusService } from 'src/app/modules/quotation/services/customer.order.status.service';
 import { DomiciliationStatusService } from 'src/app/modules/quotation/services/domiciliation-status.service';
 import { FormaliteStatusService } from 'src/app/modules/quotation/services/formalite.status.service';
@@ -47,7 +45,6 @@ export class DashboardComponent implements OnInit {
   announcementStatus: AnnouncementStatus[] = [] as Array<AnnouncementStatus>;
   formaliteStatus: FormaliteStatus[] = [] as Array<FormaliteStatus>;
   simpleProvisionStatus: SimpleProvisionStatus[] = [] as Array<SimpleProvisionStatus>;
-  bodaccStatus: BodaccStatus[] = [] as Array<BodaccStatus>;
   domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
   statusTypes: IWorkflowElement[] = [] as Array<IWorkflowElement>;
 
@@ -128,7 +125,6 @@ export class DashboardComponent implements OnInit {
   constructor(private appService: AppService,
     private employeeService: EmployeeService,
     private formaliteStatusService: FormaliteStatusService,
-    private bodaccStatusService: BodaccStatusService,
     private domiciliationStatusService: DomiciliationStatusService,
     private announcementStatusService: AnnouncementStatusService,
     private simpleProvisionStatusService: SimpleProvisionStatusService,
@@ -145,7 +141,6 @@ export class DashboardComponent implements OnInit {
       this.currentEmployee = response;
 
       combineLatest([
-        this.bodaccStatusService.getBodaccStatus(),
         this.domiciliationStatusService.getDomiciliationStatus(),
         this.announcementStatusService.getAnnouncementStatus(),
         this.formaliteStatusService.getFormaliteStatus(),
@@ -153,10 +148,8 @@ export class DashboardComponent implements OnInit {
         this.customerOrderStatusService.getCustomerOrderStatus(),
         this.quotationStatusService.getQuotationStatus()
       ]).pipe(
-        map(([bodaccStatus, domiciliationStatus, announcementStatus, formaliteStatus, simpleProvisionStatus, customerOrderStatus, quotationStatus]) => ({ bodaccStatus, domiciliationStatus, announcementStatus, formaliteStatus, simpleProvisionStatus, customerOrderStatus, quotationStatus })),
+        map(([domiciliationStatus, announcementStatus, formaliteStatus, simpleProvisionStatus, customerOrderStatus, quotationStatus]) => ({ domiciliationStatus, announcementStatus, formaliteStatus, simpleProvisionStatus, customerOrderStatus, quotationStatus })),
       ).subscribe(response => {
-        this.bodaccStatus = response.bodaccStatus;
-        this.statusTypes.push(...response.bodaccStatus);
         this.domiciliationStatus = response.domiciliationStatus;
         this.statusTypes.push(...response.domiciliationStatus);
         this.announcementStatus = response.announcementStatus;

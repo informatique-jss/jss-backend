@@ -23,11 +23,6 @@
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()"></referential-act-type>
-        <referential-bodacc-publication-type *ngIf="selectedReferential==BODACC_PUBLICATION_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-bodacc-publication-type>
         <referential-building-domiciliation *ngIf="selectedReferential==BUILDING_DOMICILIATION_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"

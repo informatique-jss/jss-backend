@@ -71,11 +71,6 @@ export class QuotationListComponent implements OnInit {
       this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix TTC", valueFonction: formatEurosForSortTable } as SortTableColumn<QuotationSearchResult>);
       this.availableColumns.push({ id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true } as SortTableColumn<QuotationSearchResult>);
       this.availableColumns.push({ id: "assignedToEmployee", fieldName: "assignedToEmployeeId", label: "Assigné à", displayAsEmployee: true } as SortTableColumn<QuotationSearchResult>);
-      this.availableColumns.push({ id: "announcementNbr", fieldName: "announcementNbr", label: "Nombre d'annonces légales" } as SortTableColumn<QuotationSearchResult>);
-      this.availableColumns.push({ id: "formaliteNbr", fieldName: "formaliteNbr", label: "Nombre de formalités GU" } as SortTableColumn<QuotationSearchResult>);
-      this.availableColumns.push({ id: "bodaccNbr", fieldName: "bodaccNbr", label: "Nombre de BODACC" } as SortTableColumn<QuotationSearchResult>);
-      this.availableColumns.push({ id: "domiciliationNbr", fieldName: "domiciliationNbr", label: "Nombre de domiciliations" } as SortTableColumn<QuotationSearchResult>);
-      this.availableColumns.push({ id: "simpleProvisionNbr", fieldName: "simpleProvisionNbr", label: "Nombre de formalités simples" } as SortTableColumn<QuotationSearchResult>);
       this.availableColumns.push({ id: "lastStatusUpdate", fieldName: "lastStatusUpdate", label: "Date de mise à jours", valueFonction: formatDateTimeForSortTable } as SortTableColumn<QuotationSearchResult>);
       this.setColumns();
 

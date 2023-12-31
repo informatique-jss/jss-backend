@@ -32,7 +32,6 @@ import com.jss.osiris.modules.miscellaneous.repository.ConstantRepository;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.AssignationType;
-import com.jss.osiris.modules.quotation.model.BodaccPublicationType;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
@@ -568,36 +567,6 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public MailRedirectionType getMailRedirectionTypeOther() throws OsirisException {
         return getConstants().getMailRedirectionTypeOther();
-    }
-
-    @Override
-    public BodaccPublicationType getBodaccPublicationTypeMerging() throws OsirisException {
-        return getConstants().getBodaccPublicationTypeMerging();
-    }
-
-    @Override
-    public BodaccPublicationType getBodaccPublicationTypeSplit() throws OsirisException {
-        return getConstants().getBodaccPublicationTypeSplit();
-    }
-
-    @Override
-    public BodaccPublicationType getBodaccPublicationTypePartialSplit() throws OsirisException {
-        return getConstants().getBodaccPublicationTypePartialSplit();
-    }
-
-    @Override
-    public BodaccPublicationType getBodaccPublicationTypePossessionDispatch() throws OsirisException {
-        return getConstants().getBodaccPublicationTypePossessionDispatch();
-    }
-
-    @Override
-    public BodaccPublicationType getBodaccPublicationTypeEstateRepresentativeDesignation() throws OsirisException {
-        return getConstants().getBodaccPublicationTypeEstateRepresentativeDesignation();
-    }
-
-    @Override
-    public BodaccPublicationType getBodaccPublicationTypeSaleOfBusiness() throws OsirisException {
-        return getConstants().getBodaccPublicationTypeSaleOfBusiness();
     }
 
     @Override

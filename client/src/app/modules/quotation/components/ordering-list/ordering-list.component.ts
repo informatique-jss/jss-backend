@@ -80,11 +80,6 @@ export class OrderingListComponent implements OnInit {
       this.availableColumns.push({ id: "depositTotalAmount", fieldName: "depositTotalAmount", label: "Acompte versé", valueFonction: formatEurosForSortTable } as SortTableColumn<OrderingSearchResult>);
       this.availableColumns.push({ id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true } as SortTableColumn<OrderingSearchResult>);
       this.availableColumns.push({ id: "assignedToEmployee", fieldName: "assignedToEmployeeId", label: "Assignée à", displayAsEmployee: true } as SortTableColumn<OrderingSearchResult>);
-      this.availableColumns.push({ id: "announcementNbr", fieldName: "announcementNbr", label: "Nombre d'annonces légales" } as SortTableColumn<OrderingSearchResult>);
-      this.availableColumns.push({ id: "formaliteNbr", fieldName: "formaliteNbr", label: "Nombre de formalités GU" } as SortTableColumn<OrderingSearchResult>);
-      this.availableColumns.push({ id: "bodaccNbr", fieldName: "bodaccNbr", label: "Nombre de BODACC" } as SortTableColumn<OrderingSearchResult>);
-      this.availableColumns.push({ id: "domiciliationNbr", fieldName: "domiciliationNbr", label: "Nombre de domiciliations" } as SortTableColumn<OrderingSearchResult>);
-      this.availableColumns.push({ id: "simpleProvisionNbr", fieldName: "simpleProvisionNbr", label: "Nombre de formalités simples" } as SortTableColumn<OrderingSearchResult>);
       this.availableColumns.push({ id: "lastStatusUpdate", fieldName: "lastStatusUpdate", label: "Date de mise à jour", valueFonction: formatDateTimeForSortTable } as SortTableColumn<OrderingSearchResult>);
       this.setColumns();
 

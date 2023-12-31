@@ -39,7 +39,6 @@ import { ReferentialBillingClosureTypeComponent } from '../referentials/referent
 import { ReferentialBillingItemComponent } from '../referentials/referential-billing-item/referential-billing-item.component';
 import { ReferentialBillingLabelTypeComponent } from '../referentials/referential-billing-label-type/referential-billing-label-type.component';
 import { ReferentialBillingTypeComponent } from '../referentials/referential-billing-type/referential-billing-type.component';
-import { ReferentialBodaccPublicationTypeComponent } from '../referentials/referential-bodacc-publication-type/referential-bodacc-publication-type.component';
 import { ReferentialBuildingDomiciliationComponent } from '../referentials/referential-building-domiciliation/referential-building-domiciliation.componentt';
 import { ReferentialCharacterPriceComponent } from '../referentials/referential-character-price/referential-character-price.component';
 import { ReferentialCityComponent } from '../referentials/referential-city/referential-city.component';
@@ -125,7 +124,6 @@ const routes: Routes = [
   ],
   declarations: [AdministrationComponent,
     ReferentialActTypeComponent,
-    ReferentialBodaccPublicationTypeComponent,
     ReferentialBuildingDomiciliationComponent,
     ReferentialDomiciliationContractTypeComponent,
     ReferentialFundTypeComponent,

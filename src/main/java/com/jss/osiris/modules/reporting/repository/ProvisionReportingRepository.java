@@ -36,8 +36,8 @@ public interface ProvisionReportingRepository extends CrudRepository<Quotation, 
                         "     coalesce(as2.label, " +
                         " sps.label, " +
                         " fst.label, " +
-                        " ds.label, " +
-                        " bs.label) as provisionStatus, " +
+                        " ds.label " +
+                        " ) as provisionStatus, " +
                         " coalesce(ca1.label, ca2.label) as waitedCompetentAuthorityLabel, " +
                         " array_to_string(array[ " +
                         " case " +
@@ -91,10 +91,6 @@ public interface ProvisionReportingRepository extends CrudRepository<Quotation, 
                         " d.id = p.id_domiciliation " +
                         " left join domiciliation_status ds on " +
                         " ds.id = d.id_domicilisation_status " +
-                        " left join bodacc b on " +
-                        " b.id = p.id_bodacc " +
-                        " left join bodacc_status bs on " +
-                        " bs.id = b.id_bodacc_status " +
                         " left join competent_authority ca1 on " +
                         " ca1.id = sp.id_waited_competent_authority " +
                         " left join competent_authority ca2 on " +

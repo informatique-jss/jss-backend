@@ -3,7 +3,6 @@ import { IAttachment } from "../../miscellaneous/model/IAttachment";
 import { Employee } from "../../profile/model/Employee";
 import { Announcement } from "./Announcement";
 import { AssoAffaireOrder } from "./AssoAffaireOrder";
-import { Bodacc } from "./Bodacc";
 import { Domiciliation } from "./Domiciliation";
 import { Formalite } from './Formalite';
 import { Invoice } from "./Invoice";
@@ -16,7 +15,6 @@ export interface Provision extends IAttachment {
   id: number;
   domiciliation: Domiciliation | undefined;
   announcement: Announcement | undefined;
-  bodacc: Bodacc | undefined;
   simpleProvision: SimpleProvision | undefined;
   formalite: Formalite | undefined;
   provisionFamilyType: ProvisionFamilyType;

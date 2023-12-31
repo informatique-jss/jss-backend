@@ -34,11 +34,6 @@
   *ngIf="provision && provision.announcement && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_ANNOUNCEMENT">
   [affaire]="affaire">
 </announcement>
-<bodacc-main [bodacc]="provision.bodacc" [affaire]="affaire" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
-  [quotation]="quotation" [instanceOfCustomerOrder]="instanceOfCustomerOrder" [(provision)]="provision"
-  (provisionChange)="noticeChange()"
-  *ngIf="provision && provision.bodacc && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_BODACC">
-</bodacc-main>
 <formalite [formalite]="provision.formalite" [editMode]="editMode" [isStatusOpen]="isStatusOpen" [quotation]="quotation"
   [affaire]="affaire" [instanceOfCustomerOrder]="instanceOfCustomerOrder" [(provision)]="provision"
   (provisionChange)="noticeChange()"

@@ -29,14 +29,6 @@ public interface QuotationSearchResult {
 
     public Float getTotalPrice();
 
-    public Integer getAnnouncementNbr();
-
-    public Integer getFormaliteNbr();
-
-    public Integer getBodaccNbr();
-
-    public Integer getDomiciliationNbr();
-
     public Integer getSimpleProvisionNbr();
 
     public LocalDateTime getLastStatusUpdate();

@@ -33,10 +33,6 @@ import { AffaireListComponent } from '../affaire-list/affaire-list.component';
 import { AffaireComponent } from '../affaire/affaire.component';
 import { AnnouncementListComponent } from '../announcement-list/announcement-list.component';
 import { AnnouncementComponent } from '../announcement/announcement.component';
-import { BodaccFusionComponent } from '../bodacc-fusion/bodacc-fusion.component';
-import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
-import { BodaccSaleComponent } from '../bodacc-sale/bodacc-sale.component';
-import { BodaccSplitComponent } from '../bodacc-split/bodacc-split.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
 import { CustomerOrderPaymentComponent } from '../customer-order-payment/customer-order-payment.component';
@@ -115,13 +111,9 @@ const routes: Routes = [
     QuotationManagementComponent,
     DomiciliationComponent,
     OrderSimilaritiesDialogComponent,
-    BodaccMainComponent,
     AddAffaireDialogComponent,
     ProvisionItemComponent,
-    BodaccSaleComponent,
     InvoiceManagementComponent,
-    BodaccFusionComponent,
-    BodaccSplitComponent,
     QuotationListComponent,
     ChooseAssignedUserDialogComponent,
     ProvisionListComponent,

@@ -29,7 +29,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   saveObservableSubscription: Subscription = new Subscription;
 
   ACT_TYPE_REFERENTIAL = "Type d'actes";
-  BODACC_PUBLICATION_TYPE_REFERENTIAL = "Type de publication";
   BUILDING_DOMICILIATION_REFERENTIAL = "Adresse de domiciliation";
   DOMICIALIATION_CONTRACT_TYPE_REFERENTIAL = "Type de contrat";
   FUND_TYPE_REFERENTIAL = "Type de fonds";
@@ -97,7 +96,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.appService.changeHeaderTitle("Administration");
     this.restoreTab();
     this.referentials.push(this.ACT_TYPE_REFERENTIAL);
-    this.referentials.push(this.BODACC_PUBLICATION_TYPE_REFERENTIAL);
     this.referentials.push(this.BUILDING_DOMICILIATION_REFERENTIAL);
     this.referentials.push(this.DOMICIALIATION_CONTRACT_TYPE_REFERENTIAL);
     this.referentials.push(this.FUND_TYPE_REFERENTIAL);

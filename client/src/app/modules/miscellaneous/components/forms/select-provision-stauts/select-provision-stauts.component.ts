@@ -1,11 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { AnnouncementStatus } from 'src/app/modules/quotation/model/AnnouncementStatus';
-import { BodaccStatus } from 'src/app/modules/quotation/model/BodaccStatus';
 import { DomiciliationStatus } from 'src/app/modules/quotation/model/DomiciliationStatus';
 import { FormaliteStatus } from 'src/app/modules/quotation/model/FormaliteStatus';
 import { AnnouncementStatusService } from 'src/app/modules/quotation/services/announcement.status.service';
-import { BodaccStatusService } from 'src/app/modules/quotation/services/bodacc.status.service';
 import { DomiciliationStatusService } from 'src/app/modules/quotation/services/domiciliation-status.service';
 import { FormaliteStatusService } from 'src/app/modules/quotation/services/formalite.status.service';
 import { UserNoteService } from 'src/app/services/user.notes.service';
@@ -29,14 +27,12 @@ export class SelectProvisionStautsComponent extends GenericMultipleSelectCompone
   @Input() defaultCodesSelected: string[] | undefined;
 
   @Input() loadAnnouncement: boolean = true;
-  @Input() loadBodacc: boolean = true;
   @Input() loadDomiciliation: boolean = true;
   @Input() loadSimpleprovision: boolean = true;
   @Input() loadFormalite: boolean = true;
 
   announcementStatus: AnnouncementStatus[] = [] as Array<AnnouncementStatus>;
   formaliteStatus: FormaliteStatus[] = [] as Array<FormaliteStatus>;
-  bodaccStatus: BodaccStatus[] = [] as Array<BodaccStatus>;
   domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
   simpleProvisionStatus: SimpleProvisionStatus[] = [] as Array<SimpleProvisionStatus>;
 
@@ -44,7 +40,6 @@ export class SelectProvisionStautsComponent extends GenericMultipleSelectCompone
 
   constructor(private formBuild: UntypedFormBuilder,
     private formaliteStatusService: FormaliteStatusService,
-    private bodaccStatusService: BodaccStatusService,
     private domiciliationStatusService: DomiciliationStatusService,
     private announcementStatusService: AnnouncementStatusService,
     private simpleProvisionStatusService: SimpleProvisionStatusService,
@@ -71,11 +66,6 @@ export class SelectProvisionStautsComponent extends GenericMultipleSelectCompone
     if (this.loadFormalite)
       this.formaliteStatusService.getFormaliteStatus().subscribe(response => {
         this.formaliteStatus = response;
-        this.types.push(...response);
-      });
-    if (this.loadBodacc)
-      this.bodaccStatusService.getBodaccStatus().subscribe(response => {
-        this.bodaccStatus = response;
         this.types.push(...response);
       });
     if (this.loadDomiciliation)

@@ -414,18 +414,6 @@ public class MiscellaneousController {
                 "DomiciliationContractTypeRouteEmail");
         validationHelper.validateReferential(constant.getMailRedirectionTypeOther(), true,
                 "MailRedirectionTypeOther");
-        validationHelper.validateReferential(constant.getBodaccPublicationTypeMerging(), true,
-                "BodaccPublicationTypeMerging");
-        validationHelper.validateReferential(constant.getBodaccPublicationTypeSplit(), true,
-                "BodaccPublicationTypeSplit");
-        validationHelper.validateReferential(constant.getBodaccPublicationTypePartialSplit(), true,
-                "BodaccPublicationTypePartialSplit");
-        validationHelper.validateReferential(constant.getBodaccPublicationTypePossessionDispatch(), true,
-                "BodaccPublicationTypePossessionDispatch");
-        validationHelper.validateReferential(constant.getBodaccPublicationTypeEstateRepresentativeDesignation(),
-                true, "BodaccPublicationTypeEstateRepresentativeDesignation");
-        validationHelper.validateReferential(constant.getBodaccPublicationTypeSaleOfBusiness(), true,
-                "BodaccPublicationTypeSaleOfBusiness");
         validationHelper.validateReferential(constant.getActTypeSeing(), true, "ActTypeSeing");
         validationHelper.validateReferential(constant.getActTypeAuthentic(), true, "ActTypeAuthentic");
         validationHelper.validateReferential(constant.getAssignationTypeEmployee(), true,

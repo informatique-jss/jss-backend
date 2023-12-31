@@ -74,8 +74,6 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " left join competent_authority ca on ca.id = sp.id_waited_competent_authority   " +
                         " left join domiciliation d on d.id = provision.id_domiciliation   " +
                         " left join domiciliation_status ds on ds.id = d.id_domicilisation_status    " +
-                        " left join bodacc b on b.id = provision.id_bodacc   " +
-                        " left join bodacc_status bs on bs.id = b.id_bodacc_status   " +
                         " left join formalite f on f.id = provision.id_formalite   " +
                         " left join formalite_status fs on fs.id = f.id_formalite_status  " +
                         " left join audit audit_quotation on audit_quotation.entity_id = customer_order.id and audit_quotation.field_name = 'id' and entity = 'Quotation' "
