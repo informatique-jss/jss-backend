@@ -17,9 +17,12 @@
             propertyName="maxAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
         </td>
         <td *ngIf=" !isForTiersIntegration">
-          <generic-date-range-picker [(modelStart)]="invoiceSearch.startDate" [(modelEnd)]="invoiceSearch.endDate"
-            label="Plage de recherche" [form]="invoiceForm" propertyNameStart="startDate" propertyNameEnd="endDate">
-          </generic-date-range-picker>
+          <generic-datepicker [(model)]="invoiceSearch.startDate" label="Date de début" [form]="invoiceForm"
+            propertyName="startDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td *ngIf=" !isForTiersIntegration">
+          <generic-datepicker [(model)]="invoiceSearch.endDate" label="Date de fin" [form]="invoiceForm"
+            propertyName="endDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
         </td>
         <td *ngIf="!isForPaymentAssocationIntegration">
           <generic-toggle [(model)]="invoiceSearch.showToRecover" label="A recouvrer ?" [form]="invoiceForm"

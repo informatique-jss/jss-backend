@@ -15,9 +15,12 @@
           propertyName="responsable" [isMandatory]="false" [onlyActive]="false"></autocomplete-responsable>
       </td>
       <td>
-        <generic-date-range-picker [(modelStart)]="rffSearch.startDate" [(modelEnd)]="rffSearch.endDate"
-          label="Plage de recherche" [form]="rffSearchForm" propertyNameStart="startDate" propertyNameEnd="endDate">
-        </generic-date-range-picker>
+        <generic-datepicker [(model)]="rffSearch.startDate" label="Date de début" [form]="rffSearchForm"
+          propertyName="startDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
+      </td>
+      <td>
+        <generic-datepicker [(model)]="rffSearch.endDate" label="Date de fin" [form]="rffSearchForm"
+          propertyName="endDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
       </td>
       <td>
         <generic-toggle [(model)]="rffSearch.isHideCancelledRff" label="Masquer les RFF annulés" [form]="rffSearchForm"
