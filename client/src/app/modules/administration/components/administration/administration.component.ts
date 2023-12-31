@@ -1,10 +1,12 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 
 @Component({
   selector: 'app-administration',
@@ -87,11 +89,13 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private habilitationService: HabilitationsService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   ngOnInit() {
     this.appService.changeHeaderTitle("Administration");
+    this.restoreTab();
     this.referentials.push(this.ACT_TYPE_REFERENTIAL);
     this.referentials.push(this.BODACC_PUBLICATION_TYPE_REFERENTIAL);
     this.referentials.push(this.BUILDING_DOMICILIATION_REFERENTIAL);
@@ -212,6 +216,16 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
 
   canViewLogdModule() {
     return this.habilitationService.canViewLogModule();
+  }
+
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('administration', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('administration');
   }
 }
 

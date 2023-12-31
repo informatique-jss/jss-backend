@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
@@ -16,6 +17,7 @@ import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch
 import { ConfrereService } from 'src/app/modules/quotation/services/confrere.service';
 import { CONFRERE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { ITiers } from '../../model/ITiers';
 
 @Component({
@@ -31,7 +33,9 @@ export class ConfrereComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private constantService: ConstantService,
     private appService: AppService,
-    protected paymentTypeService: PaymentTypeService,) {
+    protected paymentTypeService: PaymentTypeService,
+    private userPreferenceService: UserPreferenceService
+  ) {
   }
 
   confreres: Confrere[] = [];
@@ -106,6 +110,7 @@ export class ConfrereComponent implements OnInit {
   selectConfrere(element: Confrere) {
     this.selectedConfrere = element;
     this.selectedConfrereId = element.id;
+    this.restoreTab();
     if (!this.idConfrere)
       this.appService.changeHeaderTitle(element.label);
 
@@ -212,6 +217,16 @@ export class ConfrereComponent implements OnInit {
         };
       return null;
     };
+  }
+
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('confrere', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('confrere');
   }
 
 }

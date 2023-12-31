@@ -1,4 +1,4 @@
-<mat-tab-group animationDuration="0ms" #tabs [selectedIndex]="0">
+<mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
   <mat-tab label="Affaire">
     <div class="mat-elevation-z2 form-div">
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">

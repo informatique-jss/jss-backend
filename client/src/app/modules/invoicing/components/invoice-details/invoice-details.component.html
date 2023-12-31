@@ -1,5 +1,5 @@
 <div class="mat-elevation-z2 form-div" *ngIf="invoice">
-  <mat-tab-group animationDuration="0ms" #tabs>
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab label="Détail">
       <div class="full-width top">
         <div class="chips-status">

@@ -1,5 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { copyObject } from 'src/app/libs/GenericHelper';
 import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
@@ -15,6 +16,7 @@ import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { RESPONSABLE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Document } from "../../../miscellaneous/model/Document";
 import { EmployeeService } from '../../../profile/services/employee.service';
 import { ITiers } from '../../model/ITiers';
@@ -38,7 +40,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
 
   @Input() tiers: Tiers = {} as Tiers;
   @Input() editMode: boolean = false;
-  @ViewChild('tabs', { static: false }) tabs: any;
 
   RESPONSABLE_ENTITY_TYPE = RESPONSABLE_ENTITY_TYPE;
 
@@ -79,7 +80,9 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     private constantService: ConstantService,
     protected subscriptionPeriodTypeService: SubscriptionPeriodTypeService,
     private changeDetectorRef: ChangeDetectorRef,
-    protected tiersCategoryService: TiersCategoryService) { }
+    protected tiersCategoryService: TiersCategoryService,
+    private userPreferenceService: UserPreferenceService
+  ) { }
 
   ngAfterContentChecked(): void {
     this.changeDetectorRef.detectChanges();
@@ -101,7 +104,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     if (changes.tiers != undefined && this.tiers.responsables != undefined && this.tiers.responsables != null) {
       this.principalForm.markAllAsTouched();
       this.setDataTable();
-      this.toggleTabs();
 
       if (this.selectedResponsableId != null)
         this.selectResponsableById(this.selectedResponsableId);
@@ -140,18 +142,14 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
         }
       }
     } as SortTableAction<Responsable>);
-  }
 
-  toggleTabs() {
-    if (this.tabs != undefined)
-      this.tabs.realignInkBar();
+    this.restoreTab();
   }
 
   setDataTable() {
     this.tiers.responsables.sort(function (a: Responsable, b: Responsable) {
       return (a.lastname + "" + a.firstname).localeCompare(b.lastname + "" + a.firstname);
     });
-    this.toggleTabs();
   }
 
   setSelectedResponsableId(selectedResponsableId: number) {
@@ -198,7 +196,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
           }, 0);
 
           this.tiersService.setCurrentViewedResponsable(responsable);
-          this.toggleTabs();
           if (this.tiers.denomination != null) {
             this.appService.changeHeaderTitle(this.tiers.denomination + " - " + (this.selectedResponsable.firstname != null ? (this.selectedResponsable.firstname + " " + this.selectedResponsable.lastname) : ""));
           } else if (this.tiers.firstname != null) {
@@ -235,7 +232,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
         this.selectedResponsable.tiersType = this.constantService.getTiersTypeProspect();
       this.tiersService.setCurrentViewedResponsable(this.selectedResponsable);
       this.setDataTable();
-      this.toggleTabs();
     } else {
       this.appService.displaySnackBar("Compléter la saisie du responsable courant avant de continuer", true, 15);
     }
@@ -316,4 +312,13 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     this.employeeService.renewResponsablePassword(this.selectedResponsable!).subscribe(response => { });
   }
 
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('responsable', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('responsable');
+  }
 }

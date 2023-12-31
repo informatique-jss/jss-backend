@@ -13,3 +13,8 @@
 .min-height {
   padding-bottom: 65px;
 }
+
+.table-container-scroll {
+  max-height: 215px;
+  overflow-y: auto;
+}

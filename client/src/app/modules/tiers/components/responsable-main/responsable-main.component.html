@@ -15,7 +15,7 @@
   </div>
   <div [hidden]="selectedResponsable==null" class="responsable-tabs">
     <form [formGroup]="principalForm" *ngIf="selectedResponsable!=null">
-      <mat-tab-group animationDuration="0ms" #tabs>
+      <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
         <mat-tab label="Fiche du responsable">
           <div class="full-width">
             <fieldset [disabled]="editMode==false" class="fieldset-no-border">

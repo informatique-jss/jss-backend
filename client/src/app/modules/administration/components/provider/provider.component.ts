@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
@@ -11,6 +12,7 @@ import { ProviderService } from 'src/app/modules/miscellaneous/services/provider
 import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { PROVIDER_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 
 @Component({
   selector: 'provider',
@@ -24,6 +26,7 @@ export class ProviderComponent implements OnInit {
     private appService: AppService,
     protected paymentTypeService: PaymentTypeService,
     protected activatedRoute: ActivatedRoute,
+    private userPreferenceService: UserPreferenceService
   ) {
   }
 
@@ -86,6 +89,7 @@ export class ProviderComponent implements OnInit {
   selectProvider(element: Provider) {
     this.selectedProvider = element;
     this.selectedProviderId = element.id;
+    this.restoreTab();
 
     if (!this.idProvider)
       this.appService.changeHeaderTitle(element.label);
@@ -132,5 +136,15 @@ export class ProviderComponent implements OnInit {
 
   editProvider() {
     this.editMode = true;
+  }
+
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('provider', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('provider');
   }
 }

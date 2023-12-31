@@ -1,6 +1,5 @@
 <div [hidden]="!editMode && (tiers.id==undefined || tiers.id==null)">
-  <mat-tab-group animationDuration="0ms" #tabs [(selectedIndex)]="selectedTabIndex"
-    (selectedTabChange)="changePageHeader($event)">
+  <mat-tab-group animationDuration="0ms" [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onTabChange($event)">
     <mat-tab label="Fiche du tiers">
       <tiers-main [tiers]="tiers" [editMode]="editMode">
       </tiers-main>
@@ -9,9 +8,7 @@
       <settlement-billing [tiers]="tiers" [editMode]="editMode"></settlement-billing>
     </mat-tab>
     <mat-tab label="Responsable(s)">
-      <ng-template matTabContent>
-        <responsable-main [tiers]="tiers" [editMode]="editMode"></responsable-main>
-      </ng-template>
+      <responsable-main [tiers]="tiers" [editMode]="editMode"></responsable-main>
     </mat-tab>
     <mat-tab label="Documents" *ngIf="tiers.id!=null && tiers.id!=undefined">
       <attachments [entity]="tiers" [editMode]="editMode" [entityType]="TIERS_ENTITY_TYPE.entityType">

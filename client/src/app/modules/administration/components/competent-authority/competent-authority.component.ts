@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
@@ -12,6 +13,7 @@ import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payme
 import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { COMPETENT_AUTHORITY_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { CompetentAuthority } from '../../../miscellaneous/model/CompetentAuthority';
 import { CompetentAuthorityType } from '../../../miscellaneous/model/CompetentAuthorityType';
 import { CompetentAuthorityService } from '../../../miscellaneous/services/competent.authority.service';
@@ -29,7 +31,9 @@ export class CompetentAuthorityComponent implements OnInit {
     private constantService: ConstantService,
     protected activatedRoute: ActivatedRoute,
     private appService: AppService,
-    protected paymentTypeService: PaymentTypeService,) {
+    protected paymentTypeService: PaymentTypeService,
+    private userPreferenceService: UserPreferenceService
+  ) {
   }
 
   competentAuthorities: CompetentAuthority[] = [];
@@ -91,6 +95,7 @@ export class CompetentAuthorityComponent implements OnInit {
   selectCompetentAuthority(element: CompetentAuthority) {
     this.selectedcompetentAuthority = element;
     this.selectedCompetentAuthorityId = element.id;
+    this.restoreTab();
     this.getCitiesForCurrentCompetentAuthority();
     if (!this.idCompetentAuthority)
       this.appService.changeHeaderTitle(element.label);
@@ -201,6 +206,16 @@ export class CompetentAuthorityComponent implements OnInit {
         };
       return null;
     };
+  }
+
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('competent-authority', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('competent-authority');
   }
 
 }

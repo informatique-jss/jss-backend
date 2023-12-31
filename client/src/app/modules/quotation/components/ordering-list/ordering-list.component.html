@@ -39,8 +39,10 @@
         </td>
       </tr>
     </table>
-    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="orders" tableName="Commandes"
-      *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true">
-    </sort-table>
+    <div class="table-container-scroll">
+      <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="orders" tableName="Commandes"
+        *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true">
+      </sort-table>
+    </div>
   </div>
 </div>

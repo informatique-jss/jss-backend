@@ -51,7 +51,7 @@
 <div class="mat-accordion-container full-width" *ngIf="asso && asso.provisions">
   <mat-accordion multi class="mat-accordion-container">
     <mat-expansion-panel *ngFor="let provision of asso.provisions" [expanded]="!provision.id"
-      [expanded]="provision.id==inputProvisionId">
+      (afterExpand)="onExpandedChange(provision.id)" [expanded]=" provision.id==inputProvisionId">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{getProvisionLabel(provision)}}

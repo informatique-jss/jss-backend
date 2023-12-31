@@ -11,7 +11,7 @@
   </div>
 
   <div *ngIf="selectedConfrere" class="div-confrere">
-    <mat-tab-group animationDuration="0ms">
+    <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
       <mat-tab label="Fiche du confrère">
         <div class="mat-elevation-z2 form-div">
           <form [formGroup]="entityForm2">

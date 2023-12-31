@@ -1,5 +1,5 @@
 <form [formGroup]="formaliteForm" *ngIf="formalite && provision">
-  <mat-tab-group animationDuration="0ms" #tabs>
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab [label]="provision.provisionType.label">
       <div class="form-div">
         <table class="full-width">

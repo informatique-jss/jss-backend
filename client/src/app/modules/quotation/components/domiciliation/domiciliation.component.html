@@ -1,5 +1,5 @@
 <form [formGroup]="domiciliationForm" *ngIf="domiciliation">
-  <mat-tab-group animationDuration="0ms" #tabs>
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab label="Domiciliation">
       <div class=" form-div">
         <table class="full-width">

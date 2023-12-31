@@ -8,6 +8,7 @@ import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_I
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
+import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { ANNOUNCEMENT_STATUS_WAITING_CONFRERE } from '../../../../libs/Constants';
 import { IWorkflowElement } from '../../../miscellaneous/model/IWorkflowElement';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
@@ -86,6 +87,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private simpleProvisionStatusService: SimpleProvisionStatusService,
     private announcementStatusService: AnnouncementStatusService,
     private confrereService: ConfrereService,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   affaireForm = this.formBuilder.group({});
@@ -95,6 +97,10 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.idAffaire = this.activatedRoute.snapshot.params.id != "null" ? this.activatedRoute.snapshot.params.id : null;
 
     this.inputProvisionId = this.activatedRoute.snapshot.params.idProvision;
+
+    if (!this.inputProvisionId)
+      this.inputProvisionId = this.userPreferenceService.getUserExpensionPanelSelectionId("provision");
+
     this.refreshAffaire();
 
     this.formaliteStatusService.getFormaliteStatus().subscribe(response => this.formaliteStatus = response);
@@ -120,6 +126,9 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.changeDetectorRef.detectChanges();
   }
 
+  onExpandedChange(idProvision: number) {
+    this.userPreferenceService.setUserExpensionPanelSelectionId("provision", idProvision);
+  }
 
   refreshAffaire() {
     let promise: Observable<AssoAffaireOrder> | undefined;

@@ -4,6 +4,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
@@ -15,6 +16,7 @@ import { getDocument } from '../../../../libs/DocumentHelper';
 import { PROVISION_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { AttachmentType } from '../../../miscellaneous/model/AttachmentType';
 import { Document } from "../../../miscellaneous/model/Document";
 import { Announcement } from '../../model/Announcement';
@@ -47,7 +49,6 @@ export class AnnouncementComponent implements OnInit {
   @Input() quotation: IQuotation | undefined;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
 
-  @ViewChild('tabs', { static: false }) tabs: any;
   @ViewChild('noticeTypesInput') noticeTypesInput: ElementRef<HTMLInputElement> | undefined;
   @ViewChild('noticeTemplateInput') noticeTemplateInput: ElementRef<HTMLInputElement> | undefined;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
@@ -90,6 +91,7 @@ export class AnnouncementComponent implements OnInit {
     private characterNumberService: CharacterNumberService,
     private habilitationsService: HabilitationsService,
     private announcementStatusService: AnnouncementStatusService,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   canAddNewInvoice() {
@@ -125,6 +127,8 @@ export class AnnouncementComponent implements OnInit {
 
     if (this.provision && this.provision.announcement)
       this.paperDocument = getDocument(this.constantService.getDocumentTypePaper(), this.provision.announcement);
+
+    this.restoreTab();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -151,7 +155,6 @@ export class AnnouncementComponent implements OnInit {
       }
 
       this.announcementForm.markAllAsTouched();
-      this.toggleTabs();
       this.updateCharacterPrice();
     }
   }
@@ -221,11 +224,6 @@ export class AnnouncementComponent implements OnInit {
       this.announcement.notice = this.announcement.notice.replace(/<img[^>]*>/g, "");
     if (this.announcement.noticeHeader)
       this.announcement.noticeHeader = this.announcement.noticeHeader.replace(/<img[^>]*>/g, "");
-  }
-
-  toggleTabs() {
-    if (this.tabs != undefined)
-      this.tabs.realignInkBar();
   }
 
   updateHeaderFree() {
@@ -317,5 +315,15 @@ export class AnnouncementComponent implements OnInit {
 
   canEditJournal() {
     return this.announcement.publicationDate.getTime() < (new Date()).getTime();
+  }
+
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('announcement', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('announcement');
   }
 }

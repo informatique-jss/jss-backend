@@ -96,8 +96,7 @@
       <quotation-list></quotation-list>
     </div>
     <div [hidden]="!editMode && (quotation.id==undefined || quotation.id==null)">
-      <mat-tab-group animationDuration="0ms" #tabs [(selectedIndex)]="selectedTabIndex"
-        (selectedTabChange)="changeTab($event)">
+      <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTabIndex" (selectedTabChange)="changeTab($event)">
         <mat-tab label="Donneur d'ordre">
           <ordering-customer [quotation]="quotation" [editMode]="editMode" (updateDocuments)="updateDocuments()">
           </ordering-customer>
@@ -105,7 +104,8 @@
         <fieldset [disabled]="editMode==false" class="fieldset-no-border">
           <mat-tab label="Prestations" *ngIf="(quotation.tiers || quotation.responsable  || quotation.confrere)  ">
             <div class="mat-elevation-z2 form-div" *ngIf="quotation.assoAffaireOrders">
-              <mat-tab-group animationDuration="0ms" #tabs [(selectedIndex)]="selectedTabIndexAsso">
+              <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTabIndexAsso"
+                (selectedTabChange)="changeTabAsso($event)">
                 <mat-tab *ngFor="let asso of quotation.assoAffaireOrders">
                   <ng-template mat-tab-label>
                     {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' ' +

@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { BODACC_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { ActType } from '../../model/ActType';
 import { Affaire } from '../../model/Affaire';
 import { Bodacc } from '../../model/Bodacc';
@@ -36,8 +38,6 @@ export class BodaccMainComponent implements OnInit {
   @ViewChild(BodaccFusionComponent) bodaccFusionComponent: BodaccFusionComponent | undefined;
   @ViewChild(BodaccSplitComponent) bodaccSplitComponent: BodaccSplitComponent | undefined;
 
-  @ViewChild('tabs', { static: false }) tabs: any;
-
   BODACC_ENTITY_TYPE = BODACC_ENTITY_TYPE;
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
   instanceOfCustomerOrderFn = instanceOfCustomerOrder;
@@ -54,6 +54,7 @@ export class BodaccMainComponent implements OnInit {
   constructor(private formBuilder: UntypedFormBuilder,
     private constantService: ConstantService,
     private actTypeService: ActTypeService,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   ngOnInit() {
@@ -72,7 +73,6 @@ export class BodaccMainComponent implements OnInit {
         this.bodacc.dateOfPublication = new Date(this.bodacc.dateOfPublication);
 
       this.bodaccForm.markAllAsTouched();
-      this.toggleTabs();
     }
   }
 
@@ -114,13 +114,17 @@ export class BodaccMainComponent implements OnInit {
     return status && this.bodaccForm.valid;
   }
 
-  toggleTabs() {
-    if (this.tabs != undefined)
-      this.tabs.realignInkBar();
-  }
-
   provisionChangeFunction() {
     this.provisionChange.emit(this.provision);
   }
 
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('bodacc', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('bodacc');
+  }
 }

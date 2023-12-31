@@ -1,5 +1,5 @@
 <form [formGroup]="announcementForm" *ngIf=" announcement">
-  <mat-tab-group animationDuration="0ms" #tabs>
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab label="Informations générales">
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
         <div class="form-div">

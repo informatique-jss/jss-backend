@@ -1,5 +1,5 @@
 <div *ngIf="formalitesGuichetUnique">
-  <mat-tab-group animationDuration="0ms" #tabs>
+  <mat-tab-group animationDuration="0ms">
     <mat-tab *ngFor="let formaliteGuichetUnique of formalitesGuichetUnique;let index = index"
       [label]="getFormaliteLabel(formaliteGuichetUnique)">
       <mat-vertical-stepper [linear]="false" #stepper animationDuration="500" [selectedIndex]="selectedIndex[index]">

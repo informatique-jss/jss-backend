@@ -24,7 +24,7 @@
 
   <div class="mat-elevation-z2 form-div" *ngIf="selectedcompetentAuthority ">
     <form [formGroup]="entityForm2">
-      <mat-tab-group animationDuration="0ms">
+      <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
         <mat-tab label="Fiche de l'autorité compétente">
           <div class="full-width">
             <fieldset [disabled]="editMode==false" class="fieldset-no-border">

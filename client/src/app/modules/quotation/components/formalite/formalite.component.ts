@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { HabilitationsService } from '../../../../services/habilitations.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Affaire } from '../../model/Affaire';
 import { Formalite } from '../../model/Formalite';
@@ -41,7 +43,8 @@ export class FormaliteComponent implements OnInit {
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
     private habilitationsService: HabilitationsService,
-    private formaliteStatusService: FormaliteStatusService
+    private formaliteStatusService: FormaliteStatusService,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   formaliteForm = this.formBuilder.group({});
@@ -52,6 +55,7 @@ export class FormaliteComponent implements OnInit {
 
   ngOnInit() {
     this.formaliteStatusService.getFormaliteStatus().subscribe(response => { this.formaliteStatus = response });
+    this.restoreTab();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -69,4 +73,13 @@ export class FormaliteComponent implements OnInit {
     this.provisionChange.emit(this.provision);
   }
 
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('formalite', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('formalite');
+  }
 }

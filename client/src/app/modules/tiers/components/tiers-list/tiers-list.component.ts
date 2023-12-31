@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -133,6 +134,7 @@ export class TiersListComponent implements OnInit {
         }, display: true,
       } as SortTableAction<TiersSearchResult>);
 
+      this.restoreTab();
     });
   }
 
@@ -158,5 +160,15 @@ export class TiersListComponent implements OnInit {
         this.tiers = response;
       })
     }
+  }
+
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('tiers-list', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('tiers-list');
   }
 }
