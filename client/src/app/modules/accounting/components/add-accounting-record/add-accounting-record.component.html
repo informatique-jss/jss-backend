@@ -1,7 +1,7 @@
 <div class="mat-elevation-z2 form-div">
   <div class=" full-width">
     <sort-table [columns]="displayedColumns" [values]="accountingRecords" tableName="Ecritures Ajout"
-      [actions]="tableAction" (onRowClick)="selectAccountingRecord($event)"
+      [noPaddingBottom]="true" [actions]="tableAction" (onRowClick)="selectAccountingRecord($event)"
       [refreshTable]="refreshTable.asObservable()">
     </sort-table>
   </div>

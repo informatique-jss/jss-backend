@@ -1,4 +1,4 @@
-<div class="mat-elevation-z2 form-div" [ngClass]="{'min-height':!isForDashboard  }">
+<div class="mat-elevation-z2 form-div">
   <div class=" full-width">
     <table class="full-width table-fixed-layout" *ngIf="!isForDashboard   && invoiceSearch">
       <tr>
@@ -46,7 +46,7 @@
       </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="invoices" tableName="Factures"
-      *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true">
+      [isSmallerHeight]="true" *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true">
     </sort-table>
   </div>
 </div>

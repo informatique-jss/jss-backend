@@ -1,4 +1,4 @@
-<div class="mat-elevation-z2 form-div min-height">
+<div class="mat-elevation-z2 form-div  ">
   <div class=" full-width">
     <table class="full-width table-fixed-layout" *ngIf="!accountingRecordSearch.idPayment">
       <tr>
@@ -34,7 +34,8 @@
         </td>
       </tr>
     </table>
-    <sort-table [columns]="displayedColumns" [values]="accountingRecords" tableName="Ecritures" [actions]="tableAction">
+    <sort-table [columns]="displayedColumns" [values]="accountingRecords" tableName="Ecritures" [isSmallerHeight]="true"
+      [actions]="tableAction">
     </sort-table>
     <table mat-table [dataSource]="accumulatedDataSource" class="mat-elevation-z8 table total-table min-widht-table"
       cdkDrag [cdkDragFreeDragPosition]="currentUserPosition" (cdkDragEnded)="dropTotalDiv($event)"

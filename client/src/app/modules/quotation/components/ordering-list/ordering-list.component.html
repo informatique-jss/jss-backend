@@ -1,4 +1,4 @@
-<div class="mat-elevation-z2 form-div " [ngClass]="{'min-height':!isForDashboard }">
+<div class="mat-elevation-z2 form-div ">
   <div class=" full-width">
     <table class="full-width table-fixed-layout" *ngIf="!isForDashboard  && orderingSearch">
       <tr>
@@ -39,10 +39,9 @@
         </td>
       </tr>
     </table>
-    <div class="table-container-scroll">
-      <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="orders" tableName="Commandes"
-        *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true">
-      </sort-table>
-    </div>
+    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="orders" tableName="Commandes"
+      [noMaxHeight]="isForDashboard" [noPaddingBottom]="isForDashboard" [isSmallerHeight]="isForTiersIntegration"
+      *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true">
+    </sort-table>
   </div>
 </div>

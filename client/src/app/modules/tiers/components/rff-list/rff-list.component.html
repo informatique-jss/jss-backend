@@ -31,6 +31,6 @@
     </tr>
   </table>
   <sort-table [actions]="tableActionRff" [columns]="displayedColumnsRff" [values]="rff" tableName="RFF"
-    *ngIf="displayedColumnsRff && displayedColumnsRff.length>0 " [displayTotalLines]="true">
+    [isSmallerHeight]="true" *ngIf="displayedColumnsRff && displayedColumnsRff.length>0 " [displayTotalLines]="true">
   </sort-table>
 </div>

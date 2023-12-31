@@ -28,6 +28,10 @@ export class SortTableComponent<T> implements OnInit {
   @Input() idRowSelected: number | undefined;
   @Input() filterPredicate: ((record: SortTableElement, filter: string) => boolean) | undefined;
   @Input() displayTotalLines: boolean = false;
+  @Input() isSmallerHeight: boolean = false;
+  @Input() isSmallestHeight: boolean = false;
+  @Input() noPaddingBottom: boolean = false;
+  @Input() noMaxHeight: boolean = false;
   /**
  * Fired when row is clicked is modified by user
  */

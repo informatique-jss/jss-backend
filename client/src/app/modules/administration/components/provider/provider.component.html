@@ -6,11 +6,12 @@
   </div>
   <div class="table-container-scroll">
     <sort-table [columns]="displayedColumns" (onRowClick)="selectProvider($event)" [values]="providers"
-      tableName="Référentiel" [idRowSelected]="selectedProviderId" [filterText]="searchText">
+      [noMaxHeight]="true" [noPaddingBottom]="true" tableName="Référentiel" [idRowSelected]="selectedProviderId"
+      [filterText]="searchText">
     </sort-table>
   </div>
 </div>
-<div *ngIf="selectedProvider " class="mat-elevation-z2 form-div min-height">
+<div *ngIf="selectedProvider " class="mat-elevation-z2 form-div  ">
   <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab label="Fiche du fournisseur">
       <form [formGroup]="entityForm2">

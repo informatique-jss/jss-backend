@@ -16,8 +16,8 @@
     </table>
   </div>
   <div class="table-container-scroll" *ngIf="!idCompetentAuthority">
-    <sort-table [idRowSelected]="selectedCompetentAuthorityId" [columns]="displayedColumns"
-      (onRowClick)="selectCompetentAuthority($event)" [values]="filteredCompetentAuthorities"
+    <sort-table [idRowSelected]="selectedCompetentAuthorityId" [columns]="displayedColumns" [noPaddingBottom]="true"
+      [noMaxHeight]="true" (onRowClick)="selectCompetentAuthority($event)" [values]="filteredCompetentAuthorities"
       tableName="Autorités compétentes" [filterText]="searchText">
     </sort-table>
   </div>

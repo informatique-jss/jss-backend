@@ -41,6 +41,7 @@
       </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="payments" tableName="Paiements"
+      [noMaxHeight]="isForDashboard" [noPaddingBottom]="isForDashboard" [isSmallestHeight]="!isForDashboard"
       *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true">
     </sort-table>
   </div>

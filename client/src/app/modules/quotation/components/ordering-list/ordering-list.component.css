@@ -9,12 +9,3 @@
 .fab-td-button {
   width: 35px;
 }
-
-.min-height {
-  padding-bottom: 65px;
-}
-
-.table-container-scroll {
-  max-height: 215px;
-  overflow-y: auto;
-}

@@ -4,4 +4,5 @@
   </mat-form-field>
 </div>
 <sort-table [columns]="displayedColumns" (onRowClick)="chooseSpecialOffer($event)" [values]="specialOffersFlatten"
-  [refreshTable]="refreshTable.asObservable()" tableName="Tarifs spéciaux" [filterText]="searchText"></sort-table>
+  [noPaddingBottom]="true" [noMaxHeight]="true" [refreshTable]="refreshTable.asObservable()" tableName="Tarifs spéciaux"
+  [filterText]="searchText"></sort-table>

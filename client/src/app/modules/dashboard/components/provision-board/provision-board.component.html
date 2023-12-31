@@ -1,4 +1,4 @@
-<div class="mat-elevation-z2 form-div min-height">
+<div class="mat-elevation-z2 form-div  ">
 
   <div class="full-width">
     <form [formGroup]="provisionBoardForm">
@@ -13,7 +13,8 @@
       </table>
     </form>
     <sort-table *ngIf="provisionBoardResultsAggregatedWithTotal" [columns]="displayedColumns" [actions]="tableActions"
-      [values]="provisionBoardResultsAggregatedWithTotal" tableName="Dashboard provision">
+      [noMaxHeight]="true" [noPaddingBottom]="true" [values]="provisionBoardResultsAggregatedWithTotal"
+      tableName="Dashboard provision">
     </sort-table>
   </div>
 </div>

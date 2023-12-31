@@ -4,7 +4,8 @@
       propertyName="searchText" [isMandatory]="false" [isDisabled]="false"></generic-input>
   </div>
   <div class="table-container-scroll"><sort-table *ngIf="userReportings" [actions]="tableAction"
-      [refreshTable]="refreshTable.asObservable()" [columns]="displayedColumns" [values]="filteredUserReportings"
+      [noPaddingBottom]="true" [noMaxHeight]="true" [refreshTable]="refreshTable.asObservable()"
+      [columns]="displayedColumns" [values]="filteredUserReportings"
       [idRowSelected]="currentUserReporting? currentUserReporting.id! : undefined"
       (onRowClick)="selectReporting($event,[])" tableName="Reporting">
     </sort-table></div>

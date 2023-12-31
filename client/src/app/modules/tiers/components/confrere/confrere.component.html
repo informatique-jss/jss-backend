@@ -6,7 +6,8 @@
   </div>
   <div class="table-container-scroll" *ngIf="!this.idConfrere">
     <sort-table [idRowSelected]="selectedConfrereId" [columns]="displayedColumns" (onRowClick)="selectConfrere($event)"
-      [values]="confreres" tableName="Confrères" [filterText]="searchText">
+      [noPaddingBottom]="true" [noMaxHeight]="true" [values]="confreres" tableName="Confrères"
+      [filterText]="searchText">
     </sort-table>
   </div>
 

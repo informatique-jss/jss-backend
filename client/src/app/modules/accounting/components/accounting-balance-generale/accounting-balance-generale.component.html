@@ -29,7 +29,8 @@
         </td>
       </tr>
     </table>
-    <sort-table [columns]="displayedColumns" [values]="accountingBalances" tableName="Balance Générale"></sort-table>
+    <sort-table [columns]="displayedColumns" [values]="accountingBalances" tableName="Balance Générale"
+      [isSmallerHeight]="true"></sort-table>
     <table mat-table fixedLayout="false" [dataSource]="accumulatedDataSource"
       class="mat-elevation-z8 table total-table min-widht-table" cdkDrag [cdkDragFreeDragPosition]="currentUserPosition"
       (cdkDragEnded)="dropTotalDiv($event)" *ngIf="accountingBalances">

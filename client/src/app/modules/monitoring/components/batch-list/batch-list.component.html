@@ -30,6 +30,7 @@
     </tr>
   </table>
   <sort-table [actions]="batchDetailsActions" [columns]="batchDetailsColomns" [values]="batchDetails"
-    tableName="Détails des batch" *ngIf="batchDetailsColomns && batchDetailsColomns.length>0 ">
+    [noPaddingBottom]="true" [noMaxHeight]="true" tableName="Détails des batch"
+    *ngIf="batchDetailsColomns && batchDetailsColomns.length>0 ">
   </sort-table>
 </div>
