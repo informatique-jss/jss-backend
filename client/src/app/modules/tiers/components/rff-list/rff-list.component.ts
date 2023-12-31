@@ -45,19 +45,6 @@ export class RffListComponent implements OnInit {
     this.employeeService.getEmployees().subscribe(response => {
       this.allEmployees = response;
       this.displayedColumnsRff = [];
-      if (!this.isForTiersIntegration) {
-        this.rffSearch = {} as RffSearch;
-
-        this.bookmarkRff = this.userPreferenceService.getUserSearchBookmark("rff") as RffSearch;
-        if (this.bookmarkRff) {
-          this.rffSearch.tiers = this.bookmarkRff.tiers;
-          this.rffSearch.responsable = this.bookmarkRff.responsable;
-          this.rffSearch.salesEmployee = this.bookmarkRff.salesEmployee;
-          this.rffSearch.startDate = this.bookmarkRff.startDate;
-          this.rffSearch.endDate = this.bookmarkRff.endDate;
-        }
-        this.rffSearch.isHideCancelledRff = true;
-      }
 
       this.displayedColumnsRff.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn<Rff>);
       this.displayedColumnsRff.push({ id: "tiersId", fieldName: "tiersId", label: "N° Tiers" } as SortTableColumn<Rff>);
@@ -175,6 +162,17 @@ export class RffListComponent implements OnInit {
 
       if (this.isForTiersIntegration && this.rffSearch)
         this.searchRff();
+      else {
+        this.bookmarkRff = this.userPreferenceService.getUserSearchBookmark("rff") as RffSearch;
+        if (this.bookmarkRff) {
+          this.rffSearch = this.bookmarkRff;
+          if (this.rffSearch.startDate)
+            this.rffSearch.startDate = new Date(this.rffSearch.startDate);
+          if (this.rffSearch.endDate)
+            this.rffSearch.endDate = new Date(this.rffSearch.endDate);
+          this.searchRff();
+        }
+      }
     });
   }
 

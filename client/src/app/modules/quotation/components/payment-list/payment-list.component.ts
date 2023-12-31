@@ -17,6 +17,7 @@ import { ConstantService } from "src/app/modules/miscellaneous/services/constant
 import { OFX_ENTITY_TYPE } from "src/app/routing/search/search.component";
 import { AppService } from "src/app/services/app.service";
 import { HabilitationsService } from "src/app/services/habilitations.service";
+import { UserPreferenceService } from "src/app/services/user.preference.service";
 import { AccountingAccount } from '../../../accounting/model/AccountingAccount';
 import { PaymentDetailsDialogService } from '../../../invoicing/services/payment.details.dialog.service';
 import { RefundPaymentDialogComponent } from "../refund-payment-dialog/refund-payment-dialog.component";
@@ -39,6 +40,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
   tableAction: SortTableAction<PaymentSearchResult>[] = [];
   uploadAttachementDialogRef: MatDialogRef<UploadAttachementDialogComponent> | undefined;
   selectAccountingAccountDialogComponentRef: MatDialogRef<SelectAccountingAccountDialogComponent> | undefined;
+  bookmark: PaymentSearch | undefined;
 
   @Output() actionBypass: EventEmitter<PaymentSearchResult> = new EventEmitter<PaymentSearchResult>();
   @Input() overrideIconAction: string = "";
@@ -60,7 +62,8 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     private habilitationService: HabilitationsService,
     private editCommentDialog: MatDialog,
     private paymentDetailsDialogService: PaymentDetailsDialogService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   ngAfterContentChecked(): void {
@@ -150,6 +153,17 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
 
     if (this.isForDashboard && !this.payments && this.paymentSearch) {
       this.searchPayments();
+    } else {
+      this.bookmark = this.userPreferenceService.getUserSearchBookmark("payments") as PaymentSearch;
+      if (this.bookmark) {
+        this.paymentSearch = this.bookmark;
+        if (this.paymentSearch.startDate)
+          this.paymentSearch.startDate = new Date(this.paymentSearch.startDate);
+        if (this.paymentSearch.endDate)
+          this.paymentSearch.endDate = new Date(this.paymentSearch.endDate);
+        this.searchPayments();
+      }
+
     }
 
     let idPayment = this.activatedRoute.snapshot.params.idPayment;
@@ -191,6 +205,8 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
         this.paymentSearch.startDate = new Date(toIsoString(this.paymentSearch.startDate));
       if (this.paymentSearch.endDate)
         this.paymentSearch.endDate = new Date(toIsoString(this.paymentSearch.endDate));
+      if (!this.isForDashboard)
+        this.userPreferenceService.setUserSearchBookmark(this.paymentSearch, "payments");
       this.paymentSearchResultService.getPayments(this.paymentSearch).subscribe(response => {
         this.payments = response;
       })

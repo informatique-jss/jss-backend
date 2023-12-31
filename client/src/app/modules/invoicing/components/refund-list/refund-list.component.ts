@@ -5,6 +5,7 @@ import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
+import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { RefundSearch } from '../../model/RefundSearch';
 import { RefundSearchResult } from '../../model/RefundSearchResult';
 import { RefundSearchResultService } from '../../services/refund.search.result.service';
@@ -23,13 +24,15 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
   displayedColumns: SortTableColumn<RefundSearchResult>[] = [];
   columnToDisplayOnDashboard: string[] = ["refundDate", "refundAmount", "refundLabel"];
   tableAction: SortTableAction<RefundSearchResult>[] = [];
+  bookmark: RefundSearch | undefined;
 
   constructor(
     private refundSearchResultService: RefundSearchResultService,
     private changeDetectorRef: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
-    private appService: AppService
+    private appService: AppService,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   ngAfterContentChecked(): void {
@@ -63,6 +66,16 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
       this.refundSearch.isHideMatchedRefunds = false;
       this.appService.changeHeaderTitle("Remboursements");
       this.searchRefunds();
+    } else {
+      this.bookmark = this.userPreferenceService.getUserSearchBookmark("refunds") as RefundSearch;
+      if (this.bookmark) {
+        this.refundSearch = this.bookmark;
+        if (this.refundSearch.startDate)
+          this.refundSearch.startDate = new Date(this.refundSearch.startDate);
+        if (this.refundSearch.endDate)
+          this.refundSearch.endDate = new Date(this.refundSearch.endDate);
+        this.searchRefunds();
+      }
     }
   }
 
@@ -87,6 +100,8 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
         this.refundSearch.startDate = new Date(toIsoString(this.refundSearch.startDate));
       if (this.refundSearch.endDate)
         this.refundSearch.endDate = new Date(toIsoString(this.refundSearch.endDate));
+      if (!this.refundSearch.idRefund)
+        this.userPreferenceService.setUserSearchBookmark(this.refundSearch, "refunds");
       this.refundSearchResultService.getRefunds(this.refundSearch).subscribe(response => {
         this.refunds = response;
       })

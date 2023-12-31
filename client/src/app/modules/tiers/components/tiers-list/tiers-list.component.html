@@ -1,98 +1,104 @@
 <div>
   <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab label="Tiers">
-      <div class="mat-elevation-z2 form-div">
-        <div class=" full-width">
-          <table class="full-width table-fixed-layout" *ngIf=" tiersSearch">
-            <tr>
-              <td>
-                <generic-input [(model)]="tiersSearch.label" label="Dénomination" [form]="tiersSearchForm"
-                  propertyName="label" [isMandatory]="false" [isDisabled]="false"></generic-input>
-              </td>
-              <td>
-                <autocomplete-employee [(model)]="tiersSearch.salesEmployee" label="Commercial" [form]="tiersSearchForm"
-                  propertyName="salesEmployee" [isMandatory]="false">
-                </autocomplete-employee>
-              </td>
-              <td>
-                <autocomplete-tiers-individual [(model)]="tiersSearch.tiers" [form]="tiersSearchForm"
-                  propertyName="tiers" [isMandatory]="false" label="Tiers"
-                  [authorizeNonIndividualTiers]="true"></autocomplete-tiers-individual>
-              </td>
-              <td>
-                <generic-datepicker [(model)]="tiersSearch.startDate" label="Date de début" [form]="tiersSearchForm"
-                  propertyName="startDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
-              </td>
-              <td>
-                <generic-datepicker [(model)]="tiersSearch.endDate" label="Date de fin" [form]="tiersSearchForm"
-                  propertyName="endDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
-              </td>
-              <td class="fab-td-button">
-                <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchTiers()" class="add-button">
-                  <mat-icon>search</mat-icon>
-                </button>
-              </td>
-            </tr>
-          </table>
-          <sort-table [actions]="tableActionTiers" [columns]="displayedColumnsTiers" [values]="tiers" tableName="Tiers"
-            [isSmallestHeight]="true" *ngIf="displayedColumnsTiers && displayedColumnsTiers.length>0 "
-            [displayTotalLines]="true">
-          </sort-table>
+      <ng-template matTabContent>
+        <div class="mat-elevation-z2 form-div">
+          <div class=" full-width">
+            <table class="full-width table-fixed-layout" *ngIf=" tiersSearch">
+              <tr>
+                <td>
+                  <generic-input [(model)]="tiersSearch.label" label="Dénomination" [form]="tiersSearchForm"
+                    propertyName="label" [isMandatory]="false" [isDisabled]="false"></generic-input>
+                </td>
+                <td>
+                  <autocomplete-employee [(model)]="tiersSearch.salesEmployee" label="Commercial"
+                    [form]="tiersSearchForm" propertyName="salesEmployee" [isMandatory]="false">
+                  </autocomplete-employee>
+                </td>
+                <td>
+                  <autocomplete-tiers-individual [(model)]="tiersSearch.tiers" [form]="tiersSearchForm"
+                    propertyName="tiers" [isMandatory]="false" label="Tiers"
+                    [authorizeNonIndividualTiers]="true"></autocomplete-tiers-individual>
+                </td>
+                <td>
+                  <generic-datepicker [(model)]="tiersSearch.startDate" label="Date de début" [form]="tiersSearchForm"
+                    propertyName="startDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
+                </td>
+                <td>
+                  <generic-datepicker [(model)]="tiersSearch.endDate" label="Date de fin" [form]="tiersSearchForm"
+                    propertyName="endDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
+                </td>
+                <td class="fab-td-button">
+                  <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchTiers()" class="add-button">
+                    <mat-icon>search</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            </table>
+            <sort-table [actions]="tableActionTiers" [columns]="displayedColumnsTiers" [values]="tiers"
+              tableName="Tiers" [isSmallestHeight]="true"
+              *ngIf="displayedColumnsTiers && displayedColumnsTiers.length>0 " [displayTotalLines]="true">
+            </sort-table>
+          </div>
         </div>
-      </div>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Responsables">
-      <div class="mat-elevation-z2 form-div">
-        <div class=" full-width">
-          <table class="full-width table-fixed-layout" *ngIf=" responsableSearch">
-            <tr>
-              <td>
-                <generic-input [(model)]="responsableSearch.label" label="Dénomination" [form]="responsableSearchForm"
-                  propertyName="label" [isMandatory]="false" [isDisabled]="false"></generic-input>
-              </td>
-              <td>
-                <autocomplete-employee [(model)]="responsableSearch.salesEmployee" label="Commercial"
-                  [form]="responsableSearchForm" propertyName="salesEmployee" [isMandatory]="false">
-                </autocomplete-employee>
-              </td>
-              <td>
-                <autocomplete-tiers-individual [(model)]="responsableSearch.tiers" [form]="responsableSearchForm"
-                  propertyName="tiers" [isMandatory]="false" label="Tiers"
-                  [authorizeNonIndividualTiers]="true"></autocomplete-tiers-individual>
-              </td>
-              <td>
-                <autocomplete-responsable [(model)]="responsableSearch.responsable" [form]="responsableSearchForm"
-                  label='Responsable' propertyName="responsable" [isMandatory]="false"></autocomplete-responsable>
-              </td>
-              <td>
-                <generic-datepicker [(model)]="responsableSearch.startDate" label="Date de début"
-                  [form]="responsableSearchForm" propertyName="startDate" [isMandatory]="false"
-                  [isDisabled]="false"></generic-datepicker>
-              </td>
-              <td>
-                <generic-datepicker [(model)]="responsableSearch.endDate" label="Date de fin"
-                  [form]="responsableSearchForm" propertyName="endDate" [isMandatory]="false"
-                  [isDisabled]="false"></generic-datepicker>
-              </td>
-              <td class="fab-td-button">
-                <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchResponsables()"
-                  class="add-button">
-                  <mat-icon>search</mat-icon>
-                </button>
-              </td>
-            </tr>
-          </table>
-          <sort-table [actions]="tableActionResponsable" [columns]="displayedColumnsResponsables"
-            [values]="responsables" tableName="Responsables" [isSmallestHeight]="true"
-            *ngIf="displayedColumnsResponsables && displayedColumnsResponsables.length>0 " [displayTotalLines]="true">
-          </sort-table>
+      <ng-template matTabContent>
+        <div class="mat-elevation-z2 form-div">
+          <div class=" full-width">
+            <table class="full-width table-fixed-layout" *ngIf=" responsableSearch">
+              <tr>
+                <td>
+                  <generic-input [(model)]="responsableSearch.label" label="Dénomination" [form]="responsableSearchForm"
+                    propertyName="label" [isMandatory]="false" [isDisabled]="false"></generic-input>
+                </td>
+                <td>
+                  <autocomplete-employee [(model)]="responsableSearch.salesEmployee" label="Commercial"
+                    [form]="responsableSearchForm" propertyName="salesEmployee" [isMandatory]="false">
+                  </autocomplete-employee>
+                </td>
+                <td>
+                  <autocomplete-tiers-individual [(model)]="responsableSearch.tiers" [form]="responsableSearchForm"
+                    propertyName="tiers" [isMandatory]="false" label="Tiers"
+                    [authorizeNonIndividualTiers]="true"></autocomplete-tiers-individual>
+                </td>
+                <td>
+                  <autocomplete-responsable [(model)]="responsableSearch.responsable" [form]="responsableSearchForm"
+                    label='Responsable' propertyName="responsable" [isMandatory]="false"></autocomplete-responsable>
+                </td>
+                <td>
+                  <generic-datepicker [(model)]="responsableSearch.startDate" label="Date de début"
+                    [form]="responsableSearchForm" propertyName="startDate" [isMandatory]="false"
+                    [isDisabled]="false"></generic-datepicker>
+                </td>
+                <td>
+                  <generic-datepicker [(model)]="responsableSearch.endDate" label="Date de fin"
+                    [form]="responsableSearchForm" propertyName="endDate" [isMandatory]="false"
+                    [isDisabled]="false"></generic-datepicker>
+                </td>
+                <td class="fab-td-button">
+                  <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchResponsables()"
+                    class="add-button">
+                    <mat-icon>search</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            </table>
+            <sort-table [actions]="tableActionResponsable" [columns]="displayedColumnsResponsables"
+              [values]="responsables" tableName="Responsables" [isSmallestHeight]="true"
+              *ngIf="displayedColumnsResponsables && displayedColumnsResponsables.length>0 " [displayTotalLines]="true">
+            </sort-table>
+          </div>
         </div>
-      </div>
+      </ng-template>
     </mat-tab>
     <mat-tab label="RFF">
-      <div class="mat-elevation-z2 form-div">
-        <rff-list></rff-list>
-      </div>
+      <ng-template matTabContent>
+        <div class="mat-elevation-z2 form-div">
+          <rff-list></rff-list>
+        </div>
+      </ng-template>
     </mat-tab>
   </mat-tab-group>
 </div>

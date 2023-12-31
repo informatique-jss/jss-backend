@@ -46,23 +46,6 @@ export class TiersListComponent implements OnInit {
       this.displayedColumnsTiers = [];
       this.tiersSearch = {} as TiersSearch;
       this.responsableSearch = {} as TiersSearch;
-      this.bookmark = this.userPreferenceService.getUserSearchBookmark("tiers") as TiersSearch;
-      if (this.bookmark) {
-        this.tiersSearch.tiers = this.bookmark.tiers;
-        this.tiersSearch.responsable = this.bookmark.responsable;
-        this.tiersSearch.salesEmployee = this.bookmark.salesEmployee;
-        this.tiersSearch.startDate = this.bookmark.startDate;
-        this.tiersSearch.endDate = this.bookmark.endDate;
-      }
-
-      this.bookmarkResponsable = this.userPreferenceService.getUserSearchBookmark("responsables") as TiersSearch;
-      if (this.bookmark) {
-        this.responsableSearch.tiers = this.bookmark.tiers;
-        this.responsableSearch.responsable = this.bookmark.responsable;
-        this.responsableSearch.salesEmployee = this.bookmark.salesEmployee;
-        this.responsableSearch.startDate = this.bookmark.startDate;
-        this.responsableSearch.endDate = this.bookmark.endDate;
-      }
 
       this.displayedColumnsResponsables.push({ id: "tiersId", fieldName: "tiersId", label: "N°" } as SortTableColumn<ResponsableSearchResult>);
       this.displayedColumnsResponsables.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers" } as SortTableColumn<ResponsableSearchResult>);
@@ -135,6 +118,26 @@ export class TiersListComponent implements OnInit {
       } as SortTableAction<TiersSearchResult>);
 
       this.restoreTab();
+
+      this.bookmark = this.userPreferenceService.getUserSearchBookmark("tiers") as TiersSearch;
+      if (this.bookmark) {
+        this.tiersSearch = this.bookmark;
+        if (this.tiersSearch.startDate)
+          this.tiersSearch.startDate = new Date(this.tiersSearch.startDate);
+        if (this.tiersSearch.endDate)
+          this.tiersSearch.endDate = new Date(this.tiersSearch.endDate);
+        this.searchTiers();
+      }
+
+      this.bookmarkResponsable = this.userPreferenceService.getUserSearchBookmark("responsables") as TiersSearch;
+      if (this.bookmark) {
+        this.responsableSearch = this.bookmarkResponsable;
+        if (this.responsableSearch.startDate)
+          this.responsableSearch.startDate = new Date(this.responsableSearch.startDate);
+        if (this.responsableSearch.endDate)
+          this.responsableSearch.endDate = new Date(this.responsableSearch.endDate);
+        this.searchResponsables();
+      }
     });
   }
 

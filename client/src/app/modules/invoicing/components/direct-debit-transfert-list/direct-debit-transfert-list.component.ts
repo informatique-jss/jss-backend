@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { AppService } from '../../../../services/app.service';
 import { DirectDebitTransfertService } from '../../../quotation/services/direct.debit.transfert.service';
 import { DirectDebitTransfertSearch } from '../../model/DirectDebitTransfertSearch';
@@ -22,6 +23,7 @@ export class DirectDebitTransfertListComponent implements OnInit, AfterContentCh
   availableColumns: SortTableColumn<DirectDebitTransfertSearchResult>[] = [];
   displayedColumns: SortTableColumn<DirectDebitTransfertSearchResult>[] = [];
   tableAction: SortTableAction<DirectDebitTransfertSearchResult>[] = [];
+  bookmark: DirectDebitTransfertSearch | undefined;
 
   constructor(
     private directDebitTransfertSearchResultService: DirectDebitTransfertSearchResultService,
@@ -29,7 +31,8 @@ export class DirectDebitTransfertListComponent implements OnInit, AfterContentCh
     private formBuilder: FormBuilder,
     private directDebitTransfertService: DirectDebitTransfertService,
     private activatedRoute: ActivatedRoute,
-    private appService: AppService
+    private appService: AppService,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   ngAfterContentChecked(): void {
@@ -62,6 +65,16 @@ export class DirectDebitTransfertListComponent implements OnInit, AfterContentCh
       this.transfertSearch.isHideExportedDirectDebitTransfert = false;
       this.appService.changeHeaderTitle("Prélèvements");
       this.searchTransferts();
+    } else {
+      this.bookmark = this.userPreferenceService.getUserSearchBookmark("direct-debit-transfert") as DirectDebitTransfertSearch;
+      if (this.bookmark) {
+        this.transfertSearch = this.bookmark;
+        if (this.transfertSearch.startDate)
+          this.transfertSearch.startDate = new Date(this.transfertSearch.startDate);
+        if (this.transfertSearch.endDate)
+          this.transfertSearch.endDate = new Date(this.transfertSearch.endDate);
+        this.searchTransferts();
+      }
     }
   }
 
@@ -78,6 +91,8 @@ export class DirectDebitTransfertListComponent implements OnInit, AfterContentCh
         this.transfertSearch.startDate = new Date(toIsoString(this.transfertSearch.startDate));
       if (this.transfertSearch.endDate)
         this.transfertSearch.endDate = new Date(toIsoString(this.transfertSearch.endDate));
+      if (!this.transfertSearch.idDirectDebitTransfert)
+        this.userPreferenceService.setUserSearchBookmark(this.transfertSearch, "direct-debit-transfert");
       this.directDebitTransfertSearchResultService.getTransferts(this.transfertSearch).subscribe(response => {
         this.transfers = response;
       })

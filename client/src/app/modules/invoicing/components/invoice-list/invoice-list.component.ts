@@ -70,11 +70,14 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
     this.bookmark = this.userPreferenceService.getUserSearchBookmark("invoices") as InvoiceSearch;
     if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration && !this.isForPaymentAssocationIntegration) {
-      this.invoiceSearch = {} as InvoiceSearch;
-      this.invoiceSearch.invoiceStatus = this.bookmark.invoiceStatus;
       this.defaultStatusFilter = this.bookmark.invoiceStatus;
-      this.invoiceSearch.maxAmount = this.bookmark.maxAmount;
-      this.invoiceSearch.minAmount = this.bookmark.minAmount;
+      this.invoiceSearch = this.bookmark;
+      this.invoiceSearch.invoiceStatus = this.bookmark.invoiceStatus;
+      if (this.invoiceSearch.startDate)
+        this.invoiceSearch.startDate = new Date(this.invoiceSearch.startDate);
+      if (this.invoiceSearch.endDate)
+        this.invoiceSearch.endDate = new Date(this.invoiceSearch.endDate);
+      this.searchInvoices();
     }
 
     if (!this.isForDashboard && !this.isForTiersIntegration)
@@ -150,7 +153,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
         this.invoiceSearch.customerOrders = [];
         this.invoiceSearch.customerOrders.push({ id: this.searchedTiers.entityId } as ITiers)
       }
-      if (!this.isForDashboard)
+      if (!this.isForDashboard && !this.isForTiersIntegration && !this.isForPaymentAssocationIntegration)
         this.userPreferenceService.setUserSearchBookmark(this.invoiceSearch, "invoices");
       this.invoiceSearchResultService.getInvoicesList(this.invoiceSearch).subscribe(response => {
         this.invoices = response;

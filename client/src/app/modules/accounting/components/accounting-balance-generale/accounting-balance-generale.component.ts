@@ -32,6 +32,7 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
   accountingBalances: AccountingBalance[] | undefined;
   displayedColumnsTotal: string[] = ['label', 'debit', 'credit', 'balance'];
   currentUserPosition: Point = { x: 0, y: 0 };
+  bookmark: AccountingBalanceSearch | undefined;
 
 
   ngOnInit() {
@@ -50,6 +51,16 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
     this.displayedColumns.push({ id: "echu30", fieldName: "echu30", label: "Créances échues à -30 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
     this.displayedColumns.push({ id: "echu60", fieldName: "echu60", label: "Créances échues à -60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
     this.displayedColumns.push({ id: "echu90", fieldName: "echu90", label: "Créances échues à +60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
+
+    this.bookmark = this.userPreferenceService.getUserSearchBookmark("accounting-balance-generale") as AccountingBalanceSearch;
+    if (this.bookmark) {
+      this.accountingBalanceSearch = this.bookmark;
+      if (this.accountingBalanceSearch.startDate)
+        this.accountingBalanceSearch.startDate = new Date(this.accountingBalanceSearch.startDate);
+      if (this.accountingBalanceSearch.endDate)
+        this.accountingBalanceSearch.endDate = new Date(this.accountingBalanceSearch.endDate);
+      this.searchRecords();
+    }
   }
 
   formatEurosForSortTable = formatEurosForSortTable;
@@ -75,6 +86,7 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
       return;
     }
     this.accountingBalanceSearch.startDate = new Date(this.accountingBalanceSearch.startDate.setHours(12));
+    this.userPreferenceService.setUserSearchBookmark(this.accountingBalanceSearch, "accounting-balance-generale");
     this.accountingBalanceService.searchAccountingBalanceGenerale(this.accountingBalanceSearch).subscribe(response => {
       this.accountingBalances = response;
       this.computeBalanceAndDebitAndCreditAccumulation();

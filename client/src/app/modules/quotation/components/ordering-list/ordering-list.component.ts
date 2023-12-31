@@ -53,16 +53,6 @@ export class OrderingListComponent implements OnInit {
   ngOnInit() {
     this.employeeService.getEmployees().subscribe(response => {
 
-      this.bookmark = this.userPreferenceService.getUserSearchBookmark("customerOrders") as OrderingSearch;
-
-      if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
-        this.orderingSearch = {} as OrderingSearch;
-        this.orderingSearch.salesEmployee = this.bookmark.salesEmployee;
-        this.orderingSearch.assignedToEmployee = this.bookmark.assignedToEmployee;
-        this.orderingSearch.customerOrderStatus = this.bookmark.customerOrderStatus;
-      }
-
-
       this.allEmployees = response;
 
       if (!this.isForDashboard && !this.isForTiersIntegration)
@@ -110,6 +100,17 @@ export class OrderingListComponent implements OnInit {
           }
           this.searchOrders();
         })
+      } else {
+        this.bookmark = this.userPreferenceService.getUserSearchBookmark("customerOrders") as OrderingSearch;
+
+        if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
+          this.orderingSearch = this.bookmark;
+          if (this.orderingSearch.startDate)
+            this.orderingSearch.startDate = new Date(this.orderingSearch.startDate);
+          if (this.orderingSearch.endDate)
+            this.orderingSearch.endDate = new Date(this.orderingSearch.endDate);
+          this.searchOrders();
+        }
       }
     });
   }
@@ -146,7 +147,7 @@ export class OrderingListComponent implements OnInit {
 
   searchOrders() {
     if (this.orderingSearchForm.valid) {
-      if (!this.isForDashboard)
+      if (!this.isForDashboard && !this.isForTiersIntegration)
         this.userPreferenceService.setUserSearchBookmark(this.orderingSearch, "customerOrders");
       if (this.orderingSearch.startDate)
         this.orderingSearch.startDate = new Date(toIsoString(this.orderingSearch.startDate));

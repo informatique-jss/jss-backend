@@ -49,6 +49,7 @@ export class AccountingRecordComponent implements OnInit {
   currentUserPosition: Point = { x: 0, y: 0 };
   displayedColumns: SortTableColumn<AccountingRecordSearchResult>[] = [] as Array<SortTableColumn<AccountingRecordSearchResult>>;
   tableAction: SortTableAction<AccountingRecordSearchResult>[] = [] as Array<SortTableAction<AccountingRecordSearchResult>>;
+  bookmark: AccountingRecordSearch | undefined;
 
   canAddNewAccountingRecord() {
     return this.habilitationService.canAddNewAccountingRecord();
@@ -85,10 +86,20 @@ export class AccountingRecordComponent implements OnInit {
         this.accountingRecordSearch.tiersId = this.tiersToDisplay.id;
       this.accountingRecordSearch.hideLettered = true;
       this.searchRecords();
+    } else if (this.accountingRecordSearch && this.accountingRecordSearch.idPayment)
+      this.searchRecords();
+    else {
+      this.bookmark = this.userPreferenceService.getUserSearchBookmark("accounting-record") as AccountingRecordSearch;
+      if (this.bookmark) {
+        this.accountingRecordSearch = this.bookmark;
+        if (this.accountingRecordSearch.startDate)
+          this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate);
+        if (this.accountingRecordSearch.endDate)
+          this.accountingRecordSearch.endDate = new Date(this.accountingRecordSearch.endDate);
+        this.searchRecords();
+      }
     }
 
-    if (this.accountingRecordSearch && this.accountingRecordSearch.idPayment)
-      this.searchRecords();
   }
 
 
@@ -154,6 +165,9 @@ export class AccountingRecordComponent implements OnInit {
     }
     if (this.accountingRecordSearch.startDate)
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
+
+    if (!this.tiersToDisplay && !this.accountingRecordSearch.idPayment)
+      this.userPreferenceService.setUserSearchBookmark(this.accountingRecordSearch, "accounting-record");
     this.accountingRecordSearchService.searchAccountingRecords(this.accountingRecordSearch).subscribe(response => {
       this.accountingRecords = response;
       this.computeBalanceAndDebitAndCreditAccumulation();

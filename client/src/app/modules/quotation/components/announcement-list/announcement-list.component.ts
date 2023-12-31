@@ -23,6 +23,7 @@ export class AnnouncementListComponent implements OnInit, AfterContentChecked {
   displayedColumns: SortTableColumn<Announcement>[] = [];
   tableAction: SortTableAction<Announcement>[] = [];
   announcementSearch: AnnouncementSearch = {} as AnnouncementSearch;
+
   constructor(
     private announcementService: AnnouncementService,
     private changeDetectorRef: ChangeDetectorRef,

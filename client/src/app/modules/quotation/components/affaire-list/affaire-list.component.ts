@@ -6,6 +6,7 @@ import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableCo
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
 import { AppService } from 'src/app/services/app.service';
+import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { AFFAIRE_ENTITY_TYPE } from '../../../../routing/search/search.component';
 
 @Component({
@@ -19,11 +20,13 @@ export class AffaireListComponent implements OnInit {
   tableAction: SortTableAction<IndexEntity>[] = [];
   textSearch: string = "";
   searchObservableRef: Subscription | undefined;
+  bookmark: string | undefined;
 
   constructor(
     private appService: AppService,
     private formBuilder: FormBuilder,
     private indexEntityService: IndexEntityService,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   ngOnInit() {
@@ -43,6 +46,12 @@ export class AffaireListComponent implements OnInit {
         return undefined;
       }, display: true,
     } as SortTableAction<IndexEntity>);
+
+    this.bookmark = this.userPreferenceService.getUserSearchBookmark("affaires") as string;
+    if (this.bookmark) {
+      this.textSearch = this.bookmark;
+      this.searchAffaires();
+    }
   }
 
   affaireSearchForm = this.formBuilder.group({
@@ -53,6 +62,7 @@ export class AffaireListComponent implements OnInit {
       this.searchObservableRef.unsubscribe();
 
     if (this.textSearch.length >= 2) {
+      this.userPreferenceService.setUserSearchBookmark(this.textSearch, "affaires");
       this.searchObservableRef = this.indexEntityService.searchEntitiesByType(this.textSearch, AFFAIRE_ENTITY_TYPE).subscribe(response => {
         this.affaires = response;
         if (this.affaires)

@@ -258,6 +258,8 @@ export class SortTableComponent<T> implements OnInit {
 
   setDisplayedColumns() {
     this.displayedColumns = [];
+    if (this.internalActions && this.internalActions.length > 0)
+      this.displayedColumns.push('actions');
     if (this.columns)
       for (let column of this.columns) {
         if (column.display == undefined)
@@ -265,8 +267,7 @@ export class SortTableComponent<T> implements OnInit {
         if (column.display)
           this.displayedColumns.push(column.id);
       }
-    if (this.internalActions && this.internalActions.length > 0)
-      this.displayedColumns.push('actions');
+
   }
 
   selectColumn(column: SortTableColumn<T>, $event: any) {

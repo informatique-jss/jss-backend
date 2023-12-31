@@ -30,13 +30,11 @@ export class AccountingBalanceComponent implements OnInit {
   accountingBalances: AccountingBalance[] | undefined;
   displayedColumnsTotal: string[] = ['label', 'debit', 'credit'];
   currentUserPosition: Point = { x: 0, y: 0 };
+  bookmark: AccountingBalanceSearch | undefined;
 
   displayedColumns: SortTableColumn<AccountingBalance>[] = [] as Array<SortTableColumn<AccountingBalance>>;
 
   ngOnInit() {
-    this.accountingBalanceSearch.startDate = new Date(new Date().getFullYear(), 0, 1)
-    this.accountingBalanceSearch.endDate = new Date(new Date().getFullYear(), 11, 31)
-
     // Column init
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: AccountingBalance, column: SortTableColumn<AccountingBalance>) => { if (element && column) return element.principalAccountingAccountCode + element.accountingAccountSubNumber; return "" } } as SortTableColumn<AccountingBalance>);
@@ -49,6 +47,16 @@ export class AccountingBalanceComponent implements OnInit {
     this.displayedColumns.push({ id: "echu30", fieldName: "echu30", label: "Créances échues à -30 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
     this.displayedColumns.push({ id: "echu60", fieldName: "echu60", label: "Créances échues à -60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
     this.displayedColumns.push({ id: "echu90", fieldName: "echu90", label: "Créances échues à +60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
+
+    this.bookmark = this.userPreferenceService.getUserSearchBookmark("accounting-balance") as AccountingBalanceSearch;
+    if (this.bookmark) {
+      this.accountingBalanceSearch = this.bookmark;
+      if (this.accountingBalanceSearch.startDate)
+        this.accountingBalanceSearch.startDate = new Date(this.accountingBalanceSearch.startDate);
+      if (this.accountingBalanceSearch.endDate)
+        this.accountingBalanceSearch.endDate = new Date(this.accountingBalanceSearch.endDate);
+      this.searchRecords();
+    }
   }
 
   formatEurosForSortTable = formatEurosForSortTable;
@@ -74,6 +82,7 @@ export class AccountingBalanceComponent implements OnInit {
       return;
     }
     this.accountingBalanceSearch.startDate = new Date(this.accountingBalanceSearch.startDate.setHours(12));
+    this.userPreferenceService.setUserSearchBookmark(this.accountingBalanceSearch, "accounting-balance");
     this.accountingBalanceService.searchAccountingBalance(this.accountingBalanceSearch).subscribe(response => {
       this.accountingBalances = response;
       this.computeBalanceAndDebitAndCreditAccumulation();

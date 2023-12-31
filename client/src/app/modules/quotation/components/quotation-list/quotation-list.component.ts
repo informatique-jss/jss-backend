@@ -45,15 +45,6 @@ export class QuotationListComponent implements OnInit {
 
   ngOnInit() {
     this.employeeService.getEmployees().subscribe(response => {
-      this.bookmark = this.userPreferenceService.getUserSearchBookmark("quotations") as QuotationSearch;
-
-      if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
-        this.quotationSearch = {} as QuotationSearch;
-        this.quotationSearch.salesEmployee = this.bookmark.salesEmployee;
-        this.quotationSearch.assignedToEmployee = this.bookmark.assignedToEmployee;
-        this.quotationSearch.quotationStatus = this.bookmark.quotationStatus;
-      }
-
       this.allEmployees = response;
       if (!this.isForDashboard && !this.isForTiersIntegration)
         this.appService.changeHeaderTitle("Devis");
@@ -88,6 +79,17 @@ export class QuotationListComponent implements OnInit {
           }
           this.searchOrders();
         })
+      } else {
+        this.bookmark = this.userPreferenceService.getUserSearchBookmark("quotations") as QuotationSearch;
+
+        if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
+          this.quotationSearch = this.bookmark;
+          if (this.quotationSearch.startDate)
+            this.quotationSearch.startDate = new Date(this.quotationSearch.startDate);
+          if (this.quotationSearch.endDate)
+            this.quotationSearch.endDate = new Date(this.quotationSearch.endDate);
+          this.searchOrders();
+        }
       }
 
     });
@@ -148,7 +150,7 @@ export class QuotationListComponent implements OnInit {
 
   searchOrders() {
     if (this.quotationSearchForm.valid) {
-      if (!this.isForDashboard)
+      if (!this.isForDashboard && !this.isForTiersIntegration)
         this.userPreferenceService.setUserSearchBookmark(this.quotationSearch, "quotations");
       if (this.quotationSearch.startDate)
         this.quotationSearch.startDate = new Date(toIsoString(this.quotationSearch.startDate));

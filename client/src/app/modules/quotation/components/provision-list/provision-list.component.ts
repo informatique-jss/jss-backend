@@ -52,12 +52,13 @@ export class ProvisionListComponent implements OnInit {
       this.bookmark = this.userPreferenceService.getUserSearchBookmark("prestations") as AffaireSearch;
       if (!this.isForDashboard && !this.isForTiersIntegration) {
         this.appService.changeHeaderTitle("Prestations");
-        if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
-          this.affaireSearch = {} as AffaireSearch;
-          this.affaireSearch.assignedTo = this.bookmark.assignedTo;
-          this.affaireSearch.label = this.bookmark.label;
-          this.affaireSearch.responsible = this.bookmark.responsible;
-          this.affaireSearch.status = this.bookmark.status;
+        if (!this.isForDashboard && !this.isForTiersIntegration) {
+          if (this.bookmark) {
+            this.affaireSearch = this.bookmark;
+            this.searchAffaires();
+          } else {
+            this.affaireSearch = {} as AffaireSearch;
+          }
         }
 
         if (employeeId) {
@@ -133,7 +134,7 @@ export class ProvisionListComponent implements OnInit {
       || this.affaireSearch.affaire
       || this.affaireSearch.waitedCompetentAuthority
     )) {
-      if (!this.isForDashboard)
+      if (!this.isForDashboard && !this.isForTiersIntegration)
         this.userPreferenceService.setUserSearchBookmark(this.affaireSearch, "prestations");
       this.assoAffaireOrderSearchResultService.getAssoAffaireOrders(this.affaireSearch).subscribe(response => {
         this.affaires = response;

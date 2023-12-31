@@ -75,7 +75,7 @@ export class UserPreferenceService {
           return list;
       }
     }
-    return [];
+    return undefined;
   }
 
   // User tab selection index display

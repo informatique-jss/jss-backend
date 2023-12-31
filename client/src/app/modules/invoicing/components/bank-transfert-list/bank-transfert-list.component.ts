@@ -7,6 +7,7 @@ import { EditCommentDialogComponent } from 'src/app/modules/miscellaneous/compon
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
+import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { BankTransfertService } from '../../../quotation/services/bank.transfert.service';
 import { BankTransfertSearch } from '../../model/BankTransfertSearch';
@@ -25,6 +26,7 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
   availableColumns: SortTableColumn<BankTransfertSearchResult>[] = [];
   displayedColumns: SortTableColumn<BankTransfertSearchResult>[] = [];
   tableAction: SortTableAction<BankTransfertSearchResult>[] = [];
+  bookmark: BankTransfertSearch | undefined;
 
 
 
@@ -37,6 +39,7 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
     public editCommentDialog: MatDialog,
     private activatedRoute: ActivatedRoute,
     private appService: AppService,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   ngAfterContentChecked(): void {
@@ -99,6 +102,16 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
       this.transfertSearch.isHideExportedBankTransfert = false;
       this.appService.changeHeaderTitle("Virements");
       this.searchTransferts();
+    } else {
+      this.bookmark = this.userPreferenceService.getUserSearchBookmark("bank-transfert") as BankTransfertSearch;
+      if (this.bookmark) {
+        this.transfertSearch = this.bookmark;
+        if (this.transfertSearch.startDate)
+          this.transfertSearch.startDate = new Date(this.transfertSearch.startDate);
+        if (this.transfertSearch.endDate)
+          this.transfertSearch.endDate = new Date(this.transfertSearch.endDate);
+        this.searchTransferts();
+      }
     }
   }
 
@@ -115,6 +128,8 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
         this.transfertSearch.startDate = new Date(toIsoString(this.transfertSearch.startDate));
       if (this.transfertSearch.endDate)
         this.transfertSearch.endDate = new Date(toIsoString(this.transfertSearch.endDate));
+      if (!this.transfertSearch.idBankTransfert)
+        this.userPreferenceService.setUserSearchBookmark(this.transfertSearch, "bank-transfert");
       this.bankTransfertSearchResultService.getTransferts(this.transfertSearch).subscribe(response => {
         this.transfers = response;
       })
