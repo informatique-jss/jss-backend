@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -15,7 +16,8 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 public class Publication implements Serializable, IId {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "guichet_unique_sequence", sequenceName = "guichet_unique_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "guichet_unique_sequence")
     private Integer id;
 
     @Column(length = 255)
@@ -24,7 +26,6 @@ public class Publication implements Serializable, IId {
     @Column(length = 255)
     private String typePublication;
 
-    
     private LocalDate datePublication;
 
     @Column(length = 255)
@@ -33,7 +34,6 @@ public class Publication implements Serializable, IId {
     @Column(length = 255)
     private String lieuPublication;
 
-    
     private LocalDate dateEffetPublication;
 
     public Integer getId() {

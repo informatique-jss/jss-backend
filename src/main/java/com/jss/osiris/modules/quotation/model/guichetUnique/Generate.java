@@ -710,7 +710,10 @@ public class Generate {
                                 newLines.add("public class " + typeName + " implements Serializable, IId {");
                                 newLines.add("");
                                 newLines.add("    @Id");
-                                newLines.add("    @GeneratedValue(strategy = GenerationType.AUTO)");
+                                newLines.add("     @Id\r\n" + //
+                                                "    @SequenceGenerator(name = \"guichet_unique_sequence\", sequenceName = \"guichet_unique_sequence\", allocationSize = 1)\r\n"
+                                                + //
+                                                "    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = \"guichet_unique_sequence\")");
                                 newLines.add("    private Integer id;");
 
                                 for (String line : Files.readAllLines(Paths.get(file.getAbsolutePath()),
