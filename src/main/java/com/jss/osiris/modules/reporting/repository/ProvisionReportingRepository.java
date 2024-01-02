@@ -117,8 +117,8 @@ public interface ProvisionReportingRepository extends CrudRepository<Quotation, 
                         "     coalesce(as2.label, " +
                         " sps.label, " +
                         " fst.label, " +
-                        " ds.label, " +
-                        " bs.label), " +
+                        " ds.label  " +
+                        "  ), " +
                         " coalesce(ca1.label, ca2.label) " +
                         "")
         List<IProvisionReporting> getProvisionReporting(

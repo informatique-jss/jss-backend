@@ -60,7 +60,6 @@ public interface ProvisionProductionReportingRepository extends CrudRepository<Q
                         " left join domiciliation_status ds on " +
                         " ds.id = d.id_domicilisation_status " +
                         " and ds.is_close_state " +
-                        " and bs.is_close_state " +
                         " left join audit aa on " +
                         " aa.entity = 'Announcement' " +
                         " and aa.entity_id = a.id " +
@@ -85,8 +84,8 @@ public interface ProvisionProductionReportingRepository extends CrudRepository<Q
                         " coalesce(as2.id, " +
                         " sps.id, " +
                         " fst.id, " +
-                        " ds.id, " +
-                        " bs.id) is not null " +
+                        " ds.id  " +
+                        " ) is not null " +
                         " group by " +
                         " concat(e.firstname, " +
                         " ' ', " +

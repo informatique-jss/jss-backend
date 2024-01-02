@@ -56,6 +56,9 @@ export class CompetentAuthorityComponent implements OnInit {
       this.appService.changeHeaderTitle("Autorités compétentes");
 
     this.selectedCompetentAuthorityId = this.activatedRoute.snapshot.params.id;
+    if (!this.selectedCompetentAuthorityId)
+      this.selectedCompetentAuthorityId = this.userPreferenceService.getUserTabsSelectionIndex('competent-authority-selected');
+
     if (this.idCompetentAuthority)
       this.selectedCompetentAuthorityId = this.idCompetentAuthority;
 
@@ -95,6 +98,7 @@ export class CompetentAuthorityComponent implements OnInit {
   selectCompetentAuthority(element: CompetentAuthority) {
     this.selectedcompetentAuthority = element;
     this.selectedCompetentAuthorityId = element.id;
+    this.userPreferenceService.setUserTabsSelectionIndex('competent-authority-selected', this.selectedCompetentAuthorityId!);
     this.restoreTab();
     this.getCitiesForCurrentCompetentAuthority();
     if (!this.idCompetentAuthority)

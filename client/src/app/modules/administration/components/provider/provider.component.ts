@@ -53,6 +53,9 @@ export class ProviderComponent implements OnInit {
       this.appService.changeHeaderTitle("Fournisseurs");
 
     this.selectedProviderId = this.activatedRoute.snapshot.params.id;
+    if (!this.selectedProviderId)
+      this.selectedProviderId = this.userPreferenceService.getUserTabsSelectionIndex('provider-selected');
+
     if (this.idProvider)
       this.selectedProviderId = this.idProvider;
 
@@ -89,6 +92,7 @@ export class ProviderComponent implements OnInit {
   selectProvider(element: Provider) {
     this.selectedProvider = element;
     this.selectedProviderId = element.id;
+    this.userPreferenceService.setUserTabsSelectionIndex('provider-selected', this.selectedProviderId!);
     this.restoreTab();
 
     if (!this.idProvider)

@@ -33,7 +33,7 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " coalesce(confrere.label, respo.firstname || ' '||respo.lastname, coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname)) as customerOrderLabel,  "
                         +
                         " coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname) as tiersLabel,   " +
-                        " coalesce(ast.label, sps.label, ds.label, bs.label, fs.label) as provisionStatus,   " +
+                        " coalesce(ast.label, sps.label, ds.label,   fs.label) as provisionStatus,   " +
                         " confrere_a.label as confrereAnnouncementLabel,   " +
                         " ntf.label as noticeTypeFamilyLabel,   " +
                         "  STRING_AGG(DISTINCT nt.label ,', '  ) as noticeTypeLabel,   " +
@@ -92,7 +92,7 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " customer_order_status.label ,   " +
                         " e1.firstname, e1.lastname ,   " +
                         " e2.firstname, e2.lastname ,   " +
-                        " coalesce(ast.label, sps.label, ds.label, bs.label, fs.label)  , quotation_creator.firstname,quotation_creator.lastname,  "
+                        " coalesce(ast.label, sps.label, ds.label,   fs.label)  , quotation_creator.firstname,quotation_creator.lastname,  "
                         +
                         " coalesce(affaire.denomination, affaire.firstname || ' '||affaire.lastname) ,   " +
                         " customer_order.id  ,   " +

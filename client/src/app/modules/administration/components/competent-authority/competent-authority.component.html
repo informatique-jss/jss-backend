@@ -272,8 +272,10 @@
           <receipt-reconciliation [provider]="selectedcompetentAuthority"></receipt-reconciliation>
         </mat-tab>
         <mat-tab label="Factures" *ngIf="selectedcompetentAuthority.id">
-          <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
-            [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+          <ng-template matTabContent>
+            <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
+              [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+          </ng-template>
         </mat-tab>
         <mat-tab label=" Documents" *ngIf="selectedcompetentAuthority.id">
           <attachments [entity]="selectedcompetentAuthority" [editMode]="editMode"

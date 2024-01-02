@@ -71,6 +71,10 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
         )
       ).subscribe(response => {
         this.filteredTypes = this.mapResponse(response);
+
+        if (this.filteredTypes)
+          this.filteredTypes.sort((a, b) => this.displayLabel(a).localeCompare(this.displayLabel(b)));
+
         this.isLoading = false;
         if (!this.isDisabled && !this.doNotOpenTwice)
           this.trigger?.openPanel();

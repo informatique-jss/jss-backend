@@ -124,8 +124,10 @@
       </form>
     </mat-tab>
     <mat-tab label="Factures" *ngIf="selectedProvider.id">
-      <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
-        [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+      <ng-template matTabContent>
+        <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
+          [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Documents" *ngIf="selectedProvider.id">
       <attachments [entity]="selectedProvider" [editMode]="editMode" [entityType]="PROVIDER_ENTITY_TYPE.entityType">

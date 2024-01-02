@@ -681,6 +681,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                 announcement.getNotice().replaceAll("\\{denomination\\}", affaire.getDenomination()));
                     }
 
+                    if (affaire.getAcronym() != null)
+                        announcement.setNotice(
+                                announcement.getNotice().replaceAll("\\{sigle\\}", affaire.getAcronym()));
+
                     if (affaire.getAddress() != null)
                         announcement.setNotice(
                                 announcement.getNotice().replaceAll("\\{adresse\\}", affaire.getAddress()));
