@@ -18,6 +18,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.batch.model.Batch;
@@ -65,6 +66,7 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
     private String signatureConfigurationPath;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void signFormalitesGuichetUnique() throws OsirisException, OsirisClientMessageException {
         List<FormaliteGuichetUnique> formalites = formaliteGuichetUniqueService.getFormaliteGuichetUniqueToSign();
         if (formalites != null && formalites.size() > 0) {
