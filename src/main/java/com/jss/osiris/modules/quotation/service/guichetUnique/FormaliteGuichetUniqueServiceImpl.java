@@ -123,11 +123,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Override
     public List<FormaliteGuichetUnique> getFormaliteGuichetUniqueToSign() {
-        return formaliteGuichetUniqueRepository.findFormaliteToSign(
-                formaliteGuichetUniqueStatusService
-                        .getFormaliteGuichetUniqueStatus(FormaliteGuichetUniqueStatus.SIGNATURE_PENDING),
-                formaliteGuichetUniqueStatusService
-                        .getFormaliteGuichetUniqueStatus(FormaliteGuichetUniqueStatus.AMENDMENT_SIGNATURE_PENDING));
+        return formaliteGuichetUniqueRepository.findFormaliteToSign(formaliteGuichetUniqueStatusService
+                .getFormaliteGuichetUniqueStatus(FormaliteGuichetUniqueStatus.SIGNATURE_PENDING));
     }
 
     @Override
