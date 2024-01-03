@@ -371,7 +371,8 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         HttpHeaders headers = createHeaders();
 
         GuichetUniqueSignature signature = new GuichetUniqueSignature();
-        signature.setSignedDocument("/api/attachments/" + signedSynthesis.getAttachmentId());
+        if (signedSynthesis != null)
+            signature.setSignedDocument("/api/attachments/" + signedSynthesis.getAttachmentId());
         if (signedBe != null)
             signature.setBeSignedDocument("/api/attachments/" + signedBe.getAttachmentId());
 
