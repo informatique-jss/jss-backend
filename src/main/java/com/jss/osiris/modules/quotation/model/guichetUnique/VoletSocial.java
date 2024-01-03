@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -40,7 +41,7 @@ public class VoletSocial implements Serializable, IId {
     @JoinColumn(name = "id_situation_vis_a_vis_msa")
     SituationVisAVisMsa situationVisAVisMsa;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "id_activite_anterieure_activite")
     Activite activiteAnterieureActivite;
 
