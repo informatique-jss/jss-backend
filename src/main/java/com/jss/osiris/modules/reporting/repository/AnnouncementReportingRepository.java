@@ -28,7 +28,7 @@ public interface AnnouncementReportingRepository extends CrudRepository<Quotatio
                         " 	as2.label as announcementStatus, " +
                         " 	c.label as confrereAnnouncementLabel, " +
                         " 	d.code as announcementDepartment, " +
-                        " 	sum(coalesce(a.character_number,0)) as characterNumber, " +
+                        " 	a.character_number as characterNumber, " +
                         " 	sum(pre_tax_price)  as preTaxPrice, " +
                         " 	(select STRING_AGG(DISTINCT nt.label ,', '  ) from    asso_announcement_notice_type nta   left join notice_type nt on nt.id = nta.id_notice_type  where nta.id_announcement = a.id )  as noticeTypeLabel, "
                         +
