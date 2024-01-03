@@ -26,6 +26,8 @@ public abstract class IndexThread implements IOsirisThread {
         public void executeTask(Integer entityId)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException,
                         OsirisDuplicateException {
-                indexEntityService.indexEntity(getEntity(entityId));
+                IId entity = getEntity(entityId);
+                if (entity != null)
+                        indexEntityService.indexEntity(entity);
         }
 }
