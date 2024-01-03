@@ -469,7 +469,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setIsOnlyOneJob(true);
-            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setMaxAddedNumberPerIteration(1);
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.GUICHET_UNIQUE));
             addOrUpdateBatchSettings(batchSettings);
         }
