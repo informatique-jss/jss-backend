@@ -72,7 +72,7 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
         if (formalites != null && formalites.size() > 0) {
             List<FormaliteGuichetUnique> complexeSignatureFormalities = new ArrayList<FormaliteGuichetUnique>();
             for (FormaliteGuichetUnique formalite : formalites)
-                if (formalite.getTypeFormalite().getCode().equals("C"))
+                if (formalite.getTypeFormalite() != null && formalite.getTypeFormalite().getCode().equals("C"))
                     changeFormalityStatusToSigned(formalite, null, null);
                 else
                     complexeSignatureFormalities.add(formalite);
