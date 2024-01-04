@@ -7,6 +7,7 @@ import { Responsable } from "../../tiers/model/Responsable";
 import { Tiers } from "../../tiers/model/Tiers";
 import { AssoAffaireOrder } from "./AssoAffaireOrder";
 import { Confrere } from "./Confrere";
+import { OfferReason } from '../../miscellaneous/model/OfferReason';
 
 export interface IQuotation extends IAttachment, IDocument {
   id: number;
@@ -26,4 +27,5 @@ export interface IQuotation extends IAttachment, IDocument {
   thirdReminderDateTime: Date;
   customerMailCustomMessage: string;
   customerOrderOrigin: CustomerOrderOrigin;
+  offerReason: OfferReason;
 }

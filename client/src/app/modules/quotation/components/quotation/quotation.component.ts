@@ -1,6 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
@@ -51,6 +51,8 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { IQuotation } from './../../model/IQuotation';
+import { OfferReason } from '../../../miscellaneous/model/OfferReason';
+import { OfferReasonInquiryDialog } from '../offer-reason-inquiry-dialog/offer-reason-inquiry-dialog.component';
 @Component({
   selector: 'quotation',
   templateUrl: './quotation.component.html',
@@ -60,6 +62,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   quotation: IQuotation = {} as IQuotation;
   editMode: boolean = false;
   createMode: boolean = false;
+  offerReason : OfferReason = {} as OfferReason;
   quotationStatusList: QuotationStatus[] = [] as Array<QuotationStatus>;
   customerOrderStatusList: CustomerOrderStatus[] = [] as Array<CustomerOrderStatus>;
   isQuotationUrl = false;
@@ -93,6 +96,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   @Input() inputProvision: Provision | undefined;
   @Input() isForIntegration: boolean = false;
 
+  offerReasons: OfferReason | undefined;
 
   saveObservableSubscription: Subscription = new Subscription;
   customerOrderInvoices: InvoiceSearchResult[] | undefined;
@@ -105,6 +109,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private activatedRoute: ActivatedRoute,
     public chooseUserDialog: MatDialog,
     public mailLabelDialog: MatDialog,
+    public offerReasonInquiryDialog: MatDialog,
     public addAffaireDialog: MatDialog,
     public quotationWorkflowDialog: MatDialog,
     public orderSimilaritiesDialog: MatDialog,
@@ -152,7 +157,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           this.quotation = response;
           if (instanceOfCustomerOrder(this.quotation) && !this.isForIntegration)
             this.appService.changeHeaderTitle("Commande " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
-              (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : "") + (this.quotation.isGifted ? (" - Offerte") : ""));
+            (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : "") +
+            (this.quotation.isGifted ? (" - Offerte" + (this.quotation.offerReason && this.quotation.offerReason.label ? " (" + this.quotation.offerReason.label + ")" : "")) : ""));
           this.setOpenStatus();
           this.checkAffaireAssignation();
           this.updateDocumentsEvent.next(this.quotation);
@@ -852,8 +858,32 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return QuotationComponent.computeProvisionLabel(provision);
   }
 
-  offerCustomerOrder() {
+  offerCustomerOrder(){
+    const dialogRef: MatDialogRef<OfferReasonInquiryDialog> = this.offerReasonInquiryDialog.open(OfferReasonInquiryDialog, {
+      maxWidth: "600px",
+      data: {
+        offerReason: this.offerReason,
+        id_quotation: this.idQuotation
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.quotation.offerReason = result.offerReason.label;
+        this.validationOfferCustomerOrder();
+      } else {
+        this.isStatusOpen = false;
+        this.editMode = false;
+      }
+    });
+  }
+
+  validationOfferCustomerOrder() {
     if (this.quotation && instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED) {
+      this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
+        this.quotation = response;
+      })
+
       this.customerOrderService.offerCustomerOrder(this.quotation).subscribe(response => {
         this.appService.openRoute(null, '/order/' + this.quotation.id, null);
       })

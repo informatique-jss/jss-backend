@@ -122,6 +122,10 @@ public class Quotation implements IQuotation {
 	@JoinColumn(name = "id_customer_order_origin")
 	private CustomerOrderOrigin customerOrderOrigin;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_abandon_reason")
+	private OfferReason offerReason;
+
 	public Integer getId() {
 		return id;
 	}
@@ -314,4 +318,11 @@ public class Quotation implements IQuotation {
 		this.instructions = instructions;
 	}
 
+	public OfferReason getOfferReason() {
+		return offerReason;
+	}
+
+	public void setOfferReason(OfferReason offerReason) {
+		this.offerReason = offerReason;
+	}
 }

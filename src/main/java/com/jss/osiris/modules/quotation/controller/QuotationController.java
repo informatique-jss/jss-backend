@@ -85,6 +85,7 @@ import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.NoticeTypeFamily;
+import com.jss.osiris.modules.quotation.model.OfferReason;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -124,6 +125,7 @@ import com.jss.osiris.modules.quotation.service.JournalTypeService;
 import com.jss.osiris.modules.quotation.service.MailRedirectionTypeService;
 import com.jss.osiris.modules.quotation.service.NoticeTypeFamilyService;
 import com.jss.osiris.modules.quotation.service.NoticeTypeService;
+import com.jss.osiris.modules.quotation.service.OfferReasonService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
 import com.jss.osiris.modules.quotation.service.ProvisionFamilyTypeService;
 import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
@@ -312,6 +314,9 @@ public class QuotationController {
 
   @Autowired
   FormaliteGuichetUniqueService formaliteGuichetUniqueService;
+
+  @Autowired
+  OfferReasonService offerReasonService;
 
   @Autowired
   DebourDelService debourDelService;
@@ -1301,6 +1306,28 @@ public class QuotationController {
         validationHelper.validateReferential(status, false, "status");
 
     return new ResponseEntity<List<QuotationSearchResult>>(quotationService.searchQuotations(quotationSearch),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/offer-reasons")
+  public ResponseEntity<List<OfferReason>> getAbandonReasons() {
+    return new ResponseEntity<List<OfferReason>>(offerReasonService.getOfferReasons(), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/offer-reason-customer-order")
+  public ResponseEntity<OfferReason> addOrUpdateCustomerOrderOfferReason(
+      @RequestBody OfferReason offerReason, @RequestParam(name = "id_commande") String id_commande)
+      throws OsirisValidationException, OsirisException {
+    return new ResponseEntity<OfferReason>(
+        offerReasonService.addOrUpdateCustomerOrderOfferReason(offerReason, id_commande),
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/offer-reason")
+  public ResponseEntity<OfferReason> addOrUpdateOfferReason(@RequestBody OfferReason offerReason)
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+
+    return new ResponseEntity<OfferReason>(offerReasonService.addOrUpdateOfferReason(offerReason),
         HttpStatus.OK);
   }
 

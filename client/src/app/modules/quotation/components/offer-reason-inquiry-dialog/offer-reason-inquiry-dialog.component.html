@@ -1,0 +1,17 @@
+<form [formGroup]="reasonTypeForm">
+  <h1 mat-dialog-title>Enquête sur la raison de l'offrage</h1>
+  <div mat-dialog-content  *ngIf="reason">
+    <p>Veuillez indiquer ci-dessous la raison de l'offrage de la commande :</p>
+          <tr>
+            <td>
+              <select-offer-reason [(model)]="reason" label="Processus d'Offrage : Remplissage pour Identification de la Cause"
+              [form]="reasonTypeForm" propertyName="label" [isMandatory]="true" [isDisabled]="false"></select-offer-reason>
+            </td>
+          </tr>
+
+  </div>
+  <div mat-dialog-actions align="end">
+    <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+    <button mat-raised-button color="warn" (click)="onConfirm()">Valider</button>
+  </div>
+  </form>

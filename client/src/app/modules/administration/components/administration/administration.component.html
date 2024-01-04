@@ -282,6 +282,11 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-rff-frequency>
+        <referential-offer-reason *ngIf="selectedReferential==OFFER_REASON_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-offer-reason>
         <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode"
           (click)="saveEntity()">
           <mat-icon>save</mat-icon>

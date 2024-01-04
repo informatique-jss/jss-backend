@@ -83,7 +83,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   CUSTOMER_ORDER_ORIGIN_REFERENTIAL = "Origine des commandes";
   DEPARTMENT_VAT_SETTING_REFERENTIAL = "TVA par département";
   RFF_FREQUENCY_REFERENTIAL = "Périodicité des RFF";
-
+  OFFER_REASON_REFERENTIAL = "Motif de l'offrage";
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -149,6 +149,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL);
     this.referentials.push(this.CUSTOMER_ORDER_ORIGIN_REFERENTIAL);
     this.referentials.push(this.DEPARTMENT_VAT_SETTING_REFERENTIAL);
+    this.referentials.push(this.OFFER_REASON_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(

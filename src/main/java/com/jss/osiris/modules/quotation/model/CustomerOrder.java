@@ -118,6 +118,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@Column(columnDefinition = "TEXT")
 	private String instructions;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_offer_reason")
+	private OfferReason offerReason;
+
 	@OneToMany(mappedBy = "customerOrder")
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<Attachment> attachments;
@@ -397,6 +401,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setRefunds(List<Refund> refunds) {
 		this.refunds = refunds;
+	}
+
+	public OfferReason getOfferReason() {
+		return offerReason;
+	}
+
+	public void setOfferReason(OfferReason offerReason) {
+		this.offerReason = offerReason;
 	}
 
 }

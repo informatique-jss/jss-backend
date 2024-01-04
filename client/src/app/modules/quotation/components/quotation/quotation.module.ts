@@ -64,6 +64,8 @@ import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/s
 import { SelectCompetentAuthorityDialogComponent } from '../select-competent-authority-dialog/select-competent-authority-dialog.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
+import { SelectOfferReasonComponent } from '../select-offer-reason/select-offer-reason.component';
+import { OfferReasonInquiryDialog } from '../offer-reason-inquiry-dialog/offer-reason-inquiry-dialog.component';
 
 const routes: Routes = [
   { path: 'quotation', component: QuotationComponent },
@@ -147,6 +149,8 @@ const routes: Routes = [
     SelectCompetentAuthorityDialogComponent,
     DebourComponent,
     ActeDepositComponent,
+    SelectOfferReasonComponent,
+    OfferReasonInquiryDialog,
   ],
   exports: [
     OrderingListComponent,

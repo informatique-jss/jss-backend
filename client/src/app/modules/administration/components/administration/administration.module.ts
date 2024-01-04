@@ -83,6 +83,8 @@ import { ReferentialProvisionFamilyTypeComponent } from '../referentials/referen
 import { ReferentialRecordTypeComponent } from '../referentials/referentiel-record-type/referential-record-type.component';
 import { ViewLogComponent } from '../view-log/view-log.component';
 import { AdministrationComponent } from './administration.component';
+import { ReferentialOfferReasonComponent } from '../referentials/referential-offer-reason/referential-offer-reason.component';
+
 
 const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
@@ -181,6 +183,7 @@ const routes: Routes = [
     ReferentialDepartmentVatSettingComponent,
     ReferentialTypeDocumentComponent,
     ReferentialRffFrequencyComponent,
+    ReferentialOfferReasonComponent,
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent
