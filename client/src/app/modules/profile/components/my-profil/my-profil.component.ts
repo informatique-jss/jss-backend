@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AppService } from '../../../../services/app.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Employee } from '../../model/Employee';
 import { EmployeeService } from '../../services/employee.service';
 
@@ -16,6 +17,7 @@ export class MyProfilComponent implements OnInit {
     private appService: AppService,
     private employeeService: EmployeeService,
     private formBuilder: FormBuilder,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   employeeForm = this.formBuilder.group({});
@@ -55,5 +57,10 @@ export class MyProfilComponent implements OnInit {
         this.editMode = false;
         this.currentEmployee = response;
       });
+  }
+
+  deleteSearchPreferences() {
+    this.userPreferenceService.deleteSearchPreferences();
+    this.appService.displaySnackBar("Recherches effacées", false, 10);
   }
 }
