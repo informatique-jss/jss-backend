@@ -78,6 +78,14 @@ export class UserPreferenceService {
     return undefined;
   }
 
+  deleteSearchPreferences() {
+    let allItems = localStorage as any;
+    if (allItems)
+      for (let key in allItems)
+        if (key && key.indexOf('search-') == 0)
+          localStorage.removeItem(key);
+  }
+
   // User tab selection index display
   setUserTabsSelectionIndex(tabsName: string, index: number) {
     if (tabsName)
