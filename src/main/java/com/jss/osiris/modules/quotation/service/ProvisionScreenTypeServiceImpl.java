@@ -26,7 +26,6 @@ public class ProvisionScreenTypeServiceImpl implements ProvisionScreenTypeServic
     @Transactional(rollbackFor = Exception.class)
     public void updateScreenTypes() {
         updateScreenType(ProvisionScreenType.ANNOUNCEMENT, "Ecran annonces légales");
-        updateScreenType(ProvisionScreenType.BODACC, "Ecran BODACC");
         updateScreenType(ProvisionScreenType.DOMICILIATION, "Ecran domicilation");
         updateScreenType(ProvisionScreenType.FORMALITE, "Ecran formalité");
         updateScreenType(ProvisionScreenType.STANDARD, "Ecran standard");

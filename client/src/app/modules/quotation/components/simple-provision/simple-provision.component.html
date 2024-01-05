@@ -1,5 +1,5 @@
 <form [formGroup]="simpleProvisionForm" *ngIf="simpleProvision && provision">
-  <mat-tab-group animationDuration="0ms" #tabs>
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab [label]="provision.provisionType.label">
       <div class="form-div">
         <table class="full-width">
@@ -35,14 +35,20 @@
       </provision-payment>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="simpleProvision && simpleProvision.id">
-      <history [entity]="simpleProvision" [entityType]="SIMPLE_PROVISION_ENTITY_TYPE"
-        [parseTypeList]="simpleProvisionStatus"></history>
+      <ng-template matTabContent>
+        <history [entity]="simpleProvision" [entityType]="SIMPLE_PROVISION_ENTITY_TYPE"
+          [parseTypeList]="simpleProvisionStatus"></history>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Historique (prestation)" *ngIf="provision && provision.id">
-      <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
+      <ng-template matTabContent>
+        <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Débours" *ngIf="simpleProvision && simpleProvision.id && canAddNewInvoice()">
-      <debour [provision]="provision"></debour>
+      <ng-template matTabContent>
+        <debour [provision]="provision"></debour>
+      </ng-template>
     </mat-tab>
   </mat-tab-group>
 </form>

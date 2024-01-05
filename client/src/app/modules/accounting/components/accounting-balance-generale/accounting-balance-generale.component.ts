@@ -19,7 +19,7 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
 
   accountingBalanceSearch: AccountingBalanceSearch = {} as AccountingBalanceSearch;
 
-  displayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
+  displayedColumns: SortTableColumn<AccountingBalance>[] = [] as Array<SortTableColumn<AccountingBalance>>;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -32,6 +32,7 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
   accountingBalances: AccountingBalance[] | undefined;
   displayedColumnsTotal: string[] = ['label', 'debit', 'credit', 'balance'];
   currentUserPosition: Point = { x: 0, y: 0 };
+  bookmark: AccountingBalanceSearch | undefined;
 
 
   ngOnInit() {
@@ -40,16 +41,26 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
 
     // Column init
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.principalAccountingAccountCode + (element.accountingAccountSubNumber ? ( + element.accountingAccountSubNumber) : ''); return "" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "principalAccountingAccountLabel", fieldName: "principalAccountingAccountLabel", label: "Libellé du compte" } as SortTableColumn);
-    this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "echoir30", fieldName: "echoir30", label: "Créances à échoir à -30 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "echoir60", fieldName: "echoir60", label: "Créances à échoir à -60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "echoir90", fieldName: "echoir90", label: "Créances à échoir à +60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "echu30", fieldName: "echu30", label: "Créances échues à -30 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "echu60", fieldName: "echu60", label: "Créances échues à -60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "echu90", fieldName: "echu90", label: "Créances échues à +60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: AccountingBalance, column: SortTableColumn<AccountingBalance>) => { if (element && column) return element.principalAccountingAccountCode + (element.accountingAccountSubNumber ? (+ element.accountingAccountSubNumber) : ''); return "" } } as SortTableColumn<AccountingBalance>);
+    this.displayedColumns.push({ id: "principalAccountingAccountLabel", fieldName: "principalAccountingAccountLabel", label: "Libellé du compte" } as SortTableColumn<AccountingBalance>);
+    this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
+    this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
+    this.displayedColumns.push({ id: "echoir30", fieldName: "echoir30", label: "Créances à échoir à -30 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
+    this.displayedColumns.push({ id: "echoir60", fieldName: "echoir60", label: "Créances à échoir à -60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
+    this.displayedColumns.push({ id: "echoir90", fieldName: "echoir90", label: "Créances à échoir à +60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
+    this.displayedColumns.push({ id: "echu30", fieldName: "echu30", label: "Créances échues à -30 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
+    this.displayedColumns.push({ id: "echu60", fieldName: "echu60", label: "Créances échues à -60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
+    this.displayedColumns.push({ id: "echu90", fieldName: "echu90", label: "Créances échues à +60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
+
+    this.bookmark = this.userPreferenceService.getUserSearchBookmark("accounting-balance-generale") as AccountingBalanceSearch;
+    if (this.bookmark) {
+      this.accountingBalanceSearch = this.bookmark;
+      if (this.accountingBalanceSearch.startDate)
+        this.accountingBalanceSearch.startDate = new Date(this.accountingBalanceSearch.startDate);
+      if (this.accountingBalanceSearch.endDate)
+        this.accountingBalanceSearch.endDate = new Date(this.accountingBalanceSearch.endDate);
+      this.searchRecords();
+    }
   }
 
   formatEurosForSortTable = formatEurosForSortTable;
@@ -75,6 +86,7 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
       return;
     }
     this.accountingBalanceSearch.startDate = new Date(this.accountingBalanceSearch.startDate.setHours(12));
+    this.userPreferenceService.setUserSearchBookmark(this.accountingBalanceSearch, "accounting-balance-generale");
     this.accountingBalanceService.searchAccountingBalanceGenerale(this.accountingBalanceSearch).subscribe(response => {
       this.accountingBalances = response;
       this.computeBalanceAndDebitAndCreditAccumulation();

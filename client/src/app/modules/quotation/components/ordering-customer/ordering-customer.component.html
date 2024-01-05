@@ -86,7 +86,8 @@
             *ngIf="quotation && instanceOfQuotation(quotation) && quotationCustomerOrders && quotationCustomerOrders.length>0">
             <p>Commandes issues de ce devis</p>
             <sort-table [actions]="customerOrderTableActions" [columns]="customerOrderDisplayedColumns"
-              [values]="quotationCustomerOrders" tableName="Liste commandes">
+              [noMaxHeight]="true" [noPaddingBottom]="true" [values]="quotationCustomerOrders"
+              tableName="Liste commandes">
             </sort-table>
           </div>
           <div class="div-customer-order"
@@ -99,8 +100,8 @@
           <div class="div-customer-order"
             *ngIf="quotation && instanceOfCustomerOrder(quotation) && customerOrderQuotations && customerOrderQuotations.length>0">
             <p>Devis issus de cette commande</p>
-            <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
-              [values]="customerOrderQuotations" tableName="Liste devis">
+            <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns" [noMaxHeight]="true"
+              [noPaddingBottom]="true" [values]="customerOrderQuotations" tableName="Liste devis">
             </sort-table>
           </div>
           <table class="full-width">
@@ -156,7 +157,8 @@
             *ngIf="quotation && instanceOfQuotation(quotation) && quotationCustomerOrders && quotationCustomerOrders.length>0">
             <p>Commandes issues de ce devis</p>
             <sort-table [actions]="customerOrderTableActions" [columns]="customerOrderDisplayedColumns"
-              [values]="quotationCustomerOrders" tableName="Liste commandes">
+              [noMaxHeight]="true" [noPaddingBottom]="true" [values]="quotationCustomerOrders"
+              tableName="Liste commandes">
             </sort-table>
           </div>
           <div class="div-customer-order"
@@ -169,8 +171,8 @@
           <div class="div-customer-order"
             *ngIf="quotation && instanceOfCustomerOrder(quotation) && customerOrderQuotations && customerOrderQuotations.length>0">
             <p>Devis issus de cette commande</p>
-            <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
-              [values]="customerOrderQuotations" tableName="Liste devis">
+            <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns" [noMaxHeight]="true"
+              [noPaddingBottom]="true" [values]="customerOrderQuotations" tableName="Liste devis">
             </sort-table>
           </div>
         </div>

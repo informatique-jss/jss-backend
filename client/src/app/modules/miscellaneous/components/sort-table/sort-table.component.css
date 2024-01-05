@@ -1,5 +1,28 @@
 .wrapper-div {
   position: relative;
+  overflow-y: auto;
+}
+
+.wrapper-max-height {
+  max-height: calc(100vh - 225px);
+}
+
+.wrapper-div-smaller {
+  max-height: calc(100vh - 270px);
+}
+
+.wrapper-div-smallest {
+  max-height: calc(100vh - 300px);
+}
+
+.padding-bottom {
+  padding-bottom: 100px;
+}
+
+.sticky {
+  position: sticky;
+  top: 0px;
+  z-index: 1;
 }
 
 .export-icon {

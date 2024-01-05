@@ -18,7 +18,6 @@ import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.AssignationType;
-import com.jss.osiris.modules.quotation.model.BodaccPublicationType;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
@@ -418,30 +417,6 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_mail_redirection_type_other")
 	private MailRedirectionType mailRedirectionTypeOther;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_bodacc_publication_type_merging")
-	private BodaccPublicationType bodaccPublicationTypeMerging;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_bodacc_publication_type_split")
-	private BodaccPublicationType bodaccPublicationTypeSplit;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_bodacc_publication_type_partial_split")
-	private BodaccPublicationType bodaccPublicationTypePartialSplit;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_bodacc_publication_type_possession_dispatch")
-	private BodaccPublicationType bodaccPublicationTypePossessionDispatch;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_bodacc_publication_type_estate_representative_designation")
-	private BodaccPublicationType bodaccPublicationTypeEstateRepresentativeDesignation;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_bodacc_publication_type_sale_of_business")
-	private BodaccPublicationType bodaccPublicationTypeSaleOfBusiness;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_act_type_seing")
@@ -997,56 +972,6 @@ public class Constant implements Serializable, IId {
 
 	public void setMailRedirectionTypeOther(MailRedirectionType mailRedirectionTypeOther) {
 		this.mailRedirectionTypeOther = mailRedirectionTypeOther;
-	}
-
-	public BodaccPublicationType getBodaccPublicationTypeMerging() {
-		return bodaccPublicationTypeMerging;
-	}
-
-	public void setBodaccPublicationTypeMerging(BodaccPublicationType bodaccPublicationTypeMerging) {
-		this.bodaccPublicationTypeMerging = bodaccPublicationTypeMerging;
-	}
-
-	public BodaccPublicationType getBodaccPublicationTypeSplit() {
-		return bodaccPublicationTypeSplit;
-	}
-
-	public void setBodaccPublicationTypeSplit(BodaccPublicationType bodaccPublicationTypeSplit) {
-		this.bodaccPublicationTypeSplit = bodaccPublicationTypeSplit;
-	}
-
-	public BodaccPublicationType getBodaccPublicationTypePartialSplit() {
-		return bodaccPublicationTypePartialSplit;
-	}
-
-	public void setBodaccPublicationTypePartialSplit(BodaccPublicationType bodaccPublicationTypePartialSplit) {
-		this.bodaccPublicationTypePartialSplit = bodaccPublicationTypePartialSplit;
-	}
-
-	public BodaccPublicationType getBodaccPublicationTypePossessionDispatch() {
-		return bodaccPublicationTypePossessionDispatch;
-	}
-
-	public void setBodaccPublicationTypePossessionDispatch(
-			BodaccPublicationType bodaccPublicationTypePossessionDispatch) {
-		this.bodaccPublicationTypePossessionDispatch = bodaccPublicationTypePossessionDispatch;
-	}
-
-	public BodaccPublicationType getBodaccPublicationTypeEstateRepresentativeDesignation() {
-		return bodaccPublicationTypeEstateRepresentativeDesignation;
-	}
-
-	public void setBodaccPublicationTypeEstateRepresentativeDesignation(
-			BodaccPublicationType bodaccPublicationTypeEstateRepresentativeDesignation) {
-		this.bodaccPublicationTypeEstateRepresentativeDesignation = bodaccPublicationTypeEstateRepresentativeDesignation;
-	}
-
-	public BodaccPublicationType getBodaccPublicationTypeSaleOfBusiness() {
-		return bodaccPublicationTypeSaleOfBusiness;
-	}
-
-	public void setBodaccPublicationTypeSaleOfBusiness(BodaccPublicationType bodaccPublicationTypeSaleOfBusiness) {
-		this.bodaccPublicationTypeSaleOfBusiness = bodaccPublicationTypeSaleOfBusiness;
 	}
 
 	public ActType getActTypeSeing() {

@@ -1,6 +1,7 @@
-<div class="wrapper-div" *ngIf="values && columns">
-  <table mat-table matTableExporter matSort [dataSource]="dataSource" class="mat-elevation-z8 table full-width"
-    #exporter="matTableExporter">
+<div *ngIf="values && columns" class="wrapper-div"
+  [ngClass]="{'wrapper-div-smaller': isSmallerHeight,'wrapper-div-smallest' : isSmallestHeight, 'wrapper-max-height': !noMaxHeight}">
+  <table mat-table matTableExporter matSort [dataSource]="dataSource" class="mat-elevation-z8 table full-width "
+    [ngClass]="{'padding-bottom': !noPaddingBottom }" #exporter="matTableExporter">
     <ng-container matColumnDef="actions" *ngIf="internalActions">
       <th mat-header-cell mat-sort-header *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element">
@@ -8,11 +9,11 @@
           <ng-container *ngFor="let action of actions">
             <mat-icon color="accent" [matTooltip]="action.actionName" *ngIf="action.display && action.actionClick"
               color="accent" class="pointer  column-content-icon"
-              (click)="actionTrigger(action, element,$event)">{{action.actionIcon}}
+              (click)="actionTrigger(action, element.rawValue,$event)">{{action.actionIcon}}
             </mat-icon>
             <mat-icon color="accent" [matTooltip]="action.actionName"
-              *ngIf="action.display &&  getActionLink(action, element)"
-              (click)="openActionLink($event, action, element)" (auxclick)="openActionLink($event, action, element)"
+              *ngIf="action.display && element.actionsLink && element.actionsLink[action.actionName]"
+              (click)="openActionLink($event, action, element)" (auxclick)="openActionLink($event, action,  element)"
               color="accent" class="pointer column-content-icon">
               {{action.actionIcon}}
             </mat-icon>
@@ -23,13 +24,13 @@
             <mat-icon>more_vert</mat-icon>
             <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
               <ng-container *ngFor="let action of actions">
-                <button mat-menu-item (click)="actionTrigger(action, element,$event)"
+                <button mat-menu-item (click)="actionTrigger(action,  element.rawValue,$event)"
                   *ngIf="action.display && action.actionClick">
                   <mat-icon>{{action.actionIcon}}</mat-icon><span>{{action.actionName}}</span>
                 </button>
-                <button mat-menu-item (click)="openActionLink($event, action, element)"
-                  (auxclick)="openActionLink($event, action, element)"
-                  *ngIf="action.display && getActionLink(action, element)">
+                <button mat-menu-item (click)="openActionLink($event, action,  element)"
+                  (auxclick)="openActionLink($event, action,  element)"
+                  *ngIf="action.display && element.actionsLink && element.actionsLink[action.actionName]">
                   <mat-icon>{{action.actionIcon}}</mat-icon><span>{{action.actionName}}</span>
                 </button>
               </ng-container>
@@ -40,22 +41,22 @@
     </ng-container>
     <ng-container [matColumnDef]="column.id" *ngFor="let column of columns">
       <th mat-header-cell mat-sort-header *matHeaderCellDef>
-        {{getColumnLabel(column)}}
+        <span *ngIf="column.label">{{column.label}}</span>
       </th>
       <ng-container *ngIf="!column.displayAsGrade && !column.displayAsEmployee && !column.displayAsStatus">
-        <td mat-cell *matCellDef="let element" [matTooltip]="column.isShrinkColumn?getColumnValue(column,element):''"
+        <td mat-cell *matCellDef="let element " [matTooltip]="column.isShrinkColumn?element.columns[column.id]+'':''"
           [ngClass]="{'td-label':column.isShrinkColumn}">
-          <span [ngClass]="{'color-warn':getIsElementWarnColor(column,element)}" class="nowrap">{{getColumnValue(column,
-            element)}}
+          <span [ngClass]="{'color-warn':element.isElementWarn[column.id]}"
+            class="nowrap">{{element.columns[column.id]}}
             <mat-icon color="accent" [matTooltip]="column.actionTooltip" color="accent"
               class="pointer column-content-icon" (click)="openColumnLink($event, column, element)"
-              (auxclick)="openColumnLink($event, column, element)" *ngIf=" column.actionLinkFunction && getColumnLink(column,
-              element)  && getColumnValue(column, element) ">
+              (auxclick)="openColumnLink($event, column,  element)"
+              *ngIf=" column.actionLinkFunction && element.columnsLink[column.id]  && element.columns[column.id] ">
               {{column.actionIcon}}
             </mat-icon>
             <mat-icon color="accent" [matTooltip]="column.actionTooltip" color="accent"
-              class="pointer column-content-icon" (click)="columnActionTrigger( column, element)"
-              *ngIf=" column.actionFunction && getColumnValue(column, element) ">
+              class="pointer column-content-icon" (click)="columnActionTrigger( column,  element.rawValue)"
+              *ngIf=" column.actionFunction && element.columns[column.id] ">
               {{column.actionIcon}}
             </mat-icon>
           </span>
@@ -63,27 +64,27 @@
       </ng-container>
       <ng-container *ngIf="column.displayAsGrade">
         <td mat-cell *matCellDef="let element">
-          <grade [grade]="getColumnValue(column, element)"></grade>
+          <grade [grade]="element.columns[column.id]+''"></grade>
         </td>
       </ng-container>
       <ng-container *ngIf="column.displayAsStatus">
         <td mat-cell *matCellDef="let element">
-          <chips-status [status]="getColumnStatus(column, element)"
-            [value]="getColumnValue(column, element)"></chips-status>
+          <chips-status [status]="element.columnsStatus[column.id]"
+            [value]="element.columns[column.id]+''"></chips-status>
         </td>
       </ng-container>
       <ng-container>
         <td mat-cell *matCellDef="let element">
-          <div class="select-with-avatar" *ngIf=" column.displayAsEmployee && getColumnValue(column, element)">
-            <avatar class="avatar" [size]="20" [employee]="getColumnValue(column, element)"></avatar>
-            <span>{{getColumnValue(column, element).firstname}}
-              {{getColumnValue(column, element).lastname}}</span>
+          <div class="select-with-avatar" *ngIf=" column.displayAsEmployee && element.columns[column.id]">
+            <avatar class="avatar" [size]="20" [employee]="element.columns[column.id]"></avatar>
+            <span>{{element.columns[column.id].firstname}}
+              {{element.columns[column.id].lastname}}</span>
           </div>
         </td>
       </ng-container>
     </ng-container>
-    <tr mat-header-row *matHeaderRowDef="getDisplayedColumns(); "></tr>
-    <tr mat-row *matRowDef="let row; columns: getDisplayedColumns();" (click)="rowClicked(row)" [ngClass]="{'pointer':onRowClick && onRowClick.observers && onRowClick.observers.length>0,
+    <tr mat-header-row class="sticky" *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="rowClicked(row)" [ngClass]="{'pointer':onRowClick && onRowClick.observers && onRowClick.observers.length>0,
       'selected-mat-row':idRowSelected && row.id && idRowSelected==row.id,
       'color-warn':true}">
     </tr>
@@ -106,7 +107,7 @@
     <button mat-menu-item (click)="selectColumn(column, $event)" *ngFor="let column of columns">
       <mat-icon color="accent" color="primary" *ngIf="!column.display">check_box_outline_blank</mat-icon>
       <mat-icon color="accent" color="primary" *ngIf="column.display">check_box</mat-icon>
-      {{getColumnLabel(column)}}
+      <span *ngIf="column.label">{{column.label}}</span>
     </button>
   </mat-menu>
   <div *ngIf="values && displayTotalLines" class="column-icon-number"

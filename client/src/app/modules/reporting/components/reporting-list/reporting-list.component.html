@@ -4,14 +4,16 @@
       propertyName="searchText" [isMandatory]="false" [isDisabled]="false"></generic-input>
   </div>
   <div class="table-container-scroll"><sort-table *ngIf="userReportings" [actions]="tableAction"
-      [refreshTable]="refreshTable.asObservable()" [columns]="displayedColumns" [values]="filteredUserReportings"
+      [noPaddingBottom]="true" [noMaxHeight]="true" [refreshTable]="refreshTable.asObservable()"
+      [columns]="displayedColumns" [values]="filteredUserReportings"
       [idRowSelected]="currentUserReporting? currentUserReporting.id! : undefined"
-      (onRowClick)="selectReporting($event)" tableName="Reporting">
+      (onRowClick)="selectReporting($event,[])" tableName="Reporting">
     </sort-table></div>
 </div>
-<reporting [hidden]="!dataToDisplay && !currentUserReporting" [dataToDisplay]="dataToDisplay"
+<reporting [hidden]="!dataToDisplay && !currentUserReporting"
   [reportName]="currentUserReporting && currentUserReporting.name?currentUserReporting.name:''"
-  [settings]="currentUserReporting?currentUserReporting.settings:''"></reporting>
+  [settings]="currentUserReporting?currentUserReporting.settings:''"
+  (columnsChange)="selectReporting(currentUserReporting!,$event)"></reporting>
 <button matTooltip="Ajouter un rapport" mat-fab color="accent" class="fab-button" (click)="addReporting()">
   <mat-icon>add</mat-icon>
 </button>

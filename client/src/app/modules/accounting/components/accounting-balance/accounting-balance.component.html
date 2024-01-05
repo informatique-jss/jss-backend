@@ -17,10 +17,14 @@
             [form]="accountingBalanceForm" propertyName="accountingClass"></select-accounting-account-class>
         </td>
         <td>
-          <generic-date-range-picker [(modelStart)]="accountingBalanceSearch.startDate"
-            [(modelEnd)]="accountingBalanceSearch.endDate" label="Plage de recherche" [form]="accountingBalanceForm"
-            propertyNameStart="startDate" propertyNameEnd="endDate" (onDateChange)="putEndDateSameYear()">
-          </generic-date-range-picker>
+          <generic-datepicker [(model)]="accountingBalanceSearch.startDate" label="Date de début"
+            [form]="accountingBalanceForm" propertyName="startDate" [isMandatory]="false"
+            [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td>
+          <generic-datepicker [(model)]="accountingBalanceSearch.endDate" label="Date de fin"
+            [form]="accountingBalanceForm" propertyName="endDate" [isMandatory]="false"
+            [isDisabled]="false"></generic-datepicker>
         </td>
         <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchRecords()" class="add-button">
@@ -29,7 +33,8 @@
         </td>
       </tr>
     </table>
-    <sort-table [columns]="displayedColumns" [values]="accountingBalances" tableName="Balance"></sort-table>
+    <sort-table [columns]="displayedColumns" [values]="accountingBalances" tableName="Balance"
+      [isSmallerHeight]="true"></sort-table>
     <table mat-table [dataSource]="accumulatedDataSource" class="mat-elevation-z8 table total-table min-widht-table"
       cdkDrag [cdkDragFreeDragPosition]="currentUserPosition" (cdkDragEnded)="dropTotalDiv($event)"
       *ngIf="accountingBalances">

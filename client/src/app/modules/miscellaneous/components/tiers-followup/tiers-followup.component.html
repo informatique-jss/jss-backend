@@ -55,9 +55,9 @@
       </button></span>
   </div>
   <sort-table *ngIf='tiers!=undefined' [columns]="displayedColumns" [values]="tiers.tiersFollowups"
-    tableName="Suivi factures" [filterText]="searchText"></sort-table>
+    tableName="Suivi factures" [filterText]="searchText" [noPaddingBottom]="true" [noMaxHeight]="true"></sort-table>
   <sort-table *ngIf='invoice!=undefined' [columns]="displayedColumns" [values]="invoice.tiersFollowups"
-    tableName="Suivi factures" [filterText]="searchText"></sort-table>
+    tableName="Suivi factures" [filterText]="searchText" [noPaddingBottom]="true" [noMaxHeight]="true"></sort-table>
   <sort-table *ngIf='affaire!=undefined' [columns]="displayedColumns" [values]="affaire.tiersFollowups"
-    tableName="Suivi affaires" [filterText]="searchText"></sort-table>
+    tableName="Suivi affaires" [filterText]="searchText" [noPaddingBottom]="true" [noMaxHeight]="true"></sort-table>
 </div>

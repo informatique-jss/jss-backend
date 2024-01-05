@@ -23,8 +23,8 @@ import { RffService } from '../../services/rff.service';
 })
 export class RffListComponent implements OnInit {
   rff: Rff[] | undefined;
-  displayedColumnsRff: SortTableColumn[] = [];
-  tableActionRff: SortTableAction[] = [];
+  displayedColumnsRff: SortTableColumn<Rff>[] = [];
+  tableActionRff: SortTableAction<Rff>[] = [];
   bookmarkRff: RffSearch | undefined;
   @Input() rffSearch: RffSearch | undefined;
   @Input() isForTiersIntegration: boolean = false;
@@ -45,33 +45,20 @@ export class RffListComponent implements OnInit {
     this.employeeService.getEmployees().subscribe(response => {
       this.allEmployees = response;
       this.displayedColumnsRff = [];
-      if (!this.isForTiersIntegration) {
-        this.rffSearch = {} as RffSearch;
 
-        this.bookmarkRff = this.userPreferenceService.getUserSearchBookmark("rff") as RffSearch;
-        if (this.bookmarkRff) {
-          this.rffSearch.tiers = this.bookmarkRff.tiers;
-          this.rffSearch.responsable = this.bookmarkRff.responsable;
-          this.rffSearch.salesEmployee = this.bookmarkRff.salesEmployee;
-          this.rffSearch.startDate = this.bookmarkRff.startDate;
-          this.rffSearch.endDate = this.bookmarkRff.endDate;
-        }
-        this.rffSearch.isHideCancelledRff = true;
-      }
-
-      this.displayedColumnsRff.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn);
-      this.displayedColumnsRff.push({ id: "tiersId", fieldName: "tiersId", label: "N° Tiers" } as SortTableColumn);
-      this.displayedColumnsRff.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers" } as SortTableColumn);
-      this.displayedColumnsRff.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn);
-      this.displayedColumnsRff.push({ id: "startDate", fieldName: "startDate", label: "Début", valueFonction: formatDateForSortTable } as SortTableColumn);
-      this.displayedColumnsRff.push({ id: "endDate", fieldName: "endDate", label: "Fin", valueFonction: formatDateForSortTable } as SortTableColumn);
-      this.displayedColumnsRff.push({ id: "rffInsertion", fieldName: "rffInsertion", label: "RFF AL", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.rffInsertion) } } as SortTableColumn);
-      this.displayedColumnsRff.push({ id: "rffFormalite", fieldName: "rffFormalite", label: "RFF Formalités", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.rffFormalite) } } as SortTableColumn);
-      this.displayedColumnsRff.push({ id: "rffTotal", fieldName: "rffTotal", label: "Total HT", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.rffTotal) } } as SortTableColumn);
-      this.displayedColumnsRff.push({ id: "rib", fieldName: "rib", label: "RIB", valueFonction: (element: Rff) => { return (element.rffIban) ? (element.rffIban + "/" + element.rffBic) : "" } } as SortTableColumn);
-      this.displayedColumnsRff.push({ id: "rffMail", fieldName: "rffMail", label: "Mail" } as SortTableColumn);
-      this.displayedColumnsRff.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé ?", valueFonction: (element: Rff) => { return element.isCancelled ? 'Oui' : 'Non' } } as SortTableColumn);
-      this.displayedColumnsRff.push({ id: "isSent", fieldName: "isSent", label: "Envoyé ?", valueFonction: (element: Rff) => { return element.isSent ? 'Oui' : 'Non' } } as SortTableColumn);
+      this.displayedColumnsRff.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn<Rff>);
+      this.displayedColumnsRff.push({ id: "tiersId", fieldName: "tiersId", label: "N° Tiers" } as SortTableColumn<Rff>);
+      this.displayedColumnsRff.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers" } as SortTableColumn<Rff>);
+      this.displayedColumnsRff.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn<Rff>);
+      this.displayedColumnsRff.push({ id: "startDate", fieldName: "startDate", label: "Début", valueFonction: formatDateForSortTable } as SortTableColumn<Rff>);
+      this.displayedColumnsRff.push({ id: "endDate", fieldName: "endDate", label: "Fin", valueFonction: formatDateForSortTable } as SortTableColumn<Rff>);
+      this.displayedColumnsRff.push({ id: "rffInsertion", fieldName: "rffInsertion", label: "RFF AL", valueFonction: formatEurosForSortTable } as SortTableColumn<Rff>);
+      this.displayedColumnsRff.push({ id: "rffFormalite", fieldName: "rffFormalite", label: "RFF Formalités", valueFonction: formatEurosForSortTable } as SortTableColumn<Rff>);
+      this.displayedColumnsRff.push({ id: "rffTotal", fieldName: "rffTotal", label: "Total HT", valueFonction: formatEurosForSortTable } as SortTableColumn<Rff>);
+      this.displayedColumnsRff.push({ id: "rib", fieldName: "rib", label: "RIB", valueFonction: (element: Rff, column: SortTableColumn<Rff>) => { return (element.rffIban) ? (element.rffIban + "/" + element.rffBic) : "" } } as SortTableColumn<Rff>);
+      this.displayedColumnsRff.push({ id: "rffMail", fieldName: "rffMail", label: "Mail" } as SortTableColumn<Rff>);
+      this.displayedColumnsRff.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé ?", valueFonction: (element: Rff, column: SortTableColumn<Rff>) => { return element.isCancelled ? 'Oui' : 'Non' } } as SortTableColumn<Rff>);
+      this.displayedColumnsRff.push({ id: "isSent", fieldName: "isSent", label: "Envoyé ?", valueFonction: (element: Rff, column: SortTableColumn<Rff>) => { return element.isSent ? 'Oui' : 'Non' } } as SortTableColumn<Rff>);
       this.displayedColumnsRff.push({
         id: "invoice", fieldName: "invoice", label: "Facture", displayAsStatus: true, statusFonction: (element: Rff) => {
           if (element.invoices && element.invoices.length > 0) {
@@ -82,7 +69,7 @@ export class RffListComponent implements OnInit {
             }
           }
           return "N/A";
-        }, valueFonction: (element: Rff) => {
+        }, valueFonction: (element: Rff, column: SortTableColumn<Rff>) => {
           if (element.invoices && element.invoices.length > 0) {
             for (let invoice of element.invoices) {
               if (invoice.invoiceStatus.id != this.constantService.getInvoiceStatusCancelled().id)
@@ -92,26 +79,25 @@ export class RffListComponent implements OnInit {
           }
           return "";
         }
-      } as SortTableColumn);
+      } as SortTableColumn<Rff>);
 
       this.tableActionRff.push({
-        actionIcon: "visibility", actionName: "Voir le tiers", actionLinkFunction: (action: SortTableAction, element: any) => {
+        actionIcon: "visibility", actionName: "Voir le tiers", actionLinkFunction: (action: SortTableAction<Rff>, element: any) => {
           if (element)
             return ['/tiers', element.tiersId];
           return undefined;
         }, display: true,
-      } as SortTableAction);
+      } as SortTableAction<Rff>);
       this.tableActionRff.push({
-        actionIcon: "visibility", actionName: "Voir le responsable", actionLinkFunction: (action: SortTableAction, element: any) => {
+        actionIcon: "visibility", actionName: "Voir le responsable", actionLinkFunction: (action: SortTableAction<Rff>, element: any) => {
           if (element)
             return ['/tiers/responsable', element.responsableId];
           return undefined;
         }, display: true,
-      } as SortTableAction);
+      } as SortTableAction<Rff>);
       this.tableActionRff.push({
-        actionIcon: "do_not_disturb_on", actionName: "Ne pas verser le RFF", actionClick: (action: SortTableAction, element: Rff) => {
-
-          if (element.isCancelled == false) {
+        actionIcon: "do_not_disturb_on", actionName: "Ne pas verser le RFF", actionClick: (column: SortTableAction<Rff>, record: Rff, event: any) => {
+          if (record.isCancelled == false) {
             const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
               maxWidth: "400px",
               data: {
@@ -124,45 +110,43 @@ export class RffListComponent implements OnInit {
 
             dialogRef.afterClosed().subscribe(dialogResult => {
               if (dialogResult)
-                this.rffService.cancelRff(element).subscribe(res => {
+                this.rffService.cancelRff(record).subscribe(res => {
                   this.searchRff();
                 })
             });
           }
-
-
         }, display: true,
-      } as SortTableAction);
+      } as SortTableAction<Rff>);
 
       this.tableActionRff.push({
-        actionIcon: "forward_to_inbox", actionName: "Envoyer le mail de RFF", actionClick: (action: SortTableAction, element: Rff) => {
+        actionIcon: "forward_to_inbox", actionName: "Envoyer le mail de RFF", actionClick: (column: SortTableAction<Rff>, element: Rff, event: any) => {
           if (element.isCancelled == false && element.isSent == false) {
             this.sendRffMail(element, false);
           }
         }, display: true,
-      } as SortTableAction);
+      } as SortTableAction<Rff>);
 
       this.tableActionRff.push({
-        actionIcon: "forward_to_inbox", actionName: "M'envoyer le mail de RFF", actionClick: (action: SortTableAction, element: Rff) => {
+        actionIcon: "forward_to_inbox", actionName: "M'envoyer le mail de RFF", actionClick: (column: SortTableAction<Rff>, element: Rff, event: any) => {
           if (element.isCancelled == false && element.isSent == false) {
             this.sendRffMail(element, true);
           }
         }, display: true,
-      } as SortTableAction);
+      } as SortTableAction<Rff>);
 
       if (this.habilitationsService.canAddNewInvoice())
         this.tableActionRff.push({
-          actionIcon: "point_of_sale", actionName: "Générer la facture du RFF", actionClick: (action: SortTableAction, element: Rff) => {
+          actionIcon: "point_of_sale", actionName: "Générer la facture du RFF", actionClick: (column: SortTableAction<Rff>, element: Rff, event: any) => {
             if (element.isCancelled == false && element.isSent == true && this.habilitationsService.canAddNewInvoice()) {
               this.rffService.generateInvoiceForRff(element).subscribe(res => {
                 this.searchRff();
               });
             }
           }, display: true,
-        } as SortTableAction);
+        } as SortTableAction<Rff>);
 
       this.tableActionRff.push({
-        actionIcon: "receipt_long", actionName: "Voir le détail de la facture", actionLinkFunction: (action: SortTableAction, element: Rff) => {
+        actionIcon: "receipt_long", actionName: "Voir le détail de la facture", actionLinkFunction: (action: SortTableAction<Rff>, element: Rff) => {
 
           if (element.invoices && element.invoices.length > 0) {
             for (let invoice of element.invoices) {
@@ -173,11 +157,22 @@ export class RffListComponent implements OnInit {
 
           return undefined;
         }, display: true,
-      } as SortTableAction);
+      } as SortTableAction<Rff>);
 
 
       if (this.isForTiersIntegration && this.rffSearch)
         this.searchRff();
+      else {
+        this.bookmarkRff = this.userPreferenceService.getUserSearchBookmark("rff") as RffSearch;
+        if (this.bookmarkRff) {
+          this.rffSearch = this.bookmarkRff;
+          if (this.rffSearch.startDate)
+            this.rffSearch.startDate = new Date(this.rffSearch.startDate);
+          if (this.rffSearch.endDate)
+            this.rffSearch.endDate = new Date(this.rffSearch.endDate);
+          this.searchRff();
+        }
+      }
     });
   }
 

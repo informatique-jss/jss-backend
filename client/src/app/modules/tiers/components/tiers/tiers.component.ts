@@ -1,5 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
@@ -11,6 +12,7 @@ import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { InvoiceSearch } from '../../../invoicing/model/InvoiceSearch';
 import { Responsable } from '../../model/Responsable';
 import { RffSearch } from '../../model/RffSearch';
@@ -45,7 +47,6 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
   selectedTabIndex = 0;
 
-  @ViewChild('tabs', { static: false }) tabs: any;
 
   @ViewChild(PrincipalComponent) principalFormComponent: PrincipalComponent | undefined;
   @ViewChild(SettlementBillingComponent) documentSettlementBillingComponent: SettlementBillingComponent | undefined;
@@ -60,7 +61,9 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     protected searchService: SearchService,
     private constantService: ConstantService,
     public confirmationDialog: MatDialog,
-    private changeDetectorRef: ChangeDetectorRef) { }
+    private changeDetectorRef: ChangeDetectorRef,
+    private userPreferenceService: UserPreferenceService
+  ) { }
 
   ngOnInit() {
     if (!this.idTiers && !this.idResponsable)
@@ -80,7 +83,6 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
         if (!this.idTiers && !this.idResponsable)
           this.appService.changeHeaderTitle(this.tiers.denomination != null ? this.tiers.denomination : this.tiers.firstname + " " + this.tiers.lastname);
-        this.toggleTabs();
         this.selectedTabIndex = 2;
         this.responsableMainComponent?.setSelectedResponsableId(this.idResponsable ? this.idResponsable : idTiers);
 
@@ -92,8 +94,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.tiers = response;
         this.tiersService.setCurrentViewedTiers(this.tiers);
         this.changeHeader();
-        this.toggleTabs();
-
+        this.restoreTab();
         this.loadQuotationFilter();
 
         this.rffSearch = {} as RffSearch;
@@ -159,20 +160,9 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.appService.changeHeaderTitle(this.tiers.firstname + " " + this.tiers.lastname);
     }
   }
-  changePageHeader($event: any) {
-    if ($event.tab.textLabel != "Responsable(s)") {
-      if (this.tiers.id != null && this.tiers.id != undefined)
-        this.changeHeader();
-    }
-  }
 
   isTiersTypeProspect(): boolean {
     return this.tiers && this.tiers.tiersType && this.constantService.getTiersTypeProspect().id == this.tiers.tiersType.id;
-  }
-
-  toggleTabs() {
-    if (this.tabs != undefined)
-      this.tabs.realignInkBar();
   }
 
   saveTiers() {
@@ -217,7 +207,6 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     this.tiersService.setCurrentViewedTiers(this.tiers);
     if (!this.idTiers && !this.idResponsable)
       this.appService.changeHeaderTitle("Nouveau Tiers / Responsable");
-    this.toggleTabs();
   }
 
   openSearch() {
@@ -241,6 +230,19 @@ export class TiersComponent implements OnInit, AfterContentChecked {
           this.appService.openRoute(null, '/tiers/', null);
         });
     });
+  }
+
+  //Tabs management
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('tiers', event.index);
+    if (event.tab.textLabel != "Responsable(s)") {
+      if (this.tiers.id != null && this.tiers.id != undefined)
+        this.changeHeader();
+    }
+  }
+
+  restoreTab() {
+    this.selectedTabIndex = this.userPreferenceService.getUserTabsSelectionIndex('tiers');
   }
 
 }

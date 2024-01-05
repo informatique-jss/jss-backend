@@ -262,9 +262,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         if (provision.getAnnouncement() != null
                                 && !provision.getAnnouncement().getAnnouncementStatus().getIsCloseState())
                             return customerOrderIn;
-                        if (provision.getBodacc() != null
-                                && !provision.getBodacc().getBodaccStatus().getIsCloseState())
-                            return customerOrderIn;
                         if (provision.getFormalite() != null
                                 && !provision.getFormalite().getFormaliteStatus().getIsCloseState())
                             return customerOrderIn;
@@ -715,9 +712,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             if (provision.getAnnouncement().getDocuments() != null)
                                 for (Document document : provision.getAnnouncement().getDocuments())
                                     document.setId(null);
-                        }
-                        if (provision.getBodacc() != null) {
-                            provision.getBodacc().setId(null);
                         }
                         if (provision.getFormalite() != null) {
                             provision.getFormalite().setId(null);

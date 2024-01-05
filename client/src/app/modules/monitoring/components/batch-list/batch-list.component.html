@@ -18,9 +18,12 @@
           propertyName="entityId" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
       </td>
       <td>
-        <generic-date-range-picker [(modelStart)]="batchSearch.startDate" [(modelEnd)]="batchSearch.endDate"
-          label="Période" [form]="batchSearchForm" propertyNameStart="startDate" propertyNameEnd="endDate"
-          [isMandatory]="false" [isDisabled]="false"></generic-date-range-picker>
+        <generic-datepicker [(model)]="batchSearch.startDate" label="Date de début" [form]="batchSearchForm"
+          propertyName="startDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
+      </td>
+      <td>
+        <generic-datepicker [(model)]="batchSearch.endDate" label="Date de fin" [form]="batchSearchForm"
+          propertyName="endDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
       </td>
       <td class="fab-td-button">
         <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchBatchs()" class="add-button">
@@ -30,6 +33,7 @@
     </tr>
   </table>
   <sort-table [actions]="batchDetailsActions" [columns]="batchDetailsColomns" [values]="batchDetails"
-    tableName="Détails des batch" *ngIf="batchDetailsColomns && batchDetailsColomns.length>0 ">
+    [noPaddingBottom]="true" [noMaxHeight]="true" tableName="Détails des batch"
+    *ngIf="batchDetailsColomns && batchDetailsColomns.length>0 ">
   </sort-table>
 </div>

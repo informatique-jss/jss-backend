@@ -17,11 +17,6 @@
         {{displayLabel(type)}}
       </mat-option>
     </mat-optgroup>
-    <mat-optgroup label="BODACC" [disabled]="isDisabled">
-      <mat-option *ngFor="let type of bodaccStatus" [value]="type">
-        {{displayLabel(type)}}
-      </mat-option>
-    </mat-optgroup>
     <mat-optgroup label="Domiciliation" [disabled]="isDisabled">
       <mat-option *ngFor="let type of domiciliationStatus" [value]="type">
         {{displayLabel(type)}}

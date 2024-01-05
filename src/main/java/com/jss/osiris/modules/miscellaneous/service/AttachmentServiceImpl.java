@@ -44,7 +44,6 @@ import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
-import com.jss.osiris.modules.quotation.service.BodaccService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
@@ -82,9 +81,6 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     AnnouncementService announcementService;
-
-    @Autowired
-    BodaccService bodaccService;
 
     @Autowired
     FormaliteService formaliteService;

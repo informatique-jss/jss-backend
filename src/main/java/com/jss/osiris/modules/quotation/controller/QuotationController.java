@@ -69,8 +69,6 @@ import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.quotation.model.AttachmentMailRequest;
 import com.jss.osiris.modules.quotation.model.AttachmentTypeMailQuery;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
-import com.jss.osiris.modules.quotation.model.BodaccPublicationType;
-import com.jss.osiris.modules.quotation.model.BodaccStatus;
 import com.jss.osiris.modules.quotation.model.BuildingDomiciliation;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
@@ -111,8 +109,6 @@ import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.quotation.service.AssignationTypeService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
-import com.jss.osiris.modules.quotation.service.BodaccPublicationTypeService;
-import com.jss.osiris.modules.quotation.service.BodaccStatusService;
 import com.jss.osiris.modules.quotation.service.BuildingDomiciliationService;
 import com.jss.osiris.modules.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
@@ -234,9 +230,6 @@ public class QuotationController {
   NoticeTypeFamilyService noticeTypeFamilyService;
 
   @Autowired
-  BodaccPublicationTypeService bodaccPublicationTypeService;
-
-  @Autowired
   TransfertFundsTypeService transfertFundsTypeService;
 
   @Autowired
@@ -274,9 +267,6 @@ public class QuotationController {
 
   @Autowired
   MailHelper mailHelper;
-
-  @Autowired
-  BodaccStatusService bodaccStatusService;
 
   @Autowired
   AnnouncementStatusService announcementStatusService;
@@ -489,11 +479,6 @@ public class QuotationController {
 
     return new ResponseEntity<List<AnnouncementSearchResult>>(announcementService.searchAnnouncementsForWebSite(search),
         HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/bodacc-status")
-  public ResponseEntity<List<BodaccStatus>> getBodaccStatus() {
-    return new ResponseEntity<List<BodaccStatus>>(bodaccStatusService.getBodaccStatus(), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/mail/billing/compute")
@@ -880,25 +865,6 @@ public class QuotationController {
 
     return new ResponseEntity<TransfertFundsType>(
         transfertFundsTypeService.addOrUpdateTransfertFundsType(transfertFundsType), HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/bodacc-publication-types")
-  public ResponseEntity<List<BodaccPublicationType>> getBodaccPublicationTypes() {
-    return new ResponseEntity<List<BodaccPublicationType>>(bodaccPublicationTypeService.getBodaccPublicationTypes(),
-        HttpStatus.OK);
-  }
-
-  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-  @PostMapping(inputEntryPoint + "/bodacc-publication-type")
-  public ResponseEntity<BodaccPublicationType> addOrUpdateActType(
-      @RequestBody BodaccPublicationType bodaccPublicationType) throws OsirisValidationException, OsirisException {
-    if (bodaccPublicationType.getId() != null)
-      validationHelper.validateReferential(bodaccPublicationType, true, "bodaccPublicationType");
-    validationHelper.validateString(bodaccPublicationType.getCode(), true, 20, "code");
-    validationHelper.validateString(bodaccPublicationType.getLabel(), true, 100, "label");
-
-    return new ResponseEntity<BodaccPublicationType>(
-        bodaccPublicationTypeService.addOrUpdateBodaccPublicationType(bodaccPublicationType), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/notice-type-families")

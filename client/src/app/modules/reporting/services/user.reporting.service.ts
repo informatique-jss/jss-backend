@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { Employee } from '../../profile/model/Employee';
 import { UserReporting } from '../../reporting/model/UserReporting';
@@ -8,7 +9,6 @@ import { UserReporting } from '../../reporting/model/UserReporting';
   providedIn: 'root'
 })
 export class UserReportingService extends AppRestService<UserReporting>{
-
   constructor(http: HttpClient) {
     super(http, "reporting");
   }
@@ -31,6 +31,10 @@ export class UserReportingService extends AppRestService<UserReporting>{
 
   deleteUserReporting(userReporting: UserReporting) {
     return this.get(new HttpParams().set("userReportingId", userReporting.id!), "user-reporting/delete");
+  }
+
+  getFakeData(dataset: string): Observable<any> {
+    return this.get(new HttpParams().set("dataset", dataset!), "user-reporting/fake");
   }
 
 }

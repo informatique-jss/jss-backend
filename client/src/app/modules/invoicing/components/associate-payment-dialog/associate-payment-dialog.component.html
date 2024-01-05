@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Associer un paiement </h1>
 <div mat-dialog-content *ngIf="payment ">
   <sort-table [columns]="displayedColumns" [values]="associations" tableName="Association paiement / facture"
-    [actions]="tableAction" [refreshTable]="refreshTable.asObservable()">
+    [noMaxHeight]="true" [noPaddingBottom]="true" [actions]="tableAction" [refreshTable]="refreshTable.asObservable()">
   </sort-table>
 
   <div class="big-chip">

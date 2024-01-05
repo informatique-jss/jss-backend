@@ -26,10 +26,10 @@ export class QuotationListComponent implements OnInit {
   @Input() isForDashboard: boolean = false;
   @Input() isForTiersIntegration: boolean = false;
   quotations: QuotationSearchResult[] | undefined;
-  availableColumns: SortTableColumn[] = [];
+  availableColumns: SortTableColumn<QuotationSearchResult>[] = [];
   columnToDisplayOnDashboard: string[] = ["id", "customerOrderName", "quotationStatus", "affaireLabel", "createdDate"];
-  displayedColumns: SortTableColumn[] = [];
-  tableAction: SortTableAction[] = [];
+  displayedColumns: SortTableColumn<QuotationSearchResult>[] = [];
+  tableAction: SortTableAction<QuotationSearchResult>[] = [];
   bookmark: QuotationSearch | undefined;
 
   allEmployees: Employee[] | undefined;
@@ -45,59 +45,27 @@ export class QuotationListComponent implements OnInit {
 
   ngOnInit() {
     this.employeeService.getEmployees().subscribe(response => {
-      this.bookmark = this.userPreferenceService.getUserSearchBookmark("quotations") as QuotationSearch;
-
-      if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
-        this.quotationSearch = {} as QuotationSearch;
-        this.quotationSearch.salesEmployee = this.bookmark.salesEmployee;
-        this.quotationSearch.assignedToEmployee = this.bookmark.assignedToEmployee;
-        this.quotationSearch.quotationStatus = this.bookmark.quotationStatus;
-      }
-
       this.allEmployees = response;
       if (!this.isForDashboard && !this.isForTiersIntegration)
         this.appService.changeHeaderTitle("Devis");
 
 
       this.availableColumns = [];
-      this.availableColumns.push({ id: "id", fieldName: "quotationId", label: "N° du devis" } as SortTableColumn);
-      this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateForSortTable } as SortTableColumn);
-      this.availableColumns.push({ id: "origin", fieldName: "customerOrderOriginLabel", label: "Origine" } as SortTableColumn);
-      this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn);
-      this.availableColumns.push({ id: "quotationStatus", fieldName: "quotationStatus", label: "Statut" } as SortTableColumn);
-      this.availableColumns.push({ id: "quotationDescription", fieldName: "quotationDescription", label: "Description", isShrinkColumn: true } as SortTableColumn);
-      this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
-      this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
-      this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix TTC", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.totalPrice) } } as SortTableColumn);
-      this.availableColumns.push({
-        id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true, valueFonction: (element: any) => {
-          if (element && this.allEmployees) {
-            for (let employee of this.allEmployees)
-              if (employee.id == element.salesEmployeeId)
-                return employee;
-          }
-          return undefined;
-        }
-      } as SortTableColumn);
-      this.availableColumns.push({
-        id: "assignedToEmployee", fieldName: "assignedToEmployeeId", label: "Assigné à", displayAsEmployee: true, valueFonction: (element: any) => {
-          if (element && this.allEmployees) {
-            for (let employee of this.allEmployees)
-              if (employee.id == element.assignedToEmployeeId)
-                return employee;
-          }
-          return undefined;
-        }
-      } as SortTableColumn);
-      this.availableColumns.push({ id: "announcementNbr", fieldName: "announcementNbr", label: "Nombre d'annonces légales" } as SortTableColumn);
-      this.availableColumns.push({ id: "formaliteNbr", fieldName: "formaliteNbr", label: "Nombre de formalités GU" } as SortTableColumn);
-      this.availableColumns.push({ id: "bodaccNbr", fieldName: "bodaccNbr", label: "Nombre de BODACC" } as SortTableColumn);
-      this.availableColumns.push({ id: "domiciliationNbr", fieldName: "domiciliationNbr", label: "Nombre de domiciliations" } as SortTableColumn);
-      this.availableColumns.push({ id: "simpleProvisionNbr", fieldName: "simpleProvisionNbr", label: "Nombre de formalités simples" } as SortTableColumn);
-      this.availableColumns.push({ id: "lastStatusUpdate", fieldName: "lastStatusUpdate", label: "Date de mise à jours", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+      this.availableColumns.push({ id: "id", fieldName: "quotationId", label: "N° du devis" } as SortTableColumn<QuotationSearchResult>);
+      this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateForSortTable } as SortTableColumn<QuotationSearchResult>);
+      this.availableColumns.push({ id: "origin", fieldName: "customerOrderOriginLabel", label: "Origine" } as SortTableColumn<QuotationSearchResult>);
+      this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn<QuotationSearchResult>);
+      this.availableColumns.push({ id: "quotationStatus", fieldName: "quotationStatus", label: "Statut" } as SortTableColumn<QuotationSearchResult>);
+      this.availableColumns.push({ id: "quotationDescription", fieldName: "quotationDescription", label: "Description", isShrinkColumn: true } as SortTableColumn<QuotationSearchResult>);
+      this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn<QuotationSearchResult>);
+      this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn<QuotationSearchResult>);
+      this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix TTC", valueFonction: formatEurosForSortTable } as SortTableColumn<QuotationSearchResult>);
+      this.availableColumns.push({ id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true } as SortTableColumn<QuotationSearchResult>);
+      this.availableColumns.push({ id: "assignedToEmployee", fieldName: "assignedToEmployeeId", label: "Assigné à", displayAsEmployee: true } as SortTableColumn<QuotationSearchResult>);
+      this.availableColumns.push({ id: "lastStatusUpdate", fieldName: "lastStatusUpdate", label: "Date de mise à jours", valueFonction: formatDateTimeForSortTable } as SortTableColumn<QuotationSearchResult>);
       this.setColumns();
 
-      this.tableAction.push({ actionIcon: "request_quote", actionName: "Voir le devis", actionLinkFunction: this.getActionLink, display: true, } as SortTableAction);
+      this.tableAction.push({ actionIcon: "request_quote", actionName: "Voir le devis", actionLinkFunction: this.getActionLink, display: true, } as SortTableAction<QuotationSearchResult>);
 
 
       if ((this.isForDashboard || this.isForTiersIntegration) && !this.quotations && this.quotationSearch) {
@@ -111,6 +79,17 @@ export class QuotationListComponent implements OnInit {
           }
           this.searchOrders();
         })
+      } else {
+        this.bookmark = this.userPreferenceService.getUserSearchBookmark("quotations") as QuotationSearch;
+
+        if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
+          this.quotationSearch = this.bookmark;
+          if (this.quotationSearch.startDate)
+            this.quotationSearch.startDate = new Date(this.quotationSearch.startDate);
+          if (this.quotationSearch.endDate)
+            this.quotationSearch.endDate = new Date(this.quotationSearch.endDate);
+          this.searchOrders();
+        }
       }
 
     });
@@ -131,14 +110,14 @@ export class QuotationListComponent implements OnInit {
       this.displayedColumns.push(...this.availableColumns);
   }
 
-  getActionLink(action: SortTableAction, element: any) {
+  getActionLink(action: SortTableAction<QuotationSearchResult>, element: any) {
     if (element)
       return ['/quotation', element.quotationId];
     return undefined;
   }
 
 
-  getColumnLink(column: SortTableColumn, element: any) {
+  getColumnLink(column: SortTableColumn<QuotationSearchResult>, element: any) {
     if (element && column.id == "tiersLabel") {
       return ['/tiers', element.tiersId];
     }
@@ -171,7 +150,7 @@ export class QuotationListComponent implements OnInit {
 
   searchOrders() {
     if (this.quotationSearchForm.valid) {
-      if (!this.isForDashboard)
+      if (!this.isForDashboard && !this.isForTiersIntegration)
         this.userPreferenceService.setUserSearchBookmark(this.quotationSearch, "quotations");
       if (this.quotationSearch.startDate)
         this.quotationSearch.startDate = new Date(toIsoString(this.quotationSearch.startDate));

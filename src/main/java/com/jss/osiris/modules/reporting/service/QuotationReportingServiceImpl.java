@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.reporting.service;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,17 @@ public class QuotationReportingServiceImpl implements QuotationReportingService 
     @Autowired
     QuotationReportingRepository quotationReportingRepository;
 
+    @Autowired
+    ReportingHelper<IQuotationReporting> reportingHelper;
+
     @Override
-    public List<IQuotationReporting> getQuotationReporting() throws OsirisException {
-        return quotationReportingRepository.getQuotationReporting();
+    public ArrayList<HashMap<String, String>> getQuotationReporting(ArrayList<String> columns) throws OsirisException {
+        return reportingHelper.filterOutputColumns(quotationReportingRepository.getQuotationReporting(), columns,
+                IQuotationReporting.class.getDeclaredMethods());
     }
 
+    @Override
+    public ArrayList<HashMap<String, String>> getFakeData() {
+        return reportingHelper.getFakeData(IQuotationReporting.class.getDeclaredMethods());
+    }
 }

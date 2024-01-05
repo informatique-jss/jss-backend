@@ -33,7 +33,6 @@ import com.jss.osiris.modules.profile.model.Employee;
 		@Index(name = "idx_provision_domicialitation", columnList = "id_domiciliation"),
 		@Index(name = "idx_provision_simple_provision", columnList = "id_simple_provision"),
 		@Index(name = "idx_provision_announcement", columnList = "id_announcement"),
-		@Index(name = "idx_provision_bodacc", columnList = "id_bodacc")
 })
 public class Provision implements IId, IAttachment {
 
@@ -71,10 +70,6 @@ public class Provision implements IId, IAttachment {
 	@JoinColumn(name = "id_simple_provision")
 	@IndexedField
 	private SimpleProvision simpleProvision;
-
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_bodacc")
-	private Bodacc bodacc;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
@@ -250,14 +245,6 @@ public class Provision implements IId, IAttachment {
 
 	public void setAnnouncement(Announcement announcement) {
 		this.announcement = announcement;
-	}
-
-	public Bodacc getBodacc() {
-		return bodacc;
-	}
-
-	public void setBodacc(Bodacc bodacc) {
-		this.bodacc = bodacc;
 	}
 
 	public List<InvoiceItem> getInvoiceItems() {

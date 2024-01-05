@@ -23,7 +23,6 @@ import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.AssignationType;
-import com.jss.osiris.modules.quotation.model.BodaccPublicationType;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
@@ -244,18 +243,6 @@ public interface ConstantService {
     public DomiciliationContractType getDomiciliationContractTypeRouteEmail() throws OsirisException;
 
     public MailRedirectionType getMailRedirectionTypeOther() throws OsirisException;
-
-    public BodaccPublicationType getBodaccPublicationTypeMerging() throws OsirisException;
-
-    public BodaccPublicationType getBodaccPublicationTypeSplit() throws OsirisException;
-
-    public BodaccPublicationType getBodaccPublicationTypePartialSplit() throws OsirisException;
-
-    public BodaccPublicationType getBodaccPublicationTypePossessionDispatch() throws OsirisException;
-
-    public BodaccPublicationType getBodaccPublicationTypeEstateRepresentativeDesignation() throws OsirisException;
-
-    public BodaccPublicationType getBodaccPublicationTypeSaleOfBusiness() throws OsirisException;
 
     public ActType getActTypeSeing() throws OsirisException;
 

@@ -14,7 +14,6 @@ import { AffaireService } from '../../services/affaire.service';
 })
 export class AddAffaireDialogComponent implements OnInit {
 
-  @ViewChild('tabs', { static: false }) tabs: any;
   @ViewChild(AddAffaireComponent) addAffaireComponent: AddAffaireComponent | undefined;
 
   affaire: Affaire = {} as Affaire;
@@ -31,8 +30,6 @@ export class AddAffaireDialogComponent implements OnInit {
   ngOnInit() {
     if (this.affaire && !this.affaire.isIndividual)
       this.affaire.isIndividual = false;
-    if (this.tabs)
-      this.tabs.realignInkBar();
   }
 
   ngOnChanges(changes: SimpleChanges) {

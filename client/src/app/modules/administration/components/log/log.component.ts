@@ -16,10 +16,10 @@ export class LogComponent implements OnInit {
 
   @Input() isForDashboard = false;
   logs: OsirisLog[] | undefined;
-  availableColumns: SortTableColumn[] = [];
+  availableColumns: SortTableColumn<OsirisLog>[] = [];
   columnToDisplayOnDashboard: string[] = ["className", "currentUser", "createdDateTime"];
-  displayedColumns: SortTableColumn[] = [];
-  tableAction: SortTableAction[] = [];
+  displayedColumns: SortTableColumn<OsirisLog>[] = [];
+  tableAction: SortTableAction<OsirisLog>[] = [];
   hideRead: boolean = true;
 
   constructor(
@@ -32,21 +32,21 @@ export class LogComponent implements OnInit {
 
   ngOnInit() {
     this.availableColumns = [];
-    this.availableColumns.push({ id: "logType", fieldName: "logType", label: "Type de log" } as SortTableColumn);
-    this.availableColumns.push({ id: "currentUser", fieldName: "currentUser", label: "Utilisateur", displayAsEmployee: true } as SortTableColumn);
-    this.availableColumns.push({ id: "createdDateTime", fieldName: "createdDateTime", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "className", fieldName: "className", label: "Classe" } as SortTableColumn);
-    this.availableColumns.push({ id: "methodName", fieldName: "methodName", label: "Méthode" } as SortTableColumn);
-    this.availableColumns.push({ id: "message", fieldName: "message", label: "Message", isShrinkColumn: true } as SortTableColumn);
-    this.availableColumns.push({ id: "isRead", fieldName: "isRead", label: "Vu ?", valueFonction: (element: any) => { return element.isRead ? "Oui" : "Non" } } as SortTableColumn);
+    this.availableColumns.push({ id: "logType", fieldName: "logType", label: "Type de log" } as SortTableColumn<OsirisLog>);
+    this.availableColumns.push({ id: "currentUser", fieldName: "currentUser.id", label: "Utilisateur", displayAsEmployee: true } as SortTableColumn<OsirisLog>);
+    this.availableColumns.push({ id: "createdDateTime", fieldName: "createdDateTime", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn<OsirisLog>);
+    this.availableColumns.push({ id: "className", fieldName: "className", label: "Classe" } as SortTableColumn<OsirisLog>);
+    this.availableColumns.push({ id: "methodName", fieldName: "methodName", label: "Méthode" } as SortTableColumn<OsirisLog>);
+    this.availableColumns.push({ id: "message", fieldName: "message", label: "Message", isShrinkColumn: true } as SortTableColumn<OsirisLog>);
+    this.availableColumns.push({ id: "isRead", fieldName: "isRead", label: "Vu ?", valueFonction: (element: OsirisLog, column: SortTableColumn<OsirisLog>) => { return element.isRead ? "Oui" : "Non" } } as SortTableColumn<OsirisLog>);
 
     this.setColumns();
 
-    this.tableAction.push({ actionIcon: "settings", actionName: "Voir le log", actionLinkFunction: this.getActionLink, display: true, } as SortTableAction);
+    this.tableAction.push({ actionIcon: "settings", actionName: "Voir le log", actionLinkFunction: this.getActionLink, display: true, } as SortTableAction<OsirisLog>);
 
     if (!this.isForDashboard) {
       this.tableAction.push({
-        actionIcon: "visibility", actionName: "Indiquer comme lu", actionClick: (action: SortTableAction, element: any) => {
+        actionIcon: "visibility", actionName: "Indiquer comme lu", actionClick: (action: SortTableAction<OsirisLog>, element: OsirisLog, event: any) => {
           if (element) {
             let log = (element as OsirisLog);
             log.isRead = true;
@@ -55,10 +55,10 @@ export class LogComponent implements OnInit {
             });
           }
         }, display: true,
-      } as SortTableAction);
+      } as SortTableAction<OsirisLog>);
 
       this.tableAction.push({
-        actionIcon: "visibility_off", actionName: "Indiquer comme non lu", actionClick: (action: SortTableAction, element: any) => {
+        actionIcon: "visibility_off", actionName: "Indiquer comme non lu", actionClick: (action: SortTableAction<OsirisLog>, element: OsirisLog, event: any) => {
           if (element) {
             let log = (element as OsirisLog);
             log.isRead = false;
@@ -67,7 +67,7 @@ export class LogComponent implements OnInit {
             });
           }
         }, display: true,
-      } as SortTableAction);
+      } as SortTableAction<OsirisLog>);
     }
 
     if (this.isForDashboard) {
@@ -89,7 +89,7 @@ export class LogComponent implements OnInit {
       this.displayedColumns.push(...this.availableColumns);
   }
 
-  getActionLink(action: SortTableAction, element: any) {
+  getActionLink(action: SortTableAction<OsirisLog>, element: OsirisLog) {
     if (element)
       return ['/administration/log', element.id];
     return undefined;

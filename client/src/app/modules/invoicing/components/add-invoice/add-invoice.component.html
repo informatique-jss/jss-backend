@@ -166,7 +166,8 @@
   </div>
   <div class=" full-width padding-bottom">
     <sort-table [columns]="displayedColumns" [values]="invoiceItems" tableName="Facture Ajout" [actions]="tableAction"
-      (onRowClick)="selectInvoiceItem($event)" [refreshTable]="refreshTable.asObservable()">
+      [noMaxHeight]="true" [noPaddingBottom]="true" (onRowClick)="selectInvoiceItem($event)"
+      [refreshTable]="refreshTable.asObservable()">
     </sort-table>
   </div>
   <div class="align-right">

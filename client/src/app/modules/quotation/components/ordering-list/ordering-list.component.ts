@@ -27,10 +27,10 @@ export class OrderingListComponent implements OnInit {
   @Input() isForTiersIntegration: boolean = false;
   @Input() isForPaymentAssocationIntegration: boolean = false;
   orders: OrderingSearchResult[] | undefined;
-  availableColumns: SortTableColumn[] = [];
+  availableColumns: SortTableColumn<OrderingSearchResult>[] = [];
   columnToDisplayOnDashboard: string[] = ["id", "customerOrderLabel", "customerOrderStatus", "affaireLabel", "createdDate", "lastStatusUpdate"];
-  displayedColumns: SortTableColumn[] = [];
-  tableAction: SortTableAction[] = [];
+  displayedColumns: SortTableColumn<OrderingSearchResult>[] = [];
+  tableAction: SortTableAction<OrderingSearchResult>[] = [];
   bookmark: OrderingSearch | undefined;
 
   @Output() actionBypass: EventEmitter<OrderingSearchResult> = new EventEmitter<OrderingSearchResult>();
@@ -53,73 +53,40 @@ export class OrderingListComponent implements OnInit {
   ngOnInit() {
     this.employeeService.getEmployees().subscribe(response => {
 
-      this.bookmark = this.userPreferenceService.getUserSearchBookmark("customerOrders") as OrderingSearch;
-
-      if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
-        this.orderingSearch = {} as OrderingSearch;
-        this.orderingSearch.salesEmployee = this.bookmark.salesEmployee;
-        this.orderingSearch.assignedToEmployee = this.bookmark.assignedToEmployee;
-        this.orderingSearch.customerOrderStatus = this.bookmark.customerOrderStatus;
-      }
-
-
       this.allEmployees = response;
 
       if (!this.isForDashboard && !this.isForTiersIntegration)
         this.appService.changeHeaderTitle("Commande")
       this.availableColumns = [];
-      this.availableColumns.push({ id: "id", fieldName: "customerOrderId", label: "N° de la commande" } as SortTableColumn);
-      this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateForSortTable } as SortTableColumn);
-      this.availableColumns.push({ id: "origin", fieldName: "customerOrderOriginLabel", label: "Origine" } as SortTableColumn);
-      this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: false } as SortTableColumn);
-      this.availableColumns.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut" } as SortTableColumn);
-      this.availableColumns.push({ id: "customerOrderDescription", fieldName: "customerOrderDescription", label: "Description", isShrinkColumn: true } as SortTableColumn);
-      this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
-      this.availableColumns.push({ id: "customerOrderLabel", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
-      this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix TTC", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.totalPrice) } } as SortTableColumn);
-      this.availableColumns.push({ id: "depositTotalAmount", fieldName: "depositTotalAmount", label: "Acompte versé", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.depositTotalAmount) } } as SortTableColumn);
-      this.availableColumns.push({
-        id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true, valueFonction: (element: any) => {
-          if (element && this.allEmployees) {
-            for (let employee of this.allEmployees)
-              if (employee.id == element.salesEmployeeId)
-                return employee;
-          }
-          return undefined;
-        }
-      } as SortTableColumn);
-      this.availableColumns.push({
-        id: "assignedToEmployee", fieldName: "assignedToEmployeeId", label: "Assignée à", displayAsEmployee: true, valueFonction: (element: any) => {
-          if (element && this.allEmployees) {
-            for (let employee of this.allEmployees)
-              if (employee.id == element.assignedToEmployeeId)
-                return employee;
-          }
-          return undefined;
-        }
-      } as SortTableColumn);
-      this.availableColumns.push({ id: "announcementNbr", fieldName: "announcementNbr", label: "Nombre d'annonces légales" } as SortTableColumn);
-      this.availableColumns.push({ id: "formaliteNbr", fieldName: "formaliteNbr", label: "Nombre de formalités GU" } as SortTableColumn);
-      this.availableColumns.push({ id: "bodaccNbr", fieldName: "bodaccNbr", label: "Nombre de BODACC" } as SortTableColumn);
-      this.availableColumns.push({ id: "domiciliationNbr", fieldName: "domiciliationNbr", label: "Nombre de domiciliations" } as SortTableColumn);
-      this.availableColumns.push({ id: "simpleProvisionNbr", fieldName: "simpleProvisionNbr", label: "Nombre de formalités simples" } as SortTableColumn);
-      this.availableColumns.push({ id: "lastStatusUpdate", fieldName: "lastStatusUpdate", label: "Date de mise à jour", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+      this.availableColumns.push({ id: "id", fieldName: "customerOrderId", label: "N°" } as SortTableColumn<OrderingSearchResult>);
+      this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Création", valueFonction: formatDateForSortTable } as SortTableColumn<OrderingSearchResult>);
+      this.availableColumns.push({ id: "origin", fieldName: "customerOrderOriginLabel", label: "Origine" } as SortTableColumn<OrderingSearchResult>);
+      this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: false } as SortTableColumn<OrderingSearchResult>);
+      this.availableColumns.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut" } as SortTableColumn<OrderingSearchResult>);
+      this.availableColumns.push({ id: "customerOrderDescription", fieldName: "customerOrderDescription", label: "Description", isShrinkColumn: true } as SortTableColumn<OrderingSearchResult>);
+      this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers" } as SortTableColumn<OrderingSearchResult>);
+      this.availableColumns.push({ id: "customerOrderLabel", fieldName: "customerOrderLabel", label: "Donneur d'ordre" } as SortTableColumn<OrderingSearchResult>);
+      this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix TTC", valueFonction: formatEurosForSortTable } as SortTableColumn<OrderingSearchResult>);
+      this.availableColumns.push({ id: "depositTotalAmount", fieldName: "depositTotalAmount", label: "Acompte versé", valueFonction: formatEurosForSortTable } as SortTableColumn<OrderingSearchResult>);
+      this.availableColumns.push({ id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true } as SortTableColumn<OrderingSearchResult>);
+      this.availableColumns.push({ id: "assignedToEmployee", fieldName: "assignedToEmployeeId", label: "Assignée à", displayAsEmployee: true } as SortTableColumn<OrderingSearchResult>);
+      this.availableColumns.push({ id: "lastStatusUpdate", fieldName: "lastStatusUpdate", label: "Mise à jour", valueFonction: formatDateTimeForSortTable } as SortTableColumn<OrderingSearchResult>);
       this.setColumns();
 
       if (this.overrideIconAction == "") {
         this.tableAction.push({
-          actionIcon: "shopping_cart", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction, element: any) => {
+          actionIcon: "shopping_cart", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction<OrderingSearchResult>, element: OrderingSearchResult) => {
             if (element)
               return ['/order', element.customerOrderId];
             return undefined;
           }, display: true,
-        } as SortTableAction);
+        } as SortTableAction<OrderingSearchResult>);
       } else {
         this.tableAction.push({
-          actionIcon: this.overrideIconAction, actionName: this.overrideTooltipAction, actionClick: (action: SortTableAction, element: any) => {
+          actionIcon: this.overrideIconAction, actionName: this.overrideTooltipAction, actionClick: (column: SortTableAction<OrderingSearchResult>, element: OrderingSearchResult, event: any) => {
             this.actionBypass.emit(element);
           }, display: true,
-        } as SortTableAction);
+        } as SortTableAction<OrderingSearchResult>);
       };
       if ((this.isForDashboard || this.isForTiersIntegration) && !this.orders && this.orderingSearch) {
         this.customerOrderStatusService.getCustomerOrderStatus().subscribe(res => {
@@ -133,6 +100,17 @@ export class OrderingListComponent implements OnInit {
           }
           this.searchOrders();
         })
+      } else {
+        this.bookmark = this.userPreferenceService.getUserSearchBookmark("customerOrders") as OrderingSearch;
+
+        if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
+          this.orderingSearch = this.bookmark;
+          if (this.orderingSearch.startDate)
+            this.orderingSearch.startDate = new Date(this.orderingSearch.startDate);
+          if (this.orderingSearch.endDate)
+            this.orderingSearch.endDate = new Date(this.orderingSearch.endDate);
+          this.searchOrders();
+        }
       }
     });
   }
@@ -152,7 +130,7 @@ export class OrderingListComponent implements OnInit {
   orderingSearchForm = this.formBuilder.group({
   });
 
-  getColumnLink(column: SortTableColumn, element: any) {
+  getColumnLink(column: SortTableColumn<OrderingSearchResult>, element: OrderingSearchResult) {
     if (element && column.id == "tiersLabel") {
       return ['/tiers', element.tiersId];
     }
@@ -167,21 +145,9 @@ export class OrderingListComponent implements OnInit {
     return ['/tiers'];
   }
 
-  getCustomerOrderName(element: any) {
-    if (element) {
-      if (element.confrere)
-        return element.confrere.denomination
-      if (element.responsable)
-        return element.responsable.firstname + " " + element.responsable.lastname;
-      if (element.tiers)
-        return element.tiers.firstname + " " + element.tiers.lastname;
-    }
-  }
-
-
   searchOrders() {
     if (this.orderingSearchForm.valid) {
-      if (!this.isForDashboard)
+      if (!this.isForDashboard && !this.isForTiersIntegration)
         this.userPreferenceService.setUserSearchBookmark(this.orderingSearch, "customerOrders");
       if (this.orderingSearch.startDate)
         this.orderingSearch.startDate = new Date(toIsoString(this.orderingSearch.startDate));

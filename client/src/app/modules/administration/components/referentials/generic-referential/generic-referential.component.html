@@ -5,8 +5,9 @@
     </mat-form-field>
   </div>
   <div class="table-container-scroll mat-elevation-z2">
-    <sort-table [columns]="displayedColumns" [values]="entities" tableName="Référentiel"
-      (onRowClick)="selectEntity($event)" [idRowSelected]="idRowSelected" [filterText]="searchText">
+    <sort-table [columns]="displayedColumns" [values]="entities" tableName="Référentiel" [noMaxHeight]="true"
+      [noPaddingBottom]="true" (onRowClick)="selectEntity($event)" [idRowSelected]="idRowSelected"
+      [filterText]="searchText">
     </sort-table>
   </div>
 </div>

@@ -47,8 +47,9 @@ export class AccountingRecordComponent implements OnInit {
   displayedColumnsTotal: string[] = ['label', 'debit', 'credit'];
   accumulatedDataSource = new MatTableDataSource<AccountingRecord>();
   currentUserPosition: Point = { x: 0, y: 0 };
-  displayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
-  tableAction: SortTableAction[] = [] as Array<SortTableAction>;
+  displayedColumns: SortTableColumn<AccountingRecordSearchResult>[] = [] as Array<SortTableColumn<AccountingRecordSearchResult>>;
+  tableAction: SortTableAction<AccountingRecordSearchResult>[] = [] as Array<SortTableAction<AccountingRecordSearchResult>>;
+  bookmark: AccountingRecordSearch | undefined;
 
   canAddNewAccountingRecord() {
     return this.habilitationService.canAddNewAccountingRecord();
@@ -57,26 +58,26 @@ export class AccountingRecordComponent implements OnInit {
   ngOnInit() {
     // Column init
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
-    this.displayedColumns.push({ id: "customerOrder", fieldName: "customerId", label: "Commande", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn);
-    this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)" } as SortTableColumn);
-    this.displayedColumns.push({ id: "accountingDateTime", fieldName: "accountingDateTime", label: "Date d'écriture", valueFonction: this.formatDateForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "operationDateTime", fieldName: "operationDateTime", label: "Date d'opération", valueFonction: this.formatDateTimeForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "operationId", fieldName: "operationId", label: "N° d'écriture" } as SortTableColumn);
-    this.displayedColumns.push({ id: "accountingJournal", fieldName: "accountingJournalLabel", label: "Journal" } as SortTableColumn);
-    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.principalAccountingAccountCode + element.accountingAccountSubNumber; return "" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "accountingAccountLabel", fieldName: "accountingAccountLabel", label: "Libellé du compte", isShrinkColumn: true } as SortTableColumn);
-    this.displayedColumns.push({ id: "accountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N° de pièce justificative" } as SortTableColumn);
-    this.displayedColumns.push({ id: "accountingDocumentDate", fieldName: "manualAccountingDocumentDate", label: "Date pièce justificative", valueFonction: this.formatDateForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", isShrinkColumn: true } as SortTableColumn);
-    this.displayedColumns.push({ id: "letteringNumber", fieldName: "letteringNumber", label: "Lettrage" } as SortTableColumn);
-    this.displayedColumns.push({ id: "letteringDate", fieldName: "letteringDate", label: "Date de lettrage", valueFonction: this.formatDateForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "debitAccumulation", fieldName: "debitAccumulation", label: "Cumul débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "creditAccumulation", fieldName: "creditAccumulation", label: "Cumul crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "balance", fieldName: "balance", label: "Solde", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "payment", fieldName: "paymentId", label: "Paiement", actionFunction: (element: any) => this.paymentDetailsDialogService.displayPaymentDetailsDialog({ id: element.paymentId } as Payment), actionIcon: "visibility", actionTooltip: "Voir le détail du paiement" } as SortTableColumn);
+    this.displayedColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "customerOrder", fieldName: "customerId", label: "Commande", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)" } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "accountingDateTime", fieldName: "accountingDateTime", label: "Date d'écriture", valueFonction: this.formatDateForSortTable } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "operationDateTime", fieldName: "operationDateTime", label: "Date d'opération", valueFonction: this.formatDateTimeForSortTable } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "operationId", fieldName: "operationId", label: "N° d'écriture" } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "accountingJournal", fieldName: "accountingJournalLabel", label: "Journal" } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: AccountingRecordSearchResult, column: SortTableColumn<AccountingRecordSearchResult>) => { if (element && column) return element.principalAccountingAccountCode + element.accountingAccountSubNumber; return "" } } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "accountingAccountLabel", fieldName: "accountingAccountLabel", label: "Libellé du compte", isShrinkColumn: true } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "accountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N° de pièce justificative" } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "accountingDocumentDate", fieldName: "manualAccountingDocumentDate", label: "Date pièce justificative", valueFonction: this.formatDateForSortTable } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", isShrinkColumn: true } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "letteringNumber", fieldName: "letteringNumber", label: "Lettrage" } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "letteringDate", fieldName: "letteringDate", label: "Date de lettrage", valueFonction: this.formatDateForSortTable } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "debitAccumulation", fieldName: "debitAccumulation", label: "Cumul débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "creditAccumulation", fieldName: "creditAccumulation", label: "Cumul crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "balance", fieldName: "balance", label: "Solde", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "payment", fieldName: "paymentId", label: "Paiement", actionFunction: (element: AccountingRecordSearchResult) => this.paymentDetailsDialogService.displayPaymentDetailsDialog({ id: element.paymentId } as Payment), actionIcon: "visibility", actionTooltip: "Voir le détail du paiement" } as SortTableColumn<AccountingRecordSearchResult>);
 
     if (this.tiersToDisplay && this.tiersToDisplay.id) {
       if (instanceOfConfrere(this.tiersToDisplay))
@@ -85,10 +86,20 @@ export class AccountingRecordComponent implements OnInit {
         this.accountingRecordSearch.tiersId = this.tiersToDisplay.id;
       this.accountingRecordSearch.hideLettered = true;
       this.searchRecords();
+    } else if (this.accountingRecordSearch && this.accountingRecordSearch.idPayment)
+      this.searchRecords();
+    else {
+      this.bookmark = this.userPreferenceService.getUserSearchBookmark("accounting-record") as AccountingRecordSearch;
+      if (this.bookmark) {
+        this.accountingRecordSearch = this.bookmark;
+        if (this.accountingRecordSearch.startDate)
+          this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate);
+        if (this.accountingRecordSearch.endDate)
+          this.accountingRecordSearch.endDate = new Date(this.accountingRecordSearch.endDate);
+        this.searchRecords();
+      }
     }
 
-    if (this.accountingRecordSearch && this.accountingRecordSearch.idPayment)
-      this.searchRecords();
   }
 
 
@@ -99,7 +110,7 @@ export class AccountingRecordComponent implements OnInit {
   accountingRecordForm = this.formBuilder.group({
   });
 
-  getColumnLink(column: SortTableColumn, element: any) {
+  getColumnLink(column: SortTableColumn<AccountingRecordSearchResult>, element: AccountingRecordSearchResult) {
     if (element && column.id == "invoice" && element.invoiceId) {
       return ['/invoicing/view', element.invoiceId];
     }
@@ -154,6 +165,9 @@ export class AccountingRecordComponent implements OnInit {
     }
     if (this.accountingRecordSearch.startDate)
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
+
+    if (!this.tiersToDisplay && !this.accountingRecordSearch.idPayment)
+      this.userPreferenceService.setUserSearchBookmark(this.accountingRecordSearch, "accounting-record");
     this.accountingRecordSearchService.searchAccountingRecords(this.accountingRecordSearch).subscribe(response => {
       this.accountingRecords = response;
       this.computeBalanceAndDebitAndCreditAccumulation();

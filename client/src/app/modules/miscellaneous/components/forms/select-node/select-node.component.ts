@@ -26,4 +26,10 @@ export class SelectNodeComponent extends GenericMultipleSelectComponent<Node> im
       this.types = response;
     });
   }
+
+  displayLabel(object: any): string {
+    if (object && object.hostname)
+      return object.hostname;
+    return super.displayLabel(object);
+  }
 }

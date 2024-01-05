@@ -24,8 +24,8 @@ export class CustomerOrderPaymentComponent implements OnInit {
 
   advisedPayment: Payment[] = [] as Array<Payment>;
   @Input() customerOrder: CustomerOrder = {} as CustomerOrder;
-  displayedColumns: SortTableColumn[] = [];
-  tableAction: SortTableAction[] = [];
+  displayedColumns: SortTableColumn<Payment>[] = [];
+  tableAction: SortTableAction<Payment>[] = [];
   newPayment: Payment = {} as Payment;
   displayAddCashPayment = this.habilitationsService.canAddNewCashPayment();
 
@@ -46,14 +46,14 @@ export class CustomerOrderPaymentComponent implements OnInit {
 
   ngOnInit() {
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du paiement", actionFunction: (element: any) => this.paymentDetailsDialogService.displayPaymentDetailsDialog(element), actionIcon: "visibility", actionTooltip: "Voir le détail du paiement" } as SortTableColumn);
-    this.displayedColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "paymentAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable, sortFonction: (element: any) => { return (element.paymentAmount) } } as SortTableColumn);
-    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du paiement", actionFunction: (element: Payment) => this.paymentDetailsDialogService.displayPaymentDetailsDialog(element), actionIcon: "visibility", actionTooltip: "Voir le détail du paiement" } as SortTableColumn<Payment>);
+    this.displayedColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Payment>);
+    this.displayedColumns.push({ id: "paymentAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn<Payment>);
+    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn<Payment>);
 
     this.tableAction.push({
-      actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (action: SortTableAction, element: any): void => {
-        if (element.invoices) {
+      actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (column: SortTableAction<Payment>, element: Payment, event: any): void => {
+        if (element.invoice) {
           this.appService.displaySnackBar("Veuillez choisir un paiement non associé à une facture", true, 15);
           return;
         }
@@ -61,9 +61,9 @@ export class CustomerOrderPaymentComponent implements OnInit {
           this.appService.displaySnackBar("Veuillez choisir un paiement non annulé", true, 15);
           return;
         }
-        this.openAssociationDialog(element);
+        this.openAssociationDialog(element as any);
       }, display: true,
-    } as SortTableAction);
+    } as SortTableAction<Payment>);
     if (this.customerOrder) {
       this.paymentService.getAdvisedPaymentForCustomerOrder(this.customerOrder).subscribe(response => {
         this.advisedPayment = response;

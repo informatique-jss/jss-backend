@@ -1,10 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { PROVISION_ENTITY_TYPE, SIMPLE_PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { instanceOfCustomerOrder } from '../../../../libs/TypeHelper';
 import { HabilitationsService } from '../../../../services/habilitations.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { SimpleProvision } from '../../model/SimpleProvision';
@@ -36,7 +38,8 @@ export class SimpleProvisionComponent implements OnInit {
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
     private habilitationsService: HabilitationsService,
-    private simpleProvisionStatusService: SimpleProvisionStatusService
+    private simpleProvisionStatusService: SimpleProvisionStatusService,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   canAddNewInvoice() {
@@ -49,6 +52,7 @@ export class SimpleProvisionComponent implements OnInit {
 
   ngOnInit() {
     this.simpleProvisionStatusService.getSimpleProvisionStatus().subscribe(response => this.simpleProvisionStatus = response);
+    this.restoreTab();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -66,4 +70,13 @@ export class SimpleProvisionComponent implements OnInit {
     this.provisionChange.emit(this.provision);
   }
 
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('simple-provision', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('simple-provision');
+  }
 }

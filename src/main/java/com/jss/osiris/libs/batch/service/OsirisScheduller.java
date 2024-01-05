@@ -29,7 +29,6 @@ import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.quotation.service.AssignationTypeService;
-import com.jss.osiris.modules.quotation.service.BodaccStatusService;
 import com.jss.osiris.modules.quotation.service.CentralPayPaymentRequestService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
@@ -83,9 +82,6 @@ public class OsirisScheduller {
 
 	@Autowired
 	SimpleProvisionStatusService simpleProvisionStatusService;
-
-	@Autowired
-	BodaccStatusService bodaccStatusService;
 
 	@Autowired
 	AssignationTypeService assignationTypeService;
@@ -319,7 +315,6 @@ public class OsirisScheduller {
 			formaliteStatusService.updateStatusReferential();
 			domiciliationStatusService.updateStatusReferential();
 			simpleProvisionStatusService.updateStatusReferential();
-			bodaccStatusService.updateBodaccStatusReferential();
 			assignationTypeService.updateAssignationTypes();
 			provisionScreenTypeService.updateScreenTypes();
 		} catch (Exception e) {

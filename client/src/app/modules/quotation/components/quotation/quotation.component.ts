@@ -16,6 +16,7 @@ import { EntityType } from 'src/app/routing/search/EntityType';
 import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
+import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN } from '../../../../libs/Constants';
 import { replaceDocument } from '../../../../libs/DocumentHelper';
 import { formatDateFrance } from '../../../../libs/FormatHelper';
@@ -78,7 +79,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   selectedTabIndex = 0;
   selectedTabIndexAsso = 0;
 
-  @ViewChild('tabs', { static: false }) tabs: any;
   @ViewChild(OrderingCustomerComponent) orderingCustomerComponent: OrderingCustomerComponent | undefined;
   @ViewChild(QuotationManagementComponent) quotationManagementComponent: QuotationManagementComponent | undefined;
   @ViewChildren(ProvisionItemComponent) provisionItemComponents: any;
@@ -118,6 +118,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private invoiceSearchResultService: InvoiceSearchResultService,
     private habilitationsService: HabilitationsService,
     public associatePaymentDialog: MatDialog,
+    private userPreferenceService: UserPreferenceService,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   quotationForm = this.formBuilder.group({});
@@ -152,10 +153,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           if (instanceOfCustomerOrder(this.quotation) && !this.isForIntegration)
             this.appService.changeHeaderTitle("Commande " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
               (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : "") + (this.quotation.isGifted ? (" - Offerte") : ""));
-          this.toggleTabs();
           this.setOpenStatus();
           this.checkAffaireAssignation();
           this.updateDocumentsEvent.next(this.quotation);
+
+          this.restoreTab();
+          this.restoreTabAsso();
 
           // In case of integration, put screen on right provision
           if (this.inputProvision) {
@@ -175,10 +178,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       this.appService.changeHeaderTitle("Devis");
       this.quotationService.getQuotation(this.idQuotation).subscribe(response => {
         this.quotation = response;
+
+        this.restoreTab();
+        this.restoreTabAsso();
+
         if (instanceOfQuotation(this.quotation))
           this.appService.changeHeaderTitle("Devis " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
             (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
-        this.toggleTabs();
         this.setOpenStatus();
         this.updateDocumentsEvent.next(this.quotation);
       })
@@ -199,11 +205,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   ngOnDestroy() {
     this.saveObservableSubscription.unsubscribe();
-  }
-
-  toggleTabs() {
-    if (this.tabs != undefined)
-      this.tabs.realignInkBar();
   }
 
   canOfferCustomerOrder() {
@@ -359,7 +360,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.quotation = {} as IQuotation;
     this.setOpenStatus();
     this.appService.changeHeaderTitle(this.instanceOfCustomerOrder ? "Nouvelle commande" : "Nouveau devis");
-    this.toggleTabs();
   }
 
   openSearch() {
@@ -785,9 +785,23 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return true;
   }
 
+  //Tabs management
   changeTab(event: any) {
+    this.userPreferenceService.setUserTabsSelectionIndex('quotation', event.index);
     if (!this.quotation.assoAffaireOrders && event && event.tab && event.tab.textLabel == "Prestations")
       this.addAffaire();
+  }
+
+  restoreTab() {
+    this.selectedTabIndex = this.userPreferenceService.getUserTabsSelectionIndex('quotation');
+  }
+
+  changeTabAsso(event: any) {
+    this.userPreferenceService.setUserTabsSelectionIndex('quotation-asso', event.index);
+  }
+
+  restoreTabAsso() {
+    this.selectedTabIndexAsso = this.userPreferenceService.getUserTabsSelectionIndex('quotation-asso');
   }
 
   generateQuotationMail() {

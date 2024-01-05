@@ -12,8 +12,8 @@ export class QuotationReportingService extends AppRestService<QuotationReporting
     super(http, "reporting");
   }
 
-  getQuotationReporting() {
-    return this.getList(new HttpParams(), "quotation");
+  getQuotationReporting(columns: string[]) {
+    return this.getList(new HttpParams().set("columns", columns.join(",")), "quotation");
   }
 
 }

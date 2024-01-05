@@ -433,8 +433,6 @@ public class NotificationServiceImpl implements NotificationService {
     private boolean isProvisionClosed(Provision provision) {
         if (provision.getAnnouncement() != null)
             return provision.getAnnouncement().getAnnouncementStatus().getIsCloseState();
-        if (provision.getBodacc() != null)
-            return provision.getBodacc().getBodaccStatus().getIsCloseState();
         if (provision.getSimpleProvision() != null)
             return provision.getSimpleProvision().getSimpleProvisionStatus().getIsCloseState();
         if (provision.getFormalite() != null)
@@ -447,8 +445,6 @@ public class NotificationServiceImpl implements NotificationService {
     private boolean isProvisionOpen(Provision provision) {
         if (provision.getAnnouncement() != null)
             return provision.getAnnouncement().getAnnouncementStatus().getIsOpenState();
-        if (provision.getBodacc() != null)
-            return provision.getBodacc().getBodaccStatus().getIsOpenState();
         if (provision.getSimpleProvision() != null)
             return provision.getSimpleProvision().getSimpleProvisionStatus().getIsOpenState();
         if (provision.getFormalite() != null)

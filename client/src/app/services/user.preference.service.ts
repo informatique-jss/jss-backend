@@ -43,16 +43,16 @@ export class UserPreferenceService {
   }
 
   // User column display
-  setUserDisplayColumnsForTable(columns: SortTableColumn[], tableName: string) {
+  setUserDisplayColumnsForTable<T>(columns: SortTableColumn<T>[], tableName: string) {
     if (columns && tableName)
       localStorage.setItem('table-columns' + tableName, JSON.stringify(columns));
   }
 
-  getUserDisplayColumnsForTable(tableName: string): SortTableColumn[] {
+  getUserDisplayColumnsForTable<T>(tableName: string): SortTableColumn<T>[] {
     if (tableName) {
       let value = localStorage.getItem('table-columns' + tableName);
       if (value) {
-        let list = JSON.parse(value!) as SortTableColumn[];
+        let list = JSON.parse(value!) as SortTableColumn<T>[];
         if (list)
           return list;
       }
@@ -75,7 +75,39 @@ export class UserPreferenceService {
           return list;
       }
     }
-    return [];
+    return undefined;
+  }
+
+  // User tab selection index display
+  setUserTabsSelectionIndex(tabsName: string, index: number) {
+    if (tabsName)
+      localStorage.setItem('tabs-index' + tabsName, index + "");
+  }
+
+  getUserTabsSelectionIndex(tabsName: string): number {
+    if (tabsName) {
+      let value = localStorage.getItem('tabs-index' + tabsName);
+      if (value) {
+        return parseInt(value);
+      }
+    }
+    return 0;
+  }
+
+  // User provision selection display
+  setUserExpensionPanelSelectionId(expensionPanelName: string, id: number) {
+    if (expensionPanelName)
+      localStorage.setItem('expension-panel' + expensionPanelName, id + "");
+  }
+
+  getUserExpensionPanelSelectionId(expensionPanelName: string): number {
+    if (expensionPanelName) {
+      let value = localStorage.getItem('expension-panel' + expensionPanelName);
+      if (value) {
+        return parseInt(value);
+      }
+    }
+    return 0;
   }
 
   // Dark mode

@@ -56,7 +56,7 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	e2.id as salesEmployeeId, " +
                         " 	min(co2.created_date) as firstOrderDay, " +
                         " 	max(co2.created_date) as lastOrderDay,  " +
-                        " 	min(a1.datetime) as createdDateDay, " +
+                        " 	min(a1.created_date) as createdDateDay, " +
                         " 	max(tf2.followup_date) as lastResponsableFollowupDate , " +
                         " 	sum(nbr_for.announcementJssNbr) as announcementJssNbr, " +
                         " 	sum(nbr_for.announcementJssNbr) as announcementConfrereNbr, " +
@@ -85,9 +85,8 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " left join customer_order co2 on " +
                         " 	co2.id_responsable = r.id and  co2.created_date>=:startDate and co2.created_date<=:endDate "
                         +
-                        " left join audit a1 on " +
-                        " 	a1.field_name = 'id' " +
-                        " 	and a1.entity = 'Tiers' " +
+                        " left join index_entity a1 on " +
+                        " 	 a1.entity_type = 'Tiers' " +
                         " 	and a1.entity_id = t.id " +
                         " left join tiers_followup tf2 on " +
                         " 	tf2.id_responsable = r.id " +

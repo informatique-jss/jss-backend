@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.reporting.service;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,19 @@ public class ProvisionProductionReportingServiceImpl implements ProvisionProduct
     @Autowired
     ProvisionProductionReportingRepository provisionProductionReportingRepository;
 
+    @Autowired
+    ReportingHelper<IProvisionProductionReporting> reportingHelper;
+
     @Override
-    public List<IProvisionProductionReporting> getProvisionProductionReporting() throws OsirisException {
-        return provisionProductionReportingRepository.getProvisionProductionReporting();
+    public ArrayList<HashMap<String, String>> getProvisionProductionReporting(ArrayList<String> columns)
+            throws OsirisException {
+        return reportingHelper.filterOutputColumns(
+                provisionProductionReportingRepository.getProvisionProductionReporting(), columns,
+                IProvisionProductionReporting.class.getDeclaredMethods());
     }
 
+    @Override
+    public ArrayList<HashMap<String, String>> getFakeData() {
+        return reportingHelper.getFakeData(IProvisionProductionReporting.class.getDeclaredMethods());
+    }
 }

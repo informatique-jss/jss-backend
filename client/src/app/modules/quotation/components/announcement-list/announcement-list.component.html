@@ -4,15 +4,18 @@
       <tr>
         <td>
           <select-provision-stauts [(model)]="announcementSearch.announcementStatus" label="Statut"
-            [form]="announcementListForm" propertyName="paymentWay" [isMandatory]="false" [loadBodacc]="false"
-            [loadDomiciliation]="false" [loadFormalite]="false" [loadSimpleprovision]="false">
+            [form]="announcementListForm" propertyName="paymentWay" [isMandatory]="false" [loadDomiciliation]="false"
+            [loadFormalite]="false" [loadSimpleprovision]="false">
           </select-provision-stauts>
         </td>
         <td>
-          <generic-date-range-picker [(modelStart)]="announcementSearch.startDate"
-            [(modelEnd)]="announcementSearch.endDate" label="Plage de recherche" [form]="announcementListForm"
-            propertyNameStart="startDate" propertyNameEnd="endDate">
-          </generic-date-range-picker>
+          <generic-datepicker [(model)]="announcementSearch.startDate" label="Date de début"
+            [form]="announcementListForm" propertyName="startDate" [isMandatory]="false"
+            [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td>
+          <generic-datepicker [(model)]="announcementSearch.endDate" label="Date de fin" [form]="announcementListForm"
+            propertyName="endDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
         </td>
         <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchAnnouncements()" class="add-button">
@@ -22,7 +25,7 @@
       </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="announcements" tableName="Annonces"
-      [displayTotalLines]="true" *ngIf="displayedColumns && displayedColumns.length>0 ">
+      [displayTotalLines]="true" *ngIf="displayedColumns && displayedColumns.length>0 " [noMaxHeight]="true">
     </sort-table>
   </div>
 </div>

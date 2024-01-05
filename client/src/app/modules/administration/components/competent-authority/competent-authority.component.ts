@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
@@ -12,6 +13,7 @@ import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payme
 import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { COMPETENT_AUTHORITY_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { CompetentAuthority } from '../../../miscellaneous/model/CompetentAuthority';
 import { CompetentAuthorityType } from '../../../miscellaneous/model/CompetentAuthorityType';
 import { CompetentAuthorityService } from '../../../miscellaneous/services/competent.authority.service';
@@ -29,7 +31,9 @@ export class CompetentAuthorityComponent implements OnInit {
     private constantService: ConstantService,
     protected activatedRoute: ActivatedRoute,
     private appService: AppService,
-    protected paymentTypeService: PaymentTypeService,) {
+    protected paymentTypeService: PaymentTypeService,
+    private userPreferenceService: UserPreferenceService
+  ) {
   }
 
   competentAuthorities: CompetentAuthority[] = [];
@@ -37,7 +41,7 @@ export class CompetentAuthorityComponent implements OnInit {
   searchText: string = "";
   selectedcompetentAuthority: CompetentAuthority | undefined;
   selectedCompetentAuthorityType: CompetentAuthorityType | undefined;
-  displayedColumns: SortTableColumn[] = [];
+  displayedColumns: SortTableColumn<CompetentAuthority>[] = [];
   editMode: boolean = false;
   selectedCompetentAuthorityId: number | undefined;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
@@ -52,6 +56,9 @@ export class CompetentAuthorityComponent implements OnInit {
       this.appService.changeHeaderTitle("Autorités compétentes");
 
     this.selectedCompetentAuthorityId = this.activatedRoute.snapshot.params.id;
+    if (!this.selectedCompetentAuthorityId)
+      this.selectedCompetentAuthorityId = this.userPreferenceService.getUserTabsSelectionIndex('competent-authority-selected');
+
     if (this.idCompetentAuthority)
       this.selectedCompetentAuthorityId = this.idCompetentAuthority;
 
@@ -62,10 +69,10 @@ export class CompetentAuthorityComponent implements OnInit {
     }
 
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);
-    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle" } as SortTableColumn);
-    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
-    this.displayedColumns.push({ id: "competentAuthorityType", fieldName: "competentAuthorityType.label", label: "Type" } as SortTableColumn);
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn<CompetentAuthority>);
+    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle" } as SortTableColumn<CompetentAuthority>);
+    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn<CompetentAuthority>);
+    this.displayedColumns.push({ id: "competentAuthorityType", fieldName: "competentAuthorityType.label", label: "Type" } as SortTableColumn<CompetentAuthority>);
 
     this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
       if (response)
@@ -91,6 +98,8 @@ export class CompetentAuthorityComponent implements OnInit {
   selectCompetentAuthority(element: CompetentAuthority) {
     this.selectedcompetentAuthority = element;
     this.selectedCompetentAuthorityId = element.id;
+    this.userPreferenceService.setUserTabsSelectionIndex('competent-authority-selected', this.selectedCompetentAuthorityId!);
+    this.restoreTab();
     this.getCitiesForCurrentCompetentAuthority();
     if (!this.idCompetentAuthority)
       this.appService.changeHeaderTitle(element.label);
@@ -201,6 +210,16 @@ export class CompetentAuthorityComponent implements OnInit {
         };
       return null;
     };
+  }
+
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('competent-authority', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('competent-authority');
   }
 
 }

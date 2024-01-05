@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AFFAIRE_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Affaire } from '../../model/Affaire';
 import { AffaireSearch } from '../../model/AffaireSearch';
 import { OrderingSearch } from '../../model/OrderingSearch';
@@ -31,6 +33,7 @@ export class AffaireComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private appService: AppService,
     private affaireService: AffaireService,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   ngOnInit() {
@@ -40,6 +43,7 @@ export class AffaireComponent implements OnInit {
       this.affaireService.getAffaire(idAffaire).subscribe(response => {
         if (response) {
           this.affaire = response;
+          this.restoreTab();
           this.orderingSearch.affaires = [this.affaire];
           this.quotationSearch.affaires = [this.affaire];
           this.appService.changeHeaderTitle("Affaire - " + (this.affaire.denomination ? this.affaire.denomination : this.affaire.firstname + " " + this.affaire.lastname));
@@ -94,6 +98,16 @@ export class AffaireComponent implements OnInit {
     if (addAffaireComponentStatus)
       return true;
     return false;
+  }
+
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('affaire', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('affaire');
   }
 
 }

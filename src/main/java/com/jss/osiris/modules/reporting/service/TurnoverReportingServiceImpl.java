@@ -1,7 +1,8 @@
 package com.jss.osiris.modules.reporting.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,12 +21,21 @@ public class TurnoverReportingServiceImpl implements TurnoverReportingService {
     @Autowired
     ConstantService constantService;
 
+    @Autowired
+    ReportingHelper<ITurnoverReporting> reportingHelper;
+
     @Override
-    public List<ITurnoverReporting> getTurnoverReporting() throws OsirisException {
-        return turnoverReportingRepository.getTurnoverReporting(Arrays.asList(
+    public ArrayList<HashMap<String, String>> getTurnoverReporting(ArrayList<String> columns) throws OsirisException {
+        return reportingHelper.filterOutputColumns(turnoverReportingRepository.getTurnoverReporting(Arrays.asList(
                 constantService.getInvoiceStatusPayed().getId(), constantService.getInvoiceStatusSend().getId(),
                 constantService.getInvoiceStatusCreditNoteEmited().getId(),
-                constantService.getInvoiceStatusCancelled().getId()));
+                constantService.getInvoiceStatusCancelled().getId())), columns,
+                ITurnoverReporting.class.getDeclaredMethods());
+    }
+
+    @Override
+    public ArrayList<HashMap<String, String>> getFakeData() {
+        return reportingHelper.getFakeData(ITurnoverReporting.class.getDeclaredMethods());
     }
 
 }

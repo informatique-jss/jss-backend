@@ -28,8 +28,8 @@ export class AutomaticMailListComponent implements OnInit {
 
   customerMails: CustomerMail[] = [];
 
-  displayedColumns: SortTableColumn[] = [];
-  tableActions: SortTableAction[] = [] as Array<SortTableAction>;
+  displayedColumns: SortTableColumn<CustomerMail>[] = [];
+  tableActions: SortTableAction<CustomerMail>[] = [] as Array<SortTableAction<CustomerMail>>;
   searchText: string | undefined;
 
   filterValue: string = "";
@@ -64,33 +64,33 @@ export class AutomaticMailListComponent implements OnInit {
     this.setDataTable();
 
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "createdDateTime", fieldName: "createdDateTime", label: "Créé le", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "isSent", fieldName: "isSent", label: "Envoyé ?", valueFonction: (element: any) => { return element.isSent ? "Oui" : "Non" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "sentTo", fieldName: "sentTo", label: "Envoyé à", valueFonction: this.getSentToLabel } as SortTableColumn);
-    this.displayedColumns.push({ id: "sentCc", fieldName: "sentCc", label: "Copie à", valueFonction: this.getSentCcLabel } as SortTableColumn);
-    this.displayedColumns.push({ id: "subject", fieldName: "subject", label: "Objet" } as SortTableColumn);
+    this.displayedColumns.push({ id: "createdDateTime", fieldName: "createdDateTime", label: "Créé le", valueFonction: formatDateTimeForSortTable } as SortTableColumn<CustomerMail>);
+    this.displayedColumns.push({ id: "isSent", fieldName: "isSent", label: "Envoyé ?", valueFonction: (element: CustomerMail, column: SortTableColumn<CustomerMail>) => { return element.isSent ? "Oui" : "Non" } } as SortTableColumn<CustomerMail>);
+    this.displayedColumns.push({ id: "sentTo", fieldName: "sentTo", label: "Envoyé à", valueFonction: this.getSentToLabel } as SortTableColumn<CustomerMail>);
+    this.displayedColumns.push({ id: "sentCc", fieldName: "sentCc", label: "Copie à", valueFonction: this.getSentCcLabel } as SortTableColumn<CustomerMail>);
+    this.displayedColumns.push({ id: "subject", fieldName: "subject", label: "Objet" } as SortTableColumn<CustomerMail>);
 
     this.tableActions.push({
-      actionIcon: "visibility", actionName: "Prévisualiser le mail", actionClick: (action: SortTableAction, element: any): void => {
+      actionIcon: "visibility", actionName: "Prévisualiser le mail", actionClick: (column: SortTableAction<CustomerMail>, element: CustomerMail, event: any): void => {
         let customerMail = element as CustomerMail;
         if (customerMail && customerMail.attachments)
           for (let attachment of customerMail.attachments)
             if (attachment.attachmentType && attachment.attachmentType.id == this.attachmentTypeAutomaticMail.id)
               this.uploadAttachmentService.previewAttachment(attachment);
       }, display: true
-    } as SortTableAction);
+    } as SortTableAction<CustomerMail>);
     this.tableActions.push({
-      actionIcon: "download", actionName: "Télécharger le mail", actionClick: (action: SortTableAction, element: any): void => {
+      actionIcon: "download", actionName: "Télécharger le mail", actionClick: (column: SortTableAction<CustomerMail>, element: CustomerMail, event: any): void => {
         let customerMail = element as CustomerMail;
         if (customerMail && customerMail.attachments)
           for (let attachment of customerMail.attachments)
             if (attachment.attachmentType && attachment.attachmentType.id == this.attachmentTypeAutomaticMail.id)
               this.uploadAttachmentService.downloadAttachment(attachment);
       }, display: true
-    } as SortTableAction);
+    } as SortTableAction<CustomerMail>);
   }
 
-  getSentToLabel(element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string {
+  getSentToLabel(element: CustomerMail, column: SortTableColumn<CustomerMail>): string {
     if (element && element.sendToMe && element.sendToMeEmployee)
       return element.sendToMeEmployee.mail;
     if (element && column && element.mailComputeResult && element.mailComputeResult.recipientsMailTo)
@@ -98,7 +98,7 @@ export class AutomaticMailListComponent implements OnInit {
     return "";
   }
 
-  getSentCcLabel(element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string {
+  getSentCcLabel(element: CustomerMail, column: SortTableColumn<CustomerMail>): string {
     if (element && column && element.mailComputeResult && element.mailComputeResult.recipientsMailCc)
       return element.mailComputeResult.recipientsMailCc.map((mail: { mail: any; }) => mail.mail).join(", ");
     return "";

@@ -15,9 +15,12 @@
             propertyName="label" [isMandatory]="false" [isDisabled]="false"></generic-input>
         </td>
         <td>
-          <generic-date-range-picker [(modelStart)]="transfertSearch.startDate" [(modelEnd)]="transfertSearch.endDate"
-            label="Plage de recherche" [form]="transfertForm" propertyNameStart="startDate" propertyNameEnd="endDate">
-          </generic-date-range-picker>
+          <generic-datepicker [(model)]="transfertSearch.startDate" label="Date de début" [form]="transfertForm"
+            propertyName="startDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td>
+          <generic-datepicker [(model)]="transfertSearch.endDate" label="Date de fin" [form]="transfertForm"
+            propertyName="endDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
         </td>
         <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchTransferts()" class="add-button">
@@ -38,7 +41,7 @@
       </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="transfers" tableName="Virements"
-      [displayTotalLines]="true" *ngIf="displayedColumns && displayedColumns.length>0 ">
+      [isSmallestHeight]="true" [displayTotalLines]="true" *ngIf="displayedColumns && displayedColumns.length>0 ">
     </sort-table>
   </div>
 </div>

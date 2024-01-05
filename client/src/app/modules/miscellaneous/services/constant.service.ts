@@ -428,30 +428,6 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.mailRedirectionTypeOther;
   }
 
-  getBodaccPublicationTypeMerging() {
-    return this.constant.bodaccPublicationTypeMerging;
-  }
-
-  getBodaccPublicationTypeSplit() {
-    return this.constant.bodaccPublicationTypeSplit;
-  }
-
-  getBodaccPublicationTypePartialSplit() {
-    return this.constant.bodaccPublicationTypePartialSplit;
-  }
-
-  getBodaccPublicationTypePossessionDispatch() {
-    return this.constant.bodaccPublicationTypePossessionDispatch;
-  }
-
-  getBodaccPublicationTypeEstateRepresentativeDesignation() {
-    return this.constant.bodaccPublicationTypeEstateRepresentativeDesignation;
-  }
-
-  getBodaccPublicationTypeSaleOfBusiness() {
-    return this.constant.bodaccPublicationTypeSaleOfBusiness;
-  }
-
   getActTypeSeing() {
     return this.constant.actTypeSeing;
   }

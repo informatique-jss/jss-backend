@@ -1,5 +1,5 @@
 <form [formGroup]="announcementForm" *ngIf=" announcement">
-  <mat-tab-group animationDuration="0ms" #tabs>
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab label="Informations générales">
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
         <div class="form-div">
@@ -240,6 +240,7 @@
               <li>&#123;civilite&#125;</li>
               <li>&#123;adresse&#125;</li>
               <li>&#123;denomination&#125;</li>
+              <li>&#123;sigle&#125;</li>
               <li>&#123;ville&#125;</li>
               <li>&#123;codePostal&#125;</li>
               <li>&#123;activitePrincipale&#125;</li>
@@ -269,14 +270,20 @@
       </provision-payment>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="announcement && announcement.id">
-      <history [entity]="announcement" [entityType]="ANNOUNCEMENT_ENTITY_TYPE" [parseTypeList]="announcementStatus">
-      </history>
+      <ng-template matTabContent>
+        <history [entity]="announcement" [entityType]="ANNOUNCEMENT_ENTITY_TYPE" [parseTypeList]="announcementStatus">
+        </history>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Historique (prestation)" *ngIf="provision && provision.id">
-      <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
+      <ng-template matTabContent>
+        <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Débours" *ngIf=" announcement && announcement.id && canAddNewInvoice()">
-      <debour [provision]="provision"></debour>
+      <ng-template matTabContent>
+        <debour [provision]="provision"></debour>
+      </ng-template>
     </mat-tab>
   </mat-tab-group>
 </form>

@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Civility } from 'src/app/modules/miscellaneous/model/Civility';
@@ -7,6 +8,7 @@ import { CityService } from 'src/app/modules/miscellaneous/services/city.service
 import { CivilityService } from 'src/app/modules/miscellaneous/services/civility.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { DOMICILIATION_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { BuildingDomiciliation } from '../../model/BuildingDomiciliation';
 import { Domiciliation } from '../../model/Domiciliation';
 import { DomiciliationContractType } from '../../model/DomiciliationContractType';
@@ -32,8 +34,6 @@ export class DomiciliationComponent implements OnInit {
   @Input() isStatusOpen: boolean = true;
   @Input() editMode: boolean = false;
   @Input() quotation: IQuotation | undefined;
-
-  @ViewChild('tabs', { static: false }) tabs: any;
 
   DOMICILIATION_ENTITY_TYPE = DOMICILIATION_ENTITY_TYPE;
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
@@ -62,6 +62,7 @@ export class DomiciliationComponent implements OnInit {
     private constantService: ConstantService,
     private mailRedirectionTypeService: MailRedirectionTypeService,
     protected civilityService: CivilityService,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   ngOnInit() {
@@ -108,7 +109,6 @@ export class DomiciliationComponent implements OnInit {
       if (this.domiciliation && (this.domiciliation.domiciliationContractType == null || this.domiciliation.domiciliationContractType == undefined))
         this.domiciliation.domiciliationContractType = this.contractTypes[0];
       this.domiciliationForm.markAllAsTouched();
-      this.toggleTabs();
     }
   }
 
@@ -122,11 +122,6 @@ export class DomiciliationComponent implements OnInit {
     if (this.domiciliation.startDate)
       this.domiciliation.startDate = new Date(this.domiciliation.startDate.setHours(12));
     return this.domiciliationForm.valid;
-  }
-
-  toggleTabs() {
-    if (this.tabs != undefined)
-      this.tabs.realignInkBar();
   }
 
   mustDecribeAdresse(): boolean {
@@ -256,6 +251,16 @@ export class DomiciliationComponent implements OnInit {
 
   provisionChangeFunction() {
     this.provisionChange.emit(this.provision);
+  }
+
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('domiciliation', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('domiciliation');
   }
 
 }

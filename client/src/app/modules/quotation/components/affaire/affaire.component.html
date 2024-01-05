@@ -1,4 +1,4 @@
-<mat-tab-group animationDuration="0ms" #tabs [selectedIndex]="0">
+<mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
   <mat-tab label="Affaire">
     <div class="mat-elevation-z2 form-div">
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
@@ -7,27 +7,37 @@
     </div>
   </mat-tab>
   <mat-tab label="Devis" *ngIf="affaire && affaire.id ">
-    <quotation-list class="integration-component" [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
-    </quotation-list>
+    <ng-template matTabContent>
+      <quotation-list class="integration-component" [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
+      </quotation-list>
+    </ng-template>
   </mat-tab>
   <mat-tab label="Commandes" *ngIf="affaire && affaire.id ">
-    <ordering-list class="integration-component" [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
-    </ordering-list>
+    <ng-template matTabContent>
+      <ordering-list class="integration-component" [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
+      </ordering-list>
+    </ng-template>
   </mat-tab>
   <mat-tab label="Prestations" *ngIf="affaire && affaire.id">
-    <provision-list class="integration-component" *ngIf="this.provisionSearch.affaire" [affaireSearch]="provisionSearch"
-      [isForTiersIntegration]="true">
-    </provision-list>
+    <ng-template matTabContent>
+      <provision-list class="integration-component" *ngIf="this.provisionSearch.affaire"
+        [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
+      </provision-list>
+    </ng-template>
   </mat-tab>
   <mat-tab label="Suivi" *ngIf="affaire && affaire.id">
-    <tiers-followup [affaire]="affaire" [editMode]="true"></tiers-followup>
+    <ng-template matTabContent>
+      <tiers-followup [affaire]="affaire" [editMode]="true"></tiers-followup>
+    </ng-template>
   </mat-tab>
   <mat-tab label="Documents" *ngIf="affaire && affaire.id">
     <attachments [entity]="affaire" [editMode]="editMode" [entityType]="AFFAIRE_ENTITY_TYPE.entityType">
     </attachments>
   </mat-tab>
   <mat-tab label="Historique" *ngIf="affaire && affaire.id">
-    <history [entity]="affaire" [entityType]="AFFAIRE_ENTITY_TYPE"></history>
+    <ng-template matTabContent>
+      <history [entity]="affaire" [entityType]="AFFAIRE_ENTITY_TYPE"></history>
+    </ng-template>
   </mat-tab>
 </mat-tab-group>
 
