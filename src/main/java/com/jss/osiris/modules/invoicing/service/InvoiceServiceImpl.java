@@ -646,7 +646,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         if (invoices != null && invoices.size() > 0)
             for (Invoice invoice : invoices) {
-                remindInvoice(invoice);
+                batchService.declareNewBatch(Batch.SEND_REMINDER_FOR_INVOICES, invoice.getId());
             }
     }
 
