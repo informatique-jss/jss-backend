@@ -121,7 +121,7 @@ export class ReportingComponent implements OnInit {
         this.columnsChange.emit(untranslateColumns);
       }
     }
-
+    this.restoreSettings = false;
   }
 
   refreshPivot() {

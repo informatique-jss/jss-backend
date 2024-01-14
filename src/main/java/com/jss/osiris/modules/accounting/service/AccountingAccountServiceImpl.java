@@ -167,8 +167,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 accountingAccountProduct
                                 .setPrincipalAccountingAccount(constantService.getPrincipalAccountingAccountProduct());
                 accountingAccountProduct.setAccountingAccountSubNumber(maxSubAccount);
-                accountingAccountProduct.setLabel(
-                                "Produit - " + (billingType.getLabel() != null ? billingType.getLabel() : ""));
+                accountingAccountProduct.setLabel((billingType.getLabel() != null ? billingType.getLabel() : ""));
                 addOrUpdateAccountingAccount(accountingAccountProduct);
                 accountingAccountBinome.setAccountingAccountProduct(accountingAccountProduct);
 
@@ -177,7 +176,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                                 .setPrincipalAccountingAccount(constantService.getPrincipalAccountingAccountCharge());
                 accountingAccountCharge.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountCharge
-                                .setLabel("Charge - " + (billingType.getLabel() != null ? billingType.getLabel() : ""));
+                                .setLabel((billingType.getLabel() != null ? billingType.getLabel() : ""));
                 addOrUpdateAccountingAccount(accountingAccountCharge);
                 accountingAccountBinome.setAccountingAccountCharge(accountingAccountCharge);
 

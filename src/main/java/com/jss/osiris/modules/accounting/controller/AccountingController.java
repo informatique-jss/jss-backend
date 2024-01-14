@@ -3,7 +3,6 @@ package com.jss.osiris.modules.accounting.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -113,7 +112,6 @@ public class AccountingController {
         for (AccountingRecord accountingRecord : accountingRecords) {
             if (accountingRecord.getId() != null
                     || accountingRecord.getAccountingDateTime() != null
-                    || accountingRecord.getOperationDateTime() != null
                     || accountingRecord.getIsTemporary() != null
                     || accountingRecord.getInvoiceItem() != null
                     || accountingRecord.getInvoice() != null
@@ -124,7 +122,7 @@ public class AccountingController {
 
             validationHelper.validateReferential(accountingRecord.getAccountingAccount(), true, "getAccountingAccount");
             validationHelper.validateReferential(accountingRecord.getAccountingJournal(), true, "getAccountingJournal");
-            validationHelper.validateDate(accountingRecord.getManualAccountingDocumentDate(), true,
+            validationHelper.validateDateTime(accountingRecord.getOperationDateTime(), true,
                     "ManualAccountingDocumentDate");
             validationHelper.validateString(accountingRecord.getManualAccountingDocumentNumber(), true, 150,
                     "ManualAccountingDocumentNumber");
@@ -237,12 +235,6 @@ public class AccountingController {
                 && accountingRecordSearch.getConfrereId() == null) {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
                 throw new OsirisValidationException("StartDate or EndDate");
-
-            Duration duration = Duration.between(accountingRecordSearch.getStartDate(),
-                    accountingRecordSearch.getEndDate());
-
-            if (duration.toDays() > 32)
-                throw new OsirisClientMessageException("Veuillez choisir une période inférieure à un mois");
         }
 
         return new ResponseEntity<List<AccountingRecordSearchResult>>(
@@ -271,10 +263,6 @@ public class AccountingController {
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
         File grandLivre = accountingRecordService.getGrandLivreExport(accountingClass, startDate, endDate);
 
         if (grandLivre != null) {
@@ -317,11 +305,6 @@ public class AccountingController {
 
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
-
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
 
         File grandLivre = accountingRecordService.getJournalExport(accountingJournal, startDate, endDate);
 
@@ -367,11 +350,6 @@ public class AccountingController {
 
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
-
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
 
         File grandLivre = accountingRecordService.getAccountingAccountExport(accountingAccount, startDate, endDate);
 
@@ -451,12 +429,6 @@ public class AccountingController {
         if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(accountingRecordSearch.getStartDate(),
-                accountingRecordSearch.getEndDate());
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
-
         validationHelper.validateReferential(accountingRecordSearch.getPrincipalAccountingAccount(), false,
                 "PrincipalAccountingAccount");
 
@@ -488,10 +460,6 @@ public class AccountingController {
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("duration");
         File grandLivre = accountingRecordService.getAccountingBalanceExport(accountingClassId,
                 principalAccountingAccountId, accountingAccountId, startDate, endDate);
 
@@ -527,12 +495,6 @@ public class AccountingController {
         if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(accountingRecordSearch.getStartDate(),
-                accountingRecordSearch.getEndDate());
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
-
         validationHelper.validateReferential(accountingRecordSearch.getPrincipalAccountingAccount(), false,
                 "PrincipalAccountingAccount");
 
@@ -564,10 +526,6 @@ public class AccountingController {
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
         File grandLivre = accountingRecordService.getAccountingBalanceGeneraleExport(accountingClassId,
                 principalAccountingAccountId, accountingAccountId, startDate, endDate);
 
@@ -603,11 +561,6 @@ public class AccountingController {
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
-
         return new ResponseEntity<List<AccountingBalanceViewTitle>>(
                 accountingRecordService.getBilan(startDate, endDate), HttpStatus.OK);
     }
@@ -621,11 +574,6 @@ public class AccountingController {
 
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
-
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
 
         return new ResponseEntity<List<AccountingBalanceViewTitle>>(
                 accountingRecordService.getProfitAndLost(startDate, endDate), HttpStatus.OK);
@@ -643,10 +591,6 @@ public class AccountingController {
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
         File profitAndLost = accountingRecordService.getProfitLostExport(startDate, endDate);
 
         if (profitAndLost != null) {
@@ -683,10 +627,6 @@ public class AccountingController {
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
         File bilan = accountingRecordService.getBilanExport(startDate, endDate);
 
         if (bilan != null) {

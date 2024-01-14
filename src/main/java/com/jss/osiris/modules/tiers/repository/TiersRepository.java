@@ -80,11 +80,10 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          min(co2.created_date) as firstOrderDay, " +
                         "          max(co2.created_date) as lastOrderDay,  " +
                         "          min(a1.created_date) as createdDateDay, " +
-                        "          max(tf2.followup_date) as lastResponsableFollowupDate , " +
                         "          sum(nbr_for.announcementJssNbr) as announcementJssNbr, " +
-                        "          sum(nbr_for.announcementJssNbr) as announcementConfrereNbr, " +
-                        "          sum(nbr_for.announcementJssNbr) as announcementNbr, " +
-                        "          sum(nbr_for.announcementJssNbr) as formalityNbr, " +
+                        "          sum(nbr_for.announcementConfrereNbr) as announcementConfrereNbr, " +
+                        "          sum(nbr_for.announcementNbr) as announcementNbr, " +
+                        "          sum(nbr_for.formalityNbr) as formalityNbr, " +
                         "          concat(e2.firstname,' ',e2.lastname) as formalisteLabel, " +
                         "          e2.id as formalisteId, " +
                         "          blt.label as billingLabelType, " +
@@ -112,8 +111,6 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "  left join index_entity a1 on " +
                         "            a1.entity_type = 'Tiers' " +
                         "          and a1.entity_id = t.id " +
-                        "  left join tiers_followup tf2 on " +
-                        "          tf2.id_responsable = r.id or tf2.id_tiers = t.id " +
                         "  left join document d on " +
                         "          d.id_tiers= t.id " +
                         "          and d.id_document_type = :documentTypeBillingId " +
@@ -145,7 +142,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         " 	' ', " +
                         " 	e1.lastname)), concat(e2.firstname,' ',e2.lastname),e2.id," +
                         " 	 e1.id, " +
-                        " 	blt.label ,t.id " +
+                        " 	blt.label ,t.id   having :withNonNullTurnover=false or sum( (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) )>0 "
+                        +
                         "")
         List<ITiersSearchResult> searchTiers(@Param("tiersId") Integer tiersId,
                         @Param("salesEmployeeId") Integer salesEmployeeId,
@@ -153,6 +151,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         @Param("endDate") LocalDate endDate, @Param("label") String label,
                         @Param("jssSpelConfrereId") Integer jssSpelConfrereId,
                         @Param("invoiceStatusIds") List<Integer> invoiceStatusIds,
-                        @Param("documentTypeBillingId") Integer documentTypeBillingId);
+                        @Param("documentTypeBillingId") Integer documentTypeBillingId,
+                        @Param("withNonNullTurnover") Boolean withNonNullTurnover);
 
 }

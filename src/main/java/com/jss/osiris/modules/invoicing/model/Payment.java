@@ -23,6 +23,7 @@ import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
@@ -120,6 +121,10 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_competent_authority")
 	private CompetentAuthority competentAuthority;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_provider")
+	private Provider provider;
 
 	private Boolean isCancelled;
 
@@ -328,6 +333,14 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public Provider getProvider() {
+		return provider;
+	}
+
+	public void setProvider(Provider provider) {
+		this.provider = provider;
 	}
 
 }

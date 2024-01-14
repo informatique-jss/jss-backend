@@ -8,6 +8,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 public class TiersSearch {
     private IndexEntity tiers;
     private IndexEntity responsable;
+    private Boolean withNonNullTurnover;
     private Employee salesEmployee;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -59,6 +60,14 @@ public class TiersSearch {
 
     public void setResponsable(IndexEntity responsable) {
         this.responsable = responsable;
+    }
+
+    public Boolean getWithNonNullTurnover() {
+        return withNonNullTurnover;
+    }
+
+    public void setWithNonNullTurnover(Boolean withNonNullTurnover) {
+        this.withNonNullTurnover = withNonNullTurnover;
     }
 
 }

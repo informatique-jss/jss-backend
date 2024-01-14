@@ -171,7 +171,8 @@ export class RffListComponent implements OnInit {
           if (this.rffSearch.endDate)
             this.rffSearch.endDate = new Date(this.rffSearch.endDate);
           this.searchRff();
-        }
+        } else
+          this.rffSearch = {} as RffSearch;
       }
     });
   }

@@ -22,7 +22,7 @@ public interface AccountingRecordSearchResult {
 
   String getPrincipalAccountingAccountCode();
 
-  Integer getAccountingAccountSubNumber();
+  String getAccountingAccountSubNumber();
 
   String getAccountingAccountLabel();
 

@@ -139,6 +139,55 @@ public class QuotationServiceImpl implements QuotationService {
 
         // Check duplicate
         // Find first affaire customer order
+        // TODO findDuplicatesForQuotation(quotation);
+
+        // Complete provisions
+        boolean oneNewProvision = false;
+        if (quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
+                assoAffaireOrder.setQuotation(quotation);
+                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation, true);
+                if (assoAffaireOrder.getProvisions() != null)
+                    for (Provision provision : assoAffaireOrder.getProvisions())
+                        if (provision.getId() == null)
+                            oneNewProvision = true;
+            }
+
+        boolean isNewQuotation = quotation.getId() == null;
+        if (isNewQuotation) {
+            quotation.setCreatedDate(LocalDateTime.now());
+            quotation.setValidationToken(UUID.randomUUID().toString());
+            quotation = quotationRepository.save(quotation);
+        }
+
+        if (oneNewProvision)
+            quotation = quotationRepository.save(quotation);
+
+        pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
+        quotation = quotationRepository.save(quotation);
+
+        quotation = getQuotation(quotation.getId());
+
+        batchService.declareNewBatch(Batch.REINDEX_QUOTATION, quotation.getId());
+
+        if (isNewQuotation) {
+            notificationService.notifyNewQuotation(quotation);
+
+            List<CustomerOrderOrigin> origins = customerOrderOriginService
+                    .getByUsername(activeDirectoryHelper.getCurrentUsername());
+            if (origins != null && origins.size() == 1)
+                quotation.setCustomerOrderOrigin(origins.get(0));
+            else
+                quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
+
+            if (quotation.getCustomerOrderOrigin().getId()
+                    .equals(constantService.getCustomerOrderOriginWebSite().getId()))
+                mailHelper.sendQuotationCreationConfirmationToCustomer(quotation);
+        }
+        return quotation;
+    }
+
+    private void findDuplicatesForQuotation(Quotation quotation) throws OsirisDuplicateException {
         if (quotation.getId() == null && quotation.getAssoAffaireOrders() != null
                 && quotation.getAssoAffaireOrders().size() > 0) {
             QuotationSearch orderingSearch = new QuotationSearch();
@@ -193,51 +242,6 @@ public class QuotationServiceImpl implements QuotationService {
                 }
             }
         }
-
-        // Complete provisions
-        boolean oneNewProvision = false;
-        if (quotation.getAssoAffaireOrders() != null)
-            for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
-                assoAffaireOrder.setQuotation(quotation);
-                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation, true);
-                if (assoAffaireOrder.getProvisions() != null)
-                    for (Provision provision : assoAffaireOrder.getProvisions())
-                        if (provision.getId() == null)
-                            oneNewProvision = true;
-            }
-
-        boolean isNewQuotation = quotation.getId() == null;
-        if (isNewQuotation) {
-            quotation.setCreatedDate(LocalDateTime.now());
-            quotation.setValidationToken(UUID.randomUUID().toString());
-            quotation = quotationRepository.save(quotation);
-        }
-
-        if (oneNewProvision)
-            quotation = quotationRepository.save(quotation);
-
-        pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
-        quotation = quotationRepository.save(quotation);
-
-        quotation = getQuotation(quotation.getId());
-
-        batchService.declareNewBatch(Batch.REINDEX_QUOTATION, quotation.getId());
-
-        if (isNewQuotation) {
-            notificationService.notifyNewQuotation(quotation);
-
-            List<CustomerOrderOrigin> origins = customerOrderOriginService
-                    .getByUsername(activeDirectoryHelper.getCurrentUsername());
-            if (origins != null && origins.size() == 1)
-                quotation.setCustomerOrderOrigin(origins.get(0));
-            else
-                quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
-
-            if (quotation.getCustomerOrderOrigin().getId()
-                    .equals(constantService.getCustomerOrderOriginWebSite().getId()))
-                mailHelper.sendQuotationCreationConfirmationToCustomer(quotation);
-        }
-        return quotation;
     }
 
     @Override

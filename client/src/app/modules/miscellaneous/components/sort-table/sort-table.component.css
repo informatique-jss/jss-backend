@@ -28,15 +28,17 @@
 .export-icon {
   position: absolute;
   top: 3px;
-  right: 5px;
+  left: 5px;
   transform: scale(0.66);
+  z-index: 3;
 }
 
 .column-icon {
   position: absolute;
   top: 3px;
-  right: 30px;
+  left: 30px;
   transform: scale(0.66);
+  z-index: 3;
 }
 
 .column-content-icon {
@@ -49,8 +51,9 @@
 .column-icon-number {
   position: absolute;
   top: 18px;
-  right: -2px;
+  left: -2px;
   transform: scale(0.7);
+  z-index: 3;
 }
 
 td {

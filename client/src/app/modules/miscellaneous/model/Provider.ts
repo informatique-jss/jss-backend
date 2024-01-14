@@ -26,4 +26,5 @@ export interface Provider extends IReferential, IAttachment {
   paymentType: PaymentType;
   country: Country;
   city: City;
+  idAs400: number;
 }

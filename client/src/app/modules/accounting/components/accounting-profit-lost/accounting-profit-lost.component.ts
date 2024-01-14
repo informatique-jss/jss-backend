@@ -69,6 +69,19 @@ export class AccountingProfitLostComponent implements OnInit {
     return total;
   }
 
+  setCurentMonth() {
+    let d = new Date();
+    this.accountingBalanceSearch.startDate = new Date(d.getFullYear(), d.getMonth(), 1, 12, 0, 0);
+    let d2 = new Date();
+    this.accountingBalanceSearch.endDate = new Date(d2.getFullYear(), d2.getMonth() + 1, 0, 12, 0, 0);
+  }
+
+  setCurentFiscalYear() {
+    let d = new Date();
+    this.accountingBalanceSearch.startDate = new Date(d.getFullYear(), 0, 1, 12, 0, 0);
+    let d2 = new Date();
+    this.accountingBalanceSearch.endDate = new Date(d2.getFullYear() + 1, 0, 0, 12, 0, 0);
+  }
 
   dropTotalDiv(event: CdkDragEnd) {
     this.userPreferenceService.setUserTotalDivPosition(event.source.getFreeDragPosition());
