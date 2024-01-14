@@ -178,7 +178,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setCode(Batch.SEND_REMINDER_FOR_QUOTATION);
             batchSettings.setLabel("Relance par mail des devis");
             batchSettings.setFixedRate(60 * 1000);
-            batchSettings.setQueueSize(1);
+            batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
             batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
@@ -190,7 +190,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setCode(Batch.SEND_REMINDER_FOR_CUSTOMER_ORDER_DEPOSITS);
             batchSettings.setLabel("Relance par mail des acomptes de commande");
             batchSettings.setFixedRate(60 * 1000);
-            batchSettings.setQueueSize(1);
+            batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
             batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
@@ -202,7 +202,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setCode(Batch.SEND_REMINDER_FOR_INVOICES);
             batchSettings.setLabel("Relance par mail des factures non payées");
             batchSettings.setFixedRate(60 * 1000);
-            batchSettings.setQueueSize(1);
+            batchSettings.setQueueSize(5);
             batchSettings.setIsActive(true);
             batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);

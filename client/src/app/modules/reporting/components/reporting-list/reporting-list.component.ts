@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { EmployeeDialogComponent } from 'src/app/modules/miscellaneous/components/employee-dialog/employee-dialog.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -25,6 +25,7 @@ export class ReportingListComponent implements OnInit {
   filteredUserReportings: UserReporting[] | undefined;
   currentUserReporting: UserReporting | undefined;
   searchText: string = '';
+  reportingObservableRef: Subscription | undefined;
   refreshTable: Subject<void> = new Subject<void>();
 
   dataToDisplay: any | undefined;
@@ -80,7 +81,9 @@ export class ReportingListComponent implements OnInit {
 
   selectReporting(userReporting: UserReporting, columns: string[]) {
     this.currentUserReporting = userReporting;
-    this.reportingService.getDataset(userReporting.dataset, columns).subscribe(data => {
+    if (this.reportingObservableRef)
+      this.reportingObservableRef.unsubscribe();
+    this.reportingObservableRef = this.reportingService.getDataset(userReporting.dataset, columns).subscribe(data => {
       this.dataToDisplay = data;
       this.appService.changeHeaderTitle("Reporting - " + userReporting.name);
       this.reportingComponent?.refreshPivotWithData(this.dataToDisplay);

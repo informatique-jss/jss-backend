@@ -105,7 +105,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords) {
     Integer operationId = getNewTemporaryOperationId();
     for (AccountingRecord accountingRecord : accountingRecords) {
-      accountingRecord.setOperationDateTime(LocalDateTime.now());
+      if (accountingRecord.getOperationDateTime() == null)
+        accountingRecord.setOperationDateTime(LocalDateTime.now());
       accountingRecord.setTemporaryOperationId(operationId);
       accountingRecord.setIsTemporary(true);
       accountingRecord.setIsANouveau(false);

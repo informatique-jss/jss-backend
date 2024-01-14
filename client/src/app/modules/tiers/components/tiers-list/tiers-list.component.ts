@@ -57,7 +57,6 @@ export class TiersListComponent implements OnInit {
       this.displayedColumnsResponsables.push({ id: "firstOrderDay", fieldName: "firstOrderDay", label: "1ère commande", valueFonction: formatDateForSortTable } as SortTableColumn<ResponsableSearchResult>);
       this.displayedColumnsResponsables.push({ id: "lastOrderDay", fieldName: "lastOrderDay", label: "Dernière commande", valueFonction: formatDateForSortTable } as SortTableColumn<ResponsableSearchResult>);
       this.displayedColumnsResponsables.push({ id: "createdDateDay", fieldName: "createdDateDay", label: "Création", valueFonction: formatDateForSortTable } as SortTableColumn<ResponsableSearchResult>);
-      this.displayedColumnsResponsables.push({ id: "lastResponsableFollowupDate", fieldName: "lastResponsableFollowupDate", label: "Dernier suivi", valueFonction: formatDateForSortTable } as SortTableColumn<ResponsableSearchResult>);
 
       this.displayedColumnsResponsables.push({ id: "announcementJssNbr", fieldName: "announcementJssNbr", label: "Nbr annonces JSS" } as SortTableColumn<ResponsableSearchResult>);
       this.displayedColumnsResponsables.push({ id: "announcementConfrereNbr", fieldName: "announcementConfrereNbr", label: "Nbr annonces confrère" } as SortTableColumn<ResponsableSearchResult>);
@@ -96,7 +95,6 @@ export class TiersListComponent implements OnInit {
       this.displayedColumnsTiers.push({ id: "firstOrderDay", fieldName: "firstOrderDay", label: "1ère commande", valueFonction: formatDateForSortTable } as SortTableColumn<TiersSearchResult>);
       this.displayedColumnsTiers.push({ id: "lastOrderDay", fieldName: "lastOrderDay", label: "Dernière commande", valueFonction: formatDateForSortTable } as SortTableColumn<TiersSearchResult>);
       this.displayedColumnsTiers.push({ id: "createdDateDay", fieldName: "createdDateDay", label: "Création", valueFonction: formatDateForSortTable } as SortTableColumn<TiersSearchResult>);
-      this.displayedColumnsTiers.push({ id: "lastResponsableFollowupDate", fieldName: "lastResponsableFollowupDate", label: "Dernier suivi", valueFonction: formatDateForSortTable } as SortTableColumn<TiersSearchResult>);
 
       this.displayedColumnsTiers.push({ id: "announcementJssNbr", fieldName: "announcementJssNbr", label: "Nbr annonces JSS" } as SortTableColumn<TiersSearchResult>);
       this.displayedColumnsTiers.push({ id: "announcementConfrereNbr", fieldName: "announcementConfrereNbr", label: "Nbr annonces confrère" } as SortTableColumn<TiersSearchResult>);

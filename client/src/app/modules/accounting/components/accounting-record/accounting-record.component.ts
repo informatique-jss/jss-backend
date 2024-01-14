@@ -158,10 +158,6 @@ export class AccountingRecordComponent implements OnInit {
         this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", false, 10);
         return;
       }
-      if (this.tiersToDisplay == undefined && !this.accountingRecordSearch.accountingAccount && !this.accountingRecordSearch.accountingClass && !this.accountingRecordSearch.accountingJournal) {
-        this.appService.displaySnackBar("🙄 Merci de saisir au moins un critère de recherche", false, 10);
-        return;
-      }
     }
     if (this.accountingRecordSearch.startDate)
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
@@ -173,6 +169,20 @@ export class AccountingRecordComponent implements OnInit {
       this.computeBalanceAndDebitAndCreditAccumulation();
 
     });
+  }
+
+  setCurentMonth() {
+    let d = new Date();
+    this.accountingRecordSearch.startDate = new Date(d.getFullYear(), d.getMonth(), 1, 12, 0, 0);
+    let d2 = new Date();
+    this.accountingRecordSearch.endDate = new Date(d2.getFullYear(), d2.getMonth() + 1, 0, 12, 0, 0);
+  }
+
+  setCurentFiscalYear() {
+    let d = new Date();
+    this.accountingRecordSearch.startDate = new Date(d.getFullYear(), 0, 1, 12, 0, 0);
+    let d2 = new Date();
+    this.accountingRecordSearch.endDate = new Date(d2.getFullYear() + 1, 0, 0, 12, 0, 0);
   }
 
   computeBalanceAndDebitAndCreditAccumulation() {

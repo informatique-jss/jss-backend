@@ -29,9 +29,8 @@
               propertyName="manualAccountingDocumentNumber" [isMandatory]="true" [maxLength]="150"></generic-input>
           </td>
           <td>
-            <generic-datepicker [(model)]="accountingRecord.manualAccountingDocumentDate"
-              label="Date de la pièce comptable" [form]="accountingRecordForm"
-              propertyName="manualAccountingDocumentDate" [isMandatory]="true">
+            <generic-datepicker [(model)]="accountingRecord.operationDateTime" label="Date de l'opération"
+              [form]="accountingRecordForm" propertyName="operationDateTime" [isMandatory]="true">
             </generic-datepicker>
           </td>
         </tr>

@@ -208,10 +208,10 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
     }
 
     public Thread getTask(Batch batch, IOsirisThread thread) {
-        batch.setBatchStatus(batchStatusService.getBatchStatusByCode(BatchStatus.RUNNING));
-        batch.setStartDate(LocalDateTime.now());
-        addOrUpdateBatch(batch);
         return new Thread(() -> {
+            batch.setBatchStatus(batchStatusService.getBatchStatusByCode(BatchStatus.RUNNING));
+            batch.setStartDate(LocalDateTime.now());
+            addOrUpdateBatch(batch);
             try {
                 thread.executeTask(batch.getEntityId());
                 batch.setBatchStatus(batchStatusService.getBatchStatusByCode(BatchStatus.SUCCESS));

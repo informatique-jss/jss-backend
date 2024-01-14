@@ -58,8 +58,8 @@ public class ReportingHelper<T> {
                                     set.put(column, value.toString());
                             } catch (Exception e) {
                             }
-                        outResults.add(set);
                     }
+                    outResults.add(set);
                 }
             }
         }

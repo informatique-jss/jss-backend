@@ -28,6 +28,10 @@
                   <generic-datepicker [(model)]="tiersSearch.endDate" label="Date de fin" [form]="tiersSearchForm"
                     propertyName="endDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
                 </td>
+                <td>
+                  <generic-toggle [(model)]="tiersSearch.withNonNullTurnover" label="Avec un CA>0 ?"
+                    [form]="tiersSearchForm" propertyName="withNonNullTurnover"></generic-toggle>
+                </td>
                 <td class="fab-td-button">
                   <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchTiers()" class="add-button">
                     <mat-icon>search</mat-icon>
@@ -76,6 +80,10 @@
                   <generic-datepicker [(model)]="responsableSearch.endDate" label="Date de fin"
                     [form]="responsableSearchForm" propertyName="endDate" [isMandatory]="false"
                     [isDisabled]="false"></generic-datepicker>
+                </td>
+                <td>
+                  <generic-toggle [(model)]="responsableSearch.withNonNullTurnover" label="Avec un CA>0 ?"
+                    [form]="responsableSearchForm" propertyName="withNonNullTurnover"></generic-toggle>
                 </td>
                 <td class="fab-td-button">
                   <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchResponsables()"

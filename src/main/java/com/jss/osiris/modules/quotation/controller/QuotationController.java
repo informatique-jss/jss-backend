@@ -897,7 +897,7 @@ public class QuotationController {
     if (noticeTypes.getId() != null)
       validationHelper.validateReferential(noticeTypes, true, "noticeTypes");
     validationHelper.validateString(noticeTypes.getCode(), true, 20, "code");
-    validationHelper.validateString(noticeTypes.getLabel(), true, 100, "label");
+    validationHelper.validateString(noticeTypes.getLabel(), true, 200, "label");
 
     return new ResponseEntity<NoticeType>(noticeTypeService.addOrUpdateNoticeType(noticeTypes), HttpStatus.OK);
   }

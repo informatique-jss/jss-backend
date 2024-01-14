@@ -210,7 +210,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         customerOrder.setIsQuotation(false);
 
-        findDuplicatesForCustomerOrder(customerOrder);
+        // TODO findDuplicatesForCustomerOrder(customerOrder);
 
         if (customerOrder.getDocuments() != null)
             for (Document document : customerOrder.getDocuments()) {

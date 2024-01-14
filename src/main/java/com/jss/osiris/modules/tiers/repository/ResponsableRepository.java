@@ -57,11 +57,10 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	min(co2.created_date) as firstOrderDay, " +
                         " 	max(co2.created_date) as lastOrderDay,  " +
                         " 	min(a1.created_date) as createdDateDay, " +
-                        " 	max(tf2.followup_date) as lastResponsableFollowupDate , " +
                         " 	sum(nbr_for.announcementJssNbr) as announcementJssNbr, " +
-                        " 	sum(nbr_for.announcementJssNbr) as announcementConfrereNbr, " +
-                        " 	sum(nbr_for.announcementJssNbr) as announcementNbr, " +
-                        " 	sum(nbr_for.announcementJssNbr) as formalityNbr, " +
+                        " 	sum(nbr_for.announcementConfrereNbr) as announcementConfrereNbr, " +
+                        " 	sum(nbr_for.announcementNbr) as announcementNbr, " +
+                        " 	sum(nbr_for.formalityNbr) as formalityNbr, " +
                         " 	blt.label as billingLabelType, " +
                         " 	sum( (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutTax, " +
                         " 	sum( ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) as turnoverAmountWithTax, "
@@ -88,8 +87,6 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " left join index_entity a1 on " +
                         " 	 a1.entity_type = 'Tiers' " +
                         " 	and a1.entity_id = t.id " +
-                        " left join tiers_followup tf2 on " +
-                        " 	tf2.id_responsable = r.id " +
                         " left join document d on " +
                         " 	d.id_responsable = r.id " +
                         " 	and d.id_document_type = :documentTypeBillingId " +
@@ -128,7 +125,8 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	concat(e1.firstname, " +
                         " 	' ', " +
                         " 	e1.lastname)), " +
-                        " 	blt.label, e2.id ,t.id, r.id" +
+                        " 	blt.label, e2.id ,t.id, r.id having :withNonNullTurnover=false or sum( (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) )>0 "
+                        +
                         "")
         List<IResponsableSearchResult> searchResponsable(@Param("tiersId") Integer tiersId,
                         @Param("responsableId") Integer responsableId,
@@ -137,5 +135,6 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         @Param("endDate") LocalDate endDate, @Param("label") String label,
                         @Param("jssSpelConfrereId") Integer jssSpelConfrereId,
                         @Param("invoiceStatusIds") List<Integer> invoiceStatusIds,
-                        @Param("documentTypeBillingId") Integer documentTypeBillingId);
+                        @Param("documentTypeBillingId") Integer documentTypeBillingId,
+                        @Param("withNonNullTurnover") Boolean withNonNullTurnover);
 }

@@ -440,9 +440,7 @@ public class PaymentServiceImpl implements PaymentService {
                 for (IndexEntity foundEntity : correspondingEntities) {
                     if (foundEntity.getEntityType().equals(Payment.class.getSimpleName())) {
                         Payment foundPayment = getPayment(foundEntity.getEntityId());
-
-                        if (foundPayment.getInvoice() != null)
-                            associateOutboundCheckPayment(payment, foundPayment);
+                        associateOutboundCheckPayment(payment, foundPayment);
                     }
                 }
             }
@@ -688,7 +686,7 @@ public class PaymentServiceImpl implements PaymentService {
         Float inAmount = Math.round(inPayment.getPaymentAmount() * 100f) / 100f;
         Float checkAmount = Math.round(checkPayment.getPaymentAmount() * 100f) / 100f;
 
-        if (inAmount.equals(checkAmount) && checkPayment.getInvoice() != null) {
+        if (inAmount.equals(checkAmount)) {
             cancelPayment(inPayment);
             checkPayment.setOriginPayment(inPayment);
             addOrUpdatePayment(checkPayment);
@@ -1121,6 +1119,11 @@ public class PaymentServiceImpl implements PaymentService {
 
                 if (idToFind != null) {
                     tmpEntitiesFound = searchService.searchForEntitiesById(idToFind, entityTypesToSearch);
+                }
+                if ((tmpEntitiesFound == null || tmpEntitiesFound.size() == 0) && payment.getPaymentAmount() < 0) {
+                    // Try check on outbound payments
+                    tmpEntitiesFound = searchService.searchForEntities("\"checkNumber\":\"" + idToFind + "\"",
+                            Payment.class.getSimpleName(), true);
                 }
                 if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                     for (IndexEntity newEntity : tmpEntitiesFound) {

@@ -52,7 +52,7 @@ public interface BatchRepository extends CrudRepository<Batch, Integer> {
 
         @Query(nativeQuery = true, value = "" +
                         " select " +
-                        " 	date_trunc('hour' ,(b.created_date)) as dateTime , " +
+                        " 	date_trunc('hour' ,(b.start_date)) as dateTime , " +
                         " 	count(b.id) as nbr, " +
                         " 	case when max(case when bs.code = :batchStatusErrorCode then 1 else 0 end )=1 then true else false end as hasError , "
                         +
@@ -66,7 +66,7 @@ public interface BatchRepository extends CrudRepository<Batch, Integer> {
                         " where " +
                         " 	b.start_date >= now()\\:\\:date-8 and b.id_batch_settings = :batchSettingsId " +
                         " group by " +
-                        " 	date_trunc('hour' ,(b.created_date) ) order by dateTime " +
+                        " 	date_trunc('hour' ,(b.start_date) ) order by dateTime " +
                         "")
         List<IBatchTimeStatistics> getTimeStatisticsOfBatch(@Param("batchSettingsId") Integer batchSettingsId,
                         @Param("batchStatusErrorCode") String batchStatusErrorCode);

@@ -717,6 +717,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void refreshFormalitiesFromLastHour()
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         List<FormaliteGuichetUnique> formalitesGuichetUnique = getAllFormalitiesByDate(
@@ -724,7 +725,12 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
                 LocalDateTime.now().minusHours(1));
         if (formalitesGuichetUnique != null && formalitesGuichetUnique.size() > 0) {
             for (FormaliteGuichetUnique formaliteGuichetUnique : formalitesGuichetUnique) {
-                batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE, formaliteGuichetUnique.getId());
+                FormaliteGuichetUnique currentFormaliteGuichetUnique = formaliteGuichetUniqueService
+                        .getFormaliteGuichetUnique(formaliteGuichetUnique.getId());
+                if (currentFormaliteGuichetUnique == null || currentFormaliteGuichetUnique.getStatus() == null
+                        || currentFormaliteGuichetUnique.getStatus().getIsCloseState() == false)
+                    batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE,
+                            formaliteGuichetUnique.getId());
             }
         }
     }

@@ -204,7 +204,7 @@
           </div>
           <button
             [matTooltip]="'Renouveler le mot de passe JSS.fr pour '+selectedResponsable.firstname+' '+ selectedResponsable.lastname"
-            mat-fab color="accent" class="third-fab-button" *ngIf="!editMode && selectedResponsable"
+            mat-fab color="accent" class="second-fab-button" *ngIf="!editMode && selectedResponsable"
             (click)="renewPassword()">
             <mat-icon>password</mat-icon>
           </button>

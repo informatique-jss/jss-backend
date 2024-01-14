@@ -23,8 +23,6 @@ public interface ITiersSearchResult {
 
     LocalDate getCreatedDateDay();
 
-    LocalDate getLastResponsableFollowupDate();
-
     Integer getAnnouncementJssNbr();
 
     Integer getAnnouncementConfrereNbr();

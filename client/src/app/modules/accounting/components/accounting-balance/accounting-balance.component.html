@@ -26,6 +26,16 @@
             [form]="accountingBalanceForm" propertyName="endDate" [isMandatory]="false"
             [isDisabled]="false"></generic-datepicker>
         </td>
+        <td class="fab-td-button padding-fab">
+          <button mat-mini-fab matTooltip="Mois en cours" (click)="setCurentMonth()" class="add-button">
+            <mat-icon>calendar_view_month</mat-icon>
+          </button>
+        </td>
+        <td class="fab-td-button padding-fab">
+          <button mat-mini-fab matTooltip="Exercice en cours" (click)="setCurentFiscalYear()" class="add-button">
+            <mat-icon>date_range</mat-icon>
+          </button>
+        </td>
         <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchRecords()" class="add-button">
             <mat-icon>search</mat-icon>
@@ -34,6 +44,8 @@
       </tr>
     </table>
     <sort-table [columns]="displayedColumns" [values]="accountingBalances" tableName="Balance"
+      [isSmallerHeight]="true"></sort-table>
+    <sort-table [columns]="displayedColumnsClassTotal" [values]="classTotals" tableName="Balance total"
       [isSmallerHeight]="true"></sort-table>
     <table mat-table [dataSource]="accumulatedDataSource" class="mat-elevation-z8 table total-table min-widht-table"
       cdkDrag [cdkDragFreeDragPosition]="currentUserPosition" (cdkDragEnded)="dropTotalDiv($event)"

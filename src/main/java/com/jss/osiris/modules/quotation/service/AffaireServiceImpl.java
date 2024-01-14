@@ -246,6 +246,20 @@ public class AffaireServiceImpl implements AffaireService {
         if (affaire.getIsUnregistered() == null)
             affaire.setIsUnregistered(false);
 
+        if (isForceRefresh) {
+            affaire.setAcronym(null);
+            affaire.setAddress(null);
+            affaire.setCedexComplement(null);
+            affaire.setCity(null);
+            affaire.setCompetentAuthority(null);
+            affaire.setCountry(null);
+            affaire.setDenomination(null);
+            affaire.setLegalForm(null);
+            affaire.setMainActivity(null);
+            affaire.setPostalCode(null);
+            affaire.setShareCapital(null);
+        }
+
         if (rneCompany != null && rneCompany.getFormality() != null && rneCompany.getFormality().getContent() != null
                 && rneCompany.getFormality().getContent().getPersonneMorale() != null
                 && rneCompany.getFormality().getContent() != null)
@@ -276,18 +290,18 @@ public class AffaireServiceImpl implements AffaireService {
             adressElements.add(address.getVoie());
 
             if (affaire.getAddress() == null || affaire.getAddress().length() == 0)
-                if (isForceRefresh || affaire.getAddress() == null || affaire.getAddress().equals(""))
+                if (affaire.getAddress() == null || affaire.getAddress().equals(""))
                     affaire.setAddress(adressElements.stream().filter(s -> s != null && !s.isEmpty())
                             .collect(Collectors.joining(" ")));
 
             companyPostalCode = address.getCodePostal();
 
             if (affaire.getPostalCode() == null || affaire.getPostalCode().length() == 0)
-                if (isForceRefresh || affaire.getPostalCode() == null || affaire.getPostalCode().equals(""))
+                if (affaire.getPostalCode() == null || affaire.getPostalCode().equals(""))
                     affaire.setPostalCode(companyPostalCode);
 
             if (affaire.getCedexComplement() == null || affaire.getCedexComplement().length() == 0)
-                if (isForceRefresh || affaire.getCedexComplement() == null || affaire.getCedexComplement().equals(""))
+                if (affaire.getCedexComplement() == null || affaire.getCedexComplement().equals(""))
                     affaire.setCedexComplement(
                             address.getDistributionSpeciale());
 
@@ -308,16 +322,16 @@ public class AffaireServiceImpl implements AffaireService {
                     if (foundCities.size() == 1)
                         companyCity = foundCities.get(0);
                 }
-                if (isForceRefresh || affaire.getCity() == null)
+                if (affaire.getCity() == null)
                     affaire.setCity(companyCity);
             }
 
-            if (isForceRefresh || affaire.getCountry() == null)
+            if (affaire.getCountry() == null)
                 affaire.setCountry(constantService.getCountryFrance());
         }
 
         if (affaire.getLegalForm() == null) {
-            if (isForceRefresh || affaire.getLegalForm() == null)
+            if (affaire.getLegalForm() == null)
                 affaire.setLegalForm(formeJuridiqueService
                         .getFormeJuridique(
                                 rneCompany.getFormality().getContent().getNatureCreation().getFormeJuridique()
@@ -326,7 +340,7 @@ public class AffaireServiceImpl implements AffaireService {
 
         if (affaire.getMainActivity() == null
                 && rneCompany.getFormality().getContent().getFormeExerciceActivitePrincipale() != null) {
-            if (isForceRefresh || affaire.getMainActivity() == null)
+            if (affaire.getMainActivity() == null)
                 affaire.setMainActivity(formeExerciceActivitePrincipalService.getFormeExerciceActivitePrincipal(
                         rneCompany.getFormality().getContent().getFormeExerciceActivitePrincipale().getCode()));
         }
@@ -335,19 +349,19 @@ public class AffaireServiceImpl implements AffaireService {
                 && personneMorale.getIdentite() != null
                 && personneMorale.getIdentite().getDescription() != null
                 && personneMorale.getIdentite().getDescription().getMontantCapital() != null)
-            if (isForceRefresh || affaire.getShareCapital() == null || affaire.getShareCapital().equals(0f))
+            if (affaire.getShareCapital() == null || affaire.getShareCapital().equals(0f))
                 affaire.setShareCapital(personneMorale.getIdentite().getDescription().getMontantCapital() * 1.0f);
 
         if ((affaire.getAcronym() == null || affaire.getAcronym().length() == 0)
                 && personneMorale.getIdentite() != null && personneMorale.getIdentite().getDescription() != null
                 && personneMorale.getIdentite().getDescription().getSigle() != null)
-            if (isForceRefresh || affaire.getAcronym() == null || affaire.getAcronym().equals(""))
+            if (affaire.getAcronym() == null || affaire.getAcronym().equals(""))
                 affaire.setAcronym(personneMorale.getIdentite().getDescription().getSigle());
 
         if ((affaire.getDenomination() == null || affaire.getDenomination().length() == 0)
                 && personneMorale.getIdentite() != null && personneMorale.getIdentite().getEntreprise() != null
                 && personneMorale.getIdentite().getEntreprise().getDenomination() != null)
-            if (isForceRefresh || affaire.getDenomination() == null || affaire.getDenomination().equals(""))
+            if (affaire.getDenomination() == null || affaire.getDenomination().equals(""))
                 affaire.setDenomination(personneMorale.getIdentite().getEntreprise().getDenomination());
 
         if (affaire.getCity() != null && affaire.getCompetentAuthority() == null) {
@@ -355,20 +369,17 @@ public class AffaireServiceImpl implements AffaireService {
                     .getCompetentAuthorityByCityAndAuthorityType(affaire.getCity(),
                             constantService.getCompetentAuthorityTypeRcs());
             if (competentAuthoritiesFound != null && competentAuthoritiesFound.size() == 1)
-                if (isForceRefresh || affaire.getCompetentAuthority() == null)
+                if (affaire.getCompetentAuthority() == null)
                     affaire.setCompetentAuthority(competentAuthoritiesFound.get(0));
         }
     }
 
     private AdresseDomicile getAddressFromRneCompany(RneCompany company, String siren, String siret) {
-        if (siren == null)
-            return null;
-
         if (company == null || company.getFormality() == null || company.getFormality().getContent() == null
                 || company.getFormality().getContent().getPersonneMorale() == null)
             return null;
 
-        if (siret == null || siret.length() == 0) {
+        if (siren != null && (siret == null || siret.length() == 0)) {
             if (company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal() == null) {
                 return company.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse();
             } else {
