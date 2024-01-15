@@ -34,6 +34,10 @@
         </ordering-list>
       </ng-template>
     </mat-tab>
+    <mat-tab label="Prepa visite" *ngIf="tiers.id!=null && tiers.id!=undefined || (rffSearch?.tiers!=null && rffSearch?.tiers!=undefined)" >
+      <prepa-visite-tiers-info [tiers]="tiers" ></prepa-visite-tiers-info>
+      <!-- <prepa-visite-responsable-customer-orders [tiers]="tiers" [editMode]="editMode"></prepa-visite-responsable-customer-orders> -->
+    </mat-tab>
     <mat-tab label="Prestations" *ngIf="tiers.id!=null && tiers.id!=undefined">
       <ng-template matTabContent>
         <provision-list class="integration-component"
