@@ -26,6 +26,7 @@ import { EditorModule } from '@tinymce/tinymce-angular';
 import { DirectDebitTransfertListComponent } from 'src/app/modules/invoicing/components/direct-debit-transfert-list/direct-debit-transfert-list.component';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { GuichetUniqueStatusComponent } from '../../guichet-unique-status/guichet-unique-status.component';
+import { AbandonReasonDialog } from '../abandon-reason-dialog/abandon-reason-dialog';
 import { ActeDepositComponent } from '../acte-deposit/acte-deposit.component';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
@@ -64,8 +65,6 @@ import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/s
 import { SelectCompetentAuthorityDialogComponent } from '../select-competent-authority-dialog/select-competent-authority-dialog.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
-import { SelectAbandonReasonComponent } from '../select-abandon-reason/select-abandon-reason';
-import { AbandonReasonInquiryDialog } from '../abandon-reason-inquiry-dialog/abandon-reason-inquiry-dialog';
 
 const routes: Routes = [
   { path: 'quotation', component: QuotationComponent },
@@ -109,8 +108,7 @@ const routes: Routes = [
     MatDatepickerModule,
   ],
   declarations: [QuotationComponent,
-    SelectAbandonReasonComponent,
-    AbandonReasonInquiryDialog,
+    AbandonReasonDialog,
     OrderingCustomerComponent,
     QuotationManagementComponent,
     DomiciliationComponent,

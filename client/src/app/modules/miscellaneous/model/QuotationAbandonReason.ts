@@ -1,5 +1,5 @@
 import { IReferential } from "../../administration/model/IReferential";
 
-export interface AbandonReason extends IReferential {
+export interface QuotationAbandonReason extends IReferential {
 
 }

@@ -65,6 +65,7 @@ import { ReferentialPaymentDeadlineTypeComponent } from '../referentials/referen
 import { ReferentialPaymentTypeComponent } from '../referentials/referential-payment-type/referential-payment-type.component';
 import { ReferentialPrincipalAccountingAccountComponent } from '../referentials/referential-principal-accounting-account/referential-principal-accounting-account.component';
 import { ReferentialProvisionTypeComponent } from '../referentials/referential-provision-type/referential-provision-type.component';
+import { ReferentialQuotationAbandonReasonComponent } from '../referentials/referential-quotation-abandon-reason/referential-quotation-abandon-reason';
 import { ReferentialRefundTypeComponent } from '../referentials/referential-refund-type/referential-refund-type.component';
 import { ReferentialRegieComponent } from '../referentials/referential-regie/referential-regie.component';
 import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
@@ -83,7 +84,6 @@ import { ReferentialProvisionFamilyTypeComponent } from '../referentials/referen
 import { ReferentialRecordTypeComponent } from '../referentials/referentiel-record-type/referential-record-type.component';
 import { ViewLogComponent } from '../view-log/view-log.component';
 import { AdministrationComponent } from './administration.component';
-import { ReferentialAbandonReasonComponent } from '../referentials/referential-abandon-reason/referential-abandon-reason';
 
 const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
@@ -151,7 +151,7 @@ const routes: Routes = [
     ReferentialDocumentTypeComponent,
     ReferentialLanguageComponent,
     ReferentialGiftComponent,
-    ReferentialAbandonReasonComponent,
+    ReferentialQuotationAbandonReasonComponent,
     ReferentialLegalFormComponent,
     ReferentialPaymentTypeComponent,
     ReferentialAccountingAccountClassComponent,
