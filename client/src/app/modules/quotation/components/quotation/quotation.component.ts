@@ -43,7 +43,6 @@ import { OrderingSearchResultService } from '../../services/ordering.search.resu
 import { ProvisionService } from '../../services/provision.service';
 import { QuotationStatusService } from '../../services/quotation-status.service';
 import { QuotationService } from '../../services/quotation.service';
-import { AbandonReasonDialog } from '../abandon-reason-dialog/abandon-reason-dialog';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
@@ -51,6 +50,7 @@ import { OrderingCustomerComponent } from '../ordering-customer/ordering-custome
 import { PrintLabelDialogComponent } from '../print-label-dialog/print-label-dialog.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { ProvisionComponent } from '../provision/provision.component';
+import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { IQuotation } from './../../model/IQuotation';
 
@@ -536,7 +536,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   setQuotationAbandonReasonAndChangeStatus(targetStatus: QuotationStatus) {
-    const dialogRef: MatDialogRef<AbandonReasonDialog> = this.abandonReasonInquiryDialog.open(AbandonReasonDialog, {
+    const dialogRef: MatDialogRef<QuotationAbandonReasonDialog> = this.abandonReasonInquiryDialog.open(QuotationAbandonReasonDialog, {
       maxWidth: "600px",
     });
 
