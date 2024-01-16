@@ -1627,7 +1627,7 @@ public class MailHelper {
         mail.setSubject("Vos remboursements forfaitaires de frais (" + rff.getTiers().getId() + ")");
 
         mail.setExplaination3("Cette facture doit obligatoirement être datée de "
-                + LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+                + rff.getEndDate().format(DateTimeFormatter.ofPattern("MMMM yyyy"))
                 + ". Le paiement sera effectué à compter de réception de la facture et versé sur le RIB "
                 + rff.getRffBic() + " / " + rff.getRffIban());
 

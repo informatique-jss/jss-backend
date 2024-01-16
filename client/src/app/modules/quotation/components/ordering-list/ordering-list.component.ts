@@ -147,7 +147,7 @@ export class OrderingListComponent implements OnInit {
 
   searchOrders() {
     if (this.orderingSearchForm.valid) {
-      if (!this.isForDashboard && !this.isForTiersIntegration)
+      if (!this.isForDashboard && !this.isForTiersIntegration && !this.isForPaymentAssocationIntegration)
         this.userPreferenceService.setUserSearchBookmark(this.orderingSearch, "customerOrders");
       if (this.orderingSearch.startDate)
         this.orderingSearch.startDate = new Date(toIsoString(this.orderingSearch.startDate));

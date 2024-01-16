@@ -16,7 +16,7 @@ export interface SortTableElementWarn {
   [index: string]: boolean;
 }
 
-export interface SortTableElement {
+export interface SortTableElement<T> {
   columns: SortTableElementColumns;
   rawColumns: SortTableElementColumns;
   actionsLink: SortTableElementActions;
