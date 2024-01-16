@@ -70,10 +70,6 @@ table {
   min-width: 500px;
 }
 
-.min-height {
-  padding-bottom: 65px;
-}
-
 .payment-label {
   max-width: 700px;
   display: block;

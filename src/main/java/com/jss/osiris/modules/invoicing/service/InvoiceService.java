@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.invoicing.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -11,6 +12,7 @@ import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.tiers.model.BillingLabelType;
 
 public interface InvoiceService {
         public List<Invoice> getAllInvoices();
@@ -23,13 +25,13 @@ public interface InvoiceService {
         public List<Invoice> findByCompetentAuthorityAndManualDocumentNumberContains(
                         CompetentAuthority competentAuthority, String manualDocumentNumber);
 
-        public Invoice addOrUpdateInvoice(Invoice invoice);
+        public Invoice addOrUpdateInvoice(Invoice invoice) throws OsirisException;
 
         public List<InvoiceSearchResult> getInvoiceForCustomerOrder(Integer customerOrderId) throws OsirisException;
 
         public List<InvoiceSearchResult> searchInvoices(InvoiceSearch invoiceSearch) throws OsirisException;
 
-        public void reindexInvoices();
+        public void reindexInvoices() throws OsirisException;
 
         public Invoice addOrUpdateInvoiceFromUser(Invoice invoice)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
@@ -54,5 +56,11 @@ public interface InvoiceService {
         public Invoice cancelInvoice(Invoice invoice)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
+
+        public void sendRemindersForInvoices(LocalDate startDate, LocalDate endDate, BillingLabelType billingLabelType)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
+        public void remindInvoice(Invoice invoice)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
 }

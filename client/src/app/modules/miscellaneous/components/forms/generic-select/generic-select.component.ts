@@ -12,8 +12,6 @@ export abstract class GenericSelectComponent<T> extends GenericFormComponent imp
  */
   @Output() selectionChange: EventEmitter<T> = new EventEmitter();
 
-
-
   abstract types: T[];
 
   constructor(
@@ -24,6 +22,9 @@ export abstract class GenericSelectComponent<T> extends GenericFormComponent imp
 
   callOnNgInit(): void {
     this.initTypes();
+    if (this.types)
+      this.types.sort((a, b) => this.displayLabel(a).localeCompare(this.displayLabel(b)));
+
     if (this.form)
       this.form.get(this.propertyName)?.valueChanges.subscribe(
         (newValue) => {

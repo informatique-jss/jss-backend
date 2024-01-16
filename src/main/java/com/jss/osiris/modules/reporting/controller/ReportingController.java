@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.reporting.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +19,6 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
-import com.jss.osiris.modules.reporting.model.IAnnouncementReporting;
-import com.jss.osiris.modules.reporting.model.ICustomerOrderReporting;
-import com.jss.osiris.modules.reporting.model.IProvisionProductionReporting;
-import com.jss.osiris.modules.reporting.model.IProvisionReporting;
-import com.jss.osiris.modules.reporting.model.IQuotationReporting;
-import com.jss.osiris.modules.reporting.model.IRecoveryReporting;
-import com.jss.osiris.modules.reporting.model.ITiersReporting;
-import com.jss.osiris.modules.reporting.model.ITurnoverReporting;
-import com.jss.osiris.modules.reporting.model.ITurnoverVatReporting;
 import com.jss.osiris.modules.reporting.model.UserReporting;
 import com.jss.osiris.modules.reporting.service.AnnouncementReportingService;
 import com.jss.osiris.modules.reporting.service.CustomerOrderReportingService;
@@ -83,69 +76,82 @@ public class ReportingController {
 	ActiveDirectoryHelper activeDirectoryHelper;
 
 	@GetMapping(inputEntryPoint + "/quotation")
-	public ResponseEntity<List<IQuotationReporting>> getQuotationReporting()
+	public ResponseEntity<ArrayList<HashMap<String, String>>> getQuotationReporting(
+			@RequestParam ArrayList<String> columns)
 			throws OsirisValidationException, OsirisException {
-		return new ResponseEntity<List<IQuotationReporting>>(quotationReportingService.getQuotationReporting(),
+		return new ResponseEntity<ArrayList<HashMap<String, String>>>(
+				quotationReportingService.getQuotationReporting(columns),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/turnover")
-	public ResponseEntity<List<ITurnoverReporting>> getTurnoverReporting()
+	public ResponseEntity<ArrayList<HashMap<String, String>>> getTurnoverReporting(
+			@RequestParam ArrayList<String> columns)
 			throws OsirisValidationException, OsirisException {
-		return new ResponseEntity<List<ITurnoverReporting>>(turnoverReportingService.getTurnoverReporting(),
+		return new ResponseEntity<ArrayList<HashMap<String, String>>>(
+				turnoverReportingService.getTurnoverReporting(columns),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/turnover-vat")
-	public ResponseEntity<List<ITurnoverVatReporting>> getTurnoverVatReporting()
+	public ResponseEntity<ArrayList<HashMap<String, String>>> getTurnoverVatReporting(
+			@RequestParam ArrayList<String> columns)
 			throws OsirisValidationException, OsirisException {
-		return new ResponseEntity<List<ITurnoverVatReporting>>(turnoverVatReportingService.getTurnoverVatReporting(),
+		return new ResponseEntity<ArrayList<HashMap<String, String>>>(
+				turnoverVatReportingService.getTurnoverVatReporting(columns),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/announcement")
-	public ResponseEntity<List<IAnnouncementReporting>> getAnnouncementReporting()
+	public ResponseEntity<ArrayList<HashMap<String, String>>> getAnnouncementReporting(
+			@RequestParam ArrayList<String> columns)
 			throws OsirisValidationException, OsirisException {
-		return new ResponseEntity<List<IAnnouncementReporting>>(announcementReportingService.getAnnouncementReporting(),
+		return new ResponseEntity<ArrayList<HashMap<String, String>>>(
+				announcementReportingService.getAnnouncementReporting(columns),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/tiers")
-	public ResponseEntity<List<ITiersReporting>> getTiersReporting()
+	public ResponseEntity<ArrayList<HashMap<String, String>>> getTiersReporting(
+			@RequestParam ArrayList<String> columns)
 			throws OsirisValidationException, OsirisException {
-		return new ResponseEntity<List<ITiersReporting>>(tiersReportingService.getTiersReporting(),
+		return new ResponseEntity<ArrayList<HashMap<String, String>>>(tiersReportingService.getTiersReporting(columns),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/customer-order")
-	public ResponseEntity<List<ICustomerOrderReporting>> getCustomerOrderReporting()
+	public ResponseEntity<ArrayList<HashMap<String, String>>> getCustomerOrderReporting(
+			@RequestParam ArrayList<String> columns)
 			throws OsirisValidationException, OsirisException {
-		return new ResponseEntity<List<ICustomerOrderReporting>>(
-				customerOrderReportingService.getCustomerOrderReporting(),
+		return new ResponseEntity<ArrayList<HashMap<String, String>>>(
+				customerOrderReportingService.getCustomerOrderReporting(columns),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/provision")
-	public ResponseEntity<List<IProvisionReporting>> getProvisionReporting()
+	public ResponseEntity<ArrayList<HashMap<String, String>>> getProvisionReporting(
+			@RequestParam ArrayList<String> columns)
 			throws OsirisValidationException, OsirisException {
-		return new ResponseEntity<List<IProvisionReporting>>(
-				provisionReportingService.getProvisionReporting(),
+		return new ResponseEntity<ArrayList<HashMap<String, String>>>(
+				provisionReportingService.getProvisionReporting(columns),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/provision-production")
-	public ResponseEntity<List<IProvisionProductionReporting>> getProvisionProductionReporting()
+	public ResponseEntity<ArrayList<HashMap<String, String>>> getProvisionProductionReporting(
+			@RequestParam ArrayList<String> columns)
 			throws OsirisValidationException, OsirisException {
-		return new ResponseEntity<List<IProvisionProductionReporting>>(
-				productionReportingService.getProvisionProductionReporting(),
+		return new ResponseEntity<ArrayList<HashMap<String, String>>>(
+				productionReportingService.getProvisionProductionReporting(columns),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/recovery")
-	public ResponseEntity<List<IRecoveryReporting>> getRecoveryReporting()
+	public ResponseEntity<ArrayList<HashMap<String, String>>> getRecoveryReporting(
+			@RequestParam ArrayList<String> columns)
 			throws OsirisValidationException, OsirisException {
-		return new ResponseEntity<List<IRecoveryReporting>>(
-				recoveryReportingService.getRecoveryReporting(),
+		return new ResponseEntity<ArrayList<HashMap<String, String>>>(
+				recoveryReportingService.getRecoveryReporting(columns),
 				HttpStatus.OK);
 	}
 
@@ -211,6 +217,41 @@ public class ReportingController {
 		userReportingService.deleteReporting(userReporting);
 
 		return new ResponseEntity<UserReporting>(userReporting, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/user-reporting/fake")
+	public ResponseEntity<ArrayList<HashMap<String, String>>> getFakeData(@RequestParam String dataset)
+			throws OsirisValidationException {
+
+		if (dataset.equals(UserReporting.REPORTING_DATASET_TURNOVER_AMOUNT))
+			return new ResponseEntity<ArrayList<HashMap<String, String>>>(turnoverReportingService.getFakeData(),
+					HttpStatus.OK);
+		if (dataset.equals(UserReporting.REPORTING_DATASET_ANNOUNCEMENT))
+			return new ResponseEntity<ArrayList<HashMap<String, String>>>(announcementReportingService.getFakeData(),
+					HttpStatus.OK);
+		if (dataset.equals(UserReporting.REPORTING_DATASET_CUSTOMER_ORDER))
+			return new ResponseEntity<ArrayList<HashMap<String, String>>>(customerOrderReportingService.getFakeData(),
+					HttpStatus.OK);
+		if (dataset.equals(UserReporting.REPORTING_DATASET_PROVISION))
+			return new ResponseEntity<ArrayList<HashMap<String, String>>>(provisionReportingService.getFakeData(),
+					HttpStatus.OK);
+		if (dataset.equals(UserReporting.REPORTING_DATASET_PROVISION_PRODUCTION))
+			return new ResponseEntity<ArrayList<HashMap<String, String>>>(productionReportingService.getFakeData(),
+					HttpStatus.OK);
+		if (dataset.equals(UserReporting.REPORTING_DATASET_QUOTATION))
+			return new ResponseEntity<ArrayList<HashMap<String, String>>>(quotationReportingService.getFakeData(),
+					HttpStatus.OK);
+		if (dataset.equals(UserReporting.REPORTING_DATASET_RECOVERY))
+			return new ResponseEntity<ArrayList<HashMap<String, String>>>(recoveryReportingService.getFakeData(),
+					HttpStatus.OK);
+		if (dataset.equals(UserReporting.REPORTING_DATASET_TIERS))
+			return new ResponseEntity<ArrayList<HashMap<String, String>>>(tiersReportingService.getFakeData(),
+					HttpStatus.OK);
+		if (dataset.equals(UserReporting.REPORTING_DATASET_TURNOVER_VAT_AMOUNT))
+			return new ResponseEntity<ArrayList<HashMap<String, String>>>(turnoverVatReportingService.getFakeData(),
+					HttpStatus.OK);
+
+		return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 
 }

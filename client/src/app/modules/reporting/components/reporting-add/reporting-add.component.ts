@@ -19,8 +19,7 @@ export class ReportingAddComponent implements OnInit {
   idReporting: number | undefined;
   reporting: UserReporting | undefined;
   dataToDisplay: any | undefined;
-  loadingDataset: boolean = false;
-
+  reportingObservableRef: Subscription | undefined;
   @ViewChild(ReportingComponent) reportingComponent: ReportingComponent | undefined;
 
   saveObservableSubscription: Subscription = new Subscription;
@@ -77,12 +76,14 @@ export class ReportingAddComponent implements OnInit {
     }
   }
 
-  selectDataSet(dataset: string) {
-    if (!this.loadingDataset && dataset) {
-      this.loadingDataset = true;
-      this.reportingService.getDataset(dataset, undefined).subscribe(data => {
+  selectDataSet(dataset: string, columns: string[]) {
+    if (this.reportingObservableRef)
+      this.reportingObservableRef.unsubscribe();
+
+    if (dataset) {
+      this.reportingObservableRef = this.reportingService.getDataset(dataset, columns).subscribe(data => {
         this.dataToDisplay = data;
-        this.loadingDataset = false;
+        this.reportingComponent?.refreshPivotWithData(this.dataToDisplay);
       });
     }
   }

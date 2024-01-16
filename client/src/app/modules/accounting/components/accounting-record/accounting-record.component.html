@@ -1,4 +1,4 @@
-<div class="mat-elevation-z2 form-div min-height">
+<div class="mat-elevation-z2 form-div  ">
   <div class=" full-width">
     <table class="full-width table-fixed-layout" *ngIf="!accountingRecordSearch.idPayment">
       <tr>
@@ -22,10 +22,24 @@
             [form]="accountingRecordForm" propertyName="hideLettered"></generic-toggle>
         </td>
         <td *ngIf="tiersToDisplay==undefined">
-          <generic-date-range-picker [(modelStart)]="accountingRecordSearch.startDate"
-            [(modelEnd)]="accountingRecordSearch.endDate" label="Plage de recherche" [form]="accountingRecordForm"
-            propertyNameStart="startDate" propertyNameEnd="endDate" (onDateChange)="putEndDateSameYear()">
-          </generic-date-range-picker>
+          <generic-datepicker [(model)]="accountingRecordSearch.startDate" label="Date de début"
+            [form]="accountingRecordForm" propertyName="startDate" [isMandatory]="false"
+            [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td *ngIf="tiersToDisplay==undefined">
+          <generic-datepicker [(model)]="accountingRecordSearch.endDate" label="Date de fin"
+            [form]="accountingRecordForm" propertyName="endDate" [isMandatory]="false"
+            [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td class="fab-td-button padding-fab">
+          <button mat-mini-fab matTooltip="Mois en cours" (click)="setCurentMonth()" class="add-button">
+            <mat-icon>calendar_view_month</mat-icon>
+          </button>
+        </td>
+        <td class="fab-td-button padding-fab">
+          <button mat-mini-fab matTooltip="Exercice en cours" (click)="setCurentFiscalYear()" class="add-button">
+            <mat-icon>date_range</mat-icon>
+          </button>
         </td>
         <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchRecords()" class="add-button">
@@ -34,7 +48,8 @@
         </td>
       </tr>
     </table>
-    <sort-table [columns]="displayedColumns" [values]="accountingRecords" tableName="Ecritures" [actions]="tableAction">
+    <sort-table [columns]="displayedColumns" [values]="accountingRecords" tableName="Ecritures" [isSmallerHeight]="true"
+      [actions]="tableAction">
     </sort-table>
     <table mat-table [dataSource]="accumulatedDataSource" class="mat-elevation-z8 table total-table min-widht-table"
       cdkDrag [cdkDragFreeDragPosition]="currentUserPosition" (cdkDragEnded)="dropTotalDiv($event)"
@@ -59,7 +74,8 @@
     </table>
   </div>
 </div>
-<button matTooltip="Exporter" mat-fab color="accent" class="second-fab-button" [matMenuTriggerFor]="menu">
+<button matTooltip="Exporter" mat-fab color="accent" class="second-fab-button" [matMenuTriggerFor]="menu"
+  *ngIf="!tiersToDisplay">
   <mat-icon>file_download</mat-icon>
   <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
     <button mat-menu-item (click)="exportGrandLivre()"
@@ -87,7 +103,11 @@
   (auxclick)=" createAccountingRecords($event)">
   <mat-icon>add</mat-icon>
 </button>
-<button matTooltip="Télécharger un relevé de comptes" mat-fab color="accent" class="third-fab-button"
+<button matTooltip="Télécharger un relevé de comptes" mat-fab color="accent" class="second-fab-button"
   *ngIf="tiersToDisplay" (click)="downloadBillingClosureReceipt()">
   <mat-icon>download</mat-icon>
+</button>
+<button matTooltip="Envoyer un relevé de comptes" mat-fab color="accent" class="fourth-fab-button"
+  *ngIf="tiersToDisplay" (click)="sendBillingClosureReceipt()">
+  <mat-icon>outgoing_mail</mat-icon>
 </button>

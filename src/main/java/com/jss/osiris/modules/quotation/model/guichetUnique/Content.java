@@ -18,7 +18,7 @@ import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeExercice;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeExerciceActivitePrincipal;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.NatureCessation;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.SuccursaleOuFiliale;
 
@@ -43,7 +43,7 @@ public class Content implements Serializable, IId {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_forme_exercice_activite_principale")
-    FormeExercice formeExerciceActivitePrincipale;
+    FormeExerciceActivitePrincipal formeExerciceActivitePrincipale;
 
     @Column
     private Boolean indicateurPoursuiteCessation;
@@ -113,11 +113,11 @@ public class Content implements Serializable, IId {
         this.succursaleOuFiliale = succursaleOuFiliale;
     }
 
-    public FormeExercice getFormeExerciceActivitePrincipale() {
+    public FormeExerciceActivitePrincipal getFormeExerciceActivitePrincipale() {
         return formeExerciceActivitePrincipale;
     }
 
-    public void setFormeExerciceActivitePrincipale(FormeExercice formeExerciceActivitePrincipale) {
+    public void setFormeExerciceActivitePrincipale(FormeExerciceActivitePrincipal formeExerciceActivitePrincipale) {
         this.formeExerciceActivitePrincipale = formeExerciceActivitePrincipale;
     }
 

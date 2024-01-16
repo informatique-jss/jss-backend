@@ -6,7 +6,8 @@
   </div>
   <div class="table-container-scroll">
     <sort-table [columns]="displayedColumns" (onRowClick)="selectEntity($event)" [values]="entities"
-      tableName="Référentiel" [idRowSelected]="idRowSelected" [filterText]="searchText">
+      [noMaxHeight]="true" [noPaddingBottom]="true" tableName="Référentiel" [idRowSelected]="idRowSelected"
+      [filterText]="searchText">
     </sort-table>
   </div>
 </div>
@@ -29,7 +30,7 @@
           </tr>
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="100"
+              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="255"
                 [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
             </td>
           </tr>
@@ -65,6 +66,21 @@
                 hint="Lorsqu'un poids est défini sur au moins une prestation d'une affaire, alors l'ensemble des prestations de l'affaire et l'affaire est assigné au responsable de la prestation la plus lourde"
                 [form]="entityForm" propertyName="assignationWeight" [isMandatory]="false" [isDisabled]="!editMode"
                 type="number"></generic-input>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width"
+          *ngIf="selectedEntity.provisionScreenType && selectedEntity.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE">
+          <tr>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isDisplayActeDepositScreen"
+                label="Afficher l'écran de dépôt d'actes ?" [form]="entityForm"
+                propertyName="isDisplayActeDepositScreen"></generic-toggle>
+            </td>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isDisplayAnnualAccountScreen"
+                label="Afficher l'écran de dépôt de comptes ?" [form]="entityForm"
+                propertyName="isDisplayAnnualAccountScreen"></generic-toggle>
             </td>
           </tr>
         </table>

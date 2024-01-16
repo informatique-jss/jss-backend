@@ -1,8 +1,8 @@
-<h1 mat-dialog-title>Montant à utiliser</h1>
+<h1 mat-dialog-title>{{title}}</h1>
 <div mat-dialog-content>
   <p>{{label}}</p>
-  <generic-input [(model)]="amount" label="Montant à utiliser" [form]="amountForm" propertyName="amount"
-    [isMandatory]="true" [isDisabled]="false" type="number" (onInputChange)="valueModified()"></generic-input>
+  <generic-input [(model)]="amount" [label]="title" [form]="amountForm" propertyName="amount" [isMandatory]="true"
+    [isDisabled]="false" type="number" (onFormChange)="valueModified()"></generic-input>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>

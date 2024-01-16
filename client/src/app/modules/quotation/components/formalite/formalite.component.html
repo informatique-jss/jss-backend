@@ -1,5 +1,5 @@
 <form [formGroup]="formaliteForm" *ngIf="formalite && provision">
-  <mat-tab-group animationDuration="0ms" #tabs>
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab [label]="provision.provisionType.label">
       <div class="form-div">
         <table class="full-width">
@@ -35,6 +35,10 @@
         </table>
       </div>
     </mat-tab>
+    <mat-tab label="Dépôt d'actes"
+      *ngIf="provision && provision.provisionType && provision.provisionType.isDisplayActeDepositScreen">
+      <acte-deposit [editMode]="editMode" [provision]="provision" [affaire]="affaire"></acte-deposit>
+    </mat-tab>
     <mat-tab label="Options">
       <provision-options [editMode]="editMode" [provision]="provision" (provisionChange)="provisionChangeFunction()">
       </provision-options>
@@ -49,13 +53,24 @@
       </provision-payment>
     </mat-tab>
     <mat-tab label="Historique GU" *ngIf="formalite && formalite.id && formalite.formalitesGuichetUnique ">
-      <guichet-unique-status [formalitesGuichetUnique]="formalite.formalitesGuichetUnique"></guichet-unique-status>
+      <ng-template matTabContent>
+        <guichet-unique-status [formalitesGuichetUnique]="formalite.formalitesGuichetUnique"></guichet-unique-status>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="formalite && formalite.id">
-      <history [entity]="formalite" [entityType]="FORMALITE_ENTITY_TYPE"></history>
+      <ng-template matTabContent>
+        <history [entity]="formalite" [entityType]="FORMALITE_ENTITY_TYPE" [parseTypeList]="formaliteStatus"></history>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="Historique (prestation)" *ngIf="provision && provision.id">
+      <ng-template matTabContent>
+        <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Débours" *ngIf="formalite && formalite.id && canAddNewInvoice()">
-      <debour [provision]="provision"></debour>
+      <ng-template matTabContent>
+        <debour [provision]="provision"></debour>
+      </ng-template>
     </mat-tab>
   </mat-tab-group>
 </form>

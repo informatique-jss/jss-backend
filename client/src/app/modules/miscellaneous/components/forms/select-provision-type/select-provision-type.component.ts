@@ -23,7 +23,7 @@ export class SelectProvisionTypeComponent extends GenericSelectComponent<Provisi
 
   initTypes(): void {
     this.provisionTypeService.getProvisionTypes().subscribe(response => {
-      this.types = response;
+      this.types = response.sort((a, b) => a.label.localeCompare(b.label));
     })
   }
 }

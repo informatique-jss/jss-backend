@@ -13,7 +13,7 @@
       </button>
     </div>
     <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="filteredAttachments"
-      tableName="Pièce jointes" [filterText]="searchText">
+      [noPaddingBottom]="true" [noMaxHeight]="true" tableName="Pièce jointes" [filterText]="searchText">
     </sort-table>
   </div>
 </div>

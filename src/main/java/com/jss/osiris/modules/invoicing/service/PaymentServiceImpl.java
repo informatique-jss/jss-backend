@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -23,7 +25,6 @@ import com.jss.osiris.libs.ofx.OFXParser;
 import com.jss.osiris.libs.ofx.OFXStatement;
 import com.jss.osiris.libs.ofx.StatementTransaction;
 import com.jss.osiris.libs.search.model.IndexEntity;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
@@ -32,7 +33,6 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
-import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
@@ -144,13 +144,13 @@ public class PaymentServiceImpl implements PaymentService {
     private String payementLimitRefundInEuros;
 
     @Autowired
-    IndexEntityService indexEntityService;
-
-    @Autowired
     DirectDebitTransfertService debitTransfertService;
 
     @Autowired
     DocumentService documentService;
+
+    @Autowired
+    BatchService batchService;
 
     @Override
     public Payment getPayment(Integer id) {
@@ -162,7 +162,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment addOrUpdatePayment(
-            Payment payment) {
+            Payment payment) throws OsirisException {
         if (payment.getIsCancelled() == null)
             payment.setIsCancelled(false);
         if (payment.getIsAppoint() == null)
@@ -172,17 +172,17 @@ public class PaymentServiceImpl implements PaymentService {
         if (payment.getIsExternallyAssociated() == null)
             payment.setIsExternallyAssociated(false);
         paymentRepository.save(payment);
-        indexEntityService.indexEntity(payment);
+        batchService.declareNewBatch(Batch.REINDEX_PAYMENT, payment.getId());
         return payment;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexPayments() {
+    public void reindexPayments() throws OsirisException {
         List<Payment> payments = IterableUtils.toList(paymentRepository.findAll());
         if (payments != null)
             for (Payment payment : payments)
-                indexEntityService.indexEntity(payment);
+                batchService.declareNewBatch(Batch.REINDEX_PAYMENT, payment.getId());
     }
 
     @Override
@@ -193,11 +193,14 @@ public class PaymentServiceImpl implements PaymentService {
         if (paymentSearch.getEndDate() == null)
             paymentSearch.setEndDate(LocalDateTime.now().plusYears(100));
 
+        if (paymentSearch.getIdPayment() == null)
+            paymentSearch.setIdPayment(0);
+
         return paymentRepository.findPayments(paymentSearch.getStartDate().withHour(0).withMinute(0),
                 paymentSearch.getEndDate().withHour(23).withMinute(59), paymentSearch.getMinAmount(),
                 paymentSearch.getMaxAmount(),
                 paymentSearch.getLabel(), paymentSearch.isHideAssociatedPayments(),
-                paymentSearch.isHideCancelledPayments(), paymentSearch.isHideAppoint());
+                paymentSearch.isHideCancelledPayments(), paymentSearch.isHideAppoint(), paymentSearch.getIdPayment());
     }
 
     @Override
@@ -207,7 +210,7 @@ public class PaymentServiceImpl implements PaymentService {
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
 
         for (Payment payment : payments) {
-            automatchPayment(payment);
+            batchService.declareNewBatch(Batch.AUTOMATCH_PAYMENT, payment.getId());
         }
     }
 
@@ -247,17 +250,10 @@ public class PaymentServiceImpl implements PaymentService {
                 }
                 Payment payment = paymentRepository.findByBankId(transaction.id());
                 if (payment != null && (payment.getIsCancelled() == null || payment.getIsCancelled() == false))
-                    automatchPayment(payment);
+                    batchService.declareNewBatch(Batch.AUTOMATCH_PAYMENT, payment.getId());
             }
 
         return null;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void automatchPaymentFromUser(Payment payment)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        automatchPayment(payment);
     }
 
     @Override
@@ -444,63 +440,9 @@ public class PaymentServiceImpl implements PaymentService {
                 for (IndexEntity foundEntity : correspondingEntities) {
                     if (foundEntity.getEntityType().equals(Payment.class.getSimpleName())) {
                         Payment foundPayment = getPayment(foundEntity.getEntityId());
-
-                        if (foundPayment.getInvoice() != null)
-                            associateOutboundCheckPayment(payment, foundPayment);
+                        associateOutboundCheckPayment(payment, foundPayment);
                     }
                 }
-            }
-
-            // If not found and CB payment, try to match randomly a invoice at same day or
-            // in 3 days range before
-            if (payment.getLabel().contains("FACTURE CARTE") && 1 > 2) {
-                InvoiceSearch invoiceSearch = new InvoiceSearch();
-                invoiceSearch.setStartDate(payment.getPaymentDate().toLocalDate().atTime(0, 0));
-                invoiceSearch.setEndDate(payment.getPaymentDate().toLocalDate().atTime(23, 59));
-                invoiceSearch.setInvoiceStatus(Arrays.asList(constantService.getInvoiceStatusReceived()));
-                invoiceSearch.setMaxAmount(payment.getPaymentAmount());
-                invoiceSearch.setMinAmount(payment.getPaymentAmount());
-                List<InvoiceSearchResult> invoicesFound = invoiceService.searchInvoices(invoiceSearch);
-
-                if (invoicesFound != null && invoicesFound.size() > 0)
-                    for (InvoiceSearchResult invoiceFound : invoicesFound)
-                        if (invoiceFound.getIdPaymentType().equals(constantService.getPaymentTypeCB().getId())) {
-                            associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0));
-                            break;
-                        }
-
-                invoiceSearch.setStartDate(payment.getPaymentDate().toLocalDate().minusDays(1).atTime(0, 0));
-                invoiceSearch.setEndDate(payment.getPaymentDate().toLocalDate().minusDays(1).atTime(23, 59));
-                invoicesFound = invoiceService.searchInvoices(invoiceSearch);
-
-                if (invoicesFound != null && invoicesFound.size() > 0)
-                    for (InvoiceSearchResult invoiceFound : invoicesFound)
-                        if (invoiceFound.getIdPaymentType().equals(constantService.getPaymentTypeCB().getId())) {
-                            associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0));
-                            break;
-                        }
-
-                invoiceSearch.setStartDate(payment.getPaymentDate().toLocalDate().minusDays(2).atTime(0, 0));
-                invoiceSearch.setEndDate(payment.getPaymentDate().toLocalDate().minusDays(2).atTime(23, 59));
-                invoicesFound = invoiceService.searchInvoices(invoiceSearch);
-
-                if (invoicesFound != null && invoicesFound.size() > 0)
-                    for (InvoiceSearchResult invoiceFound : invoicesFound)
-                        if (invoiceFound.getIdPaymentType().equals(constantService.getPaymentTypeCB().getId())) {
-                            associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0));
-                            break;
-                        }
-
-                invoiceSearch.setStartDate(payment.getPaymentDate().toLocalDate().minusDays(3).atTime(0, 0));
-                invoiceSearch.setEndDate(payment.getPaymentDate().toLocalDate().minusDays(3).atTime(23, 59));
-                invoicesFound = invoiceService.searchInvoices(invoiceSearch);
-
-                if (invoicesFound != null && invoicesFound.size() > 0)
-                    for (InvoiceSearchResult invoiceFound : invoicesFound)
-                        if (invoiceFound.getIdPaymentType().equals(constantService.getPaymentTypeCB().getId())) {
-                            associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0));
-                            break;
-                        }
             }
         }
     }
@@ -595,8 +537,7 @@ public class PaymentServiceImpl implements PaymentService {
             remainingMoney -= effectivePayment;
 
             // Unlocked customer order if necessary
-            if (remainingToPayForCustomerOrder <= effectivePayment)
-                customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
+            customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
 
             if (Math.round(remainingMoney * 100f) / 100f == 0f)
                 return 0f;
@@ -745,7 +686,7 @@ public class PaymentServiceImpl implements PaymentService {
         Float inAmount = Math.round(inPayment.getPaymentAmount() * 100f) / 100f;
         Float checkAmount = Math.round(checkPayment.getPaymentAmount() * 100f) / 100f;
 
-        if (inAmount.equals(checkAmount) && checkPayment.getInvoice() != null) {
+        if (inAmount.equals(checkAmount)) {
             cancelPayment(inPayment);
             checkPayment.setOriginPayment(inPayment);
             addOrUpdatePayment(checkPayment);
@@ -783,7 +724,7 @@ public class PaymentServiceImpl implements PaymentService {
         checkPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
         addOrUpdatePayment(checkPayment);
         accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(checkPayment, false);
-        automatchPayment(checkPayment);
+        batchService.declareNewBatch(Batch.AUTOMATCH_PAYMENT, checkPayment.getId());
     }
 
     @Override
@@ -998,6 +939,25 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Payment movePaymentToWaitingAccount(Payment payment)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+        payment = getPayment(payment.getId());
+        cancelPayment(payment);
+        Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
+                accountingAccountService.getWaitingAccountingAccount());
+        newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+        newPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
+        addOrUpdatePayment(newPayment);
+        if (newPayment.getPaymentAmount() > 0)
+            accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(newPayment,
+                    false);
+        else
+            accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(newPayment);
+        return newPayment;
+    }
+
+    @Override
     public void movePaymentFromCustomerOrderToInvoice(Payment payment, CustomerOrder customerOrder, Invoice invoice)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         associateInboundPaymentAndInvoices(payment, Arrays.asList(invoice), null);
@@ -1159,6 +1119,11 @@ public class PaymentServiceImpl implements PaymentService {
 
                 if (idToFind != null) {
                     tmpEntitiesFound = searchService.searchForEntitiesById(idToFind, entityTypesToSearch);
+                }
+                if ((tmpEntitiesFound == null || tmpEntitiesFound.size() == 0) && payment.getPaymentAmount() < 0) {
+                    // Try check on outbound payments
+                    tmpEntitiesFound = searchService.searchForEntities("\"checkNumber\":\"" + idToFind + "\"",
+                            Payment.class.getSimpleName(), true);
                 }
                 if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                     for (IndexEntity newEntity : tmpEntitiesFound) {
@@ -1347,12 +1312,23 @@ public class PaymentServiceImpl implements PaymentService {
     public void putPaymentInAccount(Payment payment, CompetentAuthority competentAuthority)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         cancelPayment(payment);
-        Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
-                competentAuthority.getAccountingAccountDeposit());
-        newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
-        accountingRecordGenerationService
-                .generateAccountingRecordOnPaymentOnDepositCompetentAuthorityAccount(newPayment);
-        newPayment.setCompetentAuthority(competentAuthority);
+        Payment newPayment = null;
+        if (payment.getPaymentAmount() > 0) {
+            newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
+                    competentAuthority.getAccountingAccountDeposit());
+            newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
+            accountingRecordGenerationService
+                    .generateAccountingRecordOnIncomingPaymentOnDepositCompetentAuthorityAccount(newPayment);
+            newPayment.setCompetentAuthority(competentAuthority);
+        } else {
+            newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
+                    competentAuthority.getAccountingAccountDeposit());
+            newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+            newPayment.setTargetAccountingAccount(competentAuthority.getAccountingAccountProvider());
+            accountingRecordGenerationService
+                    .generateAccountingRecordOnOutgoingPaymentOnDepositCompetentAuthorityAccount(newPayment);
+            newPayment.setCompetentAuthority(competentAuthority);
+        }
         addOrUpdatePayment(newPayment);
     }
 }

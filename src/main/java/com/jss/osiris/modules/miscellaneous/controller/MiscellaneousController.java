@@ -93,6 +93,7 @@ import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.miscellaneous.service.WeekDayService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -355,6 +356,10 @@ public class MiscellaneousController {
             validationHelper.validateReferential(constant, true, "constant");
         validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true,
                 "BillingLabelTypeCodeAffaire");
+        validationHelper.validateReferential(constant.getTiersCategoryPresse(), true, "tiersCategoryPresse");
+        validationHelper.validateReferential(constant.getRffFrequencyAnnual(), true, "RffFrequencyAnnual");
+        validationHelper.validateReferential(constant.getRffFrequencyMonthly(), true, "RffFrequencyMonthly");
+        validationHelper.validateReferential(constant.getRffFrequencyQuarterly(), true, "RffFrequencyQuarterly");
         validationHelper.validateReferential(constant.getPaymentDeadLineType30(), true,
                 "PaymentDeadLineType30");
         validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true,
@@ -409,18 +414,6 @@ public class MiscellaneousController {
                 "DomiciliationContractTypeRouteEmail");
         validationHelper.validateReferential(constant.getMailRedirectionTypeOther(), true,
                 "MailRedirectionTypeOther");
-        validationHelper.validateReferential(constant.getBodaccPublicationTypeMerging(), true,
-                "BodaccPublicationTypeMerging");
-        validationHelper.validateReferential(constant.getBodaccPublicationTypeSplit(), true,
-                "BodaccPublicationTypeSplit");
-        validationHelper.validateReferential(constant.getBodaccPublicationTypePartialSplit(), true,
-                "BodaccPublicationTypePartialSplit");
-        validationHelper.validateReferential(constant.getBodaccPublicationTypePossessionDispatch(), true,
-                "BodaccPublicationTypePossessionDispatch");
-        validationHelper.validateReferential(constant.getBodaccPublicationTypeEstateRepresentativeDesignation(),
-                true, "BodaccPublicationTypeEstateRepresentativeDesignation");
-        validationHelper.validateReferential(constant.getBodaccPublicationTypeSaleOfBusiness(), true,
-                "BodaccPublicationTypeSaleOfBusiness");
         validationHelper.validateReferential(constant.getActTypeSeing(), true, "ActTypeSeing");
         validationHelper.validateReferential(constant.getActTypeAuthentic(), true, "ActTypeAuthentic");
         validationHelper.validateReferential(constant.getAssignationTypeEmployee(), true,
@@ -677,8 +670,15 @@ public class MiscellaneousController {
         if (billingType.getId() != null)
             validationHelper.validateReferential(billingType, true, "billingType");
         validationHelper.validateString(billingType.getCode(), true, 20, "code");
-        validationHelper.validateString(billingType.getLabel(), true, 100, "label");
+        validationHelper.validateString(billingType.getLabel(), true, 255, "label");
         validationHelper.validateReferential(billingType.getVat(), billingType.getIsOverrideVat(), "Vat");
+
+        if (billingType.getIsUsedForFormaliteRff() == null)
+            billingType.setIsUsedForFormaliteRff(false);
+
+        if (billingType.getIsUsedForInsertionRff() == null)
+            billingType.setIsUsedForInsertionRff(false);
+
         if (!billingType.getIsOverrideVat())
             billingType.setVat(null);
 
@@ -1025,7 +1025,8 @@ public class MiscellaneousController {
     public ResponseEntity<List<Attachment>> uploadAttachment(@RequestParam MultipartFile file,
             @RequestParam Integer idEntity, @RequestParam String entityType,
             @RequestParam Integer idAttachmentType,
-            @RequestParam String filename, @RequestParam Boolean replaceExistingAttachementType)
+            @RequestParam String filename, @RequestParam Boolean replaceExistingAttachementType,
+            @RequestParam(name = "pageSelection", required = false) String pageSelection)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         if (idAttachmentType == null)
             throw new OsirisValidationException("idAttachmentType");
@@ -1052,12 +1053,13 @@ public class MiscellaneousController {
                 && !entityType.equals(Provider.class.getSimpleName())
                 && !entityType.equals(CompetentAuthority.class.getSimpleName())
                 && !entityType.equals(Provision.class.getSimpleName())
+                && !entityType.equals(Affaire.class.getSimpleName())
                 && !entityType.equals(Invoice.class.getSimpleName()))
             throw new OsirisValidationException("entityType");
 
         return new ResponseEntity<List<Attachment>>(
                 attachmentService.addAttachment(file, idEntity, entityType, attachmentType, filename,
-                        replaceExistingAttachementType),
+                        replaceExistingAttachementType, pageSelection),
                 HttpStatus.OK);
     }
 
@@ -1103,7 +1105,7 @@ public class MiscellaneousController {
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/index/reindex/all")
-    public ResponseEntity<Boolean> reindexAll() {
+    public ResponseEntity<Boolean> reindexAll() throws OsirisException {
         invoiceService.reindexInvoices();
         tiersService.reindexTiers();
         refundService.reindexRefunds();
@@ -1121,77 +1123,77 @@ public class MiscellaneousController {
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/index/reindex/directDebitTransfert")
-    public ResponseEntity<Boolean> reindexDirectDebitTransfert() {
+    public ResponseEntity<Boolean> reindexDirectDebitTransfert() throws OsirisException {
         directDebitTransfertService.reindexDirectDebitTransfert();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/index/reindex/bankTransfert")
-    public ResponseEntity<Boolean> reindexBankTransfert() {
+    public ResponseEntity<Boolean> reindexBankTransfert() throws OsirisException {
         bankTransfertService.reindexBankTransfert();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/index/reindex/affaire")
-    public ResponseEntity<Boolean> reindexAffaire() {
+    public ResponseEntity<Boolean> reindexAffaire() throws OsirisException {
         affaireService.reindexAffaire();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/index/reindex/assoAffaireOrder")
-    public ResponseEntity<Boolean> reindexAffaires() {
+    public ResponseEntity<Boolean> reindexAffaires() throws OsirisException {
         assoAffaireOrderService.reindexAffaires();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/index/reindex/payment")
-    public ResponseEntity<Boolean> reindexPayments() {
+    public ResponseEntity<Boolean> reindexPayments() throws OsirisException {
         paymentService.reindexPayments();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/index/reindex/customerOrder")
-    public ResponseEntity<Boolean> reindexCustomerOrder() {
+    public ResponseEntity<Boolean> reindexCustomerOrder() throws OsirisException {
         customerOrderService.reindexCustomerOrder();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/index/reindex/quotation")
-    public ResponseEntity<Boolean> reindexQuotation() {
+    public ResponseEntity<Boolean> reindexQuotation() throws OsirisException {
         quotationService.reindexQuotation();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/index/reindex/responsable")
-    public ResponseEntity<Boolean> reindexResponsable() {
+    public ResponseEntity<Boolean> reindexResponsable() throws OsirisException {
         responsableService.reindexResponsable();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/index/reindex/refund")
-    public ResponseEntity<Boolean> reindexRefunds() {
+    public ResponseEntity<Boolean> reindexRefunds() throws OsirisException {
         refundService.reindexRefunds();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/index/reindex/tiers")
-    public ResponseEntity<Boolean> reindexTiers() {
+    public ResponseEntity<Boolean> reindexTiers() throws OsirisException {
         tiersService.reindexTiers();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/index/reindex/invoice")
-    public ResponseEntity<Boolean> reindexInvoices() {
+    public ResponseEntity<Boolean> reindexInvoices() throws OsirisException {
         invoiceService.reindexInvoices();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }

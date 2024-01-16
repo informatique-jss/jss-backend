@@ -22,7 +22,7 @@ public class NoticeType implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notice_type_sequence")
 	private Integer id;
 
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false, length = 200)
 	private String label;
 
 	@Column(nullable = false, length = 20)

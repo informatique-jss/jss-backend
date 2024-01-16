@@ -17,11 +17,6 @@ export interface OrderingSearchResult {
   quotationId: number;
   affaireSiren: string;
   affaireAddress: string;
-  announcementNbr: number;
-  formaliteNbr: number;
-  bodaccNbr: number;
-  domiciliationNbr: number;
-  simpleProvisionNbr: number;
   lastStatusUpdate: Date;
   customerOrderOriginLabel: string;
 }

@@ -29,12 +29,12 @@ import { ReceiptReconciliationEditDialogComponent } from '../receipt-reconciliat
 })
 export class ReceiptReconciliationComponent implements OnInit {
 
-  displayedColumns: SortTableColumn[] = [];
+  displayedColumns: SortTableColumn<Attachment>[] = [];
   selectedAttachmentId: number | undefined;
   selectedAttachment: Attachment | undefined;
   selectedAzureReceipt: AzureReceipt | undefined;
   attachments: Attachment[] | undefined;
-  tableActions: SortTableAction[] = [] as Array<SortTableAction>;
+  tableActions: SortTableAction<Attachment>[] = [] as Array<SortTableAction<Attachment>>;
   @Input() provider: IAttachment | undefined;
 
   getAffaireList = getAffaireListForProviderInvoice;
@@ -55,22 +55,22 @@ export class ReceiptReconciliationComponent implements OnInit {
 
   ngOnInit() {
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "name", fieldName: "uploadedFile.filename", label: "Nom", isShrinkColumn: true } as SortTableColumn);
-    this.displayedColumns.push({ id: "createdBy", fieldName: "uploadedFile.createdBy", label: "Ajouté par" } as SortTableColumn);
-    this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "globalDocumentConfidence", fieldName: "globalDocumentConfidence", label: "Confiance de la reconnaissance ?", valueFonction: (element: Attachment) => { return element.azureReceipt.globalDocumentConfidence * 100 + " %" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "isReconciliated", fieldName: "isReconciliated", label: "Pointé en totalité ?", valueFonction: (element: Attachment) => { return element.azureReceipt.isReconciliated ? "✔️" : "❌" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "name", fieldName: "uploadedFile.filename", label: "Nom", isShrinkColumn: true } as SortTableColumn<Attachment>);
+    this.displayedColumns.push({ id: "createdBy", fieldName: "uploadedFile.createdBy", label: "Ajouté par" } as SortTableColumn<Attachment>);
+    this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Attachment>);
+    this.displayedColumns.push({ id: "globalDocumentConfidence", fieldName: "globalDocumentConfidence", label: "Confiance de la reconnaissance ?", valueFonction: (element: Attachment, column: SortTableColumn<Attachment>) => { return element.azureReceipt.globalDocumentConfidence * 100 + " %" } } as SortTableColumn<Attachment>);
+    this.displayedColumns.push({ id: "isReconciliated", fieldName: "isReconciliated", label: "Pointé en totalité ?", valueFonction: (element: Attachment, column: SortTableColumn<Attachment>) => { return element.azureReceipt.isReconciliated ? "✔️" : "❌" } } as SortTableColumn<Attachment>);
 
     this.tableActions.push({
-      actionIcon: "visibility", actionName: "Prévisualiser le relevé", actionClick: (action: SortTableAction, element: any): void => {
+      actionIcon: "visibility", actionName: "Prévisualiser le relevé", actionClick: (column: SortTableAction<Attachment>, element: Attachment, event: any): void => {
         this.uploadAttachmentService.previewAttachment(element);
       }, display: true
-    } as SortTableAction);
+    } as SortTableAction<Attachment>);
     this.tableActions.push({
-      actionIcon: "download", actionName: "Télécharger le relevé", actionClick: (action: SortTableAction, element: any): void => {
+      actionIcon: "download", actionName: "Télécharger le relevé", actionClick: (column: SortTableAction<Attachment>, element: Attachment, event: any): void => {
         this.uploadAttachmentService.downloadAttachment(element);
       }, display: true
-    } as SortTableAction);
+    } as SortTableAction<Attachment>);
 
     if (this.provider && this.provider.attachments)
       this.attachments = this.provider.attachments.filter(attachment => attachment.azureReceipt && attachment.attachmentType.id == this.constantService.getAttachmentTypeBillingClosure().id).sort(function (a: Attachment, b: Attachment) {

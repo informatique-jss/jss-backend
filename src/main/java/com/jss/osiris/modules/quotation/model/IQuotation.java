@@ -43,6 +43,10 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 
 	public void setObservations(String observations);
 
+	public String getInstructions();
+
+	public void setInstructions(String instructions);
+
 	public String getDescription();
 
 	public void setDescription(String description);
@@ -72,8 +76,6 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 	public CustomerOrderOrigin getCustomerOrderOrigin();
 
 	public void setCustomerOrderOrigin(CustomerOrderOrigin customerOrderOrigin);
-
-	public Boolean getOverrideSpecialOffer();
 
 	public AbandonReason getAbandonReason();
 

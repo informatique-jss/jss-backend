@@ -76,6 +76,7 @@ import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 
@@ -102,9 +103,6 @@ public class MailHelper {
 
     @Value("${jss.bic}")
     private String bicJss;
-
-    @Value("${invoicing.payment.limit.refund.euros}")
-    private String payementLimitRefundInEuros;
 
     private JavaMailSender javaMailSender;
 
@@ -311,7 +309,9 @@ public class MailHelper {
                             attachment.getParentAttachment().setIsAlreadySent(true);
                         else if (attachment != null)
                             attachment.setIsAlreadySent(true);
-                        attachmentService.addOrUpdateAttachment(attachment.getParentAttachment());
+
+                        if (attachment != null && attachment.getParentAttachment() != null)
+                            attachmentService.addOrUpdateAttachment(attachment.getParentAttachment());
                     }
                 }
             }
@@ -393,6 +393,7 @@ public class MailHelper {
                 ctx.setVariable("assos", assos);
         }
 
+        ctx.setVariable("rff", mail.getRff());
         ctx.setVariable("preTaxPriceTotal", mail.getPreTaxPriceTotal());
         ctx.setVariable("discountTotal", mail.getDiscountTotal());
         ctx.setVariable("preTaxPriceTotalWithDicount", mail.getPreTaxPriceTotalWithDicount());
@@ -1608,6 +1609,34 @@ public class MailHelper {
         mail.setMailComputeResult(mailComputeResult);
 
         mail.setSubject("Votre nouveau mot de passe");
+
+        mailService.addMailToQueue(mail);
+    }
+
+    public void sendRffToCustomer(Rff rff, boolean sendToMe) throws OsirisException, OsirisClientMessageException {
+        CustomerMail mail = new CustomerMail();
+
+        mail.setHeaderPicture("images/billing-receipt-header.png");
+        mail.setTitle("Vos remboursements forfaitaires de frais");
+        String explainationText = "Bonjour, afin de nous permettre de procéder au règlement de vos remboursements forfaitaires de frais (RFF), nous vous remercions de nous faire parvenir avant la fin de l’année, une facture avec les montants ci-dessous correspondant à l'année "
+                + rff.getEndDate().getYear();
+        mail.setExplaination(explainationText);
+
+        mail.setGreetings("A très bientôt !");
+
+        mail.setReplyToMail(rff.getTiers().getSalesEmployee().getMail());
+        mail.setSendToMe(sendToMe);
+        mail.setMailComputeResult(mailComputeHelper.computeMailForRff(rff));
+
+        mail.setSubject("Vos remboursements forfaitaires de frais (" + rff.getTiers().getId() + ")");
+
+        mail.setExplaination3("Cette facture doit obligatoirement être datée de "
+                + rff.getEndDate().format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+                + ". Le paiement sera effectué à compter de réception de la facture et versé sur le RIB "
+                + rff.getRffBic() + " / " + rff.getRffIban());
+
+        mail.setRff(rff);
+        mail.setTiers(rff.getTiers());
 
         mailService.addMailToQueue(mail);
     }

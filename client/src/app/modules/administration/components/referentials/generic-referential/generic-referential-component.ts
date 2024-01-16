@@ -19,7 +19,7 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
   cloneEventSubscription: Subscription | undefined;
   @Output() selectedEntityChange: EventEmitter<T> = new EventEmitter<T>();
   entities: T[] = [] as Array<T>;
-  displayedColumns: SortTableColumn[] = [];
+  displayedColumns: SortTableColumn<T>[] = [];
   searchText: string | undefined;
   idRowSelected: number | undefined;
 
@@ -108,9 +108,9 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
 
   definedMatTableColumn() {
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);
-    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return this.getElementCode(element); return "" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return this.getElementLabel(element); return "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn<T>);
+    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle", valueFonction: (element: T, column: SortTableColumn<T>) => { if (element && column) return this.getElementCode(element); return "" } } as SortTableColumn<T>);
+    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", valueFonction: (element: T, column: SortTableColumn<T>) => { if (element && column) return this.getElementLabel(element); return "" } } as SortTableColumn<T>);
   }
 
   mapEntities() {

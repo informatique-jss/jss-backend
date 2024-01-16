@@ -37,16 +37,6 @@ public interface OrderingSearchResult {
 
     public String getAffaireAddress();
 
-    public Integer getAnnouncementNbr();
-
-    public Integer getFormaliteNbr();
-
-    public Integer getBodaccNbr();
-
-    public Integer getDomiciliationNbr();
-
-    public Integer getSimpleProvisionNbr();
-
     public LocalDateTime getLastStatusUpdate();
 
     public String getCustomerOrderOriginLabel();

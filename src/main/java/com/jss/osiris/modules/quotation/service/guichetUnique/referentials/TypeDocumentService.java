@@ -6,4 +6,8 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDoc
 
 public interface TypeDocumentService {
     public List<TypeDocument> getTypeDocument();
+
+    public TypeDocument getTypeDocumentByCode(String code);
+
+    public TypeDocument addOrUpdateTypeDocument(TypeDocument typeDocument);
 }

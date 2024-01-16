@@ -1,16 +1,11 @@
 import { Component, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
-import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AddAffaireComponent } from 'src/app/modules/quotation/components/add-affaire/add-affaire.component';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AppService } from 'src/app/services/app.service';
 import { Affaire } from '../../model/Affaire';
 import { AffaireService } from '../../services/affaire.service';
-import { RnaService } from '../../services/rna.service';
-import { SirenService } from '../../services/siren.service';
-import { SiretService } from '../../services/siret.service';
 
 @Component({
   selector: 'app-add-affaire-dialog',
@@ -19,7 +14,6 @@ import { SiretService } from '../../services/siret.service';
 })
 export class AddAffaireDialogComponent implements OnInit {
 
-  @ViewChild('tabs', { static: false }) tabs: any;
   @ViewChild(AddAffaireComponent) addAffaireComponent: AddAffaireComponent | undefined;
 
   affaire: Affaire = {} as Affaire;
@@ -28,11 +22,6 @@ export class AddAffaireDialogComponent implements OnInit {
 
 
   constructor(private formBuilder: FormBuilder,
-    private cityService: CityService,
-    private sirenService: SirenService,
-    private siretService: SiretService,
-    private rnaService: RnaService,
-    private constantService: ConstantService,
     private affaireService: AffaireService,
     private appService: AppService,
     private affaireDialogRef: MatDialogRef<AddAffaireDialogComponent>
@@ -41,8 +30,6 @@ export class AddAffaireDialogComponent implements OnInit {
   ngOnInit() {
     if (this.affaire && !this.affaire.isIndividual)
       this.affaire.isIndividual = false;
-    if (this.tabs)
-      this.tabs.realignInkBar();
   }
 
   ngOnChanges(changes: SimpleChanges) {

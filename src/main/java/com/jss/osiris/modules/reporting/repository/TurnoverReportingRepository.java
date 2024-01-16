@@ -92,7 +92,7 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " e1.username = a1.username " +
                         " left join customer_order co on co.id = i.customer_order_id " +
                         " left join employee e2 on " +
-                        " e2.id = co.id_assigned_to " +
+                        " e2.id = coalesce(r.id_commercial, t1.id_commercial, t2.id_commercial, c1.id_commercial) " +
                         " where " +
                         " i.id_invoice_status in :invoiceStatusId " +
                         " and i.is_invoice_from_provider = false " +

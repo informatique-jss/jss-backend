@@ -37,6 +37,8 @@ import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.PrintDelegate;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -44,11 +46,11 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
+import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -64,7 +66,6 @@ import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
-import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -88,9 +89,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     CustomerOrderRepository customerOrderRepository;
-
-    @Autowired
-    IndexEntityService indexEntityService;
 
     @Autowired
     PhoneService phoneService;
@@ -164,6 +162,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     ActiveDirectoryHelper activeDirectoryHelper;
 
+    @Autowired
+    InvoiceItemService invoiceItemService;
+
+    @Autowired
+    BatchService batchService;
+
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
         Optional<CustomerOrder> customerOrder = customerOrderRepository.findById(id);
@@ -206,66 +210,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         customerOrder.setIsQuotation(false);
 
-        // Check duplicate
-        // Find first affaire customer order
-        if (customerOrder.getId() == null && customerOrder.getAssoAffaireOrders() != null
-                && customerOrder.getAssoAffaireOrders().size() > 0) {
-            OrderingSearch orderingSearch = new OrderingSearch();
-            orderingSearch.setAffaires(Arrays.asList(customerOrder.getAssoAffaireOrders().get(0).getAffaire()));
-            orderingSearch.setCustomerOrders(new ArrayList<Tiers>());
-            if (customerOrder.getResponsable() != null) {
-                Tiers tiers = new Tiers();
-                tiers.setId(customerOrder.getResponsable().getId());
-                orderingSearch.getCustomerOrders().add(tiers);
-            } else if (customerOrder.getTiers() != null) {
-                orderingSearch.getCustomerOrders().add(customerOrder.getTiers());
-            } else if (customerOrder.getConfrere() != null) {
-                Tiers tiers = new Tiers();
-                tiers.setId(customerOrder.getConfrere().getId());
-                orderingSearch.getCustomerOrders().add(tiers);
-            }
-
-            // Only last 3 days
-            orderingSearch.setStartDate(DateHelper.subtractDaysSkippingWeekends(LocalDateTime.now(), 3));
-            List<OrderingSearchResult> duplicatedCustomerOrders = searchOrders(orderingSearch);
-            List<CustomerOrder> duplicatedFound = new ArrayList<CustomerOrder>();
-
-            if (duplicatedCustomerOrders != null && duplicatedCustomerOrders.size() > 0) {
-                outerloop: for (OrderingSearchResult potentialCustomerOrderResult : duplicatedCustomerOrders) {
-                    CustomerOrder potentialCustomerOrder = getCustomerOrder(
-                            potentialCustomerOrderResult.getCustomerOrderId());
-                    if (!potentialCustomerOrder.getCustomerOrderStatus().getCode()
-                            .equals(CustomerOrderStatus.ABANDONED)) {
-                        for (AssoAffaireOrder currentAsso : customerOrder.getAssoAffaireOrders()) {
-                            boolean foundAsso = false;
-                            for (AssoAffaireOrder duplicateAsso : potentialCustomerOrder.getAssoAffaireOrders()) {
-                                if (currentAsso.getAffaire().getId().equals(duplicateAsso.getAffaire().getId())) {
-                                    foundAsso = true;
-                                    for (Provision currentProvision : currentAsso.getProvisions()) {
-                                        boolean foundProvision = false;
-                                        for (Provision duplicateProvision : duplicateAsso.getProvisions()) {
-                                            if (duplicateProvision.getProvisionType().getId()
-                                                    .equals(currentProvision.getProvisionType().getId())) {
-                                                foundProvision = true;
-                                            }
-                                        }
-                                        if (!foundProvision)
-                                            break outerloop;
-                                    }
-                                }
-                            }
-                            if (!foundAsso)
-                                break outerloop;
-                        }
-                        duplicatedFound.add(potentialCustomerOrder);
-                    }
-                }
-
-                if (duplicatedFound.size() > 0) {
-                    throw new OsirisDuplicateException(duplicatedFound.stream().map(CustomerOrder::getId).toList());
-                }
-            }
-        }
+        // TODO findDuplicatesForCustomerOrder(customerOrder);
 
         if (customerOrder.getDocuments() != null)
             for (Document document : customerOrder.getDocuments()) {
@@ -301,15 +246,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (checkAllProvisionEnded)
             checkAllProvisionEnded(customerOrder);
 
-        // Trigger move forward for announcement created in website
-        if (!isFromUser && customerOrder.getAssoAffaireOrders() != null
-                && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
-                && customerOrder.getCustomerOrderOrigin().getId()
-                        .equals(constantService.getCustomerOrderOriginWebSite().getId())
-                && isOnlyAnnouncement(customerOrder))
-            addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.OPEN, isFromUser);
-
-        indexEntityService.indexEntity(customerOrder);
+        batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
         return customerOrder;
     }
 
@@ -324,9 +261,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     for (Provision provision : assoAffaireOrder.getProvisions()) {
                         if (provision.getAnnouncement() != null
                                 && !provision.getAnnouncement().getAnnouncementStatus().getIsCloseState())
-                            return customerOrderIn;
-                        if (provision.getBodacc() != null
-                                && !provision.getBodacc().getBodaccStatus().getIsCloseState())
                             return customerOrderIn;
                         if (provision.getFormalite() != null
                                 && !provision.getFormalite().getFormaliteStatus().getIsCloseState())
@@ -380,9 +314,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Handle automatic workflow for Announcement created from website
         boolean checkAllProvisionEnded = false;
-        boolean onlyAnnonceLegale = isOnlyAnnouncement(customerOrder);
-        boolean isFromWebsite = customerOrder.getCustomerOrderOrigin().getId()
-                .equals(constantService.getCustomerOrderOriginWebSite().getId());
 
         // Determine if deposit is mandatory or not
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
@@ -403,22 +334,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
             // Confirm customer order to cutomser with or without deposit
             mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, false, false);
-        }
-
-        // Handle automatic workflow for Announcement created from website
-        if (isFromWebsite && onlyAnnonceLegale && !isFromUser) {
-            // First round : move forward customerOrder
-            if (targetStatusCode.equals(CustomerOrderStatus.OPEN)) {
-                boolean hasError = false;
-                try {
-                    quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder,
-                            CustomerOrderStatus.BEING_PROCESSED);
-                } catch (Exception e) {
-                    hasError = true;
-                }
-                if (!hasError)
-                    targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
-            }
         }
 
         // Target : CANCELLED => vérifiy there is no more deposit
@@ -443,16 +358,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     notificationService.notifyCustomerOrderToBeingProcessedFromDeposit(customerOrder, isFromUser);
                 } else
                     notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, true);
-            }
-        }
-
-        // Handle automatic workflow for Announcement created from website
-        if (isFromWebsite && onlyAnnonceLegale && !isFromUser) {
-            // Second round : move forward announcements. Final check checkAllProvisionEnded
-            // on save will put it to TO BILLED if necessary
-            if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)) {
-                moveForwardAnnouncementFromWebsite(customerOrder);
-                checkAllProvisionEnded = true;
             }
         }
 
@@ -534,6 +439,40 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public void generateCreditNoteForCustomerOrderInvoice(CustomerOrder customerOrder, Invoice invoiceToRefund)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+        customerOrder = getCustomerOrder(customerOrder.getId());
+        invoiceToRefund = invoiceService.getInvoice(invoiceToRefund.getId());
+
+        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED))
+            if (customerOrder.getInvoices() != null) {
+                for (Invoice invoice : customerOrder.getInvoices())
+                    if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusCancelled().getId())
+                            && !invoice.getInvoiceStatus().getId()
+                                    .equals(constantService.getInvoiceStatusCreditNoteEmited().getId())
+                            && invoice.getId().equals(invoiceToRefund.getId())) {
+                        invoiceService.cancelInvoice(invoice);
+                        break;
+                    }
+            }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void reinitInvoicing(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+        customerOrder = getCustomerOrder(customerOrder.getId());
+        if (customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getInvoiceItems() != null)
+                            for (InvoiceItem invoiceItem : provision.getInvoiceItems())
+                                invoiceItemService.deleteInvoiceItem(invoiceItem);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public void offerCustomerOrder(CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED))
@@ -571,42 +510,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             if (invoiceItemToDelete.size() > 0)
                                 provision.getInvoiceItems().removeAll(invoiceItemToDelete);
                         }
-    }
-
-    /**
-     * Return true if announcement is done at the end, false otherwise
-     * 
-     * @throws OsirisClientMessageException
-     * @throws OsirisValidationException
-     * @throws OsirisDuplicateException
-     */
-    private boolean moveForwardAnnouncementFromWebsite(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        boolean allDone = true;
-        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
-            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
-                        if (provision.getAnnouncement() != null) {
-                            Announcement announcement = provision.getAnnouncement();
-                            announcement.setAnnouncementStatus(announcementStatusService
-                                    .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS));
-                            assoAffaireOrderService.addOrUpdateAssoAffaireOrder(asso);
-                            if (announcement.getIsProofReadingDocument() == false) {
-                                announcement.setAnnouncementStatus(announcementStatusService
-                                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
-                                assoAffaireOrderService.addOrUpdateAssoAffaireOrder(asso);
-                                announcement.setAnnouncementStatus(announcementStatusService
-                                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
-                                assoAffaireOrderService.addOrUpdateAssoAffaireOrder(asso);
-                            } else {
-                                allDone = false;
-                                announcement.setAnnouncementStatus(announcementStatusService
-                                        .getAnnouncementStatusByCode(
-                                                AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER));
-                            }
-                        }
-        return allDone;
     }
 
     @Override
@@ -662,7 +565,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeInvoice(),
                     "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                    false, "Facture n°" + invoice.getId());
+                    false, "Facture n°" + invoice.getId(), null, null);
 
             for (Attachment attachment : attachments)
                 if (attachment.getDescription().contains(invoice.getId() + "")) {
@@ -727,21 +630,25 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (orderingSearch.getEndDate() == null)
             orderingSearch.setEndDate(LocalDateTime.now().plusYears(100));
 
+        if (orderingSearch.getIdCustomerOrder() == null)
+            orderingSearch.setIdCustomerOrder(0);
+
         List<OrderingSearchResult> customerOrders = customerOrderRepository.findCustomerOrders(
                 salesEmployeeId, assignedToEmployeeId,
                 statusId,
                 orderingSearch.getStartDate().withHour(0).withMinute(0),
-                orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId, 0);
+                orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId, 0,
+                orderingSearch.getIdCustomerOrder());
         return customerOrders;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexCustomerOrder() {
+    public void reindexCustomerOrder() throws OsirisException {
         List<CustomerOrder> customerOrders = IterableUtils.toList(customerOrderRepository.findAll());
         if (customerOrders != null)
             for (CustomerOrder customerOrder : customerOrders)
-                indexEntityService.indexEntity(customerOrder);
+                batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
     }
 
     @Override
@@ -752,9 +659,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         CustomerOrder customerOrder = new CustomerOrder(quotation.getAssignedTo(), quotation.getTiers(),
                 quotation.getResponsable(),
                 quotation.getConfrere(), quotation.getSpecialOffers(), LocalDateTime.now(), statusOpen,
-                quotation.getObservations(), quotation.getDescription(), null,
-                quotation.getDocuments(), quotation.getAssoAffaireOrders(), null,
-                quotation.getOverrideSpecialOffer(), quotation.getQuotationLabel(), false, null, null);
+                quotation.getObservations(), quotation.getDescription(), quotation.getInstructions(), null,
+                quotation.getDocuments(), quotation.getAssoAffaireOrders(), null, quotation.getQuotationLabel(), false,
+                null, null);
 
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
@@ -805,9 +712,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             if (provision.getAnnouncement().getDocuments() != null)
                                 for (Document document : provision.getAnnouncement().getDocuments())
                                     document.setId(null);
-                        }
-                        if (provision.getBodacc() != null) {
-                            provision.getBodacc().setId(null);
                         }
                         if (provision.getFormalite() != null) {
                             provision.getFormalite().setId(null);
@@ -988,32 +892,40 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional
-    public void sendRemindersForCustomerOrderDeposit()
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+    public void sendRemindersForCustomerOrderDeposit() throws OsirisException {
         List<CustomerOrder> customerOrders = customerOrderRepository.findCustomerOrderForReminder(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT));
 
         if (customerOrders != null && customerOrders.size() > 0)
             for (CustomerOrder customerOrder : customerOrders) {
-                boolean toSend = false;
-                if (customerOrder.getFirstReminderDateTime() == null
-                        && customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
-                    toSend = true;
-                    customerOrder.setFirstReminderDateTime(LocalDateTime.now());
-                } else if (customerOrder.getSecondReminderDateTime() == null
-                        && customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(3 * 7))) {
-                    toSend = true;
-                    customerOrder.setSecondReminderDateTime(LocalDateTime.now());
-                } else if (customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(6 * 7))) {
-                    toSend = true;
-                    customerOrder.setThirdReminderDateTime(LocalDateTime.now());
-                }
-
-                if (toSend) {
-                    mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, false, true);
-                    addOrUpdateCustomerOrder(customerOrder, false, true);
-                }
+                batchService.declareNewBatch(Batch.SEND_REMINDER_FOR_CUSTOMER_ORDER_DEPOSITS, customerOrder.getId());
             }
+    }
+
+    @Override
+    @Transactional
+    public void sendReminderForCustomerOrderDeposit(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+        if (customerOrder != null) {
+            boolean toSend = false;
+            if (customerOrder.getFirstReminderDateTime() == null
+                    && customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                toSend = true;
+                customerOrder.setFirstReminderDateTime(LocalDateTime.now());
+            } else if (customerOrder.getSecondReminderDateTime() == null
+                    && customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(3 * 7))) {
+                toSend = true;
+                customerOrder.setSecondReminderDateTime(LocalDateTime.now());
+            } else if (customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(6 * 7))) {
+                toSend = true;
+                customerOrder.setThirdReminderDateTime(LocalDateTime.now());
+            }
+
+            if (toSend) {
+                mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, false, true);
+                addOrUpdateCustomerOrder(customerOrder, false, true);
+            }
+        }
     }
 
     @Override
@@ -1113,6 +1025,69 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation) {
         return customerOrderRepository.findCustomerOrders(
                 Arrays.asList(0), Arrays.asList(0), Arrays.asList(0), LocalDateTime.now().minusYears(100),
-                LocalDateTime.now().plusYears(100), Arrays.asList(0), Arrays.asList(0), idQuotation);
+                LocalDateTime.now().plusYears(100), Arrays.asList(0), Arrays.asList(0), idQuotation, 0);
+    }
+
+    private void findDuplicatesForCustomerOrder(CustomerOrder customerOrder) throws OsirisDuplicateException {
+        // Check duplicate
+        // Find first affaire customer order
+        if (customerOrder.getId() == null && customerOrder.getAssoAffaireOrders() != null
+                && customerOrder.getAssoAffaireOrders().size() > 0) {
+            OrderingSearch orderingSearch = new OrderingSearch();
+            orderingSearch.setAffaires(Arrays.asList(customerOrder.getAssoAffaireOrders().get(0).getAffaire()));
+            orderingSearch.setCustomerOrders(new ArrayList<Tiers>());
+            if (customerOrder.getResponsable() != null) {
+                Tiers tiers = new Tiers();
+                tiers.setId(customerOrder.getResponsable().getId());
+                orderingSearch.getCustomerOrders().add(tiers);
+            } else if (customerOrder.getTiers() != null) {
+                orderingSearch.getCustomerOrders().add(customerOrder.getTiers());
+            } else if (customerOrder.getConfrere() != null) {
+                Tiers tiers = new Tiers();
+                tiers.setId(customerOrder.getConfrere().getId());
+                orderingSearch.getCustomerOrders().add(tiers);
+            }
+
+            // Only last 3 days
+            orderingSearch.setStartDate(DateHelper.subtractDaysSkippingWeekends(LocalDateTime.now(), 3));
+            List<OrderingSearchResult> duplicatedCustomerOrders = searchOrders(orderingSearch);
+            List<CustomerOrder> duplicatedFound = new ArrayList<CustomerOrder>();
+
+            if (duplicatedCustomerOrders != null && duplicatedCustomerOrders.size() > 0) {
+                outerloop: for (OrderingSearchResult potentialCustomerOrderResult : duplicatedCustomerOrders) {
+                    CustomerOrder potentialCustomerOrder = getCustomerOrder(
+                            potentialCustomerOrderResult.getCustomerOrderId());
+                    if (!potentialCustomerOrder.getCustomerOrderStatus().getCode()
+                            .equals(CustomerOrderStatus.ABANDONED)) {
+                        for (AssoAffaireOrder currentAsso : customerOrder.getAssoAffaireOrders()) {
+                            boolean foundAsso = false;
+                            for (AssoAffaireOrder duplicateAsso : potentialCustomerOrder.getAssoAffaireOrders()) {
+                                if (currentAsso.getAffaire().getId().equals(duplicateAsso.getAffaire().getId())) {
+                                    foundAsso = true;
+                                    for (Provision currentProvision : currentAsso.getProvisions()) {
+                                        boolean foundProvision = false;
+                                        for (Provision duplicateProvision : duplicateAsso.getProvisions()) {
+                                            if (duplicateProvision.getProvisionType().getId()
+                                                    .equals(currentProvision.getProvisionType().getId())) {
+                                                foundProvision = true;
+                                            }
+                                        }
+                                        if (!foundProvision)
+                                            break outerloop;
+                                    }
+                                }
+                            }
+                            if (!foundAsso)
+                                break outerloop;
+                        }
+                        duplicatedFound.add(potentialCustomerOrder);
+                    }
+                }
+
+                if (duplicatedFound.size() > 0) {
+                    throw new OsirisDuplicateException(duplicatedFound.stream().map(CustomerOrder::getId).toList());
+                }
+            }
+        }
     }
 }

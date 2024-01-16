@@ -1,7 +1,8 @@
 package com.jss.osiris.modules.reporting.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,11 +22,22 @@ public class AnnouncementReportingServiceImpl implements AnnouncementReportingSe
     @Autowired
     CustomerOrderStatusService customerOrderStatusService;
 
+    @Autowired
+    ReportingHelper<IAnnouncementReporting> reportingHelper;
+
     @Override
-    public List<IAnnouncementReporting> getAnnouncementReporting() throws OsirisException {
-        return announcementReportingRepository.getAnnouncementReporting(
+    public ArrayList<HashMap<String, String>> getAnnouncementReporting(ArrayList<String> columns)
+            throws OsirisException {
+        return reportingHelper.filterOutputColumns(announcementReportingRepository.getAnnouncementReporting(
                 Arrays.asList(customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED)
-                        .getId()));
+                        .getId())),
+                columns,
+                IAnnouncementReporting.class.getDeclaredMethods());
+    }
+
+    @Override
+    public ArrayList<HashMap<String, String>> getFakeData() {
+        return reportingHelper.getFakeData(IAnnouncementReporting.class.getDeclaredMethods());
     }
 
 }

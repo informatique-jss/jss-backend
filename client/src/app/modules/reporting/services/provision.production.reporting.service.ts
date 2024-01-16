@@ -12,8 +12,8 @@ export class ProvisionProductionReportingService extends AppRestService<Provisio
     super(http, "reporting");
   }
 
-  getProvisionProductionReporting() {
-    return this.getList(new HttpParams(), "provision-production");
+  getProvisionProductionReporting(columns: string[]) {
+    return this.getList(new HttpParams().set("columns", columns.join(",")), "provision-production");
   }
 
 }

@@ -1,6 +1,5 @@
 <div [hidden]="!editMode && (tiers.id==undefined || tiers.id==null)">
-  <mat-tab-group animationDuration="0ms" #tabs [(selectedIndex)]="selectedTabIndex"
-    (selectedTabChange)="changePageHeader($event)">
+  <mat-tab-group animationDuration="0ms" [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onTabChange($event)">
     <mat-tab label="Fiche du tiers">
       <tiers-main [tiers]="tiers" [editMode]="editMode">
       </tiers-main>
@@ -16,38 +15,64 @@
       </attachments>
     </mat-tab>
     <mat-tab label="Mails" *ngIf="tiers.id">
-      <automatic-mail-list [tiers]="tiers">
-      </automatic-mail-list>
+      <ng-template matTabContent>
+        <automatic-mail-list [tiers]="tiers">
+        </automatic-mail-list>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Devis" *ngIf="tiers.id!=null && tiers.id!=undefined">
-      <quotation-list class="integration-component" *ngIf="this.quotationSearch.customerOrders"
-        [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
-      </quotation-list>
+      <ng-template matTabContent>
+        <quotation-list class="integration-component" *ngIf="this.quotationSearch.customerOrders"
+          [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
+        </quotation-list>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Commandes" *ngIf="tiers.id!=null && tiers.id!=undefined">
-      <ordering-list class="integration-component" *ngIf="this.orderingSearch.customerOrders"
-        [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
-      </ordering-list>
+      <ng-template matTabContent>
+        <ordering-list class="integration-component" *ngIf="this.orderingSearch.customerOrders"
+          [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
+        </ordering-list>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Prestations" *ngIf="tiers.id!=null && tiers.id!=undefined">
-      <provision-list class="integration-component"
-        *ngIf="this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0"
-        [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
-      </provision-list>
+      <ng-template matTabContent>
+        <provision-list class="integration-component"
+          *ngIf="this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0"
+          [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
+        </provision-list>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Factures" *ngIf="invoiceSearch.customerOrders">
-      <invoice-list [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+      <ng-template matTabContent>
+        <invoice-list [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id && !this.idResponsable">
-      <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
+      <ng-template matTabContent>
+        <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="RFF" *ngIf="rffSearch && rffSearch.tiers  ">
+      <ng-template matTabContent>
+        <div class="mat-elevation-z2 form-div">
+          <rff-list [rffSearch]="rffSearch" [isForTiersIntegration]="true"></rff-list>
+        </div>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Suivi" *ngIf="tiers.id!=null && tiers.id!=undefined">
-      <tiers-followup [tiers]="tiers" [editMode]="editMode"></tiers-followup>
+      <ng-template matTabContent>
+        <tiers-followup [tiers]="tiers" [editMode]="editMode"></tiers-followup>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="tiers.id!=null && tiers.id!=undefined">
-      <history [entity]="tiers" [entityType]="TIERS_ENTITY_TYPE"></history>
+      <ng-template matTabContent>
+        <history [entity]="tiers" [entityType]="TIERS_ENTITY_TYPE"></history>
+      </ng-template>
     </mat-tab>
   </mat-tab-group>
+</div>
+<div [hidden]="(tiers.id!=undefined && tiers.id!=null)">
+  <tiers-list></tiers-list>
 </div>
 <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true" (click)="saveTiers()">
   <mat-icon>save</mat-icon>
@@ -60,7 +85,7 @@
   *ngIf="editMode==false && (tiers.id==undefined || tiers.id==null)" (click)="createTiers()">
   <mat-icon>add</mat-icon>
 </button>
-<button matTooltip="Rechercher un tiers" mat-fab color="accent" class="second-fab-button" *ngIf="editMode==false"
-  (click)="openSearch()">
-  <mat-icon>search</mat-icon>
+<button matTooltip="Supprimer le tiers" mat-fab color="warn" class="third-fab-button"
+  *ngIf="editMode==false &&  tiers.id" (click)="deleteTiers()">
+  <mat-icon>delete</mat-icon>
 </button>

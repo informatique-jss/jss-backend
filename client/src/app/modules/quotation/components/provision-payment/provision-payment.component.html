@@ -42,8 +42,8 @@
         Paiements associés :
       </p>
       <sort-table [actions]="paymentsTableActions" [columns]="paymentsDisplayedColumns" [values]="provision.payments"
-        tableName="Paiements fournisseur " *ngIf="paymentsDisplayedColumns && paymentsDisplayedColumns.length>0 "
-        [displayTotalLines]="true">
+        [noPaddingBottom]="true" [noMaxHeight]="true" tableName="Paiements fournisseur "
+        *ngIf="paymentsDisplayedColumns && paymentsDisplayedColumns.length>0 " [displayTotalLines]="true">
       </sort-table>
     </div>
     <div *ngIf="provision.providerInvoices" class="padding-top">
@@ -51,8 +51,9 @@
         Factures associées :
       </p>
       <sort-table [actions]="invoiceTableActions" [columns]="invoiceDisplayedColumns"
-        [values]="provision.providerInvoices" tableName="Factures fournisseur "
-        *ngIf="invoiceDisplayedColumns && invoiceDisplayedColumns.length>0 " [displayTotalLines]="true">
+        [values]="provision.providerInvoices" tableName="Factures fournisseur " [noPaddingBottom]="true"
+        [noMaxHeight]="true" *ngIf="invoiceDisplayedColumns && invoiceDisplayedColumns.length>0 "
+        [displayTotalLines]="true">
       </sort-table>
     </div>
     <div *ngIf="getAvailableAzureInvoices() && canAddNewAzureInvoice()" class="padding-top">

@@ -340,6 +340,13 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeRff" label="Type de poste de facturation - RFF"
+                [form]="constantForm" propertyName="billingTypeRff" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeLogo"
                 label="Type de poste de facturation - Logo" [form]="constantForm" propertyName="billingTypeLogo"
                 [isMandatory]="true" [isDisabled]="!editMode">
@@ -781,54 +788,6 @@
                 label="Type de redirection du courier - autres" [form]="constantForm"
                 propertyName="mailRedirectionTypeOther" [isMandatory]="true" [isDisabled]="!editMode">
               </select-mail-redirection>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-bodacc-publication-type [(model)]="constant.bodaccPublicationTypeEstateRepresentativeDesignation"
-                label="BODACC - Type de publication - Désignation du mandataire successoral" [form]="constantForm"
-                propertyName="bodaccPublicationTypeEstateRepresentativeDesignation" [isMandatory]="true"
-                [isDisabled]="!editMode"></select-bodacc-publication-type>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-bodacc-publication-type [(model)]="constant.bodaccPublicationTypeMerging"
-                label="BODACC - Type de publication - Fusion" [form]="constantForm"
-                propertyName="bodaccPublicationTypeMerging" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-bodacc-publication-type>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-bodacc-publication-type [(model)]="constant.bodaccPublicationTypePartialSplit"
-                label="BODACC - Type de publication - Scission partielle" [form]="constantForm"
-                propertyName="bodaccPublicationTypePartialSplit" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-bodacc-publication-type>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-bodacc-publication-type [(model)]="constant.bodaccPublicationTypePossessionDispatch"
-                label="BODACC - Type de publication - Envoi en possession" [form]="constantForm"
-                propertyName="bodaccPublicationTypePossessionDispatch" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-bodacc-publication-type>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-bodacc-publication-type [(model)]="constant.bodaccPublicationTypeSaleOfBusiness"
-                label="BODACC - Type de publication - Cession de fond de commerce" [form]="constantForm"
-                propertyName="bodaccPublicationTypeSaleOfBusiness" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-bodacc-publication-type>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-bodacc-publication-type [(model)]="constant.bodaccPublicationTypeSplit"
-                label="BODACC - Type de publication - Scission" [form]="constantForm"
-                propertyName="bodaccPublicationTypeSplit" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-bodacc-publication-type>
             </td>
           </tr>
           <tr>
@@ -1317,6 +1276,34 @@
                 label="Type de suivi - relance facture" [form]="constantForm"
                 propertyName="tiersFollowupTypeInvoiceReminder" [isMandatory]="true"
                 [isDisabled]="!editMode"></select-followup>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-tiers-category [(model)]="constant.tiersCategoryPresse" label="Catégorie du tiers - Presse"
+                [form]="constantForm" propertyName="tiersCategoryPresse" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-tiers-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-rff-frequency [(model)]="constant.rffFrequencyAnnual" label="Périodicité des RFF - Annuel"
+                [form]="constantForm" propertyName="rffFrequencyAnnual " [isMandatory]="true"
+                [isDisabled]="!editMode"></select-rff-frequency>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-rff-frequency [(model)]="constant.rffFrequencyQuarterly" label="Périodicité des RFF - Trimestiel"
+                [form]="constantForm" propertyName="rffFrequencyQuarterly " [isMandatory]="true"
+                [isDisabled]="!editMode"></select-rff-frequency>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-rff-frequency [(model)]="constant.rffFrequencyMonthly" label="Périodicité des RFF - Mensuel"
+                [form]="constantForm" propertyName="rffFrequencyMonthly " [isMandatory]="true"
+                [isDisabled]="!editMode"></select-rff-frequency>
             </td>
           </tr>
         </table>

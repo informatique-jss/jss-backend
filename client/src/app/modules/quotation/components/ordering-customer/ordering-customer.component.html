@@ -86,7 +86,8 @@
             *ngIf="quotation && instanceOfQuotation(quotation) && quotationCustomerOrders && quotationCustomerOrders.length>0">
             <p>Commandes issues de ce devis</p>
             <sort-table [actions]="customerOrderTableActions" [columns]="customerOrderDisplayedColumns"
-              [values]="quotationCustomerOrders" tableName="Liste commandes">
+              [noMaxHeight]="true" [noPaddingBottom]="true" [values]="quotationCustomerOrders"
+              tableName="Liste commandes">
             </sort-table>
           </div>
           <div class="div-customer-order"
@@ -99,33 +100,16 @@
           <div class="div-customer-order"
             *ngIf="quotation && instanceOfCustomerOrder(quotation) && customerOrderQuotations && customerOrderQuotations.length>0">
             <p>Devis issus de cette commande</p>
-            <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
-              [values]="customerOrderQuotations" tableName="Liste devis">
+            <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns" [noMaxHeight]="true"
+              [noPaddingBottom]="true" [values]="customerOrderQuotations" tableName="Liste devis">
             </sort-table>
           </div>
           <table class="full-width">
             <tr>
-              <td>Tarif special :
-                <ul *ngIf="quotation.tiers ">
-                  <li *ngFor="let specialOffer of quotation.tiers.specialOffers">
-                    {{specialOffer? (specialOffer.code + " - " +specialOffer.label):"Aucun"}}
-                  </li>
-                </ul>
-                <ul *ngIf="quotation.confrere ">
-                  <li *ngFor="let specialOffer of quotation.confrere.specialOffers">
-                    {{specialOffer? (specialOffer.code + " - " +specialOffer.label):"Aucun"}}
-                  </li>
-                </ul>
-                <button *ngIf="editMode==true && !quotation.overrideSpecialOffer"
-                  matTooltip="Modifier le tarif spécial par défaut" (click)="displayOverrideSpecialOffers()"
-                  mat-icon-button color="accent">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button *ngIf="editMode==true && quotation.overrideSpecialOffer"
-                  matTooltip="Ne pas modifier le tarif spécial par défaut" (click)="hideOverrideSpecialOffers()"
-                  mat-icon-button color="accent">
-                  <mat-icon>close</mat-icon>
-                </button>
+              <td>
+                <chips-special-offers [(model)]="quotation.specialOffers" [form]="orderingCustomerForm"
+                  propertyName="specialOffer" [isDisabled]="!editMode">
+                </chips-special-offers>
               </td>
             </tr>
           </table>
@@ -173,7 +157,8 @@
             *ngIf="quotation && instanceOfQuotation(quotation) && quotationCustomerOrders && quotationCustomerOrders.length>0">
             <p>Commandes issues de ce devis</p>
             <sort-table [actions]="customerOrderTableActions" [columns]="customerOrderDisplayedColumns"
-              [values]="quotationCustomerOrders" tableName="Liste commandes">
+              [noMaxHeight]="true" [noPaddingBottom]="true" [values]="quotationCustomerOrders"
+              tableName="Liste commandes">
             </sort-table>
           </div>
           <div class="div-customer-order"
@@ -186,33 +171,12 @@
           <div class="div-customer-order"
             *ngIf="quotation && instanceOfCustomerOrder(quotation) && customerOrderQuotations && customerOrderQuotations.length>0">
             <p>Devis issus de cette commande</p>
-            <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
-              [values]="customerOrderQuotations" tableName="Liste devis">
+            <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns" [noMaxHeight]="true"
+              [noPaddingBottom]="true" [values]="customerOrderQuotations" tableName="Liste devis">
             </sort-table>
           </div>
-          <table class="full-width">
-            <tr>
-              <td>Tarif special :
-                <ul>
-                  <li *ngFor="let specialOffer of quotation.responsable.tiers.specialOffers">
-                    {{specialOffer? (specialOffer.code + " - " +specialOffer.label):"Aucun"}}
-                  </li>
-                </ul>
-                <button *ngIf="editMode==true && !quotation.overrideSpecialOffer"
-                  matTooltip="Modifier le tarif spécial par défaut" (click)="displayOverrideSpecialOffers()"
-                  mat-icon-button color="accent">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button *ngIf="editMode==true && quotation.overrideSpecialOffer"
-                  matTooltip="Ne pas modifier le tarif spécial par défaut" (click)="hideOverrideSpecialOffers()"
-                  mat-icon-button color="accent">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-          </table>
         </div>
-        <table class="full-width" *ngIf="quotation.overrideSpecialOffer">
+        <table class="full-width">
           <tr>
             <td>
               <chips-special-offers [(model)]="quotation.specialOffers" [form]="orderingCustomerForm"
@@ -226,6 +190,13 @@
             <td>
               <generic-textarea [(model)]="quotation.observations" label="Observations du tiers"
                 [form]="orderingCustomerForm" propertyName="observations" [isDisabled]="!editMode" [numberOfLines]="4">
+              </generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="quotation.instructions" label="Consignes du tiers"
+                [form]="orderingCustomerForm" propertyName="instructions" [isDisabled]="!editMode" [numberOfLines]="4">
               </generic-textarea>
             </td>
           </tr>

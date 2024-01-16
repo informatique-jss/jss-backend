@@ -12,7 +12,7 @@ public class JacksonLocalDateTimeDeserializer extends StdDeserializer<LocalDateT
 
     private static final long serialVersionUID = 1355852411036457107L;
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     public JacksonLocalDateTimeDeserializer() {
         this(null);

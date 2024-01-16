@@ -23,8 +23,8 @@ export class HistoryComponent implements OnInit {
   @Input() entityType: EntityType = {} as EntityType;
   @ViewChild(MatSort) sort!: MatSort;
   @Input() displayOnlyFields: string[] | null = null;
-  @Input() historyActions: SortTableAction[] = [] as Array<SortTableAction>;
-  internalHistoryActions: SortTableAction[] = [] as Array<SortTableAction>;
+  @Input() historyActions: SortTableAction<Audit>[] = [] as Array<SortTableAction<Audit>>;
+  internalHistoryActions: SortTableAction<Audit>[] = [] as Array<SortTableAction<Audit>>;
   @Input() parseTypeList: IReferential[] | undefined;
 
   audits: Audit[] = [] as Array<Audit>;
@@ -35,7 +35,7 @@ export class HistoryComponent implements OnInit {
 
   dictionnary = new Map<string, string>(Object.entries(Dictionnary));
 
-  displayedColumns: SortTableColumn[] = [];
+  displayedColumns: SortTableColumn<Audit>[] = [];
   searchText: string | undefined;
 
   constructor(
@@ -51,15 +51,16 @@ export class HistoryComponent implements OnInit {
   ngOnInit() {
     this.internalHistoryActions = this.historyActions;
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "fieldName", fieldName: "fieldName", label: "Champ" } as SortTableColumn);
-    this.displayedColumns.push({ id: "oldValue", fieldName: "oldValue", label: "Ancienne valeur" } as SortTableColumn);
-    this.displayedColumns.push({ id: "newValue", fieldName: "newValue", label: "Nouvelle valeur" } as SortTableColumn);
-    this.displayedColumns.push({ id: "createdBy", fieldName: "username", label: "Auteur" } as SortTableColumn);
-    this.displayedColumns.push({ id: "creationDate", fieldName: "datetime", label: "Modifié le", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "fieldName", fieldName: "fieldName", label: "Champ" } as SortTableColumn<Audit>);
+    this.displayedColumns.push({ id: "oldValue", fieldName: "oldValue", label: "Ancienne valeur", valueFonction: (element: Audit, column: SortTableColumn<Audit>) => { return this.parseValues(element.oldValue) } } as SortTableColumn<Audit>);
+    this.displayedColumns.push({ id: "newValue", fieldName: "newValue", label: "Nouvelle valeur", valueFonction: (element: Audit, column: SortTableColumn<Audit>) => { return this.parseValues(element.newValue) } } as SortTableColumn<Audit>);
+    this.displayedColumns.push({ id: "createdBy", fieldName: "username", label: "Auteur" } as SortTableColumn<Audit>);
+    this.displayedColumns.push({ id: "creationDate", fieldName: "datetime", label: "Modifié le", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Audit>);
   }
 
-  historyActionTrigger(historyAction: SortTableAction, element: Audit) {
-    historyAction.actionClick(element);
+  historyActionTrigger(historyAction: SortTableAction<Audit>, element: Audit) {
+    if (historyAction && historyAction.actionClick)
+      historyAction.actionClick(historyAction, element, undefined);
   }
 
   setData() {

@@ -6,4 +6,6 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeVoi
 
 public interface TypeVoieService {
     public List<TypeVoie> getTypeVoie();
+
+    public TypeVoie getTypeVoie(String code);
 }

@@ -1,12 +1,14 @@
 package com.jss.osiris.modules.reporting.service;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.reporting.model.ICustomerOrderReporting;
 
 public interface CustomerOrderReportingService {
 
-    List<ICustomerOrderReporting> getCustomerOrderReporting() throws OsirisException;
+    ArrayList<HashMap<String, String>> getCustomerOrderReporting(ArrayList<String> columns) throws OsirisException;
+
+    ArrayList<HashMap<String, String>> getFakeData();
 
 }

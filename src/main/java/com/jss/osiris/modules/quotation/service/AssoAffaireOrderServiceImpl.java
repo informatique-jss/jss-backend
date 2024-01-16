@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.quotation.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,15 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
+import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
@@ -32,8 +37,6 @@ import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
-import com.jss.osiris.modules.quotation.model.Bodacc;
-import com.jss.osiris.modules.quotation.model.BodaccStatus;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
@@ -48,6 +51,7 @@ import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.repository.AssoAffaireOrderRepository;
 import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 @Service
@@ -57,16 +61,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     AssoAffaireOrderRepository assoAffaireOrderRepository;
 
     @Autowired
-    IndexEntityService indexEntityService;
-
-    @Autowired
     EmployeeService employeeService;
 
     @Autowired
     FormaliteStatusService formaliteStatusService;
-
-    @Autowired
-    BodaccStatusService bodaccStatusService;
 
     @Autowired
     AnnouncementStatusService announcementStatusService;
@@ -119,6 +117,15 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     CharacterPriceService characterPriceService;
 
+    @Autowired
+    BatchService batchService;
+
+    @Autowired
+    FormaliteGuichetUniqueStatusService formaliteGuichetUniqueStatusService;
+
+    @Autowired
+    PaymentService paymentService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -155,26 +162,28 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         assoAffaireOrder.setCustomerOrder(assoAffaireOrder.getCustomerOrder());
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
         if (affaireSaved.getCustomerOrder() != null)
-            indexEntityService.indexEntity(affaireSaved);
+            batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, affaireSaved.getId());
         customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
         return affaireSaved;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee) {
+    public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee) throws OsirisException {
         asso.setAssignedTo(employee);
         assoAffaireOrderRepository.save(asso);
+        if (asso.getCustomerOrder() != null)
+            batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, asso.getId());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexAffaires() {
+    public void reindexAffaires() throws OsirisException {
         List<AssoAffaireOrder> affaires = getAssoAffaireOrders();
         if (affaires != null)
-            for (AssoAffaireOrder affaire : affaires)
-                if (affaire.getCustomerOrder() != null)
-                    indexEntityService.indexEntity(affaire);
+            for (AssoAffaireOrder asso : affaires)
+                if (asso.getCustomerOrder() != null)
+                    batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, asso.getId());
     }
 
     @Override
@@ -240,16 +249,25 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     formalite.setFormaliteStatus(
                             formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
 
-                if (formalite.getFormalitesGuichetUnique() != null) {
+                else if (formalite.getFormalitesGuichetUnique() != null) {
                     for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique()) {
-                        formaliteGuichetUniqueService.refreshFormaliteGuichetUnique(formaliteGuichetUnique,
-                                formalite, true);
+                        if (formaliteGuichetUnique.getStatus() == null
+                                || !formaliteGuichetUniqueStatusService
+                                        .getFormaliteGuichetUniqueStatus(formaliteGuichetUnique.getStatus().getCode())
+                                        .getIsCloseState()) {
+                            formaliteGuichetUnique.setFormalite(formalite);
+                            formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+
+                            batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE,
+                                    formaliteGuichetUnique.getId());
+                        }
                     }
                 }
 
                 if (formalite.getId() != null) {
                     Formalite originalFormalite = formaliteService.getFormalite(formalite.getId());
-                    if (originalFormalite.getFormalitesGuichetUnique() != null)
+                    if (originalFormalite != null && originalFormalite.getFormalitesGuichetUnique() != null
+                            && originalFormalite.getFormalitesGuichetUnique().size() > 0) {
                         for (FormaliteGuichetUnique formaliteGuichetUniqueOrigin : originalFormalite
                                 .getFormalitesGuichetUnique()) {
                             Boolean found = false;
@@ -262,7 +280,28 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 formaliteGuichetUniqueOrigin.setFormalite(null);
                             formaliteGuichetUniqueService
                                     .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUniqueOrigin);
+
+                            if (formalite.getFormaliteStatus().getIsCloseState()) {
+                                if (formaliteGuichetUniqueStatusService
+                                        .getFormaliteGuichetUniqueStatus(
+                                                formaliteGuichetUniqueOrigin.getStatus().getCode())
+                                        .getIsCloseState() == false)
+                                    throw new OsirisClientMessageException(
+                                            "Impossible de terminer la formalité, le dossier GU n'est pas terminé");
+                            }
                         }
+                    }
+                    if (formalite.getFormalitesGuichetUnique() != null
+                            && formalite.getFormalitesGuichetUnique().size() > 0)
+                        for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique()) {
+                            formaliteGuichetUnique.setFormalite(formalite);
+                            formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+                        }
+
+                }
+
+                if (formalite.getActeDeposit() != null && formalite.getActeDeposit().getId() == null) {
+                    batchService.declareNewBatch(Batch.DECLARE_NEW_ACTE_DEPOSIT_ON_GUICHET_UNIQUE, formalite.getId());
                 }
 
                 if (formalite.getFormaliteStatus().getIsCloseState()
@@ -275,15 +314,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             "Merci de compléter le nom du dossier GU avant de clôturer la formalité");
             }
 
-            if (provision.getBodacc() != null) {
-                Bodacc bodacc = provision.getBodacc();
-                if (customerOrder.getId() == null || bodacc.getBodaccStatus() == null)
-                    bodacc.setBodaccStatus(bodaccStatusService.getBodaccStatusByCode(BodaccStatus.BODACC_NEW));
-
-            }
-
             if (provision.getAnnouncement() != null) {
                 Announcement announcement = provision.getAnnouncement();
+
+                announcementService.completeAnnouncementWithAffaire(assoAffaireOrder);
 
                 // If complex, extract string from PDF and put it to notice
                 if (announcement.getIsComplexAnnouncement())
@@ -378,6 +412,38 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             .getSimpleProvisionStatusByCode(SimpleProvisionStatus.SIMPLE_PROVISION_NEW));
             }
 
+            // Auto associate payment and provider invoice if only one match is found
+            if (provision != null && provision.getId() != null) {
+                Provision originalProvision = provisionService.getProvision(provision.getId());
+                if (customerOrder instanceof CustomerOrder
+                        && ((CustomerOrder) customerOrder).getCustomerOrderStatus().getCode()
+                                .equals(CustomerOrderStatus.BILLED)
+                        && originalProvision.getPayments() != null
+                        && originalProvision.getPayments().size() > 0 && originalProvision.getProviderInvoices() != null
+                        && originalProvision.getProviderInvoices().size() > 0) {
+                    outerloop: for (Payment payment : originalProvision.getPayments()) {
+                        Invoice invoiceFound = null;
+                        if (payment.getIsCancelled() == false) {
+                            for (Invoice invoice : originalProvision.getProviderInvoices()) {
+                                if (invoice.getInvoiceStatus().getId()
+                                        .equals(constantService.getInvoiceStatusReceived().getId())) {
+                                    if (Math.round(
+                                            invoice.getTotalPrice()
+                                                    * 100f) == (Math.round(-payment.getPaymentAmount() * 100f))) {
+                                        if (invoiceFound != null)
+                                            continue outerloop;
+                                        invoiceFound = invoice;
+                                    }
+                                }
+                            }
+                            if (invoiceFound != null)
+                                paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment,
+                                        Arrays.asList(invoiceFound), null, null, null, null, null, null);
+                        }
+                    }
+                }
+            }
+
             // Set proper assignation regarding provision item configuration
             if (provision.getAssignedTo() == null && customerOrder instanceof CustomerOrder) {
                 Employee employee = provision.getProvisionType().getDefaultEmployee();
@@ -429,7 +495,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (nbrAssignation == 1 && assoAffaireOrder.getAssignedTo() == null)
             assoAffaireOrder.setAssignedTo(currentEmployee);
 
-        if (maxWeightEmployee != null) {
+        if (maxWeightEmployee != null)
+
+        {
             if (assoAffaireOrder.getAssignedTo() == null)
                 assoAffaireOrder.setAssignedTo(maxWeightEmployee);
 

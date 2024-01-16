@@ -36,6 +36,7 @@ export interface FormaliteGuichetUnique {
   created: string;
   isFormality: boolean;
   isAnnualAccounts: boolean;
+  isActeDeposit: boolean;
   validationsRequests: ValidationRequest[];
   formaliteStatusHistoryItems: FormaliteStatusHistoryItem[];
 }

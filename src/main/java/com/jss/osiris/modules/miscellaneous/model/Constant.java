@@ -18,7 +18,6 @@ import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.AssignationType;
-import com.jss.osiris.modules.quotation.model.BodaccPublicationType;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
@@ -31,7 +30,9 @@ import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
+import com.jss.osiris.modules.tiers.model.RffFrequency;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersCategory;
 import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
@@ -418,30 +419,6 @@ public class Constant implements Serializable, IId {
 	private MailRedirectionType mailRedirectionTypeOther;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_bodacc_publication_type_merging")
-	private BodaccPublicationType bodaccPublicationTypeMerging;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_bodacc_publication_type_split")
-	private BodaccPublicationType bodaccPublicationTypeSplit;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_bodacc_publication_type_partial_split")
-	private BodaccPublicationType bodaccPublicationTypePartialSplit;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_bodacc_publication_type_possession_dispatch")
-	private BodaccPublicationType bodaccPublicationTypePossessionDispatch;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_bodacc_publication_type_estate_representative_designation")
-	private BodaccPublicationType bodaccPublicationTypeEstateRepresentativeDesignation;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_bodacc_publication_type_sale_of_business")
-	private BodaccPublicationType bodaccPublicationTypeSaleOfBusiness;
-
-	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_act_type_seing")
 	private ActType actTypeSeing;
 
@@ -697,6 +674,10 @@ public class Constant implements Serializable, IId {
 	private BillingType billingTypeCorrespondenceFees;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_rff")
+	private BillingType billingTypeRff;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_customer_order_origin_website")
 	private CustomerOrderOrigin customerOrderOriginWebSite;
 
@@ -711,6 +692,22 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_tiers_followup_type_invoice_reminder")
 	private TiersFollowupType tiersFollowupTypeInvoiceReminder;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_tiers_category_presse")
+	private TiersCategory tiersCategoryPresse;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_rff_frequency_annual")
+	private RffFrequency rffFrequencyAnnual;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_rff_frequency_quarterly")
+	private RffFrequency rffFrequencyQuarterly;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_rff_frequency_monthly")
+	private RffFrequency rffFrequencyMonthly;
 
 	public Integer getId() {
 		return id;
@@ -975,56 +972,6 @@ public class Constant implements Serializable, IId {
 
 	public void setMailRedirectionTypeOther(MailRedirectionType mailRedirectionTypeOther) {
 		this.mailRedirectionTypeOther = mailRedirectionTypeOther;
-	}
-
-	public BodaccPublicationType getBodaccPublicationTypeMerging() {
-		return bodaccPublicationTypeMerging;
-	}
-
-	public void setBodaccPublicationTypeMerging(BodaccPublicationType bodaccPublicationTypeMerging) {
-		this.bodaccPublicationTypeMerging = bodaccPublicationTypeMerging;
-	}
-
-	public BodaccPublicationType getBodaccPublicationTypeSplit() {
-		return bodaccPublicationTypeSplit;
-	}
-
-	public void setBodaccPublicationTypeSplit(BodaccPublicationType bodaccPublicationTypeSplit) {
-		this.bodaccPublicationTypeSplit = bodaccPublicationTypeSplit;
-	}
-
-	public BodaccPublicationType getBodaccPublicationTypePartialSplit() {
-		return bodaccPublicationTypePartialSplit;
-	}
-
-	public void setBodaccPublicationTypePartialSplit(BodaccPublicationType bodaccPublicationTypePartialSplit) {
-		this.bodaccPublicationTypePartialSplit = bodaccPublicationTypePartialSplit;
-	}
-
-	public BodaccPublicationType getBodaccPublicationTypePossessionDispatch() {
-		return bodaccPublicationTypePossessionDispatch;
-	}
-
-	public void setBodaccPublicationTypePossessionDispatch(
-			BodaccPublicationType bodaccPublicationTypePossessionDispatch) {
-		this.bodaccPublicationTypePossessionDispatch = bodaccPublicationTypePossessionDispatch;
-	}
-
-	public BodaccPublicationType getBodaccPublicationTypeEstateRepresentativeDesignation() {
-		return bodaccPublicationTypeEstateRepresentativeDesignation;
-	}
-
-	public void setBodaccPublicationTypeEstateRepresentativeDesignation(
-			BodaccPublicationType bodaccPublicationTypeEstateRepresentativeDesignation) {
-		this.bodaccPublicationTypeEstateRepresentativeDesignation = bodaccPublicationTypeEstateRepresentativeDesignation;
-	}
-
-	public BodaccPublicationType getBodaccPublicationTypeSaleOfBusiness() {
-		return bodaccPublicationTypeSaleOfBusiness;
-	}
-
-	public void setBodaccPublicationTypeSaleOfBusiness(BodaccPublicationType bodaccPublicationTypeSaleOfBusiness) {
-		this.bodaccPublicationTypeSaleOfBusiness = bodaccPublicationTypeSaleOfBusiness;
 	}
 
 	public ActType getActTypeSeing() {
@@ -2088,5 +2035,45 @@ public class Constant implements Serializable, IId {
 
 	public void setAccountingAccountProfit(AccountingAccount accountingAccountProfit) {
 		this.accountingAccountProfit = accountingAccountProfit;
+	}
+
+	public TiersCategory getTiersCategoryPresse() {
+		return tiersCategoryPresse;
+	}
+
+	public void setTiersCategoryPresse(TiersCategory tiersCategoryPresse) {
+		this.tiersCategoryPresse = tiersCategoryPresse;
+	}
+
+	public RffFrequency getRffFrequencyAnnual() {
+		return rffFrequencyAnnual;
+	}
+
+	public void setRffFrequencyAnnual(RffFrequency rffFrequencyAnnual) {
+		this.rffFrequencyAnnual = rffFrequencyAnnual;
+	}
+
+	public RffFrequency getRffFrequencyQuarterly() {
+		return rffFrequencyQuarterly;
+	}
+
+	public void setRffFrequencyQuarterly(RffFrequency rffFrequencyQuarterly) {
+		this.rffFrequencyQuarterly = rffFrequencyQuarterly;
+	}
+
+	public RffFrequency getRffFrequencyMonthly() {
+		return rffFrequencyMonthly;
+	}
+
+	public void setRffFrequencyMonthly(RffFrequency rffFrequencyMonthly) {
+		this.rffFrequencyMonthly = rffFrequencyMonthly;
+	}
+
+	public BillingType getBillingTypeRff() {
+		return billingTypeRff;
+	}
+
+	public void setBillingTypeRff(BillingType billingTypeRff) {
+		this.billingTypeRff = billingTypeRff;
 	}
 }

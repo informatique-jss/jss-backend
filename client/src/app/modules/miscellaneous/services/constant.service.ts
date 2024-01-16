@@ -202,6 +202,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.billingTypeCentralPayFees;
   }
 
+  getBillingTypeRff() {
+    return this.constant.billingTypeRff;
+  }
+
   getBillingTypeLogo() {
     return this.constant.billingTypeLogo;
   }
@@ -422,30 +426,6 @@ export class ConstantService extends AppRestService<Constant>{
 
   getMailRedirectionTypeOther() {
     return this.constant.mailRedirectionTypeOther;
-  }
-
-  getBodaccPublicationTypeMerging() {
-    return this.constant.bodaccPublicationTypeMerging;
-  }
-
-  getBodaccPublicationTypeSplit() {
-    return this.constant.bodaccPublicationTypeSplit;
-  }
-
-  getBodaccPublicationTypePartialSplit() {
-    return this.constant.bodaccPublicationTypePartialSplit;
-  }
-
-  getBodaccPublicationTypePossessionDispatch() {
-    return this.constant.bodaccPublicationTypePossessionDispatch;
-  }
-
-  getBodaccPublicationTypeEstateRepresentativeDesignation() {
-    return this.constant.bodaccPublicationTypeEstateRepresentativeDesignation;
-  }
-
-  getBodaccPublicationTypeSaleOfBusiness() {
-    return this.constant.bodaccPublicationTypeSaleOfBusiness;
   }
 
   getActTypeSeing() {
@@ -710,5 +690,21 @@ export class ConstantService extends AppRestService<Constant>{
 
   getTiersFollowupTypeInvoiceReminder() {
     return this.constant.tiersFollowupTypeInvoiceReminder;
+  }
+
+  getTiersCategoryPresse() {
+    return this.constant.tiersCategoryPresse;
+  }
+
+  getRffFrequencyAnnual() {
+    return this.constant.rffFrequencyAnnual;
+  }
+
+  getRffFrequencyQuarterly() {
+    return this.constant.rffFrequencyQuarterly;
+  }
+
+  getRffFrequencyMonthly() {
+    return this.constant.rffFrequencyMonthly;
   }
 }

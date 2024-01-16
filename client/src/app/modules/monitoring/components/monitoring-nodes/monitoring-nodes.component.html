@@ -1,0 +1,33 @@
+<div class="mat-elevation-z2 form-div">
+  <div class="mat-accordion-container full-width" *ngIf="nodes">
+    <mat-accordion multi>
+      <mat-expansion-panel *ngFor="let node of nodes ; trackBy: trackByHostname" expanded="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{node.hostname}} - Priorité de batch {{node.batchNodePriority}} - Heartbeat {{node.lastAliveDatetime |
+            date:'dd/MM/yyyy à HH:mm'}}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="gauge-wrapper">
+          <gauge-chart class="gauge" *ngIf="node" serieName="CPU" unit="%"
+            [serieValue]="getCpuLoad(node)"></gauge-chart>
+          <gauge-chart class="gauge" *ngIf="node" serieName="RAM" unit="%"
+            [serieValue]="getRamLoad(node)"></gauge-chart>
+          <gauge-chart class="gauge" *ngIf="node" serieName="Disque" unit="%"
+            [serieValue]="getDiskLoad(node)"></gauge-chart>
+        </div>
+        <div class="row-field-container">
+          <button mat-raised-button (click)="performGc(node)" color="primary" class="mini-fab-add">
+            Exécuter un GC
+          </button>
+          <button mat-raised-button (click)="stopNode(node)" color="primary" class="mini-fab-add">
+            Arrêter
+          </button>
+          <button mat-raised-button (click)="restartNode(node)" color="primary" class="mini-fab-add">
+            Redémarrer
+          </button>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</div>

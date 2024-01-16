@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -53,6 +54,9 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
 
     @Autowired
     CityService cityService;
+
+    @Autowired
+    BatchService batchService;
 
     private List<GeoCity> geoCities = new ArrayList<GeoCity>();
     private List<City> localCities = new ArrayList<City>();

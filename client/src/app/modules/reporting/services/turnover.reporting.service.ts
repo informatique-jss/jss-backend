@@ -12,8 +12,8 @@ export class TurnoverReportingService extends AppRestService<TurnoverReporting>{
     super(http, "reporting");
   }
 
-  getTurnoverReporting() {
-    return this.getList(new HttpParams(), "turnover");
+  getTurnoverReporting(columns: string[]) {
+    return this.getList(new HttpParams().set("columns", columns.join(",")), "turnover");
   }
 
 }

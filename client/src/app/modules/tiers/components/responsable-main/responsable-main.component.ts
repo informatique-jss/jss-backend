@@ -1,5 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { copyObject } from 'src/app/libs/GenericHelper';
 import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
@@ -12,12 +13,15 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
+import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { RESPONSABLE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Document } from "../../../miscellaneous/model/Document";
 import { EmployeeService } from '../../../profile/services/employee.service';
 import { ITiers } from '../../model/ITiers';
 import { Responsable } from '../../model/Responsable';
+import { RffSearch } from '../../model/RffSearch';
 import { SubscriptionPeriodType } from '../../model/SubscriptionPeriodType';
 import { Tiers } from '../../model/Tiers';
 import { SubscriptionPeriodTypeService } from '../../services/subscription.period.type.service';
@@ -36,7 +40,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
 
   @Input() tiers: Tiers = {} as Tiers;
   @Input() editMode: boolean = false;
-  @ViewChild('tabs', { static: false }) tabs: any;
 
   RESPONSABLE_ENTITY_TYPE = RESPONSABLE_ENTITY_TYPE;
 
@@ -57,11 +60,14 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   quotationSearch: QuotationSearch = {} as QuotationSearch;
   provisionSearch: AffaireSearch = {} as AffaireSearch;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
+  rffSearch: RffSearch | undefined;
   responsableAccountSearch: ITiers | undefined;
 
-  displayedColumns: SortTableColumn[] = [];
-  tableActions: SortTableAction[] = [] as Array<SortTableAction>;
+  displayedColumns: SortTableColumn<Responsable>[] = [];
+  tableActions: SortTableAction<Responsable>[] = [] as Array<SortTableAction<Responsable>>;
   searchText: string | undefined;
+
+  tiersCategoryPresse = this.constantService.getTiersCategoryPresse();
 
   @ViewChild(SettlementBillingComponent) documentSettlementBillingComponent: SettlementBillingComponent | undefined;
 
@@ -74,7 +80,9 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     private constantService: ConstantService,
     protected subscriptionPeriodTypeService: SubscriptionPeriodTypeService,
     private changeDetectorRef: ChangeDetectorRef,
-    protected tiersCategoryService: TiersCategoryService) { }
+    protected tiersCategoryService: TiersCategoryService,
+    private userPreferenceService: UserPreferenceService
+  ) { }
 
   ngAfterContentChecked(): void {
     this.changeDetectorRef.detectChanges();
@@ -89,10 +97,13 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
       }
     }
 
+    if (this.selectedResponsable)
+      if (!this.selectedResponsable.rffFrequency)
+        this.selectedResponsable.rffFrequency = this.constantService.getRffFrequencyAnnual();
+
     if (changes.tiers != undefined && this.tiers.responsables != undefined && this.tiers.responsables != null) {
       this.principalForm.markAllAsTouched();
       this.setDataTable();
-      this.toggleTabs();
 
       if (this.selectedResponsableId != null)
         this.selectResponsableById(this.selectedResponsableId);
@@ -106,18 +117,18 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
 
     // Table definition
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du responsable" } as SortTableColumn);
-    this.displayedColumns.push({ id: "lastname", fieldName: "lastname", label: "Nom" } as SortTableColumn);
-    this.displayedColumns.push({ id: "firstname", fieldName: "firstname", label: "Prénom" } as SortTableColumn);
-    this.displayedColumns.push({ id: "function", fieldName: "function", label: "Fonction" } as SortTableColumn);
-    this.displayedColumns.push({ id: "mails", fieldName: "mails", label: "Mails", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.mails) ? element.mails.map((e: { mail: any; }) => e.mail).join(", ") : "") } } as SortTableColumn);
-    this.displayedColumns.push({ id: "phones", fieldName: "phones", label: "Téléphones", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.phones) ? element.phones.map((e: { phoneNumber: any; }) => e.phoneNumber).join(", ") : "") } } as SortTableColumn);
-    this.displayedColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", valueFonction: (element: any) => { return (element && element.salesEmployee) ? element.salesEmployee.firstname + " " + element.salesEmployee.lastname : "" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "formalisteEmployee", fieldName: "formalisteEmployee", label: "Formaliste", valueFonction: (element: any) => { return (element && element.formalisteEmployee) ? element.formalisteEmployee.firstname + " " + element.formalisteEmployee.lastname : "" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "insertionEmployee", fieldName: "insertionEmployee", label: "Publiciste", valueFonction: (element: any) => { return (element && element.insertionEmployee) ? element.insertionEmployee.firstname + " " + element.insertionEmployee.lastname : "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du responsable" } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "lastname", fieldName: "lastname", label: "Nom" } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "firstname", fieldName: "firstname", label: "Prénom" } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "function", fieldName: "function", label: "Fonction" } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "mails", fieldName: "mails", label: "Mails", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.mails) ? element.mails.map((e: { mail: any; }) => e.mail).join(", ") : "") } } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "phones", fieldName: "phones", label: "Téléphones", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.phones) ? element.phones.map((e: { phoneNumber: any; }) => e.phoneNumber).join(", ") : "") } } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return (element && element.salesEmployee) ? element.salesEmployee.firstname + " " + element.salesEmployee.lastname : "" } } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "formalisteEmployee", fieldName: "formalisteEmployee", label: "Formaliste", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return (element && element.formalisteEmployee) ? element.formalisteEmployee.firstname + " " + element.formalisteEmployee.lastname : "" } } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "insertionEmployee", fieldName: "insertionEmployee", label: "Publiciste", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return (element && element.insertionEmployee) ? element.insertionEmployee.firstname + " " + element.insertionEmployee.lastname : "" } } as SortTableColumn<Responsable>);
 
     this.tableActions.push({
-      actionIcon: "delete", actionName: 'Supprimer le responsable', display: true, actionClick: (action: SortTableAction, element: any) => {
+      actionIcon: "delete", actionName: 'Supprimer le responsable', display: true, actionClick: (column: SortTableAction<Responsable>, element: Responsable, event: any) => {
         let hash = JSON.stringify(element).toLowerCase();
         for (let i = 0; i < this.tiers.responsables.length; i++) {
           let responsable = this.tiers.responsables[i];
@@ -130,19 +141,15 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
           }
         }
       }
-    } as SortTableAction);
-  }
+    } as SortTableAction<Responsable>);
 
-  toggleTabs() {
-    if (this.tabs != undefined)
-      this.tabs.realignInkBar();
+    this.restoreTab();
   }
 
   setDataTable() {
     this.tiers.responsables.sort(function (a: Responsable, b: Responsable) {
       return (a.lastname + "" + a.firstname).localeCompare(b.lastname + "" + a.firstname);
     });
-    this.toggleTabs();
   }
 
   setSelectedResponsableId(selectedResponsableId: number) {
@@ -159,6 +166,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
           this.quotationSearch.customerOrders = [];
           this.provisionSearch.customerOrders = [];
           this.invoiceSearch.customerOrders = [];
+          this.rffSearch = {} as RffSearch;
           this.responsableAccountSearch = undefined;
 
           setTimeout(() =>
@@ -171,9 +179,23 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
             this.invoiceSearch.customerOrders = [responsable], 0);
           setTimeout(() =>
             this.responsableAccountSearch = responsable, 0);
+          setTimeout(() => {
+            this.rffSearch = {} as RffSearch;
+            this.rffSearch.responsable = { entityId: responsable.id } as IndexEntity;
+            this.rffSearch.isHideCancelledRff = false;
+
+            let start = new Date();
+            let d = new Date(start.getTime());
+            d.setFullYear(d.getFullYear() - 1);
+            this.rffSearch.startDate = d;
+
+            let end = new Date();
+            let d2 = new Date(end.getTime());
+            d2.setFullYear(d2.getFullYear() + 1);
+            this.rffSearch.endDate = d2;
+          }, 0);
 
           this.tiersService.setCurrentViewedResponsable(responsable);
-          this.toggleTabs();
           if (this.tiers.denomination != null) {
             this.appService.changeHeaderTitle(this.tiers.denomination + " - " + (this.selectedResponsable.firstname != null ? (this.selectedResponsable.firstname + " " + this.selectedResponsable.lastname) : ""));
           } else if (this.tiers.firstname != null) {
@@ -210,7 +232,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
         this.selectedResponsable.tiersType = this.constantService.getTiersTypeProspect();
       this.tiersService.setCurrentViewedResponsable(this.selectedResponsable);
       this.setDataTable();
-      this.toggleTabs();
     } else {
       this.appService.displaySnackBar("Compléter la saisie du responsable courant avant de continuer", true, 15);
     }
@@ -291,4 +312,13 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     this.employeeService.renewResponsablePassword(this.selectedResponsable!).subscribe(response => { });
   }
 
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('responsable', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('responsable');
+  }
 }

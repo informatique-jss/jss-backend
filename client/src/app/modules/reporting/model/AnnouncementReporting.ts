@@ -7,4 +7,9 @@ export interface AnnouncementReporting {
   confrereAnnouncementLabel: string;
   characterNumber: number;
   announcementDepartment: string;
+  preTaxPrice: number;
+  noticeTypeLabel: string;
+  journalTypeLabel: string;
+  noticeTypeFamilyLabel: string;
+  provisionTypeLabel: string;
 }

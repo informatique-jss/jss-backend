@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DocumentExtension;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TaciteReconduction;
@@ -20,7 +21,8 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDoc
 
 @Entity
 @Table(indexes = {
-        @Index(name = "idx_piece_jointe_content", columnList = "id_content") })
+        @Index(name = "idx_piece_jointe_content", columnList = "id_content"),
+        @Index(name = "idx_piece_jointe_id", columnList = "attachmentId") })
 public class PiecesJointe implements Serializable {
 
     @Column(length = 255)
@@ -77,6 +79,7 @@ public class PiecesJointe implements Serializable {
     private String path;
 
     @Id
+    @JsonAlias({ "id" })
     private String attachmentId;
 
     @Column(length = 255)
@@ -84,6 +87,10 @@ public class PiecesJointe implements Serializable {
 
     @Column(length = 255)
     private String codePostalLieuDelivrance;
+
+    private Boolean isAlreadySigned;
+
+    private String created;
 
     public String getNomDocument() {
         return nomDocument;
@@ -235,6 +242,22 @@ public class PiecesJointe implements Serializable {
 
     public void setContent(Content content) {
         this.content = content;
+    }
+
+    public Boolean getIsAlreadySigned() {
+        return isAlreadySigned;
+    }
+
+    public void setIsAlreadySigned(Boolean isAlreadySigned) {
+        this.isAlreadySigned = isAlreadySigned;
+    }
+
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
     }
 
 }

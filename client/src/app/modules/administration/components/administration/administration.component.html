@@ -1,5 +1,5 @@
 <div>
-  <mat-tab-group animationDuration="0ms">
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab label="Référentiels">
       <div class="mat-elevation-z2 form-div">
         <table class="full-width">
@@ -23,11 +23,6 @@
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()"></referential-act-type>
-        <referential-bodacc-publication-type *ngIf="selectedReferential==BODACC_PUBLICATION_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-bodacc-publication-type>
         <referential-building-domiciliation *ngIf="selectedReferential==BUILDING_DOMICILIATION_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
@@ -122,6 +117,11 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-attachment-type>
+        <referential-type-document *ngIf="selectedReferential==TYPE_DOCUMENT_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-type-document>
         <referential-civility *ngIf="selectedReferential==CIVILITY_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
@@ -282,6 +282,11 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-abandon-reason>
+        <referential-rff-frequency *ngIf="selectedReferential==RFF_FREQUENCY_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-rff-frequency>
         <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode"
           (click)="saveEntity()">
           <mat-icon>save</mat-icon>
@@ -301,7 +306,9 @@
       </div>
     </mat-tab>
     <mat-tab label="Constantes">
-      <constant></constant>
+      <ng-template matTabContent>
+        <constant></constant>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Logs" *ngIf="canViewLogdModule()">
       <log></log>

@@ -22,11 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.transfer.CdtrSchmeIdBean;
 import com.jss.osiris.libs.transfer.CdtrSchmeIdBeanIdBean;
 import com.jss.osiris.libs.transfer.CstmrDrctDbtInitnBean;
@@ -73,9 +74,6 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
     DirectDebitTransfertRepository directDebitTransfertRepository;
 
     @Autowired
-    IndexEntityService indexEntityService;
-
-    @Autowired
     InvoiceHelper invoiceHelper;
 
     @Autowired
@@ -96,6 +94,9 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
     @Autowired
     AccountingRecordGenerationService accountingRecordGenerationService;
 
+    @Autowired
+    BatchService batchService;
+
     @Override
     public List<DirectDebitTransfert> getDirectDebitTransferts() {
         return IterableUtils.toList(directDebitTransfertRepository.findAll());
@@ -112,21 +113,21 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
     @Override
     @Transactional(rollbackFor = Exception.class)
     public DirectDebitTransfert addOrUpdateDirectDebitTransfert(
-            DirectDebitTransfert directDebitTransfert) {
+            DirectDebitTransfert directDebitTransfert) throws OsirisException {
         if (directDebitTransfert.getIsMatched() == null)
             directDebitTransfert.setIsMatched(false);
         DirectDebitTransfert transfert = directDebitTransfertRepository.save(directDebitTransfert);
-        indexEntityService.indexEntity(transfert);
+        batchService.declareNewBatch(Batch.REINDEX_DIRECT_DEBIT_BANK_TRANSFERT, transfert.getId());
         return transfert;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexDirectDebitTransfert() {
+    public void reindexDirectDebitTransfert() throws OsirisException {
         List<DirectDebitTransfert> directDebitTransferts = getDirectDebitTransferts();
         if (directDebitTransferts != null)
             for (DirectDebitTransfert directDebitTransfert : directDebitTransferts)
-                indexEntityService.indexEntity(directDebitTransfert);
+                batchService.declareNewBatch(Batch.REINDEX_DIRECT_DEBIT_BANK_TRANSFERT, directDebitTransfert.getId());
     }
 
     @Override
@@ -136,16 +137,21 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
             directDebitTransfertSearch.setStartDate(LocalDateTime.now().minusYears(100));
         if (directDebitTransfertSearch.getEndDate() == null)
             directDebitTransfertSearch.setEndDate(LocalDateTime.now().plusYears(100));
+        if (directDebitTransfertSearch.getIdDirectDebitTransfert() == null)
+            directDebitTransfertSearch.setIdDirectDebitTransfert(0);
         return directDebitTransfertRepository.findTransferts(
                 directDebitTransfertSearch.getStartDate().withHour(0).withMinute(0),
                 directDebitTransfertSearch.getEndDate().withHour(23).withMinute(59),
                 directDebitTransfertSearch.getMinAmount(),
                 directDebitTransfertSearch.getMaxAmount(),
-                directDebitTransfertSearch.getLabel(), directDebitTransfertSearch.isHideExportedDirectDebitTransfert());
+                directDebitTransfertSearch.getLabel(), directDebitTransfertSearch.isHideExportedDirectDebitTransfert(),
+                directDebitTransfertSearch.getIdDirectDebitTransfert());
+
     }
 
     @Override
-    public DirectDebitTransfert cancelDirectDebitTransfert(DirectDebitTransfert directDebitTransfert) {
+    public DirectDebitTransfert cancelDirectDebitTransfert(DirectDebitTransfert directDebitTransfert)
+            throws OsirisException {
         directDebitTransfert.setIsCancelled(true);
         return addOrUpdateDirectDebitTransfert(directDebitTransfert);
     }

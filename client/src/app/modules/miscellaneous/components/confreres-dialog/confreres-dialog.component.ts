@@ -1,10 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Confrere } from '../../../quotation/model/Confrere';
 import { JournalType } from '../../../quotation/model/JournalType';
 import { ConfrereService } from '../../../quotation/services/confrere.service';
 import { Department } from '../../model/Department';
 import { SortTableColumn } from '../../model/SortTableColumn';
+import { SortTableElement } from '../../model/SortTableElement';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'confreres-dialog',
@@ -18,7 +20,7 @@ export class ConfrereDialogComponent implements OnInit {
 
   confreres: Confrere[] = [] as Array<Confrere>;
 
-  displayedColumns: SortTableColumn[] = [];
+  displayedColumns: SortTableColumn<Confrere>[] = [];
   searchText: string | undefined;
 
   filteredDepartments: Department | undefined;
@@ -28,6 +30,7 @@ export class ConfrereDialogComponent implements OnInit {
   filterValue: string = "";
 
   constructor(private confrereService: ConfrereService,
+    public confirmationDialog: MatDialog,
     private confreresDialogRef: MatDialogRef<ConfrereDialogComponent>) { }
 
   ngOnInit() {
@@ -55,31 +58,33 @@ export class ConfrereDialogComponent implements OnInit {
         this.confreres = filteredConfrere;
       }
 
-      this.displayedColumns.push({ id: "denomination", fieldName: "label", label: "Dénomination" } as SortTableColumn);
-      this.displayedColumns.push({ id: "type", fieldName: "journalType.label", label: "Type" } as SortTableColumn);
-      this.displayedColumns.push({ id: "departments", fieldName: "departments", label: "Habilitations", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.departments) ? element.departments.map((e: { code: any; }) => e.code).join(", ") : "") } } as SortTableColumn);
-      this.displayedColumns.push({ id: "discountRate", fieldName: "discountRate", label: "Taux de remise (%)" } as SortTableColumn);
-      this.displayedColumns.push({ id: "weekDays", fieldName: "weekDays", label: "Jours de parution", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.departments) ? element.weekDays.map((e: { label: any; }) => e.label).join(", ") : "") } } as SortTableColumn);
-      this.displayedColumns.push({ id: "lastShipmentForPublication", fieldName: "lastShipmentForPublication", label: "Dernier envoi pour parution" } as SortTableColumn);
-      this.displayedColumns.push({ id: "publicationCertificateDocumentGrade", displayAsGrade: true, fieldName: "publicationCertificateDocumentGrade", label: "Préférence attestation de parution" } as SortTableColumn);
-      this.displayedColumns.push({ id: "billingGrade", fieldName: "billingGrade", displayAsGrade: true, label: "Préférence facturation" } as SortTableColumn);
-      this.displayedColumns.push({ id: "paperGrade", fieldName: "paperGrade", displayAsGrade: true, label: "Préférence journal" } as SortTableColumn);
-      this.displayedColumns.push({ id: "boardGrade", fieldName: "boardGrade", displayAsGrade: true, label: "Préférence direction" } as SortTableColumn);
-      this.displayedColumns.push({ id: "mails", fieldName: "mails", label: "Mails", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.mails) ? element.mails.map((e: { mail: any; }) => e.mail).join(", ") : "") } } as SortTableColumn);
-      this.displayedColumns.push({ id: "phones", fieldName: "phones", label: "Téléphones", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.phones) ? element.phones.map((e: { phoneNumber: any; }) => e.phoneNumber).join(", ") : "") } } as SortTableColumn);
-      this.displayedColumns.push({ id: "numberOfPrint", fieldName: "numberOfPrint", label: "Tirage" } as SortTableColumn);
-      this.displayedColumns.push({ id: "shippingCosts", fieldName: "shippingCosts", label: "Frais de port" } as SortTableColumn);
-      this.displayedColumns.push({ id: "administrativeFees", fieldName: "administrativeFees", label: "Frais administratifs" } as SortTableColumn);
+      this.displayedColumns.push({ id: "denomination", fieldName: "label", label: "Dénomination" } as SortTableColumn<Confrere>);
+      this.displayedColumns.push({ id: "type", fieldName: "journalType.label", label: "Type" } as SortTableColumn<Confrere>);
+      this.displayedColumns.push({ id: "departments", fieldName: "departments", label: "Habilitations", valueFonction: (element: Confrere, column: SortTableColumn<Confrere>) => { return ((element.departments) ? element.departments.map((e: { code: any; }) => e.code).join(", ") : "") } } as SortTableColumn<Confrere>);
+      this.displayedColumns.push({ id: "discountRate", fieldName: "discountRate", label: "Taux de remise (%)" } as SortTableColumn<Confrere>);
+      this.displayedColumns.push({ id: "weekDays", fieldName: "weekDays", label: "Jours de parution", valueFonction: (element: Confrere, column: SortTableColumn<Confrere>) => { return ((element.weekDays) ? element.weekDays.map((e: { label: any; }) => e.label).join(", ") : "") } } as SortTableColumn<Confrere>);
+      this.displayedColumns.push({ id: "lastShipmentForPublication", fieldName: "lastShipmentForPublication", label: "Dernier envoi pour parution" } as SortTableColumn<Confrere>);
+      this.displayedColumns.push({ id: "publicationCertificateDocumentGrade", displayAsGrade: true, fieldName: "publicationCertificateDocumentGrade", label: "Préférence attestation de parution" } as SortTableColumn<Confrere>);
+      this.displayedColumns.push({ id: "billingGrade", fieldName: "billingGrade", displayAsGrade: true, label: "Préférence facturation" } as SortTableColumn<Confrere>);
+      this.displayedColumns.push({ id: "paperGrade", fieldName: "paperGrade", displayAsGrade: true, label: "Préférence journal" } as SortTableColumn<Confrere>);
+      this.displayedColumns.push({ id: "boardGrade", fieldName: "boardGrade", displayAsGrade: true, label: "Préférence direction" } as SortTableColumn<Confrere>);
+      this.displayedColumns.push({ id: "mails", fieldName: "mails", label: "Mails", valueFonction: (element: Confrere, column: SortTableColumn<Confrere>) => { return ((element.mails) ? element.mails.map((e: { mail: any; }) => e.mail).join(", ") : "") } } as SortTableColumn<Confrere>);
+      this.displayedColumns.push({ id: "phones", fieldName: "phones", label: "Téléphones", valueFonction: (element: Confrere, column: SortTableColumn<Confrere>) => { return ((element.phones) ? element.phones.map((e: { phoneNumber: any; }) => e.phoneNumber).join(", ") : "") } } as SortTableColumn<Confrere>);
+      this.displayedColumns.push({ id: "numberOfPrint", fieldName: "numberOfPrint", label: "Tirage" } as SortTableColumn<Confrere>);
+      this.displayedColumns.push({ id: "shippingCosts", fieldName: "shippingCosts", label: "Frais de port" } as SortTableColumn<Confrere>);
+      this.displayedColumns.push({ id: "administrativeFees", fieldName: "administrativeFees", label: "Frais administratifs" } as SortTableColumn<Confrere>);
 
     })
   }
 
-  filterPredicate(record: any, filter: any) {
+  filterPredicate(record: SortTableElement<Confrere>, filter: any) {
     if (filter == "")
       return true;
-    let search: string = record.departments.map((e: { code: any; }) => e.code).join(", ");
-    search += record.label;
-    search += record.weekDays.map((e: { label: any; }) => e.label).join(", ");
+    let search: string = "";
+    if (record.rawValue.departments)
+      search += record.rawValue.departments.map((e: { code: any; }) => e.code).join(", ");
+    search += record.rawValue.label;
+    search += record.rawValue.weekDays.map((e: { label: any; }) => e.label).join(", ");
     return search.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
   }
 
@@ -90,13 +95,31 @@ export class ConfrereDialogComponent implements OnInit {
   }
 
   chooseConfrere(confrereFlatten: Confrere) {
-    let outConfrere = null;
+    let outConfrere = {} as Confrere;
     this.confreres.forEach(confrere => {
       if (confrere.id == confrereFlatten.id)
         outConfrere = confrere;
       return;
     });
-    this.confreresDialogRef.close(outConfrere);
+
+    if (outConfrere.doNotUse) {
+      const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Confrère non autorisé !",
+          content: "Attention, ce confrère n'est pas censé être utilisé ! Rapprochez-vous du service des Annonces Légales avant de l'utiliser !",
+          closeActionText: "Annuler",
+          validationActionText: "Choisir"
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(dialogResult => {
+        if (dialogResult)
+          this.confreresDialogRef.close(outConfrere!);
+      });
+    } else {
+      this.confreresDialogRef.close(outConfrere!);
+    }
   }
 
   closeDialog() {

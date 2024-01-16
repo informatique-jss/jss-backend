@@ -23,8 +23,8 @@ export class AttachmentsComponent implements OnInit {
   @Input() entityType: string = "";
   @Input() editMode: boolean = false;
 
-  displayedColumns: SortTableColumn[] = [];
-  tableActions: SortTableAction[] = [] as Array<SortTableAction>;
+  displayedColumns: SortTableColumn<Attachment>[] = [];
+  tableActions: SortTableAction<Attachment>[] = [] as Array<SortTableAction<Attachment>>;
   searchText: string | undefined;
 
   filterValue: string = "";
@@ -50,24 +50,25 @@ export class AttachmentsComponent implements OnInit {
 
   ngOnInit() {
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "name", fieldName: "uploadedFile.filename", label: "Nom" } as SortTableColumn);
-    this.displayedColumns.push({ id: "attachementType", fieldName: "attachmentType.label", label: "Type de document" } as SortTableColumn);
-    this.displayedColumns.push({ id: "createdBy", fieldName: "uploadedFile.createdBy", label: "Ajouté par" } as SortTableColumn);
-    this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "name", fieldName: "uploadedFile.filename", label: "Nom" } as SortTableColumn<Attachment>);
+    this.displayedColumns.push({ id: "attachementType", fieldName: "attachmentType.label", label: "Type de document" } as SortTableColumn<Attachment>);
+    this.displayedColumns.push({ id: "createdBy", fieldName: "uploadedFile.createdBy", label: "Ajouté par" } as SortTableColumn<Attachment>);
+    this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Attachment>);
+    this.displayedColumns.push({ id: "size", fieldName: "uploadedFile.size", label: "Taille", valueFonction: (element: Attachment, column: SortTableColumn<Attachment>) => { return element.uploadedFile.size ? Math.round((element.uploadedFile.size / 1024 / 1024) * 100) / 100 + " Mo" : "" } } as SortTableColumn<Attachment>);
 
     if (this.entityType && (this.entityType == CUSTOMER_ORDER_ENTITY_TYPE.entityType || this.entityType == QUOTATION_ENTITY_TYPE.entityType || this.entityType == PROVISION_ENTITY_TYPE.entityType))
-      this.displayedColumns.push({ id: "isAlreadySent", fieldName: "isAlreadySent", label: "Envoyé au client ?", valueFonction: (element: any) => { return element.isAlreadySent ? "Oui" : "Non" } } as SortTableColumn);
+      this.displayedColumns.push({ id: "isAlreadySent", fieldName: "isAlreadySent", label: "Envoyé au client ?", valueFonction: (element: Attachment, column: SortTableColumn<Attachment>) => { return element.isAlreadySent ? "Oui" : "Non" } } as SortTableColumn<Attachment>);
 
     this.tableActions.push({
-      actionIcon: "visibility", actionName: "Prévisualiser le fichier", actionClick: (action: SortTableAction, element: any): void => {
+      actionIcon: "visibility", actionName: "Prévisualiser le fichier", actionClick: (column: SortTableAction<Attachment>, element: Attachment, event: any): void => {
         this.uploadAttachmentService.previewAttachment(element);
       }, display: true
-    } as SortTableAction);
+    } as SortTableAction<Attachment>);
     this.tableActions.push({
-      actionIcon: "download", actionName: "Télécharger le fichier", actionClick: (action: SortTableAction, element: any): void => {
+      actionIcon: "download", actionName: "Télécharger le fichier", actionClick: (column: SortTableAction<Attachment>, element: Attachment, event: any): void => {
         this.uploadAttachmentService.downloadAttachment(element);
       }, display: true
-    } as SortTableAction);
+    } as SortTableAction<Attachment>);
   }
 
   formatDateTimeForSortTable = formatDateTimeForSortTable;
@@ -100,6 +101,7 @@ export class AttachmentsComponent implements OnInit {
 
   uploadFile() {
     this.uploadAttachementDialogRef = this.uploadAttachementDialog.open(UploadAttachementDialogComponent, {
+      width: '50%'
     });
     this.uploadAttachementDialogRef.componentInstance.entity = this.entity;
     this.uploadAttachementDialogRef.componentInstance.entityType = this.entityType;

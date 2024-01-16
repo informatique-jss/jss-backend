@@ -36,6 +36,7 @@ import { AttachmentsComponent } from '../attachments/attachments.component';
 import { AutomaticMailListComponent } from '../automatic-mail-list/automatic-mail-list.component';
 import { AvatarChipComponent } from '../avatar-chip/avatar-chip.component';
 import { AvatarComponent } from '../avatar/avatar.component';
+import { BarChartComponent } from '../bar-chart/bar-chart.component';
 import { ChipsStatusComponent } from '../chips-status/chips-status.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
@@ -69,7 +70,6 @@ import { AutocompleteTiersIndividualComponent } from '../forms/autocomplete-tier
 import { ChipsAttachmentTypeComponent } from '../forms/chips-attachment-type/chips-attachment-type.component';
 import { ChipsCityComponent } from '../forms/chips-city/chips-city.component';
 import { ChipsCompetitorComponent } from '../forms/chips-competitor/chips-competitor.component';
-import { ChipsConfrereComponent } from '../forms/chips-confrere/chips-confrere.component';
 import { ChipsEmployeeComponent } from '../forms/chips-employee/chips-employee.component';
 import { ChipsFormaliteGuichetUniqueComponent } from '../forms/chips-formalite-guichet-unique/chips-formalite-guichet-unique.component';
 import { ChipsMailComponent } from '../forms/chips-mail/chips-mail.component';
@@ -195,9 +195,11 @@ import { SelectAccountingAccountClassComponent } from '../forms/select-accountin
 import { SelectAccountingJournalComponent } from '../forms/select-accounting-journal/select-accounting-journal.component';
 import { SelectAssignationTypeComponent } from '../forms/select-assignation-type/select-assignation-type.component';
 import { SelectAttachmentTypeComponent } from '../forms/select-attachment-type/select-attachment-type.component';
+import { SelectBatchCategoryComponent } from '../forms/select-batch-category/select-batch-category.component';
+import { SelectBatchSettingsComponent } from '../forms/select-batch-settings/select-batch-settings.component';
+import { SelectBatchStatusComponent } from '../forms/select-batch-status/select-batch-status.component';
 import { SelectBillingItemsComponent } from '../forms/select-billing-items/select-billing-items.component';
 import { SelectBillingTypeDebourComponent } from '../forms/select-billing-type-debour/select-billing-type-debour.component';
-import { SelectBodaccPublicationTypeComponent } from '../forms/select-bodacc-publication-type/select-bodacc-publication-type.component';
 import { SelectBuildingDomicilationComponent } from '../forms/select-building-domicilation/select-building-domicilation.component';
 import { SelectCompetentAuthorityTypeComponent } from '../forms/select-competent-authority-type/select-competent-authority-type.component';
 import { SelectContractTypeComponent } from '../forms/select-contract-type/select-contract-type.component';
@@ -216,6 +218,7 @@ import { SelectInvoiceStatusComponent } from '../forms/select-invoice-status/sel
 import { SelectJournalTypeOneComponent } from '../forms/select-journal-type-one/select-journal-type-one.component';
 import { SelectJournalTypeComponent } from '../forms/select-journal-type/select-journal-type.component';
 import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection/select-mail-redirection.component';
+import { SelectNodeComponent } from '../forms/select-node/select-node.component';
 import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/select-notice-family.component';
 import { SelectPaymentDeadlineComponent } from '../forms/select-payment-deadline/select-payment-deadline.component';
 import { SelectPaymentTypesComponent } from '../forms/select-payment-types/select-payment-types.component';
@@ -229,11 +232,13 @@ import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-re
 import { SelectRegionsComponent } from '../forms/select-regions/select-regions.component';
 import { SelectReportingDatasetComponent } from '../forms/select-reporting-dataset/select-reporting-dataset.component';
 import { SelectResponsableComponent } from '../forms/select-responsable/select-responsable.component';
+import { SelectRffFrequencyComponent } from '../forms/select-rff-frequency/select-rff-frequency.component';
 import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-period/select-subscription-period.component';
 import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/select-tiers-category.component';
 import { SelectTiersTypeComponent } from '../forms/select-tiers-type/select-tiers-type.component';
 import { SelectVatCollectionTypeComponent } from '../forms/select-vat-collection-type/select-vat-collection-type.component';
 import { SelectVatComponent } from '../forms/select-vat/select-vat.component';
+import { GaugeChartComponent } from '../gauge-chart/gauge-chart.component';
 import { GradeComponent } from '../grade/grade.component';
 import { HistoryComponent } from '../history/history.component';
 import { NotificationDialogComponent } from '../notification-dialog/notification-dialog.component';
@@ -330,7 +335,6 @@ const routes: Routes = [
     AutocompleteResponsableComponent,
     AutocompleteTiersIndividualComponent,
     SelectNoticeFamilyComponent,
-    SelectBodaccPublicationTypeComponent,
     AutocompleteCompetentAuthorityComponent,
     RadioGroupTransfertFundsComponent,
     SelectDepartmentsComponent,
@@ -350,7 +354,6 @@ const routes: Routes = [
     SelectCompetentAuthorityTypeComponent,
     ChipsCompetitorComponent,
     SelectBillingItemsComponent,
-    ChipsConfrereComponent,
     SelectJournalTypeComponent,
     TrustHtmlPipe,
     SelectVatCollectionTypeComponent,
@@ -498,6 +501,13 @@ const routes: Routes = [
     AutocompleteTypeVoieComponent,
     AutocompleteGuichetUniqueFormaliteComponent,
     ChipsFormaliteGuichetUniqueComponent,
+    SelectRffFrequencyComponent,
+    SelectBatchStatusComponent,
+    SelectBatchSettingsComponent,
+    SelectNodeComponent,
+    BarChartComponent,
+    GaugeChartComponent,
+    SelectBatchCategoryComponent,
   ],
   exports: [
     HistoryComponent,
@@ -539,7 +549,6 @@ const routes: Routes = [
     AutocompleteLegalFormComponent,
     AvatarComponent,
     AvatarChipComponent,
-    ChipsConfrereComponent,
     SelectMailRedirectionComponent,
     SelectVatComponent,
     GradeComponent,
@@ -574,7 +583,6 @@ const routes: Routes = [
     SelectDeliveryServiceComponent,
     ChipsMailComponent,
     TrustHtmlPipe,
-    SelectBodaccPublicationTypeComponent,
     ChipsEmployeeComponent,
     SelectPaymentDeadlineComponent,
     GenericTextareaComponent,
@@ -713,6 +721,13 @@ const routes: Routes = [
     AutocompleteGuichetUniqueFormaliteComponent,
     ChipsFormaliteGuichetUniqueComponent,
     SelectCustomerOrderOriginComponent,
+    SelectRffFrequencyComponent,
+    SelectBatchStatusComponent,
+    SelectBatchSettingsComponent,
+    SelectNodeComponent,
+    BarChartComponent,
+    GaugeChartComponent,
+    SelectBatchCategoryComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

@@ -8,6 +8,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -34,6 +35,14 @@ public interface CustomerOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
+        public void generateCreditNoteForCustomerOrderInvoice(CustomerOrder customerOrder, Invoice invoiceToRefund)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
+
+        public void reinitInvoicing(CustomerOrder customerOrder)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
+
         public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode,
                         boolean isFromUser)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
@@ -46,7 +55,7 @@ public interface CustomerOrderService {
 
         public List<OrderingSearchResult> searchOrders(OrderingSearch orderingSearch);
 
-        public void reindexCustomerOrder();
+        public void reindexCustomerOrder() throws OsirisException;
 
         public CustomerOrder createNewCustomerOrderFromQuotation(Quotation quotation)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
@@ -65,7 +74,9 @@ public interface CustomerOrderService {
         public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public void sendRemindersForCustomerOrderDeposit()
+        public void sendRemindersForCustomerOrderDeposit() throws OsirisException;
+
+        public void sendReminderForCustomerOrderDeposit(CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 

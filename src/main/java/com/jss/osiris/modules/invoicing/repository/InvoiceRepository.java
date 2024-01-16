@@ -15,6 +15,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -54,6 +55,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + "  i.first_reminder_date_time as firstReminderDateTime,"
                         + "  i.second_reminder_date_time as secondReminderDateTime,"
                         + "  i.third_reminder_date_time as thirdReminderDateTime,"
+                        + "  i.manual_accounting_document_number as manualAccountingDocumentNumber,"
                         + "  i.due_date as dueDate,"
                         + "  max(follow.followup_date) as lastFollowupDate,"
                         + "  COALESCE(i.total_price,0) - sum(COALESCE(case when p.is_appoint then -1 else 1 end * p.payment_amount,0)) as remainingToPay,"
@@ -79,7 +81,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + " and  ( COALESCE(:customerOrderId)=0 or c.id in (:customerOrderId)) "
                         + " and  ( COALESCE(:customerOrderForInboundInvoiceId)=0 or i.id_customer_order_for_inbound_invoice in (:customerOrderForInboundInvoiceId)) "
                         + " and  ( COALESCE(:invoiceId)=0 or i.id in (:invoiceId)) "
-                        + " and  ( COALESCE(:customerOrderIds) =0 or t.id in (:customerOrderIds) or r1.id in (:customerOrderIds) or co.id in (:customerOrderIds) or co2.id in (:customerOrderIds) or pro.id in (:customerOrderIds) ) "
+                        + " and  ( COALESCE(:customerOrderIds) =0 or t.id in (:customerOrderIds) or r1.id in (:customerOrderIds) or co.id in (:customerOrderIds) or co2.id in (:customerOrderIds) or pro.id in (:customerOrderIds) or competent_authority.id in (:customerOrderIds) ) "
                         + " and (:minAmount is null or total_price>=CAST(CAST(:minAmount as text) as real) ) "
                         + " and (:maxAmount is null or total_price<=CAST(CAST(:maxAmount as text) as real) )"
                         + " and (:showToRecover is false or (  i.first_reminder_date_time is not null and  i.second_reminder_date_time  is not null and  i.third_reminder_date_time  is not null and i.id_invoice_status<>:invoicePayedStatusId ) )"
@@ -111,5 +113,11 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
 
         @Query("select i from Invoice i where id_direct_debit_transfert=:id")
         Invoice searchInvoicesByIdDirectDebitTransfert(@Param("id") Integer idToFind);
+
+        @Query(value = "select n from Invoice n where invoiceStatus=:invoiceStatus and thirdReminderDateTime is null and billingLabelType=:billingLabelType and dueDate>=:startDate and dueDate<:endDate ")
+        List<Invoice> findInvoiceForCustomReminder(@Param("invoiceStatus") InvoiceStatus invoiceStatusSend,
+                        @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate,
+                        @Param("billingLabelType") BillingLabelType billingLabelType);
 
 }

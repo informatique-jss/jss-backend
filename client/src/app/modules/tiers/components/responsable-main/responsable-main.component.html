@@ -10,12 +10,12 @@
   </div>
   <div class="table-container-scroll">
     <sort-table [columns]="displayedColumns" (onRowClick)="selectResponsable($event)" [values]="tiers.responsables"
-      tableName="Responsables" [filterText]="searchText" [actions]="tableActions"
-      [idRowSelected]="selectedResponsable?selectedResponsable.id:undefined"></sort-table>
+      [noPaddingBottom]="true" [noMaxHeight]="true" tableName="Responsables" [filterText]="searchText"
+      [actions]="tableActions" [idRowSelected]="selectedResponsable?selectedResponsable.id:undefined"></sort-table>
   </div>
   <div [hidden]="selectedResponsable==null" class="responsable-tabs">
     <form [formGroup]="principalForm" *ngIf="selectedResponsable!=null">
-      <mat-tab-group animationDuration="0ms" #tabs>
+      <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
         <mat-tab label="Fiche du responsable">
           <div class="full-width">
             <fieldset [disabled]="editMode==false" class="fieldset-no-border">
@@ -162,7 +162,8 @@
                       propertyName="floor" [maxLength]="8"></generic-input>
                 </tr>
               </table>
-              <table class="full-width">
+              <table class="full-width"
+                *ngIf="tiers && (!tiers.tiersCategory ||  tiers.tiersCategory.id!=tiersCategoryPresse.id)">
                 <tr>
                   <td>
                     <generic-input [(model)]="selectedResponsable.rffFormaliteRate" label="Taux RFF Formalité"
@@ -171,6 +172,11 @@
                   <td>
                     <generic-input [(model)]="selectedResponsable.rffInsertionRate" label="Taux RFF Insertion"
                       [form]="principalForm" propertyName="rffInsertionRate" type="number"></generic-input>
+                  </td>
+                  <td *ngIf="tiers && !tiers.rffFormaliteRate && !tiers.rffInsertionRate">
+                    <select-rff-frequency [(model)]="selectedResponsable.rffFrequency" label="Périodicité des RFF"
+                      [form]="principalForm" propertyName="rffFrequency" [isMandatory]="true"
+                      [isDisabled]="!editMode"></select-rff-frequency>
                   </td>
                 </tr>
               </table>
@@ -198,7 +204,7 @@
           </div>
           <button
             [matTooltip]="'Renouveler le mot de passe JSS.fr pour '+selectedResponsable.firstname+' '+ selectedResponsable.lastname"
-            mat-fab color="accent" class="third-fab-button" *ngIf="!editMode && selectedResponsable"
+            mat-fab color="accent" class="second-fab-button" *ngIf="!editMode && selectedResponsable"
             (click)="renewPassword()">
             <mat-icon>password</mat-icon>
           </button>
@@ -212,36 +218,57 @@
           </attachments>
         </mat-tab>
         <mat-tab label="Mails" *ngIf="selectedResponsable.id">
-          <automatic-mail-list [responsable]="selectedResponsable">
-          </automatic-mail-list>
+          <ng-template matTabContent>
+            <automatic-mail-list [responsable]="selectedResponsable">
+            </automatic-mail-list>
+          </ng-template>
         </mat-tab>
         <mat-tab label="Devis" *ngIf="tiers.id!=null && tiers.id!=undefined">
-          <quotation-list class="integration-component"
-            *ngIf="this.quotationSearch.customerOrders && this.quotationSearch.customerOrders.length>0"
-            [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
-          </quotation-list>
+          <ng-template matTabContent>
+            <quotation-list class="integration-component"
+              *ngIf="this.quotationSearch.customerOrders && this.quotationSearch.customerOrders.length>0"
+              [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
+            </quotation-list>
+          </ng-template>
         </mat-tab>
         <mat-tab label="Commandes" *ngIf="tiers.id!=null && tiers.id!=undefined">
-          <ordering-list class="integration-component"
-            *ngIf="this.orderingSearch.customerOrders && this.orderingSearch.customerOrders.length>0"
-            [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
-          </ordering-list>
+          <ng-template matTabContent>
+            <ordering-list class="integration-component"
+              *ngIf="this.orderingSearch.customerOrders && this.orderingSearch.customerOrders.length>0"
+              [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
+            </ordering-list>
+          </ng-template>
         </mat-tab>
         <mat-tab label="Prestations" *ngIf="tiers.id!=null && tiers.id!=undefined">
-          <provision-list class="integration-component"
-            *ngIf="this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0"
-            [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
-          </provision-list>
+          <ng-template matTabContent>
+            <provision-list class="integration-component"
+              *ngIf="this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0"
+              [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
+            </provision-list>
+          </ng-template>
         </mat-tab>
         <mat-tab label="Factures" *ngIf="tiers.id!=null && tiers.id!=undefined">
-          <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
-            [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+          <ng-template matTabContent>
+            <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
+              [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="RFF" *ngIf="rffSearch && rffSearch.responsable  ">
+          <ng-template matTabContent>
+            <div class="mat-elevation-z2 form-div">
+              <rff-list [rffSearch]="rffSearch" [isForTiersIntegration]="true"></rff-list>
+            </div>
+          </ng-template>
         </mat-tab>
         <mat-tab label="Suivi" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
-          <tiers-followup [tiers]="selectedResponsable!" [editMode]="editMode"></tiers-followup>
+          <ng-template matTabContent>
+            <tiers-followup [tiers]="selectedResponsable!" [editMode]="editMode"></tiers-followup>
+          </ng-template>
         </mat-tab>
         <mat-tab label="Historique" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
-          <history [entity]="selectedResponsable" [entityType]="RESPONSABLE_ENTITY_TYPE"></history>
+          <ng-template matTabContent>
+            <history [entity]="selectedResponsable" [entityType]="RESPONSABLE_ENTITY_TYPE"></history>
+          </ng-template>
         </mat-tab>
       </mat-tab-group>
     </form>

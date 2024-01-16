@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { AGGREGATE_STATUS_DONE, AGGREGATE_STATUS_IN_PROGRESS, AGGREGATE_STATUS_NEW, AGGREGATE_STATUS_WAITING } from 'src/app/libs/Constants';
+import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
-import { SortTableAction } from '../../../miscellaneous/model/SortTableAction';
 import { Employee } from '../../../profile/model/Employee';
 import { ProvisionBoardResult } from '../../model/ProvisionBoardResult';
 import { ProvisionBoardResultAggregated } from '../../model/ProvisionBoardResultAggregated';
@@ -20,8 +20,8 @@ export class ProvisionBoardComponent implements OnInit {
   provisionBoardResults: ProvisionBoardResult[] | undefined;
   provisionBoardResultsAggregated: ProvisionBoardResultAggregated[] | undefined;
   provisionBoardResultsAggregatedWithTotal: ProvisionBoardResultAggregated[] | undefined;
-  displayedColumns: SortTableColumn[] = [];
-  tableActions: SortTableAction[] = [];
+  displayedColumns: SortTableColumn<ProvisionBoardResultAggregated>[] = [];
+  tableActions: SortTableAction<ProvisionBoardResultAggregated>[] = [];
 
   constructor(private provisionBoardResultService: ProvisionBoardResultService,
     private formBuilder: FormBuilder,
@@ -32,20 +32,20 @@ export class ProvisionBoardComponent implements OnInit {
 
   ngOnInit() {
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "employeeName", fieldName: "employeeName", label: "Collaborateur" } as SortTableColumn);
-    this.displayedColumns.push({ id: "type", fieldName: "type", label: "Type de prestation" } as SortTableColumn);
-    this.displayedColumns.push({ id: "aggregateStatusNewNumber", fieldName: "aggregateStatusNewNumber", label: "Nouveau" } as SortTableColumn);
-    this.displayedColumns.push({ id: "aggregateStatusInProgress", fieldName: "aggregateStatusInProgress", label: "En cours" } as SortTableColumn);
-    this.displayedColumns.push({ id: "aggregateStatusWaiting", fieldName: "aggregateStatusWaiting", label: "En attente" } as SortTableColumn);
-    this.displayedColumns.push({ id: "aggregateStatusDone", fieldName: "aggregateStatusDone", label: "Terminé" } as SortTableColumn);
+    this.displayedColumns.push({ id: "employeeName", fieldName: "employeeName", label: "Collaborateur" } as SortTableColumn<ProvisionBoardResultAggregated>);
+    this.displayedColumns.push({ id: "type", fieldName: "type", label: "Type de prestation" } as SortTableColumn<ProvisionBoardResultAggregated>);
+    this.displayedColumns.push({ id: "aggregateStatusNewNumber", fieldName: "aggregateStatusNewNumber", label: "Nouveau" } as SortTableColumn<ProvisionBoardResultAggregated>);
+    this.displayedColumns.push({ id: "aggregateStatusInProgress", fieldName: "aggregateStatusInProgress", label: "En cours" } as SortTableColumn<ProvisionBoardResultAggregated>);
+    this.displayedColumns.push({ id: "aggregateStatusWaiting", fieldName: "aggregateStatusWaiting", label: "En attente" } as SortTableColumn<ProvisionBoardResultAggregated>);
+    this.displayedColumns.push({ id: "aggregateStatusDone", fieldName: "aggregateStatusDone", label: "Terminé" } as SortTableColumn<ProvisionBoardResultAggregated>);
 
     this.tableActions.push({
-      actionIcon: "visibility", actionName: "Voir le détail", actionLinkFunction: (action: SortTableAction, element: any) => {
+      actionIcon: "visibility", actionName: "Voir le détail", actionLinkFunction: (action: SortTableAction<ProvisionBoardResultAggregated>, element: ProvisionBoardResultAggregated) => {
         if (element)
           return ['/provisions/', element.employeeId];
         return undefined;
       }, display: true,
-    } as SortTableAction);
+    } as SortTableAction<ProvisionBoardResultAggregated>);
 
     this.employeesSelected = this.userPreferenceService.getUserSearchBookmark("provisionBoardEmployees") as Employee[];
     this.refreshData();

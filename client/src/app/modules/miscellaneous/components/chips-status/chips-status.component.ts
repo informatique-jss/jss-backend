@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { ConstantService } from '../../services/constant.service';
 
 @Component({
@@ -18,9 +19,9 @@ export class ChipsStatusComponent implements OnInit {
   @Input() value: string = '';
   statusType = 4;
 
-  okStatus: string[] = ["VALIDATED_BY_JSS", "VALIDATED_BY_CUSTOMER", "BILLED", "PAYED", "SENT", this.constantService.getInvoiceStatusPayed().code, this.constantService.getInvoiceStatusCreditNoteEmited().code];
-  warnStatus: string[] = ["TO_VERIFY", "WAITING_DEPOSIT", "WAITING", this.constantService.getInvoiceStatusSend().code, this.constantService.getInvoiceStatusReceived().code, this.constantService.getInvoiceStatusCreditNoteReceived().code];
-  koStatus: string[] = ["REFUSED_BY_CUSTOMER", this.constantService.getInvoiceStatusCancelled().code];
+  okStatus: string[] = [VALIDATED_BY_CUSTOMER, CUSTOMER_ORDER_STATUS_BILLED, this.constantService.getInvoiceStatusPayed().code, this.constantService.getInvoiceStatusCreditNoteEmited().code];
+  warnStatus: string[] = [QUOTATION_STATUS_TO_VERIFY, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, this.constantService.getInvoiceStatusSend().code, this.constantService.getInvoiceStatusReceived().code, this.constantService.getInvoiceStatusCreditNoteReceived().code];
+  koStatus: string[] = [QUOTATION_STATUS_REFUSED_BY_CUSTOMER, this.constantService.getInvoiceStatusCancelled().code];
 
   constructor(
     private constantService: ConstantService

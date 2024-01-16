@@ -14,6 +14,10 @@
   width: 35px;
 }
 
+.padding-fab {
+  padding-right: 5px;
+}
+
 .td-label {
   white-space: nowrap;
   max-width: 120px;
@@ -42,8 +46,4 @@
 
 .toggle-td {
   width: 160px;
-}
-
-.min-height {
-  padding-bottom: 65px;
 }

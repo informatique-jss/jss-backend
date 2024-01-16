@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { Siren } from 'src/app/modules/quotation/model/Siren';
-import { SirenService } from 'src/app/modules/quotation/services/siren.service';
+import { Affaire } from 'src/app/modules/quotation/model/Affaire';
+import { AffaireService } from 'src/app/modules/quotation/services/affaire.service';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
@@ -11,22 +11,21 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
   templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
   styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css']
 })
-export class AutocompleteSirenComponent extends GenericAutocompleteComponent<Siren, Siren> implements OnInit {
+export class AutocompleteSirenComponent extends GenericAutocompleteComponent<Affaire, Affaire> implements OnInit {
 
-  constructor(private formBuild: UntypedFormBuilder, private sirenService: SirenService, private userNoteService2: UserNoteService,) {
+  constructor(private formBuild: UntypedFormBuilder, private affaireService: AffaireService, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
   }
 
-  searchEntities(value: string): Observable<Siren[]> {
-    this.expectedMinLengthInput = 9;
-    return this.sirenService.getSiren(value);
+  searchEntities(value: string): Observable<Affaire[]> {
+    return this.affaireService.generateAffaireBySiren(value);
   }
 
-  displayLabel(siren: Siren): string {
-    if (!siren)
+  displayLabel(affaire: Affaire): string {
+    if (!affaire)
       return "";
-    if (!siren.uniteLegale)
-      return siren + "";
-    return siren.uniteLegale.siren;
+    if (!affaire.denomination && !affaire.siret)
+      return affaire + "";
+    return affaire.denomination + " - " + affaire.siret;
   }
 }

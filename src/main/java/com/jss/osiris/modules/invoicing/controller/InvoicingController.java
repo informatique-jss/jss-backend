@@ -75,6 +75,7 @@ import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.service.BillingLabelTypeService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
 @RestController
@@ -153,6 +154,9 @@ public class InvoicingController {
 
     @Autowired
     ActiveDirectoryHelper activeDirectoryHelper;
+
+    @Autowired
+    BillingLabelTypeService billingLabelTypeService;
 
     @PostMapping(inputEntryPoint + "/azure-receipt/invoice")
     public ResponseEntity<AzureReceiptInvoice> updateAzureReceiptInvoice(
@@ -252,37 +256,14 @@ public class InvoicingController {
     @Autowired
     AccountingRecordGenerationService accountingRecordGenerationService;
 
-    // TODO remove !
-    @GetMapping(inputEntryPoint + "/payment/add")
+    @GetMapping(inputEntryPoint + "/payment/waiting")
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-    public ResponseEntity<Payment> addPayment(@RequestParam Float amount, @RequestParam Integer paymentWayId,
-            @RequestParam String label)
+    public ResponseEntity<Payment> movePaymentToWaitingAccount(@RequestParam Integer paymentId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-        Payment payment = new Payment();
-        payment.setIsExternallyAssociated(false);
-        payment.setIsCancelled(false);
-        payment.setLabel(label);
-        payment.setPaymentAmount(amount);
-        payment.setPaymentDate(LocalDateTime.now());
-        payment.setPaymentType(constantService.getPaymentTypeVirement());
-        payment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
-        payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
-        paymentService.addOrUpdatePayment(payment);
-        if (payment.getPaymentAmount() > 0)
-            accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment, false);
-        else
-            accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
-        paymentService.automatchPaymentFromUser(payment);
+        Payment payment = paymentService.getPayment(paymentId);
+        if (payment != null)
+            payment = paymentService.movePaymentToWaitingAccount(payment);
         return new ResponseEntity<Payment>(payment, HttpStatus.OK);
-    }
-
-    // TODO remove !
-    @GetMapping(inputEntryPoint + "/payment/automatch")
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-    public ResponseEntity<Payment> automatchPayment()
-            throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-        paymentService.paymentGrab();
-        return new ResponseEntity<Payment>(new Payment(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/payments/search")
@@ -298,7 +279,7 @@ public class InvoicingController {
     @PostMapping(inputEntryPoint + "/payment/comment")
     public ResponseEntity<Payment> addOrUpdatePaymentComment(@RequestBody String comment,
             @RequestParam Integer idPayment)
-            throws OsirisValidationException {
+            throws OsirisValidationException, OsirisException {
 
         Payment payment = paymentService.getPayment(idPayment);
 
@@ -602,7 +583,7 @@ public class InvoicingController {
                         if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null
                                 && paymentAssociate.getAffaireRefund() == null)
                             throw new OsirisValidationException("not all payment used and no refund tiers set");
-                } else if (-totalAmount != Math.round(paymentAssociate.getPayment().getPaymentAmount()))
+                } else if (totalAmount != Math.round(paymentAssociate.getPayment().getPaymentAmount() * 100f) / 100f)
                     throw new OsirisValidationException("not all payment used");
             }
         }

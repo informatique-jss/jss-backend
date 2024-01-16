@@ -6,6 +6,7 @@ import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { ConfrereService } from 'src/app/modules/quotation/services/confrere.service';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Department } from '../../../model/Department';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { ConfrereDialogComponent } from '../../confreres-dialog/confreres-dialog.component';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
@@ -26,7 +27,11 @@ export class AutocompleteConfrereComponent extends GenericAutocompleteComponent<
 
   @Input() filteredDepartment: Department | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private confrereService: ConfrereService, public confrereDialog: MatDialog, private userNoteService2: UserNoteService,) {
+  constructor(private formBuild: UntypedFormBuilder,
+    private confrereService: ConfrereService,
+    public confrereDialog: MatDialog,
+    private userNoteService2: UserNoteService,
+    public confirmationDialog: MatDialog,) {
     super(formBuild, userNoteService2)
   }
 
@@ -47,7 +52,31 @@ export class AutocompleteConfrereComponent extends GenericAutocompleteComponent<
     dialogConfrere.afterClosed().subscribe(response => {
       if (response && response != null)
         this.model! = response;
-      this.optionSelected(this.model!);
+      super.optionSelected(this.model!);
     });
+  }
+
+  override optionSelected(type: Confrere): void {
+
+    if (type.doNotUse) {
+      const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Confrère non autorisé !",
+          content: "Attention, ce confrère n'est pas censé être utilisé ! Rapprochez-vous du service des Annonces Légales avant de l'utiliser !",
+          closeActionText: "Annuler",
+          validationActionText: "Choisir"
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(dialogResult => {
+        if (dialogResult)
+          super.optionSelected(type);
+        else
+          super.clearField();
+      });
+    } else {
+      super.optionSelected(type);
+    }
   }
 }

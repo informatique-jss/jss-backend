@@ -14,6 +14,7 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
+import { Invoice } from '../../model/Invoice';
 import { Provision } from '../../model/Provision';
 
 @Component({
@@ -27,11 +28,11 @@ export class ProvisionPaymentComponent implements OnInit {
   @Input() editMode: boolean = false;
   @Input() quotation: CustomerOrder | undefined;
 
-  invoiceDisplayedColumns: SortTableColumn[] = [];
-  invoiceTableActions: SortTableAction[] = [];
+  invoiceDisplayedColumns: SortTableColumn<Invoice>[] = [];
+  invoiceTableActions: SortTableAction<Invoice>[] = [];
 
-  paymentsDisplayedColumns: SortTableColumn[] = [];
-  paymentsTableActions: SortTableAction[] = [];
+  paymentsDisplayedColumns: SortTableColumn<Payment>[] = [];
+  paymentsTableActions: SortTableAction<Payment>[] = [];
 
   azureInvoiceSelected: AzureInvoice | undefined;
 
@@ -54,39 +55,45 @@ export class ProvisionPaymentComponent implements OnInit {
 
   ngOnInit() {
     this.invoiceDisplayedColumns = [];
-    this.invoiceDisplayedColumns.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn);
-    this.invoiceDisplayedColumns.push({ id: "manualAccountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N°" } as SortTableColumn);
-    this.invoiceDisplayedColumns.push({ id: "invoiceDate", fieldName: "createdDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.invoiceDisplayedColumns.push({ id: "invoiceAmount", fieldName: "totalPrice", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.invoiceDisplayedColumns.push({ id: "invoiceStatus", fieldName: "invoiceStatus.label", label: "Statut" } as SortTableColumn);
-    this.invoiceDisplayedColumns.push({ id: "confrere", fieldName: "confrere.label", label: "Confrere" } as SortTableColumn);
-    this.invoiceDisplayedColumns.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
-    this.invoiceDisplayedColumns.push({ id: "provider", fieldName: "provider.label", label: "Fournisseur" } as SortTableColumn);
+    this.invoiceDisplayedColumns.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn<Invoice>);
+    this.invoiceDisplayedColumns.push({ id: "manualAccountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N°" } as SortTableColumn<Invoice>);
+    this.invoiceDisplayedColumns.push({ id: "invoiceDate", fieldName: "createdDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Invoice>);
+    this.invoiceDisplayedColumns.push({ id: "invoiceAmount", fieldName: "totalPrice", label: "Montant", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Invoice>);
+    this.invoiceDisplayedColumns.push({ id: "invoiceStatus", fieldName: "invoiceStatus.label", label: "Statut", statusFonction: (element: Invoice) => { return element.invoiceStatus.code }, displayAsStatus: true } as SortTableColumn<Invoice>);
+    this.invoiceDisplayedColumns.push({ id: "confrere", fieldName: "confrere.label", label: "Confrere" } as SortTableColumn<Invoice>);
+    this.invoiceDisplayedColumns.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn<Invoice>);
+    this.invoiceDisplayedColumns.push({ id: "provider", fieldName: "provider.label", label: "Fournisseur" } as SortTableColumn<Invoice>);
 
     this.invoiceTableActions.push({
-      actionIcon: "point_of_sale", actionName: "Voir le détail de la facture / associer", actionLinkFunction: (action: SortTableAction, element: any) => {
+      actionIcon: "point_of_sale", actionName: "Voir le détail de la facture / associer", actionLinkFunction: (column: SortTableAction<Invoice>, element: Invoice) => {
         if (element)
           return ['/invoicing/view', element.id];
         return undefined;
       }, display: true,
-    } as SortTableAction);
+    } as SortTableAction<Invoice>);
 
     this.paymentsDisplayedColumns = [];
-    this.paymentsDisplayedColumns.push({ id: "id", fieldName: "id", label: "N°", actionFunction: (element: any) => this.paymentDetailsDialogService.displayPaymentDetailsDialog(element), actionIcon: "visibility", actionTooltip: "Voir le détail du paiement" } as SortTableColumn);
-    this.paymentsDisplayedColumns.push({ id: "paymentDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.paymentsDisplayedColumns.push({ id: "paymentAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.paymentsDisplayedColumns.push({ id: "paymentTypeLabel", fieldName: "paymentType.label", label: "Type" } as SortTableColumn);
-    this.paymentsDisplayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
-    this.paymentsDisplayedColumns.push({ id: "checkNumber", fieldName: "checkNumber", label: "Numéro de chèque" } as SortTableColumn);
-    this.paymentsDisplayedColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Est annulé ?" } as SortTableColumn);
-    this.paymentsDisplayedColumns.push({ id: "invoice", fieldName: "invoice.manualAccountingDocumentNumber", label: "Facture associée" } as SortTableColumn);
+    this.paymentsDisplayedColumns.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn<Payment>);
+    this.paymentsDisplayedColumns.push({ id: "paymentDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Payment>);
+    this.paymentsDisplayedColumns.push({ id: "paymentAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn<Payment>);
+    this.paymentsDisplayedColumns.push({ id: "paymentTypeLabel", fieldName: "paymentType.label", label: "Type" } as SortTableColumn<Payment>);
+    this.paymentsDisplayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn<Payment>);
+    this.paymentsDisplayedColumns.push({ id: "checkNumber", fieldName: "checkNumber", label: "Numéro de chèque" } as SortTableColumn<Payment>);
+    if (this.habilitationsService.isAdministrator())
+      this.paymentsDisplayedColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Est annulé ?" } as SortTableColumn<Payment>);
+    this.paymentsDisplayedColumns.push({ id: "invoice", fieldName: "invoice.manualAccountingDocumentNumber", label: "Facture associée" } as SortTableColumn<Payment>);
 
     this.paymentsTableActions.push({
-      actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (action: SortTableAction, element: any) => {
+      actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (column: SortTableAction<Payment>, element: Payment, event: any) => {
         if ((!element.invoice && !element.isCancelled))
           this.openAssociationDialog(element);
       }, display: true,
-    } as SortTableAction);
+    } as SortTableAction<Payment>);
+    this.paymentsTableActions.push({
+      actionIcon: "visibility", actionName: "Voir le détail du paiement", actionClick: (column: SortTableAction<Payment>, element: Payment, event: any) => {
+        this.paymentDetailsDialogService.displayPaymentDetailsDialog(element)
+      }, display: true,
+    } as SortTableAction<Payment>);
   }
 
   openAssociationDialog(elementIn: Payment) {
@@ -124,7 +131,7 @@ export class ProvisionPaymentComponent implements OnInit {
     let attachments = [];
     if (this.provision && this.provision.attachments)
       for (let attachment of this.provision.attachments)
-        if (attachment.azureInvoice && !attachment.invoice && (!attachment.azureInvoice.invoices || attachment.azureInvoice.invoices.length == 0))
+        if (attachment.azureInvoice && (!attachment.azureInvoice.invoices || attachment.azureInvoice.invoices.length == 0))
           attachments.push(attachment)
     return attachments;
   }

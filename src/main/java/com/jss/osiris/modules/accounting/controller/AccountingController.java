@@ -3,7 +3,6 @@ package com.jss.osiris.modules.accounting.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
-import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
@@ -114,7 +112,6 @@ public class AccountingController {
         for (AccountingRecord accountingRecord : accountingRecords) {
             if (accountingRecord.getId() != null
                     || accountingRecord.getAccountingDateTime() != null
-                    || accountingRecord.getOperationDateTime() != null
                     || accountingRecord.getIsTemporary() != null
                     || accountingRecord.getInvoiceItem() != null
                     || accountingRecord.getInvoice() != null
@@ -125,7 +122,7 @@ public class AccountingController {
 
             validationHelper.validateReferential(accountingRecord.getAccountingAccount(), true, "getAccountingAccount");
             validationHelper.validateReferential(accountingRecord.getAccountingJournal(), true, "getAccountingJournal");
-            validationHelper.validateDate(accountingRecord.getManualAccountingDocumentDate(), true,
+            validationHelper.validateDateTime(accountingRecord.getOperationDateTime(), true,
                     "ManualAccountingDocumentDate");
             validationHelper.validateString(accountingRecord.getManualAccountingDocumentNumber(), true, 150,
                     "ManualAccountingDocumentNumber");
@@ -209,15 +206,6 @@ public class AccountingController {
                 accountingAccountService.getAccountingAccountByLabelOrCode(label), HttpStatus.OK);
     }
 
-    // TODO delete
-    @GetMapping(inputEntryPoint + "/billing-closure-receipt/trigger")
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-    public ResponseEntity<Boolean> triggerBillingClosureReceipt()
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        accountingRecordService.sendBillingClosureReceipt();
-        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-    }
-
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/accounting/close/daily")
     public ResponseEntity<Boolean> dailyAccountClosing() {
@@ -236,23 +224,10 @@ public class AccountingController {
             return new ResponseEntity<List<AccountingRecordSearchResult>>(
                     accountingRecordService.searchAccountingRecords(accountingRecordSearch), HttpStatus.OK);
 
-        if (accountingRecordSearch.getAccountingAccount() == null
-                && accountingRecordSearch.getAccountingClass() == null
-                && accountingRecordSearch.getAccountingJournal() == null
-                && accountingRecordSearch.getConfrereId() == null
-                && accountingRecordSearch.getTiersId() == null)
-            throw new OsirisValidationException("AccountingAccount or AccountingClass or AccountingJournal");
-
         if (accountingRecordSearch.getTiersId() == null
                 && accountingRecordSearch.getConfrereId() == null) {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
                 throw new OsirisValidationException("StartDate or EndDate");
-
-            Duration duration = Duration.between(accountingRecordSearch.getStartDate(),
-                    accountingRecordSearch.getEndDate());
-
-            if (duration.toDays() > 32)
-                throw new OsirisClientMessageException("Veuillez choisir une période inférieure à un mois");
         }
 
         return new ResponseEntity<List<AccountingRecordSearchResult>>(
@@ -281,10 +256,6 @@ public class AccountingController {
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
         File grandLivre = accountingRecordService.getGrandLivreExport(accountingClass, startDate, endDate);
 
         if (grandLivre != null) {
@@ -327,11 +298,6 @@ public class AccountingController {
 
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
-
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
 
         File grandLivre = accountingRecordService.getJournalExport(accountingJournal, startDate, endDate);
 
@@ -378,11 +344,6 @@ public class AccountingController {
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
-
         File grandLivre = accountingRecordService.getAccountingAccountExport(accountingAccount, startDate, endDate);
 
         if (grandLivre != null) {
@@ -409,7 +370,7 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/billing-closure-receipt/download")
-    public ResponseEntity<byte[]> downloadBillingClosureReceiptV2(@RequestParam("tiersId") Integer tiersId)
+    public ResponseEntity<byte[]> downloadBillingClosureReceipt(@RequestParam("tiersId") Integer tiersId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         byte[] data = null;
         HttpHeaders headers = null;
@@ -440,6 +401,17 @@ public class AccountingController {
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/billing-closure-receipt/send")
+    public ResponseEntity<Boolean> sendBillingClosureReceipt(@RequestParam("tiersId") Integer tiersId)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        if (tiersId == null)
+            throw new OsirisValidationException("tiersId");
+
+        accountingRecordService.getBillingClosureReceiptFile(tiersId, false);
+
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
     @PostMapping(inputEntryPoint + "/accounting-balance/search")
     public ResponseEntity<List<AccountingBalance>> searchAccountingBalance(
             @RequestBody AccountingBalanceSearch accountingRecordSearch)
@@ -449,12 +421,6 @@ public class AccountingController {
 
         if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
             throw new OsirisValidationException("StartDate or EndDate");
-
-        Duration duration = Duration.between(accountingRecordSearch.getStartDate(),
-                accountingRecordSearch.getEndDate());
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
 
         validationHelper.validateReferential(accountingRecordSearch.getPrincipalAccountingAccount(), false,
                 "PrincipalAccountingAccount");
@@ -487,10 +453,6 @@ public class AccountingController {
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("duration");
         File grandLivre = accountingRecordService.getAccountingBalanceExport(accountingClassId,
                 principalAccountingAccountId, accountingAccountId, startDate, endDate);
 
@@ -526,12 +488,6 @@ public class AccountingController {
         if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(accountingRecordSearch.getStartDate(),
-                accountingRecordSearch.getEndDate());
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
-
         validationHelper.validateReferential(accountingRecordSearch.getPrincipalAccountingAccount(), false,
                 "PrincipalAccountingAccount");
 
@@ -563,10 +519,6 @@ public class AccountingController {
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
         File grandLivre = accountingRecordService.getAccountingBalanceGeneraleExport(accountingClassId,
                 principalAccountingAccountId, accountingAccountId, startDate, endDate);
 
@@ -602,11 +554,6 @@ public class AccountingController {
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
-
         return new ResponseEntity<List<AccountingBalanceViewTitle>>(
                 accountingRecordService.getBilan(startDate, endDate), HttpStatus.OK);
     }
@@ -620,11 +567,6 @@ public class AccountingController {
 
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
-
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
 
         return new ResponseEntity<List<AccountingBalanceViewTitle>>(
                 accountingRecordService.getProfitAndLost(startDate, endDate), HttpStatus.OK);
@@ -642,10 +584,6 @@ public class AccountingController {
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
         File profitAndLost = accountingRecordService.getProfitLostExport(startDate, endDate);
 
         if (profitAndLost != null) {
@@ -682,10 +620,6 @@ public class AccountingController {
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(startDate, endDate);
-
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
         File bilan = accountingRecordService.getBilanExport(startDate, endDate);
 
         if (bilan != null) {

@@ -26,16 +26,13 @@ import { EditorModule } from '@tinymce/tinymce-angular';
 import { DirectDebitTransfertListComponent } from 'src/app/modules/invoicing/components/direct-debit-transfert-list/direct-debit-transfert-list.component';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { GuichetUniqueStatusComponent } from '../../guichet-unique-status/guichet-unique-status.component';
+import { ActeDepositComponent } from '../acte-deposit/acte-deposit.component';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
 import { AffaireListComponent } from '../affaire-list/affaire-list.component';
 import { AffaireComponent } from '../affaire/affaire.component';
 import { AnnouncementListComponent } from '../announcement-list/announcement-list.component';
 import { AnnouncementComponent } from '../announcement/announcement.component';
-import { BodaccFusionComponent } from '../bodacc-fusion/bodacc-fusion.component';
-import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
-import { BodaccSaleComponent } from '../bodacc-sale/bodacc-sale.component';
-import { BodaccSplitComponent } from '../bodacc-split/bodacc-split.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
 import { CustomerOrderPaymentComponent } from '../customer-order-payment/customer-order-payment.component';
@@ -118,13 +115,9 @@ const routes: Routes = [
     QuotationManagementComponent,
     DomiciliationComponent,
     OrderSimilaritiesDialogComponent,
-    BodaccMainComponent,
     AddAffaireDialogComponent,
     ProvisionItemComponent,
-    BodaccSaleComponent,
     InvoiceManagementComponent,
-    BodaccFusionComponent,
-    BodaccSplitComponent,
     QuotationListComponent,
     ChooseAssignedUserDialogComponent,
     ProvisionListComponent,
@@ -157,6 +150,7 @@ const routes: Routes = [
     GuichetUniqueStatusComponent,
     SelectCompetentAuthorityDialogComponent,
     DebourComponent,
+    ActeDepositComponent,
   ],
   exports: [
     OrderingListComponent,

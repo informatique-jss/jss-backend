@@ -49,10 +49,12 @@ public class Quotation implements IQuotation {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
+	@IndexedField
 	private Tiers tiers;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
+	@IndexedField
 	private Responsable responsable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -79,6 +81,9 @@ public class Quotation implements IQuotation {
 	@Column(columnDefinition = "TEXT")
 	private String description;
 
+	@Column(columnDefinition = "TEXT")
+	private String instructions;
+
 	@OneToMany(mappedBy = "quotation")
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
 	private List<Attachment> attachments;
@@ -90,9 +95,6 @@ public class Quotation implements IQuotation {
 	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
 	private List<AssoAffaireOrder> assoAffaireOrders;
-
-	@Column(nullable = false)
-	private Boolean overrideSpecialOffer;
 
 	@Column(length = 40)
 	private String quotationLabel;
@@ -276,14 +278,6 @@ public class Quotation implements IQuotation {
 		this.quotationLabel = quotationLabel;
 	}
 
-	public Boolean getOverrideSpecialOffer() {
-		return overrideSpecialOffer;
-	}
-
-	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
-		this.overrideSpecialOffer = overrideSpecialOffer;
-	}
-
 	public String getCustomerMailCustomMessage() {
 		return customerMailCustomMessage;
 	}
@@ -323,4 +317,13 @@ public class Quotation implements IQuotation {
 	public void setAbandonReason(AbandonReason abandonReason) {
 		this.abandonReason = abandonReason;
 	}
+
+	public String getInstructions() {
+		return instructions;
+	}
+
+	public void setInstructions(String instructions) {
+		this.instructions = instructions;
+	}
+
 }

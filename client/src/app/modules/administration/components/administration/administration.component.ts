@@ -1,10 +1,12 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 
 @Component({
   selector: 'app-administration',
@@ -27,7 +29,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   saveObservableSubscription: Subscription = new Subscription;
 
   ACT_TYPE_REFERENTIAL = "Type d'actes";
-  BODACC_PUBLICATION_TYPE_REFERENTIAL = "Type de publication";
   BUILDING_DOMICILIATION_REFERENTIAL = "Adresse de domiciliation";
   DOMICIALIATION_CONTRACT_TYPE_REFERENTIAL = "Type de contrat";
   FUND_TYPE_REFERENTIAL = "Type de fonds";
@@ -49,6 +50,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   TIERS_FOLLOWUP_TYPE_REFERENTIAL = "Type de suivi";
   TIERS_TYPE_REFERENTIAL = "Type de tiers";
   ATTACHMENT_TYPE_REFERENTIAL = "Type de pièces jointes";
+  TYPE_DOCUMENT_REFERENTIAL = "Type de pièces jointes - INPI";
   CIVILITY_REFERENTIAL = "Civilité";
   COMPETENT_AUTHORITY_TYPE_REFERENTIAL = "Type d'autorité compétente";
   COUNTRY_REFERENTIAL = "Pays";
@@ -80,19 +82,21 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL = "Compte comptable principal";
   CUSTOMER_ORDER_ORIGIN_REFERENTIAL = "Origine des commandes";
   DEPARTMENT_VAT_SETTING_REFERENTIAL = "TVA par département";
+  RFF_FREQUENCY_REFERENTIAL = "Périodicité des RFF";
   ABANDON_REASON_REFERENTIAL = "Raison d'abandon";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private habilitationService: HabilitationsService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   ngOnInit() {
     this.appService.changeHeaderTitle("Administration");
+    this.restoreTab();
     this.referentials.push(this.ACT_TYPE_REFERENTIAL);
-    this.referentials.push(this.BODACC_PUBLICATION_TYPE_REFERENTIAL);
     this.referentials.push(this.BUILDING_DOMICILIATION_REFERENTIAL);
     this.referentials.push(this.DOMICIALIATION_CONTRACT_TYPE_REFERENTIAL);
     this.referentials.push(this.FUND_TYPE_REFERENTIAL);
@@ -111,9 +115,11 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.REFUND_TYPE_REFERENTIAL);
     this.referentials.push(this.SUBSCRIPTION_PERIOD_TYPE_REFERENTIAL);
     this.referentials.push(this.TIERS_CATEGORY_REFERENTIAL);
+    this.referentials.push(this.RFF_FREQUENCY_REFERENTIAL);
     this.referentials.push(this.TIERS_FOLLOWUP_TYPE_REFERENTIAL);
     this.referentials.push(this.TIERS_TYPE_REFERENTIAL);
     this.referentials.push(this.ATTACHMENT_TYPE_REFERENTIAL);
+    this.referentials.push(this.TYPE_DOCUMENT_REFERENTIAL);
     this.referentials.push(this.CIVILITY_REFERENTIAL);
     this.referentials.push(this.COMPETENT_AUTHORITY_TYPE_REFERENTIAL);
     this.referentials.push(this.COUNTRY_REFERENTIAL);
@@ -210,6 +216,16 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
 
   canViewLogdModule() {
     return this.habilitationService.canViewLogModule();
+  }
+
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('administration', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('administration');
   }
 }
 
