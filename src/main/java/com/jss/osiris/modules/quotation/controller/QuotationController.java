@@ -54,7 +54,6 @@ import com.jss.osiris.modules.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
-import com.jss.osiris.modules.quotation.model.AbandonReason;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AffaireSearch;
@@ -94,6 +93,7 @@ import com.jss.osiris.modules.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.QuotationAbandonReason;
 import com.jss.osiris.modules.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
@@ -102,7 +102,6 @@ import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.ValidationRequest;
-import com.jss.osiris.modules.quotation.service.AbandonReasonService;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementNoticeTemplateService;
@@ -131,6 +130,7 @@ import com.jss.osiris.modules.quotation.service.ProvisionFamilyTypeService;
 import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.ProvisionTypeService;
+import com.jss.osiris.modules.quotation.service.QuotationAbandonReasonService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.quotation.service.RecordTypeService;
@@ -271,7 +271,7 @@ public class QuotationController {
   MailHelper mailHelper;
 
   @Autowired
-  AbandonReasonService abandonReasonService;
+  QuotationAbandonReasonService quotationAbandonReasonService;
 
   @Autowired
   AnnouncementStatusService announcementStatusService;
@@ -1309,25 +1309,19 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/abandon-reasons")
-  public ResponseEntity<List<AbandonReason>> getAbandonReasons() {
-    return new ResponseEntity<List<AbandonReason>>(abandonReasonService.getAbandonReasons(), HttpStatus.OK);
-  }
-
-  @PostMapping(inputEntryPoint + "/abandon-reason-customer-order")
-  public ResponseEntity<AbandonReason> addOrUpdateCustomerOrderAbandonReason(
-      @RequestBody AbandonReason abandonReason, @RequestParam(name = "id_commande") String id_commande)
-      throws OsirisValidationException, OsirisException {
-    return new ResponseEntity<AbandonReason>(
-        abandonReasonService.addOrUpdateCustomerOrderAbandonReason(abandonReason, id_commande),
+  @GetMapping(inputEntryPoint + "/quotation-abandon-reasons")
+  public ResponseEntity<List<QuotationAbandonReason>> getQuotationAbandonReasons() {
+    return new ResponseEntity<List<QuotationAbandonReason>>(quotationAbandonReasonService.getQuotationAbandonReasons(),
         HttpStatus.OK);
   }
 
-  @PostMapping(inputEntryPoint + "/abandon-reason")
-  public ResponseEntity<AbandonReason> addOrUpdateAbandonReason(@RequestBody AbandonReason abandonReason)
+  @PostMapping(inputEntryPoint + "/quotation-abandon-reason")
+  public ResponseEntity<QuotationAbandonReason> addOrUpdateQutationAbandonReason(
+      @RequestBody QuotationAbandonReason abandonReason)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException {
 
-    return new ResponseEntity<AbandonReason>(abandonReasonService.addOrUpdateAbandonReason(abandonReason),
+    return new ResponseEntity<QuotationAbandonReason>(
+        quotationAbandonReasonService.addOrUpdateQutationAbandonReason(abandonReason),
         HttpStatus.OK);
   }
 

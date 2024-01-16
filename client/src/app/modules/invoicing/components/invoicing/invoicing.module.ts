@@ -43,6 +43,7 @@ const routes: Routes = [
   { path: 'invoicing/add/:id/:idProvision/:idCustomerOrder', component: AddInvoiceComponent },
   { path: 'invoicing/add/:id', component: AddInvoiceComponent },
   { path: 'invoicing/azure/add/:id/:idProvision', component: AddInvoiceComponent },
+  { path: 'invoicing/rff/add/:id', component: AddInvoiceComponent },
   { path: 'invoicing/credit-note/:idInvoice', component: AddInvoiceComponent },
   { path: 'invoicing/payment/add/new', component: AddPaymentComponent },
 ];

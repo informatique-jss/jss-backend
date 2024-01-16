@@ -26,7 +26,6 @@ import { EditorModule } from '@tinymce/tinymce-angular';
 import { DirectDebitTransfertListComponent } from 'src/app/modules/invoicing/components/direct-debit-transfert-list/direct-debit-transfert-list.component';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { GuichetUniqueStatusComponent } from '../../guichet-unique-status/guichet-unique-status.component';
-import { AbandonReasonDialog } from '../abandon-reason-dialog/abandon-reason-dialog';
 import { ActeDepositComponent } from '../acte-deposit/acte-deposit.component';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
@@ -56,6 +55,7 @@ import { ProvisionListComponent } from '../provision-list/provision-list.compone
 import { ProvisionOptionsComponent } from '../provision-options/provision-options.component';
 import { ProvisionPaymentComponent } from '../provision-payment/provision-payment.component';
 import { ProvisionComponent } from '../provision/provision.component';
+import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
 import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { RefundPaymentDialogComponent } from '../refund-payment-dialog/refund-payment-dialog.component';
@@ -108,7 +108,7 @@ const routes: Routes = [
     MatDatepickerModule,
   ],
   declarations: [QuotationComponent,
-    AbandonReasonDialog,
+    QuotationAbandonReasonDialog,
     OrderingCustomerComponent,
     QuotationManagementComponent,
     DomiciliationComponent,

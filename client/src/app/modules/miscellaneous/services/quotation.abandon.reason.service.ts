@@ -17,6 +17,6 @@ export class QuotationAbandonReasonService extends AppRestService<QuotationAband
   }
 
   addOrUpdateQuotationAbandonReason(abandonReason: QuotationAbandonReason) {
-    return this.addOrUpdate(new HttpParams(), "quotation-abandon-reason/quotation", abandonReason, "Enregistré", "Erreur lors de l'enregistrement");
+    return this.addOrUpdate(new HttpParams(), "quotation-abandon-reason", abandonReason, "Enregistré", "Erreur lors de l'enregistrement");
   }
 }

@@ -13,7 +13,7 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
 @Table(name = "abandon_reason")
-public class AbandonReason implements Serializable, IId {
+public class QuotationAbandonReason implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

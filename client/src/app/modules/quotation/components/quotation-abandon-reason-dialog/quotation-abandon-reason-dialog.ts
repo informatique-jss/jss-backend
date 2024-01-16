@@ -4,17 +4,17 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { QuotationAbandonReason } from 'src/app/modules/miscellaneous/model/QuotationAbandonReason';
 
 @Component({
-  selector: 'app-abandon-reason-inquiry-dialog',
-  templateUrl: './abandon-reason-dialog.html',
-  styleUrls: ['./abandon-reason-dialog.css'],
+  selector: 'quotation-abandon-reason-dialog',
+  templateUrl: './quotation-abandon-reason-dialog.html',
+  styleUrls: ['./quotation-abandon-reason-dialog.css'],
 })
 
-export class AbandonReasonDialog implements OnInit {
+export class QuotationAbandonReasonDialog implements OnInit {
   reasonTypeForm = this.formBuilder.group({});
   abandonReason: QuotationAbandonReason | undefined;
 
   constructor(
-    public dialogRef: MatDialogRef<AbandonReasonDialog>,
+    public dialogRef: MatDialogRef<QuotationAbandonReasonDialog>,
     private formBuilder: FormBuilder,
   ) { }
 

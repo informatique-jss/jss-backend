@@ -111,7 +111,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_abandon_reason")
-	private AbandonReason abandonReason;
+	private QuotationAbandonReason abandonReason;
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
@@ -387,11 +387,11 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.isGifted = isGifted;
 	}
 
-	public AbandonReason getAbandonReason() {
+	public QuotationAbandonReason getAbandonReason() {
 		return abandonReason;
 	}
 
-	public void setAbandonReason(AbandonReason abandonReason) {
+	public void setAbandonReason(QuotationAbandonReason abandonReason) {
 		this.abandonReason = abandonReason;
 	}
 
