@@ -109,6 +109,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	private LocalDateTime lastStatusUpdate;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_abandon_reason")
+	private AbandonReason abandonReason;
+
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
@@ -381,6 +385,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setIsGifted(Boolean isGifted) {
 		this.isGifted = isGifted;
+	}
+
+	public AbandonReason getAbandonReason() {
+		return abandonReason;
+	}
+
+	public void setAbandonReason(AbandonReason abandonReason) {
+		this.abandonReason = abandonReason;
 	}
 
 	public String getInstructions() {

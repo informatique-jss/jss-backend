@@ -77,4 +77,8 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 
 	public void setCustomerOrderOrigin(CustomerOrderOrigin customerOrderOrigin);
 
+	public AbandonReason getAbandonReason();
+
+	public void setAbandonReason(AbandonReason abandonReason);
+
 }

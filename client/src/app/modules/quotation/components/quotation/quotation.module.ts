@@ -26,6 +26,7 @@ import { EditorModule } from '@tinymce/tinymce-angular';
 import { DirectDebitTransfertListComponent } from 'src/app/modules/invoicing/components/direct-debit-transfert-list/direct-debit-transfert-list.component';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { GuichetUniqueStatusComponent } from '../../guichet-unique-status/guichet-unique-status.component';
+import { AbandonReasonDialog } from '../abandon-reason-dialog/abandon-reason-dialog';
 import { ActeDepositComponent } from '../acte-deposit/acte-deposit.component';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
@@ -107,6 +108,7 @@ const routes: Routes = [
     MatDatepickerModule,
   ],
   declarations: [QuotationComponent,
+    AbandonReasonDialog,
     OrderingCustomerComponent,
     QuotationManagementComponent,
     DomiciliationComponent,
