@@ -224,13 +224,6 @@ public class AccountingController {
             return new ResponseEntity<List<AccountingRecordSearchResult>>(
                     accountingRecordService.searchAccountingRecords(accountingRecordSearch), HttpStatus.OK);
 
-        if (accountingRecordSearch.getAccountingAccount() == null
-                && accountingRecordSearch.getAccountingClass() == null
-                && accountingRecordSearch.getAccountingJournal() == null
-                && accountingRecordSearch.getConfrereId() == null
-                && accountingRecordSearch.getTiersId() == null)
-            throw new OsirisValidationException("AccountingAccount or AccountingClass or AccountingJournal");
-
         if (accountingRecordSearch.getTiersId() == null
                 && accountingRecordSearch.getConfrereId() == null) {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)

@@ -26,7 +26,7 @@ export class SortTableComponent<T> implements OnInit {
   @Input() filterText: string | undefined;
   @Input() tableName: string = "table";
   @Input() idRowSelected: number | undefined;
-  @Input() filterPredicate: ((record: SortTableElement, filter: string) => boolean) | undefined;
+  @Input() filterPredicate: ((record: SortTableElement<T>, filter: string) => boolean) | undefined;
   @Input() displayTotalLines: boolean = false;
   @Input() isSmallerHeight: boolean = false;
   @Input() isSmallestHeight: boolean = false;
@@ -40,7 +40,7 @@ export class SortTableComponent<T> implements OnInit {
   @Input() refreshTable: Observable<void> | undefined;
   private refreshTableSubscription: Subscription | undefined;
 
-  dataSource = new MatTableDataSource<SortTableElement>();
+  dataSource = new MatTableDataSource<SortTableElement<T>>();
   @ViewChild(MatSort) sort!: MatSort;
 
   internalActions: SortTableAction<T>[] | undefined = [] as Array<SortTableAction<T>>;
@@ -84,16 +84,16 @@ export class SortTableComponent<T> implements OnInit {
       this.dataSource.data = this.getSortTableElementsFromValues(this.values);
   }
 
-  getSortTableElementsFromValues(values: T[]): SortTableElement[] {
-    let outValues = [] as Array<SortTableElement>;
+  getSortTableElementsFromValues(values: T[]): SortTableElement<T>[] {
+    let outValues = [] as Array<SortTableElement<T>>;
     if (values)
       for (let value of values)
         outValues.push(this.getSortTableElementFromValue(value));
     return outValues;
   }
 
-  getSortTableElementFromValue(value: T): SortTableElement {
-    let outValue = {} as SortTableElement;
+  getSortTableElementFromValue(value: T): SortTableElement<T> {
+    let outValue = {} as SortTableElement<T>;
     if (value) {
       outValue.rawValue = value;
       outValue.columns = {} as SortTableElementColumns;
@@ -182,7 +182,7 @@ export class SortTableComponent<T> implements OnInit {
   setSorter() {
     setTimeout(() => {
       this.dataSource.sort = this.sort;
-      this.dataSource.sortingDataAccessor = (item: SortTableElement, property) => {
+      this.dataSource.sortingDataAccessor = (item: SortTableElement<T>, property) => {
         if (this.columns) {
           for (let column of this.columns) {
             if (column.id && column.id == property) {
@@ -208,7 +208,7 @@ export class SortTableComponent<T> implements OnInit {
         return "";
       };
 
-      this.dataSource.filterPredicate = (data: SortTableElement, filter) => {
+      this.dataSource.filterPredicate = (data: SortTableElement<T>, filter) => {
         if (!this.filterPredicate) {
           const dataStr = JSON.stringify(data).toLowerCase();
           return dataStr.indexOf(filter) != -1;
@@ -333,7 +333,7 @@ export class SortTableComponent<T> implements OnInit {
       this.appService.openRoute(event, link, null);
   }
 
-  openActionLink(event: any, action: SortTableAction<T>, element: SortTableElement) {
+  openActionLink(event: any, action: SortTableAction<T>, element: SortTableElement<T>) {
     let link = element.actionsLink[action.actionName];
     if (link)
       this.appService.openRoute(event, link, null);

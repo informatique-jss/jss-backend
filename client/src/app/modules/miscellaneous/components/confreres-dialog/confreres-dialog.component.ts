@@ -5,6 +5,7 @@ import { JournalType } from '../../../quotation/model/JournalType';
 import { ConfrereService } from '../../../quotation/services/confrere.service';
 import { Department } from '../../model/Department';
 import { SortTableColumn } from '../../model/SortTableColumn';
+import { SortTableElement } from '../../model/SortTableElement';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
@@ -61,7 +62,7 @@ export class ConfrereDialogComponent implements OnInit {
       this.displayedColumns.push({ id: "type", fieldName: "journalType.label", label: "Type" } as SortTableColumn<Confrere>);
       this.displayedColumns.push({ id: "departments", fieldName: "departments", label: "Habilitations", valueFonction: (element: Confrere, column: SortTableColumn<Confrere>) => { return ((element.departments) ? element.departments.map((e: { code: any; }) => e.code).join(", ") : "") } } as SortTableColumn<Confrere>);
       this.displayedColumns.push({ id: "discountRate", fieldName: "discountRate", label: "Taux de remise (%)" } as SortTableColumn<Confrere>);
-      this.displayedColumns.push({ id: "weekDays", fieldName: "weekDays", label: "Jours de parution", valueFonction: (element: Confrere, column: SortTableColumn<Confrere>) => { return ((element.departments) ? element.weekDays.map((e: { label: any; }) => e.label).join(", ") : "") } } as SortTableColumn<Confrere>);
+      this.displayedColumns.push({ id: "weekDays", fieldName: "weekDays", label: "Jours de parution", valueFonction: (element: Confrere, column: SortTableColumn<Confrere>) => { return ((element.weekDays) ? element.weekDays.map((e: { label: any; }) => e.label).join(", ") : "") } } as SortTableColumn<Confrere>);
       this.displayedColumns.push({ id: "lastShipmentForPublication", fieldName: "lastShipmentForPublication", label: "Dernier envoi pour parution" } as SortTableColumn<Confrere>);
       this.displayedColumns.push({ id: "publicationCertificateDocumentGrade", displayAsGrade: true, fieldName: "publicationCertificateDocumentGrade", label: "Préférence attestation de parution" } as SortTableColumn<Confrere>);
       this.displayedColumns.push({ id: "billingGrade", fieldName: "billingGrade", displayAsGrade: true, label: "Préférence facturation" } as SortTableColumn<Confrere>);
@@ -76,12 +77,14 @@ export class ConfrereDialogComponent implements OnInit {
     })
   }
 
-  filterPredicate(record: any, filter: any) {
+  filterPredicate(record: SortTableElement<Confrere>, filter: any) {
     if (filter == "")
       return true;
-    let search: string = record.departments.map((e: { code: any; }) => e.code).join(", ");
-    search += record.label;
-    search += record.weekDays.map((e: { label: any; }) => e.label).join(", ");
+    let search: string = "";
+    if (record.rawValue.departments)
+      search += record.rawValue.departments.map((e: { code: any; }) => e.code).join(", ");
+    search += record.rawValue.label;
+    search += record.rawValue.weekDays.map((e: { label: any; }) => e.label).join(", ");
     return search.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
   }
 
