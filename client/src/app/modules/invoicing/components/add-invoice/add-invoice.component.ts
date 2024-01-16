@@ -109,6 +109,13 @@ export class AddInvoiceComponent implements OnInit {
         })
 
       })
+    } else if (url != undefined && url != null && url[2] != undefined && url[1].path == "rff") {
+      this.invoiceService.createInvoiceFromRff(idInvoice).subscribe(generatedInvoice => {
+        this.invoice = generatedInvoice;
+        this.invoiceItems = generatedInvoice.invoiceItems;
+        if (this.invoiceItems && this.invoiceItems.length > 0)
+          this.invoiceItem = this.invoiceItems[0];
+      })
     } else if (idInvoice != null && idInvoice != "null") {
       this.invoiceService.getInvoiceById(idInvoice).subscribe(response => {
         this.invoice = response;

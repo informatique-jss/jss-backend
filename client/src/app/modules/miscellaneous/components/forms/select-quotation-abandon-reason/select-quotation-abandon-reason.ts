@@ -18,10 +18,6 @@ export class SelectQuotationAbandonReasonComponent extends GenericSelectComponen
     super(formBuild, userNoteService2);
   }
 
-  ngOnInit() {
-    this.initTypes();
-  }
-
   initTypes(): void {
     this.quotationAbandonReasonService.getQuotationAbandonReasons().subscribe(response => {
       this.types = response;

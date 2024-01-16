@@ -16,7 +16,6 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
-import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -44,9 +43,6 @@ public class RffServiceImpl implements RffService {
 
     @Autowired
     MailHelper mailHelper;
-
-    @Autowired
-    InvoiceService invoiceService;
 
     @Autowired
     VatService vatService;
@@ -230,6 +226,6 @@ public class RffServiceImpl implements RffService {
         invoice.setManualPaymentType(constantService.getPaymentTypeVirement());
         invoice.setRff(rff);
 
-        return invoiceService.addOrUpdateInvoiceFromUser(invoice);
+        return invoice;
     }
 }
