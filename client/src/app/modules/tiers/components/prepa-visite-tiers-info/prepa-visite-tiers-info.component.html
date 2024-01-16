@@ -1,9 +1,20 @@
 <div class="mat-elevation-z2 form-div">
-        <mat-tab-group >
-        <mat-tab label="Fiche du tiers"><br>
-          <sort-table [actions]="tableActionTiers" [columns]="displayedColumnsTiers" [values]="tiersToDisplay"
-          tableName="Tiers" *ngIf="displayedColumnsTiers && displayedColumnsTiers.length>0 ">
+  <mat-tab-group>
+    <mat-tab label="Fiche du tiers">
+      <sort-table [columns]="displayedColumnsTiers" [values]="tiersToDisplay"
+                  tableName="Tiers" *ngIf="displayedColumnsTiers && displayedColumnsTiers.length>0 ">
       </sort-table>
-        </mat-tab>
-      </mat-tab-group>
+    </mat-tab>
+
+    <mat-tab label="Fiche du responsable">
+      <sort-table [columns]="displayedColumnsResponsables" (onRowClick)="selectResponsable($event)" [values]="tiers.responsables"
+                   [noPaddingBottom]="true" [noMaxHeight]="true" tableName="Responsables">
+      </sort-table>
+    </mat-tab>
+
+
+  </mat-tab-group>
+ <sort-table [columns]="displayedColumnsRff" [values]="rff" tableName="RFF"
+    [isSmallerHeight]="true" *ngIf="displayedColumnsRff && displayedColumnsRff.length>0 " [displayTotalLines]="true">
+  </sort-table>
 </div>
