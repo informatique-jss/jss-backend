@@ -508,6 +508,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.competentAuthorityTypePrefecture;
   }
 
+  getCompetentAuthorityTypeSpfe() {
+    return this.constant.competentAuthorityTypeSpfe;
+  }
+
   getInvoiceStatusSend() {
     return this.constant.invoiceStatusSend;
   }

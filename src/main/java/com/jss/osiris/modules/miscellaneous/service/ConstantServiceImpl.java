@@ -665,6 +665,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeSpfe() throws OsirisException {
+        return getConstants().getCompetentAuthorityTypeSpfe();
+    }
+
+    @Override
     public CompetentAuthorityType getCompetentAuthorityTypeCfp() throws OsirisException {
         return getConstants().getCompetentAuthorityTypeCfp();
     }
