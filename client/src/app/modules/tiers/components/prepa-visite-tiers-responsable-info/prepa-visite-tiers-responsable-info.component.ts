@@ -1,24 +1,20 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { Tiers } from '../../model/Tiers';
-import { UntypedFormBuilder } from '@angular/forms';
 import { RffSearch } from '../../model/RffSearch';
 import { RffService } from '../../services/rff.service';
 import { Rff } from '../../model/Rff';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { Responsable } from '../../model/Responsable';
-import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { TiersService } from '../../services/tiers.service';
-import { formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 
 @Component({
-  selector: 'prepa-visite-tiers-info',
-  templateUrl: './prepa-visite-tiers-info.component.html',
-  styleUrls: ['./prepa-visite-tiers-info.component.css']
+  selector: 'prepa-visite-tiers-responsable-info',
+  templateUrl: './prepa-visite-tiers-responsable-info.component.html',
+  styleUrls: ['./prepa-visite-tiers-responsable-info.component.css']
 })
 
-export class PrepaVisiteTiersComponent implements OnInit, AfterContentChecked {
+export class PrepaVisiteTiersResponsableInfoComponent implements OnInit, AfterContentChecked {
 
   @Input() tiers: Tiers = {} as Tiers;
   @Input() rffSearch: RffSearch = {} as RffSearch;
@@ -31,10 +27,6 @@ export class PrepaVisiteTiersComponent implements OnInit, AfterContentChecked {
   displayedColumnsRff: SortTableColumn<Rff>[] = [];
 
   tiersToDisplay: Tiers[] | undefined;
-
-  selectedResponsableId: number | null = null;
-
-  selectedResponsable: Responsable | null = null;
 
   constructor(private rffService: RffService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -75,41 +67,6 @@ export class PrepaVisiteTiersComponent implements OnInit, AfterContentChecked {
     this.searchRff();
   }
 
-  selectResponsable(responsable: Responsable) {
-    let responsableId = responsable.id;
-    this.selectResponsableById(responsableId);
-  }
-
-  selectResponsableById(responsableId: number) {
-    if (this.selectedResponsable == null) {
-      this.tiers.responsables.forEach(responsable => {
-        if (responsable.id == responsableId) {
-          this.selectedResponsable = responsable;
-
-          this.rffSearch = {} as RffSearch;
-
-          setTimeout(() => {
-            this.rffSearch = {} as RffSearch;
-            this.rffSearch.responsable = { entityId: responsable.id } as IndexEntity;
-            this.rffSearch.isHideCancelledRff = false;
-
-            let start = new Date();
-            let d = new Date(start.getTime());
-            d.setFullYear(d.getFullYear() - 1);
-            this.rffSearch.startDate = d;
-
-            let end = new Date();
-            let d2 = new Date(end.getTime());
-            d2.setFullYear(d2.getFullYear() + 1);
-            this.rffSearch.endDate = d2;
-          }, 0);
-
-          this.tiersService.setCurrentViewedResponsable(responsable);
-
-        }
-      })
-    }
-  }
 
   searchRff() {
     this.rffSearch = {} as RffSearch;
@@ -118,12 +75,16 @@ export class PrepaVisiteTiersComponent implements OnInit, AfterContentChecked {
 
     let start = new Date();
     let d = new Date(start.getTime());
-    d.setFullYear(d.getFullYear() - 1);
+    d.setFullYear(d.getFullYear() - 2);
+    d.setMonth(10);
+    d.setDate(30);
     this.rffSearch.startDate = d;
 
     let end = new Date();
     let d2 = new Date(end.getTime());
-    d2.setFullYear(d2.getFullYear() + 1);
+    d2.setFullYear(d2.getFullYear() - 1);
+    d2.setMonth(11);
+    d2.setDate(1);
     this.rffSearch.endDate = d2;
 
     this.rffService.getRffs(this.rffSearch).subscribe(response => {

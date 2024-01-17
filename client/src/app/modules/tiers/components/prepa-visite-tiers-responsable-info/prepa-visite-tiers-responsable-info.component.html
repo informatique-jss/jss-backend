@@ -7,7 +7,7 @@
     </mat-tab>
 
     <mat-tab label="Fiche du responsable">
-      <sort-table [columns]="displayedColumnsResponsables" (onRowClick)="selectResponsable($event)" [values]="tiers.responsables"
+      <sort-table [columns]="displayedColumnsResponsables" [values]="tiers.responsables"
                    [noPaddingBottom]="true" [noMaxHeight]="true" tableName="Responsables">
       </sort-table>
     </mat-tab>

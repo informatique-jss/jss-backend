@@ -29,7 +29,8 @@ import { SettlementBillingComponent } from '../settlement-billing/settlement-bil
 import { TiersListComponent } from '../tiers-list/tiers-list.component';
 import { PrincipalComponent } from '../tiers-main/tiers-main.component';
 import { TiersComponent } from './tiers.component';
-import { PrepaVisiteTiersComponent } from '../prepa-visite-tiers-info/prepa-visite-tiers-info.component';
+import { PrepaVisiteTiersResponsableInfoComponent } from '../prepa-visite-tiers-responsable-info/prepa-visite-tiers-responsable-info.component';
+import { PrepaVisiteTiersTurnoverComponent } from '../prepa-visite-tiers-turnover/prepa-visite-tiers-turnover.component';
 
 const routes: Routes = [
   { path: 'tiers', component: TiersComponent },
@@ -72,7 +73,8 @@ const routes: Routes = [
     SearchPhoneComponent,
     TiersListComponent,
     RffListComponent,
-    PrepaVisiteTiersComponent,
+    PrepaVisiteTiersResponsableInfoComponent,
+    PrepaVisiteTiersTurnoverComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
