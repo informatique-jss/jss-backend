@@ -93,6 +93,7 @@ import com.jss.osiris.modules.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.QuotationAbandonReason;
 import com.jss.osiris.modules.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
@@ -129,6 +130,7 @@ import com.jss.osiris.modules.quotation.service.ProvisionFamilyTypeService;
 import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.ProvisionTypeService;
+import com.jss.osiris.modules.quotation.service.QuotationAbandonReasonService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.quotation.service.RecordTypeService;
@@ -267,6 +269,9 @@ public class QuotationController {
 
   @Autowired
   MailHelper mailHelper;
+
+  @Autowired
+  QuotationAbandonReasonService quotationAbandonReasonService;
 
   @Autowired
   AnnouncementStatusService announcementStatusService;
@@ -1304,6 +1309,22 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/quotation-abandon-reasons")
+  public ResponseEntity<List<QuotationAbandonReason>> getQuotationAbandonReasons() {
+    return new ResponseEntity<List<QuotationAbandonReason>>(quotationAbandonReasonService.getQuotationAbandonReasons(),
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/quotation-abandon-reason")
+  public ResponseEntity<QuotationAbandonReason> addOrUpdateQutationAbandonReason(
+      @RequestBody QuotationAbandonReason abandonReason)
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+
+    return new ResponseEntity<QuotationAbandonReason>(
+        quotationAbandonReasonService.addOrUpdateQutationAbandonReason(abandonReason),
+        HttpStatus.OK);
+  }
+
   @PostMapping(inputEntryPoint + "/customer-order")
   public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrder(@RequestBody CustomerOrder customerOrder)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException, OsirisDuplicateException {
@@ -1325,9 +1346,11 @@ public class QuotationController {
   public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrderStatus(@RequestBody CustomerOrder customerOrder,
       @RequestParam String targetStatusCode)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
     customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
-    if (!targetStatusCode.equals(CustomerOrderStatus.ABANDONED))
+    if (!targetStatusCode.equals(CustomerOrderStatus.ABANDONED)) {
       quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, targetStatusCode);
+    }
     boolean found = true;
     if (customerOrder.getCustomerOrderStatus() != null) {
       if (customerOrder.getCustomerOrderStatus().getSuccessors() != null)

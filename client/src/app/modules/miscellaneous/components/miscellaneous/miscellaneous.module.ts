@@ -227,6 +227,7 @@ import { SelectProvisionScreenTypeComponent } from '../forms/select-provision-sc
 import { SelectProvisionStautsComponent } from '../forms/select-provision-stauts/select-provision-stauts.component';
 import { SelectProvisionTypeComponent } from '../forms/select-provision-type/select-provision-type.component';
 import { SelectProvisionComponent } from '../forms/select-provision/select-provision.component';
+import { SelectQuotationAbandonReasonComponent } from '../forms/select-quotation-abandon-reason/select-quotation-abandon-reason';
 import { SelectQuotationStatusComponent } from '../forms/select-quotation-status/select-quotation-status.component';
 import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-refund-type.component';
 import { SelectRegionsComponent } from '../forms/select-regions/select-regions.component';
@@ -508,6 +509,7 @@ const routes: Routes = [
     BarChartComponent,
     GaugeChartComponent,
     SelectBatchCategoryComponent,
+    SelectQuotationAbandonReasonComponent,
   ],
   exports: [
     HistoryComponent,
@@ -728,6 +730,7 @@ const routes: Routes = [
     BarChartComponent,
     GaugeChartComponent,
     SelectBatchCategoryComponent,
+    SelectQuotationAbandonReasonComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

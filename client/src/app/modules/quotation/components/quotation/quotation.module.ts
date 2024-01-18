@@ -55,6 +55,7 @@ import { ProvisionListComponent } from '../provision-list/provision-list.compone
 import { ProvisionOptionsComponent } from '../provision-options/provision-options.component';
 import { ProvisionPaymentComponent } from '../provision-payment/provision-payment.component';
 import { ProvisionComponent } from '../provision/provision.component';
+import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
 import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { RefundPaymentDialogComponent } from '../refund-payment-dialog/refund-payment-dialog.component';
@@ -107,6 +108,7 @@ const routes: Routes = [
     MatDatepickerModule,
   ],
   declarations: [QuotationComponent,
+    QuotationAbandonReasonDialog,
     OrderingCustomerComponent,
     QuotationManagementComponent,
     DomiciliationComponent,
