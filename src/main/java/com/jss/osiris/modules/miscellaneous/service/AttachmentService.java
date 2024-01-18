@@ -32,7 +32,7 @@ public interface AttachmentService {
 
         public void deleteAttachment(Attachment attachment);
 
-        public void disableDocument(Attachment attachment);
+        public void disableAttachment(Attachment attachment);
 
         public Attachment addOrUpdateAttachment(Attachment attachment);
 

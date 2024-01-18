@@ -80,7 +80,7 @@ public class AzureReceiptServiceImpl implements AzureReceiptService {
             try {
                 formRecognizerService.recongnizeRecipts(attachment);
             } catch (Exception e) {
-                attachmentService.disableDocument(attachment);
+                attachmentService.disableAttachment(attachment);
                 throw new OsirisException(e,
                         "Erreur while recongnize receipt with Azure fot attachment " + attachment.getId());
             }

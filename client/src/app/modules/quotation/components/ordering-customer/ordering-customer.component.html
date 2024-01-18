@@ -222,6 +222,8 @@
         <div *ngIf=" instanceOfCustomerOrder(quotation)">Commande créée le {{quotation.createdDate |date:'dd/MM/yyyy à
           HH:mm'}}
         </div>
+        <div *ngIf=" quotation.abandonReason">Abandonné avec le motif : {{quotation.abandonReason.label}}
+        </div>
         <div *ngIf="quotation.firstReminderDateTime">
           <ul>
             <li *ngIf="quotation.firstReminderDateTime">Relance n°1 : {{quotation.firstReminderDateTime
