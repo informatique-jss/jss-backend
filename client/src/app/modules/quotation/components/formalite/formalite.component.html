@@ -16,6 +16,15 @@
                 propertyName="formaliteGuichetUnique" [isMandatory]="false" label="Nom du dossier GU"
                 [isDisabled]="!editMode"></chips-formalite-guichet-unique>
             </td>
+            <td *ngIf="formalite && formalite.formalitesGuichetUnique">
+              <ng-container *ngFor="let formaliteGu of formalite.formalitesGuichetUnique">
+                <generic-toggle
+                  *ngIf="formaliteGu.status.code==GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING || formaliteGu.status.code==GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING"
+                  [(model)]="formaliteGu.isAuthorizedToSign"
+                  [label]="formaliteGu.liasseNumber+' - Autoriser à signer/payer ?'" [form]="formaliteForm"
+                  propertyName="isAuthorizedToSign"></generic-toggle>
+              </ng-container>
+            </td>
             <td
               *ngIf="formalite.waitedCompetentAuthority && formalite.formaliteStatus && formalite.formaliteStatus.code ==FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY">
               <autocomplete-competent-authority [(model)]="formalite.waitedCompetentAuthority" [form]="formaliteForm"

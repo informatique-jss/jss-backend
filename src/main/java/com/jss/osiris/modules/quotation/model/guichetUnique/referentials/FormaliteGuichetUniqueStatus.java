@@ -19,6 +19,7 @@ public class FormaliteGuichetUniqueStatus implements Serializable, ICode {
     public static String PAYMENT_VALIDATION_PENDING = "PAYMENT_VALIDATION_PENDING";
     public static String AMENDMENT_PAYMENT_PENDING = "AMENDMENT_PAYMENT_PENDING";
     public static String AMENDMENT_PAYMENT_VALIDATION_PENDING = "AMENDMENT_PAYMENT_VALIDATION_PENDING";
+    public static String AMENDMENT_PENDING = "AMENDMENT_PENDING";
 
     public FormaliteGuichetUniqueStatus(String code) {
         this.code = code;
