@@ -34,4 +34,7 @@ export interface ITiers extends IAttachment, IDocument {
   rffIban: string;
   rffBic: string;
   rffMail: string;
+  rffInsertion: number;
+  rffFormalite: number;
+  rffTotal: number;
 }

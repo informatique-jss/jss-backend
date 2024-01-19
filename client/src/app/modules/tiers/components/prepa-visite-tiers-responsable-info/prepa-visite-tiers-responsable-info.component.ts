@@ -1,4 +1,4 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { Tiers } from '../../model/Tiers';
 import { RffSearch } from '../../model/RffSearch';
@@ -7,6 +7,7 @@ import { Rff } from '../../model/Rff';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { Responsable } from '../../model/Responsable';
 import { TiersService } from '../../services/tiers.service';
+import { formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 
 @Component({
   selector: 'prepa-visite-tiers-responsable-info',
@@ -42,19 +43,24 @@ export class PrepaVisiteTiersResponsableInfoComponent implements OnInit, AfterCo
 
     this.tiersToDisplay = [this.tiers];
 
+    this.searchRff();
+
+    if(this.rff && this.rff.length > 0 && this.tiersToDisplay) {
+      this.tiersToDisplay[0].rffInsertion = this.rff[0].rffInsertion;
+      this.tiersToDisplay[0].rffFormalite = this.rff[0].rffFormalite;
+      this.tiersToDisplay[0].rffTotal = this.rff[0].rffTotal;
+  }
+
     this.displayedColumnsTiers = [];
-    this.displayedColumnsRff = [];
     this.displayedColumnsResponsables = [];
 
     this.displayedColumnsTiers.push({ id: "denomination", fieldName: "denomination", label: "Dénomination"  } as SortTableColumn<Tiers>);
     this.displayedColumnsTiers.push({ id: "address", fieldName: "address", label: "address" } as SortTableColumn<Tiers>);
     this.displayedColumnsTiers.push({ id: "mails[0].mail", fieldName: "mails[0].mail", label: "mail" } as SortTableColumn<Tiers>);
     this.displayedColumnsTiers.push({ id: "phones[0].phoneNumber", fieldName: "phones[0].phoneNumber", label: "phone" } as SortTableColumn<Tiers>);
-    this.displayedColumnsTiers.push({ id: "rffInsertionRate", fieldName: "rffInsertionRate", label: "rff Insertion Rate" } as SortTableColumn<Tiers>);
-    this.displayedColumnsTiers.push({ id: "rffFormaliteRate", fieldName: "rffFormaliteRate", label: "rff Formalite Rate" } as SortTableColumn<Tiers>);
-    // this.displayedColumnsRff.push({ id: "rffInsertion", fieldName: "rffInsertion", label: "RFF AL", valueFonction: formatEurosForSortTable } as SortTableColumn<Rff>);
-    // this.displayedColumnsRff.push({ id: "rffFormalite", fieldName: "rffFormalite", label: "RFF Formalités", valueFonction: formatEurosForSortTable } as SortTableColumn<Rff>);
-    // this.displayedColumnsRff.push({ id: "rffTotal", fieldName: "rffTotal", label: "Total HT", valueFonction: formatEurosForSortTable } as SortTableColumn<Rff>);
+    this.displayedColumnsTiers.push({ id: "rffInsertion", fieldName: "rffInsertion", label: "RFF AL", valueFonction: formatEurosForSortTable } as SortTableColumn<Tiers>);
+    this.displayedColumnsTiers.push({ id: "rffFormalite", fieldName: "rffFormalite", label: "RFF Formalités", valueFonction: formatEurosForSortTable } as SortTableColumn<Tiers>);
+    this.displayedColumnsTiers.push({ id: "rffTotal", fieldName: "rffTotal", label: "Total HT", valueFonction: formatEurosForSortTable } as SortTableColumn<Tiers>);
 
     this.displayedColumnsResponsables.push({ id: "id", fieldName: "id", label: "N° du responsable" } as SortTableColumn<Responsable>);
     this.displayedColumnsResponsables.push({ id: "lastname", fieldName: "lastname", label: "Nom" } as SortTableColumn<Responsable>);
@@ -63,8 +69,6 @@ export class PrepaVisiteTiersResponsableInfoComponent implements OnInit, AfterCo
     this.displayedColumnsResponsables.push({ id: "mails", fieldName: "mails", label: "Mails", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.mails) ? element.mails.map((e: { mail: any; }) => e.mail).join(", ") : "") } } as SortTableColumn<Responsable>);
     this.displayedColumnsResponsables.push({ id: "phones", fieldName: "phones", label: "Téléphones", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.phones) ? element.phones.map((e: { phoneNumber: any; }) => e.phoneNumber).join(", ") : "") } } as SortTableColumn<Responsable>);
 
-
-    this.searchRff();
   }
 
 
