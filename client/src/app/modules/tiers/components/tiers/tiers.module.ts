@@ -31,6 +31,7 @@ import { PrincipalComponent } from '../tiers-main/tiers-main.component';
 import { TiersComponent } from './tiers.component';
 import { PrepaVisiteTiersResponsableInfoComponent } from '../prepa-visite-tiers-responsable-info/prepa-visite-tiers-responsable-info.component';
 import { PrepaVisiteTiersTurnoverComponent } from '../prepa-visite-tiers-turnover/prepa-visite-tiers-turnover.component';
+import { PrepaVisiteCustomerOrdersResponsableComponent } from '../prepa-visite-customer-orders-responsable/prepa-visite-customer-orders-responsable.component';
 
 const routes: Routes = [
   { path: 'tiers', component: TiersComponent },
@@ -74,7 +75,8 @@ const routes: Routes = [
     TiersListComponent,
     RffListComponent,
     PrepaVisiteTiersResponsableInfoComponent,
-    PrepaVisiteTiersTurnoverComponent
+    PrepaVisiteTiersTurnoverComponent,
+    PrepaVisiteCustomerOrdersResponsableComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

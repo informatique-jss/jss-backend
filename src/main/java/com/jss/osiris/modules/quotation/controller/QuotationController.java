@@ -790,6 +790,12 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/customer-order/responsable")
+  public ResponseEntity<List<CustomerOrder>> getCustomerOrderByResponsableId(@RequestParam Integer responsableId) {
+    return new ResponseEntity<List<CustomerOrder>>(customerOrderService.getCustomerOrderByResponsableId(responsableId),
+        HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/announcement-notice-templates")
   public ResponseEntity<List<AnnouncementNoticeTemplate>> getAnnouncementNoticeTemplates() {
     return new ResponseEntity<List<AnnouncementNoticeTemplate>>(

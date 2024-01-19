@@ -106,4 +106,6 @@ public interface CustomerOrderService {
         public void offerCustomerOrder(CustomerOrder customerOrder) throws OsirisException,
                         OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException;
 
+        public List<CustomerOrder> getCustomerOrderByResponsableId(Integer responsableId);
+
 }

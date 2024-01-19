@@ -81,4 +81,7 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<CustomerOrder> findByQuotations_Id(Integer idQuotation);
 
+        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+        List<CustomerOrder> findByResponsable_Id(Integer idResponsable);
+
 }

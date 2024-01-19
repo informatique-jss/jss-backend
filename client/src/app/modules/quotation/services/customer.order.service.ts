@@ -64,4 +64,7 @@ export class CustomerOrderService extends AppRestService<IQuotation>{
     return this.get(new HttpParams().set("customerOrderId", quotation.id), "customer-order/invoicing/reinit", "Facturation réinitialisée");
   }
 
+  getCustomerOrderByResponsableId(idResponsable: number) {
+    return this.get(new HttpParams().set("idResponsable", idResponsable), "customer-order/responsable");
+  }
 }
