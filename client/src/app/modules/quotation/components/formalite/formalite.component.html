@@ -22,7 +22,7 @@
                   *ngIf="formaliteGu.status.code==GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING || formaliteGu.status.code==GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING"
                   [(model)]="formaliteGu.isAuthorizedToSign"
                   [label]="formaliteGu.liasseNumber+' - Autoriser à signer/payer ?'" [form]="formaliteForm"
-                  propertyName="isAuthorizedToSign"></generic-toggle>
+                  [isDisabled]="!editMode" propertyName="isAuthorizedToSign"></generic-toggle>
               </ng-container>
             </td>
             <td
