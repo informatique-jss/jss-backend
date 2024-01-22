@@ -8,6 +8,7 @@ import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { Responsable } from '../../model/Responsable';
 import { TiersService } from '../../services/tiers.service';
 import { formatEurosForSortTable } from 'src/app/libs/FormatHelper';
+import { TiersRff } from '../../model/TiersRff';
 
 @Component({
   selector: 'prepa-visite-tiers-responsable-info',
@@ -22,12 +23,11 @@ export class PrepaVisiteTiersResponsableInfoComponent implements OnInit, AfterCo
   @Input() editMode: boolean = false;
 
   rff: Rff[] | undefined;
-  availableColumnsTiers: SortTableColumn<Tiers>[] = [];
-  displayedColumnsTiers: SortTableColumn<Tiers>[] = [];
+  tiersRff: TiersRff[] | undefined;
+  displayedColumnsTiersRff: SortTableColumn<TiersRff>[] = [];
   displayedColumnsResponsables: SortTableColumn<Responsable>[] = [];
-  displayedColumnsRff: SortTableColumn<Rff>[] = [];
 
-  tiersToDisplay: Tiers[] | undefined;
+  tiersList: Tiers[] = [];
 
   constructor(private rffService: RffService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -40,37 +40,31 @@ export class PrepaVisiteTiersResponsableInfoComponent implements OnInit, AfterCo
 
 
   ngOnInit() {
-
-    this.tiersToDisplay = [this.tiers];
-
+    this.tiersList = [this.tiers];
     this.searchRff();
-
-    if(this.rff && this.rff.length > 0 && this.tiersToDisplay) {
-      this.tiersToDisplay[0].rffInsertion = this.rff[0].rffInsertion;
-      this.tiersToDisplay[0].rffFormalite = this.rff[0].rffFormalite;
-      this.tiersToDisplay[0].rffTotal = this.rff[0].rffTotal;
   }
 
-    this.displayedColumnsTiers = [];
-    this.displayedColumnsResponsables = [];
+  showTable(){
+    this.displayedColumnsTiersRff = [];
+    // this.displayedColumnsResponsables = [];
+    // this.setDataTable();
 
-    this.displayedColumnsTiers.push({ id: "denomination", fieldName: "denomination", label: "Dénomination"  } as SortTableColumn<Tiers>);
-    this.displayedColumnsTiers.push({ id: "address", fieldName: "address", label: "address" } as SortTableColumn<Tiers>);
-    this.displayedColumnsTiers.push({ id: "mails[0].mail", fieldName: "mails[0].mail", label: "mail" } as SortTableColumn<Tiers>);
-    this.displayedColumnsTiers.push({ id: "phones[0].phoneNumber", fieldName: "phones[0].phoneNumber", label: "phone" } as SortTableColumn<Tiers>);
-    this.displayedColumnsTiers.push({ id: "rffInsertion", fieldName: "rffInsertion", label: "RFF AL", valueFonction: formatEurosForSortTable } as SortTableColumn<Tiers>);
-    this.displayedColumnsTiers.push({ id: "rffFormalite", fieldName: "rffFormalite", label: "RFF Formalités", valueFonction: formatEurosForSortTable } as SortTableColumn<Tiers>);
-    this.displayedColumnsTiers.push({ id: "rffTotal", fieldName: "rffTotal", label: "Total HT", valueFonction: formatEurosForSortTable } as SortTableColumn<Tiers>);
+    this.displayedColumnsTiersRff.push({ id: "tiersDenomination", fieldName: "tiersDenomination", label: "Dénomination"  } as SortTableColumn<TiersRff>);
+    this.displayedColumnsTiersRff.push({ id: "tiersAddress", fieldName: "tiersAddress", label: "address" } as SortTableColumn<TiersRff>);
+    this.displayedColumnsTiersRff.push({ id: "tiersMail", fieldName: "tiersMail", label: "mail" } as SortTableColumn<TiersRff>);
+    this.displayedColumnsTiersRff.push({ id: "tiersPhone", fieldName: "tiersPhone", label: "phone" } as SortTableColumn<TiersRff>);
+    this.displayedColumnsTiersRff.push({ id: "tiersRffInsertion", fieldName: "tiersRffInsertion", label: "RFF AL", valueFonction: formatEurosForSortTable } as SortTableColumn<TiersRff>);
+    this.displayedColumnsTiersRff.push({ id: "tiersRffFormalite", fieldName: "tiersRffFormalite", label: "RFF Formalités", valueFonction: formatEurosForSortTable } as SortTableColumn<TiersRff>);
+    this.displayedColumnsTiersRff.push({ id: "tiersRffTotal", fieldName: "tiersRffTotal", label: "Total HT", valueFonction: formatEurosForSortTable } as SortTableColumn<TiersRff>);
 
-    this.displayedColumnsResponsables.push({ id: "id", fieldName: "id", label: "N° du responsable" } as SortTableColumn<Responsable>);
-    this.displayedColumnsResponsables.push({ id: "lastname", fieldName: "lastname", label: "Nom" } as SortTableColumn<Responsable>);
-    this.displayedColumnsResponsables.push({ id: "firstname", fieldName: "firstname", label: "Prénom" } as SortTableColumn<Responsable>);
-    this.displayedColumnsResponsables.push({ id: "function", fieldName: "function", label: "Fonction" } as SortTableColumn<Responsable>);
-    this.displayedColumnsResponsables.push({ id: "mails", fieldName: "mails", label: "Mails", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.mails) ? element.mails.map((e: { mail: any; }) => e.mail).join(", ") : "") } } as SortTableColumn<Responsable>);
-    this.displayedColumnsResponsables.push({ id: "phones", fieldName: "phones", label: "Téléphones", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.phones) ? element.phones.map((e: { phoneNumber: any; }) => e.phoneNumber).join(", ") : "") } } as SortTableColumn<Responsable>);
+    // this.displayedColumnsResponsables.push({ id: "id", fieldName: "id", label: "N° du responsable" } as SortTableColumn<Responsable>);
+    // this.displayedColumnsResponsables.push({ id: "lastname", fieldName: "lastname", label: "Nom" } as SortTableColumn<Responsable>);
+    // this.displayedColumnsResponsables.push({ id: "firstname", fieldName: "firstname", label: "Prénom" } as SortTableColumn<Responsable>);
+    // this.displayedColumnsResponsables.push({ id: "function", fieldName: "function", label: "Fonction" } as SortTableColumn<Responsable>);
+    // this.displayedColumnsResponsables.push({ id: "mails", fieldName: "mails", label: "Mails", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.mails) ? element.mails.map((e: { mail: any; }) => e.mail).join(", ") : "") } } as SortTableColumn<Responsable>);
+    // this.displayedColumnsResponsables.push({ id: "phones", fieldName: "phones", label: "Téléphones", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.phones) ? element.phones.map((e: { phoneNumber: any; }) => e.phoneNumber).join(", ") : "") } } as SortTableColumn<Responsable>);
 
   }
-
 
   searchRff() {
     this.rffSearch = {} as RffSearch;
@@ -90,17 +84,39 @@ export class PrepaVisiteTiersResponsableInfoComponent implements OnInit, AfterCo
     d2.setMonth(11);
     d2.setDate(1);
     this.rffSearch.endDate = d2;
+    this.tiersRff = [{} as TiersRff];
+
+    if(this.tiersList[0].denomination)
+    this.tiersRff[0].tiersDenomination = this.tiersList[0].denomination;
+    if(this.tiersList[0].address.length>0)
+    this.tiersRff[0].tiersAddress = this.tiersList[0].address;
+    if(this.tiersList[0].mails.length>0)
+    this.tiersRff[0].tiersMail = this.tiersList[0].mails[0].mail;
+    if(this.tiersList[0].phones.length>0)
+    this.tiersRff[0].tiersPhone = this.tiersList[0].phones[0].phoneNumber;
 
     this.rffService.getRffs(this.rffSearch).subscribe(response => {
       this.rff = response;
-    })
+      this.setTiersRffData();
+      this.showTable();
+    });
+
+
   }
 
-  setDataTable() {
-    this.tiers.responsables.sort(function (a: Responsable, b: Responsable) {
-      return (a.lastname + "" + a.firstname).localeCompare(b.lastname + "" + a.firstname);
-    });
+  setTiersRffData() {
+    if (this.tiersRff && this.tiersRff.length > 0 && this.tiersList && this.tiersList.length > 0 && this.rff) {
+      this.tiersRff[0].tiersRffInsertion = this.rff[0]?.rffInsertion;
+      this.tiersRff[0].tiersRffFormalite = this.rff[0]?.rffFormalite;
+      this.tiersRff[0].tiersRffTotal = this.rff[0]?.rffTotal
+    }
   }
+
+  // setDataTable() {
+  //   this.tiers.responsables.sort(function (a: Responsable, b: Responsable) {
+  //     return (a.lastname + "" + a.firstname).localeCompare(b.lastname + "" + a.firstname);
+  //   });
+  // }
 
 }
 
