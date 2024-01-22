@@ -9,6 +9,7 @@ import { Responsable } from '../../model/Responsable';
 import { TiersService } from '../../services/tiers.service';
 import { formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { TiersRff } from '../../model/TiersRff';
+import { ResponsablesRff } from '../../model/ResponsablesRff';
 
 @Component({
   selector: 'prepa-visite-tiers-responsable-info',
@@ -24,10 +25,13 @@ export class PrepaVisiteTiersResponsableInfoComponent implements OnInit, AfterCo
 
   rff: Rff[] | undefined;
   tiersRff: TiersRff[] | undefined;
+  responsablesRff: ResponsablesRff[] | undefined;
+
   displayedColumnsTiersRff: SortTableColumn<TiersRff>[] = [];
-  displayedColumnsResponsables: SortTableColumn<Responsable>[] = [];
+  displayedColumnsResponsablesRff: SortTableColumn<ResponsablesRff>[] = [];
 
   tiersList: Tiers[] = [];
+  responsableList: Responsable[] = [];
 
   constructor(private rffService: RffService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -41,13 +45,13 @@ export class PrepaVisiteTiersResponsableInfoComponent implements OnInit, AfterCo
 
   ngOnInit() {
     this.tiersList = [this.tiers];
+    this.responsableList = this.tiers.responsables;
     this.searchRff();
   }
 
   showTable(){
     this.displayedColumnsTiersRff = [];
-    // this.displayedColumnsResponsables = [];
-    // this.setDataTable();
+    this.displayedColumnsResponsablesRff = [];
 
     this.displayedColumnsTiersRff.push({ id: "tiersDenomination", fieldName: "tiersDenomination", label: "Dénomination"  } as SortTableColumn<TiersRff>);
     this.displayedColumnsTiersRff.push({ id: "tiersAddress", fieldName: "tiersAddress", label: "address" } as SortTableColumn<TiersRff>);
@@ -57,11 +61,11 @@ export class PrepaVisiteTiersResponsableInfoComponent implements OnInit, AfterCo
     this.displayedColumnsTiersRff.push({ id: "tiersRffFormalite", fieldName: "tiersRffFormalite", label: "RFF Formalités", valueFonction: formatEurosForSortTable } as SortTableColumn<TiersRff>);
     this.displayedColumnsTiersRff.push({ id: "tiersRffTotal", fieldName: "tiersRffTotal", label: "Total HT", valueFonction: formatEurosForSortTable } as SortTableColumn<TiersRff>);
 
-    // this.displayedColumnsResponsables.push({ id: "id", fieldName: "id", label: "N° du responsable" } as SortTableColumn<Responsable>);
-    // this.displayedColumnsResponsables.push({ id: "lastname", fieldName: "lastname", label: "Nom" } as SortTableColumn<Responsable>);
-    // this.displayedColumnsResponsables.push({ id: "firstname", fieldName: "firstname", label: "Prénom" } as SortTableColumn<Responsable>);
-    // this.displayedColumnsResponsables.push({ id: "function", fieldName: "function", label: "Fonction" } as SortTableColumn<Responsable>);
-    // this.displayedColumnsResponsables.push({ id: "mails", fieldName: "mails", label: "Mails", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.mails) ? element.mails.map((e: { mail: any; }) => e.mail).join(", ") : "") } } as SortTableColumn<Responsable>);
+    // this.displayedColumnsResponsablesRff.push({ id: "id", fieldName: "id", label: "N° du responsable" } as SortTableColumn<ResponsablesRff>);
+    // this.displayedColumnsResponsablesRff.push({ id: "responsableLastName", fieldName: "responsableLastName", label: "Nom" } as SortTableColumn<ResponsablesRff>);
+    // this.displayedColumnsResponsablesRff.push({ id: "responsableTel", fieldName: "responsableTel", label: "Tel" } as SortTableColumn<ResponsablesRff>);
+    // this.displayedColumnsResponsablesRff.push({ id: "function", fieldName: "function", label: "Function" } as SortTableColumn<ResponsablesRff>);
+    // this.displayedColumnsResponsablesRff.push({ id: "responsableMail", fieldName: "responsableMail", label: "Mails"} as SortTableColumn<ResponsablesRff>);
     // this.displayedColumnsResponsables.push({ id: "phones", fieldName: "phones", label: "Téléphones", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.phones) ? element.phones.map((e: { phoneNumber: any; }) => e.phoneNumber).join(", ") : "") } } as SortTableColumn<Responsable>);
 
   }
@@ -84,7 +88,21 @@ export class PrepaVisiteTiersResponsableInfoComponent implements OnInit, AfterCo
     d2.setMonth(11);
     d2.setDate(1);
     this.rffSearch.endDate = d2;
+
+    this.setTiersResponsableData();
+
+    this.rffService.getRffs(this.rffSearch).subscribe(response => {
+      this.rff = response;
+      this.setTiersResponsableRffData();
+      this.showTable();
+    });
+
+
+  }
+
+  setTiersResponsableData(){
     this.tiersRff = [{} as TiersRff];
+    this.responsablesRff = [{} as ResponsablesRff];
 
     if(this.tiersList[0].denomination)
     this.tiersRff[0].tiersDenomination = this.tiersList[0].denomination;
@@ -95,21 +113,29 @@ export class PrepaVisiteTiersResponsableInfoComponent implements OnInit, AfterCo
     if(this.tiersList[0].phones.length>0)
     this.tiersRff[0].tiersPhone = this.tiersList[0].phones[0].phoneNumber;
 
-    this.rffService.getRffs(this.rffSearch).subscribe(response => {
-      this.rff = response;
-      this.setTiersRffData();
-      this.showTable();
-    });
-
-
+    // for(let i = 0; i < this.responsableList.length; i++){
+    //   if(this.responsableList[i].id)
+    //     this.responsablesRff[i].id = this.responsableList[i].id;
+    //   if(this.responsableList[i].lastname)
+    //     this.responsablesRff[i].responsableLastName = this.responsableList[i].lastname;
+    //   if(this.responsableList[i].firstname)
+    //     this.responsablesRff[i].responsableFirstName = this.responsableList[i].firstname;
+    //   if(this.responsableList[i].function)
+    //     this.responsablesRff[i].function = this.responsableList[i].function;
+    //   if(this.responsableList[i].mails[0].mail.length>0)
+    //     this.responsablesRff[i].responsableMail = this.responsableList[i].mails[0].mail;
+    //   if(this.responsableList[i].phones[0].phoneNumber.length>0)
+    //     this.responsablesRff[i].responsableTel = this.responsableList[i].phones[0].phoneNumber;
+    // }
   }
 
-  setTiersRffData() {
+  setTiersResponsableRffData() {
     if (this.tiersRff && this.tiersRff.length > 0 && this.tiersList && this.tiersList.length > 0 && this.rff) {
       this.tiersRff[0].tiersRffInsertion = this.rff[0]?.rffInsertion;
       this.tiersRff[0].tiersRffFormalite = this.rff[0]?.rffFormalite;
       this.tiersRff[0].tiersRffTotal = this.rff[0]?.rffTotal
     }
+
   }
 
   // setDataTable() {

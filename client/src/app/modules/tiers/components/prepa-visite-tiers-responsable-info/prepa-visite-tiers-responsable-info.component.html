@@ -6,10 +6,11 @@
       </sort-table>
     </mat-tab>
 
-    <!-- <mat-tab label="Fiche du responsable">
-      <sort-table [columns]="displayedColumnsResponsables" [values]="tiers.responsables"
-                   [noPaddingBottom]="true" [noMaxHeight]="true" tableName="Responsables">
+    <!-- <mat-tab label="Fiche du Responsable">
+      <sort-table [columns]="displayedColumnsResponsablesRff" [values]="responsablesRff"
+                  tableName="Tiers" *ngIf="displayedColumnsTiersRff && displayedColumnsTiersRff.length>0 ">
       </sort-table>
     </mat-tab> -->
+
   </mat-tab-group>
 </div>

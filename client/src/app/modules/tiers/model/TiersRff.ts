@@ -1,5 +1,6 @@
 import { Mail } from "../../miscellaneous/model/Mail";
 import { Phone } from "../../miscellaneous/model/Phone";
+import { Responsable } from "./Responsable";
 
 export interface TiersRff {
   tiersDenomination:  string | null;
@@ -12,6 +13,8 @@ export interface TiersRff {
   tiersRffFormalite: number| null;
   responsableLastName: string;
   responsableFirstName: string;
+  responsables: Responsable[];
+
   /*
      this.displayedColumnsTiers.push({ id: "denomination", fieldName: "denomination", label: "Dénomination"  } as SortTableColumn<Tiers>);
     this.displayedColumnsTiers.push({ id: "address", fieldName: "address", label: "address" } as SortTableColumn<Tiers>);
