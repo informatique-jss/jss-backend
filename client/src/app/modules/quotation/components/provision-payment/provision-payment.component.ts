@@ -58,7 +58,7 @@ export class ProvisionPaymentComponent implements OnInit {
     this.invoiceDisplayedColumns.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn<Invoice>);
     this.invoiceDisplayedColumns.push({ id: "manualAccountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N°" } as SortTableColumn<Invoice>);
     this.invoiceDisplayedColumns.push({ id: "invoiceDate", fieldName: "createdDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Invoice>);
-    this.invoiceDisplayedColumns.push({ id: "invoiceAmount", fieldName: "totalPrice", label: "Montant", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Invoice>);
+    this.invoiceDisplayedColumns.push({ id: "invoiceAmount", fieldName: "totalPrice", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn<Invoice>);
     this.invoiceDisplayedColumns.push({ id: "invoiceStatus", fieldName: "invoiceStatus.label", label: "Statut", statusFonction: (element: Invoice) => { return element.invoiceStatus.code }, displayAsStatus: true } as SortTableColumn<Invoice>);
     this.invoiceDisplayedColumns.push({ id: "confrere", fieldName: "confrere.label", label: "Confrere" } as SortTableColumn<Invoice>);
     this.invoiceDisplayedColumns.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn<Invoice>);
@@ -72,7 +72,7 @@ export class ProvisionPaymentComponent implements OnInit {
       }, display: true,
     } as SortTableAction<Invoice>);
 
-    this.paymentsDisplayedColumns = []; 
+    this.paymentsDisplayedColumns = [];
     this.paymentsDisplayedColumns.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn<Payment>);
     this.paymentsDisplayedColumns.push({ id: "paymentDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Payment>);
     this.paymentsDisplayedColumns.push({ id: "paymentAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn<Payment>);
@@ -81,18 +81,18 @@ export class ProvisionPaymentComponent implements OnInit {
     this.paymentsDisplayedColumns.push({ id: "checkNumber", fieldName: "checkNumber", label: "Numéro de chèque" } as SortTableColumn<Payment>);
     if (this.habilitationsService.isAdministrator())
       this.paymentsDisplayedColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Est annulé ?" } as SortTableColumn<Payment>);
-    this.paymentsDisplayedColumns.push({ id: "invoice", fieldName: "invoice.manualAccountingDocumentNumber", label: "Facture associée" } as SortTableColumn<Payment>); 
+    this.paymentsDisplayedColumns.push({ id: "invoice", fieldName: "invoice.manualAccountingDocumentNumber", label: "Facture associée" } as SortTableColumn<Payment>);
     this.paymentsTableActions.push({
       actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (column: SortTableAction<Payment>, element: Payment, event: any) => {
         if ((!element.invoice && !element.isCancelled))
           this.openAssociationDialog(element);
-      }, display: true, 
+      }, display: true,
     } as SortTableAction<Payment>);
     this.paymentsTableActions.push({
       actionIcon: "visibility", actionName: "Voir le détail du paiement", actionClick: (column: SortTableAction<Payment>, element: Payment, event: any) => {
         this.paymentDetailsDialogService.displayPaymentDetailsDialog(element)
       }, display: true,
-    } as SortTableAction<Payment>); 
+    } as SortTableAction<Payment>);
   }
 
   openAssociationDialog(elementIn: Payment) {

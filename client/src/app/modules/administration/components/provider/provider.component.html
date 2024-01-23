@@ -18,10 +18,11 @@
         <div class="full-width">
           <fieldset [disabled]="editMode==false" class="fieldset-no-border">
             <table class="full-width">
-              <tr *ngIf="selectedProvider.id">
+              <tr>
                 <td>
-                  <generic-input [(model)]="selectedProvider.id" label="Identifiant technique" [form]="entityForm2"
-                    propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+                  <generic-input *ngIf="selectedProvider.id" [(model)]="selectedProvider.id"
+                    label="Identifiant technique" [form]="entityForm2" propertyName="id" [isMandatory]="true"
+                    [isDisabled]="true"></generic-input>
                 </td>
                 <td>
                   <generic-input [(model)]="selectedProvider.label" label="Nom fonctionnel" [maxLength]="100"

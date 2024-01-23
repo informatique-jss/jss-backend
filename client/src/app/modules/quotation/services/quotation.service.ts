@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { Announcement } from '../model/Announcement';
 import { CustomerOrder } from '../model/CustomerOrder';
 import { IQuotation } from '../model/IQuotation';
 
@@ -19,6 +20,10 @@ export class QuotationService extends AppRestService<IQuotation>{
 
   getQuotation(idQuotation: number) {
     return this.getById("quotation", idQuotation);
+  }
+
+  getQuotationOfAnnouncement(announcement: Announcement) {
+    return this.get(new HttpParams().set("idAnnouncement", announcement.id), "quotation/announcement");
   }
 
   addOrUpdateQuotation(quotation: IQuotation) {

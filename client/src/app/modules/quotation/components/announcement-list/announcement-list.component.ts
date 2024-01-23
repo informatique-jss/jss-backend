@@ -9,6 +9,7 @@ import { AnnouncementSearch } from '../../model/AnnouncementSearch';
 import { Confrere } from '../../model/Confrere';
 import { AnnouncementService } from '../../services/announcement.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
+import { QuotationService } from '../../services/quotation.service';
 
 @Component({
   selector: 'announcement-list',
@@ -30,6 +31,7 @@ export class AnnouncementListComponent implements OnInit, AfterContentChecked {
     private customerOrderService: CustomerOrderService,
     private appService: AppService,
     private formBuilder: FormBuilder,
+    private quotationService: QuotationService
   ) { }
 
   ngAfterContentChecked(): void {
@@ -47,9 +49,14 @@ export class AnnouncementListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "isPublicationFlagAlreadySent", fieldName: "isPublicationFlagAlreadySent", label: "Témoin de parution envoyé ?", valueFonction: (element: Announcement, column: SortTableColumn<Announcement>) => { return element.isPublicationFlagAlreadySent ? "Oui" : "Non" } } as SortTableColumn<Announcement>);
 
     this.tableAction.push({
-      actionIcon: "shopping_cart", actionName: "Voir la commande", actionClick: (action: SortTableAction<Announcement>, element: Announcement, event: any) => {
+      actionIcon: "shopping_cart", actionName: "Voir la commande/devis", actionClick: (action: SortTableAction<Announcement>, element: Announcement, event: any) => {
         this.customerOrderService.getCustomerOrderOfAnnouncement(element).subscribe(response => {
-          this.appService.openRoute(event, "/order/" + response.id, undefined);
+          if (response)
+            this.appService.openRoute(event, "/order/" + response.id, undefined);
+          else
+            this.quotationService.getQuotationOfAnnouncement(element).subscribe(response => {
+              this.appService.openRoute(event, "/quotation/" + response.id, undefined);
+            })
         })
       }, display: true,
     } as SortTableAction<Announcement>);
