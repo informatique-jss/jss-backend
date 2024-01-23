@@ -1871,6 +1871,18 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/quotation/announcement")
+  public ResponseEntity<Quotation> getQuotationOfAnnouncement(@RequestParam Integer idAnnouncement)
+      throws OsirisValidationException {
+    Announcement announcement = this.announcementService.getAnnouncement(idAnnouncement);
+
+    if (announcement == null)
+      throw new OsirisValidationException("announcement");
+
+    return new ResponseEntity<Quotation>(quotationService.getQuotationForAnnouncement(announcement),
+        HttpStatus.OK);
+  }
+
   @PostMapping(inputEntryPoint + "/announcements/search")
   public ResponseEntity<List<Announcement>> getAnnouncements(@RequestBody AnnouncementListSearch announcementSearch)
       throws OsirisValidationException, OsirisException {

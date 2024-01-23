@@ -7,6 +7,7 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.Quotation;
@@ -16,6 +17,8 @@ import com.jss.osiris.modules.tiers.model.ITiers;
 
 public interface QuotationService {
         public Quotation getQuotation(Integer id);
+
+        public Quotation getQuotationForAnnouncement(Announcement announcement);
 
         public Quotation addOrUpdateQuotation(Quotation quotation)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,

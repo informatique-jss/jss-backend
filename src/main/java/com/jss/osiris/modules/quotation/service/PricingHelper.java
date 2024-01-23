@@ -422,7 +422,7 @@ public class PricingHelper {
                             if (invoice.getCompetentAuthority() != null) {
                                 if (invoice.getCompetentAuthority().getId()
                                         .equals(constantService.getCompetentAuthorityInpi().getId())) {
-                                    newInvoiceItem.setLabel(invoiceItem.getLabel());
+                                    newInvoiceItem.setLabel(invoiceItem.getLabel().replace("<", ""));
                                 } else {
                                     newInvoiceItem.setLabel(invoice.getCompetentAuthority().getLabel() + " - "
                                             + invoiceItem.getBillingItem().getBillingType().getLabel());

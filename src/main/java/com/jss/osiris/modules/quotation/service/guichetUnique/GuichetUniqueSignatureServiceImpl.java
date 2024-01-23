@@ -110,17 +110,17 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
 
                     if (piecesJointe.getTypeDocument().getCode()
                             .equals(TypeDocument.UNSIGNED_SYNTHESES_DOCUMENT_CODE)) {
-                        if (lastSynthesis == null || LocalDateTime.parse(lastSynthesis.getCreated(),
+                        if (lastSynthesis == null || LocalDateTime.parse(lastSynthesis.getCreated().substring(0, 19),
                                 JacksonLocalDateTimeDeserializer.formatter)
-                                .isAfter(LocalDateTime.parse(piecesJointe.getCreated(),
+                                .isAfter(LocalDateTime.parse(piecesJointe.getCreated().substring(0, 19),
                                         JacksonLocalDateTimeDeserializer.formatter)))
                             lastSynthesis = piecesJointe;
                     }
                     if (piecesJointe.getTypeDocument().getCode()
                             .equals(TypeDocument.UNSIGNED_BE_DOCUMENT_CODE)) {
-                        if (lastBe == null || LocalDateTime.parse(lastBe.getCreated(),
+                        if (lastBe == null || LocalDateTime.parse(lastBe.getCreated().substring(0, 19),
                                 JacksonLocalDateTimeDeserializer.formatter)
-                                .isAfter(LocalDateTime.parse(piecesJointe.getCreated(),
+                                .isAfter(LocalDateTime.parse(piecesJointe.getCreated().substring(0, 19),
                                         JacksonLocalDateTimeDeserializer.formatter)))
                             lastBe = piecesJointe;
                     }

@@ -16,7 +16,7 @@ public interface FormaliteGuichetUniqueRepository extends QueryCacheCrudReposito
 
     @Query("select f from FormaliteGuichetUnique f where status in (:statusSignaturePending) and formalite is not null and content is not null")
     List<FormaliteGuichetUnique> findFormaliteToSign(
-            @Param("statusSignaturePending") FormaliteGuichetUniqueStatus statusSignaturePending);
+            @Param("statusSignaturePending") List<FormaliteGuichetUniqueStatus> statusSignaturePending);
 
     List<FormaliteGuichetUnique> findByLiasseNumber(String value);
 
