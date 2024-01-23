@@ -1,5 +1,4 @@
-import { Mail } from "../../miscellaneous/model/Mail";
-import { Phone } from "../../miscellaneous/model/Phone";
+import { CustomerOrder } from "../../quotation/model/CustomerOrder";
 import { Responsable } from "./Responsable";
 
 export interface ResponsablesRff {
@@ -9,13 +8,13 @@ export interface ResponsablesRff {
   responsables: Responsable[];
   function: string;
   responsableMail: string | null;
-  responsableTel: string | null;
-  responsableCa: number;
-  responsableNbrAl: number;
-  responsableNbrForm: number;
-  responsableTotalCde: number;
+  responsablePhone: string | null;
+  responsableTurnoverAmountWithTax: number;
+  responsableAnnouncementNbr: number;
+  responsableFormalityNbr: number;
+  responsableTotalCustomerOrders: number;
   responsableSub: boolean;
   responsableGift: number;
   responsableOthers: string;
-
+  responsableCustomerOrders: CustomerOrder[];
 }
