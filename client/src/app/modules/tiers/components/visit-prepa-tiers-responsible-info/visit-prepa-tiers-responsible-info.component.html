@@ -1,16 +1,11 @@
 <div class="mat-elevation-z2 form-div">
-  <mat-tab-group>
-    <mat-tab label="Fiche du tiers">
+
       <sort-table [columns]="displayedColumnsTiersRff" [values]="tiersRff"
                   tableName="Tiers" *ngIf="displayedColumnsTiersRff && displayedColumnsTiersRff.length>0 ">
       </sort-table>
-    </mat-tab>
 
-    <mat-tab label="Fiche du Responsable">
       <sort-table [columns]="displayedColumnsResponsablesRff" [values]="responsablesRff"
                   tableName="Tiers" *ngIf="displayedColumnsTiersRff && displayedColumnsTiersRff.length>0 ">
       </sort-table>
-    </mat-tab>
 
-  </mat-tab-group>
 </div>

@@ -29,9 +29,9 @@ import { SettlementBillingComponent } from '../settlement-billing/settlement-bil
 import { TiersListComponent } from '../tiers-list/tiers-list.component';
 import { PrincipalComponent } from '../tiers-main/tiers-main.component';
 import { TiersComponent } from './tiers.component';
-import { PrepaVisiteTiersResponsableInfoComponent } from '../prepa-visite-tiers-responsable-info/prepa-visite-tiers-responsable-info.component';
-import { PrepaVisiteTiersTurnoverComponent } from '../prepa-visite-tiers-turnover/prepa-visite-tiers-turnover.component';
-import { PrepaVisiteCustomerOrdersResponsableComponent } from '../prepa-visite-customer-orders-responsable/prepa-visite-customer-orders-responsable.component';
+import { VisitPrepaTiersResponsibleInfoComponent } from '../visit-prepa-tiers-responsible-info/visit-prepa-tiers-responsible-info.component';
+import { VisitPrepaTiersTurnoverComponent } from '../visit-prepa-tiers-turnover/visit-prepa-tiers-turnover.component';
+import { VisitPrepaCustomerOrdersResponsibleComponent } from '../visit-prepa-customer-orders-responsible/visit-prepa-customer-orders-responsible.component';
 
 const routes: Routes = [
   { path: 'tiers', component: TiersComponent },
@@ -74,9 +74,9 @@ const routes: Routes = [
     SearchPhoneComponent,
     TiersListComponent,
     RffListComponent,
-    PrepaVisiteTiersResponsableInfoComponent,
-    PrepaVisiteTiersTurnoverComponent,
-    PrepaVisiteCustomerOrdersResponsableComponent,
+    VisitPrepaTiersResponsibleInfoComponent,
+    VisitPrepaTiersTurnoverComponent,
+    VisitPrepaCustomerOrdersResponsibleComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

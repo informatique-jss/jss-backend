@@ -1,20 +1,25 @@
+import { Mail } from "../../miscellaneous/model/Mail";
+import { Phone } from "../../miscellaneous/model/Phone";
 import { CustomerOrder } from "../../quotation/model/CustomerOrder";
 import { Responsable } from "./Responsable";
 
 export interface ResponsablesRff {
   id: number;
-  responsableLastName: string | null;
-  responsableFirstName: string | null;
+  lastName: string | null;
+  firstName: string | null;
   responsables: Responsable[];
   function: string;
-  responsableMail: string | null;
-  responsablePhone: string | null;
-  responsableTurnoverAmountWithTax: number;
-  responsableAnnouncementNbr: number;
-  responsableFormalityNbr: number;
-  responsableTotalCustomerOrders: number;
-  responsableSub: boolean;
-  responsableGift: number;
-  responsableOthers: string;
-  responsableCustomerOrders: CustomerOrder[];
+  mails: Mail[];
+  phones: Phone[];
+  turnoverAmountWithTax: number;
+  announcementNbr: number;
+  formalityNbr: number;
+  totalCustomerOrders: number;
+  isSub: boolean;
+  gift: boolean;
+  others: string;
+  customerOrders: CustomerOrder[];
+  rffInsertion: number | null;
+  rffFormalite: number | null;
+  rffTotal: number | null;
 }
