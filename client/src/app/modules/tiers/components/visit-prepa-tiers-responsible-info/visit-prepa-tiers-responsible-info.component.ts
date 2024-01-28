@@ -36,6 +36,7 @@ export class VisitPrepaTiersResponsibleInfoComponent implements OnInit, AfterCon
 
   rff: Rff[] | undefined;
   rffList: Rff[] = [];
+  rffResponse:  Rff[] = [];
 
   tiersRff: TiersRff[] | undefined;
   responsablesRff: ResponsablesRff[] | undefined;
@@ -82,6 +83,7 @@ export class VisitPrepaTiersResponsibleInfoComponent implements OnInit, AfterCon
     this.rff = [{} as Rff];
     this.rffSearch = {} as RffSearch;
     this.responsableDummy = {} as ResponsablesRff;
+    this.rffResponse =  [{} as Rff];
 
     this.displayedColumnsTiersRff = [];
     this.displayedColumnsResponsablesRff = [];
@@ -121,26 +123,24 @@ export class VisitPrepaTiersResponsibleInfoComponent implements OnInit, AfterCon
     }
 
     if(this.rffSearchList.length>1){
-      this.rffSearchList.forEach(rffSearch => {
-          this.rffService.getRffs(rffSearch).subscribe(response => {
-            this.rff = response;
-          });
-      });
+      for(let i = 0; i<this.rffSearchList.length; i++){
+        this.rffService.getRffs(this.rffSearchList[i]).subscribe(
+          response => {
+            this.rffResponse = response;
+            this.rff?.push({ ...this.rffResponse } as unknown as Rff);
+          }
+        );
+        }
+    }else if(this.rffSearchList.length == 1){
+      this.rffService.getRffs(this.rffSearchList[0]).subscribe(
+        response => {
+          this.rff = response;
+        }
+      );
     }
 
-      this.rffService.getRffs(this.rffSearchList[0]).subscribe(response => {
-        this.rff =response;
-      });
 
-      if(this.rff && this.rff?.length>1){
-        this.rff?.forEach( (rff: Rff) => {
-            if(rff.responsableId!=null)
-              this.rffList.push(rff)
-        });
-    }else if(this.rff && this.rff?.length == 1){
-      this.rffList.push(this.rff[0]);
-    }
-    this.setTiersAndResponsableRffData(this.rffList);
+    this.setTiersAndResponsableRffData(this.rff);
   }
 
   setRffSearch(responsable: Responsable) {
@@ -167,12 +167,13 @@ export class VisitPrepaTiersResponsibleInfoComponent implements OnInit, AfterCon
 
   }
 
-  setTiersAndResponsableRffData(rffList: Rff[]) {
+  setTiersAndResponsableRffData(rffList: Rff[] | undefined) {
 
     this.tiersRff = [{} as TiersRff];
     this.responsablesRff = [{} as ResponsablesRff];
     this.responsableDummy = {} as ResponsablesRff;
 
+    if(rffList && rffList!= undefined && rffList.length>0){
     this.tiersRff[0].rffInsertion = rffList[0]?.rffInsertion;
     this.tiersRff[0].rffFormalite = rffList[0]?.rffFormalite;
     this.tiersRff[0].rffTotal = rffList[0]?.rffTotal;
@@ -184,9 +185,11 @@ export class VisitPrepaTiersResponsibleInfoComponent implements OnInit, AfterCon
         this.responsableDummy.rffInsertion = rffResponsable.rffInsertion;
         this.responsableDummy.rffFormalite = rffResponsable.rffFormalite;
         this.responsableDummy.rffTotal = rffResponsable.rffTotal;
-        this.responsablesRff.push(this.responsableDummy);
+        this.responsablesRff.push({... this.responsableDummy});
+
       }
     })
+  }
     this.setTiersAndResponsableData(this.tiersRff, this.responsablesRff);
   }
 
