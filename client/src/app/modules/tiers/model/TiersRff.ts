@@ -14,5 +14,7 @@ export interface TiersRff {
   lastName: string;
   firstName: string;
   responsables: Responsable[];
-  turnoverAmountWithoutTax: number;
+  turnoverAmountWithTax: number;
+  announcementNbr: number;
+  formalityNbr: number;
 }

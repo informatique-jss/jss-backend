@@ -2,11 +2,11 @@
   <fieldset [disabled]="editMode==false" class="fieldset-no-border">
 
       <sort-table [columns]="displayedColumnsTiersRff" [values]="tiersRff"
-                  tableName="Tiers" *ngIf="displayedColumnsTiersRff && displayedColumnsTiersRff.length>0 ">
+                  tableName="Tiers">
       </sort-table>
 
       <sort-table [columns]="displayedColumnsResponsablesRff" [values]="responsablesRff"
-                  tableName="Tiers" *ngIf="displayedColumnsTiersRff && displayedColumnsTiersRff.length>0 ">
+                  tableName="Responsables">
       </sort-table>
 </fieldset>
 </div>

@@ -12,8 +12,8 @@ export class RffService extends AppRestService<Rff>{
   constructor(http: HttpClient) {
     super(http, "tiers");
   }
-
   getRffs(rffSearch: RffSearch) {
+    console.log(rffSearch)
     return this.postList(new HttpParams(), "rffs", rffSearch);
   }
 
