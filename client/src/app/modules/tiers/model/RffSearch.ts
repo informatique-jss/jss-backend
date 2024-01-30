@@ -5,7 +5,9 @@ export interface RffSearch {
   tiers: IndexEntity;
   responsable: IndexEntity;
   salesEmployee: Employee;
-  startDate: Date | undefined;
-  endDate: Date | undefined;
+  startDate: Date;
+  endDate: Date;
   isHideCancelledRff: boolean;
+  withNonNullTurnover: boolean;
+  label: string;
 }
