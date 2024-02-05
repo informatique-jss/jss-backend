@@ -859,7 +859,7 @@ public class InvoicingController {
             throw new OsirisValidationException("Must be same Competent authority");
 
         if (originInvoice.getProvider() != null
-                && !newInvoice.getCompetentAuthority().getId().equals(originInvoice.getProvider().getId()))
+                && !newInvoice.getProvider().getId().equals(originInvoice.getProvider().getId()))
             throw new OsirisValidationException("Must be same provider");
 
         if (originInvoice.getConfrere() != null
