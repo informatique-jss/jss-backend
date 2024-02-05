@@ -14,11 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
@@ -101,6 +103,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Autowired
     BatchService batchService;
+
+    @Autowired
+    GlobalExceptionHandler globalExceptionHandler;
 
     @Autowired
     FormaliteGuichetUniqueStatusService formaliteGuichetUniqueStatusService;
@@ -391,17 +396,25 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             if (!attachmentFound) {
                 TypeDocument typeDocument = typeDocumentService
                         .getTypeDocumentByCode(piecesJointe.getTypeDocument().getCode());
-                File file = guichetUniqueDelegateService
-                        .getAttachmentById(piecesJointe.getAttachmentId(), null);
+                File file = null;
                 try {
-                    attachmentService.addAttachment(new FileInputStream(file), provision.getId(),
-                            Provision.class.getSimpleName(),
-                            typeDocument.getAttachmentType(), piecesJointe.getNomDocument(), false,
-                            piecesJointe.getNomDocument(), piecesJointe, null);
-                    file.delete();
-                } catch (FileNotFoundException e) {
-                    throw new OsirisException(e, "erreur when reading file");
+                    file = guichetUniqueDelegateService
+                            .getAttachmentById(piecesJointe.getAttachmentId(), null);
+                } catch (Exception e) {
+                    globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG); // TODO : To handle files not found
+                                                                                   // in INPI ... To remove when
+                                                                                   // possible
                 }
+                if (file != null)
+                    try {
+                        attachmentService.addAttachment(new FileInputStream(file), provision.getId(),
+                                Provision.class.getSimpleName(),
+                                typeDocument.getAttachmentType(), piecesJointe.getNomDocument(), false,
+                                piecesJointe.getNomDocument(), piecesJointe, null);
+                        file.delete();
+                    } catch (FileNotFoundException e) {
+                        throw new OsirisException(e, "erreur when reading file");
+                    }
             }
         }
     }
