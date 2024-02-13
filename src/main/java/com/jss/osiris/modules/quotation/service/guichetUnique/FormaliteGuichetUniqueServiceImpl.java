@@ -24,6 +24,7 @@ import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
@@ -106,6 +107,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Autowired
     GlobalExceptionHandler globalExceptionHandler;
+
+    @Autowired
+    InvoiceHelper invoiceHelper;
 
     @Autowired
     FormaliteGuichetUniqueStatusService formaliteGuichetUniqueStatusService;
@@ -492,6 +496,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         invoice.setManualAccountingDocumentDate(
                 LocalDate.parse(cart.getPaymentDate() != null ? cart.getPaymentDate() : cart.getUpdated(),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+
         for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
             if (asso.getId().equals(provision.getAssoAffaireOrder().getId()))
                 for (Provision inProvision : asso.getProvisions()) {
@@ -555,7 +560,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         invoice.setIsInvoiceFromProvider(false);
         invoice.setIsProviderCreditNote(true);
         invoice.setProvision(provision);
-        return invoiceService.addOrUpdateInvoiceFromUser(invoice);
+
+        return invoiceHelper.getPriceTotal(invoice) > 0f ? invoiceService.addOrUpdateInvoiceFromUser(invoice) : null;
     }
 
     private InvoiceItem getInvoiceItemForCartRate(CartRate cartRate, Cart cart) throws OsirisException {

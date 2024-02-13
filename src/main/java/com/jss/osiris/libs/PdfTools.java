@@ -1,5 +1,6 @@
 package com.jss.osiris.libs;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -109,6 +110,7 @@ public class PdfTools {
                 BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
                 AffineTransform at = AffineTransform.getScaleInstance(factorCompression, factorCompression);
                 Graphics2D g = img.createGraphics();
+                g.setColor(Color.WHITE);
                 g.drawRenderedImage(bi, at);
                 ByteArrayOutputStream imgBytes = new ByteArrayOutputStream();
                 try {
