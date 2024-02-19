@@ -40,4 +40,6 @@ public interface OrderingSearchResult {
     public LocalDateTime getLastStatusUpdate();
 
     public String getCustomerOrderOriginLabel();
+
+    public String getProvisionStatus();
 }

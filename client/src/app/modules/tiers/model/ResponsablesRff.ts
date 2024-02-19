@@ -5,8 +5,7 @@ import { Responsable } from "./Responsable";
 
 export interface ResponsablesRff {
   id: number;
-  lastName: string | null;
-  firstName: string | null;
+  name: string | null;
   responsables: Responsable[];
   function: string;
   mails: Mail[];
@@ -19,7 +18,7 @@ export interface ResponsablesRff {
   gift: boolean;
   others: string;
   customerOrders: CustomerOrder[];
-  rffInsertion: number | null;
-  rffFormalite: number | null;
-  rffTotal: number | null;
+  rffInsertion: number | undefined;
+  rffFormalite: number | undefined;
+  rffTotal: number | undefined;
 }

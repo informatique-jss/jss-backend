@@ -282,6 +282,21 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-rff-frequency>
+        <referential-reclamation-problem *ngIf="selectedReferential==RECLAMATION_PROBLEM_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-reclamation-problem>
+        <referential-reclamation-origin *ngIf="selectedReferential==RECLAMATION_ORIGIN_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-reclamation-origin>
+        <referential-reclamation-cause *ngIf="selectedReferential==RECLAMATION_CAUSE_REFERENTIAL"
+        (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+        [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+        [cloneEvent]="cloneEvent.asObservable()">
+      </referential-reclamation-cause>
         <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode"
           (click)="saveEntity()">
           <mat-icon>save</mat-icon>

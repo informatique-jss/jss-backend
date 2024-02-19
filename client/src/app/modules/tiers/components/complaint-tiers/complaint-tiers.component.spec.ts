@@ -1,21 +1,21 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VisitPrepaTiersTurnoverComponent } from './visit-prepa-tiers-turnover.component';
+import { ComplaintTiersComponent } from './complaint-tiers.component';
 
-describe('ResponsableMainComponent', () => {
-  let component: VisitPrepaTiersTurnoverComponent;
-  let fixture: ComponentFixture<VisitPrepaTiersTurnoverComponent>;
+describe('ComplaintTiersComponent', () => {
+  let component: ComplaintTiersComponent;
+  let fixture: ComponentFixture<ComplaintTiersComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ VisitPrepaTiersTurnoverComponent ]
+      declarations: [ ComplaintTiersComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(VisitPrepaTiersTurnoverComponent);
+    fixture = TestBed.createComponent(ComplaintTiersComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

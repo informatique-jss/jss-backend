@@ -36,7 +36,10 @@
     </mat-tab>
     <mat-tab label="Prepa visite" *ngIf="tiers.id!=null && tiers.id!=undefined" >
       <visit-prepa-tiers-responsible-info [tiers]="tiers" ></visit-prepa-tiers-responsible-info>
-      <!-- <prepa-visite-responsable-customer-orders [tiers]="tiers" [editMode]="editMode"></prepa-visite-responsable-customer-orders> -->
+      <visit-prepa-customer-orders-responsible [tiers]="tiers"></visit-prepa-customer-orders-responsible>
+    </mat-tab>
+    <mat-tab label="Reclamation">
+      <complaint-tiers [tiers]="tiers"></complaint-tiers>
     </mat-tab>
     <mat-tab label="Prestations" *ngIf="tiers.id!=null && tiers.id!=undefined">
       <ng-template matTabContent>

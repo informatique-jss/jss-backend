@@ -1,12 +1,13 @@
 <div class="mat-elevation-z2 form-div">
-  <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+  <fieldset [disabled]="false" class="fieldset-no-border">
 
       <sort-table [columns]="displayedColumnsTiersRff" [values]="tiersRff"
                   tableName="Tiers">
       </sort-table>
-
+      <div *ngIf="responsablesRff && responsablesRff.length > 1">
       <sort-table [columns]="displayedColumnsResponsablesRff" [values]="responsablesRff"
                   tableName="Responsables">
       </sort-table>
+      </div>
 </fieldset>
 </div>

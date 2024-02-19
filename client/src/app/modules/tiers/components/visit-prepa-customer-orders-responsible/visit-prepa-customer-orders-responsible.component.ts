@@ -1,11 +1,24 @@
-import { Component, Input, OnInit} from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { Responsable } from '../../model/Responsable';
 import { CustomerOrder } from '../../../quotation/model/CustomerOrder';
+import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
+import { Tiers } from '../../model/Tiers';
+import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { ITiers } from '../../model/ITiers';
+import { OrderingSearchResult } from 'src/app/modules/quotation/model/OrderingSearchResult';
+import { OrderingSearchResultService } from 'src/app/modules/quotation/services/ordering.search.result.service';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
-import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
-import { Tiers } from '../../model/Tiers';
+import { InvoiceSearchResultService } from 'src/app/modules/invoicing/services/invoice.search.result.service';
+import { InvoiceSearchResult } from 'src/app/modules/invoicing/model/InvoiceSearchResult';
+import { QuotationSearchResult } from 'src/app/modules/quotation/model/QuotationSearchResult';
+import { CustomerOrderFiller } from '../../model/CustomerOrderFiller';
+import { formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
+import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
+import { Employee } from 'src/app/modules/profile/model/Employee';
+import { AssoAffaireOrderSearchResult } from 'src/app/modules/quotation/model/AssoAffaireOrderSearchResult';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'visit-prepa-customer-orders-responsible',
@@ -13,42 +26,145 @@ import { Tiers } from '../../model/Tiers';
   styleUrls: ['./visit-prepa-customer-orders-responsible.component.css']
 })
 
-export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit {
-
+export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, AfterContentChecked {
+  @Input() quotationSearch: QuotationSearch = {} as QuotationSearch;
+  @Input() orderingSearch: OrderingSearch = {} as OrderingSearch;
   @Input() responsable: Responsable = {} as Responsable;
-  @Input() editMode: boolean = false;
   @Input() tiers: Tiers = {} as Tiers;
+  @Input() overrideIconAction: string = "";
+  @Input() affaireSearch: AffaireSearch | undefined;
+
+  affaires: AssoAffaireOrderSearchResult[] | undefined;
+  allEmployees: Employee[] = [] as Array<Employee>;
   customerOrders: CustomerOrder[] | undefined;
-  orderingSearch: OrderingSearch = {} as OrderingSearch;
-  quotationSearch: QuotationSearch = {} as QuotationSearch;
-  provisionSearch: AffaireSearch = {} as AffaireSearch;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   responsableAccountSearch: Tiers | undefined;
+  orders: OrderingSearchResult[] | undefined;
+  invoices: InvoiceSearchResult[] | undefined;
+  quotations: QuotationSearchResult[] | undefined;
+  customerOrderFiller: CustomerOrderFiller[] | undefined;
+  ordersList: OrderingSearchResult[] | undefined;
+  bookmark: AffaireSearch | undefined;
+  customerOrderList: CustomerOrder[] | undefined;
+  customerOrder: CustomerOrder = {} as CustomerOrder;
+  reportingObservableRef: Subscription | undefined;
 
-  constructor(
-  ) { }
+  dataToDisplay: any | undefined;
 
 
-  ngOnInit() {
+  displayedColumnsSalesRecord: SortTableColumn<CustomerOrderFiller>[] = [];
+  salesRecordTableActions: SortTableAction<CustomerOrderFiller>[] = [] as Array<SortTableAction<CustomerOrderFiller>>;
+  tableAction: SortTableAction<CustomerOrderFiller>[] = [];
+  @Output() actionBypass: EventEmitter<InvoiceSearchResult> = new EventEmitter<InvoiceSearchResult>();
 
-    this.loadQuotationFilter();
-  }
-  loadQuotationFilter() {
-    this.orderingSearch.customerOrders = [this.tiers];
-    this.invoiceSearch.customerOrders = [this.tiers];
-    this.quotationSearch.customerOrders = [this.tiers];
-    this.provisionSearch.customerOrders = [this.tiers];
+  invoiceSearchList: ITiers[] =[];
+  provisionSearch: AffaireSearch = {} as AffaireSearch;
 
-    if (this.tiers.responsables) {
-      this.orderingSearch.customerOrders.push(...this.tiers.responsables);
-      this.invoiceSearch.customerOrders.push(...this.tiers.responsables);
-      this.quotationSearch.customerOrders.push(...this.tiers.responsables);
-      this.provisionSearch.customerOrders.push(...this.tiers.responsables);
+  constructor(private orderingSearchResultService: OrderingSearchResultService,
+    private invoiceSearchResultService: InvoiceSearchResultService,
+    private changeDetectorRef: ChangeDetectorRef,
+    ) {
     }
 
-    this.responsableAccountSearch = this.tiers;
+  ngAfterContentChecked(): void {
+      this.changeDetectorRef.detectChanges();
+  }
+
+  ngOnInit() {
+    this.displayedColumnsSalesRecord = [];
+    this.quotations = [{} as QuotationSearchResult];
+    this.invoices = [{} as InvoiceSearchResult];
+    this.customerOrderFiller = [{} as CustomerOrderFiller];
+    this.customerOrderList = [{} as CustomerOrder];
+
+    this.displayedColumnsSalesRecord.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "Nº commande"  } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "createdDateCO", fieldName: "createdDateCO", label: "Date de creation", valueFonction: formatDateTimeForSortTable } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire"  } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut commande"  } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "provisionStatus", fieldName: "provisionStatus", label: "Statut Provision"  } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "invoiceId", fieldName: "invoiceId", label: "facture"  } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "createdDateInvoice", fieldName: "createdDateInvoice", label: "Date Facture", valueFonction: formatDateTimeForSortTable  } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "totalPriceInvoice", fieldName: "totalPriceInvoice", label: "Montant Facture", valueFonction: formatEurosForSortTable  } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "remainingToPayInvoice", fieldName: "remainingToPayInvoice", label: "Reste a payer", valueFonction: formatEurosForSortTable  } as SortTableColumn<CustomerOrderFiller>);
+
+    if (this.overrideIconAction == "") {
+
+    this.salesRecordTableActions.push({
+      actionIcon: "visibility", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction<CustomerOrderFiller>, element: CustomerOrderFiller) => {
+        if (element)
+          return ['/order', element.customerOrderId];
+        return undefined;
+      }, display: true,
+    } as SortTableAction<CustomerOrderFiller>);
+
+      this.salesRecordTableActions.push({
+        actionIcon: "point_of_sale", actionName: "Voir le détail de la facture / associer", actionLinkFunction: (action: SortTableAction<CustomerOrderFiller>, element: CustomerOrderFiller) => {
+          if (element)
+            return ['/invoicing/view', element.invoiceId];
+          return undefined;
+        }, display: true,
+      } as SortTableAction<CustomerOrderFiller>);
+
+    }
+    this.loadCustomerOrderFilter();
+    this.loadInvoiceFilter();
+  }
+
+ loadCustomerOrderFilter() {
+    this.orderingSearch.customerOrders = [this.tiers];
+    this.orderingSearchResultService.getOrders(this.orderingSearch).subscribe(response => {
+      this.orders = response;
+      this.fillCustomerOrderFiller();
+    })
+  }
+
+ loadInvoiceFilter(){
+  this.invoiceSearch.customerOrders = [this.tiers];
+  this.invoiceSearchResultService.getInvoicesList(this.invoiceSearch).subscribe(response => {
+    this.invoices = response;
+  })
+  }
+
+  fillCustomerOrderFiller() {
+    this.customerOrderFiller = [];
+    const fillerMap = new Map<number, CustomerOrderFiller>();
+
+    if (this.orders !== undefined && this.orders.length > 0) {
+      for (let i = 0; i < this.orders.length; i++) {
+        if (this.orders[i].customerOrderId !== undefined) {
+          const fillerItem: CustomerOrderFiller = {
+            customerOrderId: this.orders[i].customerOrderId,
+            customerOrderStatus: this.orders[i].customerOrderStatus || '',
+            affaireLabel: this.orders[i].affaireLabel || '',
+            provisionStatus: this.orders[i].provisionStatus || '',
+            createdDateCO: this.orders[i].createdDate || '',
+            invoiceId: 0,
+            createdDateInvoice: new Date(),
+            totalPriceInvoice: 0,
+            remainingToPayInvoice: 0,
+            quotationStatus: '',
+            dateFacture: new Date(),
+          };
+
+          fillerMap.set(this.orders[i].customerOrderId, fillerItem);
+        }
+      }
+    }
+
+    if (this.invoices !== undefined && this.invoices.length > 0) {
+      for (let i = 0; i < this.invoices.length; i++) {
+        const customerOrderId = this.invoices[i].customerOrderId;
+
+        if (fillerMap.has(customerOrderId)) {
+          const fillerItem = fillerMap.get(customerOrderId)!;
+          fillerItem.invoiceId = this.invoices[i].invoiceId || 0;
+          fillerItem.createdDateInvoice = this.invoices[i].createdDate || '';
+          fillerItem.totalPriceInvoice = this.invoices[i].totalPrice || 0;
+          fillerItem.remainingToPayInvoice = this.invoices[i].remainingToPay || 0;
+        }
+      }
+    }
+      this.customerOrderFiller = Array.from(fillerMap.values());
   }
 
 }
-
-

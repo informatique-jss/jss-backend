@@ -8,6 +8,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatListModule } from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSortModule } from '@angular/material/sort';
@@ -30,8 +31,11 @@ import { TiersListComponent } from '../tiers-list/tiers-list.component';
 import { PrincipalComponent } from '../tiers-main/tiers-main.component';
 import { TiersComponent } from './tiers.component';
 import { VisitPrepaTiersResponsibleInfoComponent } from '../visit-prepa-tiers-responsible-info/visit-prepa-tiers-responsible-info.component';
-import { VisitPrepaTiersTurnoverComponent } from '../visit-prepa-tiers-turnover/visit-prepa-tiers-turnover.component';
+import { ComplaintTiersComponent } from '../complaint-tiers/complaint-tiers.component';
 import { VisitPrepaCustomerOrdersResponsibleComponent } from '../visit-prepa-customer-orders-responsible/visit-prepa-customer-orders-responsible.component';
+import { SelectReclamationProblemComponent } from 'src/app/modules/miscellaneous/components/forms/select-reclamation-problem/select-reclamation-problem.component';
+import { SelectReclamationOriginComponent } from 'src/app/modules/miscellaneous/components/forms/select-reclamation-origin/select-reclamation-origin.component';
+import { SelectReclamationCauseComponent } from 'src/app/modules/miscellaneous/components/forms/select-reclamation-causes/select-reclamation-causes.component';
 
 const routes: Routes = [
   { path: 'tiers', component: TiersComponent },
@@ -46,6 +50,7 @@ const routes: Routes = [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
     CommonModule,
     MatTabsModule,
+    MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
     MatInputModule,
@@ -63,7 +68,7 @@ const routes: Routes = [
     DragDropModule,
     QuotationModule,
     InvoicingModule,
-    ReportingModule
+    ReportingModule,
   ],
   declarations: [TiersComponent,
     PrincipalComponent,
@@ -75,7 +80,10 @@ const routes: Routes = [
     TiersListComponent,
     RffListComponent,
     VisitPrepaTiersResponsibleInfoComponent,
-    VisitPrepaTiersTurnoverComponent,
+    ComplaintTiersComponent,
+    SelectReclamationProblemComponent,
+    SelectReclamationOriginComponent,
+    SelectReclamationCauseComponent,
     VisitPrepaCustomerOrdersResponsibleComponent,
   ],
   providers: [
