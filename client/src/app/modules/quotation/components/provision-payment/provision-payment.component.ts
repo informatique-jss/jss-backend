@@ -82,10 +82,6 @@ export class ProvisionPaymentComponent implements OnInit {
     if (this.habilitationsService.isAdministrator())
       this.paymentsDisplayedColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Est annulé ?" } as SortTableColumn<Payment>);
     this.paymentsDisplayedColumns.push({ id: "invoice", fieldName: "invoice.manualAccountingDocumentNumber", label: "Facture associée" } as SortTableColumn<Payment>);
-<<<<<<< HEAD
-
-=======
->>>>>>> bc5fe1fd (fix)
     this.paymentsTableActions.push({
       actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (column: SortTableAction<Payment>, element: Payment, event: any) => {
         if ((!element.invoice && !element.isCancelled))
