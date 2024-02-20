@@ -80,5 +80,4 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 	public QuotationAbandonReason getAbandonReason();
 
 	public void setAbandonReason(QuotationAbandonReason abandonReason);
-
 }

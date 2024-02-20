@@ -64,10 +64,10 @@ dependencies {
     // Azure libs
     implementation 'com.azure:azure-ai-formrecognizer:4.0.6'
     implementation 'com.azure:azure-identity:1.8.3'
-}
- 
-group = 'com.jss.osiris'
-version = '21.1'
+} 
+
+group = 'com.jss.osiris' 
+version = '20.2' 
 description = 'Outil Sympa, Interactif, Révolutionnairement Intuitif et Simple'
 sourceCompatibility = '17'
 targetCompatibility = '17'
