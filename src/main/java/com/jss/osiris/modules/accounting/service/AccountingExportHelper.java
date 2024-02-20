@@ -314,7 +314,8 @@ public class AccountingExportHelper {
                 return file;
         }
 
-        public File getBalance(List<AccountingBalance> balanceRecords, boolean isGenerale) throws OsirisException {
+        public File getBalance(List<AccountingBalance> balanceRecords, boolean isGenerale, LocalDateTime startDate,
+                        LocalDateTime endDate) throws OsirisException {
 
                 XSSFWorkbook wb = new XSSFWorkbook();
 
@@ -390,6 +391,12 @@ public class AccountingExportHelper {
                 XSSFRow currentRow = currentSheet.createRow(currentLine++);
                 XSSFCell currentCell = currentRow.createCell(0);
                 currentCell.setCellValue("Balance" + (isGenerale ? " générale" : ""));
+
+                currentCell.setCellValue(
+                                "SPPS - " + siretJss + " - "
+                                                + startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                                + " - "
+                                                + endDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
                 CellRangeAddress region = new CellRangeAddress(0, 1, 0, isGenerale ? 8 : 9);
                 cleanBeforeMergeOnValidCells(currentSheet, region, titleCellStyle);
