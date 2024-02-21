@@ -30,7 +30,7 @@ public class SalesReclamation implements Serializable, IId {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_cause")
-  private SalesReclamationProblem salesCause;
+  private SalesReclamationCause salesCause;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_origin")
@@ -69,11 +69,11 @@ public class SalesReclamation implements Serializable, IId {
     this.salesProblem = salesProblem;
   }
 
-  public SalesReclamationProblem getSalesCause() {
+  public SalesReclamationCause getSalesCause() {
     return salesCause;
   }
 
-  public void setSalesCause(SalesReclamationProblem salesCause) {
+  public void setSalesCause(SalesReclamationCause salesCause) {
     this.salesCause = salesCause;
   }
 
@@ -93,20 +93,20 @@ public class SalesReclamation implements Serializable, IId {
     this.affaire = affaire;
   }
 
-  public LocalDateTime getComplaintDate() {
-    return complaintDate;
-  }
-
-  public void setComplaintDate(LocalDateTime complaintDate) {
-    this.complaintDate = complaintDate;
-  }
-
   public Integer getIdTiers() {
     return idTiers;
   }
 
   public void setIdTiers(Integer idTiers) {
     this.idTiers = idTiers;
+  }
+
+  public LocalDateTime getComplaintDate() {
+    return complaintDate;
+  }
+
+  public void setComplaintDate(LocalDateTime complaintDate) {
+    this.complaintDate = complaintDate;
   }
 
   public String getResponsableName() {
@@ -124,4 +124,5 @@ public class SalesReclamation implements Serializable, IId {
   public void setObservations(String observations) {
     this.observations = observations;
   }
+
 }

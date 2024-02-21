@@ -100,7 +100,7 @@ export class ComplaintTiersComponent implements OnInit, AfterContentChecked{
     this.reclamation.observations = this.observations;
 
     let d = new Date();
-    this.reclamation.complaintDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    this.reclamation.complaintDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours()+1, d.getUTCMinutes());
     this.salesReclamationService.addOrUpdateReclamation(this.reclamation).subscribe(response => {
       this.reclamation = response;
     });
