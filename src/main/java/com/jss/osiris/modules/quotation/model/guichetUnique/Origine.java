@@ -28,7 +28,7 @@ public class Origine implements Serializable, IId {
     @JoinColumn(name = "id_type_origine")
     TypeOrigine typeOrigine;
 
-    @Column(length = 255)
+    @Column(length = 1000)
     private String autreOrigine;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

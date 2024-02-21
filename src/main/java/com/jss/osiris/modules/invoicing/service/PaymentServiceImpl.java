@@ -440,7 +440,8 @@ public class PaymentServiceImpl implements PaymentService {
                 for (IndexEntity foundEntity : correspondingEntities) {
                     if (foundEntity.getEntityType().equals(Payment.class.getSimpleName())) {
                         Payment foundPayment = getPayment(foundEntity.getEntityId());
-                        associateOutboundCheckPayment(payment, foundPayment);
+                        if (foundPayment != null && !payment.getId().equals(foundPayment.getId()))
+                            associateOutboundCheckPayment(payment, foundPayment);
                     }
                 }
             }

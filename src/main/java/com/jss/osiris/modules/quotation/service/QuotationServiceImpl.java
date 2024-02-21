@@ -34,6 +34,7 @@ import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
@@ -108,6 +109,15 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     public Quotation getQuotation(Integer id) {
         Optional<Quotation> quotation = quotationRepository.findById(id);
+        if (quotation.isPresent())
+            return quotation.get();
+        return null;
+    }
+
+    @Override
+    public Quotation getQuotationForAnnouncement(Announcement announcement) {
+        Optional<Quotation> quotation = quotationRepository
+                .findQuotationForAnnouncement(announcement.getId());
         if (quotation.isPresent())
             return quotation.get();
         return null;

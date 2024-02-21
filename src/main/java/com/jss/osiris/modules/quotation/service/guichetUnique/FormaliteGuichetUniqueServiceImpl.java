@@ -14,14 +14,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
@@ -103,6 +106,12 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     BatchService batchService;
 
     @Autowired
+    GlobalExceptionHandler globalExceptionHandler;
+
+    @Autowired
+    InvoiceHelper invoiceHelper;
+
+    @Autowired
     FormaliteGuichetUniqueStatusService formaliteGuichetUniqueStatusService;
 
     private String cartStatusPayed = "PAID";
@@ -123,8 +132,10 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Override
     public List<FormaliteGuichetUnique> getFormaliteGuichetUniqueToSign() {
-        return formaliteGuichetUniqueRepository.findFormaliteToSign(formaliteGuichetUniqueStatusService
-                .getFormaliteGuichetUniqueStatus(FormaliteGuichetUniqueStatus.SIGNATURE_PENDING));
+        return formaliteGuichetUniqueRepository.findFormaliteToSign(Arrays.asList(formaliteGuichetUniqueStatusService
+                .getFormaliteGuichetUniqueStatus(FormaliteGuichetUniqueStatus.SIGNATURE_PENDING),
+                formaliteGuichetUniqueStatusService
+                        .getFormaliteGuichetUniqueStatus(FormaliteGuichetUniqueStatus.AMENDMENT_SIGNATURE_PENDING)));
     }
 
     @Override
@@ -336,19 +347,25 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             }
         }
 
-        if (originalFormalite != null
+        if (formalite != null && originalFormalite != null
                 && (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.SIGNATURE_PENDING)
                         || originalFormalite.getStatus().getCode()
-                                .equals(FormaliteGuichetUniqueStatus.AMENDMENT_SIGNATURE_PENDING)))
+                                .equals(FormaliteGuichetUniqueStatus.AMENDMENT_SIGNATURE_PENDING)
+                                && originalFormalite.getIsAuthorizedToSign() != null
+                                && originalFormalite.getIsAuthorizedToSign()))
             batchService.declareNewBatch(Batch.SIGN_FORMALITE_GUICHET_UNIQUE, originalFormalite.getId());
 
-        if (originalFormalite != null
+        if (formalite != null && originalFormalite != null
                 && (Arrays
                         .asList(FormaliteGuichetUniqueStatus.PAYMENT_PENDING,
                                 FormaliteGuichetUniqueStatus.PAYMENT_VALIDATION_PENDING,
                                 FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_PENDING,
                                 FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_VALIDATION_PENDING)
-                        .contains(originalFormalite.getStatus().getCode())))
+                        .contains(originalFormalite.getStatus().getCode())
+                        || originalFormalite.getStatus().getCode()
+                                .equals(FormaliteGuichetUniqueStatus.AMENDMENT_PENDING)
+                                && originalFormalite.getIsAuthorizedToSign() != null
+                                && originalFormalite.getIsAuthorizedToSign()))
             batchService.declareNewBatch(Batch.PAY_FORMALITE_GUICHET_UNIQUE, originalFormalite.getId());
 
         return originalFormalite;
@@ -383,17 +400,25 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             if (!attachmentFound) {
                 TypeDocument typeDocument = typeDocumentService
                         .getTypeDocumentByCode(piecesJointe.getTypeDocument().getCode());
-                File file = guichetUniqueDelegateService
-                        .getAttachmentById(piecesJointe.getAttachmentId(), null);
+                File file = null;
                 try {
-                    attachmentService.addAttachment(new FileInputStream(file), provision.getId(),
-                            Provision.class.getSimpleName(),
-                            typeDocument.getAttachmentType(), piecesJointe.getNomDocument(), false,
-                            piecesJointe.getNomDocument(), piecesJointe, null);
-                    file.delete();
-                } catch (FileNotFoundException e) {
-                    throw new OsirisException(e, "erreur when reading file");
+                    file = guichetUniqueDelegateService
+                            .getAttachmentById(piecesJointe.getAttachmentId(), null);
+                } catch (Exception e) {
+                    globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG); // TODO : To handle files not found
+                                                                                   // in INPI ... To remove when
+                                                                                   // possible
                 }
+                if (file != null)
+                    try {
+                        attachmentService.addAttachment(new FileInputStream(file), provision.getId(),
+                                Provision.class.getSimpleName(),
+                                typeDocument.getAttachmentType(), piecesJointe.getNomDocument(), false,
+                                piecesJointe.getNomDocument(), piecesJointe, null);
+                        file.delete();
+                    } catch (FileNotFoundException e) {
+                        throw new OsirisException(e, "erreur when reading file");
+                    }
             }
         }
     }
@@ -471,6 +496,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         invoice.setManualAccountingDocumentDate(
                 LocalDate.parse(cart.getPaymentDate() != null ? cart.getPaymentDate() : cart.getUpdated(),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+
         for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
             if (asso.getId().equals(provision.getAssoAffaireOrder().getId()))
                 for (Provision inProvision : asso.getProvisions()) {
@@ -534,7 +560,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         invoice.setIsInvoiceFromProvider(false);
         invoice.setIsProviderCreditNote(true);
         invoice.setProvision(provision);
-        return invoiceService.addOrUpdateInvoiceFromUser(invoice);
+
+        return invoiceHelper.getPriceTotal(invoice) > 0f ? invoiceService.addOrUpdateInvoiceFromUser(invoice) : null;
     }
 
     private InvoiceItem getInvoiceItemForCartRate(CartRate cartRate, Cart cart) throws OsirisException {

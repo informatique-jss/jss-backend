@@ -306,7 +306,7 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void disableDocument(Attachment attachment) {
+    public void disableAttachment(Attachment attachment) {
         attachment.setIsDisabled(true);
         addOrUpdateAttachment(attachment);
     }

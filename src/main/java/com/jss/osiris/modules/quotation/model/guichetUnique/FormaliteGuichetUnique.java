@@ -83,6 +83,8 @@ public class FormaliteGuichetUnique implements IId {
 
     private Boolean optionME;
 
+    private Boolean isAuthorizedToSign;
+
     @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
     @JsonProperty("validationsRequests")
@@ -422,5 +424,13 @@ public class FormaliteGuichetUnique implements IId {
 
     public void setIsActeDeposit(Boolean isActeDeposit) {
         this.isActeDeposit = isActeDeposit;
+    }
+
+    public Boolean getIsAuthorizedToSign() {
+        return isAuthorizedToSign;
+    }
+
+    public void setIsAuthorizedToSign(Boolean isAuthorizedToSign) {
+        this.isAuthorizedToSign = isAuthorizedToSign;
     }
 }

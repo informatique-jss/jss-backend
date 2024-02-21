@@ -956,6 +956,14 @@
           </tr>
           <tr>
             <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypeSpfe"
+                label="Type d'authorité compétente - SPFE" [form]="constantForm"
+                propertyName="competentAuthorityTypeSpfe" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-invoice-status-one [(model)]="constant.invoiceStatusPayed" label="Statut de facture - payée"
                 [form]="constantForm" propertyName="invoiceStatusPayed" [isMandatory]="true" [isDisabled]="!editMode">
               </select-invoice-status-one>

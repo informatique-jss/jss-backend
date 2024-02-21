@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.QueryHint;
 
@@ -68,4 +69,7 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
 
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<Quotation> findByCustomerOrders_Id(Integer idCustomerOrder);
+
+        @Query(value = "select q.* from quotation q where exists (select 1 from asso_affaire_order a join provision p on p.id_asso_affaire_order = a.id where a.id_quotation = q.id and  p.id_announcement = :announcementId)", nativeQuery = true)
+        Optional<Quotation> findQuotationForAnnouncement(@Param("announcementId") Integer announcementId);
 }

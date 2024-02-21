@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING, GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { HabilitationsService } from '../../../../services/habilitations.service';
@@ -32,6 +32,8 @@ export class FormaliteComponent implements OnInit {
 
   FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY = FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY;
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
+  GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING = GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING;
+  GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING = GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING;
   instanceOfCustomerOrderFn = instanceOfCustomerOrder;
 
   competentAuthorityInpi = this.constantService.getCompetentAuthorityInpi();

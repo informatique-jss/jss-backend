@@ -495,6 +495,10 @@ public class Constant implements Serializable, IId {
 	private CompetentAuthorityType competentAuthorityTypePrefecture;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_competent_authority_type_spfe")
+	private CompetentAuthorityType competentAuthorityTypeSpfe;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_invoice_status_send")
 	private InvoiceStatus invoiceStatusSend;
 
@@ -2075,5 +2079,13 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeRff(BillingType billingTypeRff) {
 		this.billingTypeRff = billingTypeRff;
+	}
+
+	public CompetentAuthorityType getCompetentAuthorityTypeSpfe() {
+		return competentAuthorityTypeSpfe;
+	}
+
+	public void setCompetentAuthorityTypeSpfe(CompetentAuthorityType competentAuthorityTypeSpfe) {
+		this.competentAuthorityTypeSpfe = competentAuthorityTypeSpfe;
 	}
 }

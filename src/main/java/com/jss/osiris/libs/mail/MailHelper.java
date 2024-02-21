@@ -1074,10 +1074,20 @@ public class MailHelper {
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
 
-        if (isReminder)
-            mail.setSubject("Votre commande n°" + customerOrder.getId() + " est en attente de paiement");
-        else
-            mail.setSubject("Votre commande n°" + customerOrder.getId() + " est terminée");
+        if (invoice != null) {
+            String type = invoice.getIsCreditNote() ? "avoir" : "facture";
+            if (isReminder)
+                mail.setSubject("Votre commande n°" + customerOrder.getId() + " / " + type + " n°" + invoice.getId()
+                        + " est en attente de paiement");
+            else
+                mail.setSubject("Votre commande n°" + customerOrder.getId() + " / " + type + " n°" + invoice.getId()
+                        + " est terminée");
+        } else {
+            if (isReminder)
+                mail.setSubject("Votre commande n°" + customerOrder.getId() + " est en attente de paiement");
+            else
+                mail.setSubject("Votre commande n°" + customerOrder.getId() + " est terminée");
+        }
 
         mailService.addMailToQueue(mail);
     }
@@ -1631,7 +1641,7 @@ public class MailHelper {
         mail.setSubject("Vos remboursements forfaitaires de frais (" + rff.getTiers().getId() + ")");
 
         mail.setExplaination3("Cette facture doit obligatoirement être datée de "
-                + LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+                + rff.getEndDate().format(DateTimeFormatter.ofPattern("MMMM yyyy"))
                 + ". Le paiement sera effectué à compter de réception de la facture et versé sur le RIB "
                 + rff.getRffBic() + " / " + rff.getRffIban());
 

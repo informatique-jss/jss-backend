@@ -74,8 +74,10 @@ import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
+import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.BillingLabelTypeService;
+import com.jss.osiris.modules.tiers.service.RffService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
 @RestController
@@ -158,6 +160,9 @@ public class InvoicingController {
     @Autowired
     BillingLabelTypeService billingLabelTypeService;
 
+    @Autowired
+    RffService rffService;
+
     @PostMapping(inputEntryPoint + "/azure-receipt/invoice")
     public ResponseEntity<AzureReceiptInvoice> updateAzureReceiptInvoice(
             @RequestBody AzureReceiptInvoice azureReceiptInvoice)
@@ -224,6 +229,17 @@ public class InvoicingController {
         return new ResponseEntity<Invoice>(
                 azureInvoiceService.generateInvoiceFromAzureInvoice(azureInvoice, provision),
                 HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    @GetMapping(inputEntryPoint + "/rff/create")
+    public ResponseEntity<Invoice> createInvoiceFromRff(@RequestParam Integer rffId)
+            throws OsirisValidationException, OsirisClientMessageException, OsirisException, OsirisDuplicateException {
+        Rff rff = rffService.getRff(rffId);
+        if (rff == null)
+            throw new OsirisValidationException("rff");
+
+        return new ResponseEntity<Invoice>(rffService.generateInvoiceForRff(rff), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/azure-invoice")
@@ -843,7 +859,7 @@ public class InvoicingController {
             throw new OsirisValidationException("Must be same Competent authority");
 
         if (originInvoice.getProvider() != null
-                && !newInvoice.getCompetentAuthority().getId().equals(originInvoice.getProvider().getId()))
+                && !newInvoice.getProvider().getId().equals(originInvoice.getProvider().getId()))
             throw new OsirisValidationException("Must be same provider");
 
         if (originInvoice.getConfrere() != null

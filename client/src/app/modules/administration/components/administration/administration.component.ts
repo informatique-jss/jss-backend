@@ -86,6 +86,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   RECLAMATION_PROBLEM_REFERENTIAL = "Reclamation - Probleme de vente";
   RECLAMATION_CAUSE_REFERENTIAL = "Reclamation - Cause du probleme de vente";
   RECLAMATION_ORIGIN_REFERENTIAL = "Reclamation - Origine du probleme de vente";
+  QUOTATION_ABANDON_REASON_REFERENTIAL = "Raison d'abandon des commandes/devis";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -156,6 +157,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.RECLAMATION_CAUSE_REFERENTIAL);
     this.referentials.push(this. RECLAMATION_ORIGIN_REFERENTIAL);
 
+    this.referentials.push(this.QUOTATION_ABANDON_REASON_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(

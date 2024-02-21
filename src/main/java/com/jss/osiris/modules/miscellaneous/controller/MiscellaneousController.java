@@ -1017,7 +1017,7 @@ public class MiscellaneousController {
         if (attachment == null)
             throw new OsirisValidationException("attachment");
 
-        attachmentService.disableDocument(attachment);
+        attachmentService.disableAttachment(attachment);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 

@@ -69,6 +69,14 @@ export class AttachmentsComponent implements OnInit {
         this.uploadAttachmentService.downloadAttachment(element);
       }, display: true
     } as SortTableAction<Attachment>);
+    this.tableActions.push({
+      actionIcon: "delete", actionName: "Supprimer le fichier", actionClick: (column: SortTableAction<Attachment>, element: Attachment, event: any): void => {
+        this.uploadAttachmentService.disableAttachment(element).subscribe(response => {
+          element.isDisabled = true;
+          this.setDataTable();
+        })
+      }, display: true
+    } as SortTableAction<Attachment>);
   }
 
   formatDateTimeForSortTable = formatDateTimeForSortTable;
@@ -89,7 +97,7 @@ export class AttachmentsComponent implements OnInit {
       for (let attachment of this.entity.attachments)
         if (this.attachmentTypesToHide)
           for (let toHideType of this.attachmentTypesToHide)
-            if (toHideType.id != attachment.attachmentType.id)
+            if (toHideType.id != attachment.attachmentType.id && !attachment.isDisabled)
               this.filteredAttachments.push(attachment);
   }
 

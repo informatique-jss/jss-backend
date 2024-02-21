@@ -373,7 +373,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         (principalAccountingAccountId != null && !principalAccountingAccountId.equals(0) ? principalAccountingAccountId
             : 0),
         startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-    return accountingExportHelper.getBalance(accountingBalanceRecords, false);
+    return accountingExportHelper.getBalance(accountingBalanceRecords, false, startDate, endDate);
   }
 
   @Override
@@ -385,7 +385,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         (principalAccountingAccountId != null && !principalAccountingAccountId.equals(0) ? principalAccountingAccountId
             : 0),
         startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-    return accountingExportHelper.getBalance(accountingBalanceRecords, true);
+    return accountingExportHelper.getBalance(accountingBalanceRecords, true, startDate, endDate);
   }
 
   @Override

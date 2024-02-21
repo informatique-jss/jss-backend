@@ -147,25 +147,6 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
 
     this.setColumns();
 
-    this.paymentSearch.isHideAssociatedPayments = true;
-    this.paymentSearch.isHideAppoint = true;
-    this.paymentSearch.isHideCancelledPayments = true;
-
-    if (this.isForDashboard && !this.payments && this.paymentSearch) {
-      this.searchPayments();
-    } else {
-      this.bookmark = this.userPreferenceService.getUserSearchBookmark("payments") as PaymentSearch;
-      if (this.bookmark) {
-        this.paymentSearch = this.bookmark;
-        if (this.paymentSearch.startDate)
-          this.paymentSearch.startDate = new Date(this.paymentSearch.startDate);
-        if (this.paymentSearch.endDate)
-          this.paymentSearch.endDate = new Date(this.paymentSearch.endDate);
-        this.searchPayments();
-      }
-
-    }
-
     let idPayment = this.activatedRoute.snapshot.params.idPayment;
     if (idPayment) {
       this.paymentSearch.idPayment = idPayment;
@@ -174,7 +155,23 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
       this.paymentSearch.isHideCancelledPayments = false;
       this.appService.changeHeaderTitle("Paiements");
       this.searchPayments();
+    } else {
+      if (this.isForDashboard && !this.payments && this.paymentSearch) {
+        this.searchPayments();
+      } else {
+        this.bookmark = this.userPreferenceService.getUserSearchBookmark("payments") as PaymentSearch;
+        if (this.bookmark) {
+          this.paymentSearch = this.bookmark;
+          if (this.paymentSearch.startDate)
+            this.paymentSearch.startDate = new Date(this.paymentSearch.startDate);
+          if (this.paymentSearch.endDate)
+            this.paymentSearch.endDate = new Date(this.paymentSearch.endDate);
+          this.searchPayments();
+        }
+      }
     }
+
+
 
   }
 

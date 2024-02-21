@@ -14,9 +14,9 @@ public interface FormaliteGuichetUniqueRepository extends QueryCacheCrudReposito
     @Query(nativeQuery = true, value = "select * from formalite_guichet_unique where reference_mandataire like concat('%',trim(:referenceMandataire),'%') ")
     List<FormaliteGuichetUnique> findByRefenceMandataire(@Param("referenceMandataire") String reference);
 
-    @Query("select f from FormaliteGuichetUnique f where status in (:statusSignaturePending) and formalite is not null ")
+    @Query("select f from FormaliteGuichetUnique f where status in (:statusSignaturePending) and formalite is not null and content is not null")
     List<FormaliteGuichetUnique> findFormaliteToSign(
-            @Param("statusSignaturePending") FormaliteGuichetUniqueStatus statusSignaturePending);
+            @Param("statusSignaturePending") List<FormaliteGuichetUniqueStatus> statusSignaturePending);
 
     List<FormaliteGuichetUnique> findByLiasseNumber(String value);
 

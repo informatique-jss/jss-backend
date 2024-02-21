@@ -138,9 +138,7 @@ export class RffListComponent implements OnInit {
         this.tableActionRff.push({
           actionIcon: "point_of_sale", actionName: "Générer la facture du RFF", actionClick: (column: SortTableAction<Rff>, element: Rff, event: any) => {
             if (element.isCancelled == false && element.isSent == true && this.habilitationsService.canAddNewInvoice()) {
-              this.rffService.generateInvoiceForRff(element).subscribe(res => {
-                this.searchRff();
-              });
+              this.createInvoiceFromRff(element, event);
             }
           }, display: true,
         } as SortTableAction<Rff>);
@@ -247,4 +245,8 @@ export class RffListComponent implements OnInit {
     }
   }
 
+  createInvoiceFromRff(rff: Rff, event: any) {
+    if (this.rff)
+      this.appService.openRoute(event, 'invoicing/rff/add/' + rff.id, null);
+  }
 }
