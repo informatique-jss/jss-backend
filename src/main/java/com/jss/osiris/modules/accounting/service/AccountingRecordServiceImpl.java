@@ -208,6 +208,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingRecordSearch.getHideLettered() == null)
       accountingRecordSearch.setHideLettered(false);
 
+    if (accountingRecordSearch.getIsFromAs400() == null)
+      accountingRecordSearch.setIsFromAs400(false);
+
     if (accountingRecordSearch.getTiersId() == null)
       accountingRecordSearch.setTiersId(0);
 
@@ -235,6 +238,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         accountingRecordSearch.getTiersId(),
         accountingRecordSearch.getConfrereId(),
         accountingRecordSearch.getHideLettered(),
+        accountingRecordSearch.getIsFromAs400(),
         accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
         accountingRecordSearch.getEndDate().withHour(23).withMinute(59),
         activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),

@@ -78,7 +78,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " COALESCE(re1.firstname || ' ' || re1.lastname ,re2.firstname || ' ' || re2.lastname ) as responsable "
                         +
                         " from accounting_record r " +
-                        " join accounting_journal j on j.id = r.id_accounting_journal " +
+                        " left join accounting_journal j on j.id = r.id_accounting_journal " +
                         " join accounting_account a on a.id = r.id_accounting_account " +
                         " join principal_accounting_account pa on pa.id = a.id_principal_accounting_account " +
                         " left join tiers t on (t.id_accounting_account_customer = r.id_accounting_account  or t.id_accounting_account_deposit=r.id_accounting_account) "
@@ -95,6 +95,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         " and (:tiersId =0 or t.id is not null and t.id = :tiersId) " +
                         " and (:hideLettered = false or r.lettering_date_time is null ) " +
+                        " and (:isFromAs400 = false or r.is_from_as400=true ) " +
                         " and coalesce(r.manual_accounting_document_date,r.operation_date_time)>=:startDate and coalesce(r.manual_accounting_document_date,r.operation_date_time)<=:endDate  "
                         +
                         " and (:canViewRestricted=true or a.is_view_restricted=false)  " +
@@ -113,6 +114,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("tiersId") Integer tiersId,
                         @Param("confrereId") Integer confrereId,
                         @Param("hideLettered") Boolean hideLettered,
+                        @Param("isFromAs400") Boolean isFromAs400,
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate,
                         @Param("canViewRestricted") boolean canViewRestricted,
