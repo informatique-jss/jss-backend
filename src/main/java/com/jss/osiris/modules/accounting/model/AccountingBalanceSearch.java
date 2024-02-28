@@ -10,6 +10,16 @@ public class AccountingBalanceSearch {
   private LocalDateTime startDate;
   private LocalDateTime endDate;
 
+  private Boolean isFromAs400;
+
+  public Boolean getIsFromAs400() {
+    return isFromAs400;
+  }
+
+  public void setIsFromAs400(Boolean isFromAs400) {
+    this.isFromAs400 = isFromAs400;
+  }
+
   public AccountingAccountClass getAccountingClass() {
     return accountingClass;
   }

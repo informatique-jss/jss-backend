@@ -144,7 +144,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "            on record.id_accounting_account=accounting.id  join accounting_account_class aac on aac.id = pa.id_accounting_account_class  "
                         + "			left join invoice i on i.id = record.id_invoice"
                         + " where (accounting.id=:accountingAccountId or :accountingAccountId =0 ) and "
-                        +
+                        + "   (:isFromAs400 = false or record.is_from_as400=true ) and " +
                         "(accounting.id_principal_accounting_account=:principalAccountingAccountId or :principalAccountingAccountId =0 ) and "
                         +
                         "(record.accounting_date_time is null or (coalesce(record.manual_accounting_document_date,record.accounting_date_time) >=:startDate and coalesce(record.manual_accounting_document_date,record.accounting_date_time) <=:endDate )) and "
@@ -160,7 +160,8 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("principalAccountingAccountId") Integer principalAccountingAccountId,
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate,
-                        @Param("canViewRestricted") boolean canViewRestricted);
+                        @Param("canViewRestricted") boolean canViewRestricted,
+                        @Param("isFromAs400") Boolean isFromAs400);
 
         @Query(nativeQuery = true, value = "select" + "        sum(case "
                         + "            when record.isanouveau=false then record.credit_amount "
@@ -182,7 +183,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "            on record.id_accounting_account=accounting.id  join accounting_account_class aac on aac.id = pa.id_accounting_account_class  "
                         + "			left join invoice i on i.id = record.id_invoice"
                         + " where (accounting.id=:accountingAccountId or :accountingAccountId =0 ) and "
-                        +
+                        + "  (:isFromAs400 = false or record.is_from_as400=true ) and " +
                         "(accounting.id_principal_accounting_account=:principalAccountingAccountId or :principalAccountingAccountId =0 ) and "
                         +
                         "(record.accounting_date_time is null or (coalesce(record.manual_accounting_document_date,record.accounting_date_time) >=:startDate and coalesce(record.manual_accounting_document_date,record.accounting_date_time) <=:endDate )) and "
@@ -196,7 +197,8 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("principalAccountingAccountId") Integer principalAccountingAccountId,
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate,
-                        @Param("canViewRestricted") boolean canViewRestricted);
+                        @Param("canViewRestricted") boolean canViewRestricted,
+                        @Param("isFromAs400") Boolean isFromAs400);
 
         @Query("select sum(a.creditAmount) as creditAmount, " +
                         " sum(a.debitAmount) as debitAmount, pa.code as accountingAccountNumber "

@@ -16,6 +16,10 @@
           <select-accounting-account-class [(model)]="accountingBalanceSearch.accountingClass" label="Classe comptable"
             [form]="accountingBalanceForm" propertyName="accountingClass"></select-accounting-account-class>
         </td>
+        <td class="toggle-td">
+          <generic-toggle [(model)]="accountingBalanceSearch.isFromAs400" label="Depuis l'AS400 ?"
+            [form]="accountingBalanceForm" propertyName="isFromAs400"></generic-toggle>
+        </td>
         <td>
           <generic-datepicker [(model)]="accountingBalanceSearch.startDate" label="Date de début"
             [form]="accountingBalanceForm" propertyName="startDate" [isMandatory]="false"
