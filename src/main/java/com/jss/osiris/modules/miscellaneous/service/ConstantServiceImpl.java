@@ -309,12 +309,12 @@ public class ConstantServiceImpl implements ConstantService {
         return getConstants().getBillingTypeBaloNormalization();
     }
 
-    @Override 
+    @Override
     public BillingType getBillingTypeBaloPublicationFlag() throws OsirisException {
         return getConstants().getBillingTypeBaloPublicationFlag();
     }
 
-    @Override 
+    @Override
     public BillingType getBillingTypePublicationPaper() throws OsirisException {
         return getConstants().getBillingTypePublicationPaper();
     }
@@ -667,6 +667,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public CompetentAuthorityType getCompetentAuthorityTypeSpfe() throws OsirisException {
         return getConstants().getCompetentAuthorityTypeSpfe();
+    }
+
+    @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeInsee() throws OsirisException {
+        return getConstants().getCompetentAuthorityTypeInsee();
     }
 
     @Override

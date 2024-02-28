@@ -81,8 +81,8 @@ export interface Constant {
   billingTypeDeboursNonTaxable: BillingType;
   billingTypeLogo: BillingType;
   billingTypeRedactedByJss: BillingType;
-  billingTypeBaloPackage: BillingType; 
-  billingTypeBaloPublicationFlag: BillingType; 
+  billingTypeBaloPackage: BillingType;
+  billingTypeBaloPublicationFlag: BillingType;
   billingTypeBaloNormalization: BillingType;
   billingTypePublicationPaper: BillingType;
   billingTypePublicationReceipt: BillingType;
@@ -159,6 +159,7 @@ export interface Constant {
   competentAuthorityTypeSpfe: CompetentAuthorityType;
   competentAuthorityTypeChambreAgriculture: CompetentAuthorityType;
   competentAuthorityTypeUrssaf: CompetentAuthorityType;
+  competentAuthorityTypeInsee: CompetentAuthorityType;
   invoiceStatusSend: InvoiceStatus;
   invoiceStatusReceived: InvoiceStatus;
   invoiceStatusPayed: InvoiceStatus;

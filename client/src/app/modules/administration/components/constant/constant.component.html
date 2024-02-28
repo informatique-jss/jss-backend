@@ -378,7 +378,7 @@
             </td>
           </tr>
           <tr>
-            <td> 
+            <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeBaloPublicationFlag"
                 label="Type de poste de facturation - Justificatif numérique BALO" [form]="constantForm"
                 propertyName="billingTypeBaloPublicationFlag" [isMandatory]="true" [isDisabled]="!editMode">
@@ -386,7 +386,7 @@
             </td>
           </tr>
           <tr>
-            <td> 
+            <td>
               <autocomplete-billing-type [(model)]="constant.billingTypePublicationReceipt"
                 label="Type de poste de facturation - Journal justificatif PDF" [form]="constantForm"
                 propertyName="billingTypePublicationReceipt" [isMandatory]="true" [isDisabled]="!editMode">
@@ -959,6 +959,14 @@
               <select-competent-authority-type [(model)]="constant.competentAuthorityTypeSpfe"
                 label="Type d'authorité compétente - SPFE" [form]="constantForm"
                 propertyName="competentAuthorityTypeSpfe" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypeInsee"
+                label="Type d'authorité compétente - INSEE" [form]="constantForm"
+                propertyName="competentAuthorityTypeInsee" [isMandatory]="true"
                 [isDisabled]="!editMode"></select-competent-authority-type>
             </td>
           </tr>

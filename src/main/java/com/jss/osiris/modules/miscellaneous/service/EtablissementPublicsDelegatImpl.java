@@ -40,6 +40,7 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
     private String urssafUrl = "/urssaf";
     private String prefectureUrl = "/prefecture";
     private String spfeUrl = "/hypotheque";
+    private String drInseeUrl = "/dr_insee";
 
     @Autowired
     CompetentAuthorityService competentAuthorityService;
@@ -74,6 +75,7 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
         updateDireccte();
         updatePrefecture();
         updateSpfe();
+        updateDrInsee();
         geoCities = new ArrayList<GeoCity>();
         localCities = new ArrayList<City>();
     }
@@ -327,6 +329,27 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
     private void updateSpfe() throws OsirisException {
         ResponseEntity<Organisme> response = new RestTemplate().getForEntity(
                 etablissementPublicEntryPoint + spfeUrl,
+                Organisme.class);
+        if (response.getBody() != null && response.getBody().getFeatures() != null
+                && response.getBody().getFeatures().size() > 0
+                && response.getBody().getFeatures().get(0) != null)
+            for (Feature organisme : response.getBody().getFeatures().get(0)) {
+                CompetentAuthority competentAuthority = null;
+                competentAuthority = competentAuthorityService
+                        .getCompetentAuthorityByApiId(organisme.getProperties().getId());
+                if (competentAuthority == null)
+                    competentAuthority = new CompetentAuthority();
+
+                competentAuthority.setCompetentAuthorityType(constantService.getCompetentAuthorityTypeSpfe());
+                competentAuthority = mergeCompetentAuthorityWithCityZonage(competentAuthority, organisme);
+                competentAuthorityService.addOrUpdateCompetentAuthority(competentAuthority);
+            }
+    }
+
+    @SuppressWarnings({ "null" })
+    private void updateDrInsee() throws OsirisException {
+        ResponseEntity<Organisme> response = new RestTemplate().getForEntity(
+                etablissementPublicEntryPoint + drInseeUrl,
                 Organisme.class);
         if (response.getBody() != null && response.getBody().getFeatures() != null
                 && response.getBody().getFeatures().size() > 0
