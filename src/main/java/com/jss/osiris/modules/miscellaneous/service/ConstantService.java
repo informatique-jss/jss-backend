@@ -286,6 +286,8 @@ public interface ConstantService {
 
     public CompetentAuthorityType getCompetentAuthorityTypeSpfe() throws OsirisException;
 
+    public CompetentAuthorityType getCompetentAuthorityTypeInsee() throws OsirisException;
+
     public InvoiceStatus getInvoiceStatusSend() throws OsirisException;
 
     public InvoiceStatus getInvoiceStatusReceived() throws OsirisException;

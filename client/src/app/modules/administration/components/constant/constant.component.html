@@ -964,6 +964,14 @@
           </tr>
           <tr>
             <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypeInsee"
+                label="Type d'authorité compétente - INSEE" [form]="constantForm"
+                propertyName="competentAuthorityTypeInsee" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-invoice-status-one [(model)]="constant.invoiceStatusPayed" label="Statut de facture - payée"
                 [form]="constantForm" propertyName="invoiceStatusPayed" [isMandatory]="true" [isDisabled]="!editMode">
               </select-invoice-status-one>
