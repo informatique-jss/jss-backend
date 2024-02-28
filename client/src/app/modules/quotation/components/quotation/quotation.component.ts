@@ -543,10 +543,16 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
         this.quotation.abandonReason = result;
-        this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
-          this.quotation = response;
-          this.changeQuotationStatus(targetStatus);
-        });
+        if (instanceOfCustomerOrder(this.quotation))
+          this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
+            this.quotation = response;
+            this.changeQuotationStatus(targetStatus);
+          });
+        else
+          this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
+            this.quotation = response;
+            this.changeQuotationStatus(targetStatus);
+          });
       } else {
         this.isStatusOpen = false;
         this.editMode = false;
