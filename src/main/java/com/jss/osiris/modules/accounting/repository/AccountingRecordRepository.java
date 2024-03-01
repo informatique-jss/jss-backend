@@ -126,9 +126,9 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
 
         @Query(nativeQuery = true, value = "" +
                         "select  sum(case "
-                        + "            when record.isanouveau=false then record.credit_amount "
+                        + "            when record.isanouveau=false or record.is_from_as400=true then record.credit_amount "
                         + "        end) as creditAmount," + "        sum(case "
-                        + "            when record.isanouveau=false then record.debit_amount "
+                        + "            when record.isanouveau=false or record.is_from_as400=true then record.debit_amount "
                         + "        end) as debitAmount," + "		accounting.label as accountingAccountLabel,"
                         + "		pa.code as principalAccountingAccountCode,"
                         + "		aac.label as accountingAccountClassLabel,"
@@ -164,9 +164,9 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("isFromAs400") Boolean isFromAs400);
 
         @Query(nativeQuery = true, value = "select" + "        sum(case "
-                        + "            when record.isanouveau=false then record.credit_amount "
+                        + "            when record.isanouveau=false or record.is_from_as400=true then record.credit_amount "
                         + "        end) as creditAmount," + "        sum(case "
-                        + "            when record.isanouveau=false then record.debit_amount "
+                        + "            when record.isanouveau=false or record.is_from_as400=true then record.debit_amount "
                         + "        end) as debitAmount," + "	 "
                         + "		aac.label as accountingAccountClassLabel,"
                         + "		pa.code as principalAccountingAccountCode,"

@@ -19,7 +19,7 @@ export class AutocompleteRnaComponent extends GenericAutocompleteComponent<Affai
 
   searchEntities(value: string): Observable<Affaire[]> {
     this.expectedMinLengthInput = 14;
-    return this.affaireService.generateAffaireBySiren(value);
+    return this.affaireService.generateAffaireByRna(value);
   }
 
   displayLabel(affaire: Affaire): string {
