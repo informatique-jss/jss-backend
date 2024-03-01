@@ -1067,12 +1067,12 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
         generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
-                null, Math.abs(payment.getPaymentAmount()), payment.getSourceAccountingAccount(), null, null, null,
+                null, Math.abs(payment.getPaymentAmount()), payment.getTargetAccountingAccount(), null, null, null,
                 bankJournal, payment, null, null);
 
         generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
-                Math.abs(payment.getPaymentAmount()), null, payment.getTargetAccountingAccount(), null, null, null,
+                Math.abs(payment.getPaymentAmount()), null, payment.getSourceAccountingAccount(), null, null, null,
                 bankJournal, payment, null, null);
 
     }
