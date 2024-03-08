@@ -17,7 +17,8 @@ import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_audit_entity", columnList = "entity"),
-		@Index(name = "idx_audit_entity", columnList = "entity, entityId") })
+		@Index(name = "idx_audit_entity", columnList = "entity, entityId"),
+		@Index(name = "idx_audit_datetime", columnList = "datetime") })
 public class Audit implements Serializable {
 
 	@Id

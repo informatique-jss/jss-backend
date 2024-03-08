@@ -159,6 +159,7 @@ export interface Constant {
   competentAuthorityTypeSpfe: CompetentAuthorityType;
   competentAuthorityTypeChambreAgriculture: CompetentAuthorityType;
   competentAuthorityTypeUrssaf: CompetentAuthorityType;
+  competentAuthorityTypeInsee: CompetentAuthorityType;
   invoiceStatusSend: InvoiceStatus;
   invoiceStatusReceived: InvoiceStatus;
   invoiceStatusPayed: InvoiceStatus;

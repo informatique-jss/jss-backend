@@ -113,7 +113,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 .setManualAccountingDocumentNumber(originalAccountingRecord.getManualAccountingDocumentNumber());
         newAccountingRecord.setPayment(originalAccountingRecord.getPayment());
         newAccountingRecord.setTemporaryOperationId(operationId);
-        newAccountingRecord.setOperationDateTime(LocalDateTime.now());
+        newAccountingRecord.setOperationDateTime(originalAccountingRecord.getOperationDateTime());
         newAccountingRecord.setCustomerOrder(originalAccountingRecord.getCustomerOrder());
         newAccountingRecord.setInvoice(originalAccountingRecord.getInvoice());
         newAccountingRecord.setIsCounterPart(true);
@@ -157,7 +157,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             throw new OsirisValidationException("Balance not null");
     }
 
-    private void checkInvoiceForLettrage(Invoice invoice) throws OsirisException {
+    public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException {
         if (letterInvoice(invoice)) {
             invoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
             invoiceService.addOrUpdateInvoice(invoice);
@@ -321,6 +321,12 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         invoiceService.addOrUpdateInvoice(invoice);
     }
 
+    private LocalDateTime getInvoiceOperationDateTime(Invoice invoice) {
+        return invoice.getManualAccountingDocumentDate() != null
+                ? invoice.getManualAccountingDocumentDate().atTime(12, 00)
+                : LocalDateTime.now();
+    }
+
     @Override
     public void generateAccountingRecordsOnInvoiceEmission(Invoice invoice)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
@@ -345,7 +351,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         Integer operationId = getNewTemporaryOperationId();
 
         // One write on customer account for all invoice
-        generateNewAccountingRecord(LocalDateTime.now(), operationId, invoice.getManualAccountingDocumentNumber(),
+        generateNewAccountingRecord(getInvoiceOperationDateTime(invoice),
+                operationId, invoice.getManualAccountingDocumentNumber(),
                 invoice.getManualAccountingDocumentDate(), labelPrefix, null, invoiceHelper.getPriceTotal(invoice),
                 accountingAccountCustomer, null, invoice, null, salesJournal, null, null, null);
 
@@ -382,7 +389,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             if (invoiceItem.getOriginProviderInvoice() != null
                     && invoiceItem.getOriginProviderInvoice().getIsProviderCreditNote()
                     && invoiceItem.getPreTaxPrice() < 0) {
-                generateNewAccountingRecord(LocalDateTime.now(), operationId,
+                generateNewAccountingRecord(getInvoiceOperationDateTime(invoice), operationId,
                         invoice.getManualAccountingDocumentNumber(),
                         invoice.getManualAccountingDocumentDate(),
                         labelPrefix + " - produit " + invoiceItem.getBillingItem().getBillingType().getLabel(),
@@ -391,7 +398,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
                 if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
                         && invoiceItem.getVatPrice() != 0) {
-                    generateNewAccountingRecord(LocalDateTime.now(), operationId,
+                    generateNewAccountingRecord(getInvoiceOperationDateTime(invoice), operationId,
                             invoice.getManualAccountingDocumentNumber(),
                             invoice.getManualAccountingDocumentDate(),
                             labelPrefix + " - TVA pour le produit "
@@ -404,7 +411,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                     balance -= invoiceItem.getVatPrice();
                 }
             } else {
-                generateNewAccountingRecord(LocalDateTime.now(), operationId,
+                generateNewAccountingRecord(getInvoiceOperationDateTime(invoice), operationId,
                         invoice.getManualAccountingDocumentNumber(),
                         invoice.getManualAccountingDocumentDate(),
                         labelPrefix + " - produit " + invoiceItem.getBillingItem().getBillingType().getLabel(),
@@ -413,7 +420,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
                 if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
                         && invoiceItem.getVatPrice() > 0) {
-                    generateNewAccountingRecord(LocalDateTime.now(), operationId,
+                    generateNewAccountingRecord(getInvoiceOperationDateTime(invoice), operationId,
                             invoice.getManualAccountingDocumentNumber(),
                             invoice.getManualAccountingDocumentDate(),
                             labelPrefix + " - TVA pour le produit "
@@ -496,7 +503,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         Integer operationId = getNewTemporaryOperationId();
 
         // One write on customer account for all invoice
-        generateNewAccountingRecord(LocalDateTime.now(), operationId, invoice.getManualAccountingDocumentNumber(),
+        generateNewAccountingRecord(getInvoiceOperationDateTime(invoice), operationId,
+                invoice.getManualAccountingDocumentNumber(),
                 invoice.getManualAccountingDocumentDate(),
                 labelPrefix, null,
                 invoiceHelper.getPriceTotal(invoice),
@@ -527,7 +535,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             Float billingItemPrice = invoiceItem.getPreTaxPrice()
                     - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f);
 
-            generateNewAccountingRecord(LocalDateTime.now(), operationId, invoice.getManualAccountingDocumentNumber(),
+            generateNewAccountingRecord(getInvoiceOperationDateTime(invoice), operationId,
+                    invoice.getManualAccountingDocumentNumber(),
                     invoice.getManualAccountingDocumentDate(),
                     labelPrefix + " - charge " + invoiceItem.getBillingItem().getBillingType().getLabel(),
                     billingItemPrice, null,
@@ -536,7 +545,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             balance -= billingItemPrice;
 
             if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null && invoiceItem.getVatPrice() > 0) {
-                generateNewAccountingRecord(LocalDateTime.now(), operationId,
+                generateNewAccountingRecord(getInvoiceOperationDateTime(invoice), operationId,
                         invoice.getManualAccountingDocumentNumber(),
                         invoice.getManualAccountingDocumentDate(),
                         labelPrefix + " - TVA pour la charge "
@@ -574,7 +583,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         Integer operationId = getNewTemporaryOperationId();
 
         // One write on provider account for all invoice
-        generateNewAccountingRecord(LocalDateTime.now(), operationId, invoice.getManualAccountingDocumentNumber(),
+        generateNewAccountingRecord(getInvoiceOperationDateTime(invoice), operationId,
+                invoice.getManualAccountingDocumentNumber(),
                 invoice.getManualAccountingDocumentDate(),
                 labelPrefix, balance, null, accountingAccountProvider, null, invoice, null, pushasingJournal, null,
                 null, null);
@@ -599,7 +609,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             Float billingItemPrice = invoiceItem.getPreTaxPrice()
                     - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f);
 
-            generateNewAccountingRecord(LocalDateTime.now(), operationId, invoice.getManualAccountingDocumentNumber(),
+            generateNewAccountingRecord(getInvoiceOperationDateTime(invoice), operationId,
+                    invoice.getManualAccountingDocumentNumber(),
                     invoice.getManualAccountingDocumentDate(),
                     labelPrefix + " - charge " + invoiceItem.getBillingItem().getBillingType().getLabel(), null,
                     billingItemPrice,
@@ -613,7 +624,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                     throw new OsirisException(null, "No accounting account for VAT " + invoiceItem.getVat().getLabel());
 
                 if (invoiceItem.getVatPrice() != null && invoiceItem.getVatPrice() > 0)
-                    generateNewAccountingRecord(LocalDateTime.now(), operationId,
+                    generateNewAccountingRecord(getInvoiceOperationDateTime(invoice), operationId,
                             invoice.getManualAccountingDocumentNumber(),
                             invoice.getManualAccountingDocumentDate(),
                             labelPrefix + " - TVA pour la charge "
@@ -701,15 +712,18 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
         Integer operationId = getNewTemporaryOperationId();
 
-        payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
-                "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(), null,
-                payment.getPaymentAmount(),
-                payment.getSourceAccountingAccount(), null, null, null, bankJournal, payment, null, null));
+        payment.getAccountingRecords()
+                .add(generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
+                        "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
+                        null,
+                        payment.getPaymentAmount(),
+                        payment.getSourceAccountingAccount(), null, null, null, bankJournal, payment, null, null));
 
-        payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
-                "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
-                payment.getPaymentAmount(), null,
-                payment.getTargetAccountingAccount(), null, null, null, bankJournal, payment, null, null));
+        payment.getAccountingRecords()
+                .add(generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
+                        "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
+                        payment.getPaymentAmount(), null,
+                        payment.getTargetAccountingAccount(), null, null, null, bankJournal, payment, null, null));
     }
 
     @Override
@@ -736,13 +750,15 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
         Integer operationId = getNewTemporaryOperationId();
 
-        payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
-                "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
-                Math.abs(payment.getPaymentAmount()), null, payment.getSourceAccountingAccount(), null, null,
-                null,
-                bankJournal, payment, payment.getRefund(), payment.getBankTransfert()));
+        payment.getAccountingRecords()
+                .add(generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
+                        "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
+                        Math.abs(payment.getPaymentAmount()), null, payment.getSourceAccountingAccount(), null, null,
+                        null,
+                        bankJournal, payment, payment.getRefund(), payment.getBankTransfert()));
 
-        payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        payment.getAccountingRecords().add(generateNewAccountingRecord(payment.getPaymentDate(), operationId, null,
+                null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(), null,
                 Math.abs(payment.getPaymentAmount()),
                 payment.getTargetAccountingAccount(), null, null, null, bankJournal, payment, payment.getRefund(),
@@ -822,19 +838,21 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         String isPaymentOrAppoint = payment.getIsAppoint() ? "Appoint" : "Paiement";
 
         // One write on customer order deposit account to equilibrate
-        payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
-                isPaymentOrAppoint + " n°" + payment.getId() + getPaymentOriginLabel(payment)
-                        + " - Paiement pour la facture n°" + invoice.getId()
-                        + " - "
-                        + payment.getLabel(),
-                null, Math.abs(payment.getPaymentAmount()),
-                payment.getSourceAccountingAccount(), null, invoice, null, journal, payment, null, null));
+        payment.getAccountingRecords()
+                .add(generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
+                        isPaymentOrAppoint + " n°" + payment.getId() + getPaymentOriginLabel(payment)
+                                + " - Paiement pour la facture n°" + invoice.getId()
+                                + " - "
+                                + payment.getLabel(),
+                        null, Math.abs(payment.getPaymentAmount()),
+                        payment.getSourceAccountingAccount(), null, invoice, null, journal, payment, null, null));
 
-        payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
-                isPaymentOrAppoint + " n°" + payment.getId() + getPaymentOriginLabel(payment)
-                        + " - Paiement pour la facture n°" + invoice.getId(),
-                Math.abs(payment.getPaymentAmount()), null,
-                payment.getTargetAccountingAccount(), null, invoice, null, journal, payment, null, null));
+        payment.getAccountingRecords()
+                .add(generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
+                        isPaymentOrAppoint + " n°" + payment.getId() + getPaymentOriginLabel(payment)
+                                + " - Paiement pour la facture n°" + invoice.getId(),
+                        Math.abs(payment.getPaymentAmount()), null,
+                        payment.getTargetAccountingAccount(), null, invoice, null, journal, payment, null, null));
 
         checkInvoiceForLettrage(invoice);
     }
@@ -864,7 +882,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         if (payment.getAccountingRecords() == null)
             payment.setAccountingRecords(new ArrayList<AccountingRecord>());
 
-        payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        payment.getAccountingRecords().add(generateNewAccountingRecord(payment.getPaymentDate(), operationId, null,
+                null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - Acompte pour la commande n°"
                         + customerOrder.getId() + " - "
                         + payment.getLabel(),
@@ -872,7 +891,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 payment.getSourceAccountingAccount(), null, null, null, journal, payment, null, null));
 
         // One write on customer order deposit account to equilibrate
-        payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        payment.getAccountingRecords().add(generateNewAccountingRecord(payment.getPaymentDate(), operationId, null,
+                null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - Acompte pour la commande n°"
                         + customerOrder.getId(),
                 payment.getPaymentAmount(), null,
@@ -905,7 +925,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
         Integer operationId = getNewTemporaryOperationId();
 
-        payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        payment.getAccountingRecords().add(generateNewAccountingRecord(payment.getPaymentDate(), operationId, null,
+                null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - Remboursement de la facture n°"
                         + invoice.getId() + " - "
                         + payment.getLabel(),
@@ -913,7 +934,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 payment.getTargetAccountingAccount(), null, invoice, null, journal, payment, null, null));
 
         // One write on provider account to equilibrate
-        payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        payment.getAccountingRecords().add(generateNewAccountingRecord(payment.getPaymentDate(), operationId, null,
+                null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - Remboursement de la facture n°"
                         + invoice.getId(),
                 null, payment.getPaymentAmount(),
@@ -949,7 +971,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             journal = constantService.getAccountingJournalMiscellaneousOperations();
         Integer operationId = getNewTemporaryOperationId();
 
-        payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        payment.getAccountingRecords().add(generateNewAccountingRecord(payment.getPaymentDate(), operationId, null,
+                null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - Paiement pour la facture n°"
                         + invoice.getId()
                         + " - "
@@ -958,7 +981,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 payment.getSourceAccountingAccount(), null, invoice, null, journal, payment, null, null));
 
         // One write on customer order deposit account to equilibrate
-        payment.getAccountingRecords().add(generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        payment.getAccountingRecords().add(generateNewAccountingRecord(payment.getPaymentDate(), operationId, null,
+                null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - Paiement pour la facture n°"
                         + invoice.getId(),
                 -payment.getPaymentAmount(), null,
@@ -983,13 +1007,13 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         if (payment.getSourceAccountingAccount() == null)
             throw new OsirisException(null, "No source accounting account for payment n°" + payment.getId());
 
-        generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
                 null, Math.abs(payment.getPaymentAmount()), payment.getSourceAccountingAccount(), null, null,
                 null,
                 bankJournal, payment, refund, null);
 
-        generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
                 Math.abs(payment.getPaymentAmount()), null,
                 payment.getTargetAccountingAccount(), null, null, null, bankJournal, payment, refund, null);
@@ -1013,13 +1037,13 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         if (payment.getSourceAccountingAccount() == null)
             throw new OsirisException(null, "No source accounting account for payment n°" + payment.getId());
 
-        generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
                 null, Math.abs(payment.getPaymentAmount()), payment.getTargetAccountingAccount(), null, null,
                 null,
                 bankJournal, payment, refund, null);
 
-        generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
                 Math.abs(payment.getPaymentAmount()), null,
                 payment.getSourceAccountingAccount(), null, null, null, bankJournal, payment, refund, null);
@@ -1040,12 +1064,12 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         if (payment.getSourceAccountingAccount() == null)
             throw new OsirisException(null, "No source accounting account for payment n°" + payment.getId());
 
-        generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
                 null, Math.abs(payment.getPaymentAmount()), payment.getSourceAccountingAccount(), null, null, null,
                 bankJournal, payment, null, null);
 
-        generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
                 Math.abs(payment.getPaymentAmount()), null, payment.getTargetAccountingAccount(), null, null, null,
                 bankJournal, payment, null, null);
@@ -1065,14 +1089,14 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         if (payment.getSourceAccountingAccount() == null)
             throw new OsirisException(null, "No source accounting account for payment n°" + payment.getId());
 
-        generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
-                null, Math.abs(payment.getPaymentAmount()), payment.getSourceAccountingAccount(), null, null, null,
+                null, Math.abs(payment.getPaymentAmount()), payment.getTargetAccountingAccount(), null, null, null,
                 bankJournal, payment, null, null);
 
-        generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
-                Math.abs(payment.getPaymentAmount()), null, payment.getTargetAccountingAccount(), null, null, null,
+                Math.abs(payment.getPaymentAmount()), null, payment.getSourceAccountingAccount(), null, null, null,
                 bankJournal, payment, null, null);
 
     }
