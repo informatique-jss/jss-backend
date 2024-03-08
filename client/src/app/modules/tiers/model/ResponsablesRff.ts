@@ -11,8 +11,11 @@ export interface ResponsablesRff {
   mails: Mail[];
   phones: Phone[];
   turnoverAmountWithTax: number;
+  turnoverAmountWithTaxLastYear: number;
   announcementNbr: number;
+  announcementNbrLastYear: number;
   formalityNbr: number;
+  formalityNbrLastYear: number;
   totalCustomerOrders: number;
   isSub: boolean;
   gift: boolean;

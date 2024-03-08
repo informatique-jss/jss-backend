@@ -38,6 +38,7 @@ export class ComplaintTiersComponent implements OnInit, AfterContentChecked{
   reclamationList: SalesReclamation[] | undefined;
   selectedEmployee: Employee | undefined;
   observations: string | undefined;
+  customerOrderNumber: string | undefined;
 
   displayedColumnsReclamations:  SortTableColumn<SalesReclamation>[] = [];
 
@@ -62,6 +63,7 @@ export class ComplaintTiersComponent implements OnInit, AfterContentChecked{
     this.displayedColumnsReclamations = [];
 
     this.displayedColumnsReclamations.push({ id: "id", fieldName: "id", label: "N° reclamation"  } as SortTableColumn<SalesReclamation>);
+    this.displayedColumnsReclamations.push({ id: "customerOrderNumber", fieldName: "customerOrderNumber", label: "Numero de la commande associée" } as SortTableColumn<SalesReclamation>);
     this.displayedColumnsReclamations.push({ id: "complaintDate", fieldName: "complaintDate", label: "Date de reclamation", valueFonction: formatDateTimeForSortTable  } as SortTableColumn<SalesReclamation>);
     this.displayedColumnsReclamations.push({id: "responsableName", fieldName: "responsableName", label: "Nom responsable"  } as SortTableColumn<SalesReclamation>);
     this.displayedColumnsReclamations.push({ id: "affaire.denomination", fieldName: "affaire.denomination", label: "Affaire denomination"} as SortTableColumn<SalesReclamation>);
@@ -73,6 +75,14 @@ export class ComplaintTiersComponent implements OnInit, AfterContentChecked{
     let idTiers: number = this.activatedRoute.snapshot.params.id;
     if (idTiers)
     this.loadReclamationsByTiersId(idTiers);
+  }
+
+  numberFilter(event: any): boolean {
+    const inputChar = String.fromCharCode(event.charCode);
+    if (!/^\d+$/.test(inputChar)) {
+      event.preventDefault();
+    }
+    return true;
   }
 
   fillAffaire(entity: IndexEntity) {
@@ -98,7 +108,7 @@ export class ComplaintTiersComponent implements OnInit, AfterContentChecked{
     this.reclamation.idTiers = this.tiers.id;
     this.reclamation.responsableName = this.selectedEmployee?.firstname + " " + this.selectedEmployee?.lastname;
     this.reclamation.observations = this.observations;
-
+    this.reclamation.customerOrderNumber = this.customerOrderNumber;
     let d = new Date();
     this.reclamation.complaintDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours()+1, d.getUTCMinutes());
     this.salesReclamationService.addOrUpdateReclamation(this.reclamation).subscribe(response => {

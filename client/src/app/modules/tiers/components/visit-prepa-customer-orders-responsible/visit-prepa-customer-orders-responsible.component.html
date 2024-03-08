@@ -1,7 +1,10 @@
 <div class="mat-elevation-z2 form-div">
 
   <fieldset [disabled]="false" class="fieldset-no-border">
-      <sort-table [actions]="salesRecordTableActions" [columns]="displayedColumnsSalesRecord" [values]="this.customerOrderFiller"
+    <mat-form-field class="full-width">
+      <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+    </mat-form-field>
+      <sort-table [actions]="salesRecordTableActions" [columns]="displayedColumnsSalesRecord" [filterText]="searchText" [values]="this.customerOrderFiller"
                   tableName="customerOrder">
       </sort-table>
 </fieldset>

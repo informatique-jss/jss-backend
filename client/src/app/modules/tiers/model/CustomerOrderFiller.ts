@@ -1,13 +1,14 @@
 export interface CustomerOrderFiller {
   customerOrderId: number;
-  createdDateCO: Date;
+  createdDateCO: Date | null;
   affaireLabel: string;
   customerOrderStatus: string;
-  quotationStatus: string;
   invoiceId: number;
-  createdDateInvoice: Date;
-  dateFacture: Date;
+  createdDateInvoice: Date | null;
+  dateFacture: Date | null;
   totalPriceInvoice: number;
   remainingToPayInvoice: number;
-  provisionStatus: string;
+  responsableLabel: string;
+  depositTotalAmount: number;
+  nbrCommandes: number;
 }

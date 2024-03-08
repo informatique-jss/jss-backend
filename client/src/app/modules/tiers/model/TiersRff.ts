@@ -8,13 +8,16 @@ export interface TiersRff {
   id: number;
   mails: Mail[];
   phones: Phone[];
-  rffInsertion: number| null;
-  rffTotal: number| null;
-  rffFormalite: number| null;
   lastName: string;
   firstName: string;
   responsables: Responsable[];
   turnoverAmountWithTax: number;
+  turnoverAmountWithTaxLastYear: number;
   announcementNbr: number;
   formalityNbr: number;
+  announcementNbrLastYear: number;
+  formalityNbrLastYear: number;
+  customerOrderNbr: number;
+  customerOrderNbrLastYear: number;
+  remainingToPayInvoice: number;
 }

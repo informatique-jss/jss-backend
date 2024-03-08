@@ -4,10 +4,14 @@
       <sort-table [columns]="displayedColumnsTiersRff" [values]="tiersRff"
                   tableName="Tiers">
       </sort-table>
+
       <div *ngIf="responsablesRff && responsablesRff.length > 1">
-      <sort-table [columns]="displayedColumnsResponsablesRff" [values]="responsablesRff"
+        <mat-form-field class="full-width">
+          <input matInput (keyup)="applyFilterResponsableLastYear($event.target)" placeholder="Rechercher">
+        </mat-form-field>
+      <sort-table [columns]="displayedColumnsResponsablesRff" [values]="responsablesRff" [filterText]="searchTextLastYear"
                   tableName="Responsables">
       </sort-table>
-      </div>
+     </div>
 </fieldset>
 </div>

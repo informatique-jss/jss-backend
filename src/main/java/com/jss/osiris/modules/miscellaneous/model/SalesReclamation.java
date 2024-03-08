@@ -53,6 +53,9 @@ public class SalesReclamation implements Serializable, IId {
   @Column(nullable = false)
   private String observations;
 
+  @Column(nullable = false)
+  private String customerOrderNumber;
+
   public Integer getId() {
     return id;
   }
@@ -123,6 +126,14 @@ public class SalesReclamation implements Serializable, IId {
 
   public void setObservations(String observations) {
     this.observations = observations;
+  }
+
+  public String getCustomerOrderNumber() {
+    return customerOrderNumber;
+  }
+
+  public void setCustomerOrderNumber(String customerOrderNumber) {
+    this.customerOrderNumber = customerOrderNumber;
   }
 
 }

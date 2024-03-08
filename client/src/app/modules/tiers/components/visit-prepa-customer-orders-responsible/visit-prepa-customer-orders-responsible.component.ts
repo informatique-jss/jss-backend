@@ -19,6 +19,7 @@ import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAc
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { AssoAffaireOrderSearchResult } from 'src/app/modules/quotation/model/AssoAffaireOrderSearchResult';
 import { Subscription } from 'rxjs';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 
 @Component({
   selector: 'visit-prepa-customer-orders-responsible',
@@ -33,7 +34,10 @@ export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, Aft
   @Input() tiers: Tiers = {} as Tiers;
   @Input() overrideIconAction: string = "";
   @Input() affaireSearch: AffaireSearch | undefined;
+  @Input() isForDashboard: boolean = false;
+  @Input() isForTiersIntegration: boolean = false;
 
+  searchText: string | undefined;
   affaires: AssoAffaireOrderSearchResult[] | undefined;
   allEmployees: Employee[] = [] as Array<Employee>;
   customerOrders: CustomerOrder[] | undefined;
@@ -51,6 +55,7 @@ export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, Aft
 
   dataToDisplay: any | undefined;
 
+  availableColumns: SortTableColumn<AssoAffaireOrderSearchResult>[] = [];
 
   displayedColumnsSalesRecord: SortTableColumn<CustomerOrderFiller>[] = [];
   salesRecordTableActions: SortTableAction<CustomerOrderFiller>[] = [] as Array<SortTableAction<CustomerOrderFiller>>;
@@ -63,6 +68,7 @@ export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, Aft
   constructor(private orderingSearchResultService: OrderingSearchResultService,
     private invoiceSearchResultService: InvoiceSearchResultService,
     private changeDetectorRef: ChangeDetectorRef,
+    private constantService: ConstantService,
     ) {
     }
 
@@ -76,16 +82,19 @@ export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, Aft
     this.invoices = [{} as InvoiceSearchResult];
     this.customerOrderFiller = [{} as CustomerOrderFiller];
     this.customerOrderList = [{} as CustomerOrder];
+    this.availableColumns = [];
 
+    this.displayedColumnsSalesRecord.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Donneur d'ordre"  } as SortTableColumn<CustomerOrderFiller>);
     this.displayedColumnsSalesRecord.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "Nº commande"  } as SortTableColumn<CustomerOrderFiller>);
-    this.displayedColumnsSalesRecord.push({ id: "createdDateCO", fieldName: "createdDateCO", label: "Date de creation", valueFonction: formatDateTimeForSortTable } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "createdDateCO", fieldName: "createdDateCO", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn<CustomerOrderFiller>);
     this.displayedColumnsSalesRecord.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire"  } as SortTableColumn<CustomerOrderFiller>);
-    this.displayedColumnsSalesRecord.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut commande"  } as SortTableColumn<CustomerOrderFiller>);
-    this.displayedColumnsSalesRecord.push({ id: "provisionStatus", fieldName: "provisionStatus", label: "Statut Provision"  } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut de la commande"  } as SortTableColumn<CustomerOrderFiller>);
     this.displayedColumnsSalesRecord.push({ id: "invoiceId", fieldName: "invoiceId", label: "facture"  } as SortTableColumn<CustomerOrderFiller>);
-    this.displayedColumnsSalesRecord.push({ id: "createdDateInvoice", fieldName: "createdDateInvoice", label: "Date Facture", valueFonction: formatDateTimeForSortTable  } as SortTableColumn<CustomerOrderFiller>);
-    this.displayedColumnsSalesRecord.push({ id: "totalPriceInvoice", fieldName: "totalPriceInvoice", label: "Montant Facture", valueFonction: formatEurosForSortTable  } as SortTableColumn<CustomerOrderFiller>);
-    this.displayedColumnsSalesRecord.push({ id: "remainingToPayInvoice", fieldName: "remainingToPayInvoice", label: "Reste a payer", valueFonction: formatEurosForSortTable  } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "createdDateInvoice", fieldName: "createdDateInvoice", label: "Date de la Facture", valueFonction: formatDateTimeForSortTable  } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "totalPriceInvoice", fieldName: "totalPriceInvoice", label: "Montant de la Facture", valueFonction: formatEurosForSortTable  } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "remainingToPayInvoice", fieldName: "remainingToPayInvoice", label: "Reste à payer", valueFonction: formatEurosForSortTable  } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "depositTotalAmount", fieldName: "depositTotalAmount", label: "Acompte versé", valueFonction: formatEurosForSortTable  } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "nbrCommandes", fieldName: "nbrCommandes", label: "Nbr commandes"  } as SortTableColumn<CustomerOrderFiller>);
 
     if (this.overrideIconAction == "") {
 
@@ -110,6 +119,12 @@ export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, Aft
     this.loadInvoiceFilter();
   }
 
+  applyFilter(filterValue: any) {
+    let filterValueCast = (filterValue as HTMLInputElement);
+    filterValue = filterValueCast.value.trim();
+    this.searchText = filterValue.toLowerCase();
+  }
+
  loadCustomerOrderFilter() {
     this.orderingSearch.customerOrders = [this.tiers];
     this.orderingSearchResultService.getOrders(this.orderingSearch).subscribe(response => {
@@ -128,6 +143,7 @@ export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, Aft
   fillCustomerOrderFiller() {
     this.customerOrderFiller = [];
     const fillerMap = new Map<number, CustomerOrderFiller>();
+    const responsibleLabelCount = new Map<string, number>();
 
     if (this.orders !== undefined && this.orders.length > 0) {
       for (let i = 0; i < this.orders.length; i++) {
@@ -136,14 +152,15 @@ export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, Aft
             customerOrderId: this.orders[i].customerOrderId,
             customerOrderStatus: this.orders[i].customerOrderStatus || '',
             affaireLabel: this.orders[i].affaireLabel || '',
-            provisionStatus: this.orders[i].provisionStatus || '',
+            depositTotalAmount: this.orders[i].depositTotalAmount || 0,
             createdDateCO: this.orders[i].createdDate || '',
+            responsableLabel: this.orders[i].customerOrderLabel || '',
             invoiceId: 0,
-            createdDateInvoice: new Date(),
+            createdDateInvoice: null,
             totalPriceInvoice: 0,
             remainingToPayInvoice: 0,
-            quotationStatus: '',
-            dateFacture: new Date(),
+            dateFacture: null,
+            nbrCommandes: 0,
           };
 
           fillerMap.set(this.orders[i].customerOrderId, fillerItem);
@@ -158,13 +175,25 @@ export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, Aft
         if (fillerMap.has(customerOrderId)) {
           const fillerItem = fillerMap.get(customerOrderId)!;
           fillerItem.invoiceId = this.invoices[i].invoiceId || 0;
-          fillerItem.createdDateInvoice = this.invoices[i].createdDate || '';
+          fillerItem.createdDateInvoice = this.invoices[i].createdDate || null;
           fillerItem.totalPriceInvoice = this.invoices[i].totalPrice || 0;
-          fillerItem.remainingToPayInvoice = this.invoices[i].remainingToPay || 0;
+
+          if (this.invoices[i].invoiceStatus !== this.constantService.getInvoiceStatusCancelled().label) {
+            fillerItem.remainingToPayInvoice = this.invoices[i].remainingToPay || 0;
+          }
         }
       }
     }
-      this.customerOrderFiller = Array.from(fillerMap.values());
+    for (const fillerItem of Array.from(fillerMap.values())) {
+      const count = responsibleLabelCount.get(fillerItem.responsableLabel) || 0;
+      responsibleLabelCount.set(fillerItem.responsableLabel, count + 1);
+    }
+    for (const [key, value] of responsibleLabelCount.entries()) {
+      const correspondingOrder = Array.from(fillerMap.values()).find(item => item.responsableLabel === key);
+      if (correspondingOrder) {
+        correspondingOrder.nbrCommandes = value;
+      }
+    }
+    this.customerOrderFiller = Array.from(fillerMap.values());
   }
-
 }

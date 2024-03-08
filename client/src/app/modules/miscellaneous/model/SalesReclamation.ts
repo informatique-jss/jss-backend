@@ -13,4 +13,5 @@ export interface SalesReclamation {
   idTiers: number | undefined;
   responsableName: string;
   observations: string | undefined;
+  customerOrderNumber: string | undefined;
 }
