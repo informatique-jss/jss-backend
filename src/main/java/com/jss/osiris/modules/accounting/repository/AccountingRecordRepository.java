@@ -170,7 +170,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "        end) as debitAmount," + "	 "
                         + "		aac.label as accountingAccountClassLabel,"
                         + "		pa.code as principalAccountingAccountCode,"
-                        + "		pa.label as principalAccountingAccountLabel,"
+                        + "		case when pa.code in ('401', '411', '4091', '4191') then pa.label else accounting.label end as principalAccountingAccountLabel,"
                         + "		case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),5,'0') ||'' end as accountingAccountSubNumber,"
                         + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '30 day') then i.total_price  end) as echoir30, "
                         + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '60 day') and i.due_date> (now() +INTERVAL '30 day')  then i.total_price  end) as echoir60, "
@@ -190,7 +190,9 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false)  " +
-                        " group by aac.label,pa.code,pa.label,case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),5,'0') ||'' end order by pa.code, case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),5,'0') ||'' end ")
+                        " group by aac.label,pa.code,case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),5,'0') ||'' end, case when pa.code in ('401', '411', '4091', '4191') then pa.label else accounting.label end  "
+                        +
+                        " order by pa.code, case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),5,'0') ||'' end ")
         List<AccountingBalance> searchAccountingBalanceGenerale(
                         @Param("accountingClassId") Integer accountingClassId,
                         @Param("accountingAccountId") Integer accountingAccountId,
