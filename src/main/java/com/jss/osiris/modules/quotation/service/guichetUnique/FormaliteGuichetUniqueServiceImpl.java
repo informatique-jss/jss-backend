@@ -210,9 +210,11 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 if (!originalFormalite.getStatus().getCode().equals(formaliteGuichetUnique.getStatus().getCode())) {
                     originalFormalite.setStatus(formaliteGuichetUnique.getStatus());
 
-                    if (originalFormalite.getFormalite() != null)
+                    if (originalFormalite.getFormalite() != null) {
+                        originalFormalite.setIsAuthorizedToSign(false);
                         notificationService.notifyGuichetUniqueFormaliteStatus(
                                 originalFormalite.getFormalite().getProvision().get(0), originalFormalite);
+                    }
                 }
                 // Cart field
                 if (formaliteGuichetUnique.getCarts() != null && formaliteGuichetUnique.getCarts().size() > 0) {
