@@ -376,27 +376,29 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public File getAccountingBalanceExport(Integer accountingClassId, Integer principalAccountingAccountId,
-      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
+      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate, boolean isFromAs400)
+      throws OsirisException {
     List<AccountingBalance> accountingBalanceRecords = accountingRecordRepository.searchAccountingBalance(
         accountingClassId != null ? accountingClassId : 0,
         accountingAccountId != null ? accountingAccountId : 0,
         (principalAccountingAccountId != null && !principalAccountingAccountId.equals(0) ? principalAccountingAccountId
             : 0),
         startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
-        false);
+        isFromAs400);
     return accountingExportHelper.getBalance(accountingBalanceRecords, false, startDate, endDate);
   }
 
   @Override
   public File getAccountingBalanceGeneraleExport(Integer accountingClassId, Integer principalAccountingAccountId,
-      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
+      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate, boolean isFromAs400)
+      throws OsirisException {
     List<AccountingBalance> accountingBalanceRecords = accountingRecordRepository.searchAccountingBalanceGenerale(
         accountingClassId != null ? accountingClassId : 0,
         accountingAccountId != null ? accountingAccountId : 0,
         (principalAccountingAccountId != null && !principalAccountingAccountId.equals(0) ? principalAccountingAccountId
             : 0),
         startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
-        false);
+        isFromAs400);
     return accountingExportHelper.getBalance(accountingBalanceRecords, true, startDate, endDate);
   }
 

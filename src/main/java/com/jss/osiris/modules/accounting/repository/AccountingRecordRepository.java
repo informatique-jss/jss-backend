@@ -151,7 +151,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false ) " +
-                        " group by aac.label,accounting.label,pa.code,lpad(concat(accounting_account_sub_number,''),5,'0') order by pa.code,accounting.code  "
+                        " group by aac.label,accounting.label,pa.code,lpad(concat(accounting_account_sub_number,''),5,'0') order by pa.code   "
                         +
                         "")
         List<AccountingBalance> searchAccountingBalance(
@@ -183,7 +183,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "            on record.id_accounting_account=accounting.id  join accounting_account_class aac on aac.id = pa.id_accounting_account_class  "
                         + "			left join invoice i on i.id = record.id_invoice"
                         + " where (accounting.id=:accountingAccountId or :accountingAccountId =0 ) and "
-                        + "  (:isFromAs400 = false or record.is_from_as400=true ) and " +
+                        + "  (:isFromAs400 = false or coalesce(record.is_from_as400,false)=true ) and " +
                         "(accounting.id_principal_accounting_account=:principalAccountingAccountId or :principalAccountingAccountId =0 ) and "
                         +
                         "(record.operation_date_time is null or (coalesce(record.manual_accounting_document_date,record.operation_date_time) >=:startDate and coalesce(record.manual_accounting_document_date,record.operation_date_time) <=:endDate )) and "

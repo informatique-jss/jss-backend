@@ -435,7 +435,8 @@ public class AccountingController {
             @RequestParam(name = "principalAccountingAccountId", required = false) Integer principalAccountingAccountId,
             @RequestParam(name = "accountingAccountId", required = false) Integer accountingAccountId,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam("isFromAs400") Boolean isFromAs400)
             throws OsirisValidationException, OsirisException {
         byte[] data = null;
         HttpHeaders headers = null;
@@ -454,7 +455,7 @@ public class AccountingController {
             throw new OsirisValidationException("StartDate or EndDate");
 
         File grandLivre = accountingRecordService.getAccountingBalanceExport(accountingClassId,
-                principalAccountingAccountId, accountingAccountId, startDate, endDate);
+                principalAccountingAccountId, accountingAccountId, startDate, endDate, isFromAs400);
 
         if (grandLivre != null) {
             try {
@@ -501,7 +502,8 @@ public class AccountingController {
             @RequestParam(name = "principalAccountingAccountId", required = false) Integer principalAccountingAccountId,
             @RequestParam(name = "accountingAccountId", required = false) Integer accountingAccountId,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam("isFromAs400") Boolean isFromAs400)
             throws OsirisValidationException, OsirisException {
         byte[] data = null;
         HttpHeaders headers = null;
@@ -520,7 +522,7 @@ public class AccountingController {
             throw new OsirisValidationException("StartDate or EndDate");
 
         File grandLivre = accountingRecordService.getAccountingBalanceGeneraleExport(accountingClassId,
-                principalAccountingAccountId, accountingAccountId, startDate, endDate);
+                principalAccountingAccountId, accountingAccountId, startDate, endDate, isFromAs400);
 
         if (grandLivre != null) {
             try {
