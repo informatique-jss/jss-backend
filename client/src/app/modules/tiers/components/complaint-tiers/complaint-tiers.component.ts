@@ -1,18 +1,18 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { SalesReclamationOrigin } from 'src/app/modules/miscellaneous/model/SalesReclamationOrigin';
-import { SalesReclamationProblem } from 'src/app/modules/miscellaneous/model/SalesReclamationProblem';
-import { SalesReclamationCause } from 'src/app/modules/miscellaneous/model/SalesReclamationCause';
+import { SalesComplainOrigin } from 'src/app/modules/miscellaneous/model/SalesComplainOrigin';
+import { SalesComplainProblem } from 'src/app/modules/miscellaneous/model/SalesComplainProblem';
+import { SalesComplainCause } from 'src/app/modules/miscellaneous/model/SalesComplainCause';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { FormBuilder } from '@angular/forms';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AffaireService } from '../../../quotation/services/affaire.service';
-import { SalesReclamationService } from '../../services/sales.reclamation.service';
-import { SalesReclamation } from 'src/app/modules/miscellaneous/model/SalesReclamation';
+import { SalesComplainService } from '../../services/sales.complain.service';
+import { SalesComplain } from 'src/app/modules/miscellaneous/model/SalesComplain';
 import { Tiers } from '../../model/Tiers';
 import { ActivatedRoute } from '@angular/router';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
-import { Employee } from 'src/app/modules/profile/model/Employee';import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
+import { Employee } from 'src/app/modules/profile/model/Employee';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
@@ -31,23 +31,23 @@ export class ComplaintTiersComponent implements OnInit, AfterContentChecked{
   @Input() editMode: boolean = false;
 
   selectedAffaire: Affaire | undefined;
-  selectedReclamationProblem: SalesReclamationProblem | undefined;
-  selectedReclamationOrigin: SalesReclamationOrigin | undefined;
-  selectedReclamationCause:  SalesReclamationCause | undefined;
-  reclamation: SalesReclamation = {} as SalesReclamation;
-  reclamationList: SalesReclamation[] | undefined;
+  selectedComplainProblem: SalesComplainProblem | undefined;
+  selectedComplainOrigin: SalesComplainOrigin | undefined;
+  selectedComplainCause:  SalesComplainCause | undefined;
+  complain: SalesComplain = {} as SalesComplain;
+  complainList: SalesComplain[] | undefined;
   selectedEmployee: Employee | undefined;
   observations: string | undefined;
   customerOrderNumber: string | undefined;
 
-  displayedColumnsReclamations:  SortTableColumn<SalesReclamation>[] = [];
+  displayedColumnsComplains:  SortTableColumn<SalesComplain>[] = [];
 
   constructor(
     private affaireService: AffaireService,
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private changeDetectorRef: ChangeDetectorRef,
-    private salesReclamationService: SalesReclamationService,
+    private salesComplainService: SalesComplainService,
     private customerOrderService: CustomerOrderService,) {
   }
 
@@ -60,21 +60,21 @@ export class ComplaintTiersComponent implements OnInit, AfterContentChecked{
 
   ngOnInit(): void {
 
-    this.displayedColumnsReclamations = [];
+    this.displayedColumnsComplains = [];
 
-    this.displayedColumnsReclamations.push({ id: "id", fieldName: "id", label: "N° reclamation"  } as SortTableColumn<SalesReclamation>);
-    this.displayedColumnsReclamations.push({ id: "customerOrderNumber", fieldName: "customerOrderNumber", label: "Numero de la commande associée" } as SortTableColumn<SalesReclamation>);
-    this.displayedColumnsReclamations.push({ id: "complaintDate", fieldName: "complaintDate", label: "Date de reclamation", valueFonction: formatDateTimeForSortTable  } as SortTableColumn<SalesReclamation>);
-    this.displayedColumnsReclamations.push({id: "responsableName", fieldName: "responsableName", label: "Nom responsable"  } as SortTableColumn<SalesReclamation>);
-    this.displayedColumnsReclamations.push({ id: "affaire.denomination", fieldName: "affaire.denomination", label: "Affaire denomination"} as SortTableColumn<SalesReclamation>);
-    this.displayedColumnsReclamations.push({ id: "salesProblem.label", fieldName: "salesProblem.label", label: "Problem" } as SortTableColumn<SalesReclamation>);
-    this.displayedColumnsReclamations.push({ id: "salesCause.label", fieldName: "salesCause.label", label: "Cause" } as SortTableColumn<SalesReclamation>);
-    this.displayedColumnsReclamations.push({ id: "salesOrigin.label", fieldName: "salesOrigin.label", label: "Origin" } as SortTableColumn<SalesReclamation>);
-    this.displayedColumnsReclamations.push({ id: "observations", fieldName: "observations", label: "observations" } as SortTableColumn<SalesReclamation>);
+    this.displayedColumnsComplains.push({ id: "id", fieldName: "id", label: "N° reclamation"  } as SortTableColumn<SalesComplain>);
+    this.displayedColumnsComplains.push({ id: "customerOrderNumber", fieldName: "customerOrderNumber", label: "Numero de la commande associée" } as SortTableColumn<SalesComplain>);
+    this.displayedColumnsComplains.push({ id: "complaintDate", fieldName: "complaintDate", label: "Date de reclamation", valueFonction: formatDateTimeForSortTable  } as SortTableColumn<SalesComplain>);
+    this.displayedColumnsComplains.push({id: "responsableName", fieldName: "responsableName", label: "Nom responsable"  } as SortTableColumn<SalesComplain>);
+    this.displayedColumnsComplains.push({ id: "affaire.denomination", fieldName: "affaire.denomination", label: "Affaire denomination"} as SortTableColumn<SalesComplain>);
+    this.displayedColumnsComplains.push({ id: "salesProblem.label", fieldName: "salesProblem.label", label: "Problem" } as SortTableColumn<SalesComplain>);
+    this.displayedColumnsComplains.push({ id: "salesCause.label", fieldName: "salesCause.label", label: "Cause" } as SortTableColumn<SalesComplain>);
+    this.displayedColumnsComplains.push({ id: "salesOrigin.label", fieldName: "salesOrigin.label", label: "Origin" } as SortTableColumn<SalesComplain>);
+    this.displayedColumnsComplains.push({ id: "observations", fieldName: "observations", label: "observations" } as SortTableColumn<SalesComplain>);
 
     let idTiers: number = this.activatedRoute.snapshot.params.id;
     if (idTiers)
-    this.loadReclamationsByTiersId(idTiers);
+    this.loadComplainsByTiersId(idTiers);
   }
 
   numberFilter(event: any): boolean {
@@ -92,27 +92,27 @@ export class ComplaintTiersComponent implements OnInit, AfterContentChecked{
     });
   }
 
-  private loadReclamationsByTiersId(idTiers: number) {
-    this.salesReclamationService.getReclamationsByTiersId(idTiers).subscribe(reclamations => {
-      if (Array.isArray(reclamations) && reclamations.length > 0)
-      this.reclamationList = reclamations;
+  private loadComplainsByTiersId(idTiers: number) {
+    this.salesComplainService.getComplainsByTiersId(idTiers).subscribe(complains => {
+      if (Array.isArray(complains) && complains.length > 0)
+      this.complainList = complains;
     });
   }
 
   submitForm(){
-    if (this.selectedAffaire && this.selectedReclamationCause && this.selectedReclamationOrigin && this.selectedReclamationProblem) {
-    this.reclamation.affaire = this.selectedAffaire;
-    this.reclamation.salesCause = this.selectedReclamationCause;
-    this.reclamation.salesProblem = this.selectedReclamationProblem;
-    this.reclamation.salesOrigin = this.selectedReclamationOrigin;
-    this.reclamation.idTiers = this.tiers.id;
-    this.reclamation.responsableName = this.selectedEmployee?.firstname + " " + this.selectedEmployee?.lastname;
-    this.reclamation.observations = this.observations;
-    this.reclamation.customerOrderNumber = this.customerOrderNumber;
+    if (this.selectedAffaire && this.selectedComplainCause && this.selectedComplainOrigin && this.selectedComplainProblem) {
+    this.complain.affaire = this.selectedAffaire;
+    this.complain.salesCause = this.selectedComplainCause;
+    this.complain.salesProblem = this.selectedComplainProblem;
+    this.complain.salesOrigin = this.selectedComplainOrigin;
+    this.complain.idTiers = this.tiers.id;
+    this.complain.responsableName = this.selectedEmployee?.firstname + " " + this.selectedEmployee?.lastname;
+    this.complain.observations = this.observations;
+    this.complain.customerOrderNumber = this.customerOrderNumber;
     let d = new Date();
-    this.reclamation.complaintDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours()+1, d.getUTCMinutes());
-    this.salesReclamationService.addOrUpdateReclamation(this.reclamation).subscribe(response => {
-      this.reclamation = response;
+    this.complain.complaintDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours()+1, d.getUTCMinutes());
+    this.salesComplainService.addOrUpdateComplain(this.complain).subscribe(response => {
+      this.complain = response;
     });
     }
   }

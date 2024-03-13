@@ -33,9 +33,9 @@ import { TiersComponent } from './tiers.component';
 import { VisitPrepaTiersResponsibleInfoComponent } from '../visit-prepa-tiers-responsible-info/visit-prepa-tiers-responsible-info.component';
 import { ComplaintTiersComponent } from '../complaint-tiers/complaint-tiers.component';
 import { VisitPrepaCustomerOrdersResponsibleComponent } from '../visit-prepa-customer-orders-responsible/visit-prepa-customer-orders-responsible.component';
-import { SelectReclamationProblemComponent } from 'src/app/modules/miscellaneous/components/forms/select-reclamation-problem/select-reclamation-problem.component';
-import { SelectReclamationOriginComponent } from 'src/app/modules/miscellaneous/components/forms/select-reclamation-origin/select-reclamation-origin.component';
-import { SelectReclamationCauseComponent } from 'src/app/modules/miscellaneous/components/forms/select-reclamation-causes/select-reclamation-causes.component';
+import { SelectComplainProblemComponent } from 'src/app/modules/miscellaneous/components/forms/select-complain-problem/select-complain-problem.component';
+import { SelectComplainOriginComponent } from 'src/app/modules/miscellaneous/components/forms/select-complain-origin/select-complain-origin.component';
+import { SelectComplainCauseComponent } from 'src/app/modules/miscellaneous/components/forms/select-complain-causes/select-complain-causes.component';
 
 const routes: Routes = [
   { path: 'tiers', component: TiersComponent },
@@ -81,9 +81,9 @@ const routes: Routes = [
     RffListComponent,
     VisitPrepaTiersResponsibleInfoComponent,
     ComplaintTiersComponent,
-    SelectReclamationProblemComponent,
-    SelectReclamationOriginComponent,
-    SelectReclamationCauseComponent,
+    SelectComplainProblemComponent,
+    SelectComplainOriginComponent,
+    SelectComplainCauseComponent,
     VisitPrepaCustomerOrdersResponsibleComponent,
   ],
   providers: [

@@ -25,20 +25,20 @@ import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.miscellaneous.model.PhoneSearch;
-import com.jss.osiris.modules.miscellaneous.model.SalesReclamation;
-import com.jss.osiris.modules.miscellaneous.model.SalesReclamationCause;
-import com.jss.osiris.modules.miscellaneous.model.SalesReclamationOrigin;
-import com.jss.osiris.modules.miscellaneous.model.SalesReclamationProblem;
+import com.jss.osiris.modules.miscellaneous.model.SalesComplain;
+import com.jss.osiris.modules.miscellaneous.model.SalesComplainCause;
+import com.jss.osiris.modules.miscellaneous.model.SalesComplainOrigin;
+import com.jss.osiris.modules.miscellaneous.model.SalesComplainProblem;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CountryService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
-import com.jss.osiris.modules.miscellaneous.service.SalesReclamationCauseService;
-import com.jss.osiris.modules.miscellaneous.service.SalesReclamationOriginService;
-import com.jss.osiris.modules.miscellaneous.service.SalesReclamationProblemService;
-import com.jss.osiris.modules.miscellaneous.service.SalesReclamationService;
+import com.jss.osiris.modules.miscellaneous.service.SalesComplainCauseService;
+import com.jss.osiris.modules.miscellaneous.service.SalesComplainOriginService;
+import com.jss.osiris.modules.miscellaneous.service.SalesComplainProblemService;
+import com.jss.osiris.modules.miscellaneous.service.SalesComplainService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
@@ -163,16 +163,16 @@ public class TiersController {
   RffFrequencyService rffFrequencyService;
 
   @Autowired
-  SalesReclamationCauseService salesReclamationCauseService;
+  SalesComplainCauseService salesComplainCauseService;
 
   @Autowired
-  SalesReclamationOriginService salesReclamationOriginService;
+  SalesComplainOriginService salesComplainOriginService;
 
   @Autowired
-  SalesReclamationProblemService salesReclamationProblemService;
+  SalesComplainProblemService salesComplainProblemService;
 
   @Autowired
-  SalesReclamationService salesReclamationService;
+  SalesComplainService salesComplainService;
 
   @GetMapping(inputEntryPoint + "/rff-frequencies")
   public ResponseEntity<List<RffFrequency>> getRffFrequencies() {
@@ -465,78 +465,78 @@ public class TiersController {
         HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/sales-reclamation-causes")
-  public ResponseEntity<List<SalesReclamationCause>> getReclamationCauses() {
-    return new ResponseEntity<List<SalesReclamationCause>>(salesReclamationCauseService.getReclamationCauses(),
+  @GetMapping(inputEntryPoint + "/sales-complain-causes")
+  public ResponseEntity<List<SalesComplainCause>> getComplainCauses() {
+    return new ResponseEntity<List<SalesComplainCause>>(salesComplainCauseService.getComplainCauses(),
         HttpStatus.OK);
   }
 
   @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-  @PostMapping(inputEntryPoint + "/sales-reclamation-cause")
-  public ResponseEntity<SalesReclamationCause> addOrUpdateReclamationCause(
-      @RequestBody SalesReclamationCause salesReclamationCause) throws OsirisValidationException, OsirisException {
-    if (salesReclamationCause.getId() != null)
-      validationHelper.validateReferential(salesReclamationCause, true, "noticeTypes");
-    validationHelper.validateString(salesReclamationCause.getCode(), true, 20, "code");
-    validationHelper.validateString(salesReclamationCause.getLabel(), true, 200, "label");
+  @PostMapping(inputEntryPoint + "/sales-complain-cause")
+  public ResponseEntity<SalesComplainCause> addOrUpdateComplainCause(
+      @RequestBody SalesComplainCause salesComplainCause) throws OsirisValidationException, OsirisException {
+    if (salesComplainCause.getId() != null)
+      validationHelper.validateReferential(salesComplainCause, true, "noticeTypes");
+    validationHelper.validateString(salesComplainCause.getCode(), true, 20, "code");
+    validationHelper.validateString(salesComplainCause.getLabel(), true, 200, "label");
 
-    return new ResponseEntity<SalesReclamationCause>(
-        salesReclamationCauseService.addOrUpdateReclamationCause(salesReclamationCause), HttpStatus.OK);
+    return new ResponseEntity<SalesComplainCause>(
+        salesComplainCauseService.addOrUpdateComplainCause(salesComplainCause), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/sales-reclamation-origins")
-  public ResponseEntity<List<SalesReclamationOrigin>> getReclamationOrigins() {
-    return new ResponseEntity<List<SalesReclamationOrigin>>(salesReclamationOriginService.getReclamationOrigins(),
+  @GetMapping(inputEntryPoint + "/sales-complain-origins")
+  public ResponseEntity<List<SalesComplainOrigin>> getComplainOrigins() {
+    return new ResponseEntity<List<SalesComplainOrigin>>(salesComplainOriginService.getComplainOrigins(),
         HttpStatus.OK);
   }
 
   @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-  @PostMapping(inputEntryPoint + "/sales-reclamation-origin")
-  public ResponseEntity<SalesReclamationOrigin> addOrUpdateReclamationOrigin(
-      @RequestBody SalesReclamationOrigin salesReclamationOrigin) throws OsirisValidationException, OsirisException {
-    if (salesReclamationOrigin.getId() != null)
-      validationHelper.validateReferential(salesReclamationOrigin, true, "noticeTypes");
-    validationHelper.validateString(salesReclamationOrigin.getCode(), true, 20, "code");
-    validationHelper.validateString(salesReclamationOrigin.getLabel(), true, 200, "label");
+  @PostMapping(inputEntryPoint + "/sales-complain-origin")
+  public ResponseEntity<SalesComplainOrigin> addOrUpdateComplainOrigin(
+      @RequestBody SalesComplainOrigin salesComplainOrigin) throws OsirisValidationException, OsirisException {
+    if (salesComplainOrigin.getId() != null)
+      validationHelper.validateReferential(salesComplainOrigin, true, "noticeTypes");
+    validationHelper.validateString(salesComplainOrigin.getCode(), true, 20, "code");
+    validationHelper.validateString(salesComplainOrigin.getLabel(), true, 200, "label");
 
-    return new ResponseEntity<SalesReclamationOrigin>(
-        salesReclamationOriginService.addOrUpdateReclamationOrigin(salesReclamationOrigin), HttpStatus.OK);
+    return new ResponseEntity<SalesComplainOrigin>(
+        salesComplainOriginService.addOrUpdateComplainOrigin(salesComplainOrigin), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/sales-reclamation-problems")
-  public ResponseEntity<List<SalesReclamationProblem>> getReclamationProblems() {
-    return new ResponseEntity<List<SalesReclamationProblem>>(salesReclamationProblemService.getReclamationProblems(),
+  @GetMapping(inputEntryPoint + "/sales-complain-problems")
+  public ResponseEntity<List<SalesComplainProblem>> getComplainProblems() {
+    return new ResponseEntity<List<SalesComplainProblem>>(salesComplainProblemService.getComplainProblems(),
         HttpStatus.OK);
   }
 
   @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-  @PostMapping(inputEntryPoint + "/sales-reclamation-problem")
-  public ResponseEntity<SalesReclamationProblem> addOrUpdateReclamationProblem(
-      @RequestBody SalesReclamationProblem salesReclamationProblem) throws OsirisValidationException, OsirisException {
-    if (salesReclamationProblem.getId() != null)
-      validationHelper.validateReferential(salesReclamationProblem, true, "noticeTypes");
-    validationHelper.validateString(salesReclamationProblem.getCode(), true, 20, "code");
-    validationHelper.validateString(salesReclamationProblem.getLabel(), true, 200, "label");
+  @PostMapping(inputEntryPoint + "/sales-complain-problem")
+  public ResponseEntity<SalesComplainProblem> addOrUpdateComplainProblem(
+      @RequestBody SalesComplainProblem salesComplainProblem) throws OsirisValidationException, OsirisException {
+    if (salesComplainProblem.getId() != null)
+      validationHelper.validateReferential(salesComplainProblem, true, "noticeTypes");
+    validationHelper.validateString(salesComplainProblem.getCode(), true, 20, "code");
+    validationHelper.validateString(salesComplainProblem.getLabel(), true, 200, "label");
 
-    return new ResponseEntity<SalesReclamationProblem>(
-        salesReclamationProblemService.addOrUpdateReclamationProblem(salesReclamationProblem), HttpStatus.OK);
+    return new ResponseEntity<SalesComplainProblem>(
+        salesComplainProblemService.addOrUpdateComplainProblem(salesComplainProblem), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/sales-reclamations")
-  public ResponseEntity<List<SalesReclamation>> getReclamationsByTiersId(@RequestParam Integer id)
+  @GetMapping(inputEntryPoint + "/sales-complains")
+  public ResponseEntity<List<SalesComplain>> getComplainsByTiersId(@RequestParam Integer id)
       throws OsirisValidationException {
     if (id == null)
       throw new OsirisValidationException("id");
-    return new ResponseEntity<List<SalesReclamation>>(salesReclamationService.getReclamationsByTiersId(id),
+    return new ResponseEntity<List<SalesComplain>>(salesComplainService.getComplainsByTiersId(id),
         HttpStatus.OK);
   }
 
   @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-  @PostMapping(inputEntryPoint + "/sales-reclamation")
-  public ResponseEntity<SalesReclamation> addOrUpdateReclamation(@RequestBody SalesReclamation salesReclamation)
+  @PostMapping(inputEntryPoint + "/sales-complain")
+  public ResponseEntity<SalesComplain> addOrUpdateComplain(@RequestBody SalesComplain salesComplain)
       throws OsirisValidationException, OsirisException {
 
-    return new ResponseEntity<SalesReclamation>(salesReclamationService.addOrUpdateReclamation(salesReclamation),
+    return new ResponseEntity<SalesComplain>(salesComplainService.addOrUpdateComplain(salesComplain),
         HttpStatus.OK);
   }
 

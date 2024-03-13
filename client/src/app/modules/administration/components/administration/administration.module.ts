@@ -84,9 +84,9 @@ import { ReferentialProvisionFamilyTypeComponent } from '../referentials/referen
 import { ReferentialRecordTypeComponent } from '../referentials/referentiel-record-type/referential-record-type.component';
 import { ViewLogComponent } from '../view-log/view-log.component';
 import { AdministrationComponent } from './administration.component';
-import { ReferentialReclamationProblemComponent } from '../referentials/referential-reclamation-problem/referential-reclamation-problem.component';
-import { ReferentialReclamationCauseComponent } from '../referentials/referential-reclamation-cause/referential-reclamation-cause.component';
-import { ReferentialReclamationOriginComponent } from '../referentials/referential-reclamation-origin/referential-reclamation-origin.component';
+import { ReferentialComplainProblemComponent } from '../referentials/referential-complain-problem/referential-complain-problem.component';
+import { ReferentialComplainCauseComponent } from '../referentials/referential-complain-cause/referential-complain-cause.component';
+import { ReferentialComplainOriginComponent } from '../referentials/referential-complain-origin/referential-complain-origin.component';
 
 const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
@@ -186,9 +186,9 @@ const routes: Routes = [
     ReferentialDepartmentVatSettingComponent,
     ReferentialTypeDocumentComponent,
     ReferentialRffFrequencyComponent,
-    ReferentialReclamationProblemComponent,
-    ReferentialReclamationCauseComponent,
-    ReferentialReclamationOriginComponent
+    ReferentialComplainProblemComponent,
+    ReferentialComplainCauseComponent,
+    ReferentialComplainOriginComponent
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

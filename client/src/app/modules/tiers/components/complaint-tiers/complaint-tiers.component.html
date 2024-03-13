@@ -14,19 +14,19 @@
           </tr>
         </table>
       <div class="mt-3">
-        <select-reclamation-problem [(model)]="selectedReclamationProblem" label="Sélectionner le problème" [form]="principalForm" propertyName="reclamationProblem"
+        <select-complain-problem [(model)]="selectedComplainProblem" label="Sélectionner le problème" [form]="principalForm" propertyName="complainProblem"
           [isMandatory]="true">
-        </select-reclamation-problem>
+        </select-complain-problem>
       </div>
       <div class="mt-3">
-        <select-reclamation-origin [(model)]="selectedReclamationOrigin" label="Sélectionner l'origine" [form]="principalForm" propertyName="reclamationOrigin"
+        <select-complain-origin [(model)]="selectedComplainOrigin" label="Sélectionner l'origine" [form]="principalForm" propertyName="complainOrigin"
           [isMandatory]="true">
-        </select-reclamation-origin>
+        </select-complain-origin>
       </div>
       <div class="mt-3">
-        <select-reclamation-cause [(model)]="selectedReclamationCause" label="Sélectionner la cause" [form]="principalForm" propertyName="reclamationCause"
+        <select-complain-cause [(model)]="selectedComplainCause" label="Sélectionner la cause" [form]="principalForm" propertyName="complainCause"
           [isMandatory]="true">
-        </select-reclamation-cause>
+        </select-complain-cause>
       </div>
       <div class="mt-3">
       <autocomplete-employee [(model)]="selectedEmployee" [form]="principalForm"
@@ -47,8 +47,8 @@
       </div>
     </mat-tab>
       <mat-tab label="Reclamations associés">
-        <sort-table [columns]="displayedColumnsReclamations" [values]="reclamationList"
-        tableName="Reclamations" *ngIf="displayedColumnsReclamations && displayedColumnsReclamations.length>0 ">
+        <sort-table [columns]="displayedColumnsComplains" [values]="complainList"
+        tableName="Reclamations" *ngIf="displayedColumnsComplains && displayedColumnsComplains.length>0 ">
     </sort-table>
     </mat-tab>
   </mat-tab-group>

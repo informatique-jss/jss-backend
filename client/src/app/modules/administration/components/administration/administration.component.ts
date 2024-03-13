@@ -83,9 +83,9 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   CUSTOMER_ORDER_ORIGIN_REFERENTIAL = "Origine des commandes";
   DEPARTMENT_VAT_SETTING_REFERENTIAL = "TVA par département";
   RFF_FREQUENCY_REFERENTIAL = "Périodicité des RFF";
-  RECLAMATION_PROBLEM_REFERENTIAL = "Reclamation - Probleme de vente";
-  RECLAMATION_CAUSE_REFERENTIAL = "Reclamation - Cause du probleme de vente";
-  RECLAMATION_ORIGIN_REFERENTIAL = "Reclamation - Origine du probleme de vente";
+  COMPLAIN_PROBLEM_REFERENTIAL = "Reclamation - Probleme de vente";
+  COMPLAIN_CAUSE_REFERENTIAL = "Reclamation - Cause du probleme de vente";
+  COMPLAIN_ORIGIN_REFERENTIAL = "Reclamation - Origine du probleme de vente";
   QUOTATION_ABANDON_REASON_REFERENTIAL = "Raison d'abandon des commandes/devis";
 
   constructor(private appService: AppService,
@@ -153,9 +153,9 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL);
     this.referentials.push(this.CUSTOMER_ORDER_ORIGIN_REFERENTIAL);
     this.referentials.push(this.DEPARTMENT_VAT_SETTING_REFERENTIAL);
-    this.referentials.push(this.RECLAMATION_PROBLEM_REFERENTIAL);
-    this.referentials.push(this.RECLAMATION_CAUSE_REFERENTIAL);
-    this.referentials.push(this. RECLAMATION_ORIGIN_REFERENTIAL);
+    this.referentials.push(this.COMPLAIN_PROBLEM_REFERENTIAL);
+    this.referentials.push(this.COMPLAIN_CAUSE_REFERENTIAL);
+    this.referentials.push(this. COMPLAIN_ORIGIN_REFERENTIAL);
 
     this.referentials.push(this.QUOTATION_ABANDON_REASON_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
