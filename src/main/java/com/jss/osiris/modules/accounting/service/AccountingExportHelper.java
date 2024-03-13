@@ -398,7 +398,7 @@ public class AccountingExportHelper {
                                                 + " - "
                                                 + endDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
-                CellRangeAddress region = new CellRangeAddress(0, 1, 0, isGenerale ? 8 : 9);
+                CellRangeAddress region = new CellRangeAddress(0, 1, 0, isGenerale ? 5 : 11);
                 cleanBeforeMergeOnValidCells(currentSheet, region, titleCellStyle);
                 currentSheet.addMergedRegion(region);
                 currentLine++;
@@ -410,35 +410,41 @@ public class AccountingExportHelper {
                 currentCell = currentRow.createCell(currentColumn++);
                 currentCell.setCellValue("N° de compte");
                 currentCell.setCellStyle(headerCellStyle);
-                if (!isGenerale) {
-                        currentCell = currentRow.createCell(currentColumn++);
-                        currentCell.setCellValue("Libellé du compte");
-                        currentCell.setCellStyle(headerCellStyle);
-                }
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("Début");
+                currentCell.setCellValue("Libellé du compte");
+                currentCell.setCellStyle(headerCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("Débit");
                 currentCell.setCellStyle(headerCellStyle);
                 currentCell = currentRow.createCell(currentColumn++);
                 currentCell.setCellValue("Crédit");
                 currentCell.setCellStyle(headerCellStyle);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("Créances à échoir -30j");
+                currentCell.setCellValue("Solde débit");
                 currentCell.setCellStyle(headerCellStyle);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("Créances à échoir -60j");
+                currentCell.setCellValue("Solde crédit");
                 currentCell.setCellStyle(headerCellStyle);
-                currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("Créances à échoir +60j");
-                currentCell.setCellStyle(headerCellStyle);
-                currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("Créances échues -30j");
-                currentCell.setCellStyle(headerCellStyle);
-                currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("Créances échues -60j");
-                currentCell.setCellStyle(headerCellStyle);
-                currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("Créances échues +60j");
-                currentCell.setCellStyle(headerCellStyle);
+                if (!isGenerale) {
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue("Créances à échoir -30j");
+                        currentCell.setCellStyle(headerCellStyle);
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue("Créances à échoir -60j");
+                        currentCell.setCellStyle(headerCellStyle);
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue("Créances à échoir +60j");
+                        currentCell.setCellStyle(headerCellStyle);
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue("Créances échues -30j");
+                        currentCell.setCellStyle(headerCellStyle);
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue("Créances échues -60j");
+                        currentCell.setCellStyle(headerCellStyle);
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue("Créances échues +60j");
+                        currentCell.setCellStyle(headerCellStyle);
+                }
 
                 Float debit = 0f;
                 Float credit = 0f;
@@ -452,11 +458,11 @@ public class AccountingExportHelper {
                                                                 ? balanceRecord.getAccountingAccountSubNumber()
                                                                 : ""));
                                 currentCell.setCellStyle(styleDate);
-                                if (!isGenerale) {
-                                        currentCell = currentRow.createCell(currentColumn++);
-                                        currentCell.setCellValue(balanceRecord.getAccountingAccountLabel());
-                                        currentCell.setCellStyle(recordCellStyle);
-                                }
+                                currentCell = currentRow.createCell(currentColumn++);
+                                currentCell.setCellValue(
+                                                isGenerale ? balanceRecord.getPrincipalAccountingAccountLabel()
+                                                                : balanceRecord.getAccountingAccountLabel());
+                                currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 if (balanceRecord.getDebitAmount() != null) {
                                         currentCell.setCellValue(balanceRecord.getDebitAmount());
@@ -469,36 +475,57 @@ public class AccountingExportHelper {
                                         currentCell.setCellValue(balanceRecord.getCreditAmount());
                                 }
                                 currentCell.setCellStyle(styleCurrency);
+
+                                Float debitAmount = balanceRecord.getDebitAmount() != null
+                                                ? balanceRecord.getDebitAmount()
+                                                : 0f;
+                                Float creditAmount = balanceRecord.getCreditAmount() != null
+                                                ? balanceRecord.getCreditAmount()
+                                                : 0f;
                                 currentCell = currentRow.createCell(currentColumn++);
-                                if (balanceRecord.getEchoir30() != null)
-                                        currentCell
-                                                        .setCellValue(balanceRecord.getEchoir30());
+                                if (debitAmount > creditAmount) {
+                                        currentCell.setCellValue(debitAmount - creditAmount);
+                                }
                                 currentCell.setCellStyle(styleCurrency);
                                 currentCell = currentRow.createCell(currentColumn++);
-                                if (balanceRecord.getEchoir60() != null)
-                                        currentCell
-                                                        .setCellValue(balanceRecord.getEchoir60());
+                                if (debitAmount <= creditAmount) {
+                                        currentCell.setCellValue(creditAmount - debitAmount);
+                                }
                                 currentCell.setCellStyle(styleCurrency);
-                                currentCell = currentRow.createCell(currentColumn++);
-                                if (balanceRecord.getEchoir90() != null)
-                                        currentCell
-                                                        .setCellValue(balanceRecord.getEchoir90());
-                                currentCell.setCellStyle(styleCurrency);
-                                currentCell = currentRow.createCell(currentColumn++);
-                                if (balanceRecord.getEchu30() != null)
-                                        currentCell
-                                                        .setCellValue(balanceRecord.getEchu30());
-                                currentCell.setCellStyle(styleCurrency);
-                                currentCell = currentRow.createCell(currentColumn++);
-                                if (balanceRecord.getEchu60() != null)
-                                        currentCell
-                                                        .setCellValue(balanceRecord.getEchu60());
-                                currentCell.setCellStyle(styleCurrency);
-                                currentCell = currentRow.createCell(currentColumn++);
-                                if (balanceRecord.getEchu90() != null)
-                                        currentCell
-                                                        .setCellValue(balanceRecord.getEchu90());
-                                currentCell.setCellStyle(styleCurrency);
+
+                                if (!isGenerale) {
+                                        currentCell.setCellStyle(styleCurrency);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        if (balanceRecord.getEchoir30() != null)
+                                                currentCell
+                                                                .setCellValue(balanceRecord.getEchoir30());
+                                        currentCell.setCellStyle(styleCurrency);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        if (balanceRecord.getEchoir60() != null)
+                                                currentCell
+                                                                .setCellValue(balanceRecord.getEchoir60());
+                                        currentCell.setCellStyle(styleCurrency);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        if (balanceRecord.getEchoir90() != null)
+                                                currentCell
+                                                                .setCellValue(balanceRecord.getEchoir90());
+                                        currentCell.setCellStyle(styleCurrency);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        if (balanceRecord.getEchu30() != null)
+                                                currentCell
+                                                                .setCellValue(balanceRecord.getEchu30());
+                                        currentCell.setCellStyle(styleCurrency);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        if (balanceRecord.getEchu60() != null)
+                                                currentCell
+                                                                .setCellValue(balanceRecord.getEchu60());
+                                        currentCell.setCellStyle(styleCurrency);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        if (balanceRecord.getEchu90() != null)
+                                                currentCell
+                                                                .setCellValue(balanceRecord.getEchu90());
+                                        currentCell.setCellStyle(styleCurrency);
+                                }
                         }
                 }
 
@@ -535,7 +562,7 @@ public class AccountingExportHelper {
                 currentCell.setCellStyle(styleCurrency);
 
                 // autosize
-                for (int i = 0; i < 11; i++)
+                for (int i = 0; i < 12; i++)
                         currentSheet.autoSizeColumn(i, true);
 
                 File file;
