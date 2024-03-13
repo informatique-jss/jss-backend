@@ -24,4 +24,5 @@ export interface ResponsablesRff {
   rffInsertion: number | undefined;
   rffFormalite: number | undefined;
   rffTotal: number | undefined;
+  isActive: boolean;
 }

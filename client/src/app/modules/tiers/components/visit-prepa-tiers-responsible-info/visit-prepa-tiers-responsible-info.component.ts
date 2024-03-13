@@ -139,6 +139,7 @@ export class VisitPrepaTiersResponsibleInfoComponent implements OnInit, AfterCon
 
 
     this.displayedColumnsResponsablesRff.push({ id: "id", fieldName: "id", label: "N° du responsable" } as SortTableColumn<ResponsablesRff>);
+    this.displayedColumnsResponsablesRff.push({ id: "isActive", fieldName: "isActive", label: "est actif?" } as SortTableColumn<ResponsablesRff>);
     this.displayedColumnsResponsablesRff.push({ id: "name", fieldName: "name", label: "Nom" } as SortTableColumn<ResponsablesRff>);
     this.displayedColumnsResponsablesRff.push({ id: "phones", fieldName: "phones", label: "Téléphones", valueFonction: (element: ResponsablesRff, column: SortTableColumn<ResponsablesRff>) => { return ((element.phones) ? element.phones.map((e: { phoneNumber: any; }) => e.phoneNumber).join(", ") : "") } } as SortTableColumn<ResponsablesRff>);
     this.displayedColumnsResponsablesRff.push({ id: "function", fieldName: "function", label: "Fonction" } as SortTableColumn<ResponsablesRff>);
@@ -232,7 +233,7 @@ export class VisitPrepaTiersResponsibleInfoComponent implements OnInit, AfterCon
     if(this.responsableSearchResultListLastYear && this.responsableSearchResultListLastYear!= undefined && this.responsableSearchResultListLastYear.length>1){
     for(let i = 1; i<this.responsableSearchResultListLastYear.length; i++) {
       for(let j = 0; j<this.tiers.responsables.length; j++){
-        if(this.tiers.responsables[j].id == this.responsableSearchResultListLastYear[i].responsableId && this.tiers.responsables[j].isActive == true){
+        if(this.tiers.responsables[j].id == this.responsableSearchResultListLastYear[i].responsableId ){
           if(this.responsableSearchResultListLastYear[i].responsableId!=undefined)
           this.responsablesRff[i-1].id = this.responsableSearchResultListLastYear[i].responsableId;
           if(this.responsableSearchResultListLastYear[i].responsableLabel!=undefined)
@@ -245,11 +246,19 @@ export class VisitPrepaTiersResponsibleInfoComponent implements OnInit, AfterCon
           this.responsablesRff[i-1].function = this.tiers.responsables[j].function;
           if(this.responsableSearchResultListLastYear[i].turnoverAmountWithTax!=undefined)
           this.responsablesRff[i-1].turnoverAmountWithTaxLastYear = this.responsableSearchResultListLastYear[i].turnoverAmountWithTax;
+          else
+          this.responsablesRff[i-1].turnoverAmountWithTaxLastYear = 0;
           if(this.responsableSearchResultListLastYear[i].formalityNbr!=undefined)
           this.responsablesRff[i-1].formalityNbrLastYear = this.responsableSearchResultListLastYear[i].formalityNbr;
+          else
+          this.responsablesRff[i-1].formalityNbrLastYear = 0;
           if(this.responsableSearchResultListLastYear[i].announcementNbr!=undefined)
           this.responsablesRff[i-1].announcementNbrLastYear = this.responsableSearchResultListLastYear[i].announcementNbr;
-          this.responsablesRff.push({...this.responsablesRff[i]});
+          else
+          this.responsablesRff[i-1].announcementNbrLastYear = 0;
+          if(this.tiers.responsables[j].isActive!=undefined)
+          this.responsablesRff[i-1].isActive = this.tiers.responsables[j].isActive;
+          this.responsablesRff.push({...this.responsablesRff[i-1]});
         }
       }
     }

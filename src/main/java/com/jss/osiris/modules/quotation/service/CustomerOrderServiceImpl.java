@@ -186,15 +186,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public List<CustomerOrder> getCustomerOrderByResponsableId(Integer responsableId) {
-        List<CustomerOrder> customerOrder = customerOrderRepository
-                .findByResponsable_Id(responsableId);
-        if (!customerOrder.isEmpty())
-            return customerOrder;
-        return null;
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
