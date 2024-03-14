@@ -117,16 +117,6 @@ export class ComplaintTiersComponent implements OnInit, AfterContentChecked{
     }
   }
 
-  updateAssignedToForCustomerOrder(employee: Employee) {
-    if (this.editMode)
-      return;
-    if (instanceOfCustomerOrder(this.quotation))
-      this.customerOrderService.updateAssignedToForCustomerOrder(this.quotation, employee).subscribe(response => {
-      });
-    if (instanceOfQuotation(this.quotation))
-      this.customerOrderService.updateAssignedToForQuotation(this.quotation, employee).subscribe(response => {
-      });
-  }
 }
 
 

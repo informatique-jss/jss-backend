@@ -38,32 +38,17 @@ export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, Aft
   @Input() isForTiersIntegration: boolean = false;
 
   searchText: string | undefined;
-  affaires: AssoAffaireOrderSearchResult[] | undefined;
-  allEmployees: Employee[] = [] as Array<Employee>;
   customerOrders: CustomerOrder[] | undefined;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
-  responsableAccountSearch: Tiers | undefined;
   orders: OrderingSearchResult[] | undefined;
   invoices: InvoiceSearchResult[] | undefined;
   quotations: QuotationSearchResult[] | undefined;
   customerOrderFiller: CustomerOrderFiller[] | undefined;
-  ordersList: OrderingSearchResult[] | undefined;
-  bookmark: AffaireSearch | undefined;
-  customerOrderList: CustomerOrder[] | undefined;
   customerOrder: CustomerOrder = {} as CustomerOrder;
-  reportingObservableRef: Subscription | undefined;
-
-  dataToDisplay: any | undefined;
-
-  availableColumns: SortTableColumn<AssoAffaireOrderSearchResult>[] = [];
 
   displayedColumnsSalesRecord: SortTableColumn<CustomerOrderFiller>[] = [];
   salesRecordTableActions: SortTableAction<CustomerOrderFiller>[] = [] as Array<SortTableAction<CustomerOrderFiller>>;
   tableAction: SortTableAction<CustomerOrderFiller>[] = [];
-  @Output() actionBypass: EventEmitter<InvoiceSearchResult> = new EventEmitter<InvoiceSearchResult>();
-
-  invoiceSearchList: ITiers[] =[];
-  provisionSearch: AffaireSearch = {} as AffaireSearch;
 
   constructor(private orderingSearchResultService: OrderingSearchResultService,
     private invoiceSearchResultService: InvoiceSearchResultService,
@@ -81,8 +66,6 @@ export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, Aft
     this.quotations = [{} as QuotationSearchResult];
     this.invoices = [{} as InvoiceSearchResult];
     this.customerOrderFiller = [{} as CustomerOrderFiller];
-    this.customerOrderList = [{} as CustomerOrder];
-    this.availableColumns = [];
 
     this.displayedColumnsSalesRecord.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Donneur d'ordre"  } as SortTableColumn<CustomerOrderFiller>);
     this.displayedColumnsSalesRecord.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "Nº commande"  } as SortTableColumn<CustomerOrderFiller>);

@@ -1,23 +1,15 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { Tiers } from '../../model/Tiers';
-import { RffSearch } from '../../model/RffSearch';
-import { RffService } from '../../services/rff.service';
-import { Rff } from '../../model/Rff';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
-import { Responsable } from '../../model/Responsable';
 import { TiersService } from '../../services/tiers.service';
 import { formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { TiersSearch } from '../../model/TiersSearch';
 import { ResponsableSearchResultService } from '../../services/responsable.search.result.service';
 import { ResponsableSearchResult } from '../../model/ResponsableSearchResult';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
-import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
-import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { TiersSearchResultService } from '../../services/tiers.search.result.service';
-import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
-import { forkJoin } from 'rxjs';
 import { TiersSearchResult } from '../../model/TiersSearchResult';
 import { TiersRff } from '../../model/TiersRff';
 import { ResponsablesRff } from '../../model/ResponsablesRff';
@@ -42,24 +34,14 @@ export class VisitPrepaTiersResponsibleInfoComponent implements OnInit, AfterCon
   customerOrderNbrThisYear: number | undefined;
   remainingToPayInvoice: number| undefined;
 
-  rff: Rff[] | undefined;
-  rffSearchResult:  Rff[] | undefined;
-  rffSearchResultList:  Rff[] | undefined;
-
   responsableSearchListLastYear:  TiersSearch[] | undefined;
   responsableSearchListThisYear:  TiersSearch[] | undefined;
-
-  tiersRffResponse: boolean = true;
-  noResponsable: Responsable = {} as Responsable;
 
   tiersRff: TiersRff[] | undefined;
   orders: OrderingSearchResult[] | undefined;
   ordersLastYear: OrderingSearchResult[] | undefined;
 
   responsablesRff: ResponsablesRff[] | undefined;
-
-  tiersList: Tiers[] | undefined;
-  responsablesList: Responsable[] | undefined;;
 
   tiersSearch: TiersSearch = {} as TiersSearch;
   tiersSearchResultLastYear: TiersSearchResult[] = [];
@@ -69,20 +51,14 @@ export class VisitPrepaTiersResponsibleInfoComponent implements OnInit, AfterCon
   responsableSearchThisYear: TiersSearch = {} as TiersSearch;
 
   responsableSearchResultLastYear: ResponsableSearchResult[] | undefined;
-  responsableSearchResultListLastYear: ResponsableSearchResult[] | undefined;
   responsableSearchResultThisYear: ResponsableSearchResult[] | undefined;
-  responsableSearchResultListThisYear: ResponsableSearchResult[] | undefined;
 
-  onlyResponsable: Responsable | undefined;
+  responsableSearchResultListThisYear: ResponsableSearchResult[] | undefined;
+  responsableSearchResultListLastYear: ResponsableSearchResult[] | undefined;
 
   orderingSearch: OrderingSearch = {} as OrderingSearch;
-  quotationSearch: QuotationSearch = {} as QuotationSearch;
-  provisionSearch: AffaireSearch = {} as AffaireSearch;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
-  responsableAccountSearch: Tiers | undefined;
   invoices: InvoiceSearchResult[] | undefined;
-
-  tableActions: SortTableAction<Responsable>[] = [] as Array<SortTableAction<Responsable>>;
 
   displayedColumnsTiersRff: SortTableColumn<TiersRff>[] = [];
 
@@ -104,23 +80,16 @@ export class VisitPrepaTiersResponsibleInfoComponent implements OnInit, AfterCon
 
   ngOnInit() {
 
-    this.tiersList = [this.tiers];
     this.displayedColumnsTiersRff = [];
-
     this.displayedColumnsResponsablesRff = [];
-
-    this.responsablesList = this.tiers.responsables;
     this.tiersSearchResultLastYear= [{} as TiersSearchResult];
     this.tiersSearchResultThisYear= [{} as TiersSearchResult];
-
     this.responsableSearchListLastYear = [{} as TiersSearch];
     this.responsableSearchResultLastYear = [{} as ResponsableSearchResult];
     this.responsableSearchResultListLastYear = [{} as ResponsableSearchResult];
-
     this.responsableSearchListThisYear = [{} as TiersSearch];
     this.responsableSearchResultThisYear = [{} as ResponsableSearchResult];
     this.responsableSearchResultListThisYear = [{} as ResponsableSearchResult];
-
     this.responsablesRff = [{} as ResponsablesRff];
 
     this.displayedColumnsTiersRff.push({ id: "denomination", fieldName: "denomination", label: "Dénomination"  } as SortTableColumn<TiersRff>);
@@ -190,9 +159,7 @@ export class VisitPrepaTiersResponsibleInfoComponent implements OnInit, AfterCon
     this.tiersRff = [{} as TiersRff];
     this.ordersLastYear = [{} as OrderingSearchResult];
     this.orders = [{} as OrderingSearchResult];
-
     this.tiersRff = [{} as TiersRff];
-
     this.responsablesRff = [{} as ResponsablesRff];
 
     if(this.customerOrderNbrLastYear!=undefined)

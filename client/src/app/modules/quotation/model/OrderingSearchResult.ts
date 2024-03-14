@@ -19,7 +19,6 @@ export interface OrderingSearchResult {
   affaireAddress: string;
   lastStatusUpdate: Date;
   customerOrderOriginLabel: string;
-  provisionStatus: string;
 }
 
 

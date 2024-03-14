@@ -30,9 +30,8 @@
       </div>
       <div class="mt-3">
       <autocomplete-employee [(model)]="selectedEmployee" [form]="principalForm"
-                propertyName="assignedTo" [isMandatory]="false" [isDisabled]="false" label="Commande assignée à"
-                (onOptionSelected)="updateAssignedToForCustomerOrder($event)">
-              </autocomplete-employee>
+                propertyName="assignedTo" [isMandatory]="false" [isDisabled]="false" label="Commande assignée à">
+      </autocomplete-employee>
        </div>
        <table class="full-width">
         <tr>
