@@ -3,6 +3,7 @@ package com.jss.osiris.libs.batch.service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -87,14 +88,27 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
                                 batchStatusService.getBatchStatusByCode(BatchStatus.NEW));
                         if (batchs != null && batchs.size() > 0)
                             for (Batch batch : batchs)
-                                if (numberAdded < 1000 && (batchSetting.getMaxAddedNumberPerIteration() <= 0
-                                        || batchSetting.getMaxAddedNumberPerIteration() > numberAdded)) {
-                                    addBatchToQueue(batch);
-                                    numberAdded++;
-                                }
+                                if (!entityCurrentlyRunning(batch))
+                                    if (numberAdded < 1000 && (batchSetting.getMaxAddedNumberPerIteration() <= 0
+                                            || batchSetting.getMaxAddedNumberPerIteration() > numberAdded)) {
+                                        addBatchToQueue(batch);
+                                        numberAdded++;
+                                    }
                     }
                 }
             }
+    }
+
+    private boolean entityCurrentlyRunning(Batch batch) {
+        if (batch != null) {
+            List<Batch> batchs = batchRepository.findByBatchSettingsAndEntityIdAndBatchStatusIn(
+                    batch.getBatchSettings(), batch.getEntityId(),
+                    Arrays.asList(batchStatusService.getBatchStatusByCode(BatchStatus.RUNNING),
+                            batchStatusService.getBatchStatusByCode(BatchStatus.WAITING)));
+            if (batchs != null && batchs.size() > 0)
+                return true;
+        }
+        return false;
     }
 
     private void addOrUpdateQueue(BatchSettings batchSettings) {
@@ -228,8 +242,8 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
 
     @Override
     public List<IBatchStatistics> getBatchStatistics() {
-        return batchRepository.getStatisticsOfBatch(BatchStatus.SUCCESS, BatchStatus.WAITING, BatchStatus.RUNNING,
-                BatchStatus.ERROR, BatchStatus.ACKNOWLEDGE);
+        return batchRepository.getStatisticsOfBatch(BatchStatus.NEW, BatchStatus.SUCCESS, BatchStatus.WAITING,
+                BatchStatus.RUNNING, BatchStatus.ERROR, BatchStatus.ACKNOWLEDGE);
     }
 
     @Override

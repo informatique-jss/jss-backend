@@ -46,6 +46,8 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
   @Input() overrideIconAction: string = "";
   @Input() overrideTooltipAction: string = "";
   @Input() defaultStatusFilter: string[] | undefined;
+  idPayment: number | undefined;
+
 
   constructor(
     private paymentSearchResultService: PaymentSearchResultService,
@@ -147,9 +149,9 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
 
     this.setColumns();
 
-    let idPayment = this.activatedRoute.snapshot.params.idPayment;
-    if (idPayment) {
-      this.paymentSearch.idPayment = idPayment;
+    this.idPayment = this.activatedRoute.snapshot.params.idPayment;
+    if (this.idPayment) {
+      this.paymentSearch.idPayment = this.idPayment;
       this.paymentSearch.isHideAssociatedPayments = false;
       this.paymentSearch.isHideAppoint = false;
       this.paymentSearch.isHideCancelledPayments = false;
@@ -202,7 +204,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
         this.paymentSearch.startDate = new Date(toIsoString(this.paymentSearch.startDate));
       if (this.paymentSearch.endDate)
         this.paymentSearch.endDate = new Date(toIsoString(this.paymentSearch.endDate));
-      if (!this.isForDashboard)
+      if (!this.isForDashboard && !this.idPayment)
         this.userPreferenceService.setUserSearchBookmark(this.paymentSearch, "payments");
       this.paymentSearchResultService.getPayments(this.paymentSearch).subscribe(response => {
         this.payments = response;
