@@ -21,11 +21,15 @@ public interface BatchRepository extends CrudRepository<Batch, Integer> {
 
         List<Batch> findByBatchSettingsAndBatchStatus(BatchSettings batchSetting, BatchStatus batchStatus);
 
+        List<Batch> findByBatchSettingsAndEntityIdAndBatchStatusIn(BatchSettings batchSetting, Integer entityId,
+                        List<BatchStatus> batchStatus);
+
         List<Batch> findByBatchSettingsAndBatchStatusAndNode(BatchSettings byId, BatchStatus batchStatusByCode,
                         Node currentNode);
 
         @Query(nativeQuery = true, value = "" +
                         "   select b.id_batch_settings as idBatchSettings,  " +
+                        "   sum(case when bs.code = :batchStatusNewCode then 1 else 0 end ) as new , " +
                         "   sum(case when bs.code = :batchStatusSuccessCode then 1 else 0 end ) as success , " +
                         "   sum(case when bs.code = :batchStatusWaitingCode then 1 else 0 end ) as waiting , " +
                         "   sum(case when bs.code = :batchStatusRunningCode then 1 else 0 end ) as running , " +
@@ -44,6 +48,7 @@ public interface BatchRepository extends CrudRepository<Batch, Integer> {
                         "   group by b.id_batch_settings order by b.id_batch_settings limit 10000  " +
                         "")
         List<IBatchStatistics> getStatisticsOfBatch(
+                        @Param("batchStatusNewCode") String batchStatusNewCode,
                         @Param("batchStatusSuccessCode") String batchStatusSuccessCode,
                         @Param("batchStatusWaitingCode") String batchStatusWaitingCode,
                         @Param("batchStatusRunningCode") String batchStatusRunningCode,
