@@ -8,6 +8,7 @@ export interface PaymentSearchResult {
   isExternallyAssociated: boolean;
   isAssociated: boolean;
   isCancelled: boolean;
+  isAppoint: boolean;
   invoiceId: number;
   comment: string;
   originPaymentId: number;

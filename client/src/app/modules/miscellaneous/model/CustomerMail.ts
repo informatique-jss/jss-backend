@@ -39,6 +39,5 @@ export interface CustomerMail {
   responsable: Responsable;
   confrere: Confrere;
   attachments: Attachment[];
-  hasErrors: boolean;
   isSent: boolean;
 }

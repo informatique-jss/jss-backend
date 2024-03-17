@@ -1,11 +1,16 @@
 import { IReferential } from "../../administration/model/IReferential";
 import { City } from "../../miscellaneous/model/City";
 import { Civility } from "../../miscellaneous/model/Civility";
+import { CompetentAuthority } from "../../miscellaneous/model/CompetentAuthority";
 import { Country } from "../../miscellaneous/model/Country";
+import { IAttachment } from "../../miscellaneous/model/IAttachment";
 import { Mail } from "../../miscellaneous/model/Mail";
 import { Phone } from "../../miscellaneous/model/Phone";
+import { TiersFollowup } from "../../miscellaneous/model/TiersFollowup";
+import { FormeExerciceActivitePrincipal } from "./guichet-unique/referentials/FormeExerciceActivitePrincipal";
+import { FormeJuridique } from "./guichet-unique/referentials/FormeJuridique";
 
-export interface Affaire extends IReferential {
+export interface Affaire extends IReferential, IAttachment {
   id: number;
   civility: Civility;
   firstname: string;
@@ -29,4 +34,9 @@ export interface Affaire extends IReferential {
   paymentBic: string;
   isUnregistered: boolean;
   intercommunityVat: string | null;
+  legalForm: FormeJuridique;
+  mainActivity: FormeExerciceActivitePrincipal;
+  competentAuthority: CompetentAuthority;
+  acronym: string;
+  tiersFollowups: TiersFollowup[];
 }

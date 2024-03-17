@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.QueryHints;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 
 public interface CompetentAuthorityRepository extends QueryCacheCrudRepository<CompetentAuthority, Integer> {
 
@@ -30,4 +31,8 @@ public interface CompetentAuthorityRepository extends QueryCacheCrudRepository<C
     CompetentAuthority findByAzureCustomReference(String azureCustomReference);
 
     List<CompetentAuthority> findByInpiReference(String inpiReference);
+
+    List<CompetentAuthority> findByCities_IdAndCompetentAuthorityType(Integer cityId,
+            CompetentAuthorityType competentAuthorityType);
+
 }

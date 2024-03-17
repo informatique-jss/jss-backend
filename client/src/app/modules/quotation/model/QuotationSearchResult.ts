@@ -13,11 +13,6 @@ export interface QuotationSearchResult {
   confrereId: number;
   affaireLabel: string;
   totalPrice: number;
-  announcementNbr: number;
-  formaliteNbr: number;
-  bodaccNbr: number;
-  domiciliationNbr: number;
-  simpleProvisionNbr: number;
   lastStatusUpdate: Date;
   customerOrderOriginLabel: string;
 }

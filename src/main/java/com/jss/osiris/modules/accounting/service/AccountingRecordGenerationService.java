@@ -51,7 +51,10 @@ public interface AccountingRecordGenerationService {
         public void generateAccountingRecordsForRefundExport(Refund refund)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
-        public void generateAccountingRecordOnPaymentOnDepositCompetentAuthorityAccount(Payment payment)
+        public void generateAccountingRecordOnIncomingPaymentOnDepositCompetentAuthorityAccount(Payment payment)
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
+
+        public void generateAccountingRecordOnOutgoingPaymentOnDepositCompetentAuthorityAccount(Payment payment)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
 }

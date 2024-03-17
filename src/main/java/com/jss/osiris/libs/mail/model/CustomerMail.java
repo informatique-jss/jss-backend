@@ -25,6 +25,7 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
@@ -160,12 +161,15 @@ public class CustomerMail {
     @JsonIgnoreProperties(value = { "customerMail" }, allowSetters = true)
     private List<Attachment> attachments;
 
-    private Boolean hasErrors;
     private Boolean isSent;
 
     private String mailTemplate;
 
     private String recipientName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_rff")
+    Rff rff;
 
     public Integer getId() {
         return id;
@@ -423,14 +427,6 @@ public class CustomerMail {
         this.attachments = attachments;
     }
 
-    public Boolean getHasErrors() {
-        return hasErrors;
-    }
-
-    public void setHasErrors(Boolean hasErrors) {
-        this.hasErrors = hasErrors;
-    }
-
     public Boolean getIsSent() {
         return isSent;
     }
@@ -503,6 +499,8 @@ public class CustomerMail {
         this.quotationValidationLink = quotationValidationLink;
     }
 
+    <<<<<<<HEAD
+
     public String getMailTemplate() {
         return mailTemplate;
     }
@@ -517,6 +515,15 @@ public class CustomerMail {
 
     public void setRecipientName(String recipientName) {
         this.recipientName = recipientName;
+=======
+
+    public Rff getRff() {
+        return rff;
+    }
+
+    public void setRff(Rff rff) {
+        this.rff = rff;
+>>>>>>> develop
     }
 
 }

@@ -9,6 +9,7 @@ import { AnnouncementSearch } from '../../model/AnnouncementSearch';
 import { Confrere } from '../../model/Confrere';
 import { AnnouncementService } from '../../services/announcement.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
+import { QuotationService } from '../../services/quotation.service';
 
 @Component({
   selector: 'announcement-list',
@@ -19,16 +20,18 @@ export class AnnouncementListComponent implements OnInit, AfterContentChecked {
 
   @Input() confrere: Confrere | undefined;
   announcements: Announcement[] = [];
-  availableColumns: SortTableColumn[] = [];
-  displayedColumns: SortTableColumn[] = [];
-  tableAction: SortTableAction[] = [];
+  availableColumns: SortTableColumn<Announcement>[] = [];
+  displayedColumns: SortTableColumn<Announcement>[] = [];
+  tableAction: SortTableAction<Announcement>[] = [];
   announcementSearch: AnnouncementSearch = {} as AnnouncementSearch;
+
   constructor(
     private announcementService: AnnouncementService,
     private changeDetectorRef: ChangeDetectorRef,
     private customerOrderService: CustomerOrderService,
     private appService: AppService,
     private formBuilder: FormBuilder,
+    private quotationService: QuotationService
   ) { }
 
   ngAfterContentChecked(): void {
@@ -37,21 +40,26 @@ export class AnnouncementListComponent implements OnInit, AfterContentChecked {
 
   ngOnInit() {
     this.availableColumns = [];
-    this.availableColumns.push({ id: "id", fieldName: "id", label: "N° de l'annonce" } as SortTableColumn);
-    this.availableColumns.push({ id: "confrere", fieldName: "confrere.label", label: "Confrère" } as SortTableColumn);
-    this.availableColumns.push({ id: "publicationDate", fieldName: "publicationDate", label: "Date de publication", valueFonction: formatDateForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "noticeTypes", fieldName: "noticeTypes", label: "Rubrique(s)", valueFonction: (element: Announcement) => { return element.noticeTypes.map(notice => notice.label).join(" / ") } } as SortTableColumn);
-    this.availableColumns.push({ id: "announcementStatus", fieldName: "announcementStatus.label", label: "Statut" } as SortTableColumn);
-    this.availableColumns.push({ id: "isPublicationReciptAlreadySent", fieldName: "isPublicationReciptAlreadySent", label: "Attestation de parution envoyée ?", valueFonction: (element: any) => { return element.isPublicationReciptAlreadySent ? "Oui" : "Non" } } as SortTableColumn);
-    this.availableColumns.push({ id: "isPublicationFlagAlreadySent", fieldName: "isPublicationFlagAlreadySent", label: "Témoin de parution envoyé ?", valueFonction: (element: any) => { return element.isPublicationFlagAlreadySent ? "Oui" : "Non" } } as SortTableColumn);
+    this.availableColumns.push({ id: "id", fieldName: "id", label: "N° de l'annonce" } as SortTableColumn<Announcement>);
+    this.availableColumns.push({ id: "confrere", fieldName: "confrere.label", label: "Confrère" } as SortTableColumn<Announcement>);
+    this.availableColumns.push({ id: "publicationDate", fieldName: "publicationDate", label: "Date de publication", valueFonction: formatDateForSortTable } as SortTableColumn<Announcement>);
+    this.availableColumns.push({ id: "noticeTypes", fieldName: "noticeTypes", label: "Rubrique(s)", valueFonction: (element: Announcement, column: SortTableColumn<Announcement>) => { return element.noticeTypes.map(notice => notice.label).join(" / ") } } as SortTableColumn<Announcement>);
+    this.availableColumns.push({ id: "announcementStatus", fieldName: "announcementStatus.label", label: "Statut" } as SortTableColumn<Announcement>);
+    this.availableColumns.push({ id: "isPublicationReciptAlreadySent", fieldName: "isPublicationReciptAlreadySent", label: "Attestation de parution envoyée ?", valueFonction: (element: Announcement, column: SortTableColumn<Announcement>) => { return element.isPublicationReciptAlreadySent ? "Oui" : "Non" } } as SortTableColumn<Announcement>);
+    this.availableColumns.push({ id: "isPublicationFlagAlreadySent", fieldName: "isPublicationFlagAlreadySent", label: "Témoin de parution envoyé ?", valueFonction: (element: Announcement, column: SortTableColumn<Announcement>) => { return element.isPublicationFlagAlreadySent ? "Oui" : "Non" } } as SortTableColumn<Announcement>);
 
     this.tableAction.push({
-      actionIcon: "shopping_cart", actionName: "Voir la commande", actionClick: (action: SortTableAction, element: Announcement, event: any) => {
+      actionIcon: "shopping_cart", actionName: "Voir la commande/devis", actionClick: (action: SortTableAction<Announcement>, element: Announcement, event: any) => {
         this.customerOrderService.getCustomerOrderOfAnnouncement(element).subscribe(response => {
-          this.appService.openRoute(event, "/order/" + response.id, undefined);
+          if (response)
+            this.appService.openRoute(event, "/order/" + response.id, undefined);
+          else
+            this.quotationService.getQuotationOfAnnouncement(element).subscribe(response => {
+              this.appService.openRoute(event, "/quotation/" + response.id, undefined);
+            })
         })
       }, display: true,
-    } as SortTableAction);
+    } as SortTableAction<Announcement>);
 
     this.setColumns();
     this.refreshData();

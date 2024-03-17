@@ -8,4 +8,5 @@ export interface AccountingBalanceSearch {
   principalAccountingAccount: PrincipalAccountingAccount | undefined;
   startDate: Date | undefined;
   endDate: Date | undefined;
+  isFromAs400: boolean;
 }

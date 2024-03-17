@@ -30,6 +30,7 @@ import { DashboardModule } from "./modules/dashboard/components/dashboard/dashbo
 import { InvoicingModule } from "./modules/invoicing/components/invoicing/invoicing.module";
 import { PaymentDetailsDialogComponent } from "./modules/invoicing/components/payment-details-dialog/payment-details-dialog.component";
 import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
+import { MonitoringModule } from "./modules/monitoring/components/monitoring/monitoring.module";
 import { MyProfilComponent } from './modules/profile/components/my-profil/my-profil.component';
 import { QuotationModule } from './modules/quotation/components/quotation/quotation.module';
 import { ReportingModule } from './modules/reporting/components/reporting/reporting.module';
@@ -88,6 +89,7 @@ registerLocaleData(localeFr, 'fr');
     InvoicingModule,
     DashboardModule,
     ReportingModule,
+    MonitoringModule
   ],
   exports: [
   ],

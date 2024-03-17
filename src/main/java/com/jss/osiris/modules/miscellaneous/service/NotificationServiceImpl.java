@@ -28,10 +28,10 @@ import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Status;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
-import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.StatusService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -58,7 +58,7 @@ public class NotificationServiceImpl implements NotificationService {
     ProvisionService provisionService;
 
     @Autowired
-    StatusService statusService;
+    FormaliteGuichetUniqueStatusService statusService;
 
     @Override
     public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture) {
@@ -433,8 +433,6 @@ public class NotificationServiceImpl implements NotificationService {
     private boolean isProvisionClosed(Provision provision) {
         if (provision.getAnnouncement() != null)
             return provision.getAnnouncement().getAnnouncementStatus().getIsCloseState();
-        if (provision.getBodacc() != null)
-            return provision.getBodacc().getBodaccStatus().getIsCloseState();
         if (provision.getSimpleProvision() != null)
             return provision.getSimpleProvision().getSimpleProvisionStatus().getIsCloseState();
         if (provision.getFormalite() != null)
@@ -447,8 +445,6 @@ public class NotificationServiceImpl implements NotificationService {
     private boolean isProvisionOpen(Provision provision) {
         if (provision.getAnnouncement() != null)
             return provision.getAnnouncement().getAnnouncementStatus().getIsOpenState();
-        if (provision.getBodacc() != null)
-            return provision.getBodacc().getBodaccStatus().getIsOpenState();
         if (provision.getSimpleProvision() != null)
             return provision.getSimpleProvision().getSimpleProvisionStatus().getIsOpenState();
         if (provision.getFormalite() != null)
@@ -480,8 +476,8 @@ public class NotificationServiceImpl implements NotificationService {
                             + provision.getProvisionType().getLabel();
                 details += " - ";
 
-                Status status = statusService
-                        .getStatus(formaliteGuichetUnique.getStatus().getCode());
+                FormaliteGuichetUniqueStatus status = statusService
+                        .getFormaliteGuichetUniqueStatus(formaliteGuichetUnique.getStatus().getCode());
                 if (status == null)
                     throw new OsirisException(null, "Guichet unique status not found for code "
                             + formaliteGuichetUnique.getStatus().getCode());

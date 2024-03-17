@@ -1,12 +1,15 @@
 package com.jss.osiris.modules.reporting.service;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.reporting.model.IProvisionProductionReporting;
 
 public interface ProvisionProductionReportingService {
 
-    List<IProvisionProductionReporting> getProvisionProductionReporting() throws OsirisException;
+    ArrayList<HashMap<String, String>> getProvisionProductionReporting(ArrayList<String> columns)
+            throws OsirisException;
+
+    ArrayList<HashMap<String, String>> getFakeData();
 
 }

@@ -6,6 +6,7 @@ export interface AccountingBalance {
   principalAccountingAccountCode: string;
   principalAccountingAccountLabel: string;
   accountingAccountSubNumber: string
+  accountingAccountClassLabel: string
   echoir30: string;
   echoir60: string;
   echoir90: string;

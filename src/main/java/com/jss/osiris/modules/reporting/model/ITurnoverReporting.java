@@ -26,6 +26,8 @@ public interface ITurnoverReporting {
 
     String getTiersLabel();
 
+    String getConfrereLabel();
+
     String getTiersCategory();
 
     String getInvoiceCreator();
@@ -33,8 +35,6 @@ public interface ITurnoverReporting {
     String getSalesEmployeeLabel();
 
     String getInvoiceStatusLabel();
-
-    String getVatLabel();
 
     Integer getNbrAnnouncement();
 

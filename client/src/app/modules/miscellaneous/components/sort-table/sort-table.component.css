@@ -1,19 +1,44 @@
 .wrapper-div {
   position: relative;
+  overflow-y: auto;
+}
+
+.wrapper-max-height {
+  max-height: calc(100vh - 225px);
+}
+
+.wrapper-div-smaller {
+  max-height: calc(100vh - 270px);
+}
+
+.wrapper-div-smallest {
+  max-height: calc(100vh - 315px);
+}
+
+.padding-bottom {
+  padding-bottom: 100px;
+}
+
+.sticky {
+  position: sticky;
+  top: 0px;
+  z-index: 1;
 }
 
 .export-icon {
   position: absolute;
   top: 3px;
-  right: 5px;
+  left: 5px;
   transform: scale(0.66);
+  z-index: 3;
 }
 
 .column-icon {
   position: absolute;
   top: 3px;
-  right: 30px;
+  left: 30px;
   transform: scale(0.66);
+  z-index: 3;
 }
 
 .column-content-icon {
@@ -26,8 +51,9 @@
 .column-icon-number {
   position: absolute;
   top: 18px;
-  right: -2px;
+  left: -2px;
   transform: scale(0.7);
+  z-index: 3;
 }
 
 td {

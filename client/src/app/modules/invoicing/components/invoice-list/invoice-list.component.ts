@@ -29,10 +29,10 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   @Input() isForTiersIntegration: boolean = false;
   @Input() isForPaymentAssocationIntegration: boolean = false;
   invoices: InvoiceSearchResult[] | undefined;
-  availableColumns: SortTableColumn[] = [];
+  availableColumns: SortTableColumn<InvoiceSearchResult>[] = [];
   columnToDisplayOnDashboard: string[] = ["description", "affaires", "invoicePayer", "totalPrice"];
-  displayedColumns: SortTableColumn[] = [];
-  tableAction: SortTableAction[] = [];
+  displayedColumns: SortTableColumn<InvoiceSearchResult>[] = [];
+  tableAction: SortTableAction<InvoiceSearchResult>[] = [];
   @Output() actionBypass: EventEmitter<InvoiceSearchResult> = new EventEmitter<InvoiceSearchResult>();
   @Input() overrideIconAction: string = "";
   @Input() overrideTooltipAction: string = "";
@@ -70,56 +70,63 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
     this.bookmark = this.userPreferenceService.getUserSearchBookmark("invoices") as InvoiceSearch;
     if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration && !this.isForPaymentAssocationIntegration) {
-      this.invoiceSearch = {} as InvoiceSearch;
-      this.invoiceSearch.invoiceStatus = this.bookmark.invoiceStatus;
       this.defaultStatusFilter = this.bookmark.invoiceStatus;
-      this.invoiceSearch.maxAmount = this.bookmark.maxAmount;
-      this.invoiceSearch.minAmount = this.bookmark.minAmount;
+      this.invoiceSearch = this.bookmark;
+      this.invoiceSearch.invoiceStatus = this.bookmark.invoiceStatus;
+      if (this.invoiceSearch.startDate)
+        this.invoiceSearch.startDate = new Date(this.invoiceSearch.startDate);
+      if (this.invoiceSearch.endDate)
+        this.invoiceSearch.endDate = new Date(this.invoiceSearch.endDate);
+      this.searchInvoices();
     }
 
     if (!this.isForDashboard && !this.isForTiersIntegration)
       this.appService.changeHeaderTitle("Factures & paiements");
     this.availableColumns = [];
-    this.availableColumns.push({ id: "id", fieldName: "invoiceId", label: "N° de facture" } as SortTableColumn);
-    this.availableColumns.push({ id: "status", fieldName: "invoiceStatus", label: "Status" } as SortTableColumn);
-    this.availableColumns.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "N° de commande", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn);
-    this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
-    this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
-    this.availableColumns.push({ id: "responsable", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn);
-    this.availableColumns.push({ id: "affaires", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn);
-    this.availableColumns.push({ id: "providerLabel", fieldName: "providerLabel", label: "Fournisseur" } as SortTableColumn);
-    this.availableColumns.push({ id: "invoicePayer", fieldName: "billingLabel", label: "Payeur" } as SortTableColumn);
-    this.availableColumns.push({ id: "invoiceRecipient", fieldName: "invoiceRecipient", label: "Destinataire" } as SortTableColumn);
-    this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date d'émission", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "description", fieldName: "customerOrderDescription", label: "Description" } as SortTableColumn);
-    this.availableColumns.push({ id: "payments", fieldName: "paymentId", label: "Paiement(s) associé(s)" } as SortTableColumn);
-    this.availableColumns.push({ id: "dueDate", fieldName: "dueDate", label: "Date d'échéance", valueFonction: formatDateForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "firstReminderDateTime", fieldName: "firstReminderDateTime", label: "Date de première relance", valueFonction: formatDateForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "secondReminderDateTime", fieldName: "secondReminderDateTime", label: "Date de seconde relance", valueFonction: formatDateForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "thirdReminderDateTime", fieldName: "thirdReminderDateTime", label: "Date de troisième relance", valueFonction: formatDateForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "lastFollowupDate", fieldName: "lastFollowupDate", label: "Dernier suivi", valueFonction: formatDateForSortTable } as SortTableColumn);
+    this.availableColumns.push({ id: "id", fieldName: "invoiceId", label: "N° de facture" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "status", fieldName: "invoiceStatus", label: "Status", statusFonction: (element: InvoiceSearchResult) => { return element.invoiceStatusCode }, displayAsStatus: true } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "N° de commande", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "responsable", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "affaires", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "providerLabel", fieldName: "providerLabel", label: "Fournisseur" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "invoicePayer", fieldName: "billingLabel", label: "Payeur" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "invoiceRecipient", fieldName: "invoiceRecipient", label: "Destinataire" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date d'émission", valueFonction: formatDateTimeForSortTable } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "manualAccountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N° pièce" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "description", fieldName: "customerOrderDescription", label: "Description" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "payments", fieldName: "paymentId", label: "Paiement(s) associé(s)" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "dueDate", fieldName: "dueDate", label: "Date d'échéance", valueFonction: formatDateForSortTable } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "firstReminderDateTime", fieldName: "firstReminderDateTime", label: "Date de première relance", valueFonction: formatDateForSortTable } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "secondReminderDateTime", fieldName: "secondReminderDateTime", label: "Date de seconde relance", valueFonction: formatDateForSortTable } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "thirdReminderDateTime", fieldName: "thirdReminderDateTime", label: "Date de troisième relance", valueFonction: formatDateForSortTable } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "lastFollowupDate", fieldName: "lastFollowupDate", label: "Dernier suivi", valueFonction: formatDateForSortTable } as SortTableColumn<InvoiceSearchResult>);
 
     this.setColumns();
 
     if (this.overrideIconAction == "") {
       this.tableAction.push({
-        actionIcon: "point_of_sale", actionName: "Voir le détail de la facture / associer", actionLinkFunction: (action: SortTableAction, element: any) => {
+        actionIcon: "point_of_sale", actionName: "Voir le détail de la facture / associer", actionLinkFunction: (action: SortTableAction<InvoiceSearchResult>, element: InvoiceSearchResult) => {
           if (element)
             return ['/invoicing/view', element.invoiceId];
           return undefined;
         }, display: true,
-      } as SortTableAction);
+      } as SortTableAction<InvoiceSearchResult>);
     } else {
       this.tableAction.push({
-        actionIcon: this.overrideIconAction, actionName: this.overrideTooltipAction, actionClick: (action: SortTableAction, element: any) => {
+        actionIcon: this.overrideIconAction, actionName: this.overrideTooltipAction, actionClick: (column: SortTableAction<InvoiceSearchResult>, element: InvoiceSearchResult, event: any) => {
           this.actionBypass.emit(element);
         }, display: true,
-      } as SortTableAction);
+      } as SortTableAction<InvoiceSearchResult>);
 
     };
 
     if ((this.isForDashboard || this.isForTiersIntegration) && !this.invoices && this.invoiceSearch) {
+      if (this.isForTiersIntegration && !this.invoiceSearch.invoiceStatus) {
+        this.invoiceSearch.invoiceStatus = [this.constantService.getInvoiceStatusSend()];
+      }
       this.searchInvoices();
     }
   }
@@ -146,7 +153,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
         this.invoiceSearch.customerOrders = [];
         this.invoiceSearch.customerOrders.push({ id: this.searchedTiers.entityId } as ITiers)
       }
-      if (!this.isForDashboard)
+      if (!this.isForDashboard && !this.isForTiersIntegration && !this.isForPaymentAssocationIntegration)
         this.userPreferenceService.setUserSearchBookmark(this.invoiceSearch, "invoices");
       this.invoiceSearchResultService.getInvoicesList(this.invoiceSearch).subscribe(response => {
         this.invoices = response;

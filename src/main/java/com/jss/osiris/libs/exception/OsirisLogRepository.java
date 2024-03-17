@@ -14,4 +14,7 @@ public interface OsirisLogRepository extends QueryCacheCrudRepository<OsirisLog,
 
     @Query("select n from OsirisLog n where :hideRead = false or isRead = false ")
     List<OsirisLog> findLogs(@Param("hideRead") boolean hideRead);
+
+    @Query(value = "select * from osiris_log n where n.created_date_time<(now() - make_interval(months => :monthNbr))  ", nativeQuery = true)
+    List<OsirisLog> findLogOlderThanMonths(@Param("monthNbr") Integer monthNbr);
 }

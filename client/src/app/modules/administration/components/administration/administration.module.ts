@@ -39,7 +39,6 @@ import { ReferentialBillingClosureTypeComponent } from '../referentials/referent
 import { ReferentialBillingItemComponent } from '../referentials/referential-billing-item/referential-billing-item.component';
 import { ReferentialBillingLabelTypeComponent } from '../referentials/referential-billing-label-type/referential-billing-label-type.component';
 import { ReferentialBillingTypeComponent } from '../referentials/referential-billing-type/referential-billing-type.component';
-import { ReferentialBodaccPublicationTypeComponent } from '../referentials/referential-bodacc-publication-type/referential-bodacc-publication-type.component';
 import { ReferentialBuildingDomiciliationComponent } from '../referentials/referential-building-domiciliation/referential-building-domiciliation.componentt';
 import { ReferentialCharacterPriceComponent } from '../referentials/referential-character-price/referential-character-price.component';
 import { ReferentialCityComponent } from '../referentials/referential-city/referential-city.component';
@@ -66,15 +65,18 @@ import { ReferentialPaymentDeadlineTypeComponent } from '../referentials/referen
 import { ReferentialPaymentTypeComponent } from '../referentials/referential-payment-type/referential-payment-type.component';
 import { ReferentialPrincipalAccountingAccountComponent } from '../referentials/referential-principal-accounting-account/referential-principal-accounting-account.component';
 import { ReferentialProvisionTypeComponent } from '../referentials/referential-provision-type/referential-provision-type.component';
+import { ReferentialQuotationAbandonReasonComponent } from '../referentials/referential-quotation-abandon-reason/referential-quotation-abandon-reason';
 import { ReferentialRefundTypeComponent } from '../referentials/referential-refund-type/referential-refund-type.component';
 import { ReferentialRegieComponent } from '../referentials/referential-regie/referential-regie.component';
 import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
+import { ReferentialRffFrequencyComponent } from '../referentials/referential-rff-frequency/referential-rff-frequency.component';
 import { ReferentialSpecialOfferComponent } from '../referentials/referential-special-offer/referential-special-offer.component';
 import { ReferentialSubscriptionPeriodTypeComponent } from '../referentials/referential-subscription-period-type/referential-subscription-period-type.component';
 import { ReferentialTiersCategoryComponent } from '../referentials/referential-tiers-category/referential-tiers-category.component';
 import { ReferentialTiersFollowupTypeComponent } from '../referentials/referential-tiers-followup-type/referential-tiers-followup-type.component';
 import { ReferentialTiersTypeComponent } from '../referentials/referential-tiers-type/referential-tiers-type.component';
 import { ReferentialTransfertFundsTypeComponent } from '../referentials/referential-transfert-fund-type/referential-transfert-fund-type.component';
+import { ReferentialTypeDocumentComponent } from '../referentials/referential-type-document/referential-type-document.component';
 import { ReferentialVatCollectionTypeComponent } from '../referentials/referential-vat-collection-type/referential-vat-collection-type.component';
 import { ReferentialVatComponent } from '../referentials/referential-vat/referential-vat.component';
 import { ReferentialWeekDayComponent } from '../referentials/referential-weekday/referential-weekday.component';
@@ -82,6 +84,9 @@ import { ReferentialProvisionFamilyTypeComponent } from '../referentials/referen
 import { ReferentialRecordTypeComponent } from '../referentials/referentiel-record-type/referential-record-type.component';
 import { ViewLogComponent } from '../view-log/view-log.component';
 import { AdministrationComponent } from './administration.component';
+import { ReferentialComplainProblemComponent } from '../referentials/referential-complain-problem/referential-complain-problem.component';
+import { ReferentialComplainCauseComponent } from '../referentials/referential-complain-cause/referential-complain-cause.component';
+import { ReferentialComplainOriginComponent } from '../referentials/referential-complain-origin/referential-complain-origin.component';
 
 const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
@@ -123,7 +128,6 @@ const routes: Routes = [
   ],
   declarations: [AdministrationComponent,
     ReferentialActTypeComponent,
-    ReferentialBodaccPublicationTypeComponent,
     ReferentialBuildingDomiciliationComponent,
     ReferentialDomiciliationContractTypeComponent,
     ReferentialFundTypeComponent,
@@ -150,6 +154,7 @@ const routes: Routes = [
     ReferentialDocumentTypeComponent,
     ReferentialLanguageComponent,
     ReferentialGiftComponent,
+    ReferentialQuotationAbandonReasonComponent,
     ReferentialLegalFormComponent,
     ReferentialPaymentTypeComponent,
     ReferentialAccountingAccountClassComponent,
@@ -179,6 +184,11 @@ const routes: Routes = [
     ProviderComponent,
     ReferentialCustomerOrderOriginComponent,
     ReferentialDepartmentVatSettingComponent,
+    ReferentialTypeDocumentComponent,
+    ReferentialRffFrequencyComponent,
+    ReferentialComplainProblemComponent,
+    ReferentialComplainCauseComponent,
+    ReferentialComplainOriginComponent
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

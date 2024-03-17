@@ -1,5 +1,5 @@
 <div class="mat-elevation-z2 form-div" *ngIf="invoice">
-  <mat-tab-group animationDuration="0ms" #tabs>
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab label="Détail">
       <div class="full-width top">
         <div class="chips-status">
@@ -15,6 +15,9 @@
         </p>
         <p>
           Echéance de paiement : {{invoice.dueDate | date:'dd/MM/yyyy'}}
+        </p>
+        <p *ngIf="invoice.manualPaymentType">
+          Type de paiement : {{invoice.manualPaymentType.label}}
         </p>
         <div class="invoice-title" *ngIf="invoice.creditNote">
           <span>Avoir n°{{invoice.creditNote.id}} émis à Paris, le
@@ -309,39 +312,48 @@
     </mat-tab>
     <mat-tab label="Associer un paiement" *ngIf="getAmountRemaining(invoice)>0 && (invoice.invoiceStatus.id==invoiceStatusSend.id ||invoice.invoiceStatus.id==invoiceStatusReceived.id
       ||invoice.invoiceStatus.id==invoiceStatusCreditNoteReceived.id)">
-      <invoice-payment (stateChanged)=" onStateChange()" [invoice]="invoice">
-      </invoice-payment>
+      <ng-template matTabContent>
+        <invoice-payment (stateChanged)=" onStateChange()" [invoice]="invoice">
+        </invoice-payment>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Suivi" *ngIf="invoice.id && invoice.invoiceStatus.id==invoiceStatusSend.id ">
-      <div>
-        <ul>
-          <li [ngClass]="{'color-warn':beforeToday(invoice.dueDate)}">Echéance de paiement : {{invoice.dueDate |
-            date:'dd/MM/yyyy'}}</li>
-          <li *ngIf="invoice.firstReminderDateTime && beforeToday(invoice.firstReminderDateTime)">Relance n°1 :
-            {{invoice.firstReminderDateTime |date:'dd/MM/yyyy'}}
-            <chips-status class="chips-reminder" [status]="beforeToday(invoice.firstReminderDateTime)?'SENT':'WAITING'"
-              [value]="beforeToday(invoice.firstReminderDateTime)?'Envoyée':'En attente'"></chips-status>
-          </li>
-          <li *ngIf="invoice.secondReminderDateTime && beforeToday(invoice.secondReminderDateTime)">Relance n°2 :
-            {{invoice.secondReminderDateTime|date:'dd/MM/yyyy'}}
-            <chips-status class="chips-reminder" [status]="beforeToday(invoice.secondReminderDateTime)?'SENT':'WAITING'"
-              [value]="beforeToday(invoice.secondReminderDateTime)?'Envoyée':'En attente'"></chips-status>
-          </li>
-          <li *ngIf="invoice.thirdReminderDateTime && beforeToday(invoice.thirdReminderDateTime)">Relance n°3 :
-            {{invoice.thirdReminderDateTime|date:'dd/MM/yyyy'}}
-            <chips-status class="chips-reminder" [status]="beforeToday(invoice.thirdReminderDateTime)?'SENT':'WAITING'"
-              [value]="beforeToday(invoice.thirdReminderDateTime)?'Envoyée':'En attente'"></chips-status>
-          </li>
-        </ul>
-      </div>
-      <tiers-followup [invoice]="invoice" [editMode]="true"></tiers-followup>
-      <button matTooltip="Renvoyer le mail de relance" mat-fab color="accent" class="third-fab-button"
-        *ngIf="invoice.invoiceStatus.code==invoiceStatusSend.code" (click)="sendMailReminder()">
-        <mat-icon>mail</mat-icon>
-      </button>
+      <ng-template matTabContent>
+        <div>
+          <ul>
+            <li [ngClass]="{'color-warn':beforeToday(invoice.dueDate)}">Echéance de paiement : {{invoice.dueDate |
+              date:'dd/MM/yyyy'}}</li>
+            <li *ngIf="invoice.firstReminderDateTime && beforeToday(invoice.firstReminderDateTime)">Relance n°1 :
+              {{invoice.firstReminderDateTime |date:'dd/MM/yyyy'}}
+              <chips-status class="chips-reminder"
+                [status]="beforeToday(invoice.firstReminderDateTime)?'SENT':'WAITING'"
+                [value]="beforeToday(invoice.firstReminderDateTime)?'Envoyée':'En attente'"></chips-status>
+            </li>
+            <li *ngIf="invoice.secondReminderDateTime && beforeToday(invoice.secondReminderDateTime)">Relance n°2 :
+              {{invoice.secondReminderDateTime|date:'dd/MM/yyyy'}}
+              <chips-status class="chips-reminder"
+                [status]="beforeToday(invoice.secondReminderDateTime)?'SENT':'WAITING'"
+                [value]="beforeToday(invoice.secondReminderDateTime)?'Envoyée':'En attente'"></chips-status>
+            </li>
+            <li *ngIf="invoice.thirdReminderDateTime && beforeToday(invoice.thirdReminderDateTime)">Relance n°3 :
+              {{invoice.thirdReminderDateTime|date:'dd/MM/yyyy'}}
+              <chips-status class="chips-reminder"
+                [status]="beforeToday(invoice.thirdReminderDateTime)?'SENT':'WAITING'"
+                [value]="beforeToday(invoice.thirdReminderDateTime)?'Envoyée':'En attente'"></chips-status>
+            </li>
+          </ul>
+        </div>
+        <tiers-followup [invoice]="invoice" [editMode]="true"></tiers-followup>
+        <button matTooltip="Renvoyer le mail de relance" mat-fab color="accent" class="third-fab-button"
+          *ngIf="invoice.invoiceStatus.code==invoiceStatusSend.code" (click)="sendMailReminder()">
+          <mat-icon>mail</mat-icon>
+        </button>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="invoice.id">
-      <history [entity]="invoice" [entityType]="INVOICE_ENTITY_TYPE"></history>
+      <ng-template matTabContent>
+        <history [entity]="invoice" [entityType]="INVOICE_ENTITY_TYPE"></history>
+      </ng-template>
     </mat-tab>
   </mat-tab-group>
 </div>
@@ -361,4 +373,10 @@
   *ngIf="canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code || invoice.isInvoiceFromProvider && invoice.invoiceStatus.code==invoiceStatusPayed.code )"
   matTooltip="Saisir un avoir" mat-fab color="accent" class="third-fab-button" (click)="addCreditNote($event)">
   <mat-icon>payments</mat-icon>
+</button>
+<button
+  *ngIf="canAddCreditNoteForCustomerOrderInvoice() && invoice && invoice.customerOrder && (invoice.invoiceStatus.code==invoiceStatusSend.code  )"
+  matTooltip="Générer un avoir" mat-fab color="accent" class="fourth-fab-button"
+  (click)="generateCreditNoteForCustomerOrderInvoice($event)">
+  <mat-icon>shopping_cart_checkout</mat-icon>
 </button>

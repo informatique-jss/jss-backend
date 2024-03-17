@@ -13,7 +13,7 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 public interface CustomerMailService {
     public CustomerMail getMail(Integer id);
 
-    public void addMailToQueue(CustomerMail mail);
+    public void addMailToQueue(CustomerMail mail) throws OsirisException;
 
     public List<CustomerMail> getMailsByQuotation(Quotation quotation);
 
@@ -25,10 +25,6 @@ public interface CustomerMailService {
 
     public List<CustomerMail> getMailsByResponsable(Responsable responsable);
 
-    public void sendNextMail() throws OsirisException;
-
-    public List<CustomerMail> getReceiptMailsForResponsable(Responsable responsable);
-
-    public List<CustomerMail> getReceiptMailsForTiers(Tiers tiers);
+    public void sendMail(CustomerMail mail) throws OsirisException;
 
 }

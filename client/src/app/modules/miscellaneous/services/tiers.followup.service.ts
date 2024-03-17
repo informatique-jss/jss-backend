@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { Affaire } from '../../quotation/model/Affaire';
 import { Confrere } from '../../quotation/model/Confrere';
 import { Invoice } from '../../quotation/model/Invoice';
 import { Responsable } from '../../tiers/model/Responsable';
@@ -30,6 +31,10 @@ export class TiersFollowupService extends AppRestService<TiersFollowup>{
 
   addFollowupForInvoice(tiersFollowup: TiersFollowup, invoice: Invoice) {
     return this.postList(new HttpParams().set("idInvoice", invoice.id), "tiers-followup/invoice", tiersFollowup);
+  }
+
+  addFollowupForAffaire(tiersFollowup: TiersFollowup, affaire: Affaire) {
+    return this.postList(new HttpParams().set("idAffaire", affaire.id), "tiers-followup/affaire", tiersFollowup);
   }
 
 }

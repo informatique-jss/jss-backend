@@ -119,6 +119,7 @@ public class DocumentServiceImpl implements DocumentService {
         newDocument.setBillingLabel(document.getBillingLabel());
         newDocument.setBillingAddress(document.getBillingAddress());
         newDocument.setBillingPostalCode(document.getBillingPostalCode());
+        newDocument.setExternalReference(document.getExternalReference());
         newDocument.setCedexComplement(document.getCedexComplement());
         newDocument.setBillingLabelCity(document.getBillingLabelCity());
         newDocument.setBillingLabelCountry(document.getBillingLabelCountry());

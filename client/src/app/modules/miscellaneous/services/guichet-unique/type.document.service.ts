@@ -16,4 +16,9 @@ export class TypeDocumentService extends AppRestService<TypeDocument>{
     return this.getListCached(new HttpParams(), 'type-document');
   }
 
+  addOrUpdateTypeDocument(typeDocument: TypeDocument) {
+    this.clearListCache(new HttpParams(), "type-document");
+    return this.addOrUpdate(new HttpParams(), "type-document", typeDocument, "Enregistré", "Erreur lors de l'enregistrement");
+  }
+
 }

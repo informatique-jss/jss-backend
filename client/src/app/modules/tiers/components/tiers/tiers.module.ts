@@ -8,6 +8,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatListModule } from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSortModule } from '@angular/material/sort';
@@ -24,10 +25,17 @@ import { ReportingModule } from '../../../reporting/components/reporting/reporti
 import { ConfrereComponent } from '../confrere/confrere.component';
 import { SearchPhoneComponent } from '../phone-teams/search-phone.component';
 import { ResponsableMainComponent } from '../responsable-main/responsable-main.component';
+import { RffListComponent } from '../rff-list/rff-list.component';
 import { SettlementBillingComponent } from '../settlement-billing/settlement-billing.component';
+import { TiersListComponent } from '../tiers-list/tiers-list.component';
 import { PrincipalComponent } from '../tiers-main/tiers-main.component';
 import { TiersComponent } from './tiers.component';
-
+import { VisitPrepaTiersResponsibleInfoComponent } from '../visit-prepa-tiers-responsible-info/visit-prepa-tiers-responsible-info.component';
+import { ComplaintTiersComponent } from '../complaint-tiers/complaint-tiers.component';
+import { VisitPrepaCustomerOrdersResponsibleComponent } from '../visit-prepa-customer-orders-responsible/visit-prepa-customer-orders-responsible.component';
+import { SelectComplainProblemComponent } from 'src/app/modules/miscellaneous/components/forms/select-complain-problem/select-complain-problem.component';
+import { SelectComplainOriginComponent } from 'src/app/modules/miscellaneous/components/forms/select-complain-origin/select-complain-origin.component';
+import { SelectComplainCauseComponent } from 'src/app/modules/miscellaneous/components/forms/select-complain-causes/select-complain-causes.component';
 
 const routes: Routes = [
   { path: 'tiers', component: TiersComponent },
@@ -42,6 +50,7 @@ const routes: Routes = [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
     CommonModule,
     MatTabsModule,
+    MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
     MatInputModule,
@@ -68,6 +77,14 @@ const routes: Routes = [
     ResponsableMainComponent,
     ConfrereComponent,
     SearchPhoneComponent,
+    TiersListComponent,
+    RffListComponent,
+    VisitPrepaTiersResponsibleInfoComponent,
+    ComplaintTiersComponent,
+    SelectComplainProblemComponent,
+    SelectComplainOriginComponent,
+    SelectComplainCauseComponent,
+    VisitPrepaCustomerOrdersResponsibleComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

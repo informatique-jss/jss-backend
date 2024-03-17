@@ -14,6 +14,7 @@ public class OrderingSearch {
     private List<CustomerOrderStatus> customerOrderStatus;
     private List<Tiers> customerOrders;
     private List<Affaire> affaires;
+    private Integer idCustomerOrder;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -69,6 +70,14 @@ public class OrderingSearch {
 
     public void setAssignedToEmployee(Employee assignedToEmployee) {
         this.assignedToEmployee = assignedToEmployee;
+    }
+
+    public Integer getIdCustomerOrder() {
+        return idCustomerOrder;
+    }
+
+    public void setIdCustomerOrder(Integer idCustomerOrder) {
+        this.idCustomerOrder = idCustomerOrder;
     }
 
 }

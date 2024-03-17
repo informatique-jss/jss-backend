@@ -11,7 +11,6 @@ import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { AnnouncementStatus } from 'src/app/modules/quotation/model/AnnouncementStatus';
-import { BodaccStatus } from 'src/app/modules/quotation/model/BodaccStatus';
 import { CustomerOrderStatus } from 'src/app/modules/quotation/model/CustomerOrderStatus';
 import { DomiciliationStatus } from 'src/app/modules/quotation/model/DomiciliationStatus';
 import { FormaliteStatus } from 'src/app/modules/quotation/model/FormaliteStatus';
@@ -20,7 +19,6 @@ import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch
 import { QuotationStatus } from 'src/app/modules/quotation/model/QuotationStatus';
 import { SimpleProvisionStatus } from 'src/app/modules/quotation/model/SimpleProvisonStatus';
 import { AnnouncementStatusService } from 'src/app/modules/quotation/services/announcement.status.service';
-import { BodaccStatusService } from 'src/app/modules/quotation/services/bodacc.status.service';
 import { CustomerOrderStatusService } from 'src/app/modules/quotation/services/customer.order.status.service';
 import { DomiciliationStatusService } from 'src/app/modules/quotation/services/domiciliation-status.service';
 import { FormaliteStatusService } from 'src/app/modules/quotation/services/formalite.status.service';
@@ -47,7 +45,6 @@ export class DashboardComponent implements OnInit {
   announcementStatus: AnnouncementStatus[] = [] as Array<AnnouncementStatus>;
   formaliteStatus: FormaliteStatus[] = [] as Array<FormaliteStatus>;
   simpleProvisionStatus: SimpleProvisionStatus[] = [] as Array<SimpleProvisionStatus>;
-  bodaccStatus: BodaccStatus[] = [] as Array<BodaccStatus>;
   domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
   statusTypes: IWorkflowElement[] = [] as Array<IWorkflowElement>;
 
@@ -77,11 +74,13 @@ export class DashboardComponent implements OnInit {
   affaireSearchWaitingDocument: AffaireSearch = {} as AffaireSearch;
 
   ORDER_OPEN = "Mes commandes ouvertes";
+  ALL_ORDER_OPEN = "Commandes ouvertes";
   ORDER_BEING_PROCESSED = "Mes commandes en cours";
   ORDER_TO_BILLED = "Commandes en attente de facturation";
   ORDERS_AWAITING_DEPOSIT = "Mes commandes en attente d’acompte";
 
   orderingSearchOpen: OrderingSearch = {} as OrderingSearch;
+  orderingSearchAllOpen: OrderingSearch = {} as OrderingSearch;
   orderingSearchBeingProcessed: OrderingSearch = {} as OrderingSearch;
   orderingSearchToBilled: OrderingSearch = {} as OrderingSearch;
   orderingSearchToAwaitingDeposit: OrderingSearch = {} as OrderingSearch;
@@ -109,7 +108,7 @@ export class DashboardComponent implements OnInit {
   PROVISION_BOARD = "Suivi d'équipe";
 
   allItems: Array<string> = [this.QUOTATION_REFUSED, this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY,
-  this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDERS_AWAITING_DEPOSIT, this.ORDER_OPEN,
+  this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDERS_AWAITING_DEPOSIT, this.ORDER_OPEN, this.ALL_ORDER_OPEN,
   this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY,
   this.AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO, this.QUOTATION_SENT,
   this.PROVISION_BOARD].sort((a, b) => a.localeCompare(b));
@@ -126,7 +125,6 @@ export class DashboardComponent implements OnInit {
   constructor(private appService: AppService,
     private employeeService: EmployeeService,
     private formaliteStatusService: FormaliteStatusService,
-    private bodaccStatusService: BodaccStatusService,
     private domiciliationStatusService: DomiciliationStatusService,
     private announcementStatusService: AnnouncementStatusService,
     private simpleProvisionStatusService: SimpleProvisionStatusService,
@@ -143,7 +141,6 @@ export class DashboardComponent implements OnInit {
       this.currentEmployee = response;
 
       combineLatest([
-        this.bodaccStatusService.getBodaccStatus(),
         this.domiciliationStatusService.getDomiciliationStatus(),
         this.announcementStatusService.getAnnouncementStatus(),
         this.formaliteStatusService.getFormaliteStatus(),
@@ -151,10 +148,8 @@ export class DashboardComponent implements OnInit {
         this.customerOrderStatusService.getCustomerOrderStatus(),
         this.quotationStatusService.getQuotationStatus()
       ]).pipe(
-        map(([bodaccStatus, domiciliationStatus, announcementStatus, formaliteStatus, simpleProvisionStatus, customerOrderStatus, quotationStatus]) => ({ bodaccStatus, domiciliationStatus, announcementStatus, formaliteStatus, simpleProvisionStatus, customerOrderStatus, quotationStatus })),
+        map(([domiciliationStatus, announcementStatus, formaliteStatus, simpleProvisionStatus, customerOrderStatus, quotationStatus]) => ({ domiciliationStatus, announcementStatus, formaliteStatus, simpleProvisionStatus, customerOrderStatus, quotationStatus })),
       ).subscribe(response => {
-        this.bodaccStatus = response.bodaccStatus;
-        this.statusTypes.push(...response.bodaccStatus);
         this.domiciliationStatus = response.domiciliationStatus;
         this.statusTypes.push(...response.domiciliationStatus);
         this.announcementStatus = response.announcementStatus;
@@ -189,6 +184,8 @@ export class DashboardComponent implements OnInit {
 
         this.orderingSearchOpen.assignedToEmployee = this.currentEmployee!;
         this.orderingSearchOpen.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_OPEN)!];
+
+        this.orderingSearchAllOpen.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_OPEN)!];
 
         this.orderingSearchBeingProcessed.assignedToEmployee = this.currentEmployee!;
         this.orderingSearchBeingProcessed.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_BEING_PROCESSED)!];

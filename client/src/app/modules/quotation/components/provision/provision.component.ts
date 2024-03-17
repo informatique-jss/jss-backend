@@ -8,13 +8,13 @@ import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_I
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
+import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { ANNOUNCEMENT_STATUS_WAITING_CONFRERE } from '../../../../libs/Constants';
 import { IWorkflowElement } from '../../../miscellaneous/model/IWorkflowElement';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Announcement } from '../../model/Announcement';
 import { AnnouncementStatus } from '../../model/AnnouncementStatus';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
-import { BodaccStatus } from '../../model/BodaccStatus';
 import { DomiciliationStatus } from '../../model/DomiciliationStatus';
 import { FormaliteStatus } from '../../model/FormaliteStatus';
 import { Provision } from '../../model/Provision';
@@ -23,8 +23,6 @@ import { AnnouncementService } from '../../services/announcement.service';
 import { AnnouncementStatusService } from '../../services/announcement.status.service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { AttachmentTypeMailQueryService } from '../../services/attachment-type-mail-query.service';
-import { BodaccStatusService } from '../../services/bodacc.status.service';
-import { ConfrereService } from '../../services/confrere.service';
 import { DomiciliationStatusService } from '../../services/domiciliation-status.service';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
 import { ProvisionService } from '../../services/provision.service';
@@ -53,7 +51,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   announcementStatus: AnnouncementStatus[] = [] as Array<AnnouncementStatus>;
   formaliteStatus: FormaliteStatus[] = [] as Array<FormaliteStatus>;
   simpleProvisionStatus: SimpleProvisionStatus[] = [] as Array<SimpleProvisionStatus>;
-  bodaccStatus: BodaccStatus[] = [] as Array<BodaccStatus>;
   domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
 
   confrereJssSpel = this.constantService.getConfrereJssSpel();
@@ -79,13 +76,12 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     public attachmentsDialog: MatDialog,
     private constantService: ConstantService,
     private formaliteStatusService: FormaliteStatusService,
-    private bodaccStatusService: BodaccStatusService,
     private announcementService: AnnouncementService,
     private attachmentTypeMailQueryService: AttachmentTypeMailQueryService,
     private domiciliationStatusService: DomiciliationStatusService,
     private simpleProvisionStatusService: SimpleProvisionStatusService,
     private announcementStatusService: AnnouncementStatusService,
-    private confrereService: ConfrereService,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   affaireForm = this.formBuilder.group({});
@@ -95,10 +91,13 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.idAffaire = this.activatedRoute.snapshot.params.id != "null" ? this.activatedRoute.snapshot.params.id : null;
 
     this.inputProvisionId = this.activatedRoute.snapshot.params.idProvision;
+
+    if (!this.inputProvisionId)
+      this.inputProvisionId = this.userPreferenceService.getUserExpensionPanelSelectionId("provision");
+
     this.refreshAffaire();
 
     this.formaliteStatusService.getFormaliteStatus().subscribe(response => this.formaliteStatus = response);
-    this.bodaccStatusService.getBodaccStatus().subscribe(response => this.bodaccStatus = response);
     this.domiciliationStatusService.getDomiciliationStatus().subscribe(response => this.domiciliationStatus = response);
     this.announcementStatusService.getAnnouncementStatus().subscribe(response => this.announcementStatus = response);
     this.simpleProvisionStatusService.getSimpleProvisionStatus().subscribe(response => this.simpleProvisionStatus = response);
@@ -120,6 +119,9 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.changeDetectorRef.detectChanges();
   }
 
+  onExpandedChange(idProvision: number) {
+    this.userPreferenceService.setUserExpensionPanelSelectionId("provision", idProvision);
+  }
 
   refreshAffaire() {
     let promise: Observable<AssoAffaireOrder> | undefined;
@@ -247,8 +249,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       return this.formaliteStatus;
     if (provision.simpleProvision)
       return this.simpleProvisionStatus;
-    if (provision.bodacc)
-      return this.bodaccStatus;
     if (provision.domiciliation)
       return this.domiciliationStatus;
     return [] as Array<IWorkflowElement>;
@@ -265,8 +265,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       return provision.formalite.formaliteStatus;
     if (provision.simpleProvision)
       return provision.simpleProvision.simpleProvisionStatus;
-    if (provision.bodacc)
-      return provision.bodacc.bodaccStatus;
     if (provision.domiciliation)
       return provision.domiciliation.domiciliationStatus;
     return {} as IWorkflowElement;
@@ -430,8 +428,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
         provision.simpleProvision.simpleProvisionStatus = status;
       }
     }
-    if (provision.bodacc)
-      provision.bodacc.bodaccStatus = status;
     if (provision.domiciliation)
       provision.domiciliation.domiciliationStatus = status;
 

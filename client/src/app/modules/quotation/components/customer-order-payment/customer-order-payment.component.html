@@ -17,7 +17,7 @@
     <div class="advise" *ngIf="advisedPayment && advisedPayment.length>0">
       <h3>Paiements conseillés par Osiris :</h3>
       <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="advisedPayment"
-        tableName="Paiements conseillés">
+        [noPaddingBottom]="true" [noMaxHeight]="true" tableName="Paiements conseillés">
       </sort-table>
     </div>
     <div class=" advise">

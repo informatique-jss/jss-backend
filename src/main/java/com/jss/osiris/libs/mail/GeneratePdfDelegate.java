@@ -133,7 +133,8 @@ public class GeneratePdfDelegate {
                     (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
                             ? announcement.getNoticeHeader()
                                     .replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
-                                    .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
+                                    .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ").replaceAll("<wbr>", " ")
+                                    .replaceAll("</wbr>", " ")
                             : null);
             ctx.setVariable("notice",
                     StringEscapeUtils.unescapeHtml4(announcement.getNotice()
@@ -449,18 +450,21 @@ public class GeneratePdfDelegate {
         if (invoice.getPayments() != null)
             for (Payment payment : invoice.getPayments()) {
                 if (!payment.getIsCancelled())
-                    invoicePayment.add(paymentService.getOriginalPaymentOfPayment(payment));
+                    invoicePayment.add(payment);
             }
 
         if (customerOrder.getPayments() != null)
             for (Payment payment : customerOrder.getPayments())
                 if (!payment.getIsCancelled()) {
-                    invoicePayment.add(paymentService.getOriginalPaymentOfPayment(payment));
+                    invoicePayment.add(payment);
                     remainingToPay -= payment.getPaymentAmount();
                 }
 
         if (invoicePayment.size() > 0)
             ctx.setVariable("payments", invoicePayment);
+
+        if (invoice.getCustomerOrder() != null && invoice.getCustomerOrder().getRefunds() != null)
+            ctx.setVariable("refunds", invoice.getCustomerOrder().getRefunds());
 
         if (remainingToPay != null && remainingToPay > 0
                 && remainingToPay > Float.parseFloat(payementLimitRefundInEuros))

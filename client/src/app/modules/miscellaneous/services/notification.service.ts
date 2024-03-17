@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Observable, retry, share, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
+import { Observable, Subject, retry, share, switchMap, takeUntil, tap, timer } from 'rxjs';
 import { NOTIFICATION_REFRESH_INTERVAL } from 'src/app/libs/Constants';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { Notification } from '../../miscellaneous/model/Notification';

@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.model;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -54,6 +55,10 @@ public class Formalite implements IId {
     @OneToMany(mappedBy = "formalite")
     @JsonIgnore
     private List<Provision> provision;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_acte_deposit")
+    private ActeDeposit acteDeposit;
 
     public Integer getId() {
         return id;
@@ -109,6 +114,14 @@ public class Formalite implements IId {
 
     public void setFormalitesGuichetUnique(List<FormaliteGuichetUnique> formalitesGuichetUnique) {
         this.formalitesGuichetUnique = formalitesGuichetUnique;
+    }
+
+    public ActeDeposit getActeDeposit() {
+        return acteDeposit;
+    }
+
+    public void setActeDeposit(ActeDeposit acteDeposit) {
+        this.acteDeposit = acteDeposit;
     }
 
 }

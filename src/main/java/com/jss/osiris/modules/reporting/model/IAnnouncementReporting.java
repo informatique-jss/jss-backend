@@ -1,19 +1,29 @@
 package com.jss.osiris.modules.reporting.model;
 
 public interface IAnnouncementReporting {
-    String getannouncementCreatedDateYear();
+    String getAnnouncementCreatedDateYear();
 
-    String getannouncementCreatedDateMonth();
+    String getAnnouncementCreatedDateMonth();
 
-    String getannouncementCreatedDateWeek();
+    String getAnnouncementCreatedDateWeek();
 
-    String getannouncementCreatedDateDay();
+    String getAnnouncementCreatedDateDay();
 
-    String getannouncementStatus();
+    String getAnnouncementStatus();
 
-    String getconfrereAnnouncementLabel();
+    String getConfrereAnnouncementLabel();
 
-    Integer getcharacterNumber();
+    Integer getCharacterNumber();
 
     String getAnnouncementDepartment();
+
+    Float getPreTaxPrice();
+
+    String getNoticeTypeLabel();
+
+    String getNoticeTypeFamilyLabel();
+
+    String getJournalTypeLabel();
+
+    String getProvisionTypeLabel();
 }

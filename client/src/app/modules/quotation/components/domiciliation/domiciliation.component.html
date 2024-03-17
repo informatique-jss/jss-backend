@@ -1,5 +1,5 @@
 <form [formGroup]="domiciliationForm" *ngIf="domiciliation">
-  <mat-tab-group animationDuration="0ms" #tabs>
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab label="Domiciliation">
       <div class=" form-div">
         <table class="full-width">
@@ -99,6 +99,10 @@
       <provision-options [editMode]="editMode" (provisionChange)="provisionChangeFunction()" [provision]="provision">
       </provision-options>
     </mat-tab>
+    <mat-tab label="Documents" *ngIf="domiciliation.id && provision">
+      <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
+      </attachments>
+    </mat-tab>
     <mat-tab label="Paiements & factures"
       *ngIf="domiciliation.id && provision && quotation &&  instanceOfCustomerOrderFn(quotation)">
       <provision-payment [editMode]="editMode" [provision]="provision" [quotation]="quotation">
@@ -194,14 +198,6 @@
                 [isMandatory]="true" [isDisabled]="!editMode"
                 [conditionnalRequired]="domiciliation.isLegalPerson && instanceOfCustomerOrder && !isStatusOpen">
               </autocomplete-legal-form>
-            </td>
-            <td>
-              <autocomplete-siren [(model)]="domiciliation.legalGardianSiren" [form]="domiciliationForm"
-                propertyName="legalGardianSiren" [isMandatory]="true" label="SIREN" [isDisabled]="!editMode"
-                [byPassAutocompletValidator]="true"
-                [conditionnalRequired]="domiciliation.isLegalPerson && instanceOfCustomerOrder && !isStatusOpen"
-                (onOptionSelected)="fillSiren($event)">
-              </autocomplete-siren>
             </td>
             <td>
               <generic-input [(model)]="domiciliation.legalGardianDenomination" label="Dénomination"
@@ -344,12 +340,11 @@
         </table>
       </div>
     </mat-tab>
-    <mat-tab label="Documents" *ngIf="domiciliation.id && provision">
-      <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
-      </attachments>
-    </mat-tab>
     <mat-tab label="Historique" *ngIf="domiciliation && domiciliation.id">
       <history [entity]="domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE"></history>
+    </mat-tab>
+    <mat-tab label="Historique (prestation)" *ngIf="provision && provision.id">
+      <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
     </mat-tab>
   </mat-tab-group>
 </form>

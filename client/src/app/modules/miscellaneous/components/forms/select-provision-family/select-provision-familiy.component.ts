@@ -20,7 +20,7 @@ export class SelectProvisionFamilyComponent extends GenericSelectComponent<Provi
 
   initTypes(): void {
     this.provisionFamilyTypeService.getProvisionFamilyTypes().subscribe(response => {
-      this.types = response;
+      this.types = response.sort((a, b) => a.label.localeCompare(b.label));
     })
   }
 }

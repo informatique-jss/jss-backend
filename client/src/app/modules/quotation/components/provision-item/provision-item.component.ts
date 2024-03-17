@@ -2,13 +2,12 @@ import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChil
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { compareWithId } from 'src/app/libs/CompareHelper';
-import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_BODACC, PROVISION_SCREEN_TYPE_DOMICILIATION, PROVISION_SCREEN_TYPE_FORMALITE, PROVISION_SCREEN_TYPE_STANDARD } from 'src/app/libs/Constants';
+import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, PROVISION_SCREEN_TYPE_FORMALITE, PROVISION_SCREEN_TYPE_STANDARD } from 'src/app/libs/Constants';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { getDocument } from '../../../../libs/DocumentHelper';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Affaire } from '../../model/Affaire';
 import { Announcement } from '../../model/Announcement';
-import { Bodacc } from '../../model/Bodacc';
 import { Confrere } from '../../model/Confrere';
 import { Domiciliation } from '../../model/Domiciliation';
 import { Formalite } from '../../model/Formalite';
@@ -21,7 +20,6 @@ import { ProvisionFamilyTypeService } from '../../services/provision.family.type
 import { ProvisionService } from '../../services/provision.service';
 import { ProvisionTypeService } from '../../services/provision.type.service';
 import { AnnouncementComponent } from '../announcement/announcement.component';
-import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { FormaliteComponent } from '../formalite/formalite.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
@@ -46,7 +44,6 @@ export class ProvisionItemComponent implements OnInit {
   @Output() selectedProvisionTypeChange: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild(DomiciliationComponent) domiciliationComponent: DomiciliationComponent | undefined;
   @ViewChild(AnnouncementComponent) announcementComponent: AnnouncementComponent | undefined;
-  @ViewChild(BodaccMainComponent) bodaccComponent: BodaccMainComponent | undefined;
   @ViewChild(FormaliteComponent) formaliteComponent: FormaliteComponent | undefined;
   @ViewChild(SimpleProvisionComponent) simpleProvisionComponent: SimpleProvisionComponent | undefined;
 
@@ -55,7 +52,6 @@ export class ProvisionItemComponent implements OnInit {
 
   announcementConfrere: Confrere | undefined;
 
-  PROVISION_SCREEN_TYPE_BODACC = PROVISION_SCREEN_TYPE_BODACC;
   PROVISION_SCREEN_TYPE_DOMICILIATION = PROVISION_SCREEN_TYPE_DOMICILIATION;
   PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
   PROVISION_SCREEN_TYPE_FORMALITE = PROVISION_SCREEN_TYPE_FORMALITE;
@@ -97,9 +93,6 @@ export class ProvisionItemComponent implements OnInit {
     if (this.announcementComponent)
       status = status && this.announcementComponent.getFormStatus();
 
-    if (this.bodaccComponent)
-      status = status && this.bodaccComponent.getFormStatus();
-
     if (this.formaliteComponent)
       status = status && this.formaliteComponent.getFormStatus();
 
@@ -124,7 +117,6 @@ export class ProvisionItemComponent implements OnInit {
       if (!this.provision.provisionFamilyType && !this.provision.provisionType) {
         this.provision.announcement = undefined;
         this.provision.domiciliation = undefined;
-        this.provision.bodacc = undefined;
         this.provision.formalite = undefined;
         this.provision.simpleProvision = undefined;
         this.selectedProvisionTypeChange.emit();
@@ -132,6 +124,9 @@ export class ProvisionItemComponent implements OnInit {
       }
 
       if (!this.provision.provisionType)
+        return;
+
+      if (this.provision.announcement != undefined && this.provision.announcement.actuLegaleId != undefined && this.provision.announcement.actuLegaleId > 0)
         return;
 
       if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_DOMICILIATION) {
@@ -148,12 +143,6 @@ export class ProvisionItemComponent implements OnInit {
         let paperDocument = getDocument(this.constantService.getDocumentTypePaper(), this.quotation!);
         paperDocument.id = undefined;
         this.provision.announcement.documents.push(paperDocument);
-      }
-
-      if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_BODACC) {
-        this.provision.bodacc = undefined;
-      } else if (!this.provision.bodacc) {
-        this.provision.bodacc = {} as Bodacc;
       }
 
       if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_FORMALITE) {

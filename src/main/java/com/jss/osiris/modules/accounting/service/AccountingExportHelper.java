@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -26,6 +27,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.exception.OsirisException;
@@ -48,6 +50,9 @@ public class AccountingExportHelper {
 
         @Autowired
         ConstantService constantService;
+
+        @Value("${jss.siret}")
+        private String siretJss;
 
         public File getGrandLivre(AccountingAccountClass accountingAccountClass, LocalDateTime startDate,
                         LocalDateTime endDate) throws OsirisException {
@@ -135,7 +140,15 @@ public class AccountingExportHelper {
                         XSSFRow currentRow = currentSheet.createRow(currentLine++);
                         XSSFCell currentCell = currentRow.createCell(0);
                         currentCell.setCellValue(
-                                        "Compte : " + getAccountingAccountLabel(accountingRecords, accountingAccount));
+                                        "SPPS - " + siretJss + " - " + "Compte : "
+                                                        + getAccountingAccountLabel(accountingRecords,
+                                                                        accountingAccount)
+                                                        + " " + getAccountingAccountNumber(accountingRecords,
+                                                                        accountingAccount)
+                                                        + " - "
+                                                        + startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                                        + " - "
+                                                        + endDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
                         CellRangeAddress region = new CellRangeAddress(0, 1, 0, 9);
                         cleanBeforeMergeOnValidCells(currentSheet, region, titleCellStyle);
@@ -188,9 +201,9 @@ public class AccountingExportHelper {
                                         currentRow = currentSheet.createRow(currentLine++);
                                         currentColumn = 0;
                                         currentCell = currentRow.createCell(currentColumn++);
-                                        if (accountingRecord.getAccountingDateTime() != null)
+                                        if (accountingRecord.getOperationDateTime() != null)
                                                 currentCell.setCellValue(
-                                                                accountingRecord.getAccountingDateTime().toLocalDate());
+                                                                accountingRecord.getOperationDateTime().toLocalDate());
                                         currentCell.setCellStyle(styleDate);
                                         currentCell = currentRow.createCell(currentColumn++);
                                         currentCell.setCellValue(accountingRecord.getAccountingJournalCode());
@@ -218,7 +231,9 @@ public class AccountingExportHelper {
                                                                                         .getManualAccountingDocumentNumber());
                                         currentCell.setCellStyle(recordCellStyle);
                                         currentCell = currentRow.createCell(currentColumn++);
-                                        currentCell.setCellValue("Lettrage : ?");
+                                        if (accountingRecord.getLetteringNumber() != null) {
+                                                currentCell.setCellValue(accountingRecord.getLetteringNumber());
+                                        }
                                         currentCell.setCellStyle(recordCellStyle);
                                         currentCell = currentRow.createCell(currentColumn++);
                                         currentCell.setCellValue(accountingRecord.getLabel());
@@ -258,10 +273,16 @@ public class AccountingExportHelper {
                         currentCell.setCellValue("Solde");
                         currentCell.setCellStyle(recordCellStyle);
                         currentCell = currentRow.createCell(currentColumn++);
-                        currentCell.setCellValue("");
+                        if ((credit - debit) < 0)
+                                currentCell.setCellValue(Math.abs(credit - debit));
+                        else
+                                currentCell.setCellValue("");
                         currentCell.setCellStyle(styleCurrency);
                         currentCell = currentRow.createCell(currentColumn++);
-                        currentCell.setCellValue(credit - debit);
+                        if ((credit - debit) > 0)
+                                currentCell.setCellValue(Math.abs(credit - debit));
+                        else
+                                currentCell.setCellValue("");
                         currentCell.setCellStyle(styleCurrency);
 
                         // autosize
@@ -293,7 +314,8 @@ public class AccountingExportHelper {
                 return file;
         }
 
-        public File getBalance(List<AccountingBalance> balanceRecords, boolean isGenerale) throws OsirisException {
+        public File getBalance(List<AccountingBalance> balanceRecords, boolean isGenerale, LocalDateTime startDate,
+                        LocalDateTime endDate) throws OsirisException {
 
                 XSSFWorkbook wb = new XSSFWorkbook();
 
@@ -370,7 +392,13 @@ public class AccountingExportHelper {
                 XSSFCell currentCell = currentRow.createCell(0);
                 currentCell.setCellValue("Balance" + (isGenerale ? " générale" : ""));
 
-                CellRangeAddress region = new CellRangeAddress(0, 1, 0, isGenerale ? 8 : 9);
+                currentCell.setCellValue(
+                                "SPPS - " + siretJss + " - "
+                                                + startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                                + " - "
+                                                + endDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+                CellRangeAddress region = new CellRangeAddress(0, 1, 0, isGenerale ? 5 : 11);
                 cleanBeforeMergeOnValidCells(currentSheet, region, titleCellStyle);
                 currentSheet.addMergedRegion(region);
                 currentLine++;
@@ -382,35 +410,41 @@ public class AccountingExportHelper {
                 currentCell = currentRow.createCell(currentColumn++);
                 currentCell.setCellValue("N° de compte");
                 currentCell.setCellStyle(headerCellStyle);
-                if (!isGenerale) {
-                        currentCell = currentRow.createCell(currentColumn++);
-                        currentCell.setCellValue("Libellé du compte");
-                        currentCell.setCellStyle(headerCellStyle);
-                }
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("Début");
+                currentCell.setCellValue("Libellé du compte");
+                currentCell.setCellStyle(headerCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("Débit");
                 currentCell.setCellStyle(headerCellStyle);
                 currentCell = currentRow.createCell(currentColumn++);
                 currentCell.setCellValue("Crédit");
                 currentCell.setCellStyle(headerCellStyle);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("Créances à échoir -30j");
+                currentCell.setCellValue("Solde débit");
                 currentCell.setCellStyle(headerCellStyle);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("Créances à échoir -60j");
+                currentCell.setCellValue("Solde crédit");
                 currentCell.setCellStyle(headerCellStyle);
-                currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("Créances à échoir +60j");
-                currentCell.setCellStyle(headerCellStyle);
-                currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("Créances échues -30j");
-                currentCell.setCellStyle(headerCellStyle);
-                currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("Créances échues -60j");
-                currentCell.setCellStyle(headerCellStyle);
-                currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("Créances échues +60j");
-                currentCell.setCellStyle(headerCellStyle);
+                if (!isGenerale) {
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue("Créances à échoir -30j");
+                        currentCell.setCellStyle(headerCellStyle);
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue("Créances à échoir -60j");
+                        currentCell.setCellStyle(headerCellStyle);
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue("Créances à échoir +60j");
+                        currentCell.setCellStyle(headerCellStyle);
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue("Créances échues -30j");
+                        currentCell.setCellStyle(headerCellStyle);
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue("Créances échues -60j");
+                        currentCell.setCellStyle(headerCellStyle);
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue("Créances échues +60j");
+                        currentCell.setCellStyle(headerCellStyle);
+                }
 
                 Float debit = 0f;
                 Float credit = 0f;
@@ -421,14 +455,14 @@ public class AccountingExportHelper {
                                 currentCell = currentRow.createCell(currentColumn++);
                                 currentCell.setCellValue(
                                                 balanceRecord.getPrincipalAccountingAccountCode() + (!isGenerale
-                                                                ? +balanceRecord.getAccountingAccountSubNumber()
+                                                                ? balanceRecord.getAccountingAccountSubNumber()
                                                                 : ""));
                                 currentCell.setCellStyle(styleDate);
-                                if (!isGenerale) {
-                                        currentCell = currentRow.createCell(currentColumn++);
-                                        currentCell.setCellValue(balanceRecord.getAccountingAccountLabel());
-                                        currentCell.setCellStyle(recordCellStyle);
-                                }
+                                currentCell = currentRow.createCell(currentColumn++);
+                                currentCell.setCellValue(
+                                                isGenerale ? balanceRecord.getPrincipalAccountingAccountLabel()
+                                                                : balanceRecord.getAccountingAccountLabel());
+                                currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 if (balanceRecord.getDebitAmount() != null) {
                                         currentCell.setCellValue(balanceRecord.getDebitAmount());
@@ -441,36 +475,57 @@ public class AccountingExportHelper {
                                         currentCell.setCellValue(balanceRecord.getCreditAmount());
                                 }
                                 currentCell.setCellStyle(styleCurrency);
+
+                                Float debitAmount = balanceRecord.getDebitAmount() != null
+                                                ? balanceRecord.getDebitAmount()
+                                                : 0f;
+                                Float creditAmount = balanceRecord.getCreditAmount() != null
+                                                ? balanceRecord.getCreditAmount()
+                                                : 0f;
                                 currentCell = currentRow.createCell(currentColumn++);
-                                if (balanceRecord.getEchoir30() != null)
-                                        currentCell
-                                                        .setCellValue(balanceRecord.getEchoir30());
+                                if (debitAmount > creditAmount) {
+                                        currentCell.setCellValue(debitAmount - creditAmount);
+                                }
                                 currentCell.setCellStyle(styleCurrency);
                                 currentCell = currentRow.createCell(currentColumn++);
-                                if (balanceRecord.getEchoir60() != null)
-                                        currentCell
-                                                        .setCellValue(balanceRecord.getEchoir60());
+                                if (debitAmount <= creditAmount) {
+                                        currentCell.setCellValue(creditAmount - debitAmount);
+                                }
                                 currentCell.setCellStyle(styleCurrency);
-                                currentCell = currentRow.createCell(currentColumn++);
-                                if (balanceRecord.getEchoir90() != null)
-                                        currentCell
-                                                        .setCellValue(balanceRecord.getEchoir90());
-                                currentCell.setCellStyle(styleCurrency);
-                                currentCell = currentRow.createCell(currentColumn++);
-                                if (balanceRecord.getEchu30() != null)
-                                        currentCell
-                                                        .setCellValue(balanceRecord.getEchu30());
-                                currentCell.setCellStyle(styleCurrency);
-                                currentCell = currentRow.createCell(currentColumn++);
-                                if (balanceRecord.getEchu60() != null)
-                                        currentCell
-                                                        .setCellValue(balanceRecord.getEchu60());
-                                currentCell.setCellStyle(styleCurrency);
-                                currentCell = currentRow.createCell(currentColumn++);
-                                if (balanceRecord.getEchu90() != null)
-                                        currentCell
-                                                        .setCellValue(balanceRecord.getEchu90());
-                                currentCell.setCellStyle(styleCurrency);
+
+                                if (!isGenerale) {
+                                        currentCell.setCellStyle(styleCurrency);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        if (balanceRecord.getEchoir30() != null)
+                                                currentCell
+                                                                .setCellValue(balanceRecord.getEchoir30());
+                                        currentCell.setCellStyle(styleCurrency);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        if (balanceRecord.getEchoir60() != null)
+                                                currentCell
+                                                                .setCellValue(balanceRecord.getEchoir60());
+                                        currentCell.setCellStyle(styleCurrency);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        if (balanceRecord.getEchoir90() != null)
+                                                currentCell
+                                                                .setCellValue(balanceRecord.getEchoir90());
+                                        currentCell.setCellStyle(styleCurrency);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        if (balanceRecord.getEchu30() != null)
+                                                currentCell
+                                                                .setCellValue(balanceRecord.getEchu30());
+                                        currentCell.setCellStyle(styleCurrency);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        if (balanceRecord.getEchu60() != null)
+                                                currentCell
+                                                                .setCellValue(balanceRecord.getEchu60());
+                                        currentCell.setCellStyle(styleCurrency);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        if (balanceRecord.getEchu90() != null)
+                                                currentCell
+                                                                .setCellValue(balanceRecord.getEchu90());
+                                        currentCell.setCellStyle(styleCurrency);
+                                }
                         }
                 }
 
@@ -494,14 +549,20 @@ public class AccountingExportHelper {
                 currentCell.setCellValue("Solde");
                 currentCell.setCellStyle(recordCellStyle);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("");
+                if ((credit - debit) < 0)
+                        currentCell.setCellValue(Math.abs(credit - debit));
+                else
+                        currentCell.setCellValue("");
                 currentCell.setCellStyle(styleCurrency);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue(credit - debit);
+                if ((credit - debit) > 0)
+                        currentCell.setCellValue(Math.abs(credit - debit));
+                else
+                        currentCell.setCellValue("");
                 currentCell.setCellStyle(styleCurrency);
 
                 // autosize
-                for (int i = 0; i < 11; i++)
+                for (int i = 0; i < 12; i++)
                         currentSheet.autoSizeColumn(i, true);
 
                 File file;
@@ -618,7 +679,8 @@ public class AccountingExportHelper {
 
                 XSSFRow currentRow = currentSheet.createRow(currentLine++);
                 XSSFCell currentCell = currentRow.createCell(0);
-                currentCell.setCellValue("Compte : " + accountingJournal.getLabel());
+                currentCell.setCellValue("SPPS - " + siretJss + " - Compte : "
+                                + accountingJournal.getLabel());
 
                 CellRangeAddress region = new CellRangeAddress(0, 1, 0, 9);
                 cleanBeforeMergeOnValidCells(currentSheet, region, titleCellStyle);
@@ -673,9 +735,9 @@ public class AccountingExportHelper {
                                 currentRow = currentSheet.createRow(currentLine++);
                                 currentColumn = 0;
                                 currentCell = currentRow.createCell(currentColumn++);
-                                if (accountingRecord.getAccountingDateTime() != null)
+                                if (accountingRecord.getOperationDateTime() != null)
                                         currentCell.setCellValue(
-                                                        accountingRecord.getAccountingDateTime().toLocalDate());
+                                                        accountingRecord.getOperationDateTime().toLocalDate());
                                 currentCell.setCellStyle(styleDate);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 currentCell.setCellValue(accountingRecord.getAccountingJournalCode());
@@ -881,7 +943,16 @@ public class AccountingExportHelper {
 
                 XSSFRow currentRow = currentSheet.createRow(currentLine++);
                 XSSFCell currentCell = currentRow.createCell(0);
-                currentCell.setCellValue("Compte : " + accountingAccount.getLabel());
+                currentCell.setCellValue(
+                                "SPPS - " + siretJss + " - " + "Compte : " + accountingAccount.getLabel()
+                                                + accountingAccount.getPrincipalAccountingAccount().getCode()
+                                                + " " + StringUtils.leftPad(
+                                                                accountingAccount.getAccountingAccountSubNumber() + "",
+                                                                5, "0")
+                                                + " - "
+                                                + startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                                + " - "
+                                                + endDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
                 CellRangeAddress region = new CellRangeAddress(0, 1, 0, 9);
                 cleanBeforeMergeOnValidCells(currentSheet, region, titleCellStyle);
@@ -930,9 +1001,9 @@ public class AccountingExportHelper {
                                 currentRow = currentSheet.createRow(currentLine++);
                                 currentColumn = 0;
                                 currentCell = currentRow.createCell(currentColumn++);
-                                if (accountingRecord.getAccountingDateTime() != null)
+                                if (accountingRecord.getOperationDateTime() != null)
                                         currentCell.setCellValue(
-                                                        accountingRecord.getAccountingDateTime().toLocalDate());
+                                                        accountingRecord.getOperationDateTime().toLocalDate());
                                 currentCell.setCellStyle(styleDate);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 currentCell.setCellValue(accountingRecord.getAccountingJournalCode());
@@ -958,7 +1029,9 @@ public class AccountingExportHelper {
                                                                 : accountingRecord.getManualAccountingDocumentNumber());
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
-                                currentCell.setCellValue("Lettrage : ?");
+                                if (accountingRecord.getLetteringNumber() != null) {
+                                        currentCell.setCellValue(accountingRecord.getLetteringNumber());
+                                }
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 currentCell.setCellValue(accountingRecord.getLabel());
@@ -998,10 +1071,16 @@ public class AccountingExportHelper {
                 currentCell.setCellValue("Solde");
                 currentCell.setCellStyle(recordCellStyle);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue("");
+                if ((credit - debit) < 0)
+                        currentCell.setCellValue(Math.abs(credit - debit));
+                else
+                        currentCell.setCellValue("");
                 currentCell.setCellStyle(styleCurrency);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue(credit - debit);
+                if ((credit - debit) > 0)
+                        currentCell.setCellValue(Math.abs(credit - debit));
+                else
+                        currentCell.setCellValue("");
                 currentCell.setCellStyle(styleCurrency);
 
                 // autosize
@@ -1388,6 +1467,19 @@ public class AccountingExportHelper {
                 return "";
         }
 
+        private String getAccountingAccountNumber(List<AccountingRecordSearchResult> accountingRecords,
+                        String accountingAccount) {
+                if (accountingRecords != null)
+                        for (AccountingRecordSearchResult accountingRecord : accountingRecords)
+                                if ((accountingRecord.getPrincipalAccountingAccountCode()
+                                                + accountingRecord.getAccountingAccountSubNumber())
+                                                .equals(accountingAccount))
+                                        return accountingRecord.getPrincipalAccountingAccountCode() + StringUtils
+                                                        .leftPad(accountingRecord.getAccountingAccountSubNumber(), 5,
+                                                                        '0');
+                return "";
+        }
+
         private List<AccountingRecordSearchResult> getAccountingRecordForAccountingAccount(
                         String accountingAccountNumber,
                         List<AccountingRecordSearchResult> accountingRecordsIn) {
@@ -1582,13 +1674,10 @@ public class AccountingExportHelper {
                                                 || completeAccountingRecord.getContrePasse() != null)
                                         continue;
 
-                                if (completeAccountingRecord.getAccountingAccount().getPrincipalAccountingAccount()
-                                                .getId()
-                                                .equals(constantService.getPrincipalAccountingAccountProfit().getId())
-                                                || completeAccountingRecord.getAccountingAccount()
-                                                                .getPrincipalAccountingAccount().getId()
-                                                                .equals(constantService
-                                                                                .getPrincipalAccountingAccountLost()
+                                if (completeAccountingRecord.getAccountingAccount().getId()
+                                                .equals(constantService.getAccountingAccountProfit().getId())
+                                                || completeAccountingRecord.getAccountingAccount().getId()
+                                                                .equals(constantService.getAccountingAccountLost()
                                                                                 .getId()))
                                         continue;
 
@@ -1605,9 +1694,9 @@ public class AccountingExportHelper {
                                 currentRow = currentSheet.createRow(currentLine++);
                                 currentColumn = 0;
                                 currentCell = currentRow.createCell(currentColumn++);
-                                if (accountingRecord.getAccountingDateTime() != null)
+                                if (accountingRecord.getOperationDateTime() != null)
                                         currentCell.setCellValue(
-                                                        accountingRecord.getAccountingDateTime().toLocalDate());
+                                                        accountingRecord.getOperationDateTime().toLocalDate());
                                 currentCell.setCellStyle(styleDate);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 if (accountingRecord.getInvoiceId() != null)

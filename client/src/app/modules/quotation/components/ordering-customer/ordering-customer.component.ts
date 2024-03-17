@@ -6,8 +6,8 @@ import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { getCustomerOrderForIQuotation } from 'src/app/modules/invoicing/components/invoice-tools';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
+import { Employee } from 'src/app/modules/profile/model/Employee';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
 import { formatEurosForSortTable } from '../../../../libs/FormatHelper';
@@ -43,11 +43,11 @@ export class OrderingCustomerComponent implements OnInit {
   searchedTiers: IndexEntity | undefined;
   searchedResponsable: IndexEntity | undefined;
 
-  customerOrderTableActions: SortTableAction[] = [] as Array<SortTableAction>;
-  customerOrderDisplayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
+  customerOrderTableActions: SortTableAction<OrderingSearchResult>[] = [] as Array<SortTableAction<OrderingSearchResult>>;
+  customerOrderDisplayedColumns: SortTableColumn<OrderingSearchResult>[] = [] as Array<SortTableColumn<OrderingSearchResult>>;
 
-  quotationTableActions: SortTableAction[] = [] as Array<SortTableAction>;
-  quotationDisplayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
+  quotationTableActions: SortTableAction<QuotationSearchResult>[] = [] as Array<SortTableAction<QuotationSearchResult>>;
+  quotationDisplayedColumns: SortTableColumn<QuotationSearchResult>[] = [] as Array<SortTableColumn<QuotationSearchResult>>;
 
   customerOrderQuotations: QuotationSearchResult[] | undefined;
   quotationCustomerOrders: OrderingSearchResult[] | undefined;
@@ -71,11 +71,6 @@ export class OrderingCustomerComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.quotation) {
-      if (!this.quotation.overrideSpecialOffer) {
-        this.quotation.overrideSpecialOffer = false;
-        this.initSpecialOffers();
-      }
-
       if (this.quotation.responsable && this.quotation.responsable.id && !this.searchedResponsable) {
         this.indexEntityService.getResponsableByKeyword(this.quotation.responsable.id + "", false).subscribe(response => this.searchedResponsable = response[0]);
       }
@@ -96,60 +91,38 @@ export class OrderingCustomerComponent implements OnInit {
     this.orderingCustomerForm.markAllAsTouched();
 
     this.customerOrderDisplayedColumns = [];
-    this.customerOrderDisplayedColumns.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "N° de la commande" } as SortTableColumn);
-    this.customerOrderDisplayedColumns.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut" } as SortTableColumn);
-    this.customerOrderDisplayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.customerOrderDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.customerOrderDisplayedColumns.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "N° de la commande" } as SortTableColumn<OrderingSearchResult>);
+    this.customerOrderDisplayedColumns.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut" } as SortTableColumn<OrderingSearchResult>);
+    this.customerOrderDisplayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn<OrderingSearchResult>);
+    this.customerOrderDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: formatEurosForSortTable } as SortTableColumn<OrderingSearchResult>);
 
     this.customerOrderTableActions.push({
-      actionIcon: "visibility", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction, element: any) => {
+      actionIcon: "visibility", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction<OrderingSearchResult>, element: OrderingSearchResult) => {
         if (element)
           return ['/order', element.customerOrderId];
         return undefined;
       }, display: true,
-    } as SortTableAction);
+    } as SortTableAction<OrderingSearchResult>);
 
     this.quotationDisplayedColumns = [];
-    this.quotationDisplayedColumns.push({ id: "quotationId", fieldName: "quotationId", label: "N° du devis" } as SortTableColumn);
-    this.quotationDisplayedColumns.push({ id: "quotationStatus", fieldName: "quotationStatus", label: "Statut" } as SortTableColumn);
-    this.quotationDisplayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.quotationDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.quotationDisplayedColumns.push({ id: "quotationId", fieldName: "quotationId", label: "N° du devis" } as SortTableColumn<QuotationSearchResult>);
+    this.quotationDisplayedColumns.push({ id: "quotationStatus", fieldName: "quotationStatus", label: "Statut" } as SortTableColumn<QuotationSearchResult>);
+    this.quotationDisplayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn<QuotationSearchResult>);
+    this.quotationDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: formatEurosForSortTable } as SortTableColumn<QuotationSearchResult>);
 
     this.quotationTableActions.push({
-      actionIcon: "visibility", actionName: "Voir le devis", actionLinkFunction: (action: SortTableAction, element: any) => {
+      actionIcon: "visibility", actionName: "Voir le devis", actionLinkFunction: (action: SortTableAction<QuotationSearchResult>, element: QuotationSearchResult) => {
         if (element)
           return ['/quotation', element.quotationId];
         return undefined;
       }, display: true,
-    } as SortTableAction);
-
+    } as SortTableAction<QuotationSearchResult>);
   }
 
   orderingCustomerForm = this.formBuilder.group({
   });
 
   getCustomerOrderForIQuotation = getCustomerOrderForIQuotation;
-
-  displayOverrideSpecialOffers() {
-    this.quotation.overrideSpecialOffer = true;
-  }
-
-  hideOverrideSpecialOffers() {
-    this.quotation.overrideSpecialOffer = false;
-  }
-
-  initSpecialOffers() {
-    this.quotation.specialOffers = [] as Array<SpecialOffer>;
-    if (this.quotation.tiers && this.quotation.tiers.specialOffers)
-      this.quotation.specialOffers.push(...this.quotation.tiers.specialOffers);
-
-    if (this.quotation.confrere && this.quotation.confrere.specialOffers)
-      this.quotation.specialOffers.push(...this.quotation.confrere.specialOffers);
-
-    if (this.quotation.responsable && this.quotation.responsable.tiers && this.quotation.responsable.tiers.specialOffers)
-      this.quotation.specialOffers.push(...this.quotation.responsable.tiers.specialOffers);
-  }
-
 
   fillTiers(tiers: IndexEntity) {
     this.tiersService.getTiers(tiers.entityId).subscribe(response => {
@@ -158,6 +131,7 @@ export class OrderingCustomerComponent implements OnInit {
       this.quotation.responsable = undefined;
       if (this.quotation.tiers) {
         this.quotation.observations = this.quotation.tiers.observations;
+        this.quotation.instructions = this.quotation.tiers.instructions;
       }
       this.setDocument();
     })
@@ -182,6 +156,7 @@ export class OrderingCustomerComponent implements OnInit {
       if (this.quotation.responsable != null) {
         this.quotation.responsable.tiers = response;
         this.quotation.observations = this.quotation.responsable.tiers.observations;
+        this.quotation.instructions = this.quotation.responsable.tiers.instructions;
         this.setDocument();
       }
     })
@@ -204,7 +179,7 @@ export class OrderingCustomerComponent implements OnInit {
     this.appService.openRoute(event, link, null);
   }
 
-  updateAssignedToForCustomerOrder(employee: any) {
+  updateAssignedToForCustomerOrder(employee: Employee) {
     if (this.editMode)
       return;
     if (instanceOfCustomerOrder(this.quotation))

@@ -42,6 +42,11 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("minLetteringDateTime") LocalDateTime minLetteringDateTime);
 
         @Query(nativeQuery = true, value = "" +
+                        " with invoice_label as (select i.id, string_agg(ii.label, ', ' order by ii.id) as label " +
+                        " from invoice i  " +
+                        " join invoice_item ii on ii.id_invoice = i.id " +
+                        " where i.is_invoice_from_provider and i.created_date between :startDate and :endDate " +
+                        " group by i.id) " +
                         " select  " +
                         " r.id as recordId, " +
                         " r.operation_id as operationId, " +
@@ -52,7 +57,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " j.label as accountingJournalLabel, " +
                         " j.code as accountingJournalCode, " +
                         " pa.code as principalAccountingAccountCode, " +
-                        " a.accounting_account_sub_number as accountingAccountSubNumber, " +
+                        " lpad(concat(a.accounting_account_sub_number,''),5,'0') as accountingAccountSubNumber, " +
                         " a.label as accountingAccountLabel, " +
                         " coalesce(r.manual_accounting_document_number,r.id_invoice||'') as manualAccountingDocumentNumber, "
                         +
@@ -60,7 +65,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         " r.debit_amount as debitAmount, " +
                         " r.credit_amount as creditAmount, " +
-                        " r.label as label, " +
+                        " concat(r.label,' ',il.label) as label, " +
                         " r.lettering_number as letteringNumber, " +
                         " r.lettering_date_time as letteringDate, " +
                         " r.id_invoice as invoiceId, " +
@@ -73,13 +78,13 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " COALESCE(re1.firstname || ' ' || re1.lastname ,re2.firstname || ' ' || re2.lastname ) as responsable "
                         +
                         " from accounting_record r " +
-                        " join accounting_journal j on j.id = r.id_accounting_journal " +
+                        " left join accounting_journal j on j.id = r.id_accounting_journal " +
                         " join accounting_account a on a.id = r.id_accounting_account " +
                         " join principal_accounting_account pa on pa.id = a.id_principal_accounting_account " +
                         " left join tiers t on (t.id_accounting_account_customer = r.id_accounting_account  or t.id_accounting_account_deposit=r.id_accounting_account) "
                         + " left join confrere cf on (cf.id_accounting_account_customer = r.id_accounting_account  or cf.id_accounting_account_deposit=r.id_accounting_account or cf.id_accounting_account_provider = r.id_accounting_account) "
                         + " left join accounting_record r2 on r2.id = r.id_contre_passe " +
-                        " left join invoice i on i.id = r.id_invoice " +
+                        " left join invoice i on i.id = r.id_invoice left join invoice_label il on il.id = i.id " +
                         " left join customer_order co on co.id = r.id_customer_order " +
                         " left join responsable re1 on re1.id = i.id_responsable " +
                         " left join responsable re2 on r2.id = co.id_responsable " +
@@ -90,6 +95,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         " and (:tiersId =0 or t.id is not null and t.id = :tiersId) " +
                         " and (:hideLettered = false or r.lettering_date_time is null ) " +
+                        " and (:isFromAs400 = false or r.is_from_as400=true ) " +
                         " and coalesce(r.manual_accounting_document_date,r.operation_date_time)>=:startDate and coalesce(r.manual_accounting_document_date,r.operation_date_time)<=:endDate  "
                         +
                         " and (:canViewRestricted=true or a.is_view_restricted=false)  " +
@@ -108,6 +114,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("tiersId") Integer tiersId,
                         @Param("confrereId") Integer confrereId,
                         @Param("hideLettered") Boolean hideLettered,
+                        @Param("isFromAs400") Boolean isFromAs400,
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate,
                         @Param("canViewRestricted") boolean canViewRestricted,
@@ -119,12 +126,13 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
 
         @Query(nativeQuery = true, value = "" +
                         "select  sum(case "
-                        + "            when record.isanouveau=false then record.credit_amount "
+                        + "            when record.isanouveau=false or record.is_from_as400=true then record.credit_amount "
                         + "        end) as creditAmount," + "        sum(case "
-                        + "            when record.isanouveau=false then record.debit_amount "
+                        + "            when record.isanouveau=false or record.is_from_as400=true then record.debit_amount "
                         + "        end) as debitAmount," + "		accounting.label as accountingAccountLabel,"
                         + "		pa.code as principalAccountingAccountCode,"
-                        + "		accounting.accounting_account_sub_number as accountingAccountSubNumber,"
+                        + "		aac.label as accountingAccountClassLabel,"
+                        + "		lpad(concat(accounting_account_sub_number,''),5,'0') as accountingAccountSubNumber,"
                         + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '30 day') then i.total_price  end) as echoir30, "
                         + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '60 day') and i.due_date> (now() +INTERVAL '30 day')  then i.total_price  end) as echoir60, "
                         + "		sum(case when  i.due_date>now() and i.due_date> (now() +INTERVAL '60 day')  then i.total_price  end) as echoir90, "
@@ -133,17 +141,18 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "		sum(case when  i.due_date<=now() and i.due_date< (now() -INTERVAL '60 day')  then i.total_price  end) as echu90 "
                         + "    from" + "        accounting_record record " + "    inner join"
                         + "        accounting_account accounting join principal_accounting_account pa on pa.id = accounting.id_principal_accounting_account "
-                        + "            on record.id_accounting_account=accounting.id   "
+                        + "            on record.id_accounting_account=accounting.id  join accounting_account_class aac on aac.id = pa.id_accounting_account_class  "
                         + "			left join invoice i on i.id = record.id_invoice"
                         + " where (accounting.id=:accountingAccountId or :accountingAccountId =0 ) and "
-                        +
+                        + "   (:isFromAs400 = false or record.is_from_as400=true ) and " +
                         "(accounting.id_principal_accounting_account=:principalAccountingAccountId or :principalAccountingAccountId =0 ) and "
                         +
-                        "(record.accounting_date_time is null or (coalesce(record.manual_accounting_document_date,record.accounting_date_time) >=:startDate and coalesce(record.manual_accounting_document_date,record.accounting_date_time) <=:endDate )) and "
+                        "(record.operation_date_time is null or (coalesce(record.manual_accounting_document_date,record.operation_date_time) >=:startDate and coalesce(record.manual_accounting_document_date,record.operation_date_time) <=:endDate )) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false ) " +
-                        " group by accounting.label,pa.code,accounting.accounting_account_sub_number " +
+                        " group by aac.label,accounting.label,pa.code,lpad(concat(accounting_account_sub_number,''),5,'0') order by pa.code   "
+                        +
                         "")
         List<AccountingBalance> searchAccountingBalance(
                         @Param("accountingClassId") Integer accountingClassId,
@@ -151,16 +160,18 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("principalAccountingAccountId") Integer principalAccountingAccountId,
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate,
-                        @Param("canViewRestricted") boolean canViewRestricted);
+                        @Param("canViewRestricted") boolean canViewRestricted,
+                        @Param("isFromAs400") Boolean isFromAs400);
 
         @Query(nativeQuery = true, value = "select" + "        sum(case "
-                        + "            when record.isanouveau=false then record.credit_amount "
+                        + "            when record.isanouveau=false or record.is_from_as400=true then record.credit_amount "
                         + "        end) as creditAmount," + "        sum(case "
-                        + "            when record.isanouveau=false then record.debit_amount "
+                        + "            when record.isanouveau=false or record.is_from_as400=true then record.debit_amount "
                         + "        end) as debitAmount," + "	 "
+                        + "		aac.label as accountingAccountClassLabel,"
                         + "		pa.code as principalAccountingAccountCode,"
-                        + "		pa.label as principalAccountingAccountLabel,"
-                        + "		case when pa.code in ('401','411','4091','4191') then '' else accounting.accounting_account_sub_number ||'' end as accountingAccountSubNumber,"
+                        + "		case when pa.code in ('401', '411', '4091', '4191') then pa.label else accounting.label end as principalAccountingAccountLabel,"
+                        + "		case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),5,'0') ||'' end as accountingAccountSubNumber,"
                         + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '30 day') then i.total_price  end) as echoir30, "
                         + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '60 day') and i.due_date> (now() +INTERVAL '30 day')  then i.total_price  end) as echoir60, "
                         + "		sum(case when  i.due_date>now() and i.due_date> (now() +INTERVAL '60 day')  then i.total_price  end) as echoir90, "
@@ -169,24 +180,27 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "		sum(case when  i.due_date<=now() and i.due_date< (now() -INTERVAL '60 day')  then i.total_price  end) as echu90 "
                         + "    from" + "        accounting_record record " + "    inner join"
                         + "        accounting_account accounting  join principal_accounting_account pa on pa.id = accounting.id_principal_accounting_account  "
-                        + "            on record.id_accounting_account=accounting.id "
+                        + "            on record.id_accounting_account=accounting.id  join accounting_account_class aac on aac.id = pa.id_accounting_account_class  "
                         + "			left join invoice i on i.id = record.id_invoice"
                         + " where (accounting.id=:accountingAccountId or :accountingAccountId =0 ) and "
-                        +
+                        + "  (:isFromAs400 = false or coalesce(record.is_from_as400,false)=true ) and " +
                         "(accounting.id_principal_accounting_account=:principalAccountingAccountId or :principalAccountingAccountId =0 ) and "
                         +
-                        "(record.accounting_date_time is null or (coalesce(record.manual_accounting_document_date,record.accounting_date_time) >=:startDate and coalesce(record.manual_accounting_document_date,record.accounting_date_time) <=:endDate )) and "
+                        "(record.operation_date_time is null or (coalesce(record.manual_accounting_document_date,record.operation_date_time) >=:startDate and coalesce(record.manual_accounting_document_date,record.operation_date_time) <=:endDate )) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false)  " +
-                        " group by pa.code,pa.label,case when pa.code in ('401','411','4091','4191') then '' else accounting.accounting_account_sub_number ||'' end  ")
+                        " group by aac.label,pa.code,case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),5,'0') ||'' end, case when pa.code in ('401', '411', '4091', '4191') then pa.label else accounting.label end  "
+                        +
+                        " order by pa.code, case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),5,'0') ||'' end ")
         List<AccountingBalance> searchAccountingBalanceGenerale(
                         @Param("accountingClassId") Integer accountingClassId,
                         @Param("accountingAccountId") Integer accountingAccountId,
                         @Param("principalAccountingAccountId") Integer principalAccountingAccountId,
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate,
-                        @Param("canViewRestricted") boolean canViewRestricted);
+                        @Param("canViewRestricted") boolean canViewRestricted,
+                        @Param("isFromAs400") Boolean isFromAs400);
 
         @Query("select sum(a.creditAmount) as creditAmount, " +
                         " sum(a.debitAmount) as debitAmount, pa.code as accountingAccountNumber "

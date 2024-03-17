@@ -34,7 +34,7 @@ export abstract class GenericLocalAutocompleteComponent<T> extends GenericFormCo
       this.form.addValidators(this.checkAutocompleteField());
       this.filteredTypes = this.form.get(this.propertyName)?.valueChanges.pipe(
         startWith(''),
-        map(value => this.filterEntities(this.types, value)),
+        map(value => this.filterEntities(this.types, value).sort((a, b) => this.displayLabel(a).localeCompare(this.displayLabel(b)))),
       );
       this.form.get(this.propertyName)?.setValue(this.model);
     }

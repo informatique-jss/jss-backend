@@ -22,7 +22,7 @@ export class SelectAttachmentsDialogComponent implements OnInit {
   assoAffaireOrder: AssoAffaireOrder | undefined;
   provision: Provision | undefined;
   selectedAttachments: Attachment[] = [];
-  displayedColumns: SortTableColumn[] = [];
+  displayedColumns: SortTableColumn<Attachment>[] = [];
 
   attachmentMailRequest: AttachmentMailRequest = {} as AttachmentMailRequest;
 
@@ -33,11 +33,11 @@ export class SelectAttachmentsDialogComponent implements OnInit {
 
   ngOnInit() {
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "name", fieldName: "uploadedFile.filename", label: "Nom" } as SortTableColumn);
-    this.displayedColumns.push({ id: "attachementType", fieldName: "attachmentType.label", label: "Type de document" } as SortTableColumn);
-    this.displayedColumns.push({ id: "createdBy", fieldName: "uploadedFile.createdBy", label: "Ajouté par" } as SortTableColumn);
-    this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "isAlreadySent", fieldName: "isAlreadySent", label: "Envoyé au client ?", valueFonction: (element: any) => { return element.isAlreadySent ? "Oui" : "Non" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "name", fieldName: "uploadedFile.filename", label: "Nom" } as SortTableColumn<Attachment>);
+    this.displayedColumns.push({ id: "attachementType", fieldName: "attachmentType.label", label: "Type de document" } as SortTableColumn<Attachment>);
+    this.displayedColumns.push({ id: "createdBy", fieldName: "uploadedFile.createdBy", label: "Ajouté par" } as SortTableColumn<Attachment>);
+    this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Attachment>);
+    this.displayedColumns.push({ id: "isAlreadySent", fieldName: "isAlreadySent", label: "Envoyé au client ?", valueFonction: (element: Attachment, column: SortTableColumn<Attachment>) => { return element.isAlreadySent ? "Oui" : "Non" } } as SortTableColumn<Attachment>);
   }
 
   ngOnChanges(changes: SimpleChanges) {

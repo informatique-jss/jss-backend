@@ -33,7 +33,7 @@ public interface ProvisionProductionReportingRepository extends CrudRepository<Q
                         " ' ', " +
                         " e.lastname) as provisionAssignedToLabel, " +
                         " date_trunc('day', " +
-                        " max(coalesce(aa.datetime, asp.datetime, af.datetime, ad.datetime, ab.datetime))) as datetime, "
+                        " max(coalesce(aa.datetime, asp.datetime, af.datetime, ad.datetime))) as datetime, "
                         +
                         " p.id " +
                         " from " +
@@ -60,11 +60,6 @@ public interface ProvisionProductionReportingRepository extends CrudRepository<Q
                         " left join domiciliation_status ds on " +
                         " ds.id = d.id_domicilisation_status " +
                         " and ds.is_close_state " +
-                        " left join bodacc b on " +
-                        " b.id = p.id_bodacc " +
-                        " left join bodacc_status bs on " +
-                        " bs.id = b.id_bodacc_status " +
-                        " and bs.is_close_state " +
                         " left join audit aa on " +
                         " aa.entity = 'Announcement' " +
                         " and aa.entity_id = a.id " +
@@ -85,17 +80,12 @@ public interface ProvisionProductionReportingRepository extends CrudRepository<Q
                         " and ad.entity_id = d.id " +
                         " and ad.field_name = 'domiciliationStatus' " +
                         " and ad.new_value = ds.code " +
-                        " left join audit ab on " +
-                        " ab.entity = 'Bodacc' " +
-                        " and ab.entity_id = b.id " +
-                        " and ab.field_name = 'bodaccStatus' " +
-                        " and ab.new_value = bs.code " +
                         " where " +
                         " coalesce(as2.id, " +
                         " sps.id, " +
                         " fst.id, " +
-                        " ds.id, " +
-                        " bs.id) is not null " +
+                        " ds.id  " +
+                        " ) is not null " +
                         " group by " +
                         " concat(e.firstname, " +
                         " ' ', " +

@@ -13,7 +13,7 @@ mat-drawer-container {
 main {
   padding-left: 30px;
   padding-right: 10px;
-  padding-bottom: 30px;
+  padding-bottom: 0px;
   padding-top: 10px;
 }
 

@@ -14,7 +14,8 @@
       </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="logs" tableName="Devis"
-      *ngIf="displayedColumns && displayedColumns.length>0" [displayTotalLines]="isForDashboard">
+      [isSmallerHeight]="true" *ngIf="displayedColumns && displayedColumns.length>0"
+      [displayTotalLines]="isForDashboard">
     </sort-table>
   </div>
 </div>

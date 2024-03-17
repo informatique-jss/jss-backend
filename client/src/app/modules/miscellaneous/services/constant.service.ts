@@ -202,6 +202,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.billingTypeCentralPayFees;
   }
 
+  getBillingTypeRff() {
+    return this.constant.billingTypeRff;
+  }
+
   getBillingTypeLogo() {
     return this.constant.billingTypeLogo;
   }
@@ -424,30 +428,6 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.mailRedirectionTypeOther;
   }
 
-  getBodaccPublicationTypeMerging() {
-    return this.constant.bodaccPublicationTypeMerging;
-  }
-
-  getBodaccPublicationTypeSplit() {
-    return this.constant.bodaccPublicationTypeSplit;
-  }
-
-  getBodaccPublicationTypePartialSplit() {
-    return this.constant.bodaccPublicationTypePartialSplit;
-  }
-
-  getBodaccPublicationTypePossessionDispatch() {
-    return this.constant.bodaccPublicationTypePossessionDispatch;
-  }
-
-  getBodaccPublicationTypeEstateRepresentativeDesignation() {
-    return this.constant.bodaccPublicationTypeEstateRepresentativeDesignation;
-  }
-
-  getBodaccPublicationTypeSaleOfBusiness() {
-    return this.constant.bodaccPublicationTypeSaleOfBusiness;
-  }
-
   getActTypeSeing() {
     return this.constant.actTypeSeing;
   }
@@ -504,6 +484,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.competentAuthorityTypeCfp;
   }
 
+  getCompetentAuthorityTypeInsee() {
+    return this.constant.competentAuthorityTypeInsee;
+  }
+
   getCompetentAuthorityTypeCci() {
     return this.constant.competentAuthorityTypeCci;
   }
@@ -526,6 +510,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getCompetentAuthorityTypePrefecture() {
     return this.constant.competentAuthorityTypePrefecture;
+  }
+
+  getCompetentAuthorityTypeSpfe() {
+    return this.constant.competentAuthorityTypeSpfe;
   }
 
   getInvoiceStatusSend() {
@@ -676,12 +664,12 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.principalAccountingAccountWaiting;
   }
 
-  getPrincipalAccountingAccountLost() {
-    return this.constant.principalAccountingAccountLost;
+  getAccountingAccountLost() {
+    return this.constant.accountingAccountLost;
   }
 
-  getPrincipalAccountingAccountProfit() {
-    return this.constant.principalAccountingAccountProfit;
+  getAccountingAccountProfit() {
+    return this.constant.accountingAccountProfit;
   }
 
   getAccountingAccountBankCentralPay() {
@@ -710,5 +698,21 @@ export class ConstantService extends AppRestService<Constant>{
 
   getTiersFollowupTypeInvoiceReminder() {
     return this.constant.tiersFollowupTypeInvoiceReminder;
+  }
+
+  getTiersCategoryPresse() {
+    return this.constant.tiersCategoryPresse;
+  }
+
+  getRffFrequencyAnnual() {
+    return this.constant.rffFrequencyAnnual;
+  }
+
+  getRffFrequencyQuarterly() {
+    return this.constant.rffFrequencyQuarterly;
+  }
+
+  getRffFrequencyMonthly() {
+    return this.constant.rffFrequencyMonthly;
   }
 }

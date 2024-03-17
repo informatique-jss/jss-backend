@@ -34,6 +34,7 @@ import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -68,8 +69,6 @@ import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.quotation.model.AttachmentMailRequest;
 import com.jss.osiris.modules.quotation.model.AttachmentTypeMailQuery;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
-import com.jss.osiris.modules.quotation.model.BodaccPublicationType;
-import com.jss.osiris.modules.quotation.model.BodaccStatus;
 import com.jss.osiris.modules.quotation.model.BuildingDomiciliation;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
@@ -94,16 +93,15 @@ import com.jss.osiris.modules.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.QuotationAbandonReason;
 import com.jss.osiris.modules.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.RecordType;
-import com.jss.osiris.modules.quotation.model.Rna;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
-import com.jss.osiris.modules.quotation.model.Siren;
-import com.jss.osiris.modules.quotation.model.Siret;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.guichetUnique.ValidationRequest;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementNoticeTemplateService;
@@ -112,8 +110,6 @@ import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.quotation.service.AssignationTypeService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
-import com.jss.osiris.modules.quotation.service.BodaccPublicationTypeService;
-import com.jss.osiris.modules.quotation.service.BodaccStatusService;
 import com.jss.osiris.modules.quotation.service.BuildingDomiciliationService;
 import com.jss.osiris.modules.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
@@ -134,13 +130,14 @@ import com.jss.osiris.modules.quotation.service.ProvisionFamilyTypeService;
 import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.ProvisionTypeService;
+import com.jss.osiris.modules.quotation.service.QuotationAbandonReasonService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.quotation.service.RecordTypeService;
 import com.jss.osiris.modules.quotation.service.RnaDelegateService;
 import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
-import com.jss.osiris.modules.quotation.service.SireneDelegateService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.GuichetUniqueDelegateService;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
@@ -173,9 +170,6 @@ public class QuotationController {
 
   @Autowired
   RecordTypeService recordTypeService;
-
-  @Autowired
-  SireneDelegateService sireneDelegateService;
 
   @Autowired
   RnaDelegateService rnaDelegateService;
@@ -238,9 +232,6 @@ public class QuotationController {
   NoticeTypeFamilyService noticeTypeFamilyService;
 
   @Autowired
-  BodaccPublicationTypeService bodaccPublicationTypeService;
-
-  @Autowired
   TransfertFundsTypeService transfertFundsTypeService;
 
   @Autowired
@@ -280,7 +271,7 @@ public class QuotationController {
   MailHelper mailHelper;
 
   @Autowired
-  BodaccStatusService bodaccStatusService;
+  QuotationAbandonReasonService quotationAbandonReasonService;
 
   @Autowired
   AnnouncementStatusService announcementStatusService;
@@ -325,6 +316,9 @@ public class QuotationController {
   GuichetUniqueDelegateService guichetUniqueDelegateService;
 
   @Autowired
+  FormaliteGuichetUniqueService formaliteGuichetUniqueService;
+
+  @Autowired
   DebourDelService debourDelService;
 
   @GetMapping(inputEntryPoint + "/customer-order/associate")
@@ -359,7 +353,7 @@ public class QuotationController {
   @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
   @GetMapping(inputEntryPoint + "/bank-transfert/cancel")
   public ResponseEntity<BankTransfert> cancelBankTransfer(@RequestParam Integer idBankTranfert)
-      throws OsirisValidationException {
+      throws OsirisValidationException, OsirisException {
     BankTransfert bankTransfert = bankTransfertService.getBankTransfert(idBankTranfert);
     if (bankTransfert == null)
       throw new OsirisValidationException("bankTransfert");
@@ -370,7 +364,7 @@ public class QuotationController {
   @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
   @GetMapping(inputEntryPoint + "/direct-debit-transfert/cancel")
   public ResponseEntity<DirectDebitTransfert> cancelDirectDebitTransfert(@RequestParam Integer idDirectDebitTranfert)
-      throws OsirisValidationException {
+      throws OsirisValidationException, OsirisException {
     DirectDebitTransfert directDebitTransfert = directDebitTransfertService
         .getDirectDebitTransfert(idDirectDebitTranfert);
     if (directDebitTransfert == null)
@@ -382,7 +376,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/bank-transfert/export/select")
   public ResponseEntity<BankTransfert> selectBankTransfertForExport(@RequestParam Integer idBankTranfert)
-      throws OsirisValidationException {
+      throws OsirisValidationException, OsirisException {
     BankTransfert bankTransfert = bankTransfertService.getBankTransfert(idBankTranfert);
     if (bankTransfert == null)
       throw new OsirisValidationException("bankTransfert");
@@ -393,7 +387,7 @@ public class QuotationController {
   @PostMapping(inputEntryPoint + "/bank-transfert/comment")
   public ResponseEntity<BankTransfert> addOrUpdateTransfertComment(@RequestBody String comment,
       @RequestParam Integer idBankTransfert)
-      throws OsirisValidationException {
+      throws OsirisValidationException, OsirisException {
 
     BankTransfert bankTransfert = bankTransfertService.getBankTransfert(idBankTransfert);
 
@@ -406,7 +400,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/bank-transfert/export/unselect")
   public ResponseEntity<BankTransfert> unselectBankTransfertForExport(@RequestParam Integer idBankTranfert)
-      throws OsirisValidationException {
+      throws OsirisValidationException, OsirisException {
     BankTransfert bankTransfert = bankTransfertService.getBankTransfert(idBankTranfert);
     if (bankTransfert == null)
       throw new OsirisValidationException("bankTransfert");
@@ -490,11 +484,6 @@ public class QuotationController {
 
     return new ResponseEntity<List<AnnouncementSearchResult>>(announcementService.searchAnnouncementsForWebSite(search),
         HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/bodacc-status")
-  public ResponseEntity<List<BodaccStatus>> getBodaccStatus() {
-    return new ResponseEntity<List<BodaccStatus>>(bodaccStatusService.getBodaccStatus(), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/mail/billing/compute")
@@ -672,7 +661,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/asso/affaire/order/assignedTo")
   public ResponseEntity<Boolean> updateAssignedToForAsso(@RequestParam Integer assoId,
-      @RequestParam Integer employeeId) throws OsirisValidationException {
+      @RequestParam Integer employeeId) throws OsirisValidationException, OsirisException {
     AssoAffaireOrder asso = assoAffaireOrderService.getAssoAffaireOrder(assoId);
     if (asso == null)
       throw new OsirisValidationException("asso");
@@ -738,7 +727,7 @@ public class QuotationController {
     if (affaireSearch.getLabel() == null
         && affaireSearch.getAssignedTo() == null && affaireSearch.getResponsible() == null
         && affaireSearch.getStatus() == null && affaireSearch.getCustomerOrders() == null
-        && affaireSearch.getAffaire() == null)
+        && affaireSearch.getAffaire() == null && affaireSearch.getWaitedCompetentAuthority() == null)
       throw new OsirisValidationException("Label or AssignedTo or Responsible or Status");
 
     if (affaireSearch.getLabel() == null)
@@ -883,25 +872,6 @@ public class QuotationController {
         transfertFundsTypeService.addOrUpdateTransfertFundsType(transfertFundsType), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/bodacc-publication-types")
-  public ResponseEntity<List<BodaccPublicationType>> getBodaccPublicationTypes() {
-    return new ResponseEntity<List<BodaccPublicationType>>(bodaccPublicationTypeService.getBodaccPublicationTypes(),
-        HttpStatus.OK);
-  }
-
-  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-  @PostMapping(inputEntryPoint + "/bodacc-publication-type")
-  public ResponseEntity<BodaccPublicationType> addOrUpdateActType(
-      @RequestBody BodaccPublicationType bodaccPublicationType) throws OsirisValidationException, OsirisException {
-    if (bodaccPublicationType.getId() != null)
-      validationHelper.validateReferential(bodaccPublicationType, true, "bodaccPublicationType");
-    validationHelper.validateString(bodaccPublicationType.getCode(), true, 20, "code");
-    validationHelper.validateString(bodaccPublicationType.getLabel(), true, 100, "label");
-
-    return new ResponseEntity<BodaccPublicationType>(
-        bodaccPublicationTypeService.addOrUpdateBodaccPublicationType(bodaccPublicationType), HttpStatus.OK);
-  }
-
   @GetMapping(inputEntryPoint + "/notice-type-families")
   public ResponseEntity<List<NoticeTypeFamily>> getNoticeTypeFamilies() {
     return new ResponseEntity<List<NoticeTypeFamily>>(noticeTypeFamilyService.getNoticeTypeFamilies(), HttpStatus.OK);
@@ -932,7 +902,7 @@ public class QuotationController {
     if (noticeTypes.getId() != null)
       validationHelper.validateReferential(noticeTypes, true, "noticeTypes");
     validationHelper.validateString(noticeTypes.getCode(), true, 20, "code");
-    validationHelper.validateString(noticeTypes.getLabel(), true, 100, "label");
+    validationHelper.validateString(noticeTypes.getLabel(), true, 200, "label");
 
     return new ResponseEntity<NoticeType>(noticeTypeService.addOrUpdateNoticeType(noticeTypes), HttpStatus.OK);
   }
@@ -1078,8 +1048,10 @@ public class QuotationController {
             throw new OsirisValidationException("MailsClient");
 
         validationHelper.validateString(document.getAffaireAddress(), false, 200, "AffaireAddress");
-        validationHelper.validateString(document.getClientAddress(), false, 100, "ClientAddress");
-        validationHelper.validateString(document.getAffaireRecipient(), false, 100, "AffaireRecipient");
+        validationHelper.validateString(document.getClientAddress(), false, 200, "ClientAddress");
+        validationHelper.validateString(document.getBillingAddress(), false, 200, "BillingAddress");
+        validationHelper.validateString(document.getBillingLabel(), false, 200, "BillingLabel");
+        validationHelper.validateString(document.getAffaireRecipient(), false, 200, "AffaireRecipient");
         validationHelper.validateString(document.getClientRecipient(), false, 200, "ClientRecipient");
         validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
         validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
@@ -1178,7 +1150,7 @@ public class QuotationController {
     if (provisionType.getId() != null)
       validationHelper.validateReferential(provisionType, true, "provisionType");
     validationHelper.validateString(provisionType.getCode(), true, 20, "Code");
-    validationHelper.validateString(provisionType.getLabel(), true, 100, "Label");
+    validationHelper.validateString(provisionType.getLabel(), true, 255, "Label");
     validationHelper.validateReferential(provisionType.getProvisionScreenType(), true, "ProvisionScreenType");
     validationHelper.validateReferential(provisionType.getAssignationType(), true, "AssignationType");
     validationHelper.validateReferential(provisionType.getDefaultCompetentAuthorityServiceProvider(), false,
@@ -1215,29 +1187,30 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/siren")
-  public ResponseEntity<List<Siren>> getSiren(@RequestParam String siren) throws OsirisClientMessageException {
-    if (siren != null && !siren.equals("") && siren.replaceAll(" ", "").length() == 9)
-      return new ResponseEntity<List<Siren>>(sireneDelegateService.getSiren(siren.replaceAll(" ", "")), HttpStatus.OK);
-    return new ResponseEntity<List<Siren>>(HttpStatus.OK);
+  public ResponseEntity<List<Affaire>> getAffairesFromSiren(@RequestParam String siren)
+      throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+    if (siren == null)
+      throw new OsirisValidationException("siren");
+    return new ResponseEntity<List<Affaire>>(affaireService.getAffairesFromSiren(siren.trim().replaceAll(" ", "")),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/siret")
-  public ResponseEntity<List<Siret>> getSiret(@RequestParam String siret) throws OsirisClientMessageException {
-    if (siret != null && !siret.equals("") && siret.replaceAll(" ", "").length() == 14)
-      return new ResponseEntity<List<Siret>>(sireneDelegateService.getSiret(siret.replaceAll(" ", "")), HttpStatus.OK);
-    return new ResponseEntity<List<Siret>>(HttpStatus.OK);
+  public ResponseEntity<List<Affaire>> getAffairesFromSiret(@RequestParam String siret)
+      throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+    if (siret == null)
+      throw new OsirisValidationException("siren");
+    return new ResponseEntity<List<Affaire>>(affaireService.getAffairesFromSiret(siret.trim().replaceAll(" ", "")),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/rna")
-  public ResponseEntity<List<Rna>> getRna(@RequestParam String rna) throws OsirisValidationException {
-    if (rna == null || rna.equals("")
-        || rna.replaceAll(" ", "").length() != 10 && !rna.toUpperCase().subSequence(0, 1).equals("W"))
-      throw new OsirisValidationException("rna");
-
-    if (rna != null && !rna.equals("") && rna.replaceAll(" ", "").length() == 14
-        && rna.toUpperCase().subSequence(0, 1).equals("W"))
-      return new ResponseEntity<List<Rna>>(rnaDelegateService.getRna(rna.replaceAll(" ", "")), HttpStatus.OK);
-    return new ResponseEntity<List<Rna>>(HttpStatus.OK);
+  public ResponseEntity<List<Affaire>> getAffairesFromRna(@RequestParam String rna)
+      throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+    if (rna == null)
+      throw new OsirisValidationException("siren");
+    return new ResponseEntity<List<Affaire>>(affaireService.getAffairesFromRna(rna.trim().replaceAll(" ", "")),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/affaire")
@@ -1246,22 +1219,6 @@ public class QuotationController {
       throw new OsirisValidationException("id");
 
     return new ResponseEntity<Affaire>(affaireService.getAffaire(id), HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/affaire/siret")
-  public ResponseEntity<Affaire> getAffaireBySiret(@RequestParam String siret) throws OsirisValidationException {
-    if (siret == null)
-      return null;
-
-    return new ResponseEntity<Affaire>(affaireService.getAffaireBySiret(siret), HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/affaire/siren")
-  public ResponseEntity<List<Affaire>> getAffairesBySiren(@RequestParam String siren) throws OsirisValidationException {
-    if (siren == null)
-      return null;
-
-    return new ResponseEntity<List<Affaire>>(affaireService.getAffairesBySiren(siren), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/affaires")
@@ -1352,6 +1309,22 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/quotation-abandon-reasons")
+  public ResponseEntity<List<QuotationAbandonReason>> getQuotationAbandonReasons() {
+    return new ResponseEntity<List<QuotationAbandonReason>>(quotationAbandonReasonService.getQuotationAbandonReasons(),
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/quotation-abandon-reason")
+  public ResponseEntity<QuotationAbandonReason> addOrUpdateQutationAbandonReason(
+      @RequestBody QuotationAbandonReason abandonReason)
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+
+    return new ResponseEntity<QuotationAbandonReason>(
+        quotationAbandonReasonService.addOrUpdateQutationAbandonReason(abandonReason),
+        HttpStatus.OK);
+  }
+
   @PostMapping(inputEntryPoint + "/customer-order")
   public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrder(@RequestBody CustomerOrder customerOrder)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException, OsirisDuplicateException {
@@ -1373,9 +1346,11 @@ public class QuotationController {
   public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrderStatus(@RequestBody CustomerOrder customerOrder,
       @RequestParam String targetStatusCode)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
     customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
-    if (!targetStatusCode.equals(CustomerOrderStatus.ABANDONED))
+    if (!targetStatusCode.equals(CustomerOrderStatus.ABANDONED)) {
       quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, targetStatusCode);
+    }
     boolean found = true;
     if (customerOrder.getCustomerOrderStatus() != null) {
       if (customerOrder.getCustomerOrderStatus().getSuccessors() != null)
@@ -1430,6 +1405,9 @@ public class QuotationController {
     validationHelper.validateString(affaire.getAddress(), true, 100, "Address");
     validationHelper.validateReferential(affaire.getCity(), true, "City");
     validationHelper.validateReferential(affaire.getCountry(), true, "Country");
+    validationHelper.validateReferential(affaire.getMainActivity(), false, "MainActivity");
+    validationHelper.validateReferential(affaire.getLegalForm(), false, "LegalForm");
+    validationHelper.validateReferential(affaire.getCompetentAuthority(), false, "CompetentAuthority");
     validationHelper.validateString(affaire.getExternalReference(), false, 60, "ExternalReference");
     validationHelper.validateString(affaire.getIntercommunityVat(), false, 20, "IntercommunityVat");
     if (affaire.getCountry() != null && affaire.getCountry().getId().equals(constantService.getCountryFrance().getId()))
@@ -1459,6 +1437,22 @@ public class QuotationController {
         throw new OsirisValidationException("SIRET");
     }
     return new ResponseEntity<Affaire>(affaireService.addOrUpdateAffaire(affaire), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/affaire/refresh/rne")
+  public ResponseEntity<Affaire> refreshAffaireFromRne(@RequestParam Integer idAffaire)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+    if (idAffaire == null)
+      throw new OsirisValidationException("idAffaire");
+
+    Affaire affaire = affaireService.getAffaire(idAffaire);
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    if (affaire.getSiret() == null || affaire.getSiret().equals(""))
+      throw new OsirisValidationException("siret");
+
+    return new ResponseEntity<Affaire>(affaireService.refreshAffaireFromRne(affaire), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/invoice-item/generate")
@@ -1877,6 +1871,18 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/quotation/announcement")
+  public ResponseEntity<Quotation> getQuotationOfAnnouncement(@RequestParam Integer idAnnouncement)
+      throws OsirisValidationException {
+    Announcement announcement = this.announcementService.getAnnouncement(idAnnouncement);
+
+    if (announcement == null)
+      throw new OsirisValidationException("announcement");
+
+    return new ResponseEntity<Quotation>(quotationService.getQuotationForAnnouncement(announcement),
+        HttpStatus.OK);
+  }
+
   @PostMapping(inputEntryPoint + "/announcements/search")
   public ResponseEntity<List<Announcement>> getAnnouncements(@RequestBody AnnouncementListSearch announcementSearch)
       throws OsirisValidationException, OsirisException {
@@ -1924,10 +1930,56 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
 
     List<FormaliteGuichetUnique> formalites = null;
-    if (value != null && value.length() > 2)
-      formalites = guichetUniqueDelegateService.getAllFormalitiesByRefenceMandataire(value);
+
+    if (value != null && value.length() > 2) {
+      formalites = formaliteGuichetUniqueService.getFormaliteGuichetUniqueByLiasseNumber(value.toUpperCase());
+
+      if (formalites == null || formalites.size() == 0)
+        formalites = guichetUniqueDelegateService.getAllFormalitiesByRefenceMandataire(value);
+
+      // Put empty partner center when id is set to null
+      if (formalites != null && formalites.size() > 0)
+        for (FormaliteGuichetUnique formalite : formalites)
+          if (formalite.getValidationsRequests() != null && formalite.getValidationsRequests().size() > 0)
+            for (ValidationRequest validationRequest : formalite.getValidationsRequests())
+              if (validationRequest.getPartnerCenter() != null && validationRequest.getPartner().getId() == null)
+                validationRequest.setPartnerCenter(null);
+    }
 
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @GetMapping(inputEntryPoint + "/customer-order/credit-note")
+  public ResponseEntity<Boolean> generateCreditNoteForCustomerOrderInvoice(
+      @RequestParam Integer customerOrderId, @RequestParam Integer invoiceId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+    Invoice invoice = invoiceService.getInvoice(invoiceId);
+    if (invoice == null)
+      throw new OsirisValidationException("invoice");
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    customerOrderService.generateCreditNoteForCustomerOrderInvoice(customerOrder, invoice);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+  @GetMapping(inputEntryPoint + "/customer-order/invoicing/reinit")
+  public ResponseEntity<Boolean> reinitInvoicing(@RequestParam Integer customerOrderId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED) ||
+        customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED))
+      throw new OsirisValidationException("customerOrder status");
+
+    customerOrderService.reinitInvoicing(customerOrder);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
 }

@@ -22,7 +22,7 @@ export class SpecialOffersDialogComponent implements OnInit {
   filterValue: string = "";
   refreshTable: Subject<void> = new Subject<void>();
 
-  displayedColumns: SortTableColumn[] = [];
+  displayedColumns: SortTableColumn<SpecialOfferFlatten>[] = [];
   searchText: string | undefined;
 
   constructor(private specialOfferService: SpecialOfferService,
@@ -30,12 +30,12 @@ export class SpecialOffersDialogComponent implements OnInit {
 
   ngOnInit() {
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Libellé" } as SortTableColumn);
-    this.displayedColumns.push({ id: "discountAmount", fieldName: "discountAmount", label: "Montant de la remise", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "discountRate", fieldName: "discountRate", label: "Taux de remise", valueFonction: formatPercentForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "vat", fieldName: "vat", label: "Taux de TVA", valueFonction: formatPercentForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "billingTypeLabel", fieldName: "billingTypeLabel", label: "Poste de facturation" } as SortTableColumn);
-    this.displayedColumns.push({ id: "billingTypePreTaxPrice", fieldName: "billingTypePreTaxPrice", label: "Prix HT du poste" } as SortTableColumn);
+    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Libellé" } as SortTableColumn<SpecialOfferFlatten>);
+    this.displayedColumns.push({ id: "discountAmount", fieldName: "discountAmount", label: "Montant de la remise", valueFonction: formatEurosForSortTable } as SortTableColumn<SpecialOfferFlatten>);
+    this.displayedColumns.push({ id: "discountRate", fieldName: "discountRate", label: "Taux de remise", valueFonction: formatPercentForSortTable } as SortTableColumn<SpecialOfferFlatten>);
+    this.displayedColumns.push({ id: "vat", fieldName: "vat", label: "Taux de TVA", valueFonction: formatPercentForSortTable } as SortTableColumn<SpecialOfferFlatten>);
+    this.displayedColumns.push({ id: "billingTypeLabel", fieldName: "billingTypeLabel", label: "Poste de facturation" } as SortTableColumn<SpecialOfferFlatten>);
+    this.displayedColumns.push({ id: "billingTypePreTaxPrice", fieldName: "billingTypePreTaxPrice", label: "Prix HT du poste" } as SortTableColumn<SpecialOfferFlatten>);
 
     this.specialOfferService.getSpecialOffers().subscribe(response => {
       this.specialOffers = response;

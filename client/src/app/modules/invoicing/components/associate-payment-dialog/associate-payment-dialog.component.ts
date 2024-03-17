@@ -18,6 +18,7 @@ import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { AppService } from 'src/app/services/app.service';
 import { CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
 import { Responsable } from '../../../tiers/model/Responsable';
 import { AssociationSummaryTable } from '../../model/AssociationSummaryTable';
@@ -41,8 +42,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
   invoice: Invoice | undefined;
   payment: Payment | undefined;
   associations: AssociationSummaryTable[] = [] as Array<AssociationSummaryTable>;
-  displayedColumns: SortTableColumn[] = [];
-  tableAction: SortTableAction[] = [];
+  displayedColumns: SortTableColumn<AssociationSummaryTable>[] = [];
+  tableAction: SortTableAction<AssociationSummaryTable>[] = [];
   selectedRefundTiers: Tiers | undefined;
   selectedRefundConfrere: Confrere | undefined;
   selectedRefundAffaire: Affaire | undefined;
@@ -73,6 +74,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
     private customerOrderService: CustomerOrderService,
     private constantService: ConstantService,
     private formBuilder: FormBuilder,
+    private habilitationsService: HabilitationsService,
   ) { }
 
   refundForm = this.formBuilder.group({
@@ -81,14 +83,14 @@ export class AssociatePaymentDialogComponent implements OnInit {
 
   ngOnInit() {
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "payment", fieldName: "payment.id", label: "Paiement" } as SortTableColumn);
-    this.displayedColumns.push({ id: "customerOrder", fieldName: "customerOrder.id", label: "Commande" } as SortTableColumn);
-    this.displayedColumns.push({ id: "invoice", fieldName: "invoice.id", label: "Facture" } as SortTableColumn);
-    this.displayedColumns.push({ id: "initialAmount", fieldName: "invoice", label: "Montant TTC", valueFonction: (element: any): string => { return this.getInitialAmount(element) + " €"; } } as SortTableColumn);
-    this.displayedColumns.push({ id: "amountPayed", fieldName: "invoice", label: "Montant associé", valueFonction: (element: any): string => { return this.getAmountAssociated(element) + " €"; } } as SortTableColumn);
+    this.displayedColumns.push({ id: "payment", fieldName: "payment.id", label: "Paiement" } as SortTableColumn<AssociationSummaryTable>);
+    this.displayedColumns.push({ id: "customerOrder", fieldName: "customerOrder.id", label: "Commande" } as SortTableColumn<AssociationSummaryTable>);
+    this.displayedColumns.push({ id: "invoice", fieldName: "invoice.id", label: "Facture" } as SortTableColumn<AssociationSummaryTable>);
+    this.displayedColumns.push({ id: "initialAmount", fieldName: "invoice", label: "Montant TTC", valueFonction: (element: AssociationSummaryTable, column: SortTableColumn<AssociationSummaryTable>): string => { return this.getInitialAmount(element) + " €"; } } as SortTableColumn<AssociationSummaryTable>);
+    this.displayedColumns.push({ id: "amountPayed", fieldName: "invoice", label: "Montant associé", valueFonction: (element: AssociationSummaryTable, column: SortTableColumn<AssociationSummaryTable>): string => { return this.getAmountAssociated(element) + " €"; } } as SortTableColumn<AssociationSummaryTable>);
 
     this.tableAction.push({
-      actionIcon: "delete", actionName: "Supprimer l'association", actionClick: (action: SortTableAction, element: any): void => {
+      actionIcon: "delete", actionName: "Supprimer l'association", actionClick: (column: SortTableAction<AssociationSummaryTable>, element: AssociationSummaryTable, event: any): void => {
         if (element && this.associations)
           for (let asso of this.associations)
             if (asso.customerOrder && element.customerOrder && asso.customerOrder.id == element.customerOrder.id || asso.invoice && element.invoice && asso.invoice.id == element.invoice.id) {
@@ -97,7 +99,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
               return;
             }
       }, display: true,
-    } as SortTableAction);
+    } as SortTableAction<AssociationSummaryTable>);
 
     if (this.payment && this.invoice && !this.doNotInitializeAsso) {
       this.associateInvoice(this.invoice);
@@ -201,14 +203,10 @@ export class AssociatePaymentDialogComponent implements OnInit {
           this.appService.displaySnackBar("Veuillez choisir une facture avec un total de " + this.payment.paymentAmount + " €", true, 15);
           return;
         }
-        if (this.payment && invoice.manualPaymentType.id != this.payment.paymentType.id) {
-          this.appService.displaySnackBar("Le type de réglement de la facture et le type de paiement doivent être identiques", true, 15);
-          return;
-        }
       }
     }
 
-    if (!this.isSameCustomerOrder(getCustomerOrderForInvoice(invoice))) {
+    if (!this.isSameCustomerOrder(getCustomerOrderForInvoice(invoice)) && !this.habilitationsService.canByPassMultipleCustomerOrderOnAssociationCheck()) {
       this.appService.displaySnackBar("Veuillez choisir une facture du même donneur d'ordre que les autres éléments associés au paiement", true, 15);
       return;
     }
@@ -381,7 +379,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
     return affaires;
   }
 
-  getInitialAmount(element: any): number {
+  getInitialAmount(element: AssociationSummaryTable): number {
     let total = 0;
     if (element) {
       if (element.invoice)
@@ -392,7 +390,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
     return total;
   }
 
-  getAmountAssociated(element: any): number {
+  getAmountAssociated(element: AssociationSummaryTable): number {
     return element.amountUsed;
   }
 

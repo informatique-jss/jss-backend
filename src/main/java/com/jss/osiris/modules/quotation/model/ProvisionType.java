@@ -30,7 +30,7 @@ public class ProvisionType implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "provision_type_sequence")
 	private Integer id;
 
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false, length = 255)
 	@IndexedField
 	private String label;
 
@@ -49,6 +49,9 @@ public class ProvisionType implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision_screen_type")
 	private ProvisionScreenType provisionScreenType;
+
+	private Boolean isDisplayActeDepositScreen;
+	private Boolean isDisplayAnnualAccountScreen;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_assignation_type")
@@ -143,6 +146,22 @@ public class ProvisionType implements Serializable, IId {
 	public void setDefaultCompetentAuthorityServiceProvider(
 			CompetentAuthority defaultCompetentAuthorityServiceProvider) {
 		this.defaultCompetentAuthorityServiceProvider = defaultCompetentAuthorityServiceProvider;
+	}
+
+	public Boolean getIsDisplayActeDepositScreen() {
+		return isDisplayActeDepositScreen;
+	}
+
+	public void setIsDisplayActeDepositScreen(Boolean isDisplayActeDepositScreen) {
+		this.isDisplayActeDepositScreen = isDisplayActeDepositScreen;
+	}
+
+	public Boolean getIsDisplayAnnualAccountScreen() {
+		return isDisplayAnnualAccountScreen;
+	}
+
+	public void setIsDisplayAnnualAccountScreen(Boolean isDisplayAnnualAccountScreen) {
+		this.isDisplayAnnualAccountScreen = isDisplayAnnualAccountScreen;
 	}
 
 }

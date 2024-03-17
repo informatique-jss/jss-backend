@@ -1,13 +1,3 @@
-<ng-template #accordionTools>
-  <mat-panel-description>
-    <mat-icon color="accent" matTooltip="Ouvrir tous les onglets"
-      (click)="accordion!.openAll();$event.stopPropagation();" class="pointer">
-      unfold_more_double</mat-icon>
-    <mat-icon color="accent" matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();"
-      class="pointer">
-      unfold_less_double</mat-icon>
-  </mat-panel-description>
-</ng-template>
 <div class="mat-elevation-z2 form-div">
   <fieldset [disabled]="editMode==false" class="fieldset-no-border">
     <form [formGroup]="quotationManagementForm" *ngIf="quotation">
@@ -20,7 +10,7 @@
                   Facture
                 </mat-panel-title>
                 <mat-panel-description>
-                  <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+                  <ng-template></ng-template>
                 </mat-panel-description>
               </mat-expansion-panel-header>
               <table class="full-width">
@@ -39,13 +29,14 @@
                   <td>
                     <generic-input [(model)]="billingDocument.billingLabel" label="Libellé"
                       (onFormChange)="updateAdressing($event)" [form]="quotationManagementForm"
-                      propertyName="billingLabel" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+                      propertyName="billingLabel" [isMandatory]="true" [maxLength]="200"
+                      [isDisabled]="!editMode"></generic-input>
                   </td>
                   <td>
                     <generic-input [(model)]="billingDocument.billingAddress" label="Adresse"
                       (onFormChange)="updateAdressing($event)" [form]="quotationManagementForm"
                       propertyName="billingAddress" [isMandatory]="true" [isDisabled]="!editMode"
-                      [maxLength]="100"></generic-input>
+                      [maxLength]="200"></generic-input>
                   </td>
                   <td>
                     <autocomplete-postal-code [(model)]="billingDocument.billingPostalCode"
@@ -189,7 +180,7 @@
                 <mat-panel-title>
                   Documents numériques
                 </mat-panel-title>
-                <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+                <ng-template></ng-template>
               </mat-expansion-panel-header>
               <addressing [editMode]="editMode" [document]="digitalDocument" [displayOverrideMail]="false"
                 (documentChange)="updateAdressing($event)" [displayOverrideEMail]="true">
@@ -240,7 +231,7 @@
                 <mat-panel-title>
                   Documents papiers
                 </mat-panel-title>
-                <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+                <ng-template></ng-template>
               </mat-expansion-panel-header>
               <addressing [editMode]=" editMode" [document]="paperDocument" [displayOverrideMail]="true"
                 [displayNumberMailing]="true" (documentChange)="updateAdressing($event)" [displayOverrideEMail]="false">

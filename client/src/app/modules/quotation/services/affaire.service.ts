@@ -24,7 +24,19 @@ export class AffaireService extends AppRestService<Affaire>{
     return this.addOrUpdate(new HttpParams(), "affaire", affaire, affaire.id ? "Affaire mise à jour" : "Affaire créée", "Erreur lors de l'enregistrement de l'affaire");
   }
 
-  getAffaireBySiret(siret: string) {
-    return this.get(new HttpParams().set("siret", siret), "affaire/siret");
+  generateAffaireBySiret(siret: string) {
+    return this.getList(new HttpParams().set("siret", siret), "siret");
+  }
+
+  generateAffaireBySiren(siren: string) {
+    return this.getList(new HttpParams().set("siren", siren), "siren");
+  }
+
+  generateAffaireByRna(rna: string) {
+    return this.getList(new HttpParams().set("rna", rna), "rna");
+  }
+
+  refreshAffaire(affaire: Affaire) {
+    return this.get(new HttpParams().set("idAffaire", affaire.id), "affaire/refresh/rne");
   }
 }

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
@@ -11,6 +12,7 @@ import { ProviderService } from 'src/app/modules/miscellaneous/services/provider
 import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { PROVIDER_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 
 @Component({
   selector: 'provider',
@@ -24,6 +26,7 @@ export class ProviderComponent implements OnInit {
     private appService: AppService,
     protected paymentTypeService: PaymentTypeService,
     protected activatedRoute: ActivatedRoute,
+    private userPreferenceService: UserPreferenceService
   ) {
   }
 
@@ -32,7 +35,7 @@ export class ProviderComponent implements OnInit {
   searchText: string = "";
   selectedProvider: Provider | undefined;
   selectedProviderId: number | undefined;
-  displayedColumns: SortTableColumn[] = [];
+  displayedColumns: SortTableColumn<Provider>[] = [];
   editMode: boolean = false;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
 
@@ -50,13 +53,16 @@ export class ProviderComponent implements OnInit {
       this.appService.changeHeaderTitle("Fournisseurs");
 
     this.selectedProviderId = this.activatedRoute.snapshot.params.id;
+    if (!this.selectedProviderId)
+      this.selectedProviderId = this.userPreferenceService.getUserTabsSelectionIndex('provider-selected');
+
     if (this.idProvider)
       this.selectedProviderId = this.idProvider;
 
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);
-    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle" } as SortTableColumn);
-    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn<Provider>);
+    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle" } as SortTableColumn<Provider>);
+    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn<Provider>);
 
     this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
       if (response)
@@ -86,6 +92,8 @@ export class ProviderComponent implements OnInit {
   selectProvider(element: Provider) {
     this.selectedProvider = element;
     this.selectedProviderId = element.id;
+    this.userPreferenceService.setUserTabsSelectionIndex('provider-selected', this.selectedProviderId!);
+    this.restoreTab();
 
     if (!this.idProvider)
       this.appService.changeHeaderTitle(element.label);
@@ -132,5 +140,15 @@ export class ProviderComponent implements OnInit {
 
   editProvider() {
     this.editMode = true;
+  }
+
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('provider', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('provider');
   }
 }

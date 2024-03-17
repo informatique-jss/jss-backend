@@ -27,6 +27,7 @@ import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
+import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -46,9 +47,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public CustomerOrder(Employee assignedTo, Tiers tiers, Responsable responsable, Confrere confrere,
 			List<SpecialOffer> specialOffers, LocalDateTime createdDate, CustomerOrderStatus customerOrderStatus,
-			String observations, String description, List<Attachment> attachments, List<Document> documents,
+			String observations, String description, String instructions, List<Attachment> attachments,
+			List<Document> documents,
 			List<AssoAffaireOrder> assoAffaireOrders,
-			List<Quotation> quotations, Boolean overrideSpecialOffer, String quotationLabel, Boolean isQuotation,
+			List<Quotation> quotations, String quotationLabel, Boolean isQuotation,
 			List<Invoice> invoices, List<AccountingRecord> accountingRecords) {
 		this.assignedTo = assignedTo;
 		this.tiers = tiers;
@@ -59,11 +61,11 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.customerOrderStatus = customerOrderStatus;
 		this.observations = observations;
 		this.description = description;
+		this.instructions = instructions;
 		this.attachments = attachments;
 		this.documents = documents;
 		this.assoAffaireOrders = assoAffaireOrders;
 		this.quotations = quotations;
-		this.overrideSpecialOffer = overrideSpecialOffer;
 		this.isQuotation = isQuotation;
 		this.invoices = invoices;
 		this.accountingRecords = accountingRecords;
@@ -81,10 +83,12 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
+	@IndexedField
 	private Tiers tiers;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
+	@IndexedField
 	private Responsable responsable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -105,11 +109,18 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	private LocalDateTime lastStatusUpdate;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_abandon_reason")
+	private QuotationAbandonReason abandonReason;
+
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
 	@Column(columnDefinition = "TEXT")
 	private String description;
+
+	@Column(columnDefinition = "TEXT")
+	private String instructions;
 
 	@OneToMany(mappedBy = "customerOrder")
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
@@ -127,9 +138,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonIgnoreProperties(value = { "customerOrders" }, allowSetters = true)
 	@JsonIgnore // For client-side performance purpose
 	private List<Quotation> quotations;
-
-	@Column(nullable = false)
-	private Boolean overrideSpecialOffer;
 
 	@Column(nullable = false)
 	private Boolean isQuotation;
@@ -157,6 +165,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	@JsonIgnore // For client-side performance purpose
 	private List<Invoice> providerInvoices;
+
+	@OneToMany(targetEntity = Refund.class, mappedBy = "customerOrder")
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	private List<Refund> refunds;
 
 	@Column(columnDefinition = "TEXT")
 	private String customerMailCustomMessage;
@@ -279,14 +291,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.quotations = quotations;
 	}
 
-	public Boolean getOverrideSpecialOffer() {
-		return overrideSpecialOffer;
-	}
-
-	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
-		this.overrideSpecialOffer = overrideSpecialOffer;
-	}
-
 	public Boolean getIsQuotation() {
 		return isQuotation;
 	}
@@ -381,6 +385,30 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setIsGifted(Boolean isGifted) {
 		this.isGifted = isGifted;
+	}
+
+	public QuotationAbandonReason getAbandonReason() {
+		return abandonReason;
+	}
+
+	public void setAbandonReason(QuotationAbandonReason abandonReason) {
+		this.abandonReason = abandonReason;
+	}
+
+	public String getInstructions() {
+		return instructions;
+	}
+
+	public void setInstructions(String instructions) {
+		this.instructions = instructions;
+	}
+
+	public List<Refund> getRefunds() {
+		return refunds;
+	}
+
+	public void setRefunds(List<Refund> refunds) {
+		this.refunds = refunds;
 	}
 
 }

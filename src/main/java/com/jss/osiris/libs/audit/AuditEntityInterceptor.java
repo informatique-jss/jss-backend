@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.audit.model.Audit;
 import com.jss.osiris.libs.audit.service.AuditService;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.node.model.Node;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -59,6 +61,7 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
             String[] propertyNames,
             Type[] types) {
         if (!entity.getClass().getName().equals(IndexEntity.class.getName())
+                && !entity.getClass().getName().equals(Batch.class.getName())
                 && !entity.getClass().getName().equals(Audit.class.getName()) && id instanceof Integer) {
             Audit audit = new Audit();
             audit.setUsername(activeDirectoryHelper.getCurrentUsername());
@@ -74,7 +77,9 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
 
     private void auditEntity(Object[] previousState, Object[] currentState, Object entity,
             Serializable id, String[] propertyNames) {
-        if (!entity.getClass().getName().equals(IndexEntity.class.getName()) && id instanceof Integer) {
+        if (!entity.getClass().getName().equals(IndexEntity.class.getName())
+                && !entity.getClass().getName().equals(Batch.class.getName())
+                && !entity.getClass().getName().equals(Node.class.getName()) && id instanceof Integer) {
             for (int i = 0; i < previousState.length; i++) {
                 Object oldField = previousState[i];
                 Object newField = currentState[i];

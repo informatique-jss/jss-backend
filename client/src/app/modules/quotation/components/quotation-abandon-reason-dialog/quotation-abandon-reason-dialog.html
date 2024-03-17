@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>Raison de l'abandon</h1>
+<div mat-dialog-content>
+  <p>Veuillez indiquer ci-dessous la raison de l'abandon :</p>
+  <form [formGroup]="reasonTypeForm">
+    <div>
+      <select-quotation-abandon-reason [(model)]="abandonReason" label="Raison de l'abandon" [form]="reasonTypeForm"
+        propertyName="label" [isMandatory]="true" [isDisabled]="false"></select-quotation-abandon-reason>
+    </div>
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">Valider</button>
+</div>

@@ -5,7 +5,7 @@
         <table class="full-width">
           <tr>
             <select-reporting-dataset [(model)]="reporting.dataset" label="Jeu de données" [form]="userReportingForm"
-              (selectionChange)="selectDataSet($event)" propertyName="dataset" [isMandatory]="true"
+              (selectionChange)="selectDataSet($event,[])" propertyName="dataset" [isMandatory]="true"
               [isDisabled]="false"></select-reporting-dataset>
           </tr>
           <tr>
@@ -16,7 +16,8 @@
       </form>
     </div>
   </div>
-  <reporting [hidden]="!dataToDisplay" [dataToDisplay]="dataToDisplay" [settings]="reporting.settings"></reporting>
+  <reporting [hidden]="!dataToDisplay" [settings]="reporting.settings"
+    (columnsChange)="selectDataSet(reporting.dataset,$event)"></reporting>
   <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" (click)="saveReporting()"
     *ngIf="reporting && reporting.dataset">
     <mat-icon>save</mat-icon>

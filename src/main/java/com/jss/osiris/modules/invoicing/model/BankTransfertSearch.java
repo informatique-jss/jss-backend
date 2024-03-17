@@ -16,6 +16,8 @@ public class BankTransfertSearch {
     @JsonProperty("isDisplaySelectedForExportBankTransfert")
     private boolean isDisplaySelectedForExportBankTransfert;
 
+    private Integer idBankTransfert;
+
     public LocalDateTime getStartDate() {
         return startDate;
     }
@@ -70,6 +72,14 @@ public class BankTransfertSearch {
 
     public void setDisplaySelectedForExportBankTransfert(boolean isDisplaySelectedForExportBankTransfert) {
         this.isDisplaySelectedForExportBankTransfert = isDisplaySelectedForExportBankTransfert;
+    }
+
+    public Integer getIdBankTransfert() {
+        return idBankTransfert;
+    }
+
+    public void setIdBankTransfert(Integer idBankTransfert) {
+        this.idBankTransfert = idBankTransfert;
     }
 
 }

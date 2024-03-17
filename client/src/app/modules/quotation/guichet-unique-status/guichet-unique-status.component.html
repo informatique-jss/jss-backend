@@ -1,12 +1,15 @@
 <div *ngIf="formalitesGuichetUnique">
-  <mat-tab-group animationDuration="0ms" #tabs>
+  <mat-tab-group animationDuration="0ms">
     <mat-tab *ngFor="let formaliteGuichetUnique of formalitesGuichetUnique;let index = index"
       [label]="getFormaliteLabel(formaliteGuichetUnique)">
       <mat-vertical-stepper [linear]="false" #stepper animationDuration="500" [selectedIndex]="selectedIndex[index]">
         <ng-container *ngFor="let historyItem of formaliteGuichetUnique.formaliteStatusHistoryItems">
           <mat-step
             *ngIf="historyItem.status.code!=GUICHET_UNIQUE_STATUS_VALIDATION_PENDING || !formaliteGuichetUnique.validationsRequests">
-            <ng-template matStepLabel>{{historyItem.status.label}}</ng-template>
+            <ng-template matStepLabel>{{historyItem.status.label}} <span
+                *ngIf="historyItem.partnerCenter || historyItem.partner">- {{historyItem.partnerCenter
+                ?historyItem.partnerCenter.name :historyItem.partner.denomination}}</span><span
+                *ngIf="historyItem.created "> - le {{historyItem.created |date:'dd/MM/yyyy HH:mm'}}</span></ng-template>
           </mat-step>
           <mat-step
             *ngIf="historyItem.status.code==GUICHET_UNIQUE_STATUS_VALIDATION_PENDING && formaliteGuichetUnique.validationsRequests">
@@ -25,6 +28,9 @@
                       {{rejectionReason.label}}
                     </li>
                   </ul>
+                </li>
+                <li *ngIf="validation.validationObservation"
+                  [innerHTML]="'Observations : '+validation.validationObservation| trustHtml"></li>
               </ul>
             </ul>
           </mat-step>

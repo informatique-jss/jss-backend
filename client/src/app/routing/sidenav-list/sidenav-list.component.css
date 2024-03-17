@@ -87,3 +87,8 @@ mat-nav-list a span {
 .menu-item-active {
   transition: all 0.5s ease;
 }
+
+.nav-list-main-menu {
+  overflow-y: auto;
+  max-height: calc(100vh - 185px);
+}

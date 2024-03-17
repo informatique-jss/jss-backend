@@ -22,11 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.transfer.AmtBean;
 import com.jss.osiris.libs.transfer.CdtTrfTxInfBean;
 import com.jss.osiris.libs.transfer.CdtrAcctBean;
@@ -71,9 +72,6 @@ public class BankTransfertServiceImpl implements BankTransfertService {
     @Autowired
     BankTransfertRepository bankTransfertRepository;
 
-    @Autowired
-    IndexEntityService indexEntityService;
-
     @Value("${jss.iban}")
     private String ibanJss;
 
@@ -91,6 +89,9 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
     @Autowired
     PaymentService paymentService;
+
+    @Autowired
+    BatchService batchService;
 
     @Autowired
     AccountingRecordGenerationService accountingRecordGenerationService;
@@ -111,33 +112,34 @@ public class BankTransfertServiceImpl implements BankTransfertService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public BankTransfert addOrUpdateBankTransfert(
-            BankTransfert bankTransfert) {
+            BankTransfert bankTransfert) throws OsirisException {
         if (bankTransfert.getIsMatched() == null)
             bankTransfert.setIsMatched(false);
         bankTransfert = bankTransfertRepository.save(bankTransfert);
-        indexEntityService.indexEntity(bankTransfert);
+        batchService.declareNewBatch(Batch.REINDEX_BANK_TRANSFERT, bankTransfert.getId());
         return bankTransfert;
     }
 
     @Override
-    public BankTransfert cancelBankTransfert(BankTransfert bankTransfert) {
+    public BankTransfert cancelBankTransfert(BankTransfert bankTransfert) throws OsirisException {
         bankTransfert.setIsCancelled(true);
         return addOrUpdateBankTransfert(bankTransfert);
     }
 
     @Override
-    public BankTransfert selectBankTransfertForExport(BankTransfert bankTransfert, boolean isSelected) {
+    public BankTransfert selectBankTransfertForExport(BankTransfert bankTransfert, boolean isSelected)
+            throws OsirisException {
         bankTransfert.setIsSelectedForExport(isSelected);
         return addOrUpdateBankTransfert(bankTransfert);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexBankTransfert() {
+    public void reindexBankTransfert() throws OsirisException {
         List<BankTransfert> bankTransferts = getBankTransfers();
         if (bankTransferts != null)
             for (BankTransfert bankTransfert : bankTransferts)
-                indexEntityService.indexEntity(bankTransfert);
+                batchService.declareNewBatch(Batch.REINDEX_BANK_TRANSFERT, bankTransfert.getId());
     }
 
     @Override
@@ -146,12 +148,15 @@ public class BankTransfertServiceImpl implements BankTransfertService {
             bankTransfertSearch.setStartDate(LocalDateTime.now().minusYears(100));
         if (bankTransfertSearch.getEndDate() == null)
             bankTransfertSearch.setEndDate(LocalDateTime.now().plusYears(100));
+        if (bankTransfertSearch.getIdBankTransfert() == null)
+            bankTransfertSearch.setIdBankTransfert(0);
         return bankTransfertRepository.findTransferts(
                 bankTransfertSearch.getStartDate().withHour(0).withMinute(0),
                 bankTransfertSearch.getEndDate().withHour(23).withMinute(59), bankTransfertSearch.getMinAmount(),
                 bankTransfertSearch.getMaxAmount(),
                 bankTransfertSearch.getLabel(), bankTransfertSearch.isHideExportedBankTransfert(),
-                bankTransfertSearch.isDisplaySelectedForExportBankTransfert());
+                bankTransfertSearch.isDisplaySelectedForExportBankTransfert(),
+                bankTransfertSearch.getIdBankTransfert());
     }
 
     @Override

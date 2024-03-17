@@ -56,8 +56,8 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " concat (e2.firstname, " +
                         " ' ', " +
                         " e2.lastname)) as salesEmployeeLabel, " +
+                        " c1.label as confrereLabel, " +
                         " ist.label as invoiceStatusLabel, " +
-                        " vat.label as vatLabel, " +
                         " sum(coalesce((select count(*) from announcement a join provision p on p.id_announcement =a.id join asso_affaire_order aao on aao.id = p.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id),0)) as nbrAnnouncement, "
                         +
                         " (select string_agg(distinct cast(d.code as text),', ' )  from announcement a join department d on d.id = a.id_department  join provision p on p.id_announcement = a.id join asso_affaire_order aao on aao.id = p.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id) as announcementDepartment "
@@ -66,7 +66,6 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " invoice i " +
                         " left join invoice_item ii on " +
                         " ii.id_invoice = i.id " +
-                        " join vat on vat.id = ii.id_vat " +
                         " join invoice_status ist on " +
                         " ist.id = i.id_invoice_status " +
                         " left join billing_item bi on " +
@@ -77,6 +76,8 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " r.id = i.id_responsable " +
                         " left join tiers t1 on " +
                         " t1.id = i.id_tiers " +
+                        " left join confrere c1 on " +
+                        " c1.id = i.id_confrere " +
                         " left join tiers t2 on " +
                         " t2.id = r.id_tiers " +
                         " left join tiers_category tt1 on " +
@@ -91,7 +92,7 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " e1.username = a1.username " +
                         " left join customer_order co on co.id = i.customer_order_id " +
                         " left join employee e2 on " +
-                        " e2.id = co.id_assigned_to " +
+                        " e2.id = coalesce(r.id_commercial, t1.id_commercial, t2.id_commercial, c1.id_commercial) " +
                         " where " +
                         " i.id_invoice_status in :invoiceStatusId " +
                         " and i.is_invoice_from_provider = false " +
@@ -104,7 +105,7 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " date_trunc('week', " +
                         " i.created_date) , " +
                         " date_trunc('day', " +
-                        " i.created_date) , " +
+                        " i.created_date) ,c1.label, " +
                         " coalesce(case " +
                         " when t1.denomination is not null then t1.denomination " +
                         " when t1.id is not null then concat(t1.firstname, " +
@@ -128,7 +129,7 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " concat (e2.firstname, " +
                         " ' ', " +
                         " e2.lastname)) , " +
-                        " ist.label, vat.label , " +
+                        " ist.label,  " +
                         " (select  string_agg(distinct  cast(d.code as text),', ' )  from announcement a join department d on d.id = a.id_department  join provision p on p.id_announcement = a.id join asso_affaire_order aao on aao.id = p.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id) "
                         +
                         "")

@@ -12,8 +12,8 @@ export class TiersReportingService extends AppRestService<TiersReporting>{
     super(http, "reporting");
   }
 
-  getTiersReporting() {
-    return this.getList(new HttpParams(), "tiers");
+  getTiersReporting(columns: string[]) {
+    return this.getList(new HttpParams().set("columns", columns.join(",")), "tiers");
   }
 
 }

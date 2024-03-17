@@ -41,6 +41,8 @@ export class PrincipalComponent implements OnInit {
         this.tiers.isProvisionalPaymentMandatory = false;
       if (!this.tiers.isSepaMandateReceived)
         this.tiers.isSepaMandateReceived = false;
+      if (!this.tiers.rffFrequency)
+        this.tiers.rffFrequency = this.constantService.getRffFrequencyAnnual();
       this.principalForm.markAllAsTouched();
     }
   }

@@ -15,4 +15,5 @@ export interface ValidationRequest {
   statusDate: Date;
   created: Date;
   updated: Date;
+  validationObservation: string;
 }

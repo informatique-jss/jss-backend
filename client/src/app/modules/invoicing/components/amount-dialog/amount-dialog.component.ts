@@ -14,6 +14,7 @@ export class AmountDialogComponent implements OnInit {
   label: string = "";
   maxAmount: number = 0;
   amount: number = 0;
+  title: string = "Montant à utiliser";
 
   amountForm = this.formBuilder.group({});
 

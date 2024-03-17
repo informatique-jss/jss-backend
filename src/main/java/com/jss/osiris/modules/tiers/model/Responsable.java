@@ -19,6 +19,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -133,6 +134,16 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 	private Float rffFormaliteRate;
 	private Float rffInsertionRate;
 
+	@Column(length = 40)
+	@JsonProperty("rffIban")
+	private String rffIban;
+
+	@Column(length = 40)
+	private String rffBic;
+
+	@Column(length = 100)
+	private String rffMail;
+
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
@@ -181,6 +192,10 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 	@IndexedField
 	private Integer idAs400;
 	private Integer newIdAs400;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_rff_frequency")
+	private RffFrequency rffFrequency;
 
 	public Tiers getTiers() {
 		return tiers;
@@ -536,6 +551,38 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 	@Override
 	public String getLabel() {
 		return getFirstname() + " " + getLastname();
+	}
+
+	public String getRffIban() {
+		return rffIban;
+	}
+
+	public void setRffIban(String rffIban) {
+		this.rffIban = rffIban;
+	}
+
+	public String getRffBic() {
+		return rffBic;
+	}
+
+	public void setRffBic(String rffBic) {
+		this.rffBic = rffBic;
+	}
+
+	public RffFrequency getRffFrequency() {
+		return rffFrequency;
+	}
+
+	public void setRffFrequency(RffFrequency rffFrequency) {
+		this.rffFrequency = rffFrequency;
+	}
+
+	public String getRffMail() {
+		return rffMail;
+	}
+
+	public void setRffMail(String rffMail) {
+		this.rffMail = rffMail;
 	}
 
 }

@@ -4,22 +4,24 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
-import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { ANNOUNCEMENT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { getDocument } from '../../../../libs/DocumentHelper';
 import { PROVISION_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { AttachmentType } from '../../../miscellaneous/model/AttachmentType';
 import { Document } from "../../../miscellaneous/model/Document";
 import { Announcement } from '../../model/Announcement';
 import { AnnouncementNoticeTemplate } from '../../model/AnnouncementNoticeTemplate';
+import { AnnouncementStatus } from '../../model/AnnouncementStatus';
 import { CharacterPrice } from '../../model/CharacterPrice';
 import { Confrere } from '../../model/Confrere';
 import { IQuotation } from '../../model/IQuotation';
@@ -27,9 +29,9 @@ import { JournalType } from '../../model/JournalType';
 import { NoticeType } from '../../model/NoticeType';
 import { Provision } from '../../model/Provision';
 import { AnnouncementNoticeTemplateService } from '../../services/announcement.notice.template.service';
+import { AnnouncementStatusService } from '../../services/announcement.status.service';
 import { CharacterNumberService } from '../../services/character.number.service';
 import { CharacterPriceService } from '../../services/character.price.service';
-import { ConfrereService } from '../../services/confrere.service';
 import { JournalTypeService } from '../../services/journal.type.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
 
@@ -47,7 +49,6 @@ export class AnnouncementComponent implements OnInit {
   @Input() quotation: IQuotation | undefined;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
 
-  @ViewChild('tabs', { static: false }) tabs: any;
   @ViewChild('noticeTypesInput') noticeTypesInput: ElementRef<HTMLInputElement> | undefined;
   @ViewChild('noticeTemplateInput') noticeTemplateInput: ElementRef<HTMLInputElement> | undefined;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
@@ -77,6 +78,8 @@ export class AnnouncementComponent implements OnInit {
 
   characterNumber: number = 0;
 
+  announcementStatus: AnnouncementStatus[] | undefined;
+
   constructor(private formBuilder: UntypedFormBuilder,
     private characterPriceService: CharacterPriceService,
     private constantService: ConstantService,
@@ -86,14 +89,16 @@ export class AnnouncementComponent implements OnInit {
     private journalTypeService: JournalTypeService,
     private announcementNoticeTemplateService: AnnouncementNoticeTemplateService,
     private characterNumberService: CharacterNumberService,
-    private confrereService: ConfrereService,
-    private habilitationsService: HabilitationsService
+    private habilitationsService: HabilitationsService,
+    private announcementStatusService: AnnouncementStatusService,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   canAddNewInvoice() {
     return this.habilitationsService.canAddNewInvoice();
   }
   ngOnInit() {
+    this.announcementStatusService.getAnnouncementStatus().subscribe(response => { this.announcementStatus = response });
 
     this.journalTypeService.getJournalTypes().subscribe(response => {
       this.journalTypes = response;
@@ -122,6 +127,8 @@ export class AnnouncementComponent implements OnInit {
 
     if (this.provision && this.provision.announcement)
       this.paperDocument = getDocument(this.constantService.getDocumentTypePaper(), this.provision.announcement);
+
+    this.restoreTab();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -148,7 +155,6 @@ export class AnnouncementComponent implements OnInit {
       }
 
       this.announcementForm.markAllAsTouched();
-      this.toggleTabs();
       this.updateCharacterPrice();
     }
   }
@@ -220,11 +226,6 @@ export class AnnouncementComponent implements OnInit {
       this.announcement.noticeHeader = this.announcement.noticeHeader.replace(/<img[^>]*>/g, "");
   }
 
-  toggleTabs() {
-    if (this.tabs != undefined)
-      this.tabs.realignInkBar();
-  }
-
   updateHeaderFree() {
     if (this.announcement && this.announcement.confrere?.journalType && this.announcement.confrere.journalType.id == this.journalTypeSpel.id)
       this.announcement.isHeaderFree = true;
@@ -245,7 +246,7 @@ export class AnnouncementComponent implements OnInit {
 
   private _filterNoticeTemplates(value: string): AnnouncementNoticeTemplate[] {
     const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return this.noticeTemplates.filter(noticeTemplate => noticeTemplate.label != undefined && noticeTemplate.label.toLowerCase().includes(filterValue) && (!noticeTemplate.provisionFamilyTypes || this.provision && noticeTemplate.provisionFamilyTypes.map(type => type.code).indexOf(this.provision.provisionFamilyType.code) >= 0));
+    return this.noticeTemplates.filter(noticeTemplate => noticeTemplate.label != undefined && noticeTemplate.label.toLowerCase().includes(filterValue) && (!noticeTemplate.provisionFamilyTypes || this.provision && noticeTemplate.provisionFamilyTypes.map(type => type.code).indexOf(this.provision.provisionFamilyType.code) >= 0)).sort((a: AnnouncementNoticeTemplate, b: AnnouncementNoticeTemplate) => a.label.localeCompare(b.label));
   }
 
   addNoticeType(event: MatAutocompleteSelectedEvent): void {
@@ -305,12 +306,6 @@ export class AnnouncementComponent implements OnInit {
     }
   }
 
-  getHistoryActions(): SortTableAction[] {
-    let historyActions = [] as Array<SortTableAction>;
-
-    return historyActions;
-  }
-
   updateAttachments(attachments: Attachment[]) {
     this.appService.displaySnackBar("N'oubliez pas de mettre à jours la date de publication de l'annonce !", false, 20);
     if (attachments && this.provision) {
@@ -320,5 +315,15 @@ export class AnnouncementComponent implements OnInit {
 
   canEditJournal() {
     return this.announcement.publicationDate.getTime() < (new Date()).getTime();
+  }
+
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('announcement', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('announcement');
   }
 }

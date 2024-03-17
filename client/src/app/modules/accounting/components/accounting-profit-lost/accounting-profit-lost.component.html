@@ -3,11 +3,25 @@
     <table class="full-width table-fixed-layout">
       <tr>
         <td>
-          <generic-date-range-picker [(modelStart)]="accountingBalanceSearch.startDate"
-            [(modelEnd)]="accountingBalanceSearch.endDate" label="Plage de recherche"
-            [form]="accountingprofitAndLostForm" propertyNameStart="startDate" propertyNameEnd="endDate"
-            (onDateChange)="putEndDateSameYear()">
-          </generic-date-range-picker>
+        <td>
+          <generic-datepicker [(model)]="accountingBalanceSearch.startDate" label="Date de début"
+            [form]="accountingprofitAndLostForm" propertyName="startDate" [isMandatory]="false"
+            [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td>
+          <generic-datepicker [(model)]="accountingBalanceSearch.endDate" label="Date de fin"
+            [form]="accountingprofitAndLostForm" propertyName="endDate" [isMandatory]="false"
+            [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td class="fab-td-button padding-fab">
+          <button mat-mini-fab matTooltip="Mois en cours" (click)="setCurentMonth()" class="add-button">
+            <mat-icon>calendar_view_month</mat-icon>
+          </button>
+        </td>
+        <td class="fab-td-button padding-fab">
+          <button mat-mini-fab matTooltip="Exercice en cours" (click)="setCurentFiscalYear()" class="add-button">
+            <mat-icon>date_range</mat-icon>
+          </button>
         </td>
         <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="refreshprofitAndLost()" class="add-button">

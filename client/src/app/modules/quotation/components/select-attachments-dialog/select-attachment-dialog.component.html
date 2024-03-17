@@ -5,7 +5,7 @@
     <tr>
       <td>
         <sort-table class="margin-bottom" (onRowClick)="selectAttachment($event)" [columns]="displayedColumns"
-          [values]="getAttachments()" tableName="Pièce jointes">
+          [noPaddingBottom]="true" [noMaxHeight]="true" [values]="getAttachments()" tableName="Pièce jointes">
         </sort-table>
       </td>
     </tr>

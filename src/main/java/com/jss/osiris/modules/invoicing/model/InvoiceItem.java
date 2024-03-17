@@ -22,7 +22,8 @@ import com.jss.osiris.modules.quotation.model.Provision;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_invoice_item_invoice", columnList = "id_invoice"),
-		@Index(name = "idx_invoice_item_id_provision", columnList = "id_provision"), })
+		@Index(name = "idx_invoice_item_id_provision", columnList = "id_provision"),
+		@Index(name = "idx_invoice_item_origin_provider_invoice", columnList = "id_origin_provider_invoice"), })
 public class InvoiceItem implements Serializable, IId {
 
 	@Id

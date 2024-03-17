@@ -22,7 +22,7 @@ public class BillingType implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "billing_type_sequence")
 	private Integer id;
 
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false, length = 255)
 	private String label;
 
 	@Column(nullable = false, length = 20)
@@ -65,6 +65,9 @@ public class BillingType implements Serializable, IId {
 
 	@Column(nullable = false)
 	private Boolean isGenerateAccountCharge;
+
+	private Boolean isUsedForInsertionRff;
+	private Boolean isUsedForFormaliteRff;
 
 	public Integer getId() {
 		return id;
@@ -184,6 +187,22 @@ public class BillingType implements Serializable, IId {
 
 	public void setIsFee(Boolean isFee) {
 		this.isFee = isFee;
+	}
+
+	public Boolean getIsUsedForInsertionRff() {
+		return isUsedForInsertionRff;
+	}
+
+	public void setIsUsedForInsertionRff(Boolean isUsedForInsertionRff) {
+		this.isUsedForInsertionRff = isUsedForInsertionRff;
+	}
+
+	public Boolean getIsUsedForFormaliteRff() {
+		return isUsedForFormaliteRff;
+	}
+
+	public void setIsUsedForFormaliteRff(Boolean isUsedForFormaliteRff) {
+		this.isUsedForFormaliteRff = isUsedForFormaliteRff;
 	}
 
 }

@@ -13,7 +13,6 @@ import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
 import com.jss.osiris.modules.quotation.repository.AnnouncementStatusRepository;
-import com.jss.osiris.modules.quotation.repository.BodaccStatusRepository;
 import com.jss.osiris.modules.quotation.repository.ProvisionRepository;
 
 @Service
@@ -21,9 +20,6 @@ public class ProvisionServiceImpl implements ProvisionService {
 
     @Autowired
     ProvisionRepository provisionRepository;
-
-    @Autowired
-    BodaccStatusRepository bodaccStatusRepository;
 
     @Autowired
     AnnouncementStatusRepository announcementStatusRepository;

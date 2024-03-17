@@ -45,6 +45,7 @@ export const Dictionnary = {
   "characterNumber": "Nombre de caractères",
   "publicationDateWeek": "Semaine de publication",
   "confrereAnnouncementLabel": "Confrère de l'annonce",
+  "confrereLabel": "Confrère",
   "noticeTypeFamilyLabel": "Rubrique de l'annonce",
   "noticeTypeLabel": "Sous-rubrique de l'annonce",
   "month": "Mois",
@@ -114,5 +115,7 @@ export const Dictionnary = {
   "reminderType": "Type de relance",
   "payedPeriod": "Période de paiement",
   "lastResponsableFollowupDate": "Dernier suivi du responsable",
-  "lastTiersFollowupDate": "Dernier suivi du tiers"
+  "lastTiersFollowupDate": "Dernier suivi du tiers",
+  "isProviderInvoice": "Est une facture fournisseur ?",
+  "journalTypeLabel": "Type de journal"
 };

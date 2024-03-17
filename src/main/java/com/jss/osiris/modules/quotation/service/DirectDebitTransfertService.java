@@ -17,9 +17,10 @@ public interface DirectDebitTransfertService {
 
         public DirectDebitTransfert getDirectDebitTransfert(Integer id);
 
-        public DirectDebitTransfert addOrUpdateDirectDebitTransfert(DirectDebitTransfert directDebitTransfert);
+        public DirectDebitTransfert addOrUpdateDirectDebitTransfert(DirectDebitTransfert directDebitTransfert)
+                        throws OsirisException;
 
-        public void reindexDirectDebitTransfert();
+        public void reindexDirectDebitTransfert() throws OsirisException;
 
         public List<DirectDebitTransfertSearchResult> searchDirectDebitTransfert(
                         DirectDebitTransfertSearch directDebitTransfertSearch);
@@ -31,5 +32,6 @@ public interface DirectDebitTransfertService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public DirectDebitTransfert cancelDirectDebitTransfert(DirectDebitTransfert directDebitTransfert);
+        public DirectDebitTransfert cancelDirectDebitTransfert(DirectDebitTransfert directDebitTransfert)
+                        throws OsirisException;
 }

@@ -2,6 +2,11 @@
   background-color: #2ecc71;
 }
 
+.mat-mdc-chip.mat-mdc-standard-chip {
+  height: 20px;
+  font-size: 12px;
+}
+
 .mat-mdc-chip {
   --mdc-chip-label-text-color: #fff !important;
   --mdc-chip-with-icon-selected-icon-color: #fff !important;
@@ -21,4 +26,5 @@
 
 .div-wrapper {
   display: flex;
+  justify-content: space-around;
 }

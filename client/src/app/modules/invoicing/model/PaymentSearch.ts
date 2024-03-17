@@ -7,4 +7,6 @@ export interface PaymentSearch {
   label: string;
   isHideAssociatedPayments: boolean;
   isHideCancelledPayments: boolean;
+  isHideAppoint: boolean;
+  idPayment: number;
 }

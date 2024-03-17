@@ -12,7 +12,9 @@ public interface AccountingBalance {
 
 	public String getPrincipalAccountingAccountLabel();
 
-	public Integer getAccountingAccountSubNumber();
+	public String getAccountingAccountClassLabel();
+
+	public String getAccountingAccountSubNumber();
 
 	public Float getEchoir30();
 

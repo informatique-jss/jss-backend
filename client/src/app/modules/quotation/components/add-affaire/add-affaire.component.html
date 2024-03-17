@@ -5,54 +5,61 @@
         <generic-toggle [(model)]="affaire.isIndividual" label="Particulier ?" [form]="affaireForm"
           propertyName="isIndividual"></generic-toggle>
       </td>
-      <td *ngIf="affaire.isIndividual==true">
+      <td *ngIf="affaire && affaire.isIndividual==true">
         <radio-group-civility [(model)]="affaire.civility" [form]="affaireForm" propertyName="civility"
           [isDisabled]="!editMode" label="Civilité"></radio-group-civility>
       </td>
-      <td *ngIf="affaire.isIndividual==true">
+      <td *ngIf="affaire && affaire.isIndividual==true">
         <generic-input [(model)]="affaire.lastname" label="Nom" [form]="affaireForm" propertyName="lastname"
           [isMandatory]="true" [conditionnalRequired]="affaire.isIndividual" [maxLength]="40"></generic-input>
       </td>
-      <td *ngIf="affaire.isIndividual==true">
+      <td *ngIf="affaire && affaire.isIndividual==true">
         <generic-input [(model)]="affaire.firstname" label="Prénom" [form]="affaireForm" propertyName="firstname"
           [isMandatory]="true" [conditionnalRequired]="affaire.isIndividual" [maxLength]="40"></generic-input>
       </td>
     </tr>
   </table>
-  <table class="full-width" *ngIf="affaire.isIndividual==false">
+  <table class="full-width" *ngIf="affaire && affaire.isIndividual==false">
     <tr>
       <td>
         <generic-toggle [(model)]="affaire.isUnregistered" label="Société non enregistrée ?" [form]="affaireForm"
           propertyName="isUnregistered"></generic-toggle>
       </td>
-      <td *ngIf="!affaire.isUnregistered">
+      <td *ngIf=" !affaire.isUnregistered">
         <autocomplete-siren [(model)]="affaire.siren" [form]="affaireForm" propertyName="siren" [isMandatory]="true"
           label="SIREN" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
+          [fieldToCheckAgainstForValidation]="'siren'"
           [conditionnalRequired]="!this.affaire.isIndividual && !affaire.isUnregistered && !this.affaire.siret && !this.affaire.rna"
-          [customValidators]="[checkSiren('siren')]" (onOptionSelected)="fillSiren($event)">
+          (onOptionSelected)="fillAffaire($event)">
         </autocomplete-siren>
       </td>
-      <td *ngIf="!affaire.isUnregistered">
+      <td *ngIf=" !affaire.isUnregistered">
         <autocomplete-siret [(model)]="affaire.siret" [form]="affaireForm" propertyName="siret" [isMandatory]="true"
           label="SIRET" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
+          [fieldToCheckAgainstForValidation]="'siret'"
           [conditionnalRequired]="!this.affaire.isIndividual && !affaire.isUnregistered && !this.affaire.siren && !this.affaire.rna"
-          [customValidators]="[checkSiret('siret')]" (onOptionSelected)="fillSiret($event)">
+          (onOptionSelected)="fillAffaire($event)">
         </autocomplete-siret>
       </td>
-      <td *ngIf="!affaire.isUnregistered">
+      <td *ngIf=" !affaire.isUnregistered">
         <autocomplete-rna [(model)]="affaire.rna" [form]="affaireForm" propertyName="rna" [isMandatory]="true"
           label="RNA" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
+          [fieldToCheckAgainstForValidation]="'rna'"
           [conditionnalRequired]="!this.affaire.isIndividual && !affaire.isUnregistered && !this.affaire.siren && !this.affaire.siret"
-          [customValidators]="[checkRna('rna')]" (onOptionSelected)="fillRna($event)"></autocomplete-rna>
+          (onOptionSelected)="fillAffaire($event)"></autocomplete-rna>
       </td>
     </tr>
   </table>
   <table class="full-width">
-    <tr *ngIf="affaire.isIndividual==false">
+    <tr *ngIf="affaire && affaire.isIndividual==false">
       <td>
         <generic-input [(model)]="affaire.denomination" label="Dénomination" [form]="affaireForm"
           propertyName="denomination" [isMandatory]="true" [isDisabled]="!editMode"
           [conditionnalRequired]="!this.affaire.isIndividual" [maxLength]="150"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="affaire.acronym" label="Sigle" [form]="affaireForm" propertyName="acronym"
+          [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="150"></generic-input>
       </td>
     </tr>
   </table>
@@ -106,8 +113,26 @@
         <generic-input [(model)]="affaire.externalReference" label="Référence externe" [form]="affaireForm"
           propertyName="externalReference" [isDisabled]="!editMode" [maxLength]="60"></generic-input>
       </td>
+    </tr>
+  </table>
+  <table class="full-width">
+    <tr>
       <td>
-        <generic-input [(model)]="affaire.shareCapital" label="Capital social" [form]="affaireForm"
+        <autocomplete-forme-juridique [(model)]="affaire.legalForm" [form]="affaireForm" propertyName="legalForm"
+          [isMandatory]="false" [isDisabled]="!editMode" label="Forme juridique"></autocomplete-forme-juridique>
+      </td>
+      <td>
+        <select-forme-exercice-activite-principal [(model)]="affaire.mainActivity" label="Forme de l'actvité"
+          [form]="affaireForm" propertyName="mainActivity" [isMandatory]="false"
+          [isDisabled]="!editMode"></select-forme-exercice-activite-principal>
+      </td>
+      <td>
+        <autocomplete-competent-authority [(model)]="affaire.competentAuthority" [form]="affaireForm"
+          propertyName="competentAuthority" [isMandatory]="false" label="RCS"
+          [isDisabled]="!editMode"></autocomplete-competent-authority>
+      </td>
+      <td>
+        <generic-input [(model)]="affaire.shareCapital" label="Capital social (€)" [form]="affaireForm"
           propertyName="shareCapital" [isDisabled]="!editMode" type="number"></generic-input>
       </td>
     </tr>

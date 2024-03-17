@@ -26,11 +26,11 @@ public interface AssoAffaireOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee);
+        public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee) throws OsirisException;
 
         public ArrayList<AssoAffaireOrderSearchResult> searchForAsso(AffaireSearch affaireSearch);
 
-        public void reindexAffaires();
+        public void reindexAffaires() throws OsirisException;
 
         public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder,
                         Boolean isFromUser)

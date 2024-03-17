@@ -2,6 +2,9 @@ package com.jss.osiris.libs;
 
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -59,4 +62,29 @@ public class SSLHelper {
 		return builder.toString();
 	}
 
+	public static boolean checkPasswordStrength(String password) {
+		// Checking lower alphabet in string
+		int n = password.length();
+		boolean hasLower = false, hasUpper = false,
+				hasDigit = false, specialChar = false;
+		Set<Character> set = new HashSet<Character>(
+				Arrays.asList('!', '@', '#', '$', '%', '^', '&',
+						'*', '(', ')', '-', '+'));
+		for (char i : password.toCharArray()) {
+			if (Character.isLowerCase(i))
+				hasLower = true;
+			if (Character.isUpperCase(i))
+				hasUpper = true;
+			if (Character.isDigit(i))
+				hasDigit = true;
+			if (set.contains(i))
+				specialChar = true;
+		}
+
+		// Strength of password
+		if (hasDigit && hasLower && hasUpper && specialChar
+				&& (n >= 10))
+			return true;
+		return false;
+	}
 }

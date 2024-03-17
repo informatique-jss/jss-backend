@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -33,7 +35,6 @@ import com.jss.osiris.modules.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
-import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.TiersService;
@@ -68,6 +69,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Autowired
   CustomerMailService customerMailService;
 
+  @Autowired
+  BatchService batchService;
+
   @Override
   public AccountingRecord getAccountingRecord(Integer id) {
     Optional<AccountingRecord> accountingRecord = accountingRecordRepository.findById(id);
@@ -101,7 +105,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords) {
     Integer operationId = getNewTemporaryOperationId();
     for (AccountingRecord accountingRecord : accountingRecords) {
-      accountingRecord.setOperationDateTime(LocalDateTime.now());
+      if (accountingRecord.getOperationDateTime() == null)
+        accountingRecord.setOperationDateTime(LocalDateTime.now());
       accountingRecord.setTemporaryOperationId(operationId);
       accountingRecord.setIsTemporary(true);
       accountingRecord.setIsANouveau(false);
@@ -203,6 +208,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingRecordSearch.getHideLettered() == null)
       accountingRecordSearch.setHideLettered(false);
 
+    if (accountingRecordSearch.getIsFromAs400() == null)
+      accountingRecordSearch.setIsFromAs400(false);
+
     if (accountingRecordSearch.getTiersId() == null)
       accountingRecordSearch.setTiersId(0);
 
@@ -230,6 +238,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         accountingRecordSearch.getTiersId(),
         accountingRecordSearch.getConfrereId(),
         accountingRecordSearch.getHideLettered(),
+        accountingRecordSearch.getIsFromAs400(),
         accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
         accountingRecordSearch.getEndDate().withHour(23).withMinute(59),
         activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
@@ -251,12 +260,15 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     Integer principalAccountingAccountId = accountingBalanceSearch.getPrincipalAccountingAccount() != null
         ? accountingBalanceSearch.getPrincipalAccountingAccount().getId()
         : 0;
+    if (accountingBalanceSearch.getIsFromAs400() == null)
+      accountingBalanceSearch.setIsFromAs400(false);
     List<AccountingBalance> aa = accountingRecordRepository.searchAccountingBalance(
         accountingClassId,
         accountingAccountId, principalAccountingAccountId,
         accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
         accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
-        activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
+        activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+        accountingBalanceSearch.getIsFromAs400());
 
     return aa;
   }
@@ -272,12 +284,15 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     Integer principalAccountingAccountId = accountingBalanceSearch.getPrincipalAccountingAccount() != null
         ? accountingBalanceSearch.getPrincipalAccountingAccount().getId()
         : 0;
+    if (accountingBalanceSearch.getIsFromAs400() == null)
+      accountingBalanceSearch.setIsFromAs400(false);
     return accountingRecordRepository.searchAccountingBalanceGenerale(
         accountingClassId,
         accountingAccountId, principalAccountingAccountId,
         accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
         accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
-        activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
+        activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+        accountingBalanceSearch.getIsFromAs400());
 
   }
 
@@ -361,26 +376,30 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public File getAccountingBalanceExport(Integer accountingClassId, Integer principalAccountingAccountId,
-      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
+      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate, boolean isFromAs400)
+      throws OsirisException {
     List<AccountingBalance> accountingBalanceRecords = accountingRecordRepository.searchAccountingBalance(
         accountingClassId != null ? accountingClassId : 0,
         accountingAccountId != null ? accountingAccountId : 0,
         (principalAccountingAccountId != null && !principalAccountingAccountId.equals(0) ? principalAccountingAccountId
             : 0),
-        startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-    return accountingExportHelper.getBalance(accountingBalanceRecords, false);
+        startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+        isFromAs400);
+    return accountingExportHelper.getBalance(accountingBalanceRecords, false, startDate, endDate);
   }
 
   @Override
   public File getAccountingBalanceGeneraleExport(Integer accountingClassId, Integer principalAccountingAccountId,
-      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
+      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate, boolean isFromAs400)
+      throws OsirisException {
     List<AccountingBalance> accountingBalanceRecords = accountingRecordRepository.searchAccountingBalanceGenerale(
         accountingClassId != null ? accountingClassId : 0,
         accountingAccountId != null ? accountingAccountId : 0,
         (principalAccountingAccountId != null && !principalAccountingAccountId.equals(0) ? principalAccountingAccountId
             : 0),
-        startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-    return accountingExportHelper.getBalance(accountingBalanceRecords, true);
+        startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+        isFromAs400);
+    return accountingExportHelper.getBalance(accountingBalanceRecords, true, startDate, endDate);
   }
 
   @Override
@@ -390,26 +409,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     List<Tiers> tiers = tiersService.findAllTiersForBillingClosureReceiptSend();
     if (tiers != null && tiers.size() > 0)
       for (Tiers tier : tiers) {
-        System.out.println(tiers.indexOf(tier) + "/" + tiers.size());
-        try {
-          getBillingClosureReceiptFile(tier.getId(), false);
-        } catch (Exception e) {
-          if (e instanceof OsirisException || e instanceof OsirisClientMessageException
-              || e instanceof OsirisValidationException)
-            throw e;
-          else
-            throw new OsirisException(e, "Error when sending receipt for tiers " + tier.getId());
-        } finally {
-          tier.setIsReceipSent(true);
-          tiersService.addOrUpdateTiers(tier);
-        }
-      }
-
-    List<Confrere> confreres = confrereService.getConfreres();
-    if (confreres != null && confreres.size() > 0)
-      for (Confrere confrere : confreres) {
-        System.out.println(confreres.indexOf(confrere) + "/" + confreres.size());
-        // getBillingClosureReceiptFile(confrere.getId(), false); TODO : remettre
+        batchService.declareNewBatch(Batch.SEND_BILLING_CLOSURE_RECEIPT, tier.getId());
       }
   }
 

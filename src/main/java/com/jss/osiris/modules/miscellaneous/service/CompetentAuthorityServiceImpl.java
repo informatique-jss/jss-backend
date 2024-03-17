@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
+import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.repository.CompetentAuthorityRepository;
 
@@ -56,6 +58,13 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     @Override
     public List<CompetentAuthority> getCompetentAuthorityByInpiReference(String inpiReference) {
         return competentAuthorityRepository.findByInpiReference(inpiReference);
+    }
+
+    @Override
+    public List<CompetentAuthority> getCompetentAuthorityByCityAndAuthorityType(City city,
+            CompetentAuthorityType competentAuthorityType) {
+        return competentAuthorityRepository.findByCities_IdAndCompetentAuthorityType(city.getId(),
+                competentAuthorityType);
     }
 
     @Override

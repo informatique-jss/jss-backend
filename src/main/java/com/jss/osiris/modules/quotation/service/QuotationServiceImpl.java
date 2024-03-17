@@ -14,12 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.DateHelper;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
@@ -33,6 +34,7 @@ import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
@@ -52,9 +54,6 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     QuotationRepository quotationRepository;
-
-    @Autowired
-    IndexEntityService indexEntityService;
 
     @Autowired
     PhoneService phoneService;
@@ -104,9 +103,21 @@ public class QuotationServiceImpl implements QuotationService {
     @Autowired
     CustomerOrderOriginService customerOrderOriginService;
 
+    @Autowired
+    BatchService batchService;
+
     @Override
     public Quotation getQuotation(Integer id) {
         Optional<Quotation> quotation = quotationRepository.findById(id);
+        if (quotation.isPresent())
+            return quotation.get();
+        return null;
+    }
+
+    @Override
+    public Quotation getQuotationForAnnouncement(Announcement announcement) {
+        Optional<Quotation> quotation = quotationRepository
+                .findQuotationForAnnouncement(announcement.getId());
         if (quotation.isPresent())
             return quotation.get();
         return null;
@@ -138,58 +149,7 @@ public class QuotationServiceImpl implements QuotationService {
 
         // Check duplicate
         // Find first affaire customer order
-        if (quotation.getId() == null && quotation.getAssoAffaireOrders() != null
-                && quotation.getAssoAffaireOrders().size() > 0) {
-            QuotationSearch orderingSearch = new QuotationSearch();
-            orderingSearch.setAffaires(Arrays.asList(quotation.getAssoAffaireOrders().get(0).getAffaire()));
-            orderingSearch.setCustomerOrders(new ArrayList<Tiers>());
-            if (quotation.getResponsable() != null) {
-                Tiers tiers = new Tiers();
-                tiers.setId(quotation.getResponsable().getId());
-                orderingSearch.getCustomerOrders().add(tiers);
-            } else if (quotation.getTiers() != null) {
-                orderingSearch.getCustomerOrders().add(quotation.getTiers());
-            } else if (quotation.getConfrere() != null) {
-                Tiers tiers = new Tiers();
-                tiers.setId(quotation.getConfrere().getId());
-                orderingSearch.getCustomerOrders().add(tiers);
-            }
-            orderingSearch.setStartDate(DateHelper.subtractDaysSkippingWeekends(LocalDateTime.now(), 3));
-            List<QuotationSearchResult> duplicatedCustomerOrders = searchQuotations(orderingSearch);
-            List<Quotation> duplicatedFound = new ArrayList<Quotation>();
-
-            if (duplicatedCustomerOrders != null && duplicatedCustomerOrders.size() > 0) {
-                outerloop: for (QuotationSearchResult potentialCustomerOrderResult : duplicatedCustomerOrders) {
-                    Quotation potentialCustomerOrder = getQuotation(potentialCustomerOrderResult.getQuotationId());
-                    for (AssoAffaireOrder currentAsso : quotation.getAssoAffaireOrders()) {
-                        boolean foundAsso = false;
-                        for (AssoAffaireOrder duplicateAsso : potentialCustomerOrder.getAssoAffaireOrders()) {
-                            if (currentAsso.getAffaire().getId().equals(duplicateAsso.getAffaire().getId())) {
-                                foundAsso = true;
-                                for (Provision currentProvision : currentAsso.getProvisions()) {
-                                    boolean foundProvision = false;
-                                    for (Provision duplicateProvision : duplicateAsso.getProvisions()) {
-                                        if (duplicateProvision.getProvisionType().getId()
-                                                .equals(currentProvision.getProvisionType().getId())) {
-                                            foundProvision = true;
-                                        }
-                                    }
-                                    if (!foundProvision)
-                                        break outerloop;
-                                }
-                            }
-                        }
-                        if (!foundAsso)
-                            break outerloop;
-                    }
-                    duplicatedFound.add(potentialCustomerOrder);
-                }
-
-                if (duplicatedFound.size() > 0) {
-                    throw new OsirisDuplicateException(duplicatedFound.stream().map(Quotation::getId).toList());
-                }
-            }
-        }
+        // TODO findDuplicatesForQuotation(quotation);
 
         // Complete provisions
         boolean oneNewProvision = false;
@@ -218,7 +178,7 @@ public class QuotationServiceImpl implements QuotationService {
 
         quotation = getQuotation(quotation.getId());
 
-        indexEntityService.indexEntity(quotation);
+        batchService.declareNewBatch(Batch.REINDEX_QUOTATION, quotation.getId());
 
         if (isNewQuotation) {
             notificationService.notifyNewQuotation(quotation);
@@ -235,6 +195,63 @@ public class QuotationServiceImpl implements QuotationService {
                 mailHelper.sendQuotationCreationConfirmationToCustomer(quotation);
         }
         return quotation;
+    }
+
+    private void findDuplicatesForQuotation(Quotation quotation) throws OsirisDuplicateException {
+        if (quotation.getId() == null && quotation.getAssoAffaireOrders() != null
+                && quotation.getAssoAffaireOrders().size() > 0) {
+            QuotationSearch orderingSearch = new QuotationSearch();
+            orderingSearch.setAffaires(Arrays.asList(quotation.getAssoAffaireOrders().get(0).getAffaire()));
+            orderingSearch.setCustomerOrders(new ArrayList<Tiers>());
+            if (quotation.getResponsable() != null) {
+                Tiers tiers = new Tiers();
+                tiers.setId(quotation.getResponsable().getId());
+                orderingSearch.getCustomerOrders().add(tiers);
+            } else if (quotation.getTiers() != null) {
+                orderingSearch.getCustomerOrders().add(quotation.getTiers());
+            } else if (quotation.getConfrere() != null) {
+                Tiers tiers = new Tiers();
+                tiers.setId(quotation.getConfrere().getId());
+                orderingSearch.getCustomerOrders().add(tiers);
+            }
+            orderingSearch.setStartDate(DateHelper.subtractDaysSkippingWeekends(LocalDateTime.now(), 3));
+            List<QuotationSearchResult> duplicatedCustomerOrders = searchQuotations(orderingSearch);
+            List<Quotation> duplicatedFound = new ArrayList<Quotation>();
+
+            if (duplicatedCustomerOrders != null && duplicatedCustomerOrders.size() > 0) {
+                outerloop: for (QuotationSearchResult potentialQuotationResult : duplicatedCustomerOrders) {
+                    Quotation potentialQuotation = getQuotation(potentialQuotationResult.getQuotationId());
+                    if (!potentialQuotation.getQuotationStatus().getCode().equals(QuotationStatus.ABANDONED)) {
+                        for (AssoAffaireOrder currentAsso : quotation.getAssoAffaireOrders()) {
+                            boolean foundAsso = false;
+                            for (AssoAffaireOrder duplicateAsso : potentialQuotation.getAssoAffaireOrders()) {
+                                if (currentAsso.getAffaire().getId().equals(duplicateAsso.getAffaire().getId())) {
+                                    foundAsso = true;
+                                    for (Provision currentProvision : currentAsso.getProvisions()) {
+                                        boolean foundProvision = false;
+                                        for (Provision duplicateProvision : duplicateAsso.getProvisions()) {
+                                            if (duplicateProvision.getProvisionType().getId()
+                                                    .equals(currentProvision.getProvisionType().getId())) {
+                                                foundProvision = true;
+                                            }
+                                        }
+                                        if (!foundProvision)
+                                            break outerloop;
+                                    }
+                                }
+                            }
+                            if (!foundAsso)
+                                break outerloop;
+                        }
+                        duplicatedFound.add(potentialQuotation);
+                    }
+                }
+
+                if (duplicatedFound.size() > 0) {
+                    throw new OsirisDuplicateException(duplicatedFound.stream().map(Quotation::getId).toList());
+                }
+            }
+        }
     }
 
     @Override
@@ -354,11 +371,11 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexQuotation() {
+    public void reindexQuotation() throws OsirisException {
         List<Quotation> quotations = IterableUtils.toList(quotationRepository.findAll());
         if (quotations != null)
             for (Quotation quotation : quotations)
-                indexEntityService.indexEntity(quotation);
+                batchService.declareNewBatch(Batch.REINDEX_QUOTATION, quotation.getId());
     }
 
     @Override
@@ -486,67 +503,73 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void sendRemindersForQuotation()
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+    public void sendRemindersForQuotation() throws OsirisException {
         List<Quotation> quotations = quotationRepository.findQuotationForReminder(
                 quotationStatusService.getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER));
 
         if (quotations != null && quotations.size() > 0)
             for (Quotation quotation : quotations) {
-                // if only annonce légale
-                boolean isOnlyAnnonceLegal = true;
-                if (quotation.getAssoAffaireOrders() != null)
-                    loopAsso: for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
-                        if (asso.getProvisions() != null)
-                            for (Provision provision : asso.getProvisions())
-                                if (provision.getAnnouncement() == null) {
-                                    isOnlyAnnonceLegal = false;
-                                    break loopAsso;
-                                }
+                batchService.declareNewBatch(Batch.SEND_REMINDER_FOR_QUOTATION, quotation.getId());
+            }
+    }
 
-                boolean toSend = false;
-                if (isOnlyAnnonceLegal) {
-                    if (quotation.getFirstReminderDateTime() == null
-                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(1))) {
-                        toSend = true;
-                        quotation.setFirstReminderDateTime(LocalDateTime.now());
-                    } else if (quotation.getFirstReminderDateTime() != null
-                            && quotation.getSecondReminderDateTime() == null
-                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(2))
-                            && quotation.getFirstReminderDateTime().isBefore(LocalDateTime.now().minusDays(1))) {
-                        toSend = true;
-                        quotation.setSecondReminderDateTime(LocalDateTime.now());
-                    } else if (quotation.getSecondReminderDateTime() != null
-                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(7))
-                            && quotation.getSecondReminderDateTime().isBefore(LocalDateTime.now().minusDays(5))) {
-                        toSend = true;
-                        quotation.setThirdReminderDateTime(LocalDateTime.now());
-                    }
-                } else {
-                    if (quotation.getFirstReminderDateTime() == null
-                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
-                        toSend = true;
-                        quotation.setFirstReminderDateTime(LocalDateTime.now());
-                    } else if (quotation.getFirstReminderDateTime() != null
-                            && quotation.getSecondReminderDateTime() == null
-                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(3 * 7))
-                            && quotation.getFirstReminderDateTime().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
-                        toSend = true;
-                        quotation.setSecondReminderDateTime(LocalDateTime.now());
-                    } else if (quotation.getSecondReminderDateTime() != null
-                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(6 * 7))
-                            && quotation.getSecondReminderDateTime().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
-                        toSend = true;
-                        quotation.setThirdReminderDateTime(LocalDateTime.now());
-                    }
+    @Transactional(rollbackFor = Exception.class)
+    public void sendReminderForQuotation(Quotation quotation)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        if (quotation != null) {
+            // if only annonce légale
+            boolean isOnlyAnnonceLegal = true;
+            if (quotation.getAssoAffaireOrders() != null)
+                loopAsso: for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+                    if (asso.getProvisions() != null)
+                        for (Provision provision : asso.getProvisions())
+                            if (provision.getAnnouncement() == null) {
+                                isOnlyAnnonceLegal = false;
+                                break loopAsso;
+                            }
+
+            boolean toSend = false;
+            if (isOnlyAnnonceLegal) {
+                if (quotation.getFirstReminderDateTime() == null
+                        && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(1))) {
+                    toSend = true;
+                    quotation.setFirstReminderDateTime(LocalDateTime.now());
+                } else if (quotation.getFirstReminderDateTime() != null
+                        && quotation.getSecondReminderDateTime() == null
+                        && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(2))
+                        && quotation.getFirstReminderDateTime().isBefore(LocalDateTime.now().minusDays(1))) {
+                    toSend = true;
+                    quotation.setSecondReminderDateTime(LocalDateTime.now());
+                } else if (quotation.getSecondReminderDateTime() != null
+                        && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(7))
+                        && quotation.getSecondReminderDateTime().isBefore(LocalDateTime.now().minusDays(5))) {
+                    toSend = true;
+                    quotation.setThirdReminderDateTime(LocalDateTime.now());
                 }
-
-                if (toSend) {
-                    mailHelper.sendQuotationToCustomer(quotation, false);
-                    quotationRepository.save(quotation);
+            } else {
+                if (quotation.getFirstReminderDateTime() == null
+                        && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                    toSend = true;
+                    quotation.setFirstReminderDateTime(LocalDateTime.now());
+                } else if (quotation.getFirstReminderDateTime() != null
+                        && quotation.getSecondReminderDateTime() == null
+                        && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(3 * 7))
+                        && quotation.getFirstReminderDateTime().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                    toSend = true;
+                    quotation.setSecondReminderDateTime(LocalDateTime.now());
+                } else if (quotation.getSecondReminderDateTime() != null
+                        && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(6 * 7))
+                        && quotation.getSecondReminderDateTime().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                    toSend = true;
+                    quotation.setThirdReminderDateTime(LocalDateTime.now());
                 }
             }
 
+            if (toSend) {
+                mailHelper.sendQuotationToCustomer(quotation, false);
+                quotationRepository.save(quotation);
+            }
+        }
     }
 
     @Override

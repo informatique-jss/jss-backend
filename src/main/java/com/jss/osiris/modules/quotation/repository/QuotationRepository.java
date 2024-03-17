@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.QueryHint;
 
@@ -33,11 +34,6 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         + " origin.label as customerOrderOriginLabel,"
                         + " sum(COALESCE(i.pre_tax_price,0)+COALESCE(i.vat_price,0)-COALESCE(i.discount_amount,0)) as totalPrice ,"
                         + " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')' ,', ') as affaireLabel,"
-                        + " count(distinct provision.id_announcement) as announcementNbr,"
-                        + " count(distinct provision.id_formalite) as formaliteNbr,"
-                        + " count(distinct provision.id_bodacc) as bodaccNbr,"
-                        + " count(distinct provision.id_domiciliation) as domiciliationNbr,"
-                        + " count(distinct provision.id_simple_provision) as simpleProvisionNbr,"
                         + " co.description as quotationDescription"
                         + " from quotation co"
                         + " join customer_order_origin origin on origin.id = co.id_customer_order_origin"
@@ -73,4 +69,7 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
 
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<Quotation> findByCustomerOrders_Id(Integer idCustomerOrder);
+
+        @Query(value = "select q.* from quotation q where exists (select 1 from asso_affaire_order a join provision p on p.id_asso_affaire_order = a.id where a.id_quotation = q.id and  p.id_announcement = :announcementId)", nativeQuery = true)
+        Optional<Quotation> findQuotationForAnnouncement(@Param("announcementId") Integer announcementId);
 }

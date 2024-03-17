@@ -49,10 +49,12 @@ public class Quotation implements IQuotation {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
+	@IndexedField
 	private Tiers tiers;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
+	@IndexedField
 	private Responsable responsable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -79,6 +81,9 @@ public class Quotation implements IQuotation {
 	@Column(columnDefinition = "TEXT")
 	private String description;
 
+	@Column(columnDefinition = "TEXT")
+	private String instructions;
+
 	@OneToMany(mappedBy = "quotation")
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
 	private List<Attachment> attachments;
@@ -91,9 +96,6 @@ public class Quotation implements IQuotation {
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
 	private List<AssoAffaireOrder> assoAffaireOrders;
 
-	@Column(nullable = false)
-	private Boolean overrideSpecialOffer;
-
 	@Column(length = 40)
 	private String quotationLabel;
 
@@ -102,6 +104,10 @@ public class Quotation implements IQuotation {
 
 	@Column(length = 40)
 	private String validationToken;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_abandon_reason")
+	private QuotationAbandonReason abandonReason;
 
 	@ManyToMany
 	@JoinTable(name = "asso_quotation_customer_order", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_customer_order"))
@@ -272,14 +278,6 @@ public class Quotation implements IQuotation {
 		this.quotationLabel = quotationLabel;
 	}
 
-	public Boolean getOverrideSpecialOffer() {
-		return overrideSpecialOffer;
-	}
-
-	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
-		this.overrideSpecialOffer = overrideSpecialOffer;
-	}
-
 	public String getCustomerMailCustomMessage() {
 		return customerMailCustomMessage;
 	}
@@ -310,6 +308,22 @@ public class Quotation implements IQuotation {
 
 	public void setValidationToken(String validationToken) {
 		this.validationToken = validationToken;
+	}
+
+	public QuotationAbandonReason getAbandonReason() {
+		return abandonReason;
+	}
+
+	public void setAbandonReason(QuotationAbandonReason abandonReason) {
+		this.abandonReason = abandonReason;
+	}
+
+	public String getInstructions() {
+		return instructions;
+	}
+
+	public void setInstructions(String instructions) {
+		this.instructions = instructions;
 	}
 
 }

@@ -74,7 +74,10 @@ import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
+import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.service.BillingLabelTypeService;
+import com.jss.osiris.modules.tiers.service.RffService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
 @RestController
@@ -151,6 +154,15 @@ public class InvoicingController {
     @Autowired
     CompetentAuthorityService competentAuthorityService;
 
+    @Autowired
+    ActiveDirectoryHelper activeDirectoryHelper;
+
+    @Autowired
+    BillingLabelTypeService billingLabelTypeService;
+
+    @Autowired
+    RffService rffService;
+
     @PostMapping(inputEntryPoint + "/azure-receipt/invoice")
     public ResponseEntity<AzureReceiptInvoice> updateAzureReceiptInvoice(
             @RequestBody AzureReceiptInvoice azureReceiptInvoice)
@@ -219,6 +231,17 @@ public class InvoicingController {
                 HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    @GetMapping(inputEntryPoint + "/rff/create")
+    public ResponseEntity<Invoice> createInvoiceFromRff(@RequestParam Integer rffId)
+            throws OsirisValidationException, OsirisClientMessageException, OsirisException, OsirisDuplicateException {
+        Rff rff = rffService.getRff(rffId);
+        if (rff == null)
+            throw new OsirisValidationException("rff");
+
+        return new ResponseEntity<Invoice>(rffService.generateInvoiceForRff(rff), HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/azure-invoice")
     public ResponseEntity<AzureInvoice> getAzureInvoice(@RequestParam Integer idInvoice) {
         return new ResponseEntity<AzureInvoice>(azureInvoiceService.getAzureInvoice(idInvoice),
@@ -249,37 +272,14 @@ public class InvoicingController {
     @Autowired
     AccountingRecordGenerationService accountingRecordGenerationService;
 
-    // TODO remove !
-    @GetMapping(inputEntryPoint + "/payment/add")
+    @GetMapping(inputEntryPoint + "/payment/waiting")
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-    public ResponseEntity<Payment> addPayment(@RequestParam Float amount, @RequestParam Integer paymentWayId,
-            @RequestParam String label)
+    public ResponseEntity<Payment> movePaymentToWaitingAccount(@RequestParam Integer paymentId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-        Payment payment = new Payment();
-        payment.setIsExternallyAssociated(false);
-        payment.setIsCancelled(false);
-        payment.setLabel(label);
-        payment.setPaymentAmount(amount);
-        payment.setPaymentDate(LocalDateTime.now());
-        payment.setPaymentType(constantService.getPaymentTypeVirement());
-        payment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
-        payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
-        paymentService.addOrUpdatePayment(payment);
-        if (payment.getPaymentAmount() > 0)
-            accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment, false);
-        else
-            accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
-        paymentService.automatchPaymentFromUser(payment);
+        Payment payment = paymentService.getPayment(paymentId);
+        if (payment != null)
+            payment = paymentService.movePaymentToWaitingAccount(payment);
         return new ResponseEntity<Payment>(payment, HttpStatus.OK);
-    }
-
-    // TODO remove !
-    @GetMapping(inputEntryPoint + "/payment/automatch")
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-    public ResponseEntity<Payment> automatchPayment()
-            throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-        paymentService.paymentGrab();
-        return new ResponseEntity<Payment>(new Payment(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/payments/search")
@@ -295,7 +295,7 @@ public class InvoicingController {
     @PostMapping(inputEntryPoint + "/payment/comment")
     public ResponseEntity<Payment> addOrUpdatePaymentComment(@RequestBody String comment,
             @RequestParam Integer idPayment)
-            throws OsirisValidationException {
+            throws OsirisValidationException, OsirisException {
 
         Payment payment = paymentService.getPayment(idPayment);
 
@@ -317,7 +317,7 @@ public class InvoicingController {
     }
 
     @GetMapping(inputEntryPoint + "/refund/payment")
-    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<Boolean> refundPayment(@RequestParam Integer paymentId,
             @RequestParam Integer tiersId, @RequestParam Integer affaireId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
@@ -599,14 +599,15 @@ public class InvoicingController {
                         if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null
                                 && paymentAssociate.getAffaireRefund() == null)
                             throw new OsirisValidationException("not all payment used and no refund tiers set");
-                } else
+                } else if (totalAmount != Math.round(paymentAssociate.getPayment().getPaymentAmount() * 100f) / 100f)
                     throw new OsirisValidationException("not all payment used");
             }
         }
 
         // Check same customer order for incoming payment
         Tiers commonCustomerOrder = paymentAssociate.getTiersOrder();
-        if (paymentAssociate.getPayment().getPaymentAmount() >= 0) {
+        if (paymentAssociate.getPayment().getPaymentAmount() >= 0
+                && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP)) {
             if (paymentAssociate.getInvoices() != null) {
                 for (Invoice invoice : paymentAssociate.getInvoices()) {
                     if (invoice.getResponsable() != null
@@ -858,7 +859,7 @@ public class InvoicingController {
             throw new OsirisValidationException("Must be same Competent authority");
 
         if (originInvoice.getProvider() != null
-                && !newInvoice.getCompetentAuthority().getId().equals(originInvoice.getProvider().getId()))
+                && !newInvoice.getProvider().getId().equals(originInvoice.getProvider().getId()))
             throw new OsirisValidationException("Must be same provider");
 
         if (originInvoice.getConfrere() != null

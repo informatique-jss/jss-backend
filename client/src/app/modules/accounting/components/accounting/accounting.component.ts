@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 
 @Component({
   selector: 'app-accounting',
@@ -11,6 +13,7 @@ export class AccountingComponent implements OnInit {
 
   constructor(private appService: AppService,
     private habilitationService: HabilitationsService,
+    private userPreferenceService: UserPreferenceService,
   ) { }
 
   canDisplayProfitLost() {
@@ -23,5 +26,17 @@ export class AccountingComponent implements OnInit {
 
   ngOnInit() {
     this.appService.changeHeaderTitle("Comptabilité");
+    this.restoreTab();
+  }
+
+
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('accounting', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('accounting');
   }
 }

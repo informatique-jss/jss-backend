@@ -25,11 +25,25 @@ public class FormaliteStatusHistoryItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_source_status")
-    private Status sourceStatus;
+    private FormaliteGuichetUniqueStatus sourceStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_status")
-    private Status status;
+    private FormaliteGuichetUniqueStatus status;
+
+    private String created;
+
+    // TODO : ask inpi for format ... "partnerCenter": "/api/partner_centers/103",
+    // @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST,
+    // CascadeType.MERGE })
+    // @JoinColumn(name = "id_partenaire")
+    // private Partenaire partner;
+
+    // TODO : ask inpi for format ... "partnerCenter": "/api/partner_centers/103",
+    // @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST,
+    // CascadeType.DETACH, CascadeType.REFRESH })
+    // @JoinColumn(name = "id_partner_center")
+    // private PartnerCenter partnerCenter;
 
     public long getId() {
         return id;
@@ -47,20 +61,28 @@ public class FormaliteStatusHistoryItem {
         this.formaliteGuichetUnique = formaliteGuichetUnique;
     }
 
-    public Status getSourceStatus() {
+    public FormaliteGuichetUniqueStatus getSourceStatus() {
         return sourceStatus;
     }
 
-    public void setSourceStatus(Status sourceStatus) {
+    public void setSourceStatus(FormaliteGuichetUniqueStatus sourceStatus) {
         this.sourceStatus = sourceStatus;
     }
 
-    public Status getStatus() {
+    public FormaliteGuichetUniqueStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(FormaliteGuichetUniqueStatus status) {
         this.status = status;
+    }
+
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
     }
 
 }

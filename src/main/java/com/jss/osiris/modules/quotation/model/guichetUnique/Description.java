@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DeviseCapital;
@@ -23,10 +24,11 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDeS
 public class Description implements Serializable, IId {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "guichet_unique_sequence", sequenceName = "guichet_unique_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "guichet_unique_sequence")
     private Integer id;
 
-    @Column(length = 255)
+    @Column(length = 4000)
     private String objet;
 
     @Column(length = 255)
@@ -34,7 +36,7 @@ public class Description implements Serializable, IId {
 
     private Integer duree;
 
-    private LocalDate dateClotureExerciceSocial;
+    private String dateClotureExerciceSocial;
 
     private LocalDate datePremiereCloture;
 
@@ -44,7 +46,7 @@ public class Description implements Serializable, IId {
 
     private Boolean capitalVariable;
 
-    private Integer montantCapital;
+    private Float montantCapital;
 
     private Integer capitalMinimum;
 
@@ -160,11 +162,11 @@ public class Description implements Serializable, IId {
         this.duree = duree;
     }
 
-    public LocalDate getDateClotureExerciceSocial() {
+    public String getDateClotureExerciceSocial() {
         return dateClotureExerciceSocial;
     }
 
-    public void setDateClotureExerciceSocial(LocalDate dateClotureExerciceSocial) {
+    public void setDateClotureExerciceSocial(String dateClotureExerciceSocial) {
         this.dateClotureExerciceSocial = dateClotureExerciceSocial;
     }
 
@@ -200,11 +202,11 @@ public class Description implements Serializable, IId {
         this.capitalVariable = capitalVariable;
     }
 
-    public Integer getMontantCapital() {
+    public Float getMontantCapital() {
         return montantCapital;
     }
 
-    public void setMontantCapital(Integer montantCapital) {
+    public void setMontantCapital(Float montantCapital) {
         this.montantCapital = montantCapital;
     }
 

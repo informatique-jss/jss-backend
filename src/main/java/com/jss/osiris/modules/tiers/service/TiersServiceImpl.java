@@ -1,27 +1,46 @@
 package com.jss.osiris.modules.tiers.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.CustomerMailService;
+import com.jss.osiris.libs.mail.model.CustomerMail;
+import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
+import com.jss.osiris.modules.quotation.model.OrderingSearch;
+import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
+import com.jss.osiris.modules.quotation.model.QuotationSearch;
+import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
+import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.QuotationService;
+import com.jss.osiris.modules.tiers.model.ITiersSearchResult;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.model.TiersSearch;
 import com.jss.osiris.modules.tiers.repository.TiersRepository;
 
 @Service
@@ -40,9 +59,6 @@ public class TiersServiceImpl implements TiersService {
     PhoneService phoneService;
 
     @Autowired
-    IndexEntityService indexEntityService;
-
-    @Autowired
     SearchService searchService;
 
     @Autowired
@@ -53,6 +69,21 @@ public class TiersServiceImpl implements TiersService {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    CustomerMailService customerMailService;
+
+    @Autowired
+    CustomerOrderService customerOrderService;
+
+    @Autowired
+    QuotationService quotationService;
+
+    @Autowired
+    BatchService batchService;
+
+    @Autowired
+    IndexEntityService indexEntityService;
 
     @Override
     @Transactional
@@ -89,6 +120,33 @@ public class TiersServiceImpl implements TiersService {
 
             if (tiersDuplicates.size() > 0)
                 throw new OsirisDuplicateException(tiersDuplicates.stream().map(Tiers::getId).toList());
+        }
+
+        // Find duplicate Responsable
+        if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
+            for (Responsable responsable : tiers.getResponsables()) {
+                if (responsable.getId() == null) {
+                    List<Responsable> responsablesDuplicates = new ArrayList<Responsable>();
+
+                    for (Responsable responsableCheck : tiers.getResponsables()) {
+                        if (responsableCheck.getId() != null && responsableCheck.getFirstname() != null
+                                && responsableCheck.getLastname() != null) {
+                            if ((StringUtils.stripAccents(responsable.getFirstname().trim()).toUpperCase()
+                                    + StringUtils.stripAccents(responsable.getLastname().trim()))
+                                    .toUpperCase()
+                                    .equals(StringUtils.stripAccents(responsableCheck.getFirstname().trim())
+                                            .toUpperCase()
+                                            + StringUtils.stripAccents(responsableCheck.getLastname().trim())
+                                                    .toUpperCase()))
+                                responsablesDuplicates.add(responsableCheck);
+                        }
+                    }
+
+                    if (responsablesDuplicates.size() > 0)
+                        throw new OsirisDuplicateException(
+                                responsablesDuplicates.stream().map(Responsable::getId).toList());
+                }
+            }
         }
 
         // If mails already exists, get their ids
@@ -170,12 +228,12 @@ public class TiersServiceImpl implements TiersService {
 
         tiers = tiersRepository.save(tiers);
 
-        indexEntityService.indexEntity(tiers);
+        batchService.declareNewBatch(Batch.REINDEX_TIERS, tiers.getId());
         if (tiers.getResponsables() != null)
             for (Responsable responsable : tiers.getResponsables()) {
                 if (responsable.getLoginWeb() == null)
                     responsable.setLoginWeb(responsable.getId() + "");
-                indexEntityService.indexEntity(responsable);
+                batchService.declareNewBatch(Batch.REINDEX_RESPONSABLE, responsable.getId());
             }
 
         // Set default customer order assignation to sales employee if not set
@@ -198,11 +256,11 @@ public class TiersServiceImpl implements TiersService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexTiers() {
+    public void reindexTiers() throws OsirisException {
         List<Tiers> tiers = IterableUtils.toList(tiersRepository.findAll());
         if (tiers != null)
             for (Tiers tier : tiers)
-                indexEntityService.indexEntity(tier);
+                batchService.declareNewBatch(Batch.REINDEX_TIERS, tier.getId());
     }
 
     @Override
@@ -219,6 +277,127 @@ public class TiersServiceImpl implements TiersService {
     @Override
     public List<Tiers> getTiers() {
         return IterableUtils.toList(tiersRepository.findAll());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean deleteTiers(Tiers tiers)
+            throws OsirisClientMessageException, OsirisException, OsirisDuplicateException {
+        tiers = getTiers(tiers.getId());
+        if (tiers.getAttachments() != null && tiers.getAttachments().size() > 0)
+            throw new OsirisClientMessageException("Impossible de supprimer le tiers, des documents existent");
+
+        if (tiers.getTiersFollowups() != null && tiers.getTiersFollowups().size() > 0)
+            throw new OsirisClientMessageException("Impossible de supprimer le tiers, des suivis existent");
+
+        List<CustomerMail> mails = customerMailService.getMailsByTiers(tiers);
+        if (mails != null && mails.size() > 0)
+            throw new OsirisClientMessageException("Impossible de supprimer le tiers, des mails existent");
+
+        OrderingSearch orderingSearch = new OrderingSearch();
+        orderingSearch.setCustomerOrders(Arrays.asList(tiers));
+        List<OrderingSearchResult> customerOrder = customerOrderService.searchOrders(orderingSearch);
+        if (customerOrder != null && customerOrder.size() > 0)
+            throw new OsirisClientMessageException("Impossible de supprimer le tiers, des commandes existent");
+
+        QuotationSearch quotationSearch = new QuotationSearch();
+        quotationSearch.setCustomerOrders(Arrays.asList(tiers));
+        List<QuotationSearchResult> quotations = quotationService.searchQuotations(quotationSearch);
+        if (quotations != null && quotations.size() > 0)
+            throw new OsirisClientMessageException("Impossible de supprimer le tiers, des devis existent");
+
+        InvoiceSearch invoiceSearch = new InvoiceSearch();
+        invoiceSearch.setCustomerOrders(Arrays.asList(tiers));
+        List<InvoiceSearchResult> invoices = invoiceService.searchInvoices(invoiceSearch);
+        if (invoices != null && invoices.size() > 0)
+            throw new OsirisClientMessageException("Impossible de supprimer le tiers, des factures existent");
+
+        if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
+            for (Responsable responsable : tiers.getResponsables()) {
+                if (responsable.getAttachments() != null && responsable.getAttachments().size() > 0)
+                    throw new OsirisClientMessageException("Impossible de supprimer le tiers, des documents existent");
+
+                if (responsable.getTiersFollowups() != null && responsable.getTiersFollowups().size() > 0)
+                    throw new OsirisClientMessageException("Impossible de supprimer le tiers, des suivis existent");
+
+                mails = customerMailService.getMailsByResponsable(responsable);
+                if (mails != null && mails.size() > 0)
+                    throw new OsirisClientMessageException("Impossible de supprimer le tiers, des mails existent");
+
+                orderingSearch = new OrderingSearch();
+                Tiers dummyTiers = new Tiers();
+                dummyTiers.setId(responsable.getId());
+                orderingSearch.setCustomerOrders(Arrays.asList(dummyTiers));
+                customerOrder = customerOrderService.searchOrders(orderingSearch);
+                if (customerOrder != null && customerOrder.size() > 0)
+                    throw new OsirisClientMessageException("Impossible de supprimer le tiers, des commandes existent");
+
+                quotationSearch = new QuotationSearch();
+                quotationSearch.setCustomerOrders(Arrays.asList(dummyTiers));
+                quotations = quotationService.searchQuotations(quotationSearch);
+                if (quotations != null && quotations.size() > 0)
+                    throw new OsirisClientMessageException("Impossible de supprimer le tiers, des devis existent");
+
+                invoiceSearch = new InvoiceSearch();
+                invoiceSearch.setCustomerOrders(Arrays.asList(dummyTiers));
+                invoices = invoiceService.searchInvoices(invoiceSearch);
+
+                responsable.setMails(null);
+                responsable.setPhones(null);
+            }
+        }
+
+        tiers.setMails(null);
+        tiers.setPhones(null);
+        tiers.setCompetitors(null);
+        tiers.setSpecialOffers(null);
+
+        accountingAccountService.deleteAccountingAccount(tiers.getAccountingAccountCustomer());
+        accountingAccountService.deleteAccountingAccount(tiers.getAccountingAccountDeposit());
+        accountingAccountService.deleteAccountingAccount(tiers.getAccountingAccountProvider());
+        tiers.setAccountingAccountCustomer(null);
+        tiers.setAccountingAccountDeposit(null);
+        tiers.setAccountingAccountProvider(null);
+
+        addOrUpdateTiers(tiers);
+
+        List<IndexEntity> entities = searchService.searchForEntities(tiers.getId() + "", Tiers.class.getSimpleName(),
+                true);
+        if (entities != null && entities.size() == 1)
+            indexEntityService.deleteIndexEntity(entities.get(0));
+
+        tiersRepository.delete(tiers);
+        return true;
+    }
+
+    @Override
+    public List<ITiersSearchResult> searchTiers(TiersSearch tiersSearch) throws OsirisException {
+        Integer tiersId = 0;
+        if (tiersSearch.getTiers() != null)
+            tiersId = tiersSearch.getTiers().getEntityId();
+
+        Integer salesEmployeeId = 0;
+        if (tiersSearch.getSalesEmployee() != null)
+            salesEmployeeId = tiersSearch.getSalesEmployee().getId();
+
+        if (tiersSearch.getStartDate() == null)
+            tiersSearch.setStartDate(LocalDate.now().minusYears(10));
+
+        if (tiersSearch.getEndDate() == null)
+            tiersSearch.setEndDate(LocalDate.now().plusYears(10));
+
+        if (tiersSearch.getLabel() == null)
+            tiersSearch.setLabel("");
+
+        if (tiersSearch.getWithNonNullTurnover() == null)
+            tiersSearch.setWithNonNullTurnover(false);
+
+        return tiersRepository.searchTiers(tiersId, salesEmployeeId,
+                tiersSearch.getStartDate(),
+                tiersSearch.getEndDate(), tiersSearch.getLabel(), constantService.getConfrereJssSpel().getId(),
+                Arrays.asList(constantService.getInvoiceStatusPayed().getId(),
+                        constantService.getInvoiceStatusSend().getId()),
+                this.constantService.getDocumentTypeBilling().getId(), tiersSearch.getWithNonNullTurnover());
     }
 
 }

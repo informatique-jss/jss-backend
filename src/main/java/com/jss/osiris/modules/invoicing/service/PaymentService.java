@@ -28,17 +28,13 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 public interface PaymentService {
         public Payment getPayment(Integer id);
 
-        public Payment addOrUpdatePayment(Payment payment);
+        public Payment addOrUpdatePayment(Payment payment) throws OsirisException;
 
-        public void reindexPayments();
+        public void reindexPayments() throws OsirisException;
 
         public List<PaymentSearchResult> searchPayments(PaymentSearch payemntSearch);
 
         public void paymentGrab() throws OsirisException, OsirisClientMessageException, OsirisValidationException,
-                        OsirisDuplicateException;
-
-        public void automatchPaymentFromUser(Payment payment)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
         public void automatchPayment(Payment payment)
@@ -75,6 +71,9 @@ public interface PaymentService {
                         CustomerOrder customerOrder)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException,
                         OsirisDuplicateException;
+
+        public Payment movePaymentToWaitingAccount(Payment payment)
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public Payment addOutboundPaymentForProvision(Payment payment, Provision provision)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;

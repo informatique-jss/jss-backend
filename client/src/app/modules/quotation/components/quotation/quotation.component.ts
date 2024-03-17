@@ -1,12 +1,13 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
+import { IReferential } from 'src/app/modules/administration/model/IReferential';
 import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
@@ -15,6 +16,8 @@ import { EntityType } from 'src/app/routing/search/EntityType';
 import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
+import { UserNoteService } from 'src/app/services/user.notes.service';
+import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN } from '../../../../libs/Constants';
 import { replaceDocument } from '../../../../libs/DocumentHelper';
 import { formatDateFrance } from '../../../../libs/FormatHelper';
@@ -47,8 +50,10 @@ import { OrderingCustomerComponent } from '../ordering-customer/ordering-custome
 import { PrintLabelDialogComponent } from '../print-label-dialog/print-label-dialog.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { ProvisionComponent } from '../provision/provision.component';
+import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { IQuotation } from './../../model/IQuotation';
+
 @Component({
   selector: 'quotation',
   templateUrl: './quotation.component.html',
@@ -77,7 +82,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   selectedTabIndex = 0;
   selectedTabIndexAsso = 0;
 
-  @ViewChild('tabs', { static: false }) tabs: any;
   @ViewChild(OrderingCustomerComponent) orderingCustomerComponent: OrderingCustomerComponent | undefined;
   @ViewChild(QuotationManagementComponent) quotationManagementComponent: QuotationManagementComponent | undefined;
   @ViewChildren(ProvisionItemComponent) provisionItemComponents: any;
@@ -92,7 +96,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   @Input() inputProvision: Provision | undefined;
   @Input() isForIntegration: boolean = false;
 
-
   saveObservableSubscription: Subscription = new Subscription;
   customerOrderInvoices: InvoiceSearchResult[] | undefined;
 
@@ -104,6 +107,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private activatedRoute: ActivatedRoute,
     public chooseUserDialog: MatDialog,
     public mailLabelDialog: MatDialog,
+    public abandonReasonInquiryDialog: MatDialog,
     public addAffaireDialog: MatDialog,
     public quotationWorkflowDialog: MatDialog,
     public orderSimilaritiesDialog: MatDialog,
@@ -117,6 +121,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private invoiceSearchResultService: InvoiceSearchResultService,
     private habilitationsService: HabilitationsService,
     public associatePaymentDialog: MatDialog,
+    private userNoteService2: UserNoteService,
+    private userPreferenceService: UserPreferenceService,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   quotationForm = this.formBuilder.group({});
@@ -151,10 +157,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           if (instanceOfCustomerOrder(this.quotation) && !this.isForIntegration)
             this.appService.changeHeaderTitle("Commande " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
               (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : "") + (this.quotation.isGifted ? (" - Offerte") : ""));
-          this.toggleTabs();
           this.setOpenStatus();
           this.checkAffaireAssignation();
           this.updateDocumentsEvent.next(this.quotation);
+
+          this.restoreTab();
+          this.restoreTabAsso();
 
           // In case of integration, put screen on right provision
           if (this.inputProvision) {
@@ -174,10 +182,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       this.appService.changeHeaderTitle("Devis");
       this.quotationService.getQuotation(this.idQuotation).subscribe(response => {
         this.quotation = response;
+
+        this.restoreTab();
+        this.restoreTabAsso();
+
         if (instanceOfQuotation(this.quotation))
           this.appService.changeHeaderTitle("Devis " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
             (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
-        this.toggleTabs();
         this.setOpenStatus();
         this.updateDocumentsEvent.next(this.quotation);
       })
@@ -200,13 +211,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.saveObservableSubscription.unsubscribe();
   }
 
-  toggleTabs() {
-    if (this.tabs != undefined)
-      this.tabs.realignInkBar();
-  }
-
   canOfferCustomerOrder() {
     return this.habilitationsService.canOfferCustomerOrder();
+  }
+
+  canReinitInvoicing() {
+    return this.habilitationsService.canReinitInvoicing();
   }
 
   setOpenStatus() {
@@ -354,7 +364,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.quotation = {} as IQuotation;
     this.setOpenStatus();
     this.appService.changeHeaderTitle(this.instanceOfCustomerOrder ? "Nouvelle commande" : "Nouveau devis");
-    this.toggleTabs();
   }
 
   openSearch() {
@@ -363,6 +372,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   getEntityType(): EntityType {
     return this.instanceOfCustomerOrder ? CUSTOMER_ORDER_ENTITY_TYPE : QUOTATION_ENTITY_TYPE;
+  }
+
+  getParseTypeList(): IReferential[] | undefined {
+    return this.instanceOfCustomerOrder ? this.customerOrderStatusList : this.quotationStatusList;
   }
 
   createProvision(asso: AssoAffaireOrder): Provision {
@@ -504,57 +517,95 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     asso.provisions.splice(asso.provisions.indexOf(provision), 1);
   }
 
+
   changeStatus(targetStatus: QuotationStatus) {
     let currentStatusOpen = this.isStatusOpen;
     this.isStatusOpen = false;
     this.editMode = true;
     setTimeout(() => {
       if (this.getFormsStatus() || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
-        if (!this.instanceOfCustomerOrder) {
-          this.quotationService.updateQuotationStatus(this.quotation, targetStatus.code).subscribe(response => {
-            this.quotation = response;
-            this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
-          })
+        if (targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
+          this.setQuotationAbandonReasonAndChangeStatus(targetStatus);
         } else {
-          let hasPayment = false;
-          if ((this.quotation as CustomerOrder).payments && (this.quotation as CustomerOrder).payments.length > 0) {
-            for (let payment of (this.quotation as CustomerOrder).payments)
-              if (payment.isCancelled == false)
-                hasPayment = true;
-          }
-          if (hasPayment && ((this.getRemainingToPay() < -INVOICING_PAYMENT_LIMIT_REFUND_EUROS && targetStatus.code == CUSTOMER_ORDER_STATUS_BILLED) || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED)) {
-            let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
-              width: '100%'
-            });
-            for (let payment of (this.quotation as CustomerOrder).payments)
-              if (!payment.isCancelled)
-                dialogPaymentDialogRef.componentInstance.payment = payment;
-            dialogPaymentDialogRef.componentInstance.doNotInitializeAsso = targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED;
-            dialogPaymentDialogRef.componentInstance.customerOrder = this.quotation as CustomerOrder;
-            if (targetStatus.code == CUSTOMER_ORDER_STATUS_BILLED)
-              dialogPaymentDialogRef.componentInstance.isForQuotationBilling = true;
-
-            dialogPaymentDialogRef.afterClosed().subscribe(response => {
-              if (response)
-                this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code).subscribe(response => {
-                  this.quotation = response;
-                  this.appService.openRoute(null, '/order/' + this.quotation.id, null);
-                })
-              else
-                this.appService.openRoute(null, '/order/' + this.quotation.id, null);
-            });
-          } else
-            this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code).subscribe(response => {
-              this.quotation = response;
-              this.appService.openRoute(null, '/order/' + this.quotation.id, null);
-            })
+          this.isStatusOpen = currentStatusOpen;
+          this.changeQuotationStatus(targetStatus);
         }
-      } else {
-        this.isStatusOpen = currentStatusOpen;
       }
       this.editMode = false;
     }, 100);
   }
+
+  setQuotationAbandonReasonAndChangeStatus(targetStatus: QuotationStatus) {
+    const dialogRef: MatDialogRef<QuotationAbandonReasonDialog> = this.abandonReasonInquiryDialog.open(QuotationAbandonReasonDialog, {
+      maxWidth: "600px",
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.quotation.abandonReason = result;
+        if (instanceOfCustomerOrder(this.quotation))
+          this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
+            this.quotation = response;
+            this.changeQuotationStatus(targetStatus);
+          });
+        else
+          this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
+            this.quotation = response;
+            this.changeQuotationStatus(targetStatus);
+          });
+      } else {
+        this.isStatusOpen = false;
+        this.editMode = false;
+      }
+    });
+  }
+
+  changeQuotationStatus(targetStatus: QuotationStatus) {
+    if (!this.instanceOfCustomerOrder) {
+      this.quotationService.updateQuotationStatus(this.quotation, targetStatus.code).subscribe(response => {
+        this.quotation = response;
+        this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
+      });
+    } else {
+      let hasPayment = false;
+      if ((this.quotation as CustomerOrder).payments && (this.quotation as CustomerOrder).payments.length > 0) {
+        for (let payment of (this.quotation as CustomerOrder).payments)
+          if (payment.isCancelled == false)
+            hasPayment = true;
+      }
+      if (hasPayment && ((this.getRemainingToPay() < -INVOICING_PAYMENT_LIMIT_REFUND_EUROS && targetStatus.code == CUSTOMER_ORDER_STATUS_BILLED) || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED)) {
+        let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
+          width: '100%'
+        });
+
+        for (let payment of (this.quotation as CustomerOrder).payments)
+          if (!payment.isCancelled)
+            dialogPaymentDialogRef.componentInstance.payment = payment;
+        dialogPaymentDialogRef.componentInstance.doNotInitializeAsso = targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED;
+        dialogPaymentDialogRef.componentInstance.customerOrder = this.quotation as CustomerOrder;
+        if (targetStatus.code == CUSTOMER_ORDER_STATUS_BILLED)
+          dialogPaymentDialogRef.componentInstance.isForQuotationBilling = true;
+
+        dialogPaymentDialogRef.afterClosed().subscribe(response => {
+          if (response)
+            this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code).subscribe(response => {
+              this.quotation = response;
+              this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+            })
+          else
+            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+        });
+      } else {
+        this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code)
+          .subscribe(response => {
+            this.quotation = response;
+            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+          });
+
+      }
+    }
+  }
+
 
   changeSelectedProvisionType($event: any) {
     this.generateInvoiceItem();
@@ -776,13 +827,34 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return true;
   }
 
+  //Tabs management
   changeTab(event: any) {
+    this.userPreferenceService.setUserTabsSelectionIndex('quotation', event.index);
     if (!this.quotation.assoAffaireOrders && event && event.tab && event.tab.textLabel == "Prestations")
       this.addAffaire();
   }
 
+  restoreTab() {
+    this.selectedTabIndex = this.userPreferenceService.getUserTabsSelectionIndex('quotation');
+  }
+
+  changeTabAsso(event: any) {
+    this.userPreferenceService.setUserTabsSelectionIndex('quotation-asso', event.index);
+  }
+
+  restoreTabAsso() {
+    this.selectedTabIndexAsso = this.userPreferenceService.getUserTabsSelectionIndex('quotation-asso');
+  }
+
   generateQuotationMail() {
     this.quotationService.generateQuotationMail(this.quotation).subscribe(response => { });
+  }
+
+  reinitInvoicing() {
+    if (this.quotation && this.quotation.id && this.instanceOfCustomerOrderFn(this.quotation) && this.quotation.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_ABANDONED && this.quotation.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_BILLED)
+      this.customerOrderService.reinitInvoicing(this.quotation).subscribe(response => {
+        this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+      })
   }
 
   generateCustomerOrderCreationConfirmationToCustomer() {

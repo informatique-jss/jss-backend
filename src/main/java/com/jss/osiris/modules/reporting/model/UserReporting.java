@@ -17,6 +17,16 @@ import com.jss.osiris.modules.profile.model.Employee;
 @Entity
 public class UserReporting implements Serializable, IId {
 
+	public static String REPORTING_DATASET_QUOTATION = "Donneur d'ordre / Devis / Prestations - année calendaire courante";
+	public static String REPORTING_DATASET_TURNOVER_AMOUNT = "CA HT / TTC / avec et sans débours";
+	public static String REPORTING_DATASET_TURNOVER_VAT_AMOUNT = "CA HT / TTC / avec et sans débours - TVA";
+	public static String REPORTING_DATASET_CUSTOMER_ORDER = "Commandes";
+	public static String REPORTING_DATASET_PROVISION = "Prestations";
+	public static String REPORTING_DATASET_ANNOUNCEMENT = "Annonces légales";
+	public static String REPORTING_DATASET_TIERS = "Tiers / responsables";
+	public static String REPORTING_DATASET_PROVISION_PRODUCTION = "Production : prestations";
+	public static String REPORTING_DATASET_RECOVERY = "Recouvrement";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;

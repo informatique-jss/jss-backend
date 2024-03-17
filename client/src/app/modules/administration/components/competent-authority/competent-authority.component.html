@@ -16,15 +16,15 @@
     </table>
   </div>
   <div class="table-container-scroll" *ngIf="!idCompetentAuthority">
-    <sort-table [idRowSelected]="selectedCompetentAuthorityId" [columns]="displayedColumns"
-      (onRowClick)="selectCompetentAuthority($event)" [values]="filteredCompetentAuthorities"
+    <sort-table [idRowSelected]="selectedCompetentAuthorityId" [columns]="displayedColumns" [noPaddingBottom]="true"
+      [noMaxHeight]="true" (onRowClick)="selectCompetentAuthority($event)" [values]="filteredCompetentAuthorities"
       tableName="Autorités compétentes" [filterText]="searchText">
     </sort-table>
   </div>
 
   <div class="mat-elevation-z2 form-div" *ngIf="selectedcompetentAuthority ">
     <form [formGroup]="entityForm2">
-      <mat-tab-group animationDuration="0ms">
+      <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
         <mat-tab label="Fiche de l'autorité compétente">
           <div class="full-width">
             <fieldset [disabled]="editMode==false" class="fieldset-no-border">
@@ -270,6 +270,12 @@
         </mat-tab>
         <mat-tab label="Pointage des relevés" *ngIf="selectedcompetentAuthority.id">
           <receipt-reconciliation [provider]="selectedcompetentAuthority"></receipt-reconciliation>
+        </mat-tab>
+        <mat-tab label="Factures" *ngIf="selectedcompetentAuthority.id">
+          <ng-template matTabContent>
+            <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
+              [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+          </ng-template>
         </mat-tab>
         <mat-tab label=" Documents" *ngIf="selectedcompetentAuthority.id">
           <attachments [entity]="selectedcompetentAuthority" [editMode]="editMode"

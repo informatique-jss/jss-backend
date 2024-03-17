@@ -167,8 +167,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 accountingAccountProduct
                                 .setPrincipalAccountingAccount(constantService.getPrincipalAccountingAccountProduct());
                 accountingAccountProduct.setAccountingAccountSubNumber(maxSubAccount);
-                accountingAccountProduct.setLabel(
-                                "Produit - " + (billingType.getLabel() != null ? billingType.getLabel() : ""));
+                accountingAccountProduct.setLabel((billingType.getLabel() != null ? billingType.getLabel() : ""));
                 addOrUpdateAccountingAccount(accountingAccountProduct);
                 accountingAccountBinome.setAccountingAccountProduct(accountingAccountProduct);
 
@@ -177,7 +176,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                                 .setPrincipalAccountingAccount(constantService.getPrincipalAccountingAccountCharge());
                 accountingAccountCharge.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountCharge
-                                .setLabel("Charge - " + (billingType.getLabel() != null ? billingType.getLabel() : ""));
+                                .setLabel((billingType.getLabel() != null ? billingType.getLabel() : ""));
                 addOrUpdateAccountingAccount(accountingAccountCharge);
                 accountingAccountBinome.setAccountingAccountCharge(accountingAccountCharge);
 
@@ -226,38 +225,6 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         }
 
         @Override
-        public AccountingAccount getProfitAccountingAccount() throws OsirisException {
-                List<AccountingAccount> waitingAccountingAccounts = accountingAccountRepository
-                                .findByPrincipalAccountingAccount(
-                                                constantService.getPrincipalAccountingAccountProfit());
-
-                if (waitingAccountingAccounts == null || waitingAccountingAccounts.size() == 0)
-                        throw new OsirisException(null, "Profit accounting account not found");
-
-                if (waitingAccountingAccounts.size() > 1)
-                        throw new OsirisException(null,
-                                        "Multiple waiting accounting account found for profit accounting account ");
-
-                return waitingAccountingAccounts.get(0);
-        }
-
-        @Override
-        public AccountingAccount getLostAccountingAccount() throws OsirisException {
-                List<AccountingAccount> waitingAccountingAccounts = accountingAccountRepository
-                                .findByPrincipalAccountingAccount(
-                                                constantService.getPrincipalAccountingAccountLost());
-
-                if (waitingAccountingAccounts == null || waitingAccountingAccounts.size() == 0)
-                        throw new OsirisException(null, "Lost accounting account not found");
-
-                if (waitingAccountingAccounts.size() > 1)
-                        throw new OsirisException(null,
-                                        "Multiple waiting accounting account found for lost accounting account ");
-
-                return waitingAccountingAccounts.get(0);
-        }
-
-        @Override
         public AccountingAccount updateAccountingAccountLabel(AccountingAccount accountingAccount, String label)
                         throws OsirisException {
 
@@ -279,5 +246,10 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                         addOrUpdateAccountingAccount(accountingAccount);
                 }
                 return accountingAccount;
+        }
+
+        @Override
+        public void deleteAccountingAccount(AccountingAccount accountingAccount) {
+                accountingAccountRepository.delete(accountingAccount);
         }
 }

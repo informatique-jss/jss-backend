@@ -17,6 +17,7 @@ public class AccountingRecordSearch {
   private Integer idInvoice;
   private Integer idRefund;
   private Integer idBankTransfert;
+  private Boolean isFromAs400;
 
   public AccountingAccountClass getAccountingClass() {
     return accountingClass;
@@ -120,6 +121,14 @@ public class AccountingRecordSearch {
 
   public void setIdBankTransfert(Integer idBankTransfert) {
     this.idBankTransfert = idBankTransfert;
+  }
+
+  public Boolean getIsFromAs400() {
+    return isFromAs400;
+  }
+
+  public void setIsFromAs400(Boolean isFromAs400) {
+    this.isFromAs400 = isFromAs400;
   }
 
 }

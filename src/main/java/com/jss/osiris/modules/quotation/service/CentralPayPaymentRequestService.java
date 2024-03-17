@@ -13,6 +13,8 @@ import com.jss.osiris.modules.quotation.model.Quotation;
 public interface CentralPayPaymentRequestService {
         public List<CentralPayPaymentRequest> getCentralPayPaymentRequests();
 
+        public CentralPayPaymentRequest getCentralPayPaymentRequest(Integer id);
+
         public CentralPayPaymentRequest addOrUpdateCentralPayPaymentRequest(
                         CentralPayPaymentRequest centralPayPaymentRequest);
 
@@ -22,6 +24,10 @@ public interface CentralPayPaymentRequestService {
                         Quotation quotation);
 
         public void checkAllPaymentRequests()
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
+
+        public void checkPaymentRequest(CentralPayPaymentRequest request)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 

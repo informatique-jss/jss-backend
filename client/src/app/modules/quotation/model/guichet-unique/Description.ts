@@ -8,7 +8,7 @@ export interface Description {
   objet: string;
   sigle: string;
   duree: number;
-  dateClotureExerciceSocial: Date;
+  dateClotureExerciceSocial: String;
   datePremiereCloture: Date;
   ess: boolean;
   societeMission: boolean;

@@ -6,7 +6,8 @@
   </div>
   <div class="table-container-scroll">
     <sort-table [columns]="displayedColumns" (onRowClick)="selectEntity($event)" [values]="entities"
-      tableName="Référentiel" [idRowSelected]="idRowSelected" [filterText]="searchText">
+      [noMaxHeight]="true" [noPaddingBottom]="true" tableName="Référentiel" [idRowSelected]="idRowSelected"
+      [filterText]="searchText">
     </sort-table>
   </div>
 </div>
@@ -29,7 +30,7 @@
           </tr>
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="100"
+              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="200"
                 [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
             </td>
           </tr>

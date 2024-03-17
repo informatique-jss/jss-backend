@@ -5,6 +5,7 @@ import { FormaliteStatusHistoryItem } from "./FormaliteStatusHistoryItem";
 import { ValidationRequest } from "./ValidationRequest";
 import { DiffusionINSEE } from "./referentials/DiffusionINSEE";
 import { FormeJuridique } from "./referentials/FormeJuridique";
+import { Status } from "./referentials/Status";
 import { TypeFormalite } from "./referentials/TypeFormalite";
 import { TypePersonne } from "./referentials/TypePersonne";
 
@@ -36,6 +37,9 @@ export interface FormaliteGuichetUnique {
   created: string;
   isFormality: boolean;
   isAnnualAccounts: boolean;
+  isActeDeposit: boolean;
   validationsRequests: ValidationRequest[];
   formaliteStatusHistoryItems: FormaliteStatusHistoryItem[];
+  status: Status;
+  isAuthorizedToSign: boolean;
 }

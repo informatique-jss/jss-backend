@@ -5,7 +5,6 @@ public class GuichetUniqueUploadedFile {
     private Integer id;
     private String nomDocument;
     private String typeDocument;
-    private String numeroPiece;
     private String documentBase64;
     private String documentExtension;
     private String path;
@@ -24,14 +23,6 @@ public class GuichetUniqueUploadedFile {
 
     public void setTypeDocument(String typeDocument) {
         this.typeDocument = typeDocument;
-    }
-
-    public String getNumeroPiece() {
-        return numeroPiece;
-    }
-
-    public void setNumeroPiece(String numeroPiece) {
-        this.numeroPiece = numeroPiece;
     }
 
     public String getDocumentBase64() {

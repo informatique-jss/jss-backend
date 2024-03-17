@@ -23,7 +23,6 @@ import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.AssignationType;
-import com.jss.osiris.modules.quotation.model.BodaccPublicationType;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
@@ -36,7 +35,9 @@ import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
+import com.jss.osiris.modules.tiers.model.RffFrequency;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersCategory;
 import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
@@ -128,6 +129,8 @@ public interface ConstantService {
     public BillingType getBillingTypeDeboursNonTaxable() throws OsirisException;
 
     public BillingType getBillingTypeCentralPayFees() throws OsirisException;
+
+    public BillingType getBillingTypeRff() throws OsirisException;
 
     public BillingType getBillingTypeLogo() throws OsirisException;
 
@@ -241,18 +244,6 @@ public interface ConstantService {
 
     public MailRedirectionType getMailRedirectionTypeOther() throws OsirisException;
 
-    public BodaccPublicationType getBodaccPublicationTypeMerging() throws OsirisException;
-
-    public BodaccPublicationType getBodaccPublicationTypeSplit() throws OsirisException;
-
-    public BodaccPublicationType getBodaccPublicationTypePartialSplit() throws OsirisException;
-
-    public BodaccPublicationType getBodaccPublicationTypePossessionDispatch() throws OsirisException;
-
-    public BodaccPublicationType getBodaccPublicationTypeEstateRepresentativeDesignation() throws OsirisException;
-
-    public BodaccPublicationType getBodaccPublicationTypeSaleOfBusiness() throws OsirisException;
-
     public ActType getActTypeSeing() throws OsirisException;
 
     public ActType getActTypeAuthentic() throws OsirisException;
@@ -292,6 +283,10 @@ public interface ConstantService {
     public CompetentAuthorityType getCompetentAuthorityTypeDireccte() throws OsirisException;
 
     public CompetentAuthorityType getCompetentAuthorityTypePrefecture() throws OsirisException;
+
+    public CompetentAuthorityType getCompetentAuthorityTypeSpfe() throws OsirisException;
+
+    public CompetentAuthorityType getCompetentAuthorityTypeInsee() throws OsirisException;
 
     public InvoiceStatus getInvoiceStatusSend() throws OsirisException;
 
@@ -367,9 +362,9 @@ public interface ConstantService {
 
     public PrincipalAccountingAccount getPrincipalAccountingAccountWaiting() throws OsirisException;
 
-    public PrincipalAccountingAccount getPrincipalAccountingAccountLost() throws OsirisException;
+    public AccountingAccount getAccountingAccountLost() throws OsirisException;
 
-    public PrincipalAccountingAccount getPrincipalAccountingAccountProfit() throws OsirisException;
+    public AccountingAccount getAccountingAccountProfit() throws OsirisException;
 
     public AccountingAccount getAccountingAccountBankCentralPay() throws OsirisException;
 
@@ -386,4 +381,12 @@ public interface ConstantService {
     public Provider getProviderCentralPay() throws OsirisException;
 
     public TiersFollowupType getTiersFollowupTypeInvoiceReminder() throws OsirisException;
+
+    public TiersCategory getTiersCategoryPresse() throws OsirisException;
+
+    public RffFrequency getRffFrequencyAnnual() throws OsirisException;
+
+    public RffFrequency getRffFrequencyMonthly() throws OsirisException;
+
+    public RffFrequency getRffFrequencyQuarterly() throws OsirisException;
 }

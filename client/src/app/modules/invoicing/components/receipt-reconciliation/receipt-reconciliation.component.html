@@ -1,7 +1,8 @@
 <div class="form-div">
   <div class="table-container-scroll" *ngIf="attachments">
     <sort-table [idRowSelected]="selectedAttachmentId" [columns]="displayedColumns" (onRowClick)="selectReceipt($event)"
-      [actions]="tableActions" [values]="attachments" tableName="Relevés de compte fournissuers">
+      [noMaxHeight]="true" [noPaddingBottom]="true" [actions]="tableActions" [values]="attachments"
+      tableName="Relevés de compte fournissuers">
     </sort-table>
   </div>
   <div *ngIf="selectedAzureReceipt" class="flex-card">

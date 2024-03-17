@@ -71,6 +71,10 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
         )
       ).subscribe(response => {
         this.filteredTypes = this.mapResponse(response);
+
+        if (this.filteredTypes)
+          this.filteredTypes.sort((a, b) => this.displayLabel(a).localeCompare(this.displayLabel(b)));
+
         this.isLoading = false;
         if (!this.isDisabled && !this.doNotOpenTwice)
           this.trigger?.openPanel();
@@ -100,13 +104,13 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
       const fieldValue = root.get(this.propertyName)?.value;
       if (this.form && this.form!.get(this.propertyName)) {
         if (this.conditionnalRequired != undefined) {
-          if (this.conditionnalRequired && (!fieldValue || fieldValue[this.fieldToCheckAgainstForValidation] == null)) {
+          if (this.conditionnalRequired && !this.byPassAutocompletValidator && (!fieldValue || fieldValue[this.fieldToCheckAgainstForValidation] == null)) {
             this.form!.get(this.propertyName)!.setErrors({ notFilled: this.propertyName });
             return {
               notFilled: this.propertyName
             };
           }
-        } else if (this.isMandatory && (!fieldValue || fieldValue[this.fieldToCheckAgainstForValidation] == null)) {
+        } else if (this.isMandatory && !this.byPassAutocompletValidator && (!fieldValue || fieldValue[this.fieldToCheckAgainstForValidation] == null)) {
           this.form!.get(this.propertyName)!.setErrors({ notFilled: this.propertyName });
           return {
             notFilled: this.propertyName

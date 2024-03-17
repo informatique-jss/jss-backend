@@ -1,6 +1,7 @@
 import { CustomerOrderOrigin } from "../../miscellaneous/model/CustomerOrderOrigin";
 import { IAttachment } from "../../miscellaneous/model/IAttachment";
 import { IDocument } from "../../miscellaneous/model/IDocument";
+import { QuotationAbandonReason } from "../../miscellaneous/model/QuotationAbandonReason";
 import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
 import { Employee } from '../../profile/model/Employee';
 import { Responsable } from "../../tiers/model/Responsable";
@@ -15,10 +16,10 @@ export interface IQuotation extends IAttachment, IDocument {
   responsable: Responsable | undefined;
   confrere: Confrere | undefined;
   specialOffers: SpecialOffer[] | undefined;
-  overrideSpecialOffer: boolean;
   createdDate: Date;
   observations: string;
   description: string;
+  instructions: string;
   isQuotation: boolean;
   assoAffaireOrders: AssoAffaireOrder[];
   firstReminderDateTime: Date;
@@ -26,4 +27,5 @@ export interface IQuotation extends IAttachment, IDocument {
   thirdReminderDateTime: Date;
   customerMailCustomMessage: string;
   customerOrderOrigin: CustomerOrderOrigin;
+  abandonReason: QuotationAbandonReason;
 }

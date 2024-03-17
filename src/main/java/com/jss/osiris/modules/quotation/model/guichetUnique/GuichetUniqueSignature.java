@@ -1,11 +1,16 @@
 package com.jss.osiris.modules.quotation.model.guichetUnique;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonInclude(Include.NON_NULL)
 public class GuichetUniqueSignature {
     private String formality;
     private String annualAccount;
     private String acteDeposit;
     private String association;
     private String signedDocument;
+    private String beSignedDocument;
 
     public String getFormality() {
         return formality;
@@ -45,6 +50,14 @@ public class GuichetUniqueSignature {
 
     public void setSignedDocument(String signedDocument) {
         this.signedDocument = signedDocument;
+    }
+
+    public String getBeSignedDocument() {
+        return beSignedDocument;
+    }
+
+    public void setBeSignedDocument(String beSignedDocument) {
+        this.beSignedDocument = beSignedDocument;
     }
 
 }

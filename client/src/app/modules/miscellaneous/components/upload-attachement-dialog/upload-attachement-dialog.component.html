@@ -6,24 +6,32 @@
       <h3>Glissez/déposez votre fichier ici</h3>
       <h3>ou</h3>
       <label for="fileDropRef" class="upload-label" color="warn">Recherchez sur votre ordinateur</label>
-      <p class="max-size">(5 Mo max.)</p>
+      <p class="max-size">(10 Mo max.)</p>
     </div>
     <select-attachment-type *ngIf="file!=null" [(model)]="attachmentType" label="Type de fichier"
       [form]="attachmentForm" propertyName="attachmentType" [isMandatory]="true"
       [isDisabled]="forcedAttachmentType!=undefined"></select-attachment-type>
-    <generic-input *ngIf="file!=null" [(model)]="filename" label="Nom du fichier" [form]="attachmentForm"
-      propertyName="filename" [isMandatory]="true" [isDisabled]="false" [maxLength]="250"></generic-input>
-    <div *ngIf="file!=null">
-      <mat-list>
-        <mat-list-item>
-          <mat-icon color="accent" mat-list-icon (click)="deleteFile()" class="pointer"
-            *ngIf="!isSending">delete_forever</mat-icon>
-          <div mat-line> {{ file?.name }} ({{ formatBytes(file?.size,2) }})</div>
-          <div mat-line>
-            <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
-          </div>
-        </mat-list-item>
-      </mat-list>
+    <table class="full-width">
+      <tr>
+        <td>
+          <generic-input *ngIf="file!=null" [(model)]="filename" label="Nom du fichier" [form]="attachmentForm"
+            propertyName="filename" [isMandatory]="true" [isDisabled]="false" [maxLength]="250"></generic-input>
+        </td>
+        <td>
+          <generic-input *ngIf="file!=null && filename &&  filename.toLowerCase().substring(filename.length-3)=='pdf'"
+            [(model)]="pageSelection" label="Plage de page" [form]="attachmentForm" propertyName="pageSelection"
+            [isMandatory]="false" [isDisabled]="false"
+            hint="Plage de pages au format 1-3,4-6 (seulement pour les fichiers non signés)"></generic-input>
+        </td>
+      </tr>
+    </table>
+    <div *ngIf="file!=null" class="list-div">
+      <mat-icon color="accent" mat-list-icon (click)="deleteFile()" class="pointer"
+        *ngIf="!isSending">delete_forever</mat-icon>
+      <div mat-line> {{ file?.name }} ({{ formatBytes(file?.size,2) }})</div>
+      <div mat-line>
+        <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
+      </div>
     </div>
     <div align="center" class="send-button" *ngIf="file!=null && attachmentType!=null && !isSending"
       (click)="uploadFile()"> <button mat-raised-button color="warn">Uploader le fichier</button></div>

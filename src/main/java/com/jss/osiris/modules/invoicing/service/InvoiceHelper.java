@@ -232,7 +232,9 @@ public class InvoiceHelper {
 
     public String getIbanOfOrderingCustomer(Invoice invoice) {
         if (invoice != null) {
-            if (invoice.getTiers() != null)
+            if (invoice.getRff() != null) {
+                return invoice.getRff().getRffIban();
+            } else if (invoice.getTiers() != null)
                 return invoice.getTiers().getPaymentIban();
             if (invoice.getResponsable() != null)
                 return invoice.getResponsable().getTiers().getPaymentIban();
@@ -248,7 +250,9 @@ public class InvoiceHelper {
 
     public String getBicOfOrderingCustomer(Invoice invoice) {
         if (invoice != null) {
-            if (invoice.getTiers() != null)
+            if (invoice.getRff() != null) {
+                return invoice.getRff().getRffBic();
+            } else if (invoice.getTiers() != null)
                 return invoice.getTiers().getPaymentBic();
             if (invoice.getResponsable() != null)
                 return invoice.getResponsable().getTiers().getPaymentBic();

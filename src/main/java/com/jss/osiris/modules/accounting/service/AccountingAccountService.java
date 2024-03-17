@@ -13,6 +13,8 @@ public interface AccountingAccountService {
 
         public AccountingAccount getAccountingAccount(Integer id);
 
+        public void deleteAccountingAccount(AccountingAccount accountingAccount);
+
         public AccountingAccount addOrUpdateAccountingAccountFromUser(AccountingAccount accountingAccount)
                         throws OsirisException;
 
@@ -37,10 +39,6 @@ public interface AccountingAccountService {
         public AccountingAccount getWaitingAccountingAccount() throws OsirisException;
 
         public AccountingAccount generateAccountingAccountsForProduct(String label) throws OsirisException;
-
-        public AccountingAccount getProfitAccountingAccount() throws OsirisException;
-
-        public AccountingAccount getLostAccountingAccount() throws OsirisException;
 
         public AccountingAccount updateAccountingAccountLabel(AccountingAccount accountingAccount, String label)
                         throws OsirisException;

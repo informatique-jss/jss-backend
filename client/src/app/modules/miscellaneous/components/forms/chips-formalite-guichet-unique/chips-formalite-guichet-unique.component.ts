@@ -78,6 +78,8 @@ export class ChipsFormaliteGuichetUniqueComponent extends GenericChipsComponent<
       window.open(GUICHET_UNIQUE_BASE_URL + formalite.id, "_blank");
     if (formalite.isAnnualAccounts)
       window.open(GUICHET_UNIQUE_BASE_URL + "annual-accounts/" + formalite.id, "_blank");
+    if (formalite.isActeDeposit)
+      window.open(GUICHET_UNIQUE_BASE_URL + "acte-deposits/" + formalite.id, "_blank");
     return;
   }
 

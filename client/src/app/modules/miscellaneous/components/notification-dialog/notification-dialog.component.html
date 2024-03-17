@@ -29,7 +29,7 @@
       <tr>
         <td>
           <div>
-            <mat-tab-group animationDuration="0ms">
+            <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
               <mat-tab [label]="getTabLabel(QUOTATION_ENTITY_TYPE)"
                 *ngIf="getEntitiesForTab(QUOTATION_ENTITY_TYPE).length>0">
                 <mat-dialog-content class="mat-content">

@@ -32,7 +32,6 @@ import com.jss.osiris.modules.miscellaneous.repository.ConstantRepository;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.AssignationType;
-import com.jss.osiris.modules.quotation.model.BodaccPublicationType;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
@@ -45,7 +44,9 @@ import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
+import com.jss.osiris.modules.tiers.model.RffFrequency;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
+import com.jss.osiris.modules.tiers.model.TiersCategory;
 import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
@@ -281,6 +282,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public BillingType getBillingTypeCentralPayFees() throws OsirisException {
         return getConstants().getBillingTypeCentralPayFees();
+    }
+
+    @Override
+    public BillingType getBillingTypeRff() throws OsirisException {
+        return getConstants().getBillingTypeRff();
     }
 
     @Override
@@ -564,36 +570,6 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public BodaccPublicationType getBodaccPublicationTypeMerging() throws OsirisException {
-        return getConstants().getBodaccPublicationTypeMerging();
-    }
-
-    @Override
-    public BodaccPublicationType getBodaccPublicationTypeSplit() throws OsirisException {
-        return getConstants().getBodaccPublicationTypeSplit();
-    }
-
-    @Override
-    public BodaccPublicationType getBodaccPublicationTypePartialSplit() throws OsirisException {
-        return getConstants().getBodaccPublicationTypePartialSplit();
-    }
-
-    @Override
-    public BodaccPublicationType getBodaccPublicationTypePossessionDispatch() throws OsirisException {
-        return getConstants().getBodaccPublicationTypePossessionDispatch();
-    }
-
-    @Override
-    public BodaccPublicationType getBodaccPublicationTypeEstateRepresentativeDesignation() throws OsirisException {
-        return getConstants().getBodaccPublicationTypeEstateRepresentativeDesignation();
-    }
-
-    @Override
-    public BodaccPublicationType getBodaccPublicationTypeSaleOfBusiness() throws OsirisException {
-        return getConstants().getBodaccPublicationTypeSaleOfBusiness();
-    }
-
-    @Override
     public ActType getActTypeSeing() throws OsirisException {
         return getConstants().getActTypeSeing();
     }
@@ -686,6 +662,16 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public CompetentAuthorityType getCompetentAuthorityTypePrefecture() throws OsirisException {
         return getConstants().getCompetentAuthorityTypePrefecture();
+    }
+
+    @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeSpfe() throws OsirisException {
+        return getConstants().getCompetentAuthorityTypeSpfe();
+    }
+
+    @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeInsee() throws OsirisException {
+        return getConstants().getCompetentAuthorityTypeInsee();
     }
 
     @Override
@@ -874,13 +860,13 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public PrincipalAccountingAccount getPrincipalAccountingAccountLost() throws OsirisException {
-        return getConstants().getPrincipalAccountingAccountLost();
+    public AccountingAccount getAccountingAccountLost() throws OsirisException {
+        return getConstants().getAccountingAccountLost();
     }
 
     @Override
-    public PrincipalAccountingAccount getPrincipalAccountingAccountProfit() throws OsirisException {
-        return getConstants().getPrincipalAccountingAccountProfit();
+    public AccountingAccount getAccountingAccountProfit() throws OsirisException {
+        return getConstants().getAccountingAccountProfit();
     }
 
     @Override
@@ -926,5 +912,25 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public TiersFollowupType getTiersFollowupTypeInvoiceReminder() throws OsirisException {
         return getConstants().getTiersFollowupTypeInvoiceReminder();
+    }
+
+    @Override
+    public TiersCategory getTiersCategoryPresse() throws OsirisException {
+        return getConstants().getTiersCategoryPresse();
+    }
+
+    @Override
+    public RffFrequency getRffFrequencyAnnual() throws OsirisException {
+        return getConstants().getRffFrequencyAnnual();
+    }
+
+    @Override
+    public RffFrequency getRffFrequencyMonthly() throws OsirisException {
+        return getConstants().getRffFrequencyMonthly();
+    }
+
+    @Override
+    public RffFrequency getRffFrequencyQuarterly() throws OsirisException {
+        return getConstants().getRffFrequencyQuarterly();
     }
 }

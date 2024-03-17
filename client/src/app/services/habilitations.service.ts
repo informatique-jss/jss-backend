@@ -11,6 +11,14 @@ export class HabilitationsService {
   ) {
   }
 
+  isAdministrator() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
+  canDisplayExtendentMonitoring() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
   canViewDashboardModule() {
     return true;
   }
@@ -67,6 +75,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
   }
 
+  canAddCreditNoteForCustomerOrderInvoice() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
   canAddNewInvoice() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
@@ -107,6 +119,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
+  canMovePaymentToWaitingAccount() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
   canCancelBankTransfert() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
@@ -121,6 +137,18 @@ export class HabilitationsService {
 
   canImportInfogreffeInvoice() {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
+
+  canByPassMultipleCustomerOrderOnAssociationCheck() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
+
+  canPutNegativePaymentIntoAccount() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
+
+  canReinitInvoicing() {
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 }
 

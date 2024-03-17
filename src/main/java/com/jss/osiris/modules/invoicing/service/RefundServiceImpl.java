@@ -19,10 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.transfer.CstmrCdtTrfInitnBean;
 import com.jss.osiris.libs.transfer.DocumentBean;
 import com.jss.osiris.libs.transfer.GrpHdrBean;
@@ -64,9 +65,6 @@ public class RefundServiceImpl implements RefundService {
     @Autowired
     DocumentService documentService;
 
-    @Autowired
-    IndexEntityService indexEntityService;
-
     @Value("${jss.iban}")
     private String ibanJss;
 
@@ -81,6 +79,9 @@ public class RefundServiceImpl implements RefundService {
 
     @Autowired
     PaymentService paymentService;
+
+    @Autowired
+    BatchService batchService;
 
     @Override
     public List<Refund> getRefunds() {
@@ -97,19 +98,19 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     public Refund addOrUpdateRefund(
-            Refund refund) {
+            Refund refund) throws OsirisException {
         refundRepository.save(refund);
-        indexEntityService.indexEntity(refund);
+        batchService.declareNewBatch(Batch.REINDEX_REFUND, refund.getId());
         return refund;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reindexRefunds() {
+    public void reindexRefunds() throws OsirisException {
         List<Refund> refunds = getRefunds();
         if (refunds != null)
             for (Refund refund : refunds)
-                indexEntityService.indexEntity(refund);
+                batchService.declareNewBatch(Batch.REINDEX_REFUND, refund.getId());
     }
 
     @Override
@@ -118,11 +119,14 @@ public class RefundServiceImpl implements RefundService {
             refundSearch.setStartDate(LocalDateTime.now().minusYears(100));
         if (refundSearch.getEndDate() == null)
             refundSearch.setEndDate(LocalDateTime.now().plusYears(100));
+        if (refundSearch.getIdRefund() == null)
+            refundSearch.setIdRefund(0);
         return refundRepository.findRefunds(
                 refundSearch.getStartDate().withHour(0).withMinute(0),
                 refundSearch.getEndDate().withHour(23).withMinute(59), refundSearch.getMinAmount(),
                 refundSearch.getMaxAmount(),
-                refundSearch.getLabel(), refundSearch.isHideExportedRefunds(), refundSearch.isHideMatchedRefunds());
+                refundSearch.getLabel(), refundSearch.isHideExportedRefunds(), refundSearch.isHideMatchedRefunds(),
+                refundSearch.getIdRefund());
     }
 
     @Override
@@ -198,7 +202,8 @@ public class RefundServiceImpl implements RefundService {
         if (customerOrder == null) // If it's a payment / appoint refund
             paymentService.cancelAppoint(payment);
 
-        accountingRecordGenerationService.generateAccountingRecordsForRefundGeneration(refund);
+        if (payment.getIsAppoint() == false)
+            accountingRecordGenerationService.generateAccountingRecordsForRefundGeneration(refund);
 
         return this.addOrUpdateRefund(refund);
     }

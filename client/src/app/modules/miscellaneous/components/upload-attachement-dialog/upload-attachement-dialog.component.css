@@ -8,7 +8,7 @@
 }
 
 .container {
-  width: 450px;
+  width: 615px;
   height: 200px;
   padding: 2rem;
   text-align: center;
@@ -46,4 +46,8 @@
 
 .max-size {
   padding-top: 20px
+}
+
+.list-div {
+  display: flex;
 }

@@ -32,4 +32,7 @@ export class InvoiceService extends AppRestService<Invoice>{
     return this.get(new HttpParams().set("azureInvoiceId", azureInvoiceId).set("provisionId", provisionId), "azure-invoice/create");
   }
 
+  createInvoiceFromRff(rffId: number) {
+    return this.get(new HttpParams().set("rffId", rffId), "rff/create");
+  }
 }

@@ -13,7 +13,6 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 @Entity
 public class ProvisionScreenType implements Serializable, IId {
 
-    public static String BODACC = "BODACC";
     public static String DOMICILIATION = "DOMICILIATION";
     public static String ANNOUNCEMENT = "ANNOUNCEMENT";
     public static String FORMALITE = "FORMALITE";

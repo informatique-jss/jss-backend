@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN, CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY, CUSTOMER_ORDER_BEING_PROCESSED, CUSTOMER_ORDER_BEING_PROCESSED_FROM_DEPOSIT, CUSTOMER_ORDER_CREATE, CUSTOMER_ORDER_TO_BE_BILLED, INVOICE_REMINDER_PAYMENT, PROVISION_ADD_ATTACHMENT, PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED, QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY, QUOTATION_CREATE, QUOTATION_REFUSED_BY_CUSOMER, QUOTATION_SENT, QUOTATION_VALIDATED_BY_CUSOMER, TIERS_DEPOSIT_MANDATORY } from 'src/app/libs/Constants';
 import { displayInTeams } from 'src/app/libs/MailHelper';
 import { EntityType } from 'src/app/routing/search/EntityType';
@@ -8,6 +9,7 @@ import { INVOICE_ENTITY_TYPE, PROVISION_ENTITY_TYPE, QUOTATION_ENTITY_TYPE, RESP
 import { PERSONNAL } from '../../../../libs/Constants';
 import { CUSTOMER_ORDER_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Notification } from '../../model/Notification';
 import { NotificationService } from '../../services/notification.service';
 import { AddNotificationDialogComponent } from '../add-notification-dialog/add-notification-dialog.component';
@@ -56,6 +58,7 @@ export class NotificationDialogComponent implements OnInit {
     public confirmationDialog: MatDialog,
     private appService: AppService,
     public newNotificationDialog: MatDialog,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   notificationForm = this.formBuilder.group({});
@@ -67,6 +70,7 @@ export class NotificationDialogComponent implements OnInit {
   ngOnInit() {
     this.displayFuture = this.notificationService.getIsDisplayFuture();
     this.notificationService.generateWindowsNotification();
+    this.restoreTab();
   }
 
   getTabLabel(entityType: EntityType): string {
@@ -231,5 +235,15 @@ export class NotificationDialogComponent implements OnInit {
   toggleDisplayFuture() {
     this.displayFuture = !this.displayFuture;
     this.notificationService.refreshNotifications(this.displayFuture);
+  }
+
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('notification-dialog', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('notification-dialog');
   }
 }

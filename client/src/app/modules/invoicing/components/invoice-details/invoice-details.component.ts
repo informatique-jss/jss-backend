@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { QuotationComponent } from 'src/app/modules/quotation/components/quotation/quotation.component';
@@ -7,11 +8,13 @@ import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { VatBase } from 'src/app/modules/quotation/model/VatBase';
+import { CustomerOrderService } from 'src/app/modules/quotation/services/customer.order.service';
 import { QuotationService } from 'src/app/modules/quotation/services/quotation.service';
 import { CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { instanceOfConfrere, instanceOfResponsable, instanceOfTiers } from '../../../../libs/TypeHelper';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { InvoiceService } from '../../services/invoice.service';
 import { getAffaireList, getAffaireListArray, getCustomerOrderForInvoice, getCustomerOrderNameForInvoice, getLetteringDate, getProviderLabelForInvoice, getRemainingToPay, getResponsableName } from '../invoice-tools';
@@ -36,6 +39,8 @@ export class InvoiceDetailsComponent implements OnInit {
     private constantService: ConstantService,
     private habilitationService: HabilitationsService,
     private quotationService: QuotationService,
+    private customerOrderService: CustomerOrderService,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
@@ -69,6 +74,7 @@ export class InvoiceDetailsComponent implements OnInit {
         this.appService.changeHeaderTitle("Facture/avoir n°" + idInvoice);
       this.invoiceService.getInvoiceById(idInvoice).subscribe(response => {
         this.invoice = response;
+        this.restoreTab();
         if (!this.isForIntegration)
           this.appService.changeHeaderTitle((this.invoice.isCreditNote || this.invoice.isProviderCreditNote ? "Avoir" : "Facture") + " n°" + idInvoice + " - " + this.invoice.invoiceStatus.label);
       })
@@ -210,6 +216,14 @@ export class InvoiceDetailsComponent implements OnInit {
     }
   }
 
+  generateCreditNoteForCustomerOrderInvoice(event: any) {
+    if (this.invoice && this.invoice.customerOrder) {
+      this.customerOrderService.generateCreditNoteForCustomerOrderInvoice(this.invoice, this.invoice.customerOrder).subscribe(response => {
+        this.appService.openRoute(null, 'invoicing/view/' + this.invoice!.id, undefined);
+      })
+    }
+  }
+
   canCancelInvoice() {
     return this.habilitationService.canCancelInvoice();
   }
@@ -221,9 +235,22 @@ export class InvoiceDetailsComponent implements OnInit {
     return false;
   }
 
+  canAddCreditNoteForCustomerOrderInvoice() {
+    return this.habilitationService.canAddCreditNoteForCustomerOrderInvoice();
+  }
+
   sendMailReminder() {
     if (this.invoice && this.invoice.customerOrder)
       this.quotationService.sendCustomerOrderFinalisationToCustomer(this.invoice.customerOrder).subscribe();
   }
 
+  //Tabs management
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('invoice-details', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('invoice-details');
+  }
 }

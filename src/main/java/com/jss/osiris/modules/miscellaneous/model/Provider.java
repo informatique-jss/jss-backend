@@ -84,6 +84,8 @@ public class Provider implements IAttachment, IGenericTiers {
 	@JoinColumn(name = "id_country")
 	private Country country;
 
+	private Integer idAs400;
+
 	public Integer getId() {
 		return id;
 	}
@@ -218,6 +220,14 @@ public class Provider implements IAttachment, IGenericTiers {
 
 	public void setCountry(Country country) {
 		this.country = country;
+	}
+
+	public Integer getIdAs400() {
+		return idAs400;
+	}
+
+	public void setIdAs400(Integer idAs400) {
+		this.idAs400 = idAs400;
 	}
 
 }

@@ -25,7 +25,6 @@ import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.invoicing.model.ICreatedDate;
@@ -147,12 +146,6 @@ public class BillingClosureReceiptDelegate {
                             || billingClosureDocument.getBillingClosureRecipientType().getId()
                                     .equals(constantService.getBillingClosureRecipientTypeOther().getId()))) {
 
-                if (tier instanceof Tiers) {
-                    List<CustomerMail> mails = customerMailService.getReceiptMailsForTiers((Tiers) tier);
-                    if (mails != null && mails.size() > 0)
-                        return null;
-                }
-
                 ArrayList<ITiers> tiers = new ArrayList<ITiers>();
                 if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
                     tiers.addAll(((Tiers) tier).getResponsables());
@@ -180,10 +173,6 @@ public class BillingClosureReceiptDelegate {
                 // Send to each responsable
                 if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
                     for (Responsable responsable : ((Tiers) tier).getResponsables()) {
-
-                        List<CustomerMail> mails = customerMailService.getReceiptMailsForResponsable(responsable);
-                        if (mails != null && mails.size() > 0)
-                            continue;
 
                         ArrayList<ITiers> tiers = new ArrayList<ITiers>();
                         tiers.add(responsable);
@@ -325,7 +314,7 @@ public class BillingClosureReceiptDelegate {
                 }
             } else {
                 // Order by affaire
-                ArrayList<Object> allInputs = new ArrayList<Object>();
+                ArrayList<ICreatedDate> allInputs = new ArrayList<ICreatedDate>();
                 if (customerOrders != null && customerOrders.size() > 0)
                     allInputs.addAll(customerOrders);
                 if (invoices != null && invoices.size() > 0)
@@ -333,33 +322,18 @@ public class BillingClosureReceiptDelegate {
 
                 if (allInputs.size() > 0) {
                     hadSomeValues = true;
-                    allInputs.sort(new Comparator<Object>() {
+                    allInputs.sort(new Comparator<ICreatedDate>() {
 
                         @Override
-                        public int compare(Object o1, Object o2) {
-                            Affaire affaire1 = null;
-                            Affaire affaire2 = null;
-                            if (o1 instanceof CustomerOrder)
-                                affaire1 = ((CustomerOrder) o1).getAssoAffaireOrders().get(0).getAffaire();
-                            if (o1 instanceof Invoice && ((Invoice) o1).getCustomerOrder() != null)
-                                affaire1 = ((Invoice) o1).getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
-                            if (o2 instanceof CustomerOrder)
-                                affaire2 = ((CustomerOrder) o2).getAssoAffaireOrders().get(0).getAffaire();
-                            if (o2 instanceof Invoice && ((Invoice) o2).getCustomerOrder() != null)
-                                affaire2 = ((Invoice) o2).getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
-
-                            if (affaire1 != null && affaire2 == null)
+                        public int compare(ICreatedDate o1, ICreatedDate o2) {
+                            if (o1 != null && o2 == null)
                                 return 1;
-                            if (affaire1 == null && affaire2 != null)
+                            if (o1 == null && o2 != null)
                                 return -1;
-                            if (affaire1 == null && affaire2 == null)
+                            if (o1 == null && o2 == null)
                                 return 0;
-
-                            if (affaire1 != null && affaire2 != null)
-                                return (affaire1.getDenomination() != null ? affaire1.getDenomination()
-                                        : (affaire1.getFirstname() + affaire1.getLastname()))
-                                        .compareTo((affaire2.getDenomination() != null ? affaire2.getDenomination()
-                                                : (affaire2.getFirstname() + affaire2.getLastname())));
+                            if (o1 != null && o2 != null)
+                                return o1.getCreatedDate().compareTo(o2.getCreatedDate());
                             return 0;
                         }
                     });
@@ -555,7 +529,7 @@ public class BillingClosureReceiptDelegate {
                     new FileInputStream(billingClosureReceipt), tiers.getId(),
                     tiersType, constantService.getAttachmentTypeBillingClosure(),
                     "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".pdf", false,
-                    "Relevé de compte du " + LocalDateTime.now().format(formatter));
+                    "Relevé de compte du " + LocalDateTime.now().format(formatter), null, null);
 
             for (Attachment attachment : attachmentsList)
                 if (attachment.getUploadedFile().getFilename()

@@ -45,6 +45,20 @@ export class AccountingBilanComponent implements OnInit {
     })
   }
 
+  setCurentMonth() {
+    let d = new Date();
+    this.accountingBalanceSearch.startDate = new Date(d.getFullYear(), d.getMonth(), 1, 12, 0, 0);
+    let d2 = new Date();
+    this.accountingBalanceSearch.endDate = new Date(d2.getFullYear(), d2.getMonth() + 1, 0, 12, 0, 0);
+  }
+
+  setCurentFiscalYear() {
+    let d = new Date();
+    this.accountingBalanceSearch.startDate = new Date(d.getFullYear(), 0, 1, 12, 0, 0);
+    let d2 = new Date();
+    this.accountingBalanceSearch.endDate = new Date(d2.getFullYear() + 1, 0, 0, 12, 0, 0);
+  }
+
   exportBilan() {
     if (this.accountingBalanceSearch.startDate && this.accountingBalanceSearch.endDate)
       this.accountingBalanceViewTitleService.exportBilan(this.accountingBalanceSearch.startDate, this.accountingBalanceSearch.endDate);

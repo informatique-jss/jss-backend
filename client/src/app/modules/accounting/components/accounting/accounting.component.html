@@ -1,14 +1,20 @@
 <div>
-  <mat-tab-group animationDuration="0ms" #tabs>
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab label="Ecritures">
-      <accounting-record>
-      </accounting-record>
+      <ng-template matTabContent>
+        <accounting-record>
+        </accounting-record>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Balances">
-      <accounting-balance></accounting-balance>
+      <ng-template matTabContent>
+        <accounting-balance></accounting-balance>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Balance générale">
-      <accounting-balance-generale></accounting-balance-generale>
+      <ng-template matTabContent>
+        <accounting-balance-generale></accounting-balance-generale>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Bilan" *ngIf="canDisplayBilan()">
       <accounting-bilan></accounting-bilan>

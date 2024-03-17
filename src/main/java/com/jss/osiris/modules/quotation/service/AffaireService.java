@@ -2,7 +2,9 @@ package com.jss.osiris.modules.quotation.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.Affaire;
 
 public interface AffaireService {
@@ -10,12 +12,25 @@ public interface AffaireService {
 
     public Affaire getAffaire(Integer id);
 
-    public Affaire addOrUpdateAffaire(Affaire affaire) throws OsirisDuplicateException;
+    public Affaire addOrUpdateAffaire(Affaire affaire) throws OsirisDuplicateException, OsirisException;
 
-    public void reindexAffaire();
+    public void reindexAffaire() throws OsirisException;
 
     public Affaire getAffaireBySiret(String siret);
 
     public List<Affaire> getAffairesBySiren(String siren);
+
+    public List<Affaire> getAffairesFromSiren(String siren) throws OsirisException, OsirisClientMessageException;
+
+    public List<Affaire> getAffairesFromSiret(String siret) throws OsirisException, OsirisClientMessageException;
+
+    public List<Affaire> getAffairesFromRna(String rna) throws OsirisException, OsirisClientMessageException;
+
+    public void updateAffairesFromRne() throws OsirisException, OsirisClientMessageException;
+
+    public void updateAffaireFromRne(Affaire affaire) throws OsirisException, OsirisClientMessageException;
+
+    public Affaire refreshAffaireFromRne(Affaire affaire)
+            throws OsirisException, OsirisClientMessageException, OsirisDuplicateException;
 
 }

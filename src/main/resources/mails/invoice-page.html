@@ -226,6 +226,15 @@
                 €
             </td>
         </tr>
+        <tr th:if="${refunds.size()>0}" th:each="refund : ${refunds}">
+            <td>
+                Remboursement <span th:text="${refund.label}"></span>
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                - <span th:text="${#numbers.formatDecimal(refund.refundAmount,1,2)}"></span>
+                €
+            </td>
+        </tr>
         <tr th:if="${remainingToPay!=null}">
             <td>
                 Reste à payer

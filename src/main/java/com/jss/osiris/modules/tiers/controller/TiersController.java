@@ -25,27 +25,43 @@ import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.miscellaneous.model.PhoneSearch;
+import com.jss.osiris.modules.miscellaneous.model.SalesComplain;
+import com.jss.osiris.modules.miscellaneous.model.SalesComplainCause;
+import com.jss.osiris.modules.miscellaneous.model.SalesComplainOrigin;
+import com.jss.osiris.modules.miscellaneous.model.SalesComplainProblem;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CountryService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
+import com.jss.osiris.modules.miscellaneous.service.SalesComplainCauseService;
+import com.jss.osiris.modules.miscellaneous.service.SalesComplainOriginService;
+import com.jss.osiris.modules.miscellaneous.service.SalesComplainProblemService;
+import com.jss.osiris.modules.miscellaneous.service.SalesComplainService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Competitor;
+import com.jss.osiris.modules.tiers.model.IResponsableSearchResult;
+import com.jss.osiris.modules.tiers.model.ITiersSearchResult;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.model.Rff;
+import com.jss.osiris.modules.tiers.model.RffFrequency;
+import com.jss.osiris.modules.tiers.model.RffSearch;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.model.TiersCategory;
 import com.jss.osiris.modules.tiers.model.TiersFollowup;
 import com.jss.osiris.modules.tiers.model.TiersFollowupType;
+import com.jss.osiris.modules.tiers.model.TiersSearch;
 import com.jss.osiris.modules.tiers.model.TiersType;
 import com.jss.osiris.modules.tiers.service.BillingClosureRecipientTypeService;
 import com.jss.osiris.modules.tiers.service.BillingClosureTypeService;
@@ -54,6 +70,8 @@ import com.jss.osiris.modules.tiers.service.CompetitorService;
 import com.jss.osiris.modules.tiers.service.PaymentDeadlineTypeService;
 import com.jss.osiris.modules.tiers.service.RefundTypeService;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
+import com.jss.osiris.modules.tiers.service.RffFrequencyService;
+import com.jss.osiris.modules.tiers.service.RffService;
 import com.jss.osiris.modules.tiers.service.SubscriptionPeriodTypeService;
 import com.jss.osiris.modules.tiers.service.TiersCategoryService;
 import com.jss.osiris.modules.tiers.service.TiersFollowupService;
@@ -134,6 +152,123 @@ public class TiersController {
 
   @Autowired
   InvoiceService invoiceService;
+
+  @Autowired
+  AffaireService affaireService;
+
+  @Autowired
+  RffService rffService;
+
+  @Autowired
+  RffFrequencyService rffFrequencyService;
+
+  @Autowired
+  SalesComplainCauseService salesComplainCauseService;
+
+  @Autowired
+  SalesComplainOriginService salesComplainOriginService;
+
+  @Autowired
+  SalesComplainProblemService salesComplainProblemService;
+
+  @Autowired
+  SalesComplainService salesComplainService;
+
+  @GetMapping(inputEntryPoint + "/rff-frequencies")
+  public ResponseEntity<List<RffFrequency>> getRffFrequencies() {
+    return new ResponseEntity<List<RffFrequency>>(rffFrequencyService.getRffFrequencies(), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/rff-frequency")
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  public ResponseEntity<RffFrequency> addOrUpdateRffFrequency(
+      @RequestBody RffFrequency rffFrequencies) throws OsirisValidationException, OsirisException {
+    if (rffFrequencies.getId() != null)
+      validationHelper.validateReferential(rffFrequencies, true, "rffFrequencies");
+    validationHelper.validateString(rffFrequencies.getCode(), true, "code");
+    validationHelper.validateString(rffFrequencies.getLabel(), true, "label");
+
+    return new ResponseEntity<RffFrequency>(rffFrequencyService.addOrUpdateRffFrequency(rffFrequencies), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/rffs")
+  public ResponseEntity<List<Rff>> getRffs(@RequestBody RffSearch rffSearch)
+      throws OsirisValidationException, OsirisException {
+    if (rffSearch == null)
+      throw new OsirisValidationException("rffSearch");
+
+    if (rffSearch.getStartDate() == null)
+      throw new OsirisValidationException("startDate");
+
+    if (rffSearch.getEndDate() == null)
+      throw new OsirisValidationException("endDate");
+    return new ResponseEntity<List<Rff>>(rffService.getRffs(rffSearch), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/rff")
+  public ResponseEntity<Rff> addOrUpdateRff(
+      @RequestBody Rff rffs) throws OsirisValidationException, OsirisException {
+    if (rffs.getId() != null)
+      validationHelper.validateReferential(rffs, true, "rffs");
+
+    return new ResponseEntity<Rff>(rffService.addOrUpdateRff(rffs), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/rff/cancel")
+  public ResponseEntity<Rff> cancelRff(@RequestParam Integer idRff) throws OsirisValidationException, OsirisException {
+    if (idRff == null)
+      throw new OsirisValidationException("idRff");
+
+    Rff rff = rffService.getRff(idRff);
+    if (rff == null)
+      throw new OsirisValidationException("Rff");
+
+    if (rff.getIsSent() == true || rff.getInvoices() != null && rff.getInvoices().size() > 0)
+      throw new OsirisValidationException("Rff");
+
+    return new ResponseEntity<Rff>(rffService.cancelRff(rff), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/rff/invoice")
+  public ResponseEntity<Invoice> generateInvoiceForRff(@RequestParam Integer idRff)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+    if (idRff == null)
+      throw new OsirisValidationException("idRff");
+
+    Rff rff = rffService.getRff(idRff);
+    if (rff == null)
+      throw new OsirisValidationException("Rff");
+
+    if (rff.getRffTotal() == null || rff.getRffTotal() <= 0f)
+      throw new OsirisValidationException("Rff");
+
+    if (rff.getIsCancelled() == true || rff.getIsSent() == false
+        || rff.getInvoices() != null && rff.getInvoices().size() > 0)
+      throw new OsirisValidationException("Rff");
+
+    return new ResponseEntity<Invoice>(rffService.generateInvoiceForRff(rff), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/rff/send")
+  public ResponseEntity<Rff> sendRff(@RequestParam Integer idRff, @RequestParam Float amount,
+      @RequestParam boolean sendToMe)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+    if (idRff == null)
+      throw new OsirisValidationException("idRff");
+
+    Rff rff = rffService.getRff(idRff);
+    if (rff == null)
+      throw new OsirisValidationException("Rff");
+
+    // if (amount == null || amount <= 0f || amount > (rff.getRffFormalite() +
+    // rff.getRffInsertion()))
+    // throw new OsirisValidationException("Rff");
+
+    if (rff.getIsCancelled() == true || rff.getIsSent() || rff.getInvoices() != null && rff.getInvoices().size() > 0)
+      throw new OsirisValidationException("Rff");
+
+    return new ResponseEntity<Rff>(rffService.sendRff(rff, amount, sendToMe), HttpStatus.OK);
+  }
 
   @GetMapping(inputEntryPoint + "/competitors")
   public ResponseEntity<List<Competitor>> getCompetitors() {
@@ -242,6 +377,18 @@ public class TiersController {
     return saveTiersFollomUp(tiersFollowup);
   }
 
+  @PostMapping(inputEntryPoint + "/tiers-followup/affaire")
+  public ResponseEntity<List<TiersFollowup>> addTiersFollowupForAffaire(@RequestBody TiersFollowup tiersFollowup,
+      @RequestParam Integer idAffaire)
+      throws OsirisValidationException, OsirisException {
+    Affaire affaire = affaireService.getAffaire(idAffaire);
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    tiersFollowup.setAffaire(affaire);
+    return saveTiersFollomUp(tiersFollowup);
+  }
+
   private ResponseEntity<List<TiersFollowup>> saveTiersFollomUp(TiersFollowup tiersFollowup)
       throws OsirisValidationException, OsirisException {
     validationHelper.validateReferential(tiersFollowup.getTiersFollowupType(), true, "TiersFollowupType");
@@ -315,6 +462,81 @@ public class TiersController {
   @GetMapping(inputEntryPoint + "/payment-deadline-types")
   public ResponseEntity<List<PaymentDeadlineType>> getPaymentDeadlineTypes() {
     return new ResponseEntity<List<PaymentDeadlineType>>(paymentDeadlineTypeService.getPaymentDeadlineTypes(),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/sales-complain-causes")
+  public ResponseEntity<List<SalesComplainCause>> getComplainCauses() {
+    return new ResponseEntity<List<SalesComplainCause>>(salesComplainCauseService.getComplainCauses(),
+        HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @PostMapping(inputEntryPoint + "/sales-complain-cause")
+  public ResponseEntity<SalesComplainCause> addOrUpdateComplainCause(
+      @RequestBody SalesComplainCause salesComplainCause) throws OsirisValidationException, OsirisException {
+    if (salesComplainCause.getId() != null)
+      validationHelper.validateReferential(salesComplainCause, true, "noticeTypes");
+    validationHelper.validateString(salesComplainCause.getCode(), true, 20, "code");
+    validationHelper.validateString(salesComplainCause.getLabel(), true, 200, "label");
+
+    return new ResponseEntity<SalesComplainCause>(
+        salesComplainCauseService.addOrUpdateComplainCause(salesComplainCause), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/sales-complain-origins")
+  public ResponseEntity<List<SalesComplainOrigin>> getComplainOrigins() {
+    return new ResponseEntity<List<SalesComplainOrigin>>(salesComplainOriginService.getComplainOrigins(),
+        HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @PostMapping(inputEntryPoint + "/sales-complain-origin")
+  public ResponseEntity<SalesComplainOrigin> addOrUpdateComplainOrigin(
+      @RequestBody SalesComplainOrigin salesComplainOrigin) throws OsirisValidationException, OsirisException {
+    if (salesComplainOrigin.getId() != null)
+      validationHelper.validateReferential(salesComplainOrigin, true, "noticeTypes");
+    validationHelper.validateString(salesComplainOrigin.getCode(), true, 20, "code");
+    validationHelper.validateString(salesComplainOrigin.getLabel(), true, 200, "label");
+
+    return new ResponseEntity<SalesComplainOrigin>(
+        salesComplainOriginService.addOrUpdateComplainOrigin(salesComplainOrigin), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/sales-complain-problems")
+  public ResponseEntity<List<SalesComplainProblem>> getComplainProblems() {
+    return new ResponseEntity<List<SalesComplainProblem>>(salesComplainProblemService.getComplainProblems(),
+        HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @PostMapping(inputEntryPoint + "/sales-complain-problem")
+  public ResponseEntity<SalesComplainProblem> addOrUpdateComplainProblem(
+      @RequestBody SalesComplainProblem salesComplainProblem) throws OsirisValidationException, OsirisException {
+    if (salesComplainProblem.getId() != null)
+      validationHelper.validateReferential(salesComplainProblem, true, "noticeTypes");
+    validationHelper.validateString(salesComplainProblem.getCode(), true, 20, "code");
+    validationHelper.validateString(salesComplainProblem.getLabel(), true, 200, "label");
+
+    return new ResponseEntity<SalesComplainProblem>(
+        salesComplainProblemService.addOrUpdateComplainProblem(salesComplainProblem), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/sales-complains")
+  public ResponseEntity<List<SalesComplain>> getComplainsByTiersId(@RequestParam Integer id)
+      throws OsirisValidationException {
+    if (id == null)
+      throw new OsirisValidationException("id");
+    return new ResponseEntity<List<SalesComplain>>(salesComplainService.getComplainsByTiersId(id),
+        HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @PostMapping(inputEntryPoint + "/sales-complain")
+  public ResponseEntity<SalesComplain> addOrUpdateComplain(@RequestBody SalesComplain salesComplain)
+      throws OsirisValidationException, OsirisException {
+
+    return new ResponseEntity<SalesComplain>(salesComplainService.addOrUpdateComplain(salesComplain),
         HttpStatus.OK);
   }
 
@@ -394,6 +616,39 @@ public class TiersController {
     return new ResponseEntity<Tiers>(tiersService.getTiersFromUser(id), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/tiers/delete")
+  public ResponseEntity<Boolean> deleteTiers(@RequestParam Integer idTiers)
+      throws OsirisValidationException, OsirisClientMessageException, OsirisException, OsirisDuplicateException {
+    if (idTiers == null)
+      throw new OsirisValidationException("idTiers");
+
+    Tiers tiers = tiersService.getTiers(idTiers);
+    if (tiers == null)
+      throw new OsirisValidationException("tiers");
+
+    return new ResponseEntity<Boolean>(tiersService.deleteTiers(tiers), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/responsable/search")
+  public ResponseEntity<List<IResponsableSearchResult>> getResponsableSearch(@RequestBody TiersSearch tiersSearch)
+      throws OsirisValidationException, OsirisException {
+    if (tiersSearch == null)
+      throw new OsirisValidationException("tiersSearch");
+
+    return new ResponseEntity<List<IResponsableSearchResult>>(responsableService.searchResponsables(tiersSearch),
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/search")
+  public ResponseEntity<List<ITiersSearchResult>> getTiersSearch(@RequestBody TiersSearch tiersSearch)
+      throws OsirisValidationException, OsirisException {
+    if (tiersSearch == null)
+      throw new OsirisValidationException("tiersSearch");
+
+    return new ResponseEntity<List<ITiersSearchResult>>(tiersService.searchTiers(tiersSearch),
+        HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/responsable")
   public ResponseEntity<Responsable> getResponsableById(@RequestParam Integer id) {
     return new ResponseEntity<Responsable>(responsableService.getResponsable(id), HttpStatus.OK);
@@ -442,6 +697,18 @@ public class TiersController {
     validationHelper.validateReferential(tiers.getCity(), true, "City");
 
     validationHelper.validateString(tiers.getIntercom(), false, 12, "Intercom");
+
+    validationHelper.validateReferential(tiers.getRffFrequency(),
+        tiers.getRffFormaliteRate() != null && tiers.getRffFormaliteRate() > 0
+            || tiers.getRffInsertionRate() != null && tiers.getRffInsertionRate() > 0,
+        "rffFrequency");
+
+    if (tiers.getRffFrequency() != null
+        && !tiers.getRffFrequency().getId().equals(constantService.getRffFrequencyAnnual().getId()))
+      if (tiers.getTiersCategory() == null
+          || !tiers.getTiersCategory().getId().equals(constantService.getTiersCategoryPresse().getId()))
+        throw new OsirisClientMessageException("La périodicité des RFF ne peut être que annuelle");
+
     if (tiers.getSpecialOffers() != null) {
       for (SpecialOffer specialOffer : tiers.getSpecialOffers()) {
         validationHelper.validateReferential(specialOffer, false, "specialOffer");
@@ -487,8 +754,8 @@ public class TiersController {
             "BillingClosureRecipientType");
         validationHelper.validateReferential(document.getBillingLabelCity(), false, "BillingLabelCity");
         validationHelper.validateReferential(document.getBillingLabelCountry(), false, "BillingLabelCountry");
-        validationHelper.validateString(document.getBillingAddress(), false, 100, "BillingAddress");
-        validationHelper.validateString(document.getBillingLabel(), false, 100, "BillingLabel");
+        validationHelper.validateString(document.getBillingAddress(), false, 200, "BillingAddress");
+        validationHelper.validateString(document.getBillingLabel(), false, 200, "BillingLabel");
         validationHelper.validateString(document.getBillingPostalCode(), false, 10, "BillingPostalCode");
         validationHelper.validateString(document.getCedexComplement(), false, 20, "CedexComplement");
 
@@ -507,6 +774,11 @@ public class TiersController {
         !tiers.getTiersType().getId().equals(constantService.getTiersTypeProspect().getId()), "PaymentType");
     validationHelper.validateIban(tiers.getPaymentIban(), false, "PaymentIBAN");
     validationHelper.validateBic(tiers.getPaymentBic(), false, "PaymentBic");
+    validationHelper.validateIban(tiers.getRffIban(), false, "RffIBAN");
+    validationHelper.validateBic(tiers.getRffBic(), false, "RffBic");
+    if (tiers.getRffMail() != null && tiers.getRffMail().length() > 0
+        && !validationHelper.validateMail(tiers.getRffMail()))
+      throw new OsirisValidationException("Mails rff");
 
     if (tiers.getPaymentType() != null
         && tiers.getPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())) {
@@ -538,6 +810,20 @@ public class TiersController {
         validationHelper.validateString(responsable.getBuilding(), false, 20, "Building");
         validationHelper.validateString(responsable.getFloor(), false, 20, "Floor");
         validationHelper.validateReferential(responsable.getSubscriptionPeriodType(), false, "SubscriptionPeriodType");
+        validationHelper.validateIban(responsable.getRffIban(), false, "RffIBAN");
+        validationHelper.validateBic(responsable.getRffBic(), false, "RffBic");
+        if (responsable.getRffMail() != null && responsable.getRffMail().length() > 0
+            && !validationHelper.validateMail(responsable.getRffMail()))
+          throw new OsirisValidationException("Mails rff");
+
+        boolean tiersGotRff = tiers.getRffFormaliteRate() != null && tiers.getRffFormaliteRate() > 0
+            || tiers.getRffInsertionRate() != null && tiers.getRffInsertionRate() > 0;
+
+        if (tiersGotRff || tiers.getTiersCategory() != null
+            && tiers.getTiersCategory().getId().equals(constantService.getTiersCategoryPresse().getId())) {
+          responsable.setRffFormaliteRate(null);
+          responsable.setRffInsertionRate(null);
+        }
 
         if (responsable.getDocuments() != null && responsable.getDocuments().size() > 0) {
           for (Document document : responsable.getDocuments()) {
@@ -557,8 +843,8 @@ public class TiersController {
             validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
             validationHelper.validateReferential(document.getBillingLabelCity(), false, "BillingLabelCity");
             validationHelper.validateReferential(document.getBillingLabelCountry(), false, "BillingLabelCountry");
-            validationHelper.validateString(document.getBillingAddress(), false, 100, "BillingAddress");
-            validationHelper.validateString(document.getBillingLabel(), false, 100, "BillingLabel");
+            validationHelper.validateString(document.getBillingAddress(), false, 200, "BillingAddress");
+            validationHelper.validateString(document.getBillingLabel(), false, 200, "BillingLabel");
             validationHelper.validateString(document.getBillingPostalCode(), false, 10, "BillingPostalCode");
             validationHelper.validateString(document.getCedexComplement(), false, 20, "CedexComplement");
 

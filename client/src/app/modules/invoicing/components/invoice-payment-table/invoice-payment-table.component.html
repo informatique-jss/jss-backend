@@ -8,10 +8,22 @@
     <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let payment of invoice.payments">
       <ng-container *ngIf="!payment.isCancelled">
         <td class="mat-mdc-cell mdc-data-table__cell ">
-          N°{{payment.id}} du {{formatDate(payment.paymentDate)}} (<span class="pointer"
-            (click)="movePayment(payment)">déplacer</span>) - {{payment.label}} <mat-icon color="accent"
-            (click)="openPaymentDialog(payment)" matTooltip="Voir le détail du paiement" color="accent"
-            class="pointer ">visibility</mat-icon>
+          <button matTooltip="Actions" mat-button color="accent" [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+            <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+              <button mat-menu-item (click)="movePayment(payment)">
+                <mat-icon>move_up</mat-icon><span>Déplacer le paiement</span>
+              </button>
+              <button mat-menu-item (click)="openPaymentDialog(payment)">
+                <mat-icon>visibility</mat-icon><span>Voir le détail du paiement</span>
+              </button>
+              <button mat-menu-item (click)="movePaymentToWaitingAccount(payment)"
+                *ngIf="canMovePaymentToWaitingAccount()">
+                <mat-icon>hourglass_empty</mat-icon><span>Déplacer dans le compte d'attente</span>
+              </button>
+            </mat-menu>
+          </button>
+          N°{{payment.id}} du {{formatDate(payment.paymentDate)}} - {{payment.label}}
         </td>
         <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
           {{payment.isAppoint ? -payment.paymentAmount : payment.paymentAmount}} € <span class="pointer"

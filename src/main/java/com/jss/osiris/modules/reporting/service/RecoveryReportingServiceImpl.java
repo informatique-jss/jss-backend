@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.reporting.service;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,11 +20,22 @@ public class RecoveryReportingServiceImpl implements RecoveryReportingService {
     @Autowired
     ConstantService constantService;
 
+    @Autowired
+    ReportingHelper<IRecoveryReporting> reportingHelper;
+
     @Override
-    public List<IRecoveryReporting> getRecoveryReporting() throws OsirisException {
-        return recoveryReportingRepository.getRecoveryReporting(constantService.getInvoiceStatusPayed().getId(),
-                constantService.getInvoiceStatusSend().getId(),
-                constantService.getTiersFollowupTypeInvoiceReminder().getId());
+    public ArrayList<HashMap<String, String>> getRecoveryReporting(ArrayList<String> columns) throws OsirisException {
+        return reportingHelper.filterOutputColumns(
+                recoveryReportingRepository.getRecoveryReporting(constantService.getInvoiceStatusPayed().getId(),
+                        constantService.getInvoiceStatusSend().getId(),
+                        constantService.getTiersFollowupTypeInvoiceReminder().getId()),
+                columns,
+                IRecoveryReporting.class.getDeclaredMethods());
+    }
+
+    @Override
+    public ArrayList<HashMap<String, String>> getFakeData() {
+        return reportingHelper.getFakeData(IRecoveryReporting.class.getDeclaredMethods());
     }
 
 }
