@@ -11,7 +11,6 @@ export class TiersSearchResultService extends AppRestService<TiersSearchResult>{
   constructor(http: HttpClient) {
     super(http, "tiers");
   }
-
   getTiersSearch(tiersSearch: TiersSearch) {
     return this.postList(new HttpParams(), "search", tiersSearch);
   }
