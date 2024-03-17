@@ -208,6 +208,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingRecordSearch.getHideLettered() == null)
       accountingRecordSearch.setHideLettered(false);
 
+    if (accountingRecordSearch.getIsFromAs400() == null)
+      accountingRecordSearch.setIsFromAs400(false);
+
     if (accountingRecordSearch.getTiersId() == null)
       accountingRecordSearch.setTiersId(0);
 
@@ -235,6 +238,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         accountingRecordSearch.getTiersId(),
         accountingRecordSearch.getConfrereId(),
         accountingRecordSearch.getHideLettered(),
+        accountingRecordSearch.getIsFromAs400(),
         accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
         accountingRecordSearch.getEndDate().withHour(23).withMinute(59),
         activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
@@ -256,12 +260,15 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     Integer principalAccountingAccountId = accountingBalanceSearch.getPrincipalAccountingAccount() != null
         ? accountingBalanceSearch.getPrincipalAccountingAccount().getId()
         : 0;
+    if (accountingBalanceSearch.getIsFromAs400() == null)
+      accountingBalanceSearch.setIsFromAs400(false);
     List<AccountingBalance> aa = accountingRecordRepository.searchAccountingBalance(
         accountingClassId,
         accountingAccountId, principalAccountingAccountId,
         accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
         accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
-        activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
+        activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+        accountingBalanceSearch.getIsFromAs400());
 
     return aa;
   }
@@ -277,12 +284,15 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     Integer principalAccountingAccountId = accountingBalanceSearch.getPrincipalAccountingAccount() != null
         ? accountingBalanceSearch.getPrincipalAccountingAccount().getId()
         : 0;
+    if (accountingBalanceSearch.getIsFromAs400() == null)
+      accountingBalanceSearch.setIsFromAs400(false);
     return accountingRecordRepository.searchAccountingBalanceGenerale(
         accountingClassId,
         accountingAccountId, principalAccountingAccountId,
         accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
         accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
-        activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
+        activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+        accountingBalanceSearch.getIsFromAs400());
 
   }
 
@@ -366,25 +376,29 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public File getAccountingBalanceExport(Integer accountingClassId, Integer principalAccountingAccountId,
-      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
+      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate, boolean isFromAs400)
+      throws OsirisException {
     List<AccountingBalance> accountingBalanceRecords = accountingRecordRepository.searchAccountingBalance(
         accountingClassId != null ? accountingClassId : 0,
         accountingAccountId != null ? accountingAccountId : 0,
         (principalAccountingAccountId != null && !principalAccountingAccountId.equals(0) ? principalAccountingAccountId
             : 0),
-        startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
+        startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+        isFromAs400);
     return accountingExportHelper.getBalance(accountingBalanceRecords, false, startDate, endDate);
   }
 
   @Override
   public File getAccountingBalanceGeneraleExport(Integer accountingClassId, Integer principalAccountingAccountId,
-      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
+      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate, boolean isFromAs400)
+      throws OsirisException {
     List<AccountingBalance> accountingBalanceRecords = accountingRecordRepository.searchAccountingBalanceGenerale(
         accountingClassId != null ? accountingClassId : 0,
         accountingAccountId != null ? accountingAccountId : 0,
         (principalAccountingAccountId != null && !principalAccountingAccountId.equals(0) ? principalAccountingAccountId
             : 0),
-        startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
+        startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+        isFromAs400);
     return accountingExportHelper.getBalance(accountingBalanceRecords, true, startDate, endDate);
   }
 

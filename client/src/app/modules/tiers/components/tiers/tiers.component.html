@@ -34,6 +34,17 @@
         </ordering-list>
       </ng-template>
     </mat-tab>
+    <mat-tab label="Prepa visite" *ngIf="tiers.id!=null && tiers.id!=undefined" >
+      <visit-prepa-tiers-responsible-info [tiers]="tiers" ></visit-prepa-tiers-responsible-info>
+      <visit-prepa-customer-orders-responsible [tiers]="tiers"></visit-prepa-customer-orders-responsible>
+      <provision-list class="integration-component"
+          *ngIf="this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0"
+          [affaireSearch]="provisionSearch" [isForTiersIntegration]="true" >
+        </provision-list>
+    </mat-tab>
+    <mat-tab label="Reclamation">
+      <complaint-tiers [tiers]="tiers"></complaint-tiers>
+    </mat-tab>
     <mat-tab label="Prestations" *ngIf="tiers.id!=null && tiers.id!=undefined">
       <ng-template matTabContent>
         <provision-list class="integration-component"

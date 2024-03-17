@@ -25,12 +25,20 @@ import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.miscellaneous.model.PhoneSearch;
+import com.jss.osiris.modules.miscellaneous.model.SalesComplain;
+import com.jss.osiris.modules.miscellaneous.model.SalesComplainCause;
+import com.jss.osiris.modules.miscellaneous.model.SalesComplainOrigin;
+import com.jss.osiris.modules.miscellaneous.model.SalesComplainProblem;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CountryService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
+import com.jss.osiris.modules.miscellaneous.service.SalesComplainCauseService;
+import com.jss.osiris.modules.miscellaneous.service.SalesComplainOriginService;
+import com.jss.osiris.modules.miscellaneous.service.SalesComplainProblemService;
+import com.jss.osiris.modules.miscellaneous.service.SalesComplainService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
@@ -153,6 +161,18 @@ public class TiersController {
 
   @Autowired
   RffFrequencyService rffFrequencyService;
+
+  @Autowired
+  SalesComplainCauseService salesComplainCauseService;
+
+  @Autowired
+  SalesComplainOriginService salesComplainOriginService;
+
+  @Autowired
+  SalesComplainProblemService salesComplainProblemService;
+
+  @Autowired
+  SalesComplainService salesComplainService;
 
   @GetMapping(inputEntryPoint + "/rff-frequencies")
   public ResponseEntity<List<RffFrequency>> getRffFrequencies() {
@@ -442,6 +462,81 @@ public class TiersController {
   @GetMapping(inputEntryPoint + "/payment-deadline-types")
   public ResponseEntity<List<PaymentDeadlineType>> getPaymentDeadlineTypes() {
     return new ResponseEntity<List<PaymentDeadlineType>>(paymentDeadlineTypeService.getPaymentDeadlineTypes(),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/sales-complain-causes")
+  public ResponseEntity<List<SalesComplainCause>> getComplainCauses() {
+    return new ResponseEntity<List<SalesComplainCause>>(salesComplainCauseService.getComplainCauses(),
+        HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @PostMapping(inputEntryPoint + "/sales-complain-cause")
+  public ResponseEntity<SalesComplainCause> addOrUpdateComplainCause(
+      @RequestBody SalesComplainCause salesComplainCause) throws OsirisValidationException, OsirisException {
+    if (salesComplainCause.getId() != null)
+      validationHelper.validateReferential(salesComplainCause, true, "noticeTypes");
+    validationHelper.validateString(salesComplainCause.getCode(), true, 20, "code");
+    validationHelper.validateString(salesComplainCause.getLabel(), true, 200, "label");
+
+    return new ResponseEntity<SalesComplainCause>(
+        salesComplainCauseService.addOrUpdateComplainCause(salesComplainCause), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/sales-complain-origins")
+  public ResponseEntity<List<SalesComplainOrigin>> getComplainOrigins() {
+    return new ResponseEntity<List<SalesComplainOrigin>>(salesComplainOriginService.getComplainOrigins(),
+        HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @PostMapping(inputEntryPoint + "/sales-complain-origin")
+  public ResponseEntity<SalesComplainOrigin> addOrUpdateComplainOrigin(
+      @RequestBody SalesComplainOrigin salesComplainOrigin) throws OsirisValidationException, OsirisException {
+    if (salesComplainOrigin.getId() != null)
+      validationHelper.validateReferential(salesComplainOrigin, true, "noticeTypes");
+    validationHelper.validateString(salesComplainOrigin.getCode(), true, 20, "code");
+    validationHelper.validateString(salesComplainOrigin.getLabel(), true, 200, "label");
+
+    return new ResponseEntity<SalesComplainOrigin>(
+        salesComplainOriginService.addOrUpdateComplainOrigin(salesComplainOrigin), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/sales-complain-problems")
+  public ResponseEntity<List<SalesComplainProblem>> getComplainProblems() {
+    return new ResponseEntity<List<SalesComplainProblem>>(salesComplainProblemService.getComplainProblems(),
+        HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @PostMapping(inputEntryPoint + "/sales-complain-problem")
+  public ResponseEntity<SalesComplainProblem> addOrUpdateComplainProblem(
+      @RequestBody SalesComplainProblem salesComplainProblem) throws OsirisValidationException, OsirisException {
+    if (salesComplainProblem.getId() != null)
+      validationHelper.validateReferential(salesComplainProblem, true, "noticeTypes");
+    validationHelper.validateString(salesComplainProblem.getCode(), true, 20, "code");
+    validationHelper.validateString(salesComplainProblem.getLabel(), true, 200, "label");
+
+    return new ResponseEntity<SalesComplainProblem>(
+        salesComplainProblemService.addOrUpdateComplainProblem(salesComplainProblem), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/sales-complains")
+  public ResponseEntity<List<SalesComplain>> getComplainsByTiersId(@RequestParam Integer id)
+      throws OsirisValidationException {
+    if (id == null)
+      throw new OsirisValidationException("id");
+    return new ResponseEntity<List<SalesComplain>>(salesComplainService.getComplainsByTiersId(id),
+        HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @PostMapping(inputEntryPoint + "/sales-complain")
+  public ResponseEntity<SalesComplain> addOrUpdateComplain(@RequestBody SalesComplain salesComplain)
+      throws OsirisValidationException, OsirisException {
+
+    return new ResponseEntity<SalesComplain>(salesComplainService.addOrUpdateComplain(salesComplain),
         HttpStatus.OK);
   }
 

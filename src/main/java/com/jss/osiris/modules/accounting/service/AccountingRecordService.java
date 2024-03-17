@@ -79,11 +79,13 @@ public interface AccountingRecordService {
         public File getBilanExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException;
 
         public File getAccountingBalanceExport(Integer accountingClassId, Integer principalAccountingAccountId,
-                        Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate)
+                        Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate,
+                        boolean isFromAs400)
                         throws OsirisException;
 
         public File getAccountingBalanceGeneraleExport(Integer accountingClassId, Integer principalAccountingAccountId,
-                        Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate)
+                        Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate,
+                        boolean isFromAs400)
                         throws OsirisException;
 
 }

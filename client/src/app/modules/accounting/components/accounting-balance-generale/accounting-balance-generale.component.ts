@@ -52,12 +52,8 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
     this.displayedColumns.push({ id: "principalAccountingAccountLabel", fieldName: "principalAccountingAccountLabel", label: "Libellé du compte" } as SortTableColumn<AccountingBalance>);
     this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
     this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
-    this.displayedColumns.push({ id: "echoir30", fieldName: "echoir30", label: "Créances à échoir à -30 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
-    this.displayedColumns.push({ id: "echoir60", fieldName: "echoir60", label: "Créances à échoir à -60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
-    this.displayedColumns.push({ id: "echoir90", fieldName: "echoir90", label: "Créances à échoir à +60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
-    this.displayedColumns.push({ id: "echu30", fieldName: "echu30", label: "Créances échues à -30 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
-    this.displayedColumns.push({ id: "echu60", fieldName: "echu60", label: "Créances échues à -60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
-    this.displayedColumns.push({ id: "echu90", fieldName: "echu90", label: "Créances échues à +60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
+    this.displayedColumns.push({ id: "debitAmountSolde", fieldName: "debitAmountSolde", label: "Solde débit", valueFonction: (element: AccountingBalance, column: SortTableColumn<AccountingBalance>) => { if (element && column) return (element.debitAmount > element.creditAmount ? Math.round((element.debitAmount - element.creditAmount) * 100) / 100 + " €" : ''); return "" } } as SortTableColumn<AccountingBalance>);
+    this.displayedColumns.push({ id: "creditAmountSolde", fieldName: "creditAmountSolde", label: "Solde crédit", valueFonction: (element: AccountingBalance, column: SortTableColumn<AccountingBalance>) => { if (element && column) return (element.debitAmount <= element.creditAmount ? Math.round((element.creditAmount - element.debitAmount) * 100) / 100 + " €" : ''); return "" } } as SortTableColumn<AccountingBalance>);
 
     this.displayedColumnsClassTotal = [];
     this.displayedColumnsClassTotal.push({ id: "accountingAccountLabel", fieldName: "accountingAccountLabel", label: "Libellé" } as SortTableColumn<AccountingBalance>);

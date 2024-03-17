@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.tiers.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -63,12 +64,13 @@ public class RffServiceImpl implements RffService {
 
     @Override
     public List<Rff> getRffs(RffSearch rffSearch) throws OsirisException {
+
         Integer idTiers = 0;
-        if (rffSearch.getTiers() != null)
+        if (rffSearch.getTiers().getEntityId() != null)
             idTiers = rffSearch.getTiers().getEntityId();
 
         Integer idResponsable = 0;
-        if (rffSearch.getResponsable() != null)
+        if (rffSearch.getResponsable().getEntityId() != null)
             idResponsable = rffSearch.getResponsable().getEntityId();
 
         Integer idSalesEmployee = 0;

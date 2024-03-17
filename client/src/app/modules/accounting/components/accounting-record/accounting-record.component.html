@@ -17,10 +17,6 @@
             [form]="accountingRecordForm" propertyName="accountingJournal">
           </select-accounting-journal>
         </td>
-        <td class="toggle-td">
-          <generic-toggle [(model)]="accountingRecordSearch.hideLettered" label="Cacher lettrées ?"
-            [form]="accountingRecordForm" propertyName="hideLettered"></generic-toggle>
-        </td>
         <td *ngIf="tiersToDisplay==undefined">
           <generic-datepicker [(model)]="accountingRecordSearch.startDate" label="Date de début"
             [form]="accountingRecordForm" propertyName="startDate" [isMandatory]="false"
@@ -45,6 +41,18 @@
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchRecords()" class="add-button">
             <mat-icon>search</mat-icon>
           </button>
+        </td>
+      </tr>
+    </table>
+    <table class="full-width table-fixed-layout" *ngIf="!accountingRecordSearch.idPayment">
+      <tr>
+        <td class="toggle-td">
+          <generic-toggle [(model)]="accountingRecordSearch.hideLettered" label="Cacher lettrées ?"
+            [form]="accountingRecordForm" propertyName="hideLettered"></generic-toggle>
+        </td>
+        <td class="toggle-td">
+          <generic-toggle [(model)]="accountingRecordSearch.isFromAs400" label="Depuis l'AS400 ?"
+            [form]="accountingRecordForm" propertyName="isFromAs400"></generic-toggle>
         </td>
       </tr>
     </table>

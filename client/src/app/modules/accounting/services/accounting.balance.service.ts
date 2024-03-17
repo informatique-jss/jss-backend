@@ -19,7 +19,7 @@ export class AccountingBalanceService extends AppRestService<AccountingBalance>{
   }
 
   exportBalance(accountingBalanceSearch: AccountingBalanceSearch) {
-    this.downloadGet(new HttpParams().set("accountingClassId", accountingBalanceSearch.accountingClass ? accountingBalanceSearch.accountingClass.id : "").set("principalAccountingAccountId", accountingBalanceSearch.principalAccountingAccount ? accountingBalanceSearch.principalAccountingAccount.id + "" : "0").set("accountingAccountId", accountingBalanceSearch.accountingAccount ? accountingBalanceSearch.accountingAccount.id! : "").set("startDate", toIsoString(accountingBalanceSearch.startDate!)).set("endDate", toIsoString(accountingBalanceSearch.endDate!)), "accounting-balance/export");
+    this.downloadGet(new HttpParams().set("accountingClassId", accountingBalanceSearch.accountingClass ? accountingBalanceSearch.accountingClass.id : "").set("principalAccountingAccountId", accountingBalanceSearch.principalAccountingAccount ? accountingBalanceSearch.principalAccountingAccount.id + "" : "0").set("accountingAccountId", accountingBalanceSearch.accountingAccount ? accountingBalanceSearch.accountingAccount.id! : "").set("startDate", toIsoString(accountingBalanceSearch.startDate!)).set("endDate", toIsoString(accountingBalanceSearch.endDate!)).set("isFromAs400", accountingBalanceSearch.isFromAs400 + ""), "accounting-balance/export");
   }
 
   searchAccountingBalanceGenerale(accountingBalanceSearch: AccountingBalanceSearch) {
@@ -27,7 +27,7 @@ export class AccountingBalanceService extends AppRestService<AccountingBalance>{
   }
 
   exportBalanceGenerale(accountingBalanceSearch: AccountingBalanceSearch) {
-    this.downloadGet(new HttpParams().set("accountingClassId", accountingBalanceSearch.accountingClass ? accountingBalanceSearch.accountingClass.id : "").set("principalAccountingAccountId", accountingBalanceSearch.principalAccountingAccount ? accountingBalanceSearch.principalAccountingAccount.id + "" : "0").set("accountingAccountId", accountingBalanceSearch.accountingAccount ? accountingBalanceSearch.accountingAccount.id! : "").set("startDate", toIsoString(accountingBalanceSearch.startDate!)).set("endDate", toIsoString(accountingBalanceSearch.endDate!)), "accounting-balance/generale/export");
+    this.downloadGet(new HttpParams().set("accountingClassId", accountingBalanceSearch.accountingClass ? accountingBalanceSearch.accountingClass.id : "").set("principalAccountingAccountId", accountingBalanceSearch.principalAccountingAccount ? accountingBalanceSearch.principalAccountingAccount.id + "" : "0").set("accountingAccountId", accountingBalanceSearch.accountingAccount ? accountingBalanceSearch.accountingAccount.id! : "").set("startDate", toIsoString(accountingBalanceSearch.startDate!)).set("endDate", toIsoString(accountingBalanceSearch.endDate!)).set("isFromAs400", accountingBalanceSearch.isFromAs400 + ""), "accounting-balance/generale/export");
   }
 
 }
