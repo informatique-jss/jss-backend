@@ -2,7 +2,9 @@ package com.jss.osiris.libs.mail;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -25,6 +27,7 @@ public interface CustomerMailService {
 
     public List<CustomerMail> getMailsByResponsable(Responsable responsable);
 
-    public void sendMail(CustomerMail mail) throws OsirisException;
+    public void sendMail(CustomerMail mail)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
 }

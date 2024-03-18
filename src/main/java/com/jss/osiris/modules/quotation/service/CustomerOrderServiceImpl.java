@@ -197,6 +197,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             boolean checkAllProvisionEnded)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
+        boolean isNewCustomerOrder = customerOrder.getId() == null;
         if (customerOrder.getCustomerOrderOrigin() == null)
             customerOrder.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
 
@@ -240,8 +241,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         customerOrder = getCustomerOrder(customerOrder.getId());
 
-        if (customerOrder.getId() == null)
+        if (isNewCustomerOrder) {
             notificationService.notifyNewCustomerOrderQuotation(customerOrder);
+            if (customerOrder.getCustomerOrderOrigin().getId()
+                    .equals(constantService.getCustomerOrderOriginWebSite().getId()))
+                mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, false); // TODO
+        }
 
         if (checkAllProvisionEnded)
             checkAllProvisionEnded(customerOrder);
@@ -323,17 +328,23 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
             ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
             boolean isDepositMandatory = false;
+            boolean isPaymentTypePrelevement = false;
             if (tiers instanceof Responsable)
                 tiers = ((Responsable) tiers).getTiers();
             isDepositMandatory = tiers.getIsProvisionalPaymentMandatory();
 
-            if (!isDepositMandatory || remainingToPay <= 0)
-                targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
-            else
-                targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
+            if (tiers instanceof Tiers)
+                isPaymentTypePrelevement = ((Tiers) tiers).getPaymentType().getId()
+                        .equals(constantService.getPaymentTypePrelevement().getId());
 
-            // Confirm customer order to cutomser with or without deposit
-            mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, false, false);
+            if (!isDepositMandatory || remainingToPay <= 0 || isPaymentTypePrelevement) {
+                targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
+                mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
+            } else {
+                targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
+                mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, false);
+            }
+
         }
 
         // Target : CANCELLED => vérifiy there is no more deposit
@@ -355,6 +366,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
                     if (!isFromUser)
                         mailHelper.sendCustomerOrderDepositConfirmationToCustomer(customerOrder, false);
+                    else
+                        mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
                     notificationService.notifyCustomerOrderToBeingProcessedFromDeposit(customerOrder, isFromUser);
                 } else
                     notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, true);
@@ -922,7 +935,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
 
             if (toSend) {
-                mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, false, true);
+                mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, true);
                 addOrUpdateCustomerOrder(customerOrder, false, true);
             }
         }

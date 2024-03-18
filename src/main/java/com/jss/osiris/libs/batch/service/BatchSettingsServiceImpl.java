@@ -221,6 +221,18 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REMINDERS));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.SEND_REMINDER_TO_CONFRERE_FOR_PROVIDER_INVOICE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.SEND_REMINDER_TO_CONFRERE_FOR_PROVIDER_INVOICE);
+            batchSettings.setLabel("Relance par mail des confrère pour la réception des factures fournisseurs");
+            batchSettings.setFixedRate(60 * 1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REMINDERS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
         if (getByCode(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_PROOF_READING) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_PROOF_READING);

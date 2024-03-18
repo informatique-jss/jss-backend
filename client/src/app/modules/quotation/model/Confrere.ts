@@ -36,4 +36,5 @@ export interface Confrere extends IDocument, ITiers {
   vatCollectionType: VatCollectionType;
   intercommunityVat: string;
   doNotUse: boolean;
+  isRemindProviderInvoice: boolean;
 }

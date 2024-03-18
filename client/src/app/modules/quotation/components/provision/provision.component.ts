@@ -19,12 +19,13 @@ import { DomiciliationStatus } from '../../model/DomiciliationStatus';
 import { FormaliteStatus } from '../../model/FormaliteStatus';
 import { Provision } from '../../model/Provision';
 import { SimpleProvisionStatus } from '../../model/SimpleProvisonStatus';
+import { AffaireService } from '../../services/affaire.service';
 import { AnnouncementService } from '../../services/announcement.service';
 import { AnnouncementStatusService } from '../../services/announcement.status.service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
-import { AttachmentTypeMailQueryService } from '../../services/attachment-type-mail-query.service';
 import { DomiciliationStatusService } from '../../services/domiciliation-status.service';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
+import { MissingAttachmentQueryService } from '../../services/missing-attachment-query.service';
 import { ProvisionService } from '../../services/provision.service';
 import { SimpleProvisionStatusService } from '../../services/simple.provision.status.service';
 import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
@@ -77,11 +78,12 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private constantService: ConstantService,
     private formaliteStatusService: FormaliteStatusService,
     private announcementService: AnnouncementService,
-    private attachmentTypeMailQueryService: AttachmentTypeMailQueryService,
+    private missingAttachmentQueryService: MissingAttachmentQueryService,
     private domiciliationStatusService: DomiciliationStatusService,
     private simpleProvisionStatusService: SimpleProvisionStatusService,
     private announcementStatusService: AnnouncementStatusService,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
+    private affaireService: AffaireService,
   ) { }
 
   affaireForm = this.formBuilder.group({});
@@ -514,7 +516,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
     dialogRef.afterClosed().subscribe(dialogResult => {
       if (dialogResult && this.currentProvisionWorkflow) {
-        this.attachmentTypeMailQueryService.generateAttachmentTypeMail(dialogResult, this.asso.customerOrder, this.currentProvisionWorkflow).subscribe(response => { });
+        this.missingAttachmentQueryService.generateAttachmentTypeMail(dialogResult, this.asso.customerOrder, this.currentProvisionWorkflow).subscribe(response => { });
       }
     });
   }
@@ -530,8 +532,14 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
     dialogRef.afterClosed().subscribe(dialogResult => {
       if (dialogResult && this.currentProvisionWorkflow) {
-        this.attachmentTypeMailQueryService.generateAttachmentsMail(dialogResult).subscribe(response => { });
+        this.missingAttachmentQueryService.generateAttachmentsMail(dialogResult).subscribe(response => { });
       }
     });
+  }
+
+  sendRibRequestToAffaire() {
+    this.affaireService.sendRibRequestToAffaire(this.asso.affaire, this.asso).subscribe(reponse => {
+      this.appService.displaySnackBar("Demande de RIB envoyée", false, 10);
+    })
   }
 }

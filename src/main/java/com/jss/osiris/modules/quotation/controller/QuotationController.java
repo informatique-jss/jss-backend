@@ -67,7 +67,6 @@ import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.quotation.model.AttachmentMailRequest;
-import com.jss.osiris.modules.quotation.model.AttachmentTypeMailQuery;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.BuildingDomiciliation;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
@@ -83,6 +82,7 @@ import com.jss.osiris.modules.quotation.model.FundType;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.NoticeTypeFamily;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
@@ -517,6 +517,25 @@ public class QuotationController {
     return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/mail/affaire/request/rib")
+  public ResponseEntity<Affaire> generateQuotationMail(@RequestParam Integer idAffaire,
+      @RequestParam Integer idAssoAffaireOrder)
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+    AssoAffaireOrder assoAffaireOrder = assoAffaireOrderService.getAssoAffaireOrder(idAssoAffaireOrder);
+    if (assoAffaireOrder == null)
+      throw new OsirisValidationException("assoAffaireOrder");
+
+    Affaire affaire = affaireService.getAffaire(idAffaire);
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    if (affaire.getMails() == null || affaire.getMails().size() == 0)
+      throw new OsirisClientMessageException("Aucun mail trouvé sur l'affaire");
+
+    mailHelper.sendRibRequestToAffaire(affaire, assoAffaireOrder);
+    return new ResponseEntity<Affaire>(affaire, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/mail/generate/customer-order-confirmation")
   public ResponseEntity<CustomerOrder> generateCustomerOrderCreationConfirmationToCustomer(
       @RequestParam Integer customerOrderId)
@@ -530,7 +549,8 @@ public class QuotationController {
     if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
       throw new OsirisValidationException("MailTo");
 
-    mailHelper.generateCustomerOrderCreationConfirmationToCustomer(customerOrder);
+    // mailHelper.generateCustomerOrderCreationConfirmationToCustomer(customerOrder);
+    // // TODO
     return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
   }
 
@@ -1820,7 +1840,7 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/mail/generate/attachment")
-  public ResponseEntity<Boolean> generateAttachmentTypeMail(@RequestBody AttachmentTypeMailQuery query,
+  public ResponseEntity<Boolean> generateAttachmentTypeMail(@RequestBody MissingAttachmentQuery query,
       @RequestParam Integer idCustomerOrder, @RequestParam Integer idProvision)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException {
     CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
@@ -1835,7 +1855,7 @@ public class QuotationController {
     if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
       throw new OsirisValidationException("MailTo");
 
-    mailHelper.sendCustomerOrderAttachmentTypeQueryToCustomer(customerOrder, provision, query);
+    mailHelper.sendMissingAttachmentQueryToCustomer(customerOrder, provision, query);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 

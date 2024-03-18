@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { Affaire } from '../../quotation/model/Affaire';
+import { AssoAffaireOrder } from '../model/AssoAffaireOrder';
 
 @Injectable({
   providedIn: 'root'
@@ -38,5 +39,9 @@ export class AffaireService extends AppRestService<Affaire>{
 
   refreshAffaire(affaire: Affaire) {
     return this.get(new HttpParams().set("idAffaire", affaire.id), "affaire/refresh/rne");
+  }
+
+  sendRibRequestToAffaire(affaire: Affaire, assoAffaireOrder: AssoAffaireOrder) {
+    return this.get(new HttpParams().set("idAffaire", affaire.id).set("idAssoAffaireOrder", assoAffaireOrder.id), "mail/affaire/request/rib");
   }
 }

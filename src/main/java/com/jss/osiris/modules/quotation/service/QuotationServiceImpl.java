@@ -289,6 +289,7 @@ public class QuotationServiceImpl implements QuotationService {
             quotation.getCustomerOrders().add(customerOrder);
             customerOrder.setQuotations(new ArrayList<Quotation>());
             customerOrder.getQuotations().add(quotation);
+            mailHelper.sendCustomerOrderCreationConfirmationOnQuotationValidation(quotation, customerOrder);
         }
 
         // Target REFUSED from SENT TO CUSTOMER : notify user

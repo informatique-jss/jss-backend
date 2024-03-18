@@ -71,8 +71,6 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 
 	public void setConfrere(Confrere confrere);
 
-	public String getCustomerMailCustomMessage();
-
 	public CustomerOrderOrigin getCustomerOrderOrigin();
 
 	public void setCustomerOrderOrigin(CustomerOrderOrigin customerOrderOrigin);

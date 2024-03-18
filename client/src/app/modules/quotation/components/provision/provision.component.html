@@ -182,6 +182,9 @@
   <button mat-menu-item *ngIf="currentProvisionWorkflow" (click)="generateAttachmentsMail()">
     <span>Envoyer des pièces jointes</span>
   </button>
+  <button mat-menu-item (click)="sendRibRequestToAffaire()">
+    <span>Envoyer une demande de RIB à l'affaire</span>
+  </button>
   <button mat-menu-item
     *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id!=journalTypeSpel.id"
     (click)="generateAnnouncementRequestToConfrereMail(currentProvisionWorkflow.announcement)">

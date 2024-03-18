@@ -119,9 +119,6 @@ public class Quotation implements IQuotation {
 	private LocalDateTime secondReminderDateTime;
 	private LocalDateTime thirdReminderDateTime;
 
-	@Column(columnDefinition = "TEXT")
-	private String customerMailCustomMessage;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_origin")
 	private CustomerOrderOrigin customerOrderOrigin;
@@ -276,14 +273,6 @@ public class Quotation implements IQuotation {
 
 	public void setQuotationLabel(String quotationLabel) {
 		this.quotationLabel = quotationLabel;
-	}
-
-	public String getCustomerMailCustomMessage() {
-		return customerMailCustomMessage;
-	}
-
-	public void setCustomerMailCustomMessage(String customerMailCustomMessage) {
-		this.customerMailCustomMessage = customerMailCustomMessage;
 	}
 
 	public Employee getAssignedTo() {

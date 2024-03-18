@@ -29,8 +29,6 @@ dependencies {
     implementation 'org.springframework.session:spring-session-jdbc:2.6.3'
     implementation 'org.springframework.ldap:spring-ldap-core:2.4.1'
     implementation 'org.springframework.security:spring-security-ldap:5.7.3'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
-    runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.4'
     implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.5'
     implementation 'org.springframework.boot:spring-boot-starter-cache:2.6.4'
     implementation 'com.hazelcast:hazelcast-all:4.2.7'

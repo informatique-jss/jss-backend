@@ -170,9 +170,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<Refund> refunds;
 
-	@Column(columnDefinition = "TEXT")
-	private String customerMailCustomMessage;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_origin")
 	private CustomerOrderOrigin customerOrderOrigin;
@@ -345,14 +342,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setProviderInvoices(List<Invoice> providerInvoices) {
 		this.providerInvoices = providerInvoices;
-	}
-
-	public String getCustomerMailCustomMessage() {
-		return customerMailCustomMessage;
-	}
-
-	public void setCustomerMailCustomMessage(String customerMailCustomMessage) {
-		this.customerMailCustomMessage = customerMailCustomMessage;
 	}
 
 	public Employee getAssignedTo() {

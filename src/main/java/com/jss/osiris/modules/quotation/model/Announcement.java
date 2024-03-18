@@ -86,6 +86,10 @@ public class Announcement implements IId, IDocument {
 	private LocalDateTime secondConfrereReminderDateTime;
 	private LocalDateTime thirdConfrereReminderDateTime;
 
+	private LocalDateTime firstConfrereReminderProviderInvoiceDateTime;
+	private LocalDateTime secondReminderProviderInvoiceDateTime;
+	private LocalDateTime thirdReminderProviderInvoiceDateTime;
+
 	private LocalDateTime firstClientReviewSentMailDateTime;
 	private LocalDateTime firstClientReviewReminderDateTime;
 	private LocalDateTime secondClientReviewReminderDateTime;
@@ -311,6 +315,31 @@ public class Announcement implements IId, IDocument {
 
 	public void setCharacterNumber(Integer characterNumber) {
 		this.characterNumber = characterNumber;
+	}
+
+	public LocalDateTime getFirstConfrereReminderProviderInvoiceDateTime() {
+		return firstConfrereReminderProviderInvoiceDateTime;
+	}
+
+	public void setFirstConfrereReminderProviderInvoiceDateTime(
+			LocalDateTime firstConfrereReminderProviderInvoiceDateTime) {
+		this.firstConfrereReminderProviderInvoiceDateTime = firstConfrereReminderProviderInvoiceDateTime;
+	}
+
+	public LocalDateTime getSecondReminderProviderInvoiceDateTime() {
+		return secondReminderProviderInvoiceDateTime;
+	}
+
+	public void setSecondReminderProviderInvoiceDateTime(LocalDateTime secondReminderProviderInvoiceDateTime) {
+		this.secondReminderProviderInvoiceDateTime = secondReminderProviderInvoiceDateTime;
+	}
+
+	public LocalDateTime getThirdReminderProviderInvoiceDateTime() {
+		return thirdReminderProviderInvoiceDateTime;
+	}
+
+	public void setThirdReminderProviderInvoiceDateTime(LocalDateTime thirdReminderProviderInvoiceDateTime) {
+		this.thirdReminderProviderInvoiceDateTime = thirdReminderProviderInvoiceDateTime;
 	}
 
 }

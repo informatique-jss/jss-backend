@@ -23,6 +23,7 @@ import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Rff;
@@ -36,6 +37,25 @@ import com.jss.osiris.modules.tiers.model.Tiers;
         @Index(name = "idx_customer_mail_customer_order", columnList = "id_customer_order"),
         @Index(name = "idx_customer_mail_confrere", columnList = "id_confrere") })
 public class CustomerMail {
+
+    public static String TEMPLATE_WAITING_DEPOSIT = "waiting-deposit";
+    public static String TEMPLATE_WAITING_QUOTATION_VALIDATION = "waiting-quotation-validation";
+    public static String TEMPLATE_QUOTATION_VALIDATED = "quotation-validated";
+    public static String TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS = "customer-order-in-progress";
+    public static String TEMPLATE_SEND_ATTACHMENTS = "send-attanchments";
+    public static String TEMPLATE_SEND_PUBLICATION_RECEIPT = "send-publication-receipt";
+    public static String TEMPLATE_SEND_PUBLICATION_FLAG = "send-publication-flag";
+    public static String TEMPLATE_SEND_PROOF_READING = "send-proof-reading";
+    public static String TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE = "send-announcement-confrere";
+    public static String TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER = "send-announcement-confrere-reminder";
+    public static String TEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER = "send-confrere-provider-invoice-reminder";
+    public static String TEMPLATE_CUSTOMER_ORDER_FINALIZATION = "customer-order-finalization";
+    public static String TEMPLATE_BILLING_CLOSURE = "billing-closure";
+    public static String TEMPLATE_INVOICE_REMINDER = "invoice-reminder";
+    public static String TEMPLATE_MISSING_ATTACHMENT = "missing-attachment";
+    public static String TEMPLATE_RENEW_PASSWORD = "renew-password";
+    public static String TEMPLATE_REQUEST_RIB = "request-rib";
+
     @Id
     @SequenceGenerator(name = "customer_mail_sequence", sequenceName = "customer_mail_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_mail_sequence")
@@ -111,9 +131,6 @@ public class CustomerMail {
 
     private Boolean copyToMe;
 
-    @Column(columnDefinition = "TEXT")
-    private String customerMailCustomMessage;
-
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_mail_compute_result")
     MailComputeResult mailComputeResult;
@@ -165,7 +182,13 @@ public class CustomerMail {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_rff")
-    Rff rff;
+    private Rff rff;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_provision")
+    private Provision provision;
+
+    private String mailTemplate;
 
     public Integer getId() {
         return id;
@@ -463,14 +486,6 @@ public class CustomerMail {
         this.confrere = confrere;
     }
 
-    public String getCustomerMailCustomMessage() {
-        return customerMailCustomMessage;
-    }
-
-    public void setCustomerMailCustomMessage(String customerMailCustomMessage) {
-        this.customerMailCustomMessage = customerMailCustomMessage;
-    }
-
     public Boolean getCopyToMe() {
         return copyToMe;
     }
@@ -501,6 +516,94 @@ public class CustomerMail {
 
     public void setRff(Rff rff) {
         this.rff = rff;
+    }
+
+    public String getMailTemplate() {
+        return mailTemplate;
+    }
+
+    public void setMailTemplate(String mailTemplate) {
+        this.mailTemplate = mailTemplate;
+    }
+
+    public static String getTEMPLATE_WAITING_DEPOSIT() {
+        return TEMPLATE_WAITING_DEPOSIT;
+    }
+
+    public static void setTEMPLATE_WAITING_DEPOSIT(String tEMPLATE_WAITING_DEPOSIT) {
+        TEMPLATE_WAITING_DEPOSIT = tEMPLATE_WAITING_DEPOSIT;
+    }
+
+    public static String getTEMPLATE_WAITING_QUOTATION_VALIDATION() {
+        return TEMPLATE_WAITING_QUOTATION_VALIDATION;
+    }
+
+    public static void setTEMPLATE_WAITING_QUOTATION_VALIDATION(String tEMPLATE_WAITING_QUOTATION_VALIDATION) {
+        TEMPLATE_WAITING_QUOTATION_VALIDATION = tEMPLATE_WAITING_QUOTATION_VALIDATION;
+    }
+
+    public static String getTEMPLATE_QUOTATION_VALIDATED() {
+        return TEMPLATE_QUOTATION_VALIDATED;
+    }
+
+    public static void setTEMPLATE_QUOTATION_VALIDATED(String tEMPLATE_QUOTATION_VALIDATED) {
+        TEMPLATE_QUOTATION_VALIDATED = tEMPLATE_QUOTATION_VALIDATED;
+    }
+
+    public static String getTEMPLATE_CUSTOMER_ORDER_IN_PROGRESS() {
+        return TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS;
+    }
+
+    public static void setTEMPLATE_CUSTOMER_ORDER_IN_PROGRESS(String tEMPLATE_CUSTOMER_ORDER_IN_PROGRESS) {
+        TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS = tEMPLATE_CUSTOMER_ORDER_IN_PROGRESS;
+    }
+
+    public static String getTEMPLATE_SEND_ATTACHMENTS() {
+        return TEMPLATE_SEND_ATTACHMENTS;
+    }
+
+    public static void setTEMPLATE_SEND_ATTACHMENTS(String tEMPLATE_SEND_ATTACHMENTS) {
+        TEMPLATE_SEND_ATTACHMENTS = tEMPLATE_SEND_ATTACHMENTS;
+    }
+
+    public static String getTEMPLATE_SEND_PUBLICATION_RECEIPT() {
+        return TEMPLATE_SEND_PUBLICATION_RECEIPT;
+    }
+
+    public static void setTEMPLATE_SEND_PUBLICATION_RECEIPT(String tEMPLATE_SEND_PUBLICATION_RECEIPT) {
+        TEMPLATE_SEND_PUBLICATION_RECEIPT = tEMPLATE_SEND_PUBLICATION_RECEIPT;
+    }
+
+    public static String getTEMPLATE_SEND_PUBLICATION_FLAG() {
+        return TEMPLATE_SEND_PUBLICATION_FLAG;
+    }
+
+    public static void setTEMPLATE_SEND_PUBLICATION_FLAG(String tEMPLATE_SEND_PUBLICATION_FLAG) {
+        TEMPLATE_SEND_PUBLICATION_FLAG = tEMPLATE_SEND_PUBLICATION_FLAG;
+    }
+
+    public static String getTEMPLATE_SEND_PROOF_READING() {
+        return TEMPLATE_SEND_PROOF_READING;
+    }
+
+    public static void setTEMPLATE_SEND_PROOF_READING(String tEMPLATE_SEND_PROOF_READING) {
+        TEMPLATE_SEND_PROOF_READING = tEMPLATE_SEND_PROOF_READING;
+    }
+
+    public static String getTEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE() {
+        return TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE;
+    }
+
+    public static void setTEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE(String tEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE) {
+        TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE = tEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE;
+    }
+
+    public Provision getProvision() {
+        return provision;
+    }
+
+    public void setProvision(Provision provision) {
+        this.provision = provision;
     }
 
 }

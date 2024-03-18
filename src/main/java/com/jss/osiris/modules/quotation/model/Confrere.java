@@ -204,6 +204,8 @@ public class Confrere implements ITiers, IGenericTiers {
 
 	private Boolean doNotUse;
 
+	private Boolean isRemindProviderInvoice;
+
 	public Integer getId() {
 		return id;
 	}
@@ -591,6 +593,14 @@ public class Confrere implements ITiers, IGenericTiers {
 
 	public void setDoNotUse(Boolean doNotUse) {
 		this.doNotUse = doNotUse;
+	}
+
+	public Boolean getIsRemindProviderInvoice() {
+		return isRemindProviderInvoice;
+	}
+
+	public void setIsRemindProviderInvoice(Boolean isRemindProviderInvoice) {
+		this.isRemindProviderInvoice = isRemindProviderInvoice;
 	}
 
 }

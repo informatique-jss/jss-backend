@@ -40,13 +40,11 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
-import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Provision;
-import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -66,9 +64,6 @@ public class BillingClosureReceiptDelegate {
 
     @Autowired
     ResponsableService responsableService;
-
-    @Autowired
-    ConfrereService confrereService;
 
     @Autowired
     DocumentService documentService;
@@ -111,9 +106,6 @@ public class BillingClosureReceiptDelegate {
 
         if (tier == null)
             tier = responsableService.getResponsable(tiersId);
-
-        if (tier == null)
-            tier = confrereService.getConfrere(tiersId);
 
         Document billingClosureDocument = null;
         if (tier instanceof Responsable)
@@ -214,11 +206,6 @@ public class BillingClosureReceiptDelegate {
                 values.add(new BillingClosureReceiptValue(
                         t.getDenomination() != null ? t.getDenomination()
                                 : (t.getFirstname() + " " + t.getLastname())));
-            } else if (tiersIn instanceof Confrere) {
-                Tiers fakeTiers = new Tiers();
-                fakeTiers.setId(tiersIn.getId());
-                tiersList.add(fakeTiers);
-                values.add(new BillingClosureReceiptValue(((Confrere) tiersIn).getLabel()));
             } else if (tiersIn instanceof Responsable) {
                 Tiers fakeTiers = new Tiers();
                 fakeTiers.setId(tiersIn.getId());
@@ -514,16 +501,18 @@ public class BillingClosureReceiptDelegate {
     private void sendBillingClosureReceiptFile(File billingClosureReceipt, ITiers tiers)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         List<Attachment> attachments = new ArrayList<Attachment>();
+        Tiers finalTiers = null;
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
             String tiersType = "";
-            if (tiers instanceof Tiers)
+            if (tiers instanceof Tiers) {
                 tiersType = Tiers.class.getSimpleName();
-            if (tiers instanceof Responsable)
+                finalTiers = (Tiers) tiers;
+            } else {
                 tiersType = Responsable.class.getSimpleName();
-            if (tiers instanceof Confrere)
-                tiersType = Confrere.class.getSimpleName();
+                finalTiers = ((Responsable) tiers).getTiers();
+            }
 
             List<Attachment> attachmentsList = attachmentService.addAttachment(
                     new FileInputStream(billingClosureReceipt), tiers.getId(),
@@ -543,7 +532,7 @@ public class BillingClosureReceiptDelegate {
         }
 
         try {
-            mailHelper.sendBillingClosureToCustomer(attachments, tiers, false);
+            mailHelper.sendBillingClosureToCustomer(attachments, finalTiers, false);
         } catch (Exception e) {
             globalExceptionHandler.persistLog(
                     new OsirisException(e, "Impossible to send billing closure mail for Tiers " + tiers.getId()),

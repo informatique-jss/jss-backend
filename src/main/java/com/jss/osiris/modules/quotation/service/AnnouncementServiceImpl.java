@@ -510,6 +510,77 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     @Transactional
+    public void sendRemindersToConfrereForProviderInvoice() throws OsirisException {
+        List<Announcement> announcements = announcementRepository
+                .getAnnouncementForConfrereReminderProviderInvoice(announcementStatusService
+                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE),
+                        constantService.getConfrereJssSpel());
+
+        if (announcements != null && announcements.size() > 0) {
+            for (Announcement announcement : announcements) {
+                batchService.declareNewBatch(Batch.SEND_REMINDER_TO_CONFRERE_FOR_PROVIDER_INVOICE,
+                        announcement.getId());
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void sendReminderToConfrereForProviderInvoice(Announcement announcement)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        if (announcement != null) {
+            CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+
+            if (announcement.getConfrere().getIsRemindProviderInvoice() == null
+                    || announcement.getConfrere().getIsRemindProviderInvoice() == false)
+                return;
+
+            // Get provision
+            Provision currentProvision = null;
+            AssoAffaireOrder currentAsso = null;
+            if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
+                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                    if (asso.getProvisions() != null)
+                        for (Provision provision : asso.getProvisions())
+                            if (provision.getAnnouncement() != null
+                                    && provision.getAnnouncement().getId().equals(announcement.getId())) {
+                                currentProvision = provision;
+                                currentAsso = asso;
+                                break;
+                            }
+
+                boolean toSend = false;
+
+                if (announcement.getPublicationDate().isBefore(LocalDate.now().minusDays(1 * 7))) {
+                    toSend = true;
+                    announcement.setFirstConfrereReminderProviderInvoiceDateTime(LocalDateTime.now());
+                } else if (!toSend && announcement.getFirstConfrereReminderDateTime() != null) {
+                    if (announcement.getFirstConfrereReminderDateTime()
+                            .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                        toSend = true;
+                        announcement.setSecondReminderProviderInvoiceDateTime(LocalDateTime.now());
+                    }
+                } else if (!toSend && announcement.getSecondReminderProviderInvoiceDateTime() != null
+                        && announcement.getThirdReminderProviderInvoiceDateTime() == null) {
+                    if (announcement.getSecondReminderProviderInvoiceDateTime()
+                            .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                        toSend = true;
+                        announcement.setThirdConfrereReminderDateTime(LocalDateTime.now());
+                    }
+                }
+
+                if (toSend) {
+                    mailHelper.sendConfrereReminderProviderInvoice(
+                            customerOrderService.getCustomerOrder(customerOrder.getId()), currentAsso,
+                            false, currentProvision, announcement);
+                    addOrUpdateAnnouncement(announcement);
+                }
+            }
+        }
+    }
+
+    @Override
+    @Transactional
     public void sendReminderToConfrereForAnnouncement(Announcement announcement)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (announcement != null) {

@@ -74,6 +74,11 @@ public interface AnnouncementService {
         public void sendReminderToConfrereForAnnouncement(Announcement announcement)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
+        public void sendRemindersToConfrereForProviderInvoice() throws OsirisException;
+
+        public void sendReminderToConfrereForProviderInvoice(Announcement announcement)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
         public void sendRemindersToCustomerForProofReading() throws OsirisException, OsirisClientMessageException;
 
         public void sendReminderToCustomerForProofReading(Announcement announcement)

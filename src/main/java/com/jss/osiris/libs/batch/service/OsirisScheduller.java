@@ -213,6 +213,16 @@ public class OsirisScheduller {
 		}
 	}
 
+	@Scheduled(cron = "${schedulling.log.osiris.invoice.confrere.query.reminder}")
+	private void reminderConfrereForProviderInvoice() {
+		try {
+			if (nodeService.shouldIBatch())
+				announcementService.sendRemindersToConfrereForProviderInvoice();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
 	@Scheduled(cron = "${schedulling.log.osiris.customer.proof.reading.reminder}")
 	private void reminderClientReviewQuery() {
 		try {

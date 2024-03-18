@@ -2,7 +2,7 @@ import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AppService } from 'src/app/services/app.service';
-import { AttachmentTypeMailQuery } from '../../model/AttachmentTypeMailQuery';
+import { MissingAttachmentQuery } from '../../model/MissingAttachmentQuery';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 
 @Component({
@@ -12,7 +12,7 @@ import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/s
 })
 export class SelectAttachmentTypeDialogComponent implements OnInit {
 
-  query: AttachmentTypeMailQuery = {} as AttachmentTypeMailQuery;
+  query: MissingAttachmentQuery = {} as MissingAttachmentQuery;
 
   constructor(private formBuilder: FormBuilder,
     private appService: AppService,

@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearchResult;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
@@ -84,4 +84,8 @@ public interface AnnouncementRepository extends QueryCacheCrudRepository<Announc
         @Query("select a from Announcement a where a.announcementStatus=:announcementStatus and publicationDate is not null and firstClientReviewSentMailDateTime is not null ")
         List<Announcement> getAnnouncementForCustomerProofReadingReminder(
                         @Param("announcementStatus") AnnouncementStatus announcementStatus);
+
+        @Query("select a from Announcement a where a.announcementStatus=:announcementStatus and publicationDate is not null  and confrere <> :confrere  ")
+        List<Announcement> getAnnouncementForConfrereReminderProviderInvoice(
+                        AnnouncementStatus announcementStatusByCode, @Param("confrere") Confrere confrere);
 }

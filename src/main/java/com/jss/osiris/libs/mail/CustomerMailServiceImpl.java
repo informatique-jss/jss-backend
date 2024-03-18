@@ -21,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.repository.CustomerMailRepository;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -116,7 +118,8 @@ public class CustomerMailServiceImpl implements CustomerMailService {
 
     @Transactional
     @Override
-    public void sendMail(CustomerMail mail) throws OsirisException {
+    public void sendMail(CustomerMail mail)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         if (mail != null) {
             prepareAndSendMail(mail);
 
@@ -124,7 +127,7 @@ public class CustomerMailServiceImpl implements CustomerMailService {
                 File mailPdf = null;
                 try {
                     List<Attachment> attachments = null;
-                    mailPdf = mailHelper.generateGenericPdf(mail);
+                    mailPdf = mailHelper.generateGenericPdfOfMail(mail);
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
                     if (mail.getCustomerOrder() != null)
                         attachments = attachmentService.addAttachment(new FileInputStream(mailPdf),
@@ -190,7 +193,8 @@ public class CustomerMailServiceImpl implements CustomerMailService {
         }
     }
 
-    private void prepareAndSendMail(CustomerMail mail) throws OsirisException {
+    private void prepareAndSendMail(CustomerMail mail)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         boolean canSend = true;
         MimeMessage message = mailHelper.generateGenericMail(mail);
 
