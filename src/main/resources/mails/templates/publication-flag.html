@@ -1,0 +1,38 @@
+<html>
+
+<head>
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        * {
+            font-family: 'Times New Roman', Times, serif
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .full-width {
+            width: 100%
+        }
+
+        @page {
+            size: A4 portrait;
+        }
+    </style>
+</head>
+
+<body style="padding-top: 140px;">
+    <div th:if="${logo!=null}" class="center" align="center" style="line-height:10px"><img style="max-width:500px"
+            th:src="@{'data:image/jpeg;base64,'+${logo}}" /></div>
+    <div th:if="${noticeHeader!=null}">
+        <p class="text" th:utext="${noticeHeader}">header</p>
+    </div>
+    <div>
+        <p class="text" th:utext="${notice}">notice</p>
+    </div>
+</body>
+
+</html>
