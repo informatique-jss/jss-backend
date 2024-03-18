@@ -55,6 +55,7 @@ public class CustomerMail {
     public static String TEMPLATE_MISSING_ATTACHMENT = "missing-attachment";
     public static String TEMPLATE_RENEW_PASSWORD = "renew-password";
     public static String TEMPLATE_REQUEST_RIB = "request-rib";
+    public static String TEMPLATE_SEND_RFF = "send-rff";
 
     @Id
     @SequenceGenerator(name = "customer_mail_sequence", sequenceName = "customer_mail_sequence", allocationSize = 1)

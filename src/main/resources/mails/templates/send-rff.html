@@ -146,37 +146,123 @@
                                                                 style="padding-left:10px;padding-right:10px;text-align:center;width:100%;">
                                                                 <h1
                                                                     style="margin: 0; white-space: nowrap;color: rgb(35, 61, 86); direction: ltr; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 700; letter-spacing: normal; line-height: 24px; text-align: center; margin-top: 0; margin-bottom: 0;">
-                                                                    <strong><span>Relance attestation de parution
-                                                                        </span></strong>
+                                                                    <strong><span>Vos remboursements forfaitaires de
+                                                                            frais</span></strong>
                                                                 </h1>
                                                             </td>
                                                         </tr>
                                                     </table>
+                                                    <table class="text_block block-3" width="100%" border="0"
+                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                                        <tr>
+                                                            <td
+                                                                style="padding-left:10px;padding-right:10px;padding-top:15px;">
+                                                                <div style="font-family: Arial, sans-serif">
+                                                                    <div
+                                                                        style="font-size: 22px;font-weight: 700; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; mso-line-height-alt: 16.8px; color: rgb(196, 174, 139); line-height: 1.2;text-align: center;">
+                                                                        <span>Année <span
+                                                                                th:text="${rffYear}"></span></span>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table class="image_block block-5" width="100%" border="0"
+                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        th:if="${headerPicture!=null}"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                        <tr>
+                                                            <td
+                                                                style="width:100%;padding-right:0px;padding-left:0px;padding-top:20px;">
+                                                                <div class="alignment" align="center"
+                                                                    style="line-height:10px"><img class="big"
+                                                                        src="sample.png" th:src="|cid:${headerPicture}|"
+                                                                        style="display: block; height: auto; border: 0; width: 750px;"
+                                                                        width="750" alt="" title="" /></div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
                                                     <table width="100%" border="0" cellpadding="0" cellspacing="0"
                                                         role="presentation"
-                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;padding-top: 30px;">
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;padding-top: 10px;">
                                                         <tr>
                                                             <td
                                                                 style="padding-left:10px;padding-right:10px;width:100%;">
-                                                                <p>Cher Confrère,</p>
-                                                                <p>Je vous prie de nous transmettre l'attestation de
-                                                                    parution de notre commande n°<span
-                                                                        th:text="${customerOrder.id}"></span>
-                                                                    - Affaire <span th:text="${affaireLabel}"></span>
-                                                                    envoyée
-                                                                    le <span th:text="${sentDateToConfrere}"></span> :
+                                                                <p>Bonjour,</p>
+                                                                <p>Afin de nous permettre de procéder au règlement de
+                                                                    vos remboursements forfaitaires de frais (RFF), nous
+                                                                    vous remercions de nous faire parvenir avant la fin
+                                                                    de l’année, une facture avec les montants ci-dessous
+                                                                    correspondant à l’année <span
+                                                                        th:text="${rffYear}"></span></span>.</p>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table width="100%" border="0" cellpadding="0" cellspacing="0"
+                                                        role="presentation"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;padding-top: 10px;padding-bottom: 15px;">
+                                                        <tr>
+                                                            <td
+                                                                style="padding-left:10px;padding-right:10px;width:100%;">
+                                                                <p><strong><span th:text="${rffMonth}"></span></strong>
                                                                 </p>
-                                                                <p>L'annonce est à paraitre le <span
-                                                                        th:text="${announcementPublicationDate}"></span>
-                                                                    dans le département <span
-                                                                        th:text="${provision.announcement.department.code}"></span>.
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table
+                                                        style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;   color: #233d56; width:100%">
+                                                        <tr>
+                                                            <td colspan="4" style="text-align: left;padding-left: 10px">
+                                                                Remboursement forfaitaire de frais pour l’année <span
+                                                                    th:text="${rffYear}"></span>
+                                                            </td>
+                                                            <td
+                                                                style="text-align: right;white-space: nowrap;padding-right: 10px;">
+                                                                <span
+                                                                    th:text="${#numbers.formatDecimal(rff.rffTotal,1,2)}"></span>
+                                                                €
+                                                            </td>
+                                                        </tr>
+                                                        <tr style="text-align: left;padding-left: 10px">
+                                                            <td colspan="4"> <span>
+                                                                    TVA à 20% </span>€
+                                                            </td>
+                                                            <td
+                                                                style="text-align: right;white-space: nowrap;;padding-right: 10px">
+                                                                <span
+                                                                    th:text="${#numbers.formatDecimal(rff.rffTotal*0.2,1,2)}"></span>
+                                                                €
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td colspan="4" style="text-align: left;padding-left: 10px">
+                                                                Total TTC
+                                                            </td>
+                                                            <td
+                                                                style="text-align: right;white-space: nowrap;padding-right: 10px">
+                                                                <span
+                                                                    th:text="${#numbers.formatDecimal(rff.rffTotal*1.2,1,2)}"></span>
+                                                                €
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table width="100%" border="0" cellpadding="0" cellspacing="0"
+                                                        role="presentation"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;padding-top: 10px;padding-left: 10px;">
+                                                        <tr>
+                                                            <td
+                                                                style="padding-left:10px;padding-right:10px;width:100%;padding-right: 10px">
+                                                                <p>Cette facture doit obligatoirement être datée de
+                                                                    <span th:text="${rffMonth}"></span></span>.
                                                                 </p>
                                                             </td>
                                                         </tr>
                                                     </table>
                                                     <table width="100%" border="0" cellpadding="0" cellspacing="0"
                                                         role="presentation"
-                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;padding-top: 20px;">
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;padding-top: 10px;">
                                                         <tr>
                                                             <td
                                                                 style="padding-left:10px;padding-right:10px;width:100%;">
@@ -194,7 +280,7 @@
                                                                 <div style="font-family: Arial, sans-serif">
                                                                     <div
                                                                         style="font-size: 22px;font-weight: 700; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; mso-line-height-alt: 16.8px; color: rgb(196, 174, 139); line-height: 1.2;text-align: center;">
-                                                                        Cordialement,
+                                                                        A très bientôt !
                                                                     </div>
                                                                 </div>
                                                             </td>

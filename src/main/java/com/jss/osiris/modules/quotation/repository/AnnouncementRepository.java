@@ -87,5 +87,5 @@ public interface AnnouncementRepository extends QueryCacheCrudRepository<Announc
 
         @Query("select a from Announcement a where a.announcementStatus=:announcementStatus and publicationDate is not null  and confrere <> :confrere  ")
         List<Announcement> getAnnouncementForConfrereReminderProviderInvoice(
-                        AnnouncementStatus announcementStatusByCode, @Param("confrere") Confrere confrere);
+                        AnnouncementStatus announcementStatus, @Param("confrere") Confrere confrere);
 }

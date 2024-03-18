@@ -70,6 +70,11 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                                 AggregateStatus.AGGREGATE_STATUS_WAITING);
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, "Publié", "fact_check", false, false,
                                 AggregateStatus.AGGREGATE_STATUS_IN_PROGRESS);
+
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_INVOICE, "En attente de facture confrère",
+                                "point_of_sale", false, false,
+                                AggregateStatus.AGGREGATE_STATUS_IN_PROGRESS);
+
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_DONE, "Terminé", "check_small", false, true,
                                 AggregateStatus.AGGREGATE_STATUS_DONE);
 

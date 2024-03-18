@@ -146,7 +146,7 @@
                                                                 style="padding-left:10px;padding-right:10px;text-align:center;width:100%;">
                                                                 <h1
                                                                     style="margin: 0; white-space: nowrap;color: rgb(35, 61, 86); direction: ltr; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 700; letter-spacing: normal; line-height: 24px; text-align: center; margin-top: 0; margin-bottom: 0;">
-                                                                    <strong><span>Relance Attestation de Parution
+                                                                    <strong><span>Relance envoi facture
                                                                         </span></strong>
                                                                 </h1>
                                                             </td>
@@ -159,14 +159,14 @@
                                                             <td
                                                                 style="padding-left:10px;padding-right:10px;width:100%;">
                                                                 <p>Cher Confrère,</p>
-                                                                <p>Je vous prie de nous transmettre l'attestation de
-                                                                    parution de notre commande n°<span
+                                                                <p>Je vous prie de nous transmettre la facture de notre
+                                                                    commande n°<span
                                                                         th:text="${customerOrder.id}"></span>
                                                                     - Affaire <span th:text="${affaireLabel}"></span>
                                                                     envoyée
                                                                     le <span th:text="${sentDateToConfrere}"></span> :
                                                                 </p>
-                                                                <p>L'annonce est à paraitre le <span
+                                                                <p>L'annonce est parue le <span
                                                                         th:text="${announcementPublicationDate}"></span>
                                                                     dans le département <span
                                                                         th:text="${provision.announcement.department.code}"></span>.

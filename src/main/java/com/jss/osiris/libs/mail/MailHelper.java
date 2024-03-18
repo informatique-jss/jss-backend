@@ -435,6 +435,12 @@ public class MailHelper {
         }
         ctx.setVariable("publicationPaperNumber", publicationPaperNumber);
 
+        ctx.setVariable("rff", mail.getRff());
+        if (mail.getRff() != null) {
+            ctx.setVariable("rffYear", mail.getRff().getEndDate().format(DateTimeFormatter.ofPattern("yyyy")));
+            ctx.setVariable("rffMonth", mail.getRff().getEndDate().format(DateTimeFormatter.ofPattern("MMMM yyyy")));
+        }
+
         if (quotation != null)
             setQuotationPrice(quotation, ctx);
     }
@@ -899,11 +905,8 @@ public class MailHelper {
         mail.setSendToMe(sendToMe);
         mail.setProvision(provision);
         mail.setMailComputeResult(mailComputeHelper.computeMailForSendAnnouncementToConfrere(announcement));
-        mail.setSubject("Demande d'insertion légale pour notre commande n°" + customerOrder.getId() + " - "
+        mail.setSubject("Relance facture - commande n°" + customerOrder.getId() + " - "
                 + getCustomerOrderAffaireLabel(customerOrder, asso));
-        if (isReminder)
-            mail.setSubject("Relance attestation de parution pour notre commande n°" + customerOrder.getId() + " - "
-                    + getCustomerOrderAffaireLabel(customerOrder, asso));
         mailService.addMailToQueue(mail);
     }
 
@@ -1038,6 +1041,20 @@ public class MailHelper {
 
         mail.setSubject("Demande de RIB concernant la commande n°" + assoAffaireOrder.getCustomerOrder().getId() + " - "
                 + getCustomerOrderAffaireLabel(assoAffaireOrder.getCustomerOrder(), assoAffaireOrder));
+
+        mailService.addMailToQueue(mail);
+    }
+
+    public void sendRffToCustomer(Rff rff, boolean sendToMe) throws OsirisException, OsirisClientMessageException {
+        CustomerMail mail = new CustomerMail();
+        mail.setHeaderPicture("images/mails/send-rff.png");
+        mail.setReplyToMail(rff.getTiers().getSalesEmployee().getMail());
+        mail.setSendToMe(sendToMe);
+        mail.setMailComputeResult(mailComputeHelper.computeMailForRff(rff));
+        mail.setSubject("Vos remboursements forfaitaires de frais pour le compte n°" + rff.getTiers().getId());
+        mail.setRff(rff);
+        mail.setTiers(rff.getTiers());
+        mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_RFF);
 
         mailService.addMailToQueue(mail);
     }
@@ -1353,34 +1370,6 @@ public class MailHelper {
         if (attachments.size() > 0)
             sendCustomerOrderAttachmentsToCustomer(customerOrder, customerOrder.getAssoAffaireOrders().get(0), sendToMe,
                     attachments);
-    }
-
-    public void sendRffToCustomer(Rff rff, boolean sendToMe) throws OsirisException, OsirisClientMessageException {
-        CustomerMail mail = new CustomerMail();
-
-        mail.setHeaderPicture("images/billing-receipt-header.png");
-        mail.setTitle("Vos remboursements forfaitaires de frais");
-        String explainationText = "Bonjour, afin de nous permettre de procéder au règlement de vos remboursements forfaitaires de frais (RFF), nous vous remercions de nous faire parvenir avant la fin de l’année, une facture avec les montants ci-dessous correspondant à l'année "
-                + rff.getEndDate().getYear();
-        mail.setExplaination(explainationText);
-
-        mail.setGreetings("A très bientôt !");
-
-        mail.setReplyToMail(rff.getTiers().getSalesEmployee().getMail());
-        mail.setSendToMe(sendToMe);
-        mail.setMailComputeResult(mailComputeHelper.computeMailForRff(rff));
-
-        mail.setSubject("Vos remboursements forfaitaires de frais (" + rff.getTiers().getId() + ")");
-
-        mail.setExplaination3("Cette facture doit obligatoirement être datée de "
-                + rff.getEndDate().format(DateTimeFormatter.ofPattern("MMMM yyyy"))
-                + ". Le paiement sera effectué à compter de réception de la facture et versé sur le RIB "
-                + rff.getRffBic() + " / " + rff.getRffIban());
-
-        mail.setRff(rff);
-        mail.setTiers(rff.getTiers());
-
-        mailService.addMailToQueue(mail);
     }
 
 }
