@@ -328,26 +328,48 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           }
           this.saveAsso();
         });
-      } else if (status.code == ANNOUNCEMENT_STATUS_WAITING_CONFRERE && !provision.announcement.isAnnouncementAlreadySentToConfrere && provision.announcement.confrere) {
-        saveAsso = false;
-        const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-          maxWidth: "400px",
-          data: {
-            title: "Envoyer au confrère ?",
-            content: "Voulez vous envoyer la demande de publication de cette annonce au confrère " + provision.announcement.confrere.label + " ?",
-            closeActionText: "Envoyer",
-            validationActionText: "Ne pas envoyer"
-          }
-        });
-
-        dialogRef.afterClosed().subscribe(dialogResult => {
-          if (dialogResult == true || dialogResult == false) {
-            if (provision.announcement) {
-              provision.announcement.isAnnouncementAlreadySentToConfrere = dialogResult;
+      } else if (status.code == ANNOUNCEMENT_STATUS_WAITING_CONFRERE && provision.announcement.confrere) {
+        if (!provision.announcement.isAnnouncementAlreadySentToConfrere) {
+          saveAsso = false;
+          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+            maxWidth: "400px",
+            data: {
+              title: "Envoyer au confrère ?",
+              content: "Voulez vous envoyer la demande de publication de cette annonce au confrère " + provision.announcement.confrere.label + " ?",
+              closeActionText: "Envoyer",
+              validationActionText: "Ne pas envoyer"
             }
-          }
-          this.saveAsso();
-        });
+          });
+
+          dialogRef.afterClosed().subscribe(dialogResult => {
+            if (dialogResult == true || dialogResult == false) {
+              if (provision.announcement) {
+                provision.announcement.isAnnouncementAlreadySentToConfrere = dialogResult;
+              }
+            }
+            this.saveAsso();
+          });
+        } else {
+          saveAsso = false;
+          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+            maxWidth: "400px",
+            data: {
+              title: "Envoyer un erratum au confrère ?",
+              content: "Voulez vous envoyer un erratum de cette annonce au confrère " + provision.announcement.confrere.label + " ?",
+              closeActionText: "Envoyer",
+              validationActionText: "Ne pas envoyer"
+            }
+          });
+
+          dialogRef.afterClosed().subscribe(dialogResult => {
+            if (dialogResult == true || dialogResult == false) {
+              if (provision.announcement) {
+                provision.announcement.isAnnouncementErratumAlreadySentToConfrere = dialogResult;
+              }
+            }
+            this.saveAsso();
+          });
+        }
       } else if (status.code == ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER) {
         if (!provision.announcement.isProofReadingDocument && !provision.announcement.firstClientReviewSentMailDateTime) {
           saveAsso = false;

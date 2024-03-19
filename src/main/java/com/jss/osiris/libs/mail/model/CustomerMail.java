@@ -47,6 +47,7 @@ public class CustomerMail {
     public static String TEMPLATE_SEND_PUBLICATION_FLAG = "send-publication-flag";
     public static String TEMPLATE_SEND_PROOF_READING = "send-proof-reading";
     public static String TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE = "send-announcement-confrere";
+    public static String TEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE = "send-announcement-erratum-confrere";
     public static String TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER = "send-announcement-confrere-reminder";
     public static String TEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER = "send-confrere-provider-invoice-reminder";
     public static String TEMPLATE_CUSTOMER_ORDER_FINALIZATION = "customer-order-finalization";

@@ -444,7 +444,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             Provision provision, Announcement announcement)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         if (announcement.getIsAnnouncementAlreadySentToConfrere() == null
-                || !announcement.getIsAnnouncementAlreadySentToConfrere()) {
+                || !announcement.getIsAnnouncementAlreadySentToConfrere()
+                || announcement.getIsAnnouncementErratumAlreadySentToConfrere() == null
+                || !announcement.getIsAnnouncementErratumAlreadySentToConfrere()) {
             if (announcement.getConfrere() != null
                     && !announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
 
@@ -483,12 +485,20 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                     wordFile.delete();
                 }
 
-                mailHelper.sendAnnouncementRequestToConfrere(
-                        customerOrderService.getCustomerOrder(customerOrder.getId()), asso,
-                        false, provision, announcement, false);
+                if (announcement.getIsAnnouncementAlreadySentToConfrere() == null
+                        || !announcement.getIsAnnouncementAlreadySentToConfrere()) {
+                    mailHelper.sendAnnouncementRequestToConfrere(
+                            customerOrderService.getCustomerOrder(customerOrder.getId()), asso,
+                            false, provision, announcement, false);
+                    announcement.setIsAnnouncementAlreadySentToConfrere(true);
+                    announcement.setFirstConfrereSentMailDateTime(LocalDateTime.now());
+                } else {
+                    mailHelper.sendAnnouncementErratumToConfrere(
+                            customerOrderService.getCustomerOrder(customerOrder.getId()), asso,
+                            false, provision, announcement);
+                    announcement.setIsAnnouncementErratumAlreadySentToConfrere(true);
+                }
 
-                announcement.setIsAnnouncementAlreadySentToConfrere(true);
-                announcement.setFirstConfrereSentMailDateTime(LocalDateTime.now());
                 addOrUpdateAnnouncement(announcement);
             }
         }

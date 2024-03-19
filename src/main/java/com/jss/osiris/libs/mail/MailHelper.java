@@ -877,6 +877,40 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
+    public void sendAnnouncementErratumToConfrere(CustomerOrder customerOrder, AssoAffaireOrder asso,
+            boolean sendToMe, Provision provision, Announcement announcement)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+
+        if (announcement == null || announcement.getConfrere() == null || announcement.getPublicationDate() == null
+                || announcement.getNoticeTypes() == null || announcement.getNoticeTypes().size() == 0)
+            return;
+
+        CustomerMail mail = new CustomerMail();
+        mail.setCustomerOrder(customerOrder);
+        mail.setHeaderPicture("images/mails/send-publication-flag.png");
+
+        mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE);
+
+        List<Attachment> attachments = new ArrayList<Attachment>();
+        for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(provision.getAttachments()))
+            if (attachment.getAttachmentType().getId()
+                    .equals(constantService.getAttachmentTypeAnnouncement()
+                            .getId())) {
+                attachments.add(attachment);
+                break;
+            }
+
+        mail.setAttachments(attachments);
+        mail.setReplyTo(asso.getAssignedTo());
+        mail.setSendToMe(sendToMe);
+        mail.setProvision(provision);
+        mail.setMailComputeResult(mailComputeHelper.computeMailForSendAnnouncementToConfrere(announcement));
+        mail.setSubject(
+                "Erratum - modification d'insertion légale pour notre commande n°" + customerOrder.getId() + " - "
+                        + getCustomerOrderAffaireLabel(customerOrder, asso));
+        mailService.addMailToQueue(mail);
+    }
+
     public void sendConfrereReminderProviderInvoice(CustomerOrder customerOrder, AssoAffaireOrder asso,
             boolean sendToMe, Provision provision, Announcement announcement)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {

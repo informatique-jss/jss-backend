@@ -80,6 +80,7 @@ public class Announcement implements IId, IDocument {
 	private Boolean isPublicationReciptAlreadySent;
 	private Boolean isPublicationFlagAlreadySent;
 	private Boolean isAnnouncementAlreadySentToConfrere;
+	private Boolean isAnnouncementErratumAlreadySentToConfrere;
 
 	private LocalDateTime firstConfrereSentMailDateTime;
 	private LocalDateTime firstConfrereReminderDateTime;
@@ -340,6 +341,14 @@ public class Announcement implements IId, IDocument {
 
 	public void setThirdReminderProviderInvoiceDateTime(LocalDateTime thirdReminderProviderInvoiceDateTime) {
 		this.thirdReminderProviderInvoiceDateTime = thirdReminderProviderInvoiceDateTime;
+	}
+
+	public Boolean getIsAnnouncementErratumAlreadySentToConfrere() {
+		return isAnnouncementErratumAlreadySentToConfrere;
+	}
+
+	public void setIsAnnouncementErratumAlreadySentToConfrere(Boolean isAnnouncementErratumAlreadySentToConfrere) {
+		this.isAnnouncementErratumAlreadySentToConfrere = isAnnouncementErratumAlreadySentToConfrere;
 	}
 
 }
