@@ -49,8 +49,8 @@
           <span [ngClass]="{'color-warn':element.isElementWarn[column.id]}"
             class="nowrap">{{element.columns[column.id]}}
             <mat-icon color="accent" [matTooltip]="column.actionTooltip" color="accent"
-              class="pointer column-content-icon" (click)="openColumnLink($event, column, element)"
-              (auxclick)="openColumnLink($event, column,  element)"
+              class="pointer column-content-icon" (click)="openColumnLink($event, column, element.rawValue)"
+              (auxclick)="openColumnLink($event, column,  element.rawValue)"
               *ngIf=" column.actionLinkFunction && element.columnsLink[column.id]  && element.columns[column.id] ">
               {{column.actionIcon}}
             </mat-icon>
