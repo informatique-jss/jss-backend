@@ -6,12 +6,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import com.jss.osiris.modules.miscellaneous.model.IId;
 import javax.persistence.Id;
 
-import com.jss.osiris.modules.miscellaneous.model.IId;
-
 @Entity
-public class Service implements Serializable, IId {
+public class ServiceFamilyGroup implements Serializable,IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,7 +18,7 @@ public class Service implements Serializable, IId {
 
 	@Column(nullable = false)
 	private String label;
-
+	
 	private String code;
 
 	public Integer getId() {
@@ -37,7 +36,7 @@ public class Service implements Serializable, IId {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-
+	
 	public String getCode() {
 		return code;
 	}

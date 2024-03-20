@@ -7,6 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -73,7 +74,9 @@ import { ReferentialRefundTypeComponent } from '../referentials/referential-refu
 import { ReferentialRegieComponent } from '../referentials/referential-regie/referential-regie.component';
 import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
 import { ReferentialRffFrequencyComponent } from '../referentials/referential-rff-frequency/referential-rff-frequency.component';
-import { ReferentialServiceComponent } from '../referentials/referential-service/referential-service.component';
+import { ReferentialServiceFamilyGroupComponent } from '../referentials/referential-service-family-group/referential-service-family-group.component';
+import { ReferentialServiceFamilyComponent } from '../referentials/referential-service-family/referential-service-family.component';
+import { ReferentialServiceTypeComponent } from '../referentials/referential-service/referential-service-type.component';
 import { ReferentialSpecialOfferComponent } from '../referentials/referential-special-offer/referential-special-offer.component';
 import { ReferentialSubscriptionPeriodTypeComponent } from '../referentials/referential-subscription-period-type/referential-subscription-period-type.component';
 import { ReferentialTiersCategoryComponent } from '../referentials/referential-tiers-category/referential-tiers-category.component';
@@ -125,6 +128,7 @@ const routes: Routes = [
     TiersModule,
     QuotationModule,
     AccountingModule,
+    MatDividerModule,
     InvoicingModule,
   ],
   declarations: [AdministrationComponent,
@@ -190,7 +194,10 @@ const routes: Routes = [
     ReferentialComplainProblemComponent,
     ReferentialComplainCauseComponent,
     ReferentialComplainOriginComponent,
-    ReferentialServiceComponent,
+    ReferentialServiceTypeComponent,
+    ReferentialServiceFamilyComponent,
+    ReferentialServiceFamilyGroupComponent,
+    ReferentialServiceTypeComponent,
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

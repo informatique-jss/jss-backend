@@ -72,6 +72,7 @@ import { ChipsCityComponent } from '../forms/chips-city/chips-city.component';
 import { ChipsCompetitorComponent } from '../forms/chips-competitor/chips-competitor.component';
 import { ChipsEmployeeComponent } from '../forms/chips-employee/chips-employee.component';
 import { ChipsFormaliteGuichetUniqueComponent } from '../forms/chips-formalite-guichet-unique/chips-formalite-guichet-unique.component';
+import { ChipsFormeJuridiqueComponent } from '../forms/chips-forme-juridique/chips-forme-juridique.component';
 import { ChipsMailComponent } from '../forms/chips-mail/chips-mail.component';
 import { ChipsPaymentTypeComponent } from '../forms/chips-payment-type/chips-payment-type.component';
 import { ChipsPhoneComponent } from '../forms/chips-phone/chips-phone.component';
@@ -234,9 +235,12 @@ import { SelectRegionsComponent } from '../forms/select-regions/select-regions.c
 import { SelectReportingDatasetComponent } from '../forms/select-reporting-dataset/select-reporting-dataset.component';
 import { SelectResponsableComponent } from '../forms/select-responsable/select-responsable.component';
 import { SelectRffFrequencyComponent } from '../forms/select-rff-frequency/select-rff-frequency.component';
+import { SelectServiceFamilyGroupComponent } from '../forms/select-service-family-group/select-service-family-group.component';
+import { SelectServiceFamilyComponent } from '../forms/select-service-family/select-service-family.component';
 import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-period/select-subscription-period.component';
 import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/select-tiers-category.component';
 import { SelectTiersTypeComponent } from '../forms/select-tiers-type/select-tiers-type.component';
+import { SelectTypeDocumentComponent } from '../forms/select-type-document/select-type-document.component';
 import { SelectVatCollectionTypeComponent } from '../forms/select-vat-collection-type/select-vat-collection-type.component';
 import { SelectVatComponent } from '../forms/select-vat/select-vat.component';
 import { GaugeChartComponent } from '../gauge-chart/gauge-chart.component';
@@ -510,6 +514,11 @@ const routes: Routes = [
     GaugeChartComponent,
     SelectBatchCategoryComponent,
     SelectQuotationAbandonReasonComponent,
+    SelectServiceFamilyGroupComponent,
+    SelectServiceFamilyComponent,
+    ChipsFormeJuridiqueComponent,
+    SelectTypeDocumentComponent,
+    AutocompleteTypeDocumentComponent,
   ],
   exports: [
     HistoryComponent,
@@ -731,6 +740,11 @@ const routes: Routes = [
     GaugeChartComponent,
     SelectBatchCategoryComponent,
     SelectQuotationAbandonReasonComponent,
+    SelectServiceFamilyGroupComponent,
+    SelectServiceFamilyComponent,
+    ChipsFormeJuridiqueComponent,
+    SelectTypeDocumentComponent,
+    AutocompleteTypeDocumentComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

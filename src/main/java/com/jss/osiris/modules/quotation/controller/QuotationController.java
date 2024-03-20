@@ -66,6 +66,7 @@ import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
+import com.jss.osiris.modules.quotation.model.AssoServiceProvisionType;
 import com.jss.osiris.modules.quotation.model.AttachmentMailRequest;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.BuildingDomiciliation;
@@ -98,7 +99,9 @@ import com.jss.osiris.modules.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.RecordType;
-import com.jss.osiris.modules.quotation.model.Service;
+import com.jss.osiris.modules.quotation.model.ServiceFamily;
+import com.jss.osiris.modules.quotation.model.ServiceFamilyGroup;
+import com.jss.osiris.modules.quotation.model.ServiceType;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
@@ -136,7 +139,9 @@ import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.quotation.service.RecordTypeService;
 import com.jss.osiris.modules.quotation.service.RnaDelegateService;
-import com.jss.osiris.modules.quotation.service.ServiceService;
+import com.jss.osiris.modules.quotation.service.ServiceFamilyGroupService;
+import com.jss.osiris.modules.quotation.service.ServiceFamilyService;
+import com.jss.osiris.modules.quotation.service.ServiceTypeService;
 import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
@@ -324,22 +329,78 @@ public class QuotationController {
   DebourDelService debourDelService;
 
   @Autowired
-  ServiceService serviceService;
+  ServiceTypeService serviceTypeService;
 
-  @GetMapping(inputEntryPoint + "/services")
-  public ResponseEntity<List<Service>> getServices() {
-    return new ResponseEntity<List<Service>>(serviceService.getServices(), HttpStatus.OK);
+  @Autowired
+  ServiceFamilyService serviceFamilyService;
+
+  @Autowired
+  ServiceFamilyGroupService serviceFamilyGroupService;
+
+  @GetMapping(inputEntryPoint + "/service-family-groups")
+  public ResponseEntity<List<ServiceFamilyGroup>> getServiceFamilyGroups() {
+    return new ResponseEntity<List<ServiceFamilyGroup>>(serviceFamilyGroupService.getServiceFamilyGroups(),
+        HttpStatus.OK);
   }
 
-  @PostMapping(inputEntryPoint + "/service")
-  public ResponseEntity<Service> addOrUpdateService(
-      @RequestBody Service services) throws OsirisValidationException, OsirisException {
-    if (services.getId() != null)
-      validationHelper.validateReferential(services, true, "services");
-    validationHelper.validateString(services.getCode(), true, "code");
-    validationHelper.validateString(services.getLabel(), true, "label");
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @PostMapping(inputEntryPoint + "/service-family-group")
+  public ResponseEntity<ServiceFamilyGroup> addOrUpdateServiceFamilyGroup(
+      @RequestBody ServiceFamilyGroup serviceFamilyGroups) throws OsirisValidationException, OsirisException {
+    if (serviceFamilyGroups.getId() != null)
+      validationHelper.validateReferential(serviceFamilyGroups, true, "serviceFamilyGroups");
+    validationHelper.validateString(serviceFamilyGroups.getCode(), true, "code");
+    validationHelper.validateString(serviceFamilyGroups.getLabel(), true, "label");
 
-    return new ResponseEntity<Service>(serviceService.addOrUpdateService(services), HttpStatus.OK);
+    return new ResponseEntity<ServiceFamilyGroup>(
+        serviceFamilyGroupService.addOrUpdateServiceFamilyGroup(serviceFamilyGroups), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/service-families")
+  public ResponseEntity<List<ServiceFamily>> getServiceFamilies() {
+    return new ResponseEntity<List<ServiceFamily>>(serviceFamilyService.getServiceFamilies(), HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @PostMapping(inputEntryPoint + "/service-family")
+  public ResponseEntity<ServiceFamily> addOrUpdateServiceFamily(
+      @RequestBody ServiceFamily serviceFamilies) throws OsirisValidationException, OsirisException {
+    if (serviceFamilies.getId() != null)
+      validationHelper.validateReferential(serviceFamilies, true, "serviceFamilies");
+    validationHelper.validateString(serviceFamilies.getCode(), true, "code");
+    validationHelper.validateString(serviceFamilies.getLabel(), true, "label");
+    validationHelper.validateReferential(serviceFamilies.getServiceFamilyGroup(), true, "familyGroup");
+
+    return new ResponseEntity<ServiceFamily>(serviceFamilyService.addOrUpdateServiceFamily(serviceFamilies),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/service-types")
+  public ResponseEntity<List<ServiceType>> getServiceTypes() {
+    return new ResponseEntity<List<ServiceType>>(serviceTypeService.getServiceTypes(), HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @PostMapping(inputEntryPoint + "/service-type")
+  public ResponseEntity<ServiceType> addOrUpdateServiceType(
+      @RequestBody ServiceType serviceType) throws OsirisValidationException, OsirisException {
+    if (serviceType.getId() != null)
+      validationHelper.validateReferential(serviceType, true, "services");
+    validationHelper.validateString(serviceType.getCode(), true, "code");
+    validationHelper.validateString(serviceType.getLabel(), true, "label");
+    validationHelper.validateReferential(serviceType.getServiceFamily(), true, "serviceFamily");
+
+    if (serviceType.getAssoServiceProvisionTypes() != null) {
+      for (AssoServiceProvisionType assoServiceProvisionType : serviceType.getAssoServiceProvisionTypes()) {
+        validationHelper.validateReferential(assoServiceProvisionType.getProvisionType(), true, "provisionType");
+        validationHelper.validateInteger(assoServiceProvisionType.getMaxEmployee(), false, "maxEmployee");
+        validationHelper.validateInteger(assoServiceProvisionType.getMinEmployee(), false, "minEmployee");
+        validationHelper.validateString(assoServiceProvisionType.getCustomerMessageWhenAdded(), false,
+            "customerMessageWhenAdded");
+      }
+    }
+
+    return new ResponseEntity<ServiceType>(serviceTypeService.addOrUpdateServiceType(serviceType), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/customer-order/associate")

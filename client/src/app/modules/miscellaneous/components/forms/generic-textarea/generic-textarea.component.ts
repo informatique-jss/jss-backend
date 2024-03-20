@@ -29,6 +29,10 @@ export class GenericTextareaComponent extends GenericFormComponent implements On
  * Default : 3
  */
   @Input() numberOfLines: number = 3;
+  /**
+* Hint to display
+*/
+  @Input() hint: string = "";
 
   constructor(
     private formBuilder3: UntypedFormBuilder,

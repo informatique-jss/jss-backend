@@ -83,11 +83,13 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   CUSTOMER_ORDER_ORIGIN_REFERENTIAL = "Origine des commandes";
   DEPARTMENT_VAT_SETTING_REFERENTIAL = "TVA par département";
   RFF_FREQUENCY_REFERENTIAL = "Périodicité des RFF";
-  SERVICE_REFERENTIAL = "Service";
+  SERVICE_TYPE_REFERENTIAL = "Service";
   COMPLAIN_PROBLEM_REFERENTIAL = "Reclamation - Probleme de vente";
   COMPLAIN_CAUSE_REFERENTIAL = "Reclamation - Cause du probleme de vente";
   COMPLAIN_ORIGIN_REFERENTIAL = "Reclamation - Origine du probleme de vente";
   QUOTATION_ABANDON_REASON_REFERENTIAL = "Raison d'abandon des commandes/devis";
+  SERVICE_FAMILY_REFERENTIAL = "Famille de service";
+  SERVICE_FAMILY_GROUP_REFERENTIAL = "Groupe de famille de service";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -157,8 +159,10 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.COMPLAIN_PROBLEM_REFERENTIAL);
     this.referentials.push(this.COMPLAIN_CAUSE_REFERENTIAL);
     this.referentials.push(this.COMPLAIN_ORIGIN_REFERENTIAL);
-    this.referentials.push(this.SERVICE_REFERENTIAL);
+    this.referentials.push(this.SERVICE_TYPE_REFERENTIAL);
     this.referentials.push(this.QUOTATION_ABANDON_REASON_REFERENTIAL);
+    this.referentials.push(this.SERVICE_FAMILY_REFERENTIAL);
+    this.referentials.push(this.SERVICE_FAMILY_GROUP_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(
