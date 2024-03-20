@@ -98,6 +98,7 @@ import com.jss.osiris.modules.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.RecordType;
+import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
@@ -135,6 +136,7 @@ import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.quotation.service.RecordTypeService;
 import com.jss.osiris.modules.quotation.service.RnaDelegateService;
+import com.jss.osiris.modules.quotation.service.ServiceService;
 import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
@@ -320,6 +322,25 @@ public class QuotationController {
 
   @Autowired
   DebourDelService debourDelService;
+
+  @Autowired
+  ServiceService serviceService;
+
+  @GetMapping(inputEntryPoint + "/services")
+  public ResponseEntity<List<Service>> getServices() {
+    return new ResponseEntity<List<Service>>(serviceService.getServices(), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/service")
+  public ResponseEntity<Service> addOrUpdateService(
+      @RequestBody Service services) throws OsirisValidationException, OsirisException {
+    if (services.getId() != null)
+      validationHelper.validateReferential(services, true, "services");
+    validationHelper.validateString(services.getCode(), true, "code");
+    validationHelper.validateString(services.getLabel(), true, "label");
+
+    return new ResponseEntity<Service>(serviceService.addOrUpdateService(services), HttpStatus.OK);
+  }
 
   @GetMapping(inputEntryPoint + "/customer-order/associate")
   public ResponseEntity<Quotation> associateCustomerOrderToQuotation(@RequestParam Integer idQuotation,

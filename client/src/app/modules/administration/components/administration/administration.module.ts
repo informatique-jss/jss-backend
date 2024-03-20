@@ -45,6 +45,9 @@ import { ReferentialCityComponent } from '../referentials/referential-city/refer
 import { ReferentialCivilityComponent } from '../referentials/referential-civility/referential-civility.component';
 import { ReferentialCompetentAuthorityTypeComponent } from '../referentials/referential-competent-authority-type/referential-competent-authority-type.component';
 import { ReferentialCompetitorComponent } from '../referentials/referential-competitor/referential-competitor.component';
+import { ReferentialComplainCauseComponent } from '../referentials/referential-complain-cause/referential-complain-cause.component';
+import { ReferentialComplainOriginComponent } from '../referentials/referential-complain-origin/referential-complain-origin.component';
+import { ReferentialComplainProblemComponent } from '../referentials/referential-complain-problem/referential-complain-problem.component';
 import { ReferentialCountryComponent } from '../referentials/referential-country/referential-country.component';
 import { ReferentialCustomerOrderOriginComponent } from '../referentials/referential-customer-order-origin/referential-customer-order-origin.component';
 import { ReferentialDeliveryServiceComponent } from '../referentials/referential-delivery-service/referential-delivery-service.component';
@@ -70,6 +73,7 @@ import { ReferentialRefundTypeComponent } from '../referentials/referential-refu
 import { ReferentialRegieComponent } from '../referentials/referential-regie/referential-regie.component';
 import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
 import { ReferentialRffFrequencyComponent } from '../referentials/referential-rff-frequency/referential-rff-frequency.component';
+import { ReferentialServiceComponent } from '../referentials/referential-service/referential-service.component';
 import { ReferentialSpecialOfferComponent } from '../referentials/referential-special-offer/referential-special-offer.component';
 import { ReferentialSubscriptionPeriodTypeComponent } from '../referentials/referential-subscription-period-type/referential-subscription-period-type.component';
 import { ReferentialTiersCategoryComponent } from '../referentials/referential-tiers-category/referential-tiers-category.component';
@@ -84,9 +88,6 @@ import { ReferentialProvisionFamilyTypeComponent } from '../referentials/referen
 import { ReferentialRecordTypeComponent } from '../referentials/referentiel-record-type/referential-record-type.component';
 import { ViewLogComponent } from '../view-log/view-log.component';
 import { AdministrationComponent } from './administration.component';
-import { ReferentialComplainProblemComponent } from '../referentials/referential-complain-problem/referential-complain-problem.component';
-import { ReferentialComplainCauseComponent } from '../referentials/referential-complain-cause/referential-complain-cause.component';
-import { ReferentialComplainOriginComponent } from '../referentials/referential-complain-origin/referential-complain-origin.component';
 
 const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
@@ -188,7 +189,8 @@ const routes: Routes = [
     ReferentialRffFrequencyComponent,
     ReferentialComplainProblemComponent,
     ReferentialComplainCauseComponent,
-    ReferentialComplainOriginComponent
+    ReferentialComplainOriginComponent,
+    ReferentialServiceComponent,
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent
