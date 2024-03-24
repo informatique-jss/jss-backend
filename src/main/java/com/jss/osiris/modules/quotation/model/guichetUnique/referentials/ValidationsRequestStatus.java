@@ -10,6 +10,10 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class ValidationsRequestStatus implements Serializable, ICode {
+
+    public static String MSA_ACCEPTATION_PENDING = "MSA_ACCEPTATION_PENDING";
+    public static String VALIDATION_PENDING = "VALIDATION_PENDING";
+
     public ValidationsRequestStatus(String code) {
         this.code = code;
     }

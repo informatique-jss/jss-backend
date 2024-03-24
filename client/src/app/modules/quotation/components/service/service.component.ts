@@ -1,0 +1,158 @@
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
+import { EditCommentDialogComponent } from 'src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component';
+import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
+import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { AppService } from 'src/app/services/app.service';
+import { formatBytes } from '../../../../libs/FormatHelper';
+import { AssoServiceDocument } from '../../model/AssoServiceDocument';
+import { IQuotation } from '../../model/IQuotation';
+import { Service } from '../../model/Service';
+import { ServiceType } from '../../model/ServiceType';
+import { TypeDocument } from '../../model/guichet-unique/referentials/TypeDocument';
+import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialog/select-document-type-dialog.component';
+
+@Component({
+  selector: 'service',
+  templateUrl: './service.component.html',
+  styleUrls: ['./service.component.css']
+})
+export class ServiceComponent implements OnInit {
+
+  @Input() service: Service | undefined;
+  @Input() quotation: IQuotation | undefined;
+  @Input() editMode: boolean = false;
+  searchText: string = "";
+
+  constructor(
+    private formBuilder: FormBuilder,
+    public editCommentDialog: MatDialog,
+    public selectedDocumentTypeDialog: MatDialog,
+    public confirmationDialog: MatDialog,
+    public selectServiceTypeDialog: MatDialog,
+    private constantService: ConstantService,
+    private appService: AppService,
+    private uploadAttachmentService: UploadAttachmentService
+  ) { }
+
+  serviceForm = this.formBuilder.group({});
+  otherServiceType: ServiceType = this.constantService.getServiceTypeOther();
+  ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
+  formatBytes = formatBytes;
+
+  ngOnInit() {
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.service && this.service) {
+      if (this.service.assoServiceDocuments && this.service.assoServiceDocuments.length > 0)
+        this.service.assoServiceDocuments.sort((a: AssoServiceDocument, b: AssoServiceDocument) => a.typeDocument.label.localeCompare(b.typeDocument.label));
+    }
+  }
+
+  commentDocument(document: AssoServiceDocument) {
+    let dialogRef = this.editCommentDialog.open(EditCommentDialogComponent, {
+      width: "50%",
+    });
+    dialogRef.componentInstance.comment = document.formalisteComment;
+    dialogRef.componentInstance.isMandatory = false;
+
+    dialogRef.afterClosed().subscribe(newComment => {
+      if (newComment && newComment.length == 0)
+        newComment = null;
+      document.formalisteComment = newComment;
+    });
+  }
+
+  deleteDocument(document: AssoServiceDocument) {
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Supprimer le type de document",
+        content: "Êtes-vous sûr de vouloir supprimer le type de document " + document.typeDocument.label + " ? Cela effacera toutes les pièces jointes associées.",
+        closeActionText: "Annuler",
+        validationActionText: "Supprimer"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult && this.service)
+        this.service.assoServiceDocuments.splice(this.service.assoServiceDocuments.indexOf(document), 1);
+    });
+  }
+
+  completeDocumentAttachment($event: any, document: AssoServiceDocument) {
+    document.attachments = $event;
+  }
+
+  deleteAttachment(attachment: Attachment) {
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Supprimer le type de document",
+        content: "Êtes-vous sûr de vouloir supprimer le fichier " + attachment.uploadedFile.filename + " ?",
+        closeActionText: "Annuler",
+        validationActionText: "Supprimer"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult && this.service)
+        this.uploadAttachmentService.disableAttachment(attachment).subscribe(response => {
+          attachment.isDisabled = true;
+        })
+    });
+
+  }
+
+  previewAttachment(attachment: Attachment) {
+    this.uploadAttachmentService.previewAttachment(attachment);
+  }
+
+  downloadAttachment(attachment: Attachment) {
+    this.uploadAttachmentService.downloadAttachment(attachment);
+  }
+
+  addNewDocumentType(service: Service) {
+    const dialogRef = this.selectedDocumentTypeDialog.open(SelectDocumentTypeDialogComponent, {
+      maxWidth: "400px",
+    });
+
+    dialogRef.afterClosed().subscribe((dialogResult: TypeDocument) => {
+      if (dialogResult && service) {
+        if (!service.assoServiceDocuments)
+          service.assoServiceDocuments = [];
+        for (let asso of service.assoServiceDocuments) {
+          if (asso.typeDocument.code == dialogResult.code) {
+            this.appService.displaySnackBar("Type de document déjà présent", true, 10);
+            return;
+          }
+        }
+        let asso = {} as AssoServiceDocument;
+        asso.isMandatory = false;
+        asso.typeDocument = dialogResult;
+        service.assoServiceDocuments.push(asso);
+      }
+    });
+  }
+
+  documentContainsSearch(document: AssoServiceDocument) {
+    let found = false;
+    if (this.searchText && document) {
+      found = document.typeDocument.label.toLocaleLowerCase().trim().indexOf(this.searchText.trim().toLocaleLowerCase()) >= 0;
+      if (!found && document.attachments && document.attachments.length > 0) {
+        for (let attachment of document.attachments)
+          if (attachment.uploadedFile.filename.toLocaleLowerCase().trim().indexOf(this.searchText.trim().toLocaleLowerCase()) >= 0) {
+            found = true;
+            break;
+          }
+      }
+    }
+    return found;
+  }
+
+}

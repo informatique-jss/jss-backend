@@ -46,7 +46,8 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         +
                         " max((substring(invoice_item.label,'(\\d)(?=\\s*caract)'))) as characterNumber " +
                         " from asso_affaire_order asso   " +
-                        " join provision on provision.id_asso_affaire_order = asso.id   " +
+                        " join service on service.id_asso_affaire_order = asso.id   " +
+                        " join provision on provision.id_service = service.id   " +
                         " left join employee e1 on e1.id = provision.id_employee   " +
                         " join affaire on affaire.id = asso.id_affaire   " +
                         " join quotation customer_order on customer_order.id = asso.id_quotation   " +

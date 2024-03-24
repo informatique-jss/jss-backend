@@ -2,6 +2,7 @@ import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { TypeDocument } from '../../quotation/model/guichet-unique/referentials/TypeDocument';
 import { Attachment } from '../model/Attachment';
 import { AttachmentType } from '../model/AttachmentType';
 import { IAttachment } from '../model/IAttachment';
@@ -15,13 +16,15 @@ export class UploadAttachmentService extends AppRestService<IAttachment>{
     super(http, "miscellaneous");
   }
 
-  uploadAttachment(file: File, entity: IAttachment, entityType: string, attachmentType: AttachmentType, filename: string, replaceExistingAttachementType: boolean, pageSelection: string | null): Observable<HttpEvent<any>> {
+  uploadAttachment(file: File, entity: IAttachment, entityType: string, attachmentType: AttachmentType, filename: string, replaceExistingAttachementType: boolean, pageSelection: string | null, typeDocument: TypeDocument | null): Observable<HttpEvent<any>> {
     let formData = new FormData();
     formData.append("idEntity", entity.id + "");
     formData.append("entityType", entityType);
     formData.append("idAttachmentType", attachmentType.id + "");
     formData.append("filename", filename);
     formData.append("pageSelection", pageSelection + "");
+    if (typeDocument && typeDocument != null)
+      formData.append("typeDocumentCode", typeDocument.code);
     formData.append("replaceExistingAttachementType", replaceExistingAttachementType ? "true" : "false");
     return this.uploadPost('attachment/upload', file, formData);
   }

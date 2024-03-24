@@ -1,23 +1,67 @@
 package com.jss.osiris.modules.quotation.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@Entity
+@Table(indexes = { @Index(name = "idx_service_missing_attachment_query", columnList = "id_service") })
 public class MissingAttachmentQuery {
-    private List<AttachmentType> attachmentTypes;
-    private List<TypeDocument> typeDocument;
+    @Id
+    @SequenceGenerator(name = "missing_attachment_query_sequence", sequenceName = "missing_attachment_query_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "missing_attachment_query_sequence")
+    private Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_service")
+    private Service service;
+
+    @ManyToMany
+    @JoinTable(name = "asso_service_document_missing_attachment_query", joinColumns = @JoinColumn(name = "id_missing_attchment_query"), inverseJoinColumns = @JoinColumn(name = "id_asso_service_document"))
+    @JsonIgnoreProperties(value = { "service" }, allowSetters = true)
+    private List<AssoServiceDocument> assoServiceDocument;
+
     private String comment;
     private Boolean sendToMe;
     private Boolean copyToMe;
+    private LocalDateTime createdDateTime;
 
-    public List<AttachmentType> getAttachmentTypes() {
-        return attachmentTypes;
+    public Integer getId() {
+        return id;
     }
 
-    public void setAttachmentTypes(List<AttachmentType> attachmentTypes) {
-        this.attachmentTypes = attachmentTypes;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Service getService() {
+        return service;
+    }
+
+    public void setService(Service service) {
+        this.service = service;
+    }
+
+    public List<AssoServiceDocument> getAssoServiceDocument() {
+        return assoServiceDocument;
+    }
+
+    public void setAssoServiceDocument(List<AssoServiceDocument> assoServiceDocument) {
+        this.assoServiceDocument = assoServiceDocument;
     }
 
     public String getComment() {
@@ -36,20 +80,20 @@ public class MissingAttachmentQuery {
         this.sendToMe = sendToMe;
     }
 
-    public List<TypeDocument> getTypeDocument() {
-        return typeDocument;
-    }
-
-    public void setTypeDocument(List<TypeDocument> typeDocument) {
-        this.typeDocument = typeDocument;
-    }
-
     public Boolean getCopyToMe() {
         return copyToMe;
     }
 
     public void setCopyToMe(Boolean copyToMe) {
         this.copyToMe = copyToMe;
+    }
+
+    public LocalDateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(LocalDateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 
 }

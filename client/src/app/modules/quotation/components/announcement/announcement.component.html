@@ -7,16 +7,15 @@
             <tr>
               <td>
                 <autocomplete-confrere [(model)]="announcement.confrere" [form]="announcementForm"
-                  propertyName="confrere" [isMandatory]="true" [isDisabled]="!editMode"
+                  propertyName="confrere" [isMandatory]="false" [isDisabled]="!editMode"
                   [filteredDepartment]="announcement.department" (onOptionSelected)="updateHeaderFree()">
                 </autocomplete-confrere>
               </td>
               <td>
                 <autocomplete-department [(model)]="announcement.department" [form]="announcementForm"
-                  propertyName="department" [isMandatory]="true" [isDisabled]="!editMode" label="Département"
+                  propertyName="department" [isMandatory]="false" [isDisabled]="!editMode" label="Département"
                   [isDisabled]="!editMode" (onOptionSelected)="updateCharacterPrice()"
-                  [filterAvailableEntities]="announcement.confrere?announcement.confrere.departments:undefined"
-                  [conditionnalRequired]=" !isStatusOpen">
+                  [filterAvailableEntities]="announcement.confrere?announcement.confrere.departments:undefined">
                 </autocomplete-department>
               </td>
             </tr>
@@ -26,7 +25,7 @@
               <td>
                 <generic-datepicker [(model)]="announcement.publicationDate" label="Date de publication"
                   [minDate]="getCurrentDate()" [form]="announcementForm" propertyName="publicationDate"
-                  [isMandatory]="true" [conditionnalRequired]=" !isStatusOpen" [isDisabled]="!editMode"
+                  [isMandatory]="false" [isDisabled]="!editMode"
                   (onDateChange)="updateCharacterPrice()"></generic-datepicker>
               </td>
               <td>
@@ -39,9 +38,8 @@
             <tr>
               <td>
                 <select-notice-family [(model)]="announcement.noticeTypeFamily" label="Rubrique"
-                  [form]="announcementForm" propertyName="noticeTypeFamily" [isMandatory]="true"
-                  (selectionChange)="clearNoticeTypeField()"
-                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+                  [form]="announcementForm" propertyName="noticeTypeFamily" [isMandatory]="false"
+                  (selectionChange)="clearNoticeTypeField()" [isDisabled]="!editMode">
                 </select-notice-family>
               </td>
               <td *ngIf="announcement.noticeTypeFamily">

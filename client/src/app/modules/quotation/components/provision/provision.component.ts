@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
-import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
@@ -18,6 +18,7 @@ import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { DomiciliationStatus } from '../../model/DomiciliationStatus';
 import { FormaliteStatus } from '../../model/FormaliteStatus';
 import { Provision } from '../../model/Provision';
+import { Service } from '../../model/Service';
 import { SimpleProvisionStatus } from '../../model/SimpleProvisonStatus';
 import { AffaireService } from '../../services/affaire.service';
 import { AnnouncementService } from '../../services/announcement.service';
@@ -27,12 +28,13 @@ import { DomiciliationStatusService } from '../../services/domiciliation-status.
 import { FormaliteStatusService } from '../../services/formalite.status.service';
 import { MissingAttachmentQueryService } from '../../services/missing-attachment-query.service';
 import { ProvisionService } from '../../services/provision.service';
+import { ServiceService } from '../../services/service.service';
 import { SimpleProvisionStatusService } from '../../services/simple.provision.status.service';
 import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
-import { QuotationComponent } from '../quotation/quotation.component';
-import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
+import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
+import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 
 @Component({
   selector: 'provision',
@@ -57,7 +59,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   confrereJssSpel = this.constantService.getConfrereJssSpel();
   journalTypePaper = this.constantService.getJournalTypePaper();
   journalTypeSpel = this.constantService.getJournalTypeSpel();
-  getProvisionLabel = QuotationComponent.computeProvisionLabel;
 
   saveObservableSubscription: Subscription = new Subscription;
 
@@ -73,8 +74,10 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private appService: AppService,
     public confirmationDialog: MatDialog,
     public chooseCompetentAuthorityDialog: MatDialog,
-    public attachmentTypeDialog: MatDialog,
+    public missingAttachmentMailDialog: MatDialog,
+    public selectAttachmentTypeDialog: MatDialog,
     public attachmentsDialog: MatDialog,
+    public selectServiceTypeDialog: MatDialog,
     private constantService: ConstantService,
     private formaliteStatusService: FormaliteStatusService,
     private announcementService: AnnouncementService,
@@ -84,9 +87,11 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private announcementStatusService: AnnouncementStatusService,
     private userPreferenceService: UserPreferenceService,
     private affaireService: AffaireService,
+    private serviceService: ServiceService,
   ) { }
 
   affaireForm = this.formBuilder.group({});
+  getServiceLabel = this.serviceService.getServiceLabel;
 
   ngOnInit() {
     this.appService.changeHeaderTitle("Prestation");
@@ -103,6 +108,8 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.domiciliationStatusService.getDomiciliationStatus().subscribe(response => this.domiciliationStatus = response);
     this.announcementStatusService.getAnnouncementStatus().subscribe(response => this.announcementStatus = response);
     this.simpleProvisionStatusService.getSimpleProvisionStatus().subscribe(response => this.simpleProvisionStatus = response);
+
+    this.setOpenStatus();
 
     this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
       if (response)
@@ -141,8 +148,8 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
   updateAssignedToForAffaire(employee: any, asso: AssoAffaireOrder) {
     this.assoAffaireOrderService.updateAssignedToForAsso(asso, employee).subscribe(response => {
-      this.refreshAffaire();
     });
+    this.refreshAffaire();
   }
 
   updateAssignedToForProvision(employee: any, provision: Provision) {
@@ -151,12 +158,79 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     });
   }
 
+  setOpenStatus() {
+    this.isStatusOpen = true;
+    if (this.asso && this.asso.customerOrder && this.asso.customerOrder.customerOrderStatus)
+      this.isStatusOpen = this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_OPEN
+        || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BEING_PROCESSED
+        || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT;
+  }
+
 
   displaySnakBarLockProvision() {
     this.appService.displaySnackBar("Il n'est pas possible d'ajouter ou modifier une prestation sur une commande au statut A facturer ou Facturer. Veuillez modifier le statut de la commande.", false, 15);
   }
 
-  deleteProvision(asso: AssoAffaireOrder, provision: Provision) {
+  deleteService(asso: AssoAffaireOrder, service: Service) {
+    if (this.asso.customerOrder && this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+      this.displaySnakBarLockProvision();
+    }
+
+    asso.services.splice(asso.services.indexOf(service), 1);
+  }
+
+  modifyService(service: Service) {
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Modifier le type de service",
+        content: "Attention, la modification du type de service ajoutera les nouvelles prestations sans supprimer les prestations existantes. Pensez à vérifier les doublons après modification. Êtes-vous sûr de vouloir continuer ?",
+        closeActionText: "Annuler",
+        validationActionText: "Modifier"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult && service) {
+        const dialogRef2 = this.selectServiceTypeDialog.open(SelectServiceTypeDialogComponent, {
+          width: "50%",
+        });
+        dialogRef2.componentInstance.isJustSelectServiceType = true;
+        dialogRef2.afterClosed().subscribe(dialogResult => {
+          if (dialogResult && service && (this.asso.quotation || this.asso.customerOrder)) {
+            this.serviceService.modifyServiceType(service, dialogResult).subscribe(response => {
+              if (this.asso.quotation) {
+                this.displayQuotation(null);
+              } else {
+                this.displayCustomerOrder(null);
+              }
+            })
+          }
+        });
+      }
+    });
+  }
+
+  createService(asso: AssoAffaireOrder) {
+    if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+      this.displaySnakBarLockProvision();
+    }
+    if (asso && !asso.services)
+      asso.services = [] as Array<Service>;
+
+    let dialogRef = this.selectAttachmentTypeDialog.open(SelectServiceTypeDialogComponent, {
+      width: '50%',
+    });
+    dialogRef.componentInstance.affaire = asso.affaire;
+
+    dialogRef.afterClosed().subscribe(response => {
+      if (response != null) {
+        asso.services.push(response);
+      }
+    })
+  }
+
+  deleteProvision(service: Service, provision: Provision) {
     if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
       this.displaySnakBarLockProvision();
       return;
@@ -176,18 +250,18 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     }
 
 
-    asso.provisions.splice(asso.provisions.indexOf(provision), 1);
+    service.provisions.splice(service.provisions.indexOf(provision), 1);
   }
 
-  createProvision(asso: AssoAffaireOrder): Provision {
+  createProvision(service: Service,): Provision {
     if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
       this.displaySnakBarLockProvision();
       return {} as Provision;
     }
-    if (asso && !asso.provisions)
-      asso.provisions = [] as Array<Provision>;
+    if (service && !service.provisions)
+      service.provisions = [] as Array<Provision>;
     let provision = {} as Provision;
-    asso.provisions.push(provision);
+    service.provisions.push(provision);
     return provision;
   }
 
@@ -413,7 +487,8 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       }
     }
     if (provision.formalite) {
-      if (status.code == FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY) {
+      if (status.code == FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY &&
+        (!provision.formalite.competentAuthorityServiceProvider || provision.formalite.competentAuthorityServiceProvider.id != this.constantService.getCompetentAuthorityInpi().id)) {
         saveAsso = false;
         const dialogRef = this.chooseCompetentAuthorityDialog.open(ChooseCompetentAuthorityDialogComponent, {
           maxWidth: "400px",
@@ -529,18 +604,18 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     return false;
   }
 
-  generateAttachmentQueryMail() {
-    const dialogRef = this.attachmentTypeDialog.open(SelectAttachmentTypeDialogComponent, {
-      maxWidth: "1000px",
+  onlyOneProvision() {
+    return this.asso && this.asso.services && this.asso.services.length == 1 && this.asso.services[0].provisions && this.asso.services[0].provisions.length == 1;
+  }
+
+  sendMissingAttachmentMail(service: Service) {
+    const dialogRef = this.missingAttachmentMailDialog.open(MissingAttachmentMailDialogComponent, {
+      width: "80%",
+      height: "90%",
     });
 
     dialogRef.componentInstance.dialogRef.disableClose = true;
-
-    dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult && this.currentProvisionWorkflow) {
-        this.missingAttachmentQueryService.generateAttachmentTypeMail(dialogResult, this.asso.customerOrder, this.currentProvisionWorkflow).subscribe(response => { });
-      }
-    });
+    dialogRef.componentInstance.service = service;
   }
 
   generateAttachmentsMail() {
@@ -563,5 +638,14 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.affaireService.sendRibRequestToAffaire(this.asso.affaire, this.asso).subscribe(reponse => {
       this.appService.displaySnackBar("Demande de RIB envoyée", false, 10);
     })
+  }
+
+  public computeProvisionLabel(service: Service, provision: Provision, doNotDisplayService: boolean): string {
+    let label = provision.provisionType ? (provision.provisionFamilyType.label + ' - ' + provision.provisionType.label) : '';
+    if (provision.announcement && provision.announcement.department)
+      label += " - Département " + provision.announcement.department.code;
+    if (!doNotDisplayService)
+      label = this.serviceService.getServiceLabel(service, false) + " - " + label;
+    return label;
   }
 }

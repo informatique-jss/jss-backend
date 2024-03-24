@@ -27,7 +27,6 @@ import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -60,12 +59,14 @@ import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
@@ -75,7 +76,7 @@ import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 
-@Service
+@org.springframework.stereotype.Service
 public class MailHelper {
 
     @Value("${mail.smtp.host}")
@@ -443,6 +444,13 @@ public class MailHelper {
 
         if (quotation != null)
             setQuotationPrice(quotation, ctx);
+
+        if (mail.getMissingAttachmentQuery() != null) {
+            for (AssoServiceDocument asso : mail.getMissingAttachmentQuery().getAssoServiceDocument())
+                if (asso.getFormalisteComment() != null)
+                    asso.setFormalisteComment(asso.getFormalisteComment().replaceAll("\r?\n", "<br/>"));
+            ctx.setVariable("assoServiceDocuments", mail.getMissingAttachmentQuery().getAssoServiceDocument());
+        }
     }
 
     private String getCustomerOrderAffaireLabel(IQuotation customerOrder, AssoAffaireOrder asso) {
@@ -503,50 +511,56 @@ public class MailHelper {
         Float priceTotal = null;
 
         for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
-            for (Provision provision : asso.getProvisions()) {
-                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                    preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f;
-                    if (invoiceItem.getDiscountAmount() != null && invoiceItem.getDiscountAmount() > 0) {
-                        if (discountTotal == null)
-                            discountTotal = invoiceItem.getDiscountAmount();
-                        else
-                            discountTotal += invoiceItem.getDiscountAmount();
-                    }
-                    if (vats == null)
-                        vats = new ArrayList<VatMail>();
-                    if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
-                            && invoiceItem.getVatPrice() > 0) {
-                        vatTotal += invoiceItem.getVatPrice();
-                        boolean vatFound = false;
-                        for (VatMail vatMail : vats) {
-                            if (vatMail.getLabel().equals(invoiceItem.getVat().getLabel())) {
-                                vatFound = true;
-                                if (vatMail.getTotal() == null) {
-                                    vatMail.setTotal(invoiceItem.getVatPrice());
-                                    vatMail.setBase(
-                                            invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f);
-                                } else {
-                                    vatMail.setTotal(vatMail.getTotal() + invoiceItem.getVatPrice());
-                                    vatMail.setBase(vatMail.getBase()
-                                            + (invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice()
-                                                    : 0f)
-                                            - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
-                                                    : 0f));
+            for (Service service : asso.getServices())
+                for (Provision provision : service.getProvisions()) {
+                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                        preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f;
+                        if (invoiceItem.getDiscountAmount() != null && invoiceItem.getDiscountAmount() > 0) {
+                            if (discountTotal == null)
+                                discountTotal = invoiceItem.getDiscountAmount();
+                            else
+                                discountTotal += invoiceItem.getDiscountAmount();
+                        }
+                        if (vats == null)
+                            vats = new ArrayList<VatMail>();
+                        if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
+                                && invoiceItem.getVatPrice() > 0) {
+                            vatTotal += invoiceItem.getVatPrice();
+                            boolean vatFound = false;
+                            for (VatMail vatMail : vats) {
+                                if (vatMail.getLabel().equals(invoiceItem.getVat().getLabel())) {
+                                    vatFound = true;
+                                    if (vatMail.getTotal() == null) {
+                                        vatMail.setTotal(invoiceItem.getVatPrice());
+                                        vatMail.setBase(
+                                                invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice()
+                                                        : 0f);
+                                    } else {
+                                        vatMail.setTotal(vatMail.getTotal() + invoiceItem.getVatPrice());
+                                        vatMail.setBase(vatMail.getBase()
+                                                + (invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice()
+                                                        : 0f)
+                                                - (invoiceItem.getDiscountAmount() != null
+                                                        ? invoiceItem.getDiscountAmount()
+                                                        : 0f));
+                                    }
                                 }
                             }
-                        }
-                        if (!vatFound) {
-                            VatMail vatmail = new VatMail();
-                            vatmail.setTotal(invoiceItem.getVatPrice());
-                            vatmail.setLabel(invoiceItem.getVat().getLabel());
-                            vatmail.setBase((invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f)
-                                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
-                            vats.add(vatmail);
+                            if (!vatFound) {
+                                VatMail vatmail = new VatMail();
+                                vatmail.setTotal(invoiceItem.getVatPrice());
+                                vatmail.setLabel(invoiceItem.getVat().getLabel());
+                                vatmail.setBase(
+                                        (invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f)
+                                                - (invoiceItem.getDiscountAmount() != null
+                                                        ? invoiceItem.getDiscountAmount()
+                                                        : 0f));
+                                vats.add(vatmail);
+                            }
                         }
                     }
-                }
 
-            }
+                }
         }
 
         if (discountTotal != null)
@@ -701,8 +715,8 @@ public class MailHelper {
         Provision currentProvision = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
+                for (Service service : asso.getServices())
+                    for (Provision provision : service.getProvisions())
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             currentProvision = provision;
@@ -736,7 +750,7 @@ public class MailHelper {
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForPublicationReceipt(customerOrder));
         mail.setSubject("Attestation de parution - commande n°" + customerOrder.getId() + " - "
-                + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getAssoAffaireOrder()));
+                + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
         mailService.addMailToQueue(mail);
     }
 
@@ -753,8 +767,8 @@ public class MailHelper {
         Provision currentProvision = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
+                for (Service service : asso.getServices())
+                    for (Provision provision : service.getProvisions())
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             currentProvision = provision;
@@ -784,7 +798,7 @@ public class MailHelper {
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForReadingProof(customerOrder));
         mail.setSubject("BAT à valider concernant la commande n°" + customerOrder.getId() + " - "
-                + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getAssoAffaireOrder()));
+                + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
         mailService.addMailToQueue(mail);
     }
 
@@ -800,8 +814,8 @@ public class MailHelper {
         Provision currentProvision = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
+                for (Service service : asso.getServices())
+                    for (Provision provision : service.getProvisions())
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             currentProvision = provision;
@@ -835,7 +849,7 @@ public class MailHelper {
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForPublicationReceipt(customerOrder));
         mail.setSubject("Témoin de parution - commande n°" + customerOrder.getId() + " - "
-                + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getAssoAffaireOrder()));
+                + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
         mailService.addMailToQueue(mail);
     }
 
@@ -1013,33 +1027,6 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void sendMissingAttachmentQueryToCustomer(CustomerOrder customerOrder, Provision provision,
-            MissingAttachmentQuery query)
-            throws OsirisException, OsirisClientMessageException {
-
-        customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
-        CustomerMail mail = new CustomerMail();
-        mail.setMailTemplate(CustomerMail.TEMPLATE_MISSING_ATTACHMENT);
-        mail.setCustomerOrder(customerOrder);
-        mail.setHeaderPicture("images/mails/missing-attachment.png");
-        if (query.getComment() != null)
-            mail.setExplaination(query.getComment().replaceAll("\r?\n", "<br/>")); // TODO suite refonte service
-
-        mail.setReplyTo(provision.getAssignedTo());
-        mail.setSendToMe(query.getSendToMe());
-        mail.setMailComputeResult(mailComputeHelper.computeMailForGenericDigitalDocument(customerOrder));
-
-        if (query.getCopyToMe()) {
-            mail.setCopyToMe(true);
-        }
-
-        mail.setSubject("Vos pièces numériques concernant la commande n°" + customerOrder.getId() + " - "
-                + getCustomerOrderAffaireLabel(customerOrder, null));
-
-        mailService.addMailToQueue(mail);
-    }
-
     public void sendNewPasswordMail(Responsable responsable, String password) throws OsirisException {
         responsableService.getResponsable(responsable.getId());
         CustomerMail mail = new CustomerMail();
@@ -1089,6 +1076,32 @@ public class MailHelper {
         mail.setRff(rff);
         mail.setTiers(rff.getTiers());
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_RFF);
+
+        mailService.addMailToQueue(mail);
+    }
+
+    public void sendMissingAttachmentQueryToCustomer(MissingAttachmentQuery query)
+            throws OsirisException, OsirisClientMessageException {
+
+        CustomerMail mail = new CustomerMail();
+        CustomerOrder customerOrder = query.getService().getAssoAffaireOrder().getCustomerOrder();
+        mail.setMailTemplate(CustomerMail.TEMPLATE_MISSING_ATTACHMENT);
+        mail.setCustomerOrder(customerOrder);
+        mail.setMissingAttachmentQuery(query);
+        mail.setHeaderPicture("images/mails/missing-attachment.png");
+        if (query.getComment() != null)
+            mail.setExplaination(query.getComment().replaceAll("\r?\n", "<br/>"));
+
+        mail.setReplyTo(query.getService().getAssoAffaireOrder().getAssignedTo());
+        mail.setSendToMe(query.getSendToMe());
+        mail.setMailComputeResult(mailComputeHelper.computeMailForGenericDigitalDocument(customerOrder));
+
+        if (query.getCopyToMe()) {
+            mail.setCopyToMe(true);
+        }
+
+        mail.setSubject("Pièces manquantes concernant la commande n°" + customerOrder.getId() + " - "
+                + getCustomerOrderAffaireLabel(customerOrder, null));
 
         mailService.addMailToQueue(mail);
     }
@@ -1383,8 +1396,8 @@ public class MailHelper {
                 }
             }
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions()) {
+                for (Service service : asso.getServices())
+                    for (Provision provision : service.getProvisions()) {
                         if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
                             for (Attachment attachment : attachmentService
                                     .sortAttachmentByDateDesc(provision.getAttachments()))

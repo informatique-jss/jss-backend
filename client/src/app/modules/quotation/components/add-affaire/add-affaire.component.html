@@ -131,9 +131,21 @@
           propertyName="competentAuthority" [isMandatory]="false" label="RCS"
           [isDisabled]="!editMode"></autocomplete-competent-authority>
       </td>
+    </tr>
+  </table>
+  <table class="full-width">
+    <tr>
       <td>
         <generic-input [(model)]="affaire.shareCapital" label="Capital social (€)" [form]="affaireForm"
           propertyName="shareCapital" [isDisabled]="!editMode" type="number"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="affaire.employeeNumber" label="Nombre de salariés" [form]="affaireForm"
+          propertyName="employeeNumber" [isDisabled]="!editMode" type="number"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="affaire.employeeNumber" label="Codes APE" [form]="affaireForm" propertyName="apeCodes"
+          [isDisabled]="!editMode" type="number"></generic-input>
       </td>
     </tr>
   </table>

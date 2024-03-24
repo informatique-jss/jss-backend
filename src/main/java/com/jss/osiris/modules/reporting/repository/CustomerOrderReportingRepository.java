@@ -45,8 +45,9 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " cos2.id = co.id_customer_order_status " +
                         " left join asso_affaire_order aao on " +
                         " aao.id_customer_order = co.id " +
+                        " left join service on service.id_asso_affaire_order = aao.id " +
                         " left join provision p on " +
-                        " p.id_asso_affaire_order = aao.id " +
+                        " p.id_service = service.id " +
                         " left join provision_family_type pft on " +
                         " pft.id = p.id_provision_family_type " +
                         " left join employee e on " +

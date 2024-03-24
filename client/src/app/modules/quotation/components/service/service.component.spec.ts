@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { SelectAttachmentTypeDialogComponent } from './select-attachment-type-dialog.component';
+import { ServiceComponent } from './service.component';
 
-describe('SelectAttachmentTypeDialogComponent', () => {
-  let component: SelectAttachmentTypeDialogComponent;
-  let fixture: ComponentFixture<SelectAttachmentTypeDialogComponent>;
+describe('ServiceComponent', () => {
+  let component: ServiceComponent;
+  let fixture: ComponentFixture<ServiceComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SelectAttachmentTypeDialogComponent ]
+      declarations: [ ServiceComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SelectAttachmentTypeDialogComponent);
+    fixture = TestBed.createComponent(ServiceComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

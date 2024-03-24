@@ -56,10 +56,10 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@JoinColumn(name = "id_employee")
 	private Employee assignedTo;
 
-	@OneToMany(targetEntity = Provision.class, mappedBy = "assoAffaireOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = Service.class, mappedBy = "assoAffaireOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "assoAffaireOrder" }, allowSetters = true)
 	@IndexedField
-	private List<Provision> provisions;
+	private List<Service> services;
 
 	public Affaire getAffaire() {
 		return affaire;
@@ -101,12 +101,12 @@ public class AssoAffaireOrder implements Serializable, IId {
 		this.quotation = quotation;
 	}
 
-	public List<Provision> getProvisions() {
-		return provisions;
+	public List<Service> getServices() {
+		return services;
 	}
 
-	public void setProvisions(List<Provision> provisions) {
-		this.provisions = provisions;
+	public void setServices(List<Service> services) {
+		this.services = services;
 	}
 
 }

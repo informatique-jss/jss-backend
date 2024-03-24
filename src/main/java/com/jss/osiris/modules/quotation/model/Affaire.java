@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.model;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -141,6 +142,13 @@ public class Affaire implements IId, IAttachment {
 	@OneToMany(mappedBy = "affaire", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "affaire" }, allowSetters = true)
 	private List<Attachment> attachments;
+
+	private Integer employeeNumber;
+
+	private LocalDate lastRneUpdate;
+
+	@Column(columnDefinition = "TEXT")
+	private String apeCodes;
 
 	public String getPaymentIban() {
 		return paymentIban;
@@ -372,6 +380,30 @@ public class Affaire implements IId, IAttachment {
 
 	public void setAttachments(List<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+
+	public Integer getEmployeeNumber() {
+		return employeeNumber;
+	}
+
+	public void setEmployeeNumber(Integer employeeNumber) {
+		this.employeeNumber = employeeNumber;
+	}
+
+	public String getApeCodes() {
+		return apeCodes;
+	}
+
+	public void setApeCodes(String apeCodes) {
+		this.apeCodes = apeCodes;
+	}
+
+	public LocalDate getLastRneUpdate() {
+		return lastRneUpdate;
+	}
+
+	public void setLastRneUpdate(LocalDate lastRneUpdate) {
+		this.lastRneUpdate = lastRneUpdate;
 	}
 
 }

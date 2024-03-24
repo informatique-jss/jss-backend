@@ -28,7 +28,7 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_provision_asso_affaire_order", columnList = "id_asso_affaire_order"),
+@Table(indexes = { @Index(name = "idx_provision_service", columnList = "id_service"),
 		@Index(name = "idx_provision_formalite", columnList = "id_formalite"),
 		@Index(name = "idx_provision_domicialitation", columnList = "id_domiciliation"),
 		@Index(name = "idx_provision_simple_provision", columnList = "id_simple_provision"),
@@ -42,9 +42,9 @@ public class Provision implements IId, IAttachment {
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_asso_affaire_order")
+	@JoinColumn(name = "id_service")
 	@JsonIgnoreProperties(value = { "provisions" }, allowSetters = true)
-	private AssoAffaireOrder assoAffaireOrder;
+	private Service service;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "defaultCompetentAuthorityServiceProvider" }, allowSetters = true)
@@ -204,14 +204,6 @@ public class Provision implements IId, IAttachment {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public AssoAffaireOrder getAssoAffaireOrder() {
-		return assoAffaireOrder;
-	}
-
-	public void setAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder) {
-		this.assoAffaireOrder = assoAffaireOrder;
 	}
 
 	public ProvisionType getProvisionType() {
@@ -572,6 +564,14 @@ public class Provision implements IId, IAttachment {
 
 	public void setIsRneUpdate(Boolean isRneUpdate) {
 		this.isRneUpdate = isRneUpdate;
+	}
+
+	public Service getService() {
+		return service;
+	}
+
+	public void setService(Service service) {
+		this.service = service;
 	}
 
 }

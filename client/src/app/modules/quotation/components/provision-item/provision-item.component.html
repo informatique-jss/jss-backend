@@ -9,7 +9,7 @@
     </td>
     <td *ngIf="provision.provisionFamilyType">
       <select-provision-type (selectionChange)="changeProvisionType()" [(model)]="provision.provisionType"
-        label="Service" [form]="provisionItemForm" propertyName="provisionType" [isMandatory]="true"
+        label="Prestation" [form]="provisionItemForm" propertyName="provisionType" [isMandatory]="true"
         [isDisabled]="!editMode || ( provision.announcement!=undefined && provision.announcement.actuLegaleId!=undefined && provision.announcement.actuLegaleId>0)"
         [filteredProvisionFamilyType]="provision.provisionFamilyType"></select-provision-type>
     </td>

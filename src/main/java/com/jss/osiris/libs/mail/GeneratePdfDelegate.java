@@ -16,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -62,12 +61,13 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
-@Service
+@org.springframework.stereotype.Service
 public class GeneratePdfDelegate {
     @Autowired
     PictureHelper pictureHelper;
@@ -226,8 +226,10 @@ public class GeneratePdfDelegate {
                         + asso.getAffaire().getAddress() + "<br/>"
                         + asso.getAffaire().getPostalCode() + " "
                         + (asso.getAffaire().getCity() != null ? asso.getAffaire().getCity().getLabel() : ""));
-                for (Provision provision : asso.getProvisions()) {
-                    eventLabels.add(provision.getProvisionType().getLabel());
+                for (Service service : asso.getServices()) {
+                    for (Provision provision : service.getProvisions()) {
+                        eventLabels.add(provision.getProvisionType().getLabel());
+                    }
                 }
             }
 

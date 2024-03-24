@@ -51,8 +51,10 @@ public interface AnnouncementReportingRepository extends CrudRepository<Quotatio
                         "                 p.id_announcement = a.id " +
                         "         join provision_type pt2 on " +
                         "                 pt2.id = p.id_provision_type " +
+                        "         join service on " +
+                        "                 service.id = p.id_service " +
                         "         join asso_affaire_order aao on " +
-                        "                 aao.id = p.id_asso_affaire_order " +
+                        "                 aao.id = service.id_asso_affaire_order " +
                         "         join customer_order co on " +
                         "                 co.id = aao.id_customer_order " +
                         "         join confrere c on " +

@@ -58,8 +58,9 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         +
                         " from " +
                         " 	asso_affaire_order aao " +
+                        " left join service on service.id_asso_affaire_order = aao.id " +
                         " left join provision p on " +
-                        " 	p.id_asso_affaire_order = aao.id " +
+                        " 	p.id_service = service.id " +
                         " left join announcement a on " +
                         " 	a.id = p.id_announcement " +
                         " where " +

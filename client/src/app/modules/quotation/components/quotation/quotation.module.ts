@@ -3,11 +3,13 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -60,9 +62,13 @@ import { QuotationListComponent } from '../quotation-list/quotation-list.compone
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { RefundPaymentDialogComponent } from '../refund-payment-dialog/refund-payment-dialog.component';
 import { SelectAccountingAccountDialogComponent } from '../select-accounting-account-dialog/select-accounting-account-dialog.component';
-import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
+import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 import { SelectCompetentAuthorityDialogComponent } from '../select-competent-authority-dialog/select-competent-authority-dialog.component';
+import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialog/select-document-type-dialog.component';
+import { SelectServiceDialogComponent } from '../select-service-dialog/select-service-dialog.component';
+import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
+import { ServiceComponent } from '../service/service.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
 
@@ -100,12 +106,14 @@ const routes: Routes = [
     MatCheckboxModule,
     MatTooltipModule,
     MatTabsModule,
+    MatDividerModule,
     MiscellaneousModule,
     MatSidenavModule,
     MatTableModule,
     MatSortModule,
     MatMenuModule,
     MatDatepickerModule,
+    MatCardModule,
   ],
   declarations: [QuotationComponent,
     QuotationAbandonReasonDialog,
@@ -127,7 +135,7 @@ const routes: Routes = [
     SimpleProvisionComponent,
     AffaireListComponent,
     AffaireComponent,
-    SelectAttachmentTypeDialogComponent,
+    MissingAttachmentMailDialogComponent,
     AddAffaireComponent,
     CustomerOrderPaymentComponent,
     PaymentListComponent,
@@ -149,6 +157,10 @@ const routes: Routes = [
     SelectCompetentAuthorityDialogComponent,
     DebourComponent,
     ActeDepositComponent,
+    ServiceComponent,
+    SelectServiceTypeDialogComponent,
+    SelectServiceDialogComponent,
+    SelectDocumentTypeDialogComponent,
   ],
   exports: [
     OrderingListComponent,

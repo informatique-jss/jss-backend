@@ -1,0 +1,71 @@
+<ng-container *ngIf="service">
+  <table class="full-width">
+    <tr *ngIf="service.serviceType.id ==otherServiceType.id">
+      <td>
+        <generic-input [(model)]="service.customLabel" label="Libellé du service" [form]="serviceForm"
+          propertyName="customLabel" [isMandatory]="false" [maxLength]="250"></generic-input>
+      </td>
+    </tr>
+    <tr *ngIf="service.customerComment ">
+      <td>Commentaire client : {{service.customerComment}}
+      </td>
+    </tr>
+  </table>
+  <div class="full-width">
+    <generic-input [(model)]="searchText" label="Rechercher" [form]="serviceForm" propertyName="searchText"
+      [isMandatory]="false" [isDisabled]="false"></generic-input>
+  </div>
+  <ng-container *ngIf="service.assoServiceDocuments">
+    <div class="attachment-cards">
+      <ng-container *ngFor="let document of service.assoServiceDocuments;let index= index">
+        <mat-card class="document-card" *ngIf="!searchText || searchText.length==0 || documentContainsSearch(document)">
+          <mat-card-header>
+            <mat-card-title>{{document.typeDocument.label}}</mat-card-title>
+            <mat-card-subtitle
+              matTooltip="Commentaire du formaliste">{{document.formalisteComment?document.formalisteComment :
+              "&nbsp;"}}</mat-card-subtitle>
+          </mat-card-header>
+          <multiple-upload class="document-upload" [entity]="document"
+            [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType"
+            (endOfUpload)="completeDocumentAttachment($event, document)" [isDirectUpload]="true"
+            [attachmentType]="document.typeDocument.attachmentType"
+            [typeDocument]="document.typeDocument"></multiple-upload>
+          <mat-card-actions>
+            <generic-toggle [(model)]="document.isMandatory" label="Obligatoire ?" [form]="serviceForm"
+              [propertyName]="'isMandatory'+index" [isDisabled]="!editMode"></generic-toggle>
+            <button mat-raised-button color="accent" style="margin-left : 7px" *ngIf="editMode"
+              matTooltip="Ajouter un commentaire" (click)="commentDocument(document)"><mat-icon style="margin : 0"
+                class="pointer">
+                comment</mat-icon></button>
+            <button mat-raised-button color="accent" (click)="deleteDocument(document)" *ngIf="editMode"
+              matTooltip="Supprimer le type de document"><mat-icon style="margin : 0" class="pointer">
+                delete</mat-icon></button>
+          </mat-card-actions>
+          <mat-card-content>
+            <div *ngIf="document.attachments && document.attachments.length>0">
+              <div *ngFor="let attachment of document.attachments">
+                <ng-container *ngIf="!attachment.isDisabled">
+                  <mat-icon color="accent" mat-list-icon (click)="deleteAttachment(attachment)" class="pointer"
+                    matTooltip="Supprimer le fichier">delete_forever</mat-icon>
+                  <mat-icon color="accent" mat-list-icon (click)="previewAttachment(attachment)"
+                    matTooltip="Prévisualiser le fichier" class="pointer">visibility</mat-icon>
+                  <mat-icon color="accent" mat-list-icon matTooltip="Télécharger le fichier"
+                    (click)="downloadAttachment(attachment)" class="pointer">download</mat-icon> {{
+                  attachment.uploadedFile.filename }}
+                  {{attachment.uploadedFile.size ? ("("+formatBytes(attachment.uploadedFile.size,2)+")"):"" }}
+                </ng-container>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </ng-container>
+    </div>
+  </ng-container>
+
+  <div style="width: 100%;text-align: right;" *ngIf="editMode">
+    <button matTooltip="Changer de statut" mat-fab color="accent" matTooltip="Ajouter un nouveau type de document"
+      (click)="addNewDocumentType(service)">
+      <mat-icon>post_add</mat-icon>
+    </button>
+  </div>
+</ng-container>

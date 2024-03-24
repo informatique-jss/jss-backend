@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>Choix du type de document</h1>
+<div mat-dialog-content>
+  <p>Choisissez le type de document à ajouter ci-dessous :</p>
+  <table class="full-width">
+    <tr>
+      <td>
+        <autocomplete-type-document [(model)]="selectedDocumentType" [form]="documentTypeForm"
+          propertyName="selectedDocumentType" [isMandatory]="true" [isDisabled]="false" label="Type de document"
+          [onlyDisplayWithAttachmentType]="true"></autocomplete-type-document>
+      </td>
+    </tr>
+  </table>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="closeDialog()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="validateDocumentType()">Valider</button>
+</div>

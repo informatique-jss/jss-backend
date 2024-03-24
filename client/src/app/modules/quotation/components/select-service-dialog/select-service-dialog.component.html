@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>Choix du service</h1>
+<div mat-dialog-content *ngIf="assoAffaireOrder && assoAffaireOrder.services">
+  <p>Choisissez le service où déplacer les prestations restantes :</p>
+  <ul>
+    <ng-container *ngFor="let service of assoAffaireOrder.services">
+      <li class="pointer" *ngIf="!currentService || currentService.id !=service.id" (click)="selectService(service)">
+        {{service.customLabel?service.customLabel : (service.serviceType.serviceFamily.serviceFamilyGroup.label+" -
+        "+service.serviceType.serviceFamily.label+" -
+        "+service.serviceType.label)}}</li>
+    </ng-container>
+  </ul>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="closeDialog()">Annuler</button>
+  <button mat-raised-button color="warn" *ngIf="selectedService" (click)="validateService()">Valider</button>
+</div>

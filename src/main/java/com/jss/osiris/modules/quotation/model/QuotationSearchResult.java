@@ -25,6 +25,8 @@ public interface QuotationSearchResult {
 
     public Integer getConfrereId();
 
+    public String getServiceTypeLabel();
+
     public String getAffaireLabel();
 
     public Float getTotalPrice();

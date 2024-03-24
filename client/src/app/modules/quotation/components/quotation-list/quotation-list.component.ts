@@ -27,7 +27,7 @@ export class QuotationListComponent implements OnInit {
   @Input() isForTiersIntegration: boolean = false;
   quotations: QuotationSearchResult[] | undefined;
   availableColumns: SortTableColumn<QuotationSearchResult>[] = [];
-  columnToDisplayOnDashboard: string[] = ["id", "customerOrderName", "quotationStatus", "affaireLabel", "createdDate"];
+  columnToDisplayOnDashboard: string[] = ["id", "customerOrderName", "quotationStatus", "affaireLabel", "serviceTypeLabel", "createdDate"];
   displayedColumns: SortTableColumn<QuotationSearchResult>[] = [];
   tableAction: SortTableAction<QuotationSearchResult>[] = [];
   bookmark: QuotationSearch | undefined;
@@ -55,6 +55,7 @@ export class QuotationListComponent implements OnInit {
       this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateForSortTable } as SortTableColumn<QuotationSearchResult>);
       this.availableColumns.push({ id: "origin", fieldName: "customerOrderOriginLabel", label: "Origine" } as SortTableColumn<QuotationSearchResult>);
       this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn<QuotationSearchResult>);
+      this.availableColumns.push({ id: "serviceTypeLabel", fieldName: "serviceTypeLabel", label: "Service(s)", isShrinkColumn: true } as SortTableColumn<QuotationSearchResult>);
       this.availableColumns.push({ id: "quotationStatus", fieldName: "quotationStatus", label: "Statut" } as SortTableColumn<QuotationSearchResult>);
       this.availableColumns.push({ id: "quotationDescription", fieldName: "quotationDescription", label: "Description", isShrinkColumn: true } as SortTableColumn<QuotationSearchResult>);
       this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn<QuotationSearchResult>);

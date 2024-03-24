@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { UploadTiersAttachementDialogComponent } from './upload-tiers-attachement-dialog.component';
+import { SelectServiceDialogComponent } from './select-service-dialog.component';
 
-describe('UploadTiersAttachementDialogComponent', () => {
-  let component: UploadTiersAttachementDialogComponent;
-  let fixture: ComponentFixture<UploadTiersAttachementDialogComponent>;
+describe('SelectServiceDialogComponent', () => {
+  let component: SelectServiceDialogComponent;
+  let fixture: ComponentFixture<SelectServiceDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UploadTiersAttachementDialogComponent ]
+      declarations: [ SelectServiceDialogComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(UploadTiersAttachementDialogComponent);
+    fixture = TestBed.createComponent(SelectServiceDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

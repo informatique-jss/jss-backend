@@ -66,6 +66,7 @@ import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
+import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.AssoServiceProvisionType;
 import com.jss.osiris.modules.quotation.model.AttachmentMailRequest;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
@@ -99,6 +100,7 @@ import com.jss.osiris.modules.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.RecordType;
+import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.ServiceFamily;
 import com.jss.osiris.modules.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.quotation.model.ServiceType;
@@ -113,6 +115,7 @@ import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.quotation.service.AssignationTypeService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
+import com.jss.osiris.modules.quotation.service.AssoServiceDocumentService;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.BuildingDomiciliationService;
 import com.jss.osiris.modules.quotation.service.CharacterPriceService;
@@ -127,6 +130,7 @@ import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.quotation.service.FundTypeService;
 import com.jss.osiris.modules.quotation.service.JournalTypeService;
 import com.jss.osiris.modules.quotation.service.MailRedirectionTypeService;
+import com.jss.osiris.modules.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.quotation.service.NoticeTypeFamilyService;
 import com.jss.osiris.modules.quotation.service.NoticeTypeService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
@@ -141,6 +145,7 @@ import com.jss.osiris.modules.quotation.service.RecordTypeService;
 import com.jss.osiris.modules.quotation.service.RnaDelegateService;
 import com.jss.osiris.modules.quotation.service.ServiceFamilyGroupService;
 import com.jss.osiris.modules.quotation.service.ServiceFamilyService;
+import com.jss.osiris.modules.quotation.service.ServiceService;
 import com.jss.osiris.modules.quotation.service.ServiceTypeService;
 import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
@@ -336,6 +341,47 @@ public class QuotationController {
 
   @Autowired
   ServiceFamilyGroupService serviceFamilyGroupService;
+
+  @Autowired
+  ServiceService serviceService;
+
+  @Autowired
+  MissingAttachmentQueryService missingAttachmentQueryService;
+
+  @Autowired
+  AssoServiceDocumentService assoServiceDocumentService;
+
+  @GetMapping(inputEntryPoint + "/service/modify")
+  public ResponseEntity<Service> modifyServiceType(@RequestParam Integer serviceId,
+      @RequestParam Integer serviceTypeId) throws OsirisValidationException {
+
+    Service service = serviceService.getService(serviceId);
+    if (service == null)
+      throw new OsirisValidationException("service");
+
+    ServiceType serviceType = serviceTypeService.getServiceType(serviceTypeId);
+    if (serviceType == null)
+      throw new OsirisValidationException("ServiceType");
+
+    return new ResponseEntity<Service>(serviceService.modifyServiceType(serviceType, service),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/service-type/provision")
+  public ResponseEntity<Service> getServiceForServiceTypeAndAffaire(@RequestParam Integer idAffaire,
+      @RequestParam Integer serviceTypeId) throws OsirisValidationException {
+
+    Affaire affaire = affaireService.getAffaire(idAffaire);
+    if (affaire == null)
+      throw new OsirisValidationException("Affaire");
+
+    ServiceType serviceType = serviceTypeService.getServiceType(serviceTypeId);
+    if (serviceType == null)
+      throw new OsirisValidationException("ServiceType");
+
+    return new ResponseEntity<Service>(serviceService.getServiceForServiceTypeAndAffaire(serviceType, affaire),
+        HttpStatus.OK);
+  }
 
   @GetMapping(inputEntryPoint + "/service-family-groups")
   public ResponseEntity<List<ServiceFamilyGroup>> getServiceFamilyGroups() {
@@ -849,8 +895,12 @@ public class QuotationController {
     validationHelper.validateReferential(assoAffaireOrder.getAssignedTo(), true, "AssignedTo");
     validationHelper.validateReferential(assoAffaireOrder.getCustomerOrder(), true, "CustomerOrder");
 
-    if (assoAffaireOrder.getProvisions() == null)
-      throw new OsirisValidationException("Provisions");
+    if (assoAffaireOrder.getServices() == null)
+      throw new OsirisValidationException("Services");
+
+    for (Service service : assoAffaireOrder.getServices())
+      if (service.getProvisions() == null)
+        throw new OsirisValidationException("Provisions");
 
     CustomerOrder customerOrder = assoAffaireOrder.getCustomerOrder() != null ? assoAffaireOrder.getCustomerOrder()
         : null;
@@ -860,8 +910,9 @@ public class QuotationController {
 
     boolean isOpen = quotationService.getIsOpenedQuotation(customerOrder);
 
-    for (Provision provision : assoAffaireOrder.getProvisions())
-      quotationValidationHelper.validateProvisionTransactionnal(provision, isOpen, customerOrder);
+    for (Service service : assoAffaireOrder.getServices())
+      for (Provision provision : service.getProvisions())
+        quotationValidationHelper.validateProvisionTransactionnal(provision, null, customerOrder);
 
     assoAffaireOrderService.addOrUpdateAssoAffaireOrderFromUser(assoAffaireOrder);
 
@@ -883,7 +934,8 @@ public class QuotationController {
     if (id == null)
       throw new OsirisValidationException("Id");
 
-    return new ResponseEntity<AssoAffaireOrder>(provisionService.getProvision(id).getAssoAffaireOrder(), HttpStatus.OK);
+    return new ResponseEntity<AssoAffaireOrder>(provisionService.getProvision(id).getService().getAssoAffaireOrder(),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/assignation-types")
@@ -1562,8 +1614,8 @@ public class QuotationController {
       throws OsirisException, OsirisValidationException, OsirisClientMessageException {
     if (quotation != null && quotation.getAssoAffaireOrders() != null)
       for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders())
-        if (assoAffaireOrder.getProvisions() != null)
-          for (Provision provision : assoAffaireOrder.getProvisions())
+        for (Service service : assoAffaireOrder.getServices())
+          for (Provision provision : service.getProvisions())
             if (provision.getAnnouncement() != null) {
               if (provision.getAnnouncement().getConfrere() == null
                   || provision.getAnnouncement().getDepartment() == null
@@ -1824,8 +1876,8 @@ public class QuotationController {
       // Get provision
       if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
         for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-          if (asso.getProvisions() != null)
-            for (Provision orderProvision : asso.getProvisions())
+          for (Service service : asso.getServices())
+            for (Provision orderProvision : service.getProvisions())
               if (orderProvision.getAnnouncement() != null
                   && orderProvision.getAnnouncement().getId().equals(announcement.getId())) {
                 provision = orderProvision;
@@ -1880,8 +1932,8 @@ public class QuotationController {
       // Get provision
       if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
         for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-          if (asso.getProvisions() != null)
-            for (Provision orderProvision : asso.getProvisions())
+          for (Service service : asso.getServices())
+            for (Provision orderProvision : service.getProvisions())
               if (orderProvision.getAnnouncement() != null
                   && orderProvision.getAnnouncement().getId().equals(announcement.getId())) {
                 provision = orderProvision;
@@ -1921,23 +1973,28 @@ public class QuotationController {
     return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
   }
 
-  @PostMapping(inputEntryPoint + "/mail/generate/attachment")
-  public ResponseEntity<Boolean> generateAttachmentTypeMail(@RequestBody MissingAttachmentQuery query,
-      @RequestParam Integer idCustomerOrder, @RequestParam Integer idProvision)
+  @PostMapping(inputEntryPoint + "/mail/generate/missing-attachment")
+  public ResponseEntity<Boolean> generateAttachmentTypeMail(@RequestBody MissingAttachmentQuery query)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException {
-    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
-    if (customerOrder == null)
-      throw new OsirisValidationException("customerOrder");
 
-    Provision provision = provisionService.getProvision(idProvision);
-    if (provision == null)
-      throw new OsirisValidationException("provision");
+    if (query.getAssoServiceDocument() == null || query.getAssoServiceDocument().size() == 0)
+      throw new OsirisValidationException("assoServiceDocumentList");
 
-    MailComputeResult mailComputeResult = mailComputeHelper.computeMailForPublicationReceipt(customerOrder);
-    if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
-      throw new OsirisValidationException("MailTo");
+    AssoServiceDocument asso = null;
+    for (AssoServiceDocument assoServiceDocument : query.getAssoServiceDocument()) {
+      asso = assoServiceDocumentService.getAssoServiceDocument(assoServiceDocument.getId());
+      if (asso == null)
+        throw new OsirisValidationException("assoServiceDocument");
+    }
 
-    mailHelper.sendMissingAttachmentQueryToCustomer(customerOrder, provision, query);
+    if (asso != null) {
+      MailComputeResult mailComputeResult = mailComputeHelper
+          .computeMailForPublicationReceipt(asso.getService().getAssoAffaireOrder().getCustomerOrder());
+      if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+        throw new OsirisValidationException("MailTo");
+
+      missingAttachmentQueryService.sendMissingAttachmentQueryToCustomer(query);
+    }
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 

@@ -11,31 +11,38 @@
               {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
             </td>
           </tr>
-          <ng-container *ngFor="let provision of asso.provisions">
-            <tr *ngIf="provision.provisionType">
-              <td class="affaire " colspan="2">
-                {{provision.provisionType.label}}
-              </td>
-            </tr>
-            <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
-              <table>
-                <tr>
-                  <td>
-                    {{invoiceItem.label}}
-                  </td>
-                  <td class="td-price">
-                    {{invoiceItem.preTaxPrice|number}} €
-                  </td>
-                </tr>
-                <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
-                  <td>
-                    Remise
-                  </td>
-                  <td class="td-price remise">
-                    - {{invoiceItem.discountAmount|number}} €
-                  </td>
-                </tr>
-              </table>
+          <ng-container *ngFor="let service of asso.services">
+            <ng-container *ngFor="let provision of service.provisions">
+              <tr *ngIf="service ">
+                <td class="affaire " colspan="2">
+                  <strong>{{getServiceLabel(service,false)}}</strong>
+                </td>
+              </tr>
+              <tr *ngIf="provision.provisionType">
+                <td class="affaire " colspan="2">
+                  {{provision.provisionType.label}}
+                </td>
+              </tr>
+              <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
+                <table>
+                  <tr>
+                    <td>
+                      {{invoiceItem.label}}
+                    </td>
+                    <td class="td-price">
+                      {{invoiceItem.preTaxPrice|number}} €
+                    </td>
+                  </tr>
+                  <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
+                    <td>
+                      Remise
+                    </td>
+                    <td class="td-price remise">
+                      - {{invoiceItem.discountAmount|number}} €
+                    </td>
+                  </tr>
+                </table>
+              </ng-container>
             </ng-container>
           </ng-container>
         </ng-container>
@@ -118,7 +125,7 @@
                       <mat-accordion multi>
                         <mat-expansion-panel expanded="false">
                           <mat-expansion-panel-header>
-                            <mat-panel-title>Détails de l'affaire
+                            <mat-panel-title>Détails de l'affaire -
                               {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' '
                               +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
                               {{asso.affaire.city.label}}
@@ -145,46 +152,72 @@
                         </mat-expansion-panel>
                       </mat-accordion>
                     </div>
-                    <div class="mat-accordion-container full-width">
-                      <mat-accordion multi class="mat-accordion-container">
-                        <mat-expansion-panel *ngFor="let provision of asso.provisions"
-                          [expanded]="!provision.id || inputProvision && provision.id==inputProvision.id">
-                          <mat-expansion-panel-header>
-                            <mat-panel-title>
-                              {{getProvisionLabel(provision)}}
-                            </mat-panel-title>
-                            <span class="status-text"
-                              *ngIf="instanceOfCustomerOrderFn(quotation) && getActiveWorkflowElementsForProvision(provision)">{{getActiveWorkflowElementsForProvision(provision).label}}</span>
-                            <avatar-chip *ngIf="asso.assignedTo" [employee]="provision.assignedTo"
-                              (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
-                            </avatar-chip>
-                            <ng-template></ng-template>
-                            <mat-panel-description>
-                              <mat-icon color="accent"
-                                *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.id && !editMode"
-                                matTooltip="Voir/éditer la prestation"
-                                (click)="displayProvision($event, asso,provision)"
-                                (auxclick)="displayProvision($event, asso,provision)" class="pointer">
-                                work</mat-icon>
-                              <mat-icon color="accent" *ngIf="editMode" matTooltip="Supprimer la prestation"
-                                (click)="deleteProvision(asso,provision)" class="pointer">
-                                delete</mat-icon>
-                            </mat-panel-description>
-                          </mat-expansion-panel-header>
-                          <provision-item [quotation]="quotation" *ngIf="asso.affaire && asso.affaire.id"
-                            [editMode]="editMode" [provision]="provision" [affaire]="asso.affaire"
-                            (selectedProvisionTypeChange)="changeSelectedProvisionType($event)"
-                            [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen">
-                          </provision-item>
-                        </mat-expansion-panel>
-                      </mat-accordion>
-                    </div>
+                    <ng-container *ngFor="let service of asso.services">
+                      <div class="mat-accordion-container full-width">
+                        <mat-accordion multi>
+                          <mat-expansion-panel expanded="false" class="service-tab ">
+                            <mat-expansion-panel-header>
+                              <mat-panel-title>Service - {{getServiceLabel(service,true)}}
+                              </mat-panel-title>
+                              <mat-panel-description>
+                                <mat-icon color="accent" *ngIf="!editMode && service.id"
+                                  matTooltip="Modifier le type de service"
+                                  (click)="modifyService(service);$event.stopPropagation()" class="pointer">
+                                  edit</mat-icon>
+                                <mat-icon color="accent" *ngIf="editMode  " matTooltip="Supprimer le service"
+                                  (click)="deleteService(asso,service);$event.stopPropagation()" class="pointer">
+                                  delete</mat-icon>
+                              </mat-panel-description>
+                            </mat-expansion-panel-header>
+                            <service [service]=" service" [editMode]="editMode" [quotation]="quotation"></service>
+                          </mat-expansion-panel>
+                        </mat-accordion>
+                      </div>
+                      <div class="mat-accordion-container full-width">
+                        <mat-accordion multi class="mat-accordion-container">
+                          <mat-expansion-panel *ngFor="let provision of service.provisions"
+                            [expanded]="!provision.id || inputProvision && provision.id==inputProvision.id">
+                            <mat-expansion-panel-header>
+                              <mat-panel-title>
+                                {{computeProvisionLabel(service, provision, true)}}
+                              </mat-panel-title>
+                              <span class="status-text"
+                                *ngIf="instanceOfCustomerOrderFn(quotation) && getActiveWorkflowElementsForProvision(provision)">{{getActiveWorkflowElementsForProvision(provision).label}}</span>
+                              <avatar-chip *ngIf="asso.assignedTo" [employee]="provision.assignedTo"
+                                (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
+                              </avatar-chip>
+                              <ng-template></ng-template>
+                              <mat-panel-description>
+                                <mat-icon color="accent"
+                                  *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.id && !editMode"
+                                  matTooltip="Voir/éditer la prestation"
+                                  (click)="displayProvision($event, asso,provision);$event.stopPropagation()"
+                                  (auxclick)="displayProvision($event, asso,provision);$event.stopPropagation()"
+                                  class="pointer">
+                                  work</mat-icon>
+                                <mat-icon color="accent" *ngIf="editMode" matTooltip="Supprimer la prestation"
+                                  (click)="deleteProvision(service,provision);$event.stopPropagation()" class="pointer">
+                                  delete</mat-icon>
+                              </mat-panel-description>
+                            </mat-expansion-panel-header>
+                            <provision-item [quotation]="quotation" *ngIf="asso.affaire && asso.affaire.id"
+                              [editMode]="editMode" [provision]="provision" [affaire]="asso.affaire"
+                              (selectedProvisionTypeChange)="changeSelectedProvisionType($event)"
+                              [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen">
+                            </provision-item>
+                          </mat-expansion-panel>
+                        </mat-accordion>
+                      </div>
+                      <div class="row-field-container">
+                        <button mat-raised-button *ngIf="editMode" (click)="createProvision(service)" color="primary"
+                          class="mini-fab-add">
+                          Ajouter une prestation pour le service {{getServiceLabel(service,false)}}
+                        </button>
+                      </div>
+                    </ng-container>
                     <div class="row-field-container">
-                      <button mat-raised-button *ngIf="editMode" (click)="createProvision(asso)" color="primary"
-                        class="mini-fab-add">
-                        Ajouter une prestation pour
-                        {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + '
-                        '+asso.affaire.lastname)}}
+                      <button mat-raised-button *ngIf="editMode" (click)="createService(asso)" color="primary"
+                        class="mini-fab-add">Ajouter un service
                       </button>
                     </div>
                   </ng-template>

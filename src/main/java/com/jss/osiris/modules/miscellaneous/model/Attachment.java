@@ -22,10 +22,12 @@ import com.jss.osiris.modules.invoicing.model.AzureInvoice;
 import com.jss.osiris.modules.invoicing.model.AzureReceipt;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -113,8 +115,18 @@ public class Attachment implements Serializable, IId {
 	private Affaire affaire;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_asso_service_document")
+	@JsonIgnore
+	@JsonIgnoreProperties(value = { "attachments", "service" }, allowSetters = true)
+	private AssoServiceDocument assoServiceDocument;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_attachment_type")
 	private AttachmentType attachmentType;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_type_document")
+	private TypeDocument typeDocument;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_uploaded_file")
@@ -316,5 +328,21 @@ public class Attachment implements Serializable, IId {
 
 	public void setAffaire(Affaire affaire) {
 		this.affaire = affaire;
+	}
+
+	public TypeDocument getTypeDocument() {
+		return typeDocument;
+	}
+
+	public void setTypeDocument(TypeDocument typeDocument) {
+		this.typeDocument = typeDocument;
+	}
+
+	public AssoServiceDocument getAssoServiceDocument() {
+		return assoServiceDocument;
+	}
+
+	public void setAssoServiceDocument(AssoServiceDocument assoServiceDocument) {
+		this.assoServiceDocument = assoServiceDocument;
 	}
 }

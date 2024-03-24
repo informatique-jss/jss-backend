@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
@@ -27,16 +26,18 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
+import com.jss.osiris.modules.quotation.service.ServiceService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
-@Service
+@org.springframework.stereotype.Service
 public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
@@ -56,6 +57,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     ProvisionService provisionService;
+
+    @Autowired
+    ServiceService serviceService;
 
     @Autowired
     FormaliteGuichetUniqueStatusService statusService;
@@ -371,7 +375,7 @@ public class NotificationServiceImpl implements NotificationService {
 
             if (!createdByMe && provision.getAssignedTo() != null) {
                 String details = "";
-                Affaire affaire = provision.getAssoAffaireOrder().getAffaire();
+                Affaire affaire = provision.getService().getAssoAffaireOrder().getAffaire();
                 if (affaire != null)
                     details += affaire.getDenomination() != null ? affaire.getDenomination()
                             : (affaire.getFirstname() + " " + affaire.getLastname());
@@ -384,6 +388,35 @@ public class NotificationServiceImpl implements NotificationService {
                 generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
                         Notification.PROVISION_ADD_ATTACHMENT, provision, details, null, false);
             }
+        }
+    }
+
+    @Override
+    public void notifyAttachmentAddToService(Service service, Attachment attachment) throws OsirisException {
+        boolean createdByMe = false;
+        List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
+        service = serviceService.getService(service.getId());
+
+        if (compareEmployee != null)
+            for (Employee employee : compareEmployee)
+                if (service.getAssoAffaireOrder().getAssignedTo() != null
+                        && employee.getId().equals(service.getAssoAffaireOrder().getAssignedTo().getId()))
+                    createdByMe = true;
+
+        if (!createdByMe && service.getAssoAffaireOrder().getAssignedTo() != null && service.getAssoAffaireOrder()
+                .getCustomerOrder().getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)) {
+            String details = "";
+            Affaire affaire = service.getAssoAffaireOrder().getAffaire();
+            if (affaire != null)
+                details += affaire.getDenomination() != null ? affaire.getDenomination()
+                        : (affaire.getFirstname() + " " + affaire.getLastname());
+            details += " - ";
+            details += service.getCustomLabel() != null ? service.getCustomLabel()
+                    : service.getServiceType().getLabel();
+            details += " - ";
+            details += attachment.getAttachmentType().getLabel() + " (" + attachment.getDescription() + ")";
+            generateNewNotification(employeeService.getCurrentEmployee(), service.getAssoAffaireOrder().getAssignedTo(),
+                    Notification.SERVICE_ADD_ATTACHMENT, service, details, null, false);
         }
     }
 
@@ -459,14 +492,14 @@ public class NotificationServiceImpl implements NotificationService {
             throws OsirisException {
         provision = provisionService.getProvision(provision.getId());
 
-        if (!isProvisionClosed(provision) && provision.getAssoAffaireOrder() != null
-                && provision.getAssoAffaireOrder().getCustomerOrder() != null
-                && !provision.getAssoAffaireOrder().getCustomerOrder().getCustomerOrderStatus().getCode()
+        if (!isProvisionClosed(provision) && provision.getService().getAssoAffaireOrder() != null
+                && provision.getService().getAssoAffaireOrder().getCustomerOrder() != null
+                && !provision.getService().getAssoAffaireOrder().getCustomerOrder().getCustomerOrderStatus().getCode()
                         .equals(CustomerOrderStatus.OPEN)) {
 
             if (provision.getAssignedTo() != null) {
                 String details = "";
-                Affaire affaire = provision.getAssoAffaireOrder().getAffaire();
+                Affaire affaire = provision.getService().getAssoAffaireOrder().getAffaire();
                 if (affaire != null)
                     details += affaire.getDenomination() != null ? affaire.getDenomination()
                             : (affaire.getFirstname() + " " + affaire.getLastname());

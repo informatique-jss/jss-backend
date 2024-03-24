@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
@@ -40,6 +39,7 @@ import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
+import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
@@ -50,7 +50,7 @@ import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
-@Service
+@org.springframework.stereotype.Service
 public class QuotationValidationHelper {
 
         @Autowired
@@ -285,9 +285,9 @@ public class QuotationValidationHelper {
                 if (quotation.getAssoAffaireOrders().get(0).getAffaire() == null) {
                         throw new OsirisValidationException("No affaire");
                 }
-                if (quotation.getAssoAffaireOrders().get(0).getProvisions() == null
-                                || quotation.getAssoAffaireOrders().get(0).getProvisions().size() == 0)
-                        throw new OsirisValidationException("No provision");
+                if (quotation.getAssoAffaireOrders().get(0).getServices() == null
+                                || quotation.getAssoAffaireOrders().get(0).getServices().size() == 0)
+                        throw new OsirisValidationException("No service");
 
                 if (quotation.getDocuments() != null && quotation.getDocuments().size() > 0) {
                         for (Document document : quotation.getDocuments()) {
@@ -337,9 +337,19 @@ public class QuotationValidationHelper {
                                         .setAffaire((Affaire) validationHelper.validateReferential(
                                                         assoAffaireOrder.getAffaire(), true,
                                                         "Affaire"));
-                        if (assoAffaireOrder.getProvisions() != null && assoAffaireOrder.getProvisions().size() > 0)
-                                for (Provision provision : assoAffaireOrder.getProvisions()) {
-                                        validateProvision(provision, isOpen, isCustomerOrder, quotation);
+
+                        if (assoAffaireOrder.getServices() == null || assoAffaireOrder.getServices().size() == 0)
+                                throw new OsirisClientMessageException("Au moins un service est nécessaire");
+
+                        for (Service service : assoAffaireOrder.getServices())
+                                if (service.getProvisions() == null
+                                                || service.getProvisions().size() == 0)
+                                        throw new OsirisClientMessageException(
+                                                        "Chaque service doit avoir au moins une prestation");
+
+                        for (Service service : assoAffaireOrder.getServices())
+                                for (Provision provision : service.getProvisions()) {
+                                        validateProvision(provision, targetStatusCode, isCustomerOrder, quotation);
                                 }
                 }
 
@@ -355,20 +365,19 @@ public class QuotationValidationHelper {
         }
 
         @Transactional
-        public void validateProvisionTransactionnal(Provision provision, boolean isOpen, CustomerOrder customerOrder)
+        public void validateProvisionTransactionnal(Provision provision, String targetStatusCode,
+                        CustomerOrder customerOrder)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-                validateProvision(provision, isOpen, true,
+                validateProvision(provision, targetStatusCode, true,
                                 customerOrderService.getCustomerOrder(customerOrder.getId()));
         }
 
-        private void validateProvision(Provision provision, boolean isOpen, boolean isCustomerOrder,
+        private void validateProvision(Provision provision, String targetStatusCode, boolean isCustomerOrder,
                         IQuotation quotation)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
 
                 validationHelper.validateReferential(provision.getProvisionFamilyType(), true, "Famille de prestation");
                 validationHelper.validateReferential(provision.getProvisionType(), true, "Type de prestation");
-
-                isCustomerOrder = isCustomerOrder && !isOpen;
 
                 if (quotation.getId() == null && !quotation.getCustomerOrderOrigin().getId()
                                 .equals(constantService.getCustomerOrderOriginOsiris().getId()))
@@ -380,12 +389,12 @@ public class QuotationValidationHelper {
                 // Domiciliation
                 if (provision.getDomiciliation() != null) {
                         Domiciliation domiciliation = provision.getDomiciliation();
-                        validationHelper.validateReferential(domiciliation.getDomiciliationContractType(), !isOpen,
+                        validationHelper.validateReferential(domiciliation.getDomiciliationContractType(), false,
                                         "DomiciliationContractType");
-                        validationHelper.validateReferential(domiciliation.getLanguage(), !isOpen, "Language");
-                        validationHelper.validateReferential(domiciliation.getBuildingDomiciliation(), !isOpen,
+                        validationHelper.validateReferential(domiciliation.getLanguage(), false, "Language");
+                        validationHelper.validateReferential(domiciliation.getBuildingDomiciliation(), false,
                                         "BuildingDomiciliation");
-                        validationHelper.validateReferential(domiciliation.getMailRedirectionType(), !isOpen,
+                        validationHelper.validateReferential(domiciliation.getMailRedirectionType(), false,
                                         "MailRedirectionType");
                         validationHelper.validateString(domiciliation.getAddress(), false, 60, "Address");
                         validationHelper.validateString(domiciliation.getPostalCode(), false, 10, "PostalCode");
@@ -402,7 +411,7 @@ public class QuotationValidationHelper {
                         validationHelper.validateReferential(domiciliation.getCity(), false, "City");
                         validationHelper.validateReferential(domiciliation.getCountry(), false, "Country");
                         validationHelper.validateString(domiciliation.getAccountingRecordDomiciliation(),
-                                        isCustomerOrder, 60,
+                                        false, 60,
                                         "AccountingRecordDomiciliation");
 
                         if (domiciliation.isLegalPerson()) {
@@ -411,46 +420,46 @@ public class QuotationValidationHelper {
                                                                 .validateSiren(domiciliation.getLegalGardianSiren())))
                                         throw new OsirisValidationException("LegalGardianSiren");
                                 validationHelper.validateString(domiciliation.getLegalGardianDenomination(),
-                                                isCustomerOrder, 60,
+                                                false, 60,
                                                 "LegalGardianDenomination");
                                 validationHelper.validateReferential(domiciliation.getLegalGardianLegalForm(),
-                                                isCustomerOrder,
+                                                false,
                                                 "LegalGardianLegalForm");
                         } else {
                                 validationHelper.validateReferential(domiciliation.getLegalGardianCivility(),
-                                                isCustomerOrder,
+                                                false,
                                                 "LegalGardianCivility");
                                 validationHelper.validateString(domiciliation.getLegalGardianFirstname(),
-                                                isCustomerOrder, 20,
+                                                false, 20,
                                                 "LegalGardianFirstname");
                                 validationHelper.validateString(domiciliation.getLegalGardianLastname(),
-                                                isCustomerOrder, 20,
+                                                false, 20,
                                                 "LegalGardianLastname");
                                 validationHelper.validateDateMax(domiciliation.getLegalGardianBirthdate(),
-                                                isCustomerOrder,
+                                                false,
                                                 LocalDate.now(),
                                                 "LegalGardianBirthdate");
                                 validationHelper.validateString(domiciliation.getLegalGardianPlaceOfBirth(),
-                                                isCustomerOrder, 60,
+                                                false, 60,
                                                 "LegalGardianPlaceOfBirth");
-                                validationHelper.validateString(domiciliation.getLegalGardianJob(), isCustomerOrder, 30,
+                                validationHelper.validateString(domiciliation.getLegalGardianJob(), false, 30,
                                                 "LegalGardianJob");
                         }
 
-                        validationHelper.validateString(domiciliation.getLegalGardianMailRecipient(), isCustomerOrder,
+                        validationHelper.validateString(domiciliation.getLegalGardianMailRecipient(), false,
                                         60,
                                         "LegalGardianMailRecipient");
-                        validationHelper.validateString(domiciliation.getLegalGardianAddress(), isCustomerOrder, 60,
+                        validationHelper.validateString(domiciliation.getLegalGardianAddress(), false, 60,
                                         "LegalGardianAddress");
                         if (domiciliation.getCountry() != null && domiciliation.getCountry().getCode().equals("FR"))
                                 validationHelper.validateString(domiciliation.getLegalGardianPostalCode(),
-                                                isCustomerOrder, 10,
+                                                false, 10,
                                                 "LegalGardianPostalCode");
                         validationHelper.validateString(domiciliation.getLegalGardianCedexComplement(), false, 20,
                                         "LegalGardianCedexComplement");
-                        validationHelper.validateReferential(domiciliation.getLegalGardianCity(), isCustomerOrder,
+                        validationHelper.validateReferential(domiciliation.getLegalGardianCity(), false,
                                         "LegalGardianCity");
-                        validationHelper.validateReferential(domiciliation.getLegalGardianCountry(), isCustomerOrder,
+                        validationHelper.validateReferential(domiciliation.getLegalGardianCountry(), false,
                                         "LegalGardianCountry");
 
                 }
@@ -507,22 +516,29 @@ public class QuotationValidationHelper {
                                 }
                         }
 
-                        validationHelper.validateDateMin(announcement.getPublicationDate(), true,
+                        boolean verifyAnnouncement = isCustomerOrder && targetStatusCode != null
+                                        && (targetStatusCode.equals(CustomerOrderStatus.TO_BILLED)
+                                                        || targetStatusCode.equals(CustomerOrderStatus.BILLED));
+
+                        validationHelper.validateDateMin(announcement.getPublicationDate(), verifyAnnouncement,
                                         publicationDateVerification,
                                         "Date de publication de l'annonce");
-                        validationHelper.validateReferential(announcement.getDepartment(), !isOpen, "Department");
-                        validationHelper.validateReferential(announcement.getConfrere(), isCustomerOrder, "Confrere");
-                        validationHelper.validateReferential(announcement.getNoticeTypeFamily(), isCustomerOrder,
+                        validationHelper.validateReferential(announcement.getDepartment(), verifyAnnouncement,
+                                        "Department");
+                        validationHelper.validateReferential(announcement.getConfrere(), verifyAnnouncement,
+                                        "Confrere");
+                        validationHelper.validateReferential(announcement.getNoticeTypeFamily(), verifyAnnouncement,
                                         "NoticeTypeFamily");
-                        if (isCustomerOrder && (announcement.getNoticeTypes() == null
+                        if (verifyAnnouncement && (announcement.getNoticeTypes() == null
                                         || announcement.getNoticeTypes().size() == 0))
                                 throw new OsirisValidationException("NoticeTypes");
 
                         if (announcement.getNoticeTypes() != null)
                                 for (NoticeType noticeType : announcement.getNoticeTypes()) {
-                                        validationHelper.validateReferential(noticeType, isCustomerOrder, "noticeType");
+                                        validationHelper.validateReferential(noticeType, verifyAnnouncement,
+                                                        "noticeType");
                                 }
-                        validationHelper.validateString(announcement.getNotice(), !isOpen, "Notice");
+                        validationHelper.validateString(announcement.getNotice(), verifyAnnouncement, "Notice");
 
                         if (announcement.getAnnouncementStatus() != null && (announcement.getAnnouncementStatus()
                                         .getCode()

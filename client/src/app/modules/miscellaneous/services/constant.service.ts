@@ -715,4 +715,8 @@ export class ConstantService extends AppRestService<Constant>{
   getRffFrequencyMonthly() {
     return this.constant.rffFrequencyMonthly;
   }
+
+  getServiceTypeOther() {
+    return this.constant.serviceTypeOther;
+  }
 }

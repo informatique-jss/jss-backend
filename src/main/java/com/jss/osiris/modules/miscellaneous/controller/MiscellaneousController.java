@@ -94,16 +94,19 @@ import com.jss.osiris.modules.miscellaneous.service.WeekDayService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.TypeDocumentService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
@@ -137,6 +140,9 @@ public class MiscellaneousController {
 
     @Autowired
     CompetentAuthorityTypeService competentAuthorityTypeService;
+
+    @Autowired
+    TypeDocumentService typeDocumentService;
 
     @Autowired
     ValidationHelper validationHelper;
@@ -1028,7 +1034,8 @@ public class MiscellaneousController {
             @RequestParam Integer idEntity, @RequestParam String entityType,
             @RequestParam Integer idAttachmentType,
             @RequestParam String filename, @RequestParam Boolean replaceExistingAttachementType,
-            @RequestParam(name = "pageSelection", required = false) String pageSelection)
+            @RequestParam(name = "pageSelection", required = false) String pageSelection,
+            @RequestParam(name = "typeDocumentCode", required = false) String typeDocumentCode)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         if (idAttachmentType == null)
             throw new OsirisValidationException("idAttachmentType");
@@ -1047,6 +1054,13 @@ public class MiscellaneousController {
         if (entityType == null)
             throw new OsirisValidationException("entityType");
 
+        TypeDocument typeDocument = null;
+        if (typeDocumentCode != null) {
+            typeDocument = typeDocumentService.getTypeDocumentByCode(typeDocumentCode);
+            if (typeDocument == null)
+                throw new OsirisValidationException("typeDocument");
+        }
+
         if (!entityType.equals(Tiers.class.getSimpleName())
                 && !entityType.equals("Ofx")
                 && !entityType.equals(Responsable.class.getSimpleName())
@@ -1056,12 +1070,13 @@ public class MiscellaneousController {
                 && !entityType.equals(CompetentAuthority.class.getSimpleName())
                 && !entityType.equals(Provision.class.getSimpleName())
                 && !entityType.equals(Affaire.class.getSimpleName())
+                && !entityType.equals(AssoServiceDocument.class.getSimpleName())
                 && !entityType.equals(Invoice.class.getSimpleName()))
             throw new OsirisValidationException("entityType");
 
         return new ResponseEntity<List<Attachment>>(
                 attachmentService.addAttachment(file, idEntity, entityType, attachmentType, filename,
-                        replaceExistingAttachementType, pageSelection),
+                        replaceExistingAttachementType, pageSelection, typeDocument),
                 HttpStatus.OK);
     }
 

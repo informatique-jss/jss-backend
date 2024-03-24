@@ -38,4 +38,7 @@ public interface AttachmentRepository extends QueryCacheCrudRepository<Attachmen
 
         @Query(value = "select a from Attachment a where id_competent_authority =:idCompetentAuthority")
         List<Attachment> findByCompetentAuthorityId(@Param("idCompetentAuthority") Integer idCompetentAuthority);
+
+        @Query(value = "select a from Attachment a where id_asso_service_document =:idAssoServiceDocument")
+        List<Attachment> findByAssoServiceDocument(@Param("idAssoServiceDocument") Integer idAssoServiceDocument);
 }

@@ -45,6 +45,7 @@
         <p>Prestations du service</p>
         <ng-container
           *ngFor="let assoServiceProvisionType of selectedEntity.assoServiceProvisionTypes ; let index = index">
+          <p *ngIf="assoServiceProvisionType.provisionType">{{assoServiceProvisionType.provisionType.label}}</p>
           <table class="full-width">
             <tr>
               <td>
@@ -55,13 +56,15 @@
               <td>
                 <generic-textarea [(model)]="assoServiceProvisionType.apeCodes" label="Codes APE" [form]="entityForm"
                   [propertyName]="'apeCodes'+index" [isMandatory]="false" [isDisabled]="!editMode"
-                  hint="Codes APE nécessaires dans l'une des activités pour appliquer la prestation (séparés par un ;)"></generic-textarea>
+                  matTooltipShowDelay="1000"
+                  matTooltip="Codes APE nécessaires dans l'une des activités pour appliquer la prestation (séparés par un ;)"
+                  [numberOfLines]="1"></generic-textarea>
               </td>
               <td>
                 <chips-forme-juridique [(model)]="assoServiceProvisionType.formeJuridiques" label="Formes juridique"
                   [form]="entityForm" [propertyName]="'formeJuridique'+index" [isMandatory]="false"
-                  [isDisabled]="!editMode"
-                  hint="Formes juridiques nécessaires pour appliquer la prestation"></chips-forme-juridique>
+                  [isDisabled]="!editMode" matTooltipShowDelay="1000"
+                  matTooltip="Formes juridiques nécessaires pour appliquer la prestation"></chips-forme-juridique>
               </td>
             </tr>
           </table>
@@ -70,20 +73,20 @@
               <td>
                 <generic-input [(model)]="assoServiceProvisionType.minEmployee" label="Nombre minimal de salariés"
                   [form]="entityForm" [propertyName]="'minEmployee'+index" [isMandatory]="false"
-                  [isDisabled]="!editMode" hint="Nombre minimal de salariés pour appliquer la prestation"
-                  type="number"></generic-input>
+                  matTooltipShowDelay="1000" [isDisabled]="!editMode"
+                  matTooltip="Nombre minimal de salariés pour appliquer la prestation" type="number"></generic-input>
               </td>
               <td>
                 <generic-input [(model)]="assoServiceProvisionType.maxEmployee" label="Nombre maximal de salariés"
                   [form]="entityForm" [propertyName]="'maxEmployee'+index" [isMandatory]="false"
-                  [isDisabled]="!editMode" hint="Nombre maximal de salariés pour appliquer la prestation"
-                  type="number"></generic-input>
+                  matTooltipShowDelay="1000" [isDisabled]="!editMode"
+                  matTooltip="Nombre maximal de salariés pour appliquer la prestation" type="number"></generic-input>
               </td>
               <td>
                 <generic-input [(model)]="assoServiceProvisionType.customerMessageWhenAdded"
-                  label="Message à afficher en cas d'ajout" [form]="entityForm"
+                  label="Message à afficher en cas d'ajout" [form]="entityForm" matTooltipShowDelay="1000"
                   [propertyName]="'customerMessageWhenAdded'+index" [isMandatory]="false" [isDisabled]="!editMode"
-                  hint="Message à afficher en cas d'ajout de la prestation suite aux conditions précédentes"
+                  matTooltip="Message à afficher en cas d'ajout de la prestation suite aux conditions précédentes"
                   [maxLength]="400"></generic-input>
               </td>
               <td>
@@ -109,8 +112,9 @@
           <tr *ngFor="let assoServiceTypeDocument of selectedEntity.assoServiceTypeDocuments ; let index = index">
             <td>
               <autocomplete-type-document [(model)]="assoServiceTypeDocument.typeDocument" [form]="entityForm"
-                [propertyName]="'typeDocument'+index" [isMandatory]="true"
-                [isDisabled]="!editMode"></autocomplete-type-document>
+                [propertyName]="'typeDocument'+index" [isMandatory]="true" [isDisabled]="!editMode"
+                matTooltip="Seuls les types attachés à un Type de pièce jointe sont affichés"
+                [onlyDisplayWithAttachmentType]="true"></autocomplete-type-document>
             </td>
             <td>
               <generic-toggle [(model)]="assoServiceTypeDocument.isMandatory" label="Est obligatoire ?"

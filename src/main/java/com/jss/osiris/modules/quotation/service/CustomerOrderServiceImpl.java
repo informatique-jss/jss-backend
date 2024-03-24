@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -67,6 +66,7 @@ import com.jss.osiris.modules.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
@@ -75,13 +75,14 @@ import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.repository.CustomerOrderRepository;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
-@Service
+@org.springframework.stereotype.Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Value("${invoicing.payment.limit.refund.euros}")
@@ -226,8 +227,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                 assoAffaireOrder.setCustomerOrder(customerOrder);
                 assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
-                if (assoAffaireOrder.getProvisions() != null)
-                    for (Provision provision : assoAffaireOrder.getProvisions())
+                for (Service service : assoAffaireOrder.getServices())
+                    for (Provision provision : service.getProvisions())
                         if (provision.getId() == null)
                             oneNewProvision = true;
             }
@@ -262,8 +263,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null
                 && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)) {
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
-                if (assoAffaireOrder.getProvisions() != null)
-                    for (Provision provision : assoAffaireOrder.getProvisions()) {
+                for (Service service : assoAffaireOrder.getServices())
+                    for (Provision provision : service.getProvisions()) {
                         if (provision.getAnnouncement() != null
                                 && !provision.getAnnouncement().getAnnouncementStatus().getIsCloseState())
                             return customerOrderIn;
@@ -292,8 +293,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     private boolean isOnlyAnnouncement(CustomerOrder customerOrder) {
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
+                for (Service service : asso.getServices())
+                    for (Provision provision : service.getProvisions())
                         if (provision.getAnnouncement() == null)
                             return false;
         return true;
@@ -305,8 +306,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
+                for (Service service : asso.getServices())
+                    for (Provision provision : service.getProvisions())
                         if (provision.getAnnouncement() != null && !provision.getAnnouncement().getConfrere().getId()
                                 .equals(constantService.getConfrereJssSpel().getId()))
                             return false;
@@ -477,8 +478,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder = getCustomerOrder(customerOrder.getId());
         if (customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
+                for (Service service : asso.getServices())
+                    for (Provision provision : service.getProvisions())
                         if (provision.getInvoiceItems() != null)
                             for (InvoiceItem invoiceItem : provision.getInvoiceItems())
                                 invoiceItemService.deleteInvoiceItem(invoiceItem);
@@ -512,8 +513,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         List<InvoiceItem> invoiceItemToDelete = new ArrayList<InvoiceItem>();
         if (customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
-                if (assoAffaireOrder.getProvisions() != null)
-                    for (Provision provision : assoAffaireOrder.getProvisions())
+                for (Service service : assoAffaireOrder.getServices())
+                    for (Provision provision : service.getProvisions())
                         if (provision.getInvoiceItems() != null) {
                             invoiceItemToDelete = new ArrayList<InvoiceItem>();
                             for (InvoiceItem invoiceItem : provision.getInvoiceItems())
@@ -560,12 +561,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
         // Associate invoice to invoice item
         for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
-            for (Provision provision : assoAffaireOrder.getProvisions()) {
-                if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
-                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                        invoice.getInvoiceItems().add(invoiceItem);
-                    }
-            }
+            for (Service service : assoAffaireOrder.getServices())
+                for (Provision provision : service.getProvisions()) {
+                    if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
+                        for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                            invoice.getInvoiceItems().add(invoiceItem);
+                        }
+                }
         }
         invoiceService.addOrUpdateInvoiceFromUser(invoice);
 
@@ -578,7 +580,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeInvoice(),
                     "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                    false, "Facture n°" + invoice.getId(), null, null);
+                    false, "Facture n°" + invoice.getId(), null, null, null);
 
             for (Attachment attachment : attachments)
                 if (attachment.getDescription().contains(invoice.getId() + "")) {
@@ -717,8 +719,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 asso.setId(null);
                 asso.setCustomerOrder(null);
                 asso.setQuotation(null);
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions()) {
+                for (Service service : asso.getServices()) {
+                    service.setId(null);
+                    if (service.getAssoServiceDocuments() != null)
+                        for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
+                            assoServiceDocument.setId(null);
+                            assoServiceDocument.setAttachments(null);
+                        }
+                    for (Provision provision : service.getProvisions()) {
                         provision.setId(null);
                         if (provision.getAnnouncement() != null) {
                             provision.getAnnouncement().setId(null);
@@ -740,6 +748,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                 invoiceItem.setId(null);
                         provision.setAttachments(null);
                     }
+                }
             }
         addOrUpdateCustomerOrder(customerOrder2, false, true);
 
@@ -757,20 +766,48 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (quotation.getAssoAffaireOrders() != null)
             for (int assoIndex = 0; assoIndex < quotation.getAssoAffaireOrders().size(); assoIndex++) {
                 AssoAffaireOrder quotationAsso = quotation.getAssoAffaireOrders().get(assoIndex);
-                if (quotationAsso.getProvisions() != null)
-                    for (int provisionIndex = 0; provisionIndex < quotationAsso.getProvisions()
+                for (int serviceIndex = 0; serviceIndex < quotationAsso.getServices().size(); serviceIndex++) {
+                    // Service attachments
+                    Service quotationService = quotation.getAssoAffaireOrders().get(assoIndex)
+                            .getServices().get(serviceIndex);
+                    if (quotationService.getAssoServiceDocuments() != null
+                            && quotationService.getAssoServiceDocuments().size() > 0) {
+                        for (int assoServiceDocumentIndex = 0; assoServiceDocumentIndex < quotationService
+                                .getAssoServiceDocuments().size(); assoServiceDocumentIndex++) {
+                            AssoServiceDocument quotationServiceDocument = quotationService
+                                    .getAssoServiceDocuments().get(assoServiceDocumentIndex);
+                            if (quotationServiceDocument.getAttachments() != null
+                                    && quotationServiceDocument.getAttachments().size() > 0) {
+                                for (Attachment attachment : quotationServiceDocument.getAttachments()) {
+                                    Attachment newAttachment = attachmentService.cloneAttachment(attachment);
+                                    newAttachment
+                                            .setAssoServiceDocument(customerOrder2.getAssoAffaireOrders().get(assoIndex)
+                                                    .getServices().get(serviceIndex).getAssoServiceDocuments()
+                                                    .get(assoServiceDocumentIndex));
+                                    attachmentService.addOrUpdateAttachment(newAttachment);
+                                }
+                            }
+                        }
+                    }
+
+                    // Provision attachments
+                    for (int provisionIndex = 0; provisionIndex < quotation.getAssoAffaireOrders().get(assoIndex)
+                            .getServices().get(serviceIndex).getProvisions()
                             .size(); provisionIndex++) {
-                        Provision quotationProvision = quotationAsso.getProvisions().get(provisionIndex);
+                        Provision quotationProvision = quotation.getAssoAffaireOrders().get(assoIndex)
+                                .getServices().get(serviceIndex).getProvisions().get(provisionIndex);
                         if (quotationProvision.getAttachments() != null
                                 && quotationProvision.getAttachments().size() > 0)
                             for (Attachment attachment : quotationProvision.getAttachments()) {
                                 Attachment newAttachment = attachmentService.cloneAttachment(attachment);
                                 newAttachment.setQuotation(null);
                                 newAttachment.setProvision(customerOrder2.getAssoAffaireOrders().get(assoIndex)
+                                        .getServices().get(serviceIndex)
                                         .getProvisions().get(provisionIndex));
                                 attachmentService.addOrUpdateAttachment(newAttachment);
                             }
                     }
+                }
             }
         return customerOrder2;
     }
@@ -947,8 +984,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder != null)
             if (customerOrder.getAssoAffaireOrders() != null)
                 for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
-                    if (assoAffaireOrder.getProvisions() != null)
-                        for (Provision provision : assoAffaireOrder.getProvisions())
+                    for (Service service : assoAffaireOrder.getServices())
+                        for (Provision provision : service.getProvisions())
                             if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
                                 for (InvoiceItem invoiceItem : provision.getInvoiceItems())
                                     total += invoiceHelper.getTotalForInvoiceItem(invoiceItem);
@@ -1077,17 +1114,19 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             for (AssoAffaireOrder duplicateAsso : potentialCustomerOrder.getAssoAffaireOrders()) {
                                 if (currentAsso.getAffaire().getId().equals(duplicateAsso.getAffaire().getId())) {
                                     foundAsso = true;
-                                    for (Provision currentProvision : currentAsso.getProvisions()) {
-                                        boolean foundProvision = false;
-                                        for (Provision duplicateProvision : duplicateAsso.getProvisions()) {
-                                            if (duplicateProvision.getProvisionType().getId()
-                                                    .equals(currentProvision.getProvisionType().getId())) {
-                                                foundProvision = true;
-                                            }
+                                    for (Service service : currentAsso.getServices())
+                                        for (Provision currentProvision : service.getProvisions()) {
+                                            boolean foundProvision = false;
+                                            for (Service duplicateService : duplicateAsso.getServices())
+                                                for (Provision duplicateProvision : duplicateService.getProvisions()) {
+                                                    if (duplicateProvision.getProvisionType().getId()
+                                                            .equals(currentProvision.getProvisionType().getId())) {
+                                                        foundProvision = true;
+                                                    }
+                                                }
+                                            if (!foundProvision)
+                                                break outerloop;
                                         }
-                                        if (!foundProvision)
-                                            break outerloop;
-                                    }
                                 }
                             }
                             if (!foundAsso)

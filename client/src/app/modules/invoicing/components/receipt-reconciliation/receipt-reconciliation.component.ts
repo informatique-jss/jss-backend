@@ -142,7 +142,7 @@ export class ReceiptReconciliationComponent implements OnInit {
   }
 
   openProvision(event: any, provision: Provision) {
-    this.appService.openRoute(event, "/provision/" + provision.assoAffaireOrder.id + "/" + provision.id, undefined);
+    this.appService.openRoute(event, "/provision/" + provision.service.assoAffaireOrder.id + "/" + provision.id, undefined);
   }
 
   getAffaireLabel(affaire: Affaire): string {

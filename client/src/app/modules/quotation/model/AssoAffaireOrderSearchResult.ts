@@ -17,4 +17,5 @@ export interface AssoAffaireOrderSearchResult {
   competentAuthorityLabel: string;
   provisionStatusDatetime: Date;
   provisionCreatedDatetime: Date;
+  serviceTypeLabel: string;
 }

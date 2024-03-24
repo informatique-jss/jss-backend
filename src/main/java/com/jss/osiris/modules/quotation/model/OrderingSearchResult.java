@@ -27,6 +27,8 @@ public interface OrderingSearchResult {
 
     public String getAffaireLabel();
 
+    public String getServiceTypeLabel();
+
     public Float getTotalPrice();
 
     public Float getDepositTotalAmount();

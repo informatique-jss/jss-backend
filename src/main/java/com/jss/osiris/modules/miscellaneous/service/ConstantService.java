@@ -27,6 +27,7 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.quotation.model.ServiceType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
@@ -389,4 +390,6 @@ public interface ConstantService {
     public RffFrequency getRffFrequencyMonthly() throws OsirisException;
 
     public RffFrequency getRffFrequencyQuarterly() throws OsirisException;
+
+    public ServiceType getServiceTypeOther() throws OsirisException;
 }

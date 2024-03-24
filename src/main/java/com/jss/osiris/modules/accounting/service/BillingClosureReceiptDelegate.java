@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -45,6 +44,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -53,7 +53,7 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
-@Service
+@org.springframework.stereotype.Service
 public class BillingClosureReceiptDelegate {
 
     @Value("${payment.cb.entry.point}")
@@ -489,8 +489,8 @@ public class BillingClosureReceiptDelegate {
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null
                 && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
-                if (asso.getProvisions() != null && asso.getProvisions().size() > 0)
-                    for (Provision provision : asso.getProvisions())
+                for (Service service : asso.getServices())
+                    for (Provision provision : service.getProvisions())
                         provisions
                                 .add(provision.getProvisionFamilyType().getLabel() + " - "
                                         + provision.getProvisionType().getLabel());
@@ -518,7 +518,7 @@ public class BillingClosureReceiptDelegate {
                     new FileInputStream(billingClosureReceipt), tiers.getId(),
                     tiersType, constantService.getAttachmentTypeBillingClosure(),
                     "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".pdf", false,
-                    "Relevé de compte du " + LocalDateTime.now().format(formatter), null, null);
+                    "Relevé de compte du " + LocalDateTime.now().format(formatter), null, null, null);
 
             for (Attachment attachment : attachmentsList)
                 if (attachment.getUploadedFile().getFilename()

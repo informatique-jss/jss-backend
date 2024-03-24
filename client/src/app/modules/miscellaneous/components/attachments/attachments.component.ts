@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
+import { formatBytes, formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { CUSTOMER_ORDER_ENTITY_TYPE, PROVISION_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { Attachment } from '../../model/Attachment';
 import { AttachmentType } from '../../model/AttachmentType';
@@ -52,9 +52,10 @@ export class AttachmentsComponent implements OnInit {
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "name", fieldName: "uploadedFile.filename", label: "Nom" } as SortTableColumn<Attachment>);
     this.displayedColumns.push({ id: "attachementType", fieldName: "attachmentType.label", label: "Type de document" } as SortTableColumn<Attachment>);
+    this.displayedColumns.push({ id: "typeDocument", fieldName: "typeDocument.label", label: "Type INPI" } as SortTableColumn<Attachment>);
     this.displayedColumns.push({ id: "createdBy", fieldName: "uploadedFile.createdBy", label: "Ajouté par" } as SortTableColumn<Attachment>);
     this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Attachment>);
-    this.displayedColumns.push({ id: "size", fieldName: "uploadedFile.size", label: "Taille", valueFonction: (element: Attachment, column: SortTableColumn<Attachment>) => { return element.uploadedFile.size ? Math.round((element.uploadedFile.size / 1024 / 1024) * 100) / 100 + " Mo" : "" } } as SortTableColumn<Attachment>);
+    this.displayedColumns.push({ id: "size", fieldName: "uploadedFile.size", label: "Taille", valueFonction: (element: Attachment, column: SortTableColumn<Attachment>) => { return element.uploadedFile.size ? formatBytes(element.uploadedFile.size, 2) : "" } } as SortTableColumn<Attachment>);
 
     if (this.entityType && (this.entityType == CUSTOMER_ORDER_ENTITY_TYPE.entityType || this.entityType == QUOTATION_ENTITY_TYPE.entityType || this.entityType == PROVISION_ENTITY_TYPE.entityType))
       this.displayedColumns.push({ id: "isAlreadySent", fieldName: "isAlreadySent", label: "Envoyé au client ?", valueFonction: (element: Attachment, column: SortTableColumn<Attachment>) => { return element.isAlreadySent ? "Oui" : "Non" } } as SortTableColumn<Attachment>);
@@ -109,7 +110,6 @@ export class AttachmentsComponent implements OnInit {
 
   uploadFile() {
     this.uploadAttachementDialogRef = this.uploadAttachementDialog.open(UploadAttachementDialogComponent, {
-      width: '50%'
     });
     this.uploadAttachementDialogRef.componentInstance.entity = this.entity;
     this.uploadAttachementDialogRef.componentInstance.entityType = this.entityType;

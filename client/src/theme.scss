@@ -354,6 +354,15 @@ tr.selected-mat-row {
   background-color: $dark-bg-lighter-20 !important;
 }
 
+
+.light .service-tab {
+  background-color: $light-bg-darker-20 !important;
+}
+
+.dark .service-tab {
+  background-color: $dark-bg-lighter-30 !important;
+}
+
 .mdc-evolution-chip__text-label {
   display: flex;
 }

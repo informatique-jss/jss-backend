@@ -9,6 +9,7 @@ import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { IReferential } from 'src/app/modules/administration/model/IReferential';
 import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
+import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
@@ -35,6 +36,7 @@ import { CustomerOrderStatus } from '../../model/CustomerOrderStatus';
 import { OrderingSearch } from '../../model/OrderingSearch';
 import { Provision } from '../../model/Provision';
 import { QuotationStatus } from '../../model/QuotationStatus';
+import { Service } from '../../model/Service';
 import { VatBase } from '../../model/VatBase';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
@@ -43,6 +45,7 @@ import { OrderingSearchResultService } from '../../services/ordering.search.resu
 import { ProvisionService } from '../../services/provision.service';
 import { QuotationStatusService } from '../../services/quotation-status.service';
 import { QuotationService } from '../../services/quotation.service';
+import { ServiceService } from '../../services/service.service';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
@@ -52,6 +55,7 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
+import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 import { IQuotation } from './../../model/IQuotation';
 
 @Component({
@@ -108,7 +112,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     public chooseUserDialog: MatDialog,
     public mailLabelDialog: MatDialog,
     public abandonReasonInquiryDialog: MatDialog,
+    public selectServiceTypeDialog: MatDialog,
     public addAffaireDialog: MatDialog,
+    public selectAttachmentTypeDialog: MatDialog,
+    public confirmationDialog: MatDialog,
     public quotationWorkflowDialog: MatDialog,
     public orderSimilaritiesDialog: MatDialog,
     public customerOrderWorkflowDialog: MatDialog,
@@ -123,9 +130,11 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     public associatePaymentDialog: MatDialog,
     private userNoteService2: UserNoteService,
     private userPreferenceService: UserPreferenceService,
+    private serviceService: ServiceService,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   quotationForm = this.formBuilder.group({});
+  getServiceLabel = this.serviceService.getServiceLabel;
 
   ngAfterContentChecked(): void {
     this.changeDetectorRef.detectChanges();
@@ -169,7 +178,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             this.selectedTabIndex = 1;
             if (this.quotation.assoAffaireOrders)
               for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
-                if (this.quotation.assoAffaireOrders[i].id == this.inputProvision.assoAffaireOrder.id)
+                if (this.quotation.assoAffaireOrders[i].id == this.inputProvision.service.assoAffaireOrder.id)
                   this.selectedTabIndexAsso = i;
               }
           }
@@ -224,9 +233,11 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     if (instanceOfCustomerOrder(this.quotation) && !this.quotation.customerOrderStatus || instanceOfQuotation(this.quotation) && !this.quotation.quotationStatus)
       this.isStatusOpen = true;
     if (this.quotation && instanceOfQuotation(this.quotation) && this.quotation.quotationStatus)
-      this.isStatusOpen = this.quotation.quotationStatus.code == QUOTATION_STATUS_OPEN;
+      this.isStatusOpen = true;
     if (this.quotation && instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus)
-      this.isStatusOpen = this.quotation.customerOrderStatus.code == QUOTATION_STATUS_OPEN;
+      this.isStatusOpen = this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_OPEN
+        || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BEING_PROCESSED
+        || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT;
   }
 
   updateDocuments() {
@@ -251,19 +262,19 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   checkAffaireAssignation() {
     let userList: Employee[] = [] as Array<Employee>;
-    if (this.quotation && this.instanceOfCustomerOrder && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0
-      && this.quotation.assoAffaireOrders[0].provisions && this.quotation.assoAffaireOrders[0].provisions.length > 0)
+    if (this.quotation && this.instanceOfCustomerOrder && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0)
       for (let asso of this.quotation.assoAffaireOrders)
-        if (asso.affaire && asso.provisions && !asso.assignedTo) {
+        if (asso.affaire && asso.services && !asso.assignedTo) {
           let found = false;
-          for (let provision of asso.provisions) {
-            for (let employee of userList) {
-              if (provision.assignedTo && provision.assignedTo.id == employee.id)
-                found = true;
+          for (let service of asso.services)
+            for (let provision of service.provisions) {
+              for (let employee of userList) {
+                if (provision.assignedTo && provision.assignedTo.id == employee.id)
+                  found = true;
+              }
+              if (!found && provision.assignedTo)
+                userList.push(provision.assignedTo);
             }
-            if (!found && provision.assignedTo)
-              userList.push(provision.assignedTo);
-          }
           if (userList.length == 0) {
             let tiers: ITiers | undefined = this.quotation.responsable ?? this.quotation.tiers ?? this.quotation.confrere;
             if (tiers) {
@@ -378,17 +389,78 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return this.instanceOfCustomerOrder ? this.customerOrderStatusList : this.quotationStatusList;
   }
 
-  createProvision(asso: AssoAffaireOrder): Provision {
+  createProvision(service: Service): Provision {
     if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
       this.displaySnakBarLockProvision();
       return {} as Provision;
     }
-    if (asso && !asso.provisions)
-      asso.provisions = [] as Array<Provision>;
+    if (service && !service.provisions)
+      service.provisions = [] as Array<Provision>;
     let provision = {} as Provision;
-    asso.provisions.push(provision);
+    service.provisions.push(provision);
     this.generateInvoiceItem();
     return provision;
+  }
+
+  createService(asso: AssoAffaireOrder) {
+    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+      this.displaySnakBarLockProvision();
+    }
+    if (asso && !asso.services)
+      asso.services = [] as Array<Service>;
+
+    let dialogRef = this.selectAttachmentTypeDialog.open(SelectServiceTypeDialogComponent, {
+      width: '50%',
+    });
+    dialogRef.componentInstance.affaire = asso.affaire;
+
+    dialogRef.afterClosed().subscribe(response => {
+      if (response != null) {
+        asso.services.push(response);
+        this.generateInvoiceItem();
+      }
+    })
+  }
+
+  deleteService(asso: AssoAffaireOrder, service: Service) {
+    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+      this.displaySnakBarLockProvision();
+    }
+
+    asso.services.splice(asso.services.indexOf(service), 1);
+    this.generateInvoiceItem();
+  }
+
+  modifyService(service: Service) {
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Modifier le type de service",
+        content: "Attention, la modification du type de service ajoutera les nouvelles prestations sans supprimer les prestations existantes. Pensez à vérifier les doublons après modification. Êtes-vous sûr de vouloir continuer ?",
+        closeActionText: "Annuler",
+        validationActionText: "Modifier"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult && service) {
+        const dialogRef2 = this.selectServiceTypeDialog.open(SelectServiceTypeDialogComponent, {
+          width: "50%",
+        });
+        dialogRef2.componentInstance.isJustSelectServiceType = true;
+        dialogRef2.afterClosed().subscribe(dialogResult => {
+          if (dialogResult && service && this.quotation) {
+            this.serviceService.modifyServiceType(service, dialogResult).subscribe(response => {
+              if (!this.instanceOfCustomerOrder) {
+                this.appService.openRoute(null, '/quotation/' + this.quotation!.id, null);
+              } else {
+                this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+              }
+            })
+          }
+        });
+      }
+    });
   }
 
   displaySnakBarLockProvision() {
@@ -422,8 +494,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
         let asso = {} as AssoAffaireOrder;
         asso.affaire = response;
-        asso.provisions = [] as Array<Provision>;
-        asso.provisions.push({} as Provision);
+        asso.services = [] as Array<Service>;
         if (!this.quotation.assoAffaireOrders)
           this.quotation.assoAffaireOrders = [] as Array<AssoAffaireOrder>;
 
@@ -495,7 +566,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     dialogRef.componentInstance.title = "Workflow des commandes";
   }
 
-  deleteProvision(asso: AssoAffaireOrder, provision: Provision) {
+  deleteProvision(service: Service, provision: Provision) {
     if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
       this.displaySnakBarLockProvision();
       return;
@@ -514,7 +585,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       return;
     }
 
-    asso.provisions.splice(asso.provisions.indexOf(provision), 1);
+    service.provisions.splice(service.provisions.indexOf(provision), 1);
   }
 
 
@@ -622,8 +693,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   currentInvoiceGeneration: boolean = false;
   generateInvoiceItem() {
     if (!this.currentInvoiceGeneration && this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders[0]
-      && this.quotation.assoAffaireOrders[0].provisions && this.quotation.assoAffaireOrders[0].provisions[0]
-      && this.quotation.assoAffaireOrders[0].provisions[0].provisionType && this.quotation.assoAffaireOrders[0].provisions[0].isRedactedByJss != null) {
+      && this.quotation.assoAffaireOrders[0].services && this.quotation.assoAffaireOrders[0].services[0]
+      && this.quotation.assoAffaireOrders[0].services[0].provisions && this.quotation.assoAffaireOrders[0].services[0].provisions[0]
+      && this.quotation.assoAffaireOrders[0].services[0].provisions[0].provisionType && this.quotation.assoAffaireOrders[0].services[0].provisions[0].isRedactedByJss != null) {
       this.currentInvoiceGeneration = true;
       this.quotationService.getInvoiceItemsForQuotation(this.quotation).subscribe(response => {
         this.currentInvoiceGeneration = false;
@@ -636,17 +708,21 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     if (incomingQuotation && targetQuotation && incomingQuotation.assoAffaireOrders && targetQuotation.assoAffaireOrders) {
       for (let assoIncoming of incomingQuotation.assoAffaireOrders) {
         for (let assoTarget of targetQuotation.assoAffaireOrders) {
-          if (assoIncoming.provisions && assoTarget.provisions)
-            for (let i = 0; i < assoIncoming.provisions.length; i++) {
-              let incomingProvision = assoIncoming.provisions[i];
-              for (let j = 0; j < assoTarget.provisions.length; j++) {
-                let targetProvision = assoTarget.provisions[j];
-                if (incomingProvision.id && targetProvision.id && incomingProvision.id == targetProvision.id && assoIncoming.affaire.id == assoTarget.affaire.id)
-                  targetProvision.invoiceItems = incomingProvision.invoiceItems;
-                else if (i == j && incomingProvision.provisionType && targetProvision.provisionType && incomingProvision.provisionType.id == targetProvision.provisionType.id && assoIncoming.affaire.id == assoTarget.affaire.id)
-                  targetProvision.invoiceItems = incomingProvision.invoiceItems;
-              }
+          for (let serviceIncoming of assoIncoming.services) {
+            for (let serviceTarget of assoTarget.services) {
+              if (serviceIncoming.provisions && serviceTarget.provisions)
+                for (let i = 0; i < serviceIncoming.provisions.length; i++) {
+                  let incomingProvision = serviceIncoming.provisions[i];
+                  for (let j = 0; j < serviceTarget.provisions.length; j++) {
+                    let targetProvision = serviceTarget.provisions[j];
+                    if (incomingProvision.id && targetProvision.id && incomingProvision.id == targetProvision.id && assoIncoming.affaire.id == assoTarget.affaire.id)
+                      targetProvision.invoiceItems = incomingProvision.invoiceItems;
+                    else if (i == j && incomingProvision.provisionType && targetProvision.provisionType && incomingProvision.provisionType.id == targetProvision.provisionType.id && assoIncoming.affaire.id == assoTarget.affaire.id)
+                      targetProvision.invoiceItems = incomingProvision.invoiceItems;
+                  }
+                }
             }
+          }
         }
       }
     }
@@ -660,15 +736,16 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     let preTaxPrice = 0;
     if (quotation && quotation.assoAffaireOrders) {
       for (let asso of quotation.assoAffaireOrders) {
-        if (asso.provisions) {
-          for (let provision of asso.provisions) {
-            if (provision.invoiceItems) {
-              for (let invoiceItem of provision.invoiceItems) {
-                preTaxPrice += parseFloat(invoiceItem.preTaxPrice + "");
+        for (let service of asso.services)
+          if (service.provisions) {
+            for (let provision of service.provisions) {
+              if (provision.invoiceItems) {
+                for (let invoiceItem of provision.invoiceItems) {
+                  preTaxPrice += parseFloat(invoiceItem.preTaxPrice + "");
+                }
               }
             }
           }
-        }
       }
     }
     return preTaxPrice;
@@ -684,16 +761,17 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     let discountAmount = 0;
     if (quotation && quotation.assoAffaireOrders) {
       for (let asso of quotation.assoAffaireOrders) {
-        if (asso.provisions) {
-          for (let provision of asso.provisions) {
-            if (provision.invoiceItems) {
-              for (let invoiceItem of provision.invoiceItems) {
-                if (invoiceItem.discountAmount)
-                  discountAmount += parseFloat(invoiceItem.discountAmount + "");
+        for (let service of asso.services)
+          if (service.provisions) {
+            for (let provision of service.provisions) {
+              if (provision.invoiceItems) {
+                for (let invoiceItem of provision.invoiceItems) {
+                  if (invoiceItem.discountAmount)
+                    discountAmount += parseFloat(invoiceItem.discountAmount + "");
+                }
               }
             }
           }
-        }
       }
     }
     return discountAmount;
@@ -707,16 +785,17 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     let vat = 0;
     if (quotation && quotation.assoAffaireOrders) {
       for (let asso of quotation.assoAffaireOrders) {
-        if (asso.provisions) {
-          for (let provision of asso.provisions) {
-            if (provision.invoiceItems) {
-              for (let invoiceItem of provision.invoiceItems) {
-                if (invoiceItem.vatPrice)
-                  vat += invoiceItem.vatPrice;
+        for (let service of asso.services)
+          if (service.provisions) {
+            for (let provision of service.provisions) {
+              if (provision.invoiceItems) {
+                for (let invoiceItem of provision.invoiceItems) {
+                  if (invoiceItem.vatPrice)
+                    vat += invoiceItem.vatPrice;
+                }
               }
             }
           }
-        }
       }
     }
     return vat;
@@ -730,27 +809,28 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     let vatBases: VatBase[] = [];
     if (quotation && quotation.assoAffaireOrders) {
       for (let asso of quotation.assoAffaireOrders) {
-        if (asso.provisions) {
-          for (let provision of asso.provisions) {
-            if (provision.invoiceItems) {
-              for (let invoiceItem of provision.invoiceItems) {
-                if (invoiceItem.vat && invoiceItem.vatPrice) {
-                  let vatFound = false;
-                  for (let vatBase of vatBases) {
-                    if (vatBase.label == invoiceItem.vat.label) {
-                      vatFound = true;
-                      vatBase.base += invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0);
-                      vatBase.total += invoiceItem.vatPrice;
+        for (let service of asso.services)
+          if (service.provisions) {
+            for (let provision of service.provisions) {
+              if (provision.invoiceItems) {
+                for (let invoiceItem of provision.invoiceItems) {
+                  if (invoiceItem.vat && invoiceItem.vatPrice) {
+                    let vatFound = false;
+                    for (let vatBase of vatBases) {
+                      if (vatBase.label == invoiceItem.vat.label) {
+                        vatFound = true;
+                        vatBase.base += invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0);
+                        vatBase.total += invoiceItem.vatPrice;
+                      }
                     }
-                  }
-                  if (!vatFound) {
-                    vatBases.push({ label: invoiceItem.vat.label, base: (invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0)), total: invoiceItem.vatPrice });
+                    if (!vatFound) {
+                      vatBases.push({ label: invoiceItem.vat.label, base: (invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0)), total: invoiceItem.vatPrice });
+                    }
                   }
                 }
               }
             }
           }
-        }
       }
     }
     return vatBases;
@@ -766,16 +846,17 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
         const asso = this.quotation.assoAffaireOrders[i];
         if (asso.affaire && asso.affaire.id == affaire.id) {
-          if (asso.provisions) {
-            for (let provision of asso.provisions)
-              if (provision && provision.payments) {
-                for (let payment of provision.payments)
-                  if (!payment.isCancelled) {
-                    this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : des paiements ont déjà été déclarés.", false, 15);
-                    return;
-                  }
-              }
-          }
+          for (let service of asso.services)
+            if (service.provisions) {
+              for (let provision of service.provisions)
+                if (provision && provision.payments) {
+                  for (let payment of provision.payments)
+                    if (!payment.isCancelled) {
+                      this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : des paiements ont déjà été déclarés.", false, 15);
+                      return;
+                    }
+                }
+            }
         }
       }
 
@@ -889,11 +970,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return ProvisionComponent.getActiveWorkflowElementsForProvision(provision);
   }
 
-
-  getProvisionLabel(provision: Provision): string {
-    return QuotationComponent.computeProvisionLabel(provision);
-  }
-
   offerCustomerOrder() {
     if (this.quotation && instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED) {
       this.customerOrderService.offerCustomerOrder(this.quotation).subscribe(response => {
@@ -902,10 +978,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     }
   }
 
-  public static computeProvisionLabel(provision: Provision): string {
+  public computeProvisionLabel(service: Service, provision: Provision, doNotDisplayService: boolean): string {
     let label = provision.provisionType ? (provision.provisionFamilyType.label + ' - ' + provision.provisionType.label) : '';
     if (provision.announcement && provision.announcement.department)
       label += " - Département " + provision.announcement.department.code;
+    if (!doNotDisplayService)
+      label = this.serviceService.getServiceLabel(service, false) + " - " + label;
     return label;
   }
 

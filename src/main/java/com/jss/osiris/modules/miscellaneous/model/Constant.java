@@ -22,6 +22,7 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.quotation.model.ServiceType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
@@ -716,6 +717,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_rff_frequency_monthly")
 	private RffFrequency rffFrequencyMonthly;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_service_type_other")
+	private ServiceType serviceTypeOther;
 
 	public Integer getId() {
 		return id;
@@ -2099,5 +2104,13 @@ public class Constant implements Serializable, IId {
 
 	public void setCompetentAuthorityTypeInsee(CompetentAuthorityType competentAuthorityTypeInsee) {
 		this.competentAuthorityTypeInsee = competentAuthorityTypeInsee;
+	}
+
+	public ServiceType getServiceTypeOther() {
+		return serviceTypeOther;
+	}
+
+	public void setServiceTypeOther(ServiceType serviceTypeOther) {
+		this.serviceTypeOther = serviceTypeOther;
 	}
 }

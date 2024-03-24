@@ -24,7 +24,8 @@ public interface AnnouncementRepository extends QueryCacheCrudRepository<Announc
                         " a.notice " +
                         " from announcement a " +
                         " join provision p on p.id_announcement = a.id " +
-                        " join asso_affaire_order asso_affaire on asso_affaire.id = p.id_asso_affaire_order " +
+                        " join service on service.id = p.id_service " +
+                        " join asso_affaire_order asso_affaire on asso_affaire.id = service.id_asso_affaire_order " +
                         " join affaire on affaire.id = asso_affaire.id_affaire " +
                         " join department d on d.id = a.id_department " +
                         " join customer_order on customer_order.id = asso_affaire.id_customer_order " +
@@ -55,7 +56,8 @@ public interface AnnouncementRepository extends QueryCacheCrudRepository<Announc
         @Query(nativeQuery = true, value = " " +
                         " select affaire.id " +
                         " from announcement a join provision p on p.id_announcement = a.id " +
-                        " join asso_affaire_order asso on asso.id = p.id_asso_affaire_order " +
+                        " join service on service.id = p.id_service " +
+                        " join asso_affaire_order asso on asso.id = service.id_asso_affaire_order " +
                         " join affaire on affaire.id = asso.id_affaire  " +
                         " where a.id = :announcementId " +
                         "")

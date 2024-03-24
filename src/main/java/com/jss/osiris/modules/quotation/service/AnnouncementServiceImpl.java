@@ -13,7 +13,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.itextpdf.text.pdf.PdfReader;
@@ -45,9 +44,10 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.repository.AnnouncementRepository;
 
-@Service
+@org.springframework.stereotype.Service
 public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Autowired
@@ -253,8 +253,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         Provision currentProvision = null;
         if (customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
+                for (Service service : asso.getServices())
+                    for (Provision provision : service.getProvisions())
                         if (provision.getAnnouncement() != null && provision.getAnnouncement().getId() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             currentProvision = provision;
@@ -292,7 +292,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                 Provision.class.getSimpleName(),
                                 constantService.getAttachmentTypePublicationReceipt(),
                                 "Publication_receipt_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                false, "Attestation de parution n°" + announcement.getId(), null, null));
+                                false, "Attestation de parution n°" + announcement.getId(), null, null, null));
             } catch (FileNotFoundException e) {
                 throw new OsirisException(e, "Impossible to read invoice PDF temp file");
             } finally {
@@ -309,8 +309,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         Provision currentProvision = null;
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
+                for (Service service : asso.getServices())
+                    for (Provision provision : service.getProvisions())
                         if (provision.getAnnouncement() != null && provision.getAnnouncement().getId() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             currentProvision = provision;
@@ -351,7 +351,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                 Provision.class.getSimpleName(),
                                 constantService.getAttachmentTypePublicationFlag(),
                                 "Publication_flag_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                false, "Témoin de publication n°" + announcement.getId(), null, null));
+                                false, "Témoin de publication n°" + announcement.getId(), null, null, null));
             } catch (FileNotFoundException e) {
                 throw new OsirisException(e, "Impossible to read invoice PDF temp file");
             } finally {
@@ -403,8 +403,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         Provision currentProvision = null;
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
+                for (Service service : asso.getServices())
+                    for (Provision provision : service.getProvisions())
                         if (provision.getAnnouncement() != null && provision.getAnnouncement().getId() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             currentProvision = provision;
@@ -425,7 +425,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                 Provision.class.getSimpleName(),
                                 constantService.getAttachmentTypeProofReading(),
                                 "Proof_reading_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                false, "Bon à tirer n°" + announcement.getId(), null, null));
+                                false, "Bon à tirer n°" + announcement.getId(), null, null, null));
             } catch (FileNotFoundException e) {
                 throw new OsirisException(e, "Impossible to read invoice PDF temp file");
             } finally {
@@ -478,7 +478,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                     "announcement_" + announcement.getId()
                                             + DateTimeFormatter.ofPattern("yyyyMMdd HHmm").format(LocalDateTime.now())
                                             + ".docx",
-                                    false, "Annonce n°" + announcement.getId(), null, null));
+                                    false, "Annonce n°" + announcement.getId(), null, null, null));
                 } catch (FileNotFoundException e) {
                     throw new OsirisException(e, "Impossible to read announcement Word temp file");
                 } finally {
@@ -550,8 +550,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             AssoAffaireOrder currentAsso = null;
             if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
                 for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                    if (asso.getProvisions() != null)
-                        for (Provision provision : asso.getProvisions())
+                    for (Service service : asso.getServices())
+                        for (Provision provision : service.getProvisions())
                             if (provision.getAnnouncement() != null
                                     && provision.getAnnouncement().getId().equals(announcement.getId())) {
                                 currentProvision = provision;
@@ -601,8 +601,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             AssoAffaireOrder currentAsso = null;
             if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
                 for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                    if (asso.getProvisions() != null)
-                        for (Provision provision : asso.getProvisions())
+                    for (Service service : asso.getServices())
+                        for (Provision provision : service.getProvisions())
                             if (provision.getAnnouncement() != null
                                     && provision.getAnnouncement().getId().equals(announcement.getId())) {
                                 currentProvision = provision;
@@ -740,8 +740,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         Affaire affaire = assoAffaireOrder.getAffaire();
 
-        if (assoAffaireOrder.getProvisions() != null)
-            for (Provision provision : assoAffaireOrder.getProvisions())
+        for (Service service : assoAffaireOrder.getServices())
+            for (Provision provision : service.getProvisions())
                 if (provision.getAnnouncement() != null && provision.getAnnouncement().getNotice() != null) {
                     Announcement announcement = provision.getAnnouncement();
 

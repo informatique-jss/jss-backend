@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
@@ -44,12 +43,13 @@ import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
+import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.repository.QuotationRepository;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
-@Service
+@org.springframework.stereotype.Service
 public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
@@ -157,8 +157,8 @@ public class QuotationServiceImpl implements QuotationService {
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                 assoAffaireOrder.setQuotation(quotation);
                 assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation, true);
-                if (assoAffaireOrder.getProvisions() != null)
-                    for (Provision provision : assoAffaireOrder.getProvisions())
+                for (Service service : assoAffaireOrder.getServices())
+                    for (Provision provision : service.getProvisions())
                         if (provision.getId() == null)
                             oneNewProvision = true;
             }
@@ -227,17 +227,19 @@ public class QuotationServiceImpl implements QuotationService {
                             for (AssoAffaireOrder duplicateAsso : potentialQuotation.getAssoAffaireOrders()) {
                                 if (currentAsso.getAffaire().getId().equals(duplicateAsso.getAffaire().getId())) {
                                     foundAsso = true;
-                                    for (Provision currentProvision : currentAsso.getProvisions()) {
-                                        boolean foundProvision = false;
-                                        for (Provision duplicateProvision : duplicateAsso.getProvisions()) {
-                                            if (duplicateProvision.getProvisionType().getId()
-                                                    .equals(currentProvision.getProvisionType().getId())) {
-                                                foundProvision = true;
-                                            }
+                                    for (Service service : currentAsso.getServices())
+                                        for (Provision currentProvision : service.getProvisions()) {
+                                            boolean foundProvision = false;
+                                            for (Service duplicateService : duplicateAsso.getServices())
+                                                for (Provision duplicateProvision : duplicateService.getProvisions()) {
+                                                    if (duplicateProvision.getProvisionType().getId()
+                                                            .equals(currentProvision.getProvisionType().getId())) {
+                                                        foundProvision = true;
+                                                    }
+                                                }
+                                            if (!foundProvision)
+                                                break outerloop;
                                         }
-                                        if (!foundProvision)
-                                            break outerloop;
-                                    }
                                 }
                             }
                             if (!foundAsso)
@@ -483,21 +485,22 @@ public class QuotationServiceImpl implements QuotationService {
         Float vatTotal = 0f;
 
         for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
-            for (Provision provision : asso.getProvisions()) {
-                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                    preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f;
-                    if (invoiceItem.getDiscountAmount() != null && invoiceItem.getDiscountAmount() > 0) {
-                        if (discountTotal == null)
-                            discountTotal = invoiceItem.getDiscountAmount();
-                        else
-                            discountTotal += invoiceItem.getDiscountAmount();
-                    }
-                    if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
-                            && invoiceItem.getVatPrice() > 0) {
-                        vatTotal += invoiceItem.getVatPrice();
+            for (Service service : asso.getServices())
+                for (Provision provision : service.getProvisions()) {
+                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                        preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f;
+                        if (invoiceItem.getDiscountAmount() != null && invoiceItem.getDiscountAmount() > 0) {
+                            if (discountTotal == null)
+                                discountTotal = invoiceItem.getDiscountAmount();
+                            else
+                                discountTotal += invoiceItem.getDiscountAmount();
+                        }
+                        if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
+                                && invoiceItem.getVatPrice() > 0) {
+                            vatTotal += invoiceItem.getVatPrice();
+                        }
                     }
                 }
-            }
         }
 
         return preTaxPriceTotal - (discountTotal != null ? discountTotal : 0) + vatTotal;
@@ -522,8 +525,8 @@ public class QuotationServiceImpl implements QuotationService {
             boolean isOnlyAnnonceLegal = true;
             if (quotation.getAssoAffaireOrders() != null)
                 loopAsso: for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
-                    if (asso.getProvisions() != null)
-                        for (Provision provision : asso.getProvisions())
+                    for (Service service : asso.getServices())
+                        for (Provision provision : service.getProvisions())
                             if (provision.getAnnouncement() == null) {
                                 isOnlyAnnonceLegal = false;
                                 break loopAsso;

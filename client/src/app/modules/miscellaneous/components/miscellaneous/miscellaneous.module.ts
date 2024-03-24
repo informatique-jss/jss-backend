@@ -64,6 +64,7 @@ import { AutocompleteRegieComponent } from '../forms/autocomplete-regie/autocomp
 import { AutocompleteRegionComponent } from '../forms/autocomplete-region/autocomplete-region.component';
 import { AutocompleteResponsableComponent } from '../forms/autocomplete-responsable/autocomplete-responsable.component';
 import { AutocompleteRnaComponent } from '../forms/autocomplete-rna/autocomplete-rna.component';
+import { AutocompleteServiceTypeComponent } from '../forms/autocomplete-service-type/autocomplete-service-type.component';
 import { AutocompleteSirenComponent } from '../forms/autocomplete-siren/autocomplete-siren.component';
 import { AutocompleteSiretComponent } from '../forms/autocomplete-siret/autocomplete-siret.component';
 import { AutocompleteTiersIndividualComponent } from '../forms/autocomplete-tiers-individual/autocomplete-tiers-individual.component';
@@ -237,6 +238,7 @@ import { SelectResponsableComponent } from '../forms/select-responsable/select-r
 import { SelectRffFrequencyComponent } from '../forms/select-rff-frequency/select-rff-frequency.component';
 import { SelectServiceFamilyGroupComponent } from '../forms/select-service-family-group/select-service-family-group.component';
 import { SelectServiceFamilyComponent } from '../forms/select-service-family/select-service-family.component';
+import { SelectServiceTypeComponent } from '../forms/select-service-type/select-service-type.component';
 import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-period/select-subscription-period.component';
 import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/select-tiers-category.component';
 import { SelectTiersTypeComponent } from '../forms/select-tiers-type/select-tiers-type.component';
@@ -246,6 +248,7 @@ import { SelectVatComponent } from '../forms/select-vat/select-vat.component';
 import { GaugeChartComponent } from '../gauge-chart/gauge-chart.component';
 import { GradeComponent } from '../grade/grade.component';
 import { HistoryComponent } from '../history/history.component';
+import { MultipleUploadComponent } from '../multiple-upload/multiple-upload.component';
 import { NotificationDialogComponent } from '../notification-dialog/notification-dialog.component';
 import { SingleAttachmentComponent } from '../single-attachment/single-attachment.component';
 import { SortTableComponent } from '../sort-table/sort-table.component';
@@ -519,6 +522,9 @@ const routes: Routes = [
     ChipsFormeJuridiqueComponent,
     SelectTypeDocumentComponent,
     AutocompleteTypeDocumentComponent,
+    SelectServiceTypeComponent,
+    AutocompleteServiceTypeComponent,
+    MultipleUploadComponent,
   ],
   exports: [
     HistoryComponent,
@@ -745,6 +751,9 @@ const routes: Routes = [
     ChipsFormeJuridiqueComponent,
     SelectTypeDocumentComponent,
     AutocompleteTypeDocumentComponent,
+    SelectServiceTypeComponent,
+    AutocompleteServiceTypeComponent,
+    MultipleUploadComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

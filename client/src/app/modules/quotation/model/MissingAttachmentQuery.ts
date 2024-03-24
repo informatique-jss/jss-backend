@@ -1,9 +1,9 @@
-import { AttachmentType } from '../../miscellaneous/model/AttachmentType';
-import { TypeDocument } from './guichet-unique/referentials/TypeDocument';
+import { AssoServiceDocument } from './AssoServiceDocument';
 export interface MissingAttachmentQuery {
-  attachmentTypes: AttachmentType[];
-  typeDocument: TypeDocument[];
+  id: number | undefined;
+  assoServiceDocument: AssoServiceDocument[];
   comment: string;
   sendToMe: boolean;
   copyToMe: boolean;
+  createdDateTime: Date | undefined;
 }

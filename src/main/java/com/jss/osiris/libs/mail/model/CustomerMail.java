@@ -23,6 +23,7 @@ import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -185,6 +186,10 @@ public class CustomerMail {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_rff")
     private Rff rff;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_missing_attachment_query")
+    private MissingAttachmentQuery missingAttachmentQuery;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_provision")
@@ -606,6 +611,97 @@ public class CustomerMail {
 
     public void setProvision(Provision provision) {
         this.provision = provision;
+    }
+
+    public static String getTEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE() {
+        return TEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE;
+    }
+
+    public static void setTEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE(
+            String tEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE) {
+        TEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE = tEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE;
+    }
+
+    public static String getTEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER() {
+        return TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER;
+    }
+
+    public static void setTEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER(
+            String tEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER) {
+        TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER = tEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER;
+    }
+
+    public static String getTEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER() {
+        return TEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER;
+    }
+
+    public static void setTEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER(
+            String tEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER) {
+        TEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER = tEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER;
+    }
+
+    public static String getTEMPLATE_CUSTOMER_ORDER_FINALIZATION() {
+        return TEMPLATE_CUSTOMER_ORDER_FINALIZATION;
+    }
+
+    public static void setTEMPLATE_CUSTOMER_ORDER_FINALIZATION(String tEMPLATE_CUSTOMER_ORDER_FINALIZATION) {
+        TEMPLATE_CUSTOMER_ORDER_FINALIZATION = tEMPLATE_CUSTOMER_ORDER_FINALIZATION;
+    }
+
+    public static String getTEMPLATE_BILLING_CLOSURE() {
+        return TEMPLATE_BILLING_CLOSURE;
+    }
+
+    public static void setTEMPLATE_BILLING_CLOSURE(String tEMPLATE_BILLING_CLOSURE) {
+        TEMPLATE_BILLING_CLOSURE = tEMPLATE_BILLING_CLOSURE;
+    }
+
+    public static String getTEMPLATE_INVOICE_REMINDER() {
+        return TEMPLATE_INVOICE_REMINDER;
+    }
+
+    public static void setTEMPLATE_INVOICE_REMINDER(String tEMPLATE_INVOICE_REMINDER) {
+        TEMPLATE_INVOICE_REMINDER = tEMPLATE_INVOICE_REMINDER;
+    }
+
+    public static String getTEMPLATE_MISSING_ATTACHMENT() {
+        return TEMPLATE_MISSING_ATTACHMENT;
+    }
+
+    public static void setTEMPLATE_MISSING_ATTACHMENT(String tEMPLATE_MISSING_ATTACHMENT) {
+        TEMPLATE_MISSING_ATTACHMENT = tEMPLATE_MISSING_ATTACHMENT;
+    }
+
+    public static String getTEMPLATE_RENEW_PASSWORD() {
+        return TEMPLATE_RENEW_PASSWORD;
+    }
+
+    public static void setTEMPLATE_RENEW_PASSWORD(String tEMPLATE_RENEW_PASSWORD) {
+        TEMPLATE_RENEW_PASSWORD = tEMPLATE_RENEW_PASSWORD;
+    }
+
+    public static String getTEMPLATE_REQUEST_RIB() {
+        return TEMPLATE_REQUEST_RIB;
+    }
+
+    public static void setTEMPLATE_REQUEST_RIB(String tEMPLATE_REQUEST_RIB) {
+        TEMPLATE_REQUEST_RIB = tEMPLATE_REQUEST_RIB;
+    }
+
+    public static String getTEMPLATE_SEND_RFF() {
+        return TEMPLATE_SEND_RFF;
+    }
+
+    public static void setTEMPLATE_SEND_RFF(String tEMPLATE_SEND_RFF) {
+        TEMPLATE_SEND_RFF = tEMPLATE_SEND_RFF;
+    }
+
+    public MissingAttachmentQuery getMissingAttachmentQuery() {
+        return missingAttachmentQuery;
+    }
+
+    public void setMissingAttachmentQuery(MissingAttachmentQuery missingAttachmentQuery) {
+        this.missingAttachmentQuery = missingAttachmentQuery;
     }
 
 }

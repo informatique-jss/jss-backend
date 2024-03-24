@@ -46,7 +46,6 @@ public class Announcement implements IId, IDocument {
 	@JoinColumn(name = "id_announcement_status")
 	private AnnouncementStatus announcementStatus;
 
-	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate publicationDate;
 

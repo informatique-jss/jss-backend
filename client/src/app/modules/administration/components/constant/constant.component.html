@@ -1322,6 +1322,13 @@
                 [isDisabled]="!editMode"></select-rff-frequency>
             </td>
           </tr>
+          <tr>
+            <td>
+              <autocomplete-service-type [(model)]="constant.serviceTypeOther" [form]="constantForm"
+                propertyName="serviceTypeOther" [isMandatory]="true" label="Service - Autre"
+                [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>

@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -33,8 +32,9 @@ import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
+import com.jss.osiris.modules.quotation.model.Service;
 
-@Service
+@org.springframework.stereotype.Service
 public class PricingHelper {
 
     @Autowired
@@ -77,9 +77,10 @@ public class PricingHelper {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (quotation.getAssoAffaireOrders() != null) {
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
-                if (assoAffaireOrder.getProvisions() != null)
-                    for (Provision provision : assoAffaireOrder.getProvisions()) {
-                        provision.setAssoAffaireOrder(assoAffaireOrder);
+                for (Service service : assoAffaireOrder.getServices())
+                    for (Provision provision : service.getProvisions()) {
+                        provision.setService(service);
+                        service.setAssoAffaireOrder(assoAffaireOrder);
                         if (provision.getProvisionType() != null && provision.getProvisionType().getId() != null)
                             setInvoiceItemsForProvision(provision, quotation, persistInvoiceItem);
                     }
