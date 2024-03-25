@@ -28,8 +28,5 @@ export class RffService extends AppRestService<Rff>{
     return this.get(new HttpParams().set("idRff", rff.id).set("amount", amount).set("sendToMe", sendToMe), "rff/send", "Mail envoyé !");
   }
 
-  generateInvoiceForRff(rff: Rff) {
-    return this.get(new HttpParams().set("idRff", rff.id), "rff/invoice");
-  }
 
 }

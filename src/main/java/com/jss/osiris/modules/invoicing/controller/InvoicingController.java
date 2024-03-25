@@ -74,7 +74,6 @@ import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
-import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.BillingLabelTypeService;
 import com.jss.osiris.modules.tiers.service.RffService;
@@ -229,17 +228,6 @@ public class InvoicingController {
         return new ResponseEntity<Invoice>(
                 azureInvoiceService.generateInvoiceFromAzureInvoice(azureInvoice, provision),
                 HttpStatus.OK);
-    }
-
-    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
-    @GetMapping(inputEntryPoint + "/rff/create")
-    public ResponseEntity<Invoice> createInvoiceFromRff(@RequestParam Integer rffId)
-            throws OsirisValidationException, OsirisClientMessageException, OsirisException, OsirisDuplicateException {
-        Rff rff = rffService.getRff(rffId);
-        if (rff == null)
-            throw new OsirisValidationException("rff");
-
-        return new ResponseEntity<Invoice>(rffService.generateInvoiceForRff(rff), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/azure-invoice")
