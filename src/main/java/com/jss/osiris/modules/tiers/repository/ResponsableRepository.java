@@ -15,27 +15,28 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
         Responsable findByLoginWeb(String loginWeb);
 
         @Query(nativeQuery = true, value = "" +
-                        "     with nbr_for as ( " +
-                        " select " +
-                        " 	aao.id_customer_order , " +
-                        " 	sum(case when a.id_confrere is not null and a.id_confrere = :jssSpelConfrereId then 1 else 0 end) as announcementJssNbr, "
+                        "  with nbr_for as ( " +
+                        "  select " +
+                        "          r.id as id_responsable , " +
+                        "          sum(case when a.id_confrere is not null and a.id_confrere = :jssSpelConfrereId then 1 else 0 end) as announcementJssNbr, "
                         +
-                        " 	sum(case when a.id_confrere is not null and a.id_confrere <> :jssSpelConfrereId then 1 else 0 end) as announcementConfrereNbr, "
+                        "          sum(case when a.id_confrere is not null and a.id_confrere <> :jssSpelConfrereId then 1 else 0 end) as announcementConfrereNbr, "
                         +
-                        " 	sum(case when a.id_confrere is not null then 1 else 0 end) as announcementNbr, " +
-                        " 	sum(case when p.id_formalite is not null or p.id_simple_provision is not null then 1 else 0 end ) as formalityNbr "
+                        "          sum(case when a.id_confrere is not null then 1 else 0 end) as announcementNbr, " +
+                        "          sum(case when p.id_formalite is not null or p.id_simple_provision is not null then 1 else 0 end ) as formalityNbr "
                         +
-                        " from " +
-                        " 	asso_affaire_order aao " +
-                        " left join service on service.id_asso_affaire_order = aao.id " +
-                        " left join provision p on " +
-                        " 	p.id_service = service.id " +
-                        " left join announcement a on " +
-                        " 	a.id = p.id_announcement " +
-                        " where " +
-                        " 	aao.id_customer_order is not null " +
-                        " group by " +
-                        " 	aao.id_customer_order ) " +
+                        "  from " +
+                        "          asso_affaire_order aao " +
+                        "  left join service on service.id_asso_affaire_order = aao.id left join provision p on " +
+                        "          p.id_service= service.id " +
+                        "  left join announcement a on " +
+                        "          a.id = p.id_announcement " +
+                        "          join customer_order co on co.id = aao.id_customer_order " +
+                        "          join responsable r on r.id = co.id_responsable " +
+                        "  where " +
+                        "          aao.id_customer_order is not null " +
+                        "  group by " +
+                        "          r.id )  " +
                         " select " +
                         " 	coalesce(t.denomination, " +
                         " 	concat(t.firstname, " +
@@ -58,10 +59,10 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	min(co2.created_date) as firstOrderDay, " +
                         " 	max(co2.created_date) as lastOrderDay,  " +
                         " 	min(a1.created_date) as createdDateDay, " +
-                        " 	sum(nbr_for.announcementJssNbr) as announcementJssNbr, " +
-                        " 	sum(nbr_for.announcementConfrereNbr) as announcementConfrereNbr, " +
-                        " 	sum(nbr_for.announcementNbr) as announcementNbr, " +
-                        " 	sum(nbr_for.formalityNbr) as formalityNbr, " +
+                        " 	max(nbr_for.announcementJssNbr) as announcementJssNbr, " +
+                        " 	max(nbr_for.announcementConfrereNbr) as announcementConfrereNbr, " +
+                        " 	max(nbr_for.announcementNbr) as announcementNbr, " +
+                        " 	max(nbr_for.formalityNbr) as formalityNbr, " +
                         " 	blt.label as billingLabelType, " +
                         " 	sum( (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutTax, " +
                         " 	sum( ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) as turnoverAmountWithTax, "
@@ -103,7 +104,7 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " left join billing_type bt on " +
                         " 	bt.id = bi.id_billing_type " +
                         " left join nbr_for on " +
-                        " 	nbr_for.id_customer_order = co2.id " +
+                        " 	nbr_for.id_responsable = r.id " +
                         " where  " +
                         "  ( :tiersId =0 or t.id = :tiersId) " +
                         " and  ( :salesEmployeeId =0 or e2.id = :salesEmployeeId) " +
