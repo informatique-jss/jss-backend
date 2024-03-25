@@ -980,7 +980,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .getBillingItemByBillingType(constantService.getBillingTypeCentralPayFees());
 
         InvoiceItem invoiceItem = new InvoiceItem();
-        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(centralPayBillingItem));
+        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(centralPayBillingItem, null));
         invoiceItem.setDiscountAmount(0f);
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);

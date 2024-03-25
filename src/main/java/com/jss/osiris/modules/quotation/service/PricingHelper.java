@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.quotation.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -9,6 +10,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.audit.model.Audit;
+import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -28,6 +31,8 @@ import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -66,6 +71,12 @@ public class PricingHelper {
 
     @Autowired
     ProvisionService provisionService;
+
+    @Autowired
+    AuditService auditService;
+
+    @Autowired
+    CustomerOrderService customerOrderService;
 
     @Transactional
     public IQuotation getAndSetInvoiceItemsForQuotationForFront(IQuotation quotation, boolean persistInvoiceItem)
@@ -116,7 +127,8 @@ public class PricingHelper {
         return null;
     }
 
-    public BillingItem getAppliableBillingItem(List<BillingItem> billingItems) throws OsirisException {
+    public BillingItem getAppliableBillingItem(List<BillingItem> billingItems, IQuotation quotation)
+            throws OsirisException {
         if (billingItems == null)
             throw new OsirisException(null, "No billing items provided");
 
@@ -127,8 +139,37 @@ public class PricingHelper {
                     return o2.getStartDate().compareTo(o1.getStartDate());
                 }
             });
+
+        LocalDate billingDate = LocalDate.now();
+        // Use first TO_BILLED status to determine billing date
+        if (quotation != null) {
+            CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotation.getId());
+            if (customerOrder != null) {
+                List<Audit> audits = auditService.getAuditForEntity(CustomerOrder.class.getSimpleName(),
+                        quotation.getId());
+                if (audits != null && audits.size() > 0) {
+                    List<LocalDateTime> toBilledDate = new ArrayList<LocalDateTime>();
+                    for (Audit audit : audits) {
+                        if (audit.getFieldName().equals("customerOrderStatus")
+                                && audit.getNewValue().equals(CustomerOrderStatus.TO_BILLED)) {
+                            toBilledDate.add(audit.getDatetime());
+                        }
+                    }
+                    if (toBilledDate.size() > 0) {
+                        toBilledDate.sort(new Comparator<LocalDateTime>() {
+                            @Override
+                            public int compare(LocalDateTime o1, LocalDateTime o2) {
+                                return o1.compareTo(o2);
+                            }
+                        });
+                        billingDate = toBilledDate.get(0).toLocalDate();
+                    }
+                }
+            }
+        }
+
         for (BillingItem billingItem : billingItems) {
-            if (billingItem.getStartDate().isBefore(LocalDate.now()))
+            if (billingItem.getStartDate().isBefore(billingDate))
                 return billingItem;
         }
         throw new OsirisException(null, "No billing items appliable found");
@@ -288,7 +329,7 @@ public class PricingHelper {
                 for (BillingType billingType : provisionType.getBillingTypes()) {
                     List<BillingItem> billingItems = billingItemService.getBillingItemByBillingType(billingType);
                     if (billingItems != null && billingItems.size() > 0) {
-                        BillingItem billingItem = getAppliableBillingItem(billingItems);
+                        BillingItem billingItem = getAppliableBillingItem(billingItems, quotation);
 
                         if (billingItem != null && billingType.getAccountingAccountProduct() != null
                                 && (!billingItem.getBillingType().getIsOptionnal()

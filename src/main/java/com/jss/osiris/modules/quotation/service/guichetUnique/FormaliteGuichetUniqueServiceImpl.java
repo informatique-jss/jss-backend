@@ -698,7 +698,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             }
         }
 
-        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(deboursBillingItem));
+        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(deboursBillingItem, null));
     }
 
     private boolean isVatEqual(Float vat1, Float vat2) {

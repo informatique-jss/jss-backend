@@ -205,7 +205,7 @@ public class RffServiceImpl implements RffService {
                 .getBillingItemByBillingType(constantService.getBillingTypeRff());
 
         InvoiceItem invoiceItem = new InvoiceItem();
-        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(rffBillingItem));
+        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(rffBillingItem, null));
         invoiceItem.setDiscountAmount(0f);
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);

@@ -143,7 +143,7 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
                 .getBillingItemByBillingType(constantService.getBillingTypeEmolumentsDeGreffeDebour());
 
         InvoiceItem invoiceItem = new InvoiceItem();
-        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(taxableBillingItem));
+        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(taxableBillingItem, null));
         invoiceItem.setDiscountAmount(0f);
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);
@@ -163,7 +163,7 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
                 .getBillingItemByBillingType(constantService.getBillingTypeDeboursNonTaxable());
 
         InvoiceItem invoiceItem2 = new InvoiceItem();
-        invoiceItem2.setBillingItem(pricingHelper.getAppliableBillingItem(nonTaxableBillingItem));
+        invoiceItem2.setBillingItem(pricingHelper.getAppliableBillingItem(nonTaxableBillingItem, null));
         invoiceItem2.setDiscountAmount(0f);
         invoiceItem2.setIsGifted(false);
         invoiceItem2.setIsOverridePrice(false);
