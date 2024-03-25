@@ -8,6 +8,7 @@ export const Dictionnary = {
   "waitedCompetentAuthorityLabel": "Autorité compétente en attente",
   "affaireLabel": "Affaire",
   "customerOrderId": "N° de la commande",
+  "quotationId": "N° du devis",
   "customerOrderLabel": "Donneur d'ordre",
   "preTaxPrice": "Prix HT",
   "preTaxPriceWithoutDebour": "Prix HT (hors débours)",

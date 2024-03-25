@@ -17,7 +17,7 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " affaire.siret as affaireSiret,   " +
                         " coalesce(affaire.denomination, affaire.firstname || ' '||affaire.lastname) as affaireLabel,  "
                         +
-                        " customer_order.id as customerOrderId,   " +
+                        " customer_order.id as quotationId,   " +
                         " provision.id as provisionId,   " +
                         " provision_t.label as provisionTypeLabel,   " +
                         " ca.label as waitedCompetentAuthorityLabel,   " +
