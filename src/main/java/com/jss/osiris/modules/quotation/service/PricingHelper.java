@@ -141,7 +141,7 @@ public class PricingHelper {
 
         LocalDate billingDate = LocalDate.now();
         // Use first TO_BILLED status to determine billing date
-        if (quotation != null) {
+        if (quotation != null && quotation.getId() != null) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotation.getId());
             if (customerOrder != null) {
                 List<Audit> audits = auditService.getAuditForEntity(CustomerOrder.class.getSimpleName(),
