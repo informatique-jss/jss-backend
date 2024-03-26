@@ -31,6 +31,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 @Table(indexes = { @Index(name = "idx_provision_service", columnList = "id_service"),
 		@Index(name = "idx_provision_formalite", columnList = "id_formalite"),
 		@Index(name = "idx_provision_domicialitation", columnList = "id_domiciliation"),
+		@Index(name = "idx_provision_employee", columnList = "id_employee"),
 		@Index(name = "idx_provision_simple_provision", columnList = "id_simple_provision"),
 		@Index(name = "idx_provision_announcement", columnList = "id_announcement"),
 })

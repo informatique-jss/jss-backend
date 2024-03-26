@@ -17,6 +17,8 @@ public interface CustomerMailService {
 
     public void addMailToQueue(CustomerMail mail) throws OsirisException;
 
+    public void sendTemporizedMails() throws OsirisException;
+
     public List<CustomerMail> getMailsByQuotation(Quotation quotation);
 
     public List<CustomerMail> getMailsByCustomerOrder(CustomerOrder customerOrder);

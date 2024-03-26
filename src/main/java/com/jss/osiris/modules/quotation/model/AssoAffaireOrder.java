@@ -26,6 +26,8 @@ import com.jss.osiris.modules.profile.model.Employee;
 @Table(uniqueConstraints = {
 		@UniqueConstraint(columnNames = { "id_customer_order", "id_affaire", "id_quotation" }) }, indexes = {
 				@Index(name = "idx_asso_affaire_customer_order", columnList = "id_customer_order"),
+				@Index(name = "idx_asso_affaire_affaire", columnList = "id_affaire"),
+				@Index(name = "idx_asso_affaire_employee", columnList = "id_employee"),
 				@Index(name = "idx_asso_affaire_quotation", columnList = "id_quotation") })
 public class AssoAffaireOrder implements Serializable, IId {
 

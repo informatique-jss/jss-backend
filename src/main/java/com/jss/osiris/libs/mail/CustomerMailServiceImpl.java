@@ -54,6 +54,9 @@ public class CustomerMailServiceImpl implements CustomerMailService {
     @Value("${mail.domain.filter}")
     private String mailDomainFilter;
 
+    @Value("${mail.temporized.temporization.seconds}")
+    private Integer temporizedMailDeltaTime;
+
     @Autowired
     ConstantService constantService;
 
@@ -66,6 +69,10 @@ public class CustomerMailServiceImpl implements CustomerMailService {
         if (mail.isPresent())
             return mail.get();
         return null;
+    }
+
+    private CustomerMail addOrUpdateCustomerMail(CustomerMail customerMail) {
+        return customerMailRepository.save(customerMail);
     }
 
     @Override
@@ -98,7 +105,7 @@ public class CustomerMailServiceImpl implements CustomerMailService {
         mail.setCreatedDateTime(LocalDateTime.now());
         mail.setIsSent(false);
         mail.setSendToMeEmployee(employeeService.getCurrentEmployee());
-        customerMailRepository.save(mail);
+        addOrUpdateCustomerMail(mail);
 
         if (mail.getAttachments() != null)
             for (Attachment attachment : mail.getAttachments()) {
@@ -113,7 +120,161 @@ public class CustomerMailServiceImpl implements CustomerMailService {
                 newAttachment.setParentAttachment(attachment);
                 attachmentService.addOrUpdateAttachment(newAttachment);
             }
-        batchService.declareNewBatch(Batch.SEND_MAIL, mail.getId());
+
+        if (mail.getCustomerOrder() != null && (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_WAITING_DEPOSIT)
+                || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
+                || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)
+                || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_CREDIT_NOTE)
+                || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_PUBLICATION_FLAG)
+                || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_PUBLICATION_RECEIPT)
+                || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_ATTACHMENTS)))
+            manageTemporization(mail);
+        else
+            batchService.declareNewBatch(Batch.SEND_MAIL, mail.getId());
+    }
+
+    private void manageTemporization(CustomerMail mail) {
+        List<CustomerMail> customerOrderMails = customerMailRepository
+                .findTemporizedMailsForCustomerOrder(mail.getCustomerOrder());
+        LocalDateTime previousSendDateTime = LocalDateTime.now().plusSeconds(temporizedMailDeltaTime);
+
+        if (customerOrderMails != null && customerOrderMails.size() > 0) {
+            // Order in progress then finalized => keep only finalized
+            if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)) {
+                for (CustomerMail existingMail : customerOrderMails) {
+                    if (existingMail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)) {
+                        existingMail.setIsCancelled(true);
+                        addOrUpdateCustomerMail(existingMail);
+                        if (previousSendDateTime.isAfter(existingMail.getToSendAfter()))
+                            previousSendDateTime = existingMail.getToSendAfter();
+                    }
+                }
+            }
+
+            // Order finalization then credit note => keep credit note and steal attachments
+            if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_CREDIT_NOTE)) {
+                for (CustomerMail existingMail : customerOrderMails) {
+                    if (existingMail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)) {
+                        existingMail.setIsCancelled(true);
+                        addOrUpdateCustomerMail(existingMail);
+
+                        if (existingMail.getAttachments() != null)
+                            for (Attachment attachment : existingMail.getAttachments()) {
+                                attachment.setCustomerMail(mail);
+                                attachmentService.addOrUpdateAttachment(attachment);
+                            }
+                        if (previousSendDateTime.isAfter(existingMail.getToSendAfter()))
+                            previousSendDateTime = existingMail.getToSendAfter();
+                    }
+                }
+            }
+
+            // Credit note then Order finalization => keep order finalization and steal
+            // attachments
+            if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)) {
+                for (CustomerMail existingMail : customerOrderMails) {
+                    if (existingMail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_CREDIT_NOTE)) {
+                        existingMail.setIsCancelled(true);
+                        addOrUpdateCustomerMail(existingMail);
+
+                        if (existingMail.getAttachments() != null)
+                            for (Attachment attachment : existingMail.getAttachments()) {
+                                attachment.setCustomerMail(mail);
+                                attachmentService.addOrUpdateAttachment(attachment);
+                            }
+                        if (previousSendDateTime.isAfter(existingMail.getToSendAfter()))
+                            previousSendDateTime = existingMail.getToSendAfter();
+                    }
+                }
+            }
+
+            // Publication flag then publication receipt => keep publication receipt and
+            // steal attachments
+            if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_PUBLICATION_RECEIPT)) {
+                for (CustomerMail existingMail : customerOrderMails) {
+                    if (existingMail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_PUBLICATION_FLAG)) {
+                        existingMail.setIsCancelled(true);
+                        addOrUpdateCustomerMail(existingMail);
+
+                        if (existingMail.getAttachments() != null)
+                            for (Attachment attachment : existingMail.getAttachments()) {
+                                attachment.setCustomerMail(mail);
+                                attachmentService.addOrUpdateAttachment(attachment);
+                            }
+                        if (previousSendDateTime.isAfter(existingMail.getToSendAfter()))
+                            previousSendDateTime = existingMail.getToSendAfter();
+                    }
+                }
+            }
+
+            // Publication receipt then publication flag => keep publication flag and steal
+            // attachments
+            if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_PUBLICATION_FLAG)) {
+                for (CustomerMail existingMail : customerOrderMails) {
+                    if (existingMail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_PUBLICATION_RECEIPT)) {
+                        existingMail.setIsCancelled(true);
+                        addOrUpdateCustomerMail(existingMail);
+
+                        if (existingMail.getAttachments() != null)
+                            for (Attachment attachment : existingMail.getAttachments()) {
+                                attachment.setCustomerMail(mail);
+                                attachmentService.addOrUpdateAttachment(attachment);
+                            }
+                        if (previousSendDateTime.isAfter(existingMail.getToSendAfter()))
+                            previousSendDateTime = existingMail.getToSendAfter();
+                    }
+                }
+            }
+
+            // Publication receipt and / or publication flag then order finalization => keep
+            // order finalization and steal
+            // attachments
+            if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)) {
+                for (CustomerMail existingMail : customerOrderMails) {
+                    if (existingMail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_PUBLICATION_RECEIPT)
+                            || existingMail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_PUBLICATION_FLAG)) {
+                        existingMail.setIsCancelled(true);
+                        addOrUpdateCustomerMail(existingMail);
+
+                        if (existingMail.getAttachments() != null)
+                            for (Attachment attachment : existingMail.getAttachments()) {
+                                attachment.setCustomerMail(mail);
+                                attachmentService.addOrUpdateAttachment(attachment);
+                            }
+                        if (previousSendDateTime.isAfter(existingMail.getToSendAfter()))
+                            previousSendDateTime = existingMail.getToSendAfter();
+                    }
+                }
+            }
+
+            // Multiple send attachments => keep last one and steal attachments
+            if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_ATTACHMENTS)) {
+                for (CustomerMail existingMail : customerOrderMails) {
+                    if (existingMail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_ATTACHMENTS)) {
+                        existingMail.setIsCancelled(true);
+                        addOrUpdateCustomerMail(existingMail);
+
+                        if (existingMail.getAttachments() != null)
+                            for (Attachment attachment : existingMail.getAttachments()) {
+                                attachment.setCustomerMail(mail);
+                                attachmentService.addOrUpdateAttachment(attachment);
+                            }
+                        if (previousSendDateTime.isAfter(existingMail.getToSendAfter()))
+                            previousSendDateTime = existingMail.getToSendAfter();
+                    }
+                }
+            }
+        }
+        mail.setIsCancelled(false);
+        mail.setToSendAfter(previousSendDateTime); // if previous mail steal its date else now + tempo
+    }
+
+    @Override
+    public void sendTemporizedMails() throws OsirisException {
+        List<CustomerMail> mails = customerMailRepository.findTemporizesMailsToSend(LocalDateTime.now());
+        if (mails != null && mails.size() > 0)
+            for (CustomerMail mail : mails)
+                batchService.declareNewBatch(Batch.SEND_MAIL, mail.getId());
     }
 
     @Transactional
@@ -173,10 +334,10 @@ public class CustomerMailServiceImpl implements CustomerMailService {
                                 attachmentService.addOrUpdateAttachment(attachment);
                             }
                 } catch (FileNotFoundException e) {
-                    customerMailRepository.save(mail);
+                    addOrUpdateCustomerMail(mail);
                     throw new OsirisException(e, "Impossible to read invoice PDF temp file");
                 } catch (Exception e) {
-                    customerMailRepository.save(mail);
+                    addOrUpdateCustomerMail(mail);
                     throw new OsirisException(e, "Impossible to generate mail PDF for mail " + mail.getId());
                 } finally {
                     if (mailPdf != null)
@@ -189,7 +350,7 @@ public class CustomerMailServiceImpl implements CustomerMailService {
             mail.setIsSent(true);
             mail.setVatMails(null);
             mail.setCustomerMailAssoAffaireOrders(null);
-            customerMailRepository.save(mail);
+            addOrUpdateCustomerMail(mail);
         }
     }
 

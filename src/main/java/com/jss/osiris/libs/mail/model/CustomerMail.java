@@ -32,6 +32,7 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
 @Table(indexes = {
+        @Index(name = "idx_customer_mail_send", columnList = "is_sent"),
         @Index(name = "idx_customer_mail_tiers", columnList = "id_tiers"),
         @Index(name = "idx_customer_mail_responsable", columnList = "id_responsable"),
         @Index(name = "idx_customer_mail_quotation", columnList = "id_quotation"),
@@ -42,6 +43,7 @@ public class CustomerMail {
     public static String TEMPLATE_WAITING_DEPOSIT = "waiting-deposit";
     public static String TEMPLATE_WAITING_QUOTATION_VALIDATION = "waiting-quotation-validation";
     public static String TEMPLATE_QUOTATION_VALIDATED = "quotation-validated";
+    public static String TEMPLATE_SEND_CREDIT_NOTE = "send-credit-note";
     public static String TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS = "customer-order-in-progress";
     public static String TEMPLATE_SEND_ATTACHMENTS = "send-attanchments";
     public static String TEMPLATE_SEND_PUBLICATION_RECEIPT = "send-publication-receipt";
@@ -181,6 +183,7 @@ public class CustomerMail {
     @JsonIgnoreProperties(value = { "customerMail" }, allowSetters = true)
     private List<Attachment> attachments;
 
+    @Column(name = "is_sent")
     private Boolean isSent;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -196,6 +199,12 @@ public class CustomerMail {
     private Provision provision;
 
     private String mailTemplate;
+
+    private LocalDateTime toSendAfter;
+
+    private Boolean isCancelled;
+
+    private Boolean isLastReminder;
 
     public Integer getId() {
         return id;
@@ -702,6 +711,38 @@ public class CustomerMail {
 
     public void setMissingAttachmentQuery(MissingAttachmentQuery missingAttachmentQuery) {
         this.missingAttachmentQuery = missingAttachmentQuery;
+    }
+
+    public LocalDateTime getToSendAfter() {
+        return toSendAfter;
+    }
+
+    public void setToSendAfter(LocalDateTime toSendAfter) {
+        this.toSendAfter = toSendAfter;
+    }
+
+    public Boolean getIsCancelled() {
+        return isCancelled;
+    }
+
+    public void setIsCancelled(Boolean isCancelled) {
+        this.isCancelled = isCancelled;
+    }
+
+    public static String getTEMPLATE_SEND_CREDIT_NOTE() {
+        return TEMPLATE_SEND_CREDIT_NOTE;
+    }
+
+    public static void setTEMPLATE_SEND_CREDIT_NOTE(String tEMPLATE_SEND_CREDIT_NOTE) {
+        TEMPLATE_SEND_CREDIT_NOTE = tEMPLATE_SEND_CREDIT_NOTE;
+    }
+
+    public Boolean getIsLastReminder() {
+        return isLastReminder;
+    }
+
+    public void setIsLastReminder(Boolean isLastReminder) {
+        this.isLastReminder = isLastReminder;
     }
 
 }

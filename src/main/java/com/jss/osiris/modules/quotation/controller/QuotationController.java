@@ -682,22 +682,6 @@ public class QuotationController {
     return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/mail/generate/customer-order-deposit-confirmation")
-  public ResponseEntity<CustomerOrder> generateCustomerOrderDepositConfirmationToCustomer(
-      @RequestParam Integer customerOrderId)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
-    if (customerOrder == null)
-      throw new OsirisValidationException("customerOrder");
-
-    MailComputeResult mailComputeResult = mailComputeHelper.computeMailForDepositConfirmation(customerOrder);
-    if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
-      throw new OsirisValidationException("MailTo");
-
-    mailHelper.generateCustomerOrderDepositConfirmationToCustomer(customerOrder);
-    return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
-  }
-
   @GetMapping(inputEntryPoint + "/mail/generate/invoice")
   public ResponseEntity<CustomerOrder> generateInvoiceMail(@RequestParam Integer customerOrderId)
       throws OsirisValidationException, OsirisClientMessageException {
@@ -907,8 +891,6 @@ public class QuotationController {
 
     if (customerOrder == null)
       throw new OsirisValidationException("CustomerOrder");
-
-    boolean isOpen = quotationService.getIsOpenedQuotation(customerOrder);
 
     for (Service service : assoAffaireOrder.getServices())
       for (Provision provision : service.getProvisions())

@@ -9,16 +9,12 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
-import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.node.service.NodeService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
-import com.jss.osiris.modules.invoicing.service.AzureInvoiceService;
-import com.jss.osiris.modules.invoicing.service.AzureReceiptService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.service.EtablissementPublicsDelegate;
-import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
@@ -47,12 +43,6 @@ public class OsirisScheduller {
 
 	@Autowired
 	EmployeeService employeeService;
-
-	@Autowired
-	CustomerMailService customerMailService;
-
-	@Autowired
-	NotificationService notificationService;
 
 	@Autowired
 	GlobalExceptionHandler globalExceptionHandler;
@@ -91,6 +81,9 @@ public class OsirisScheduller {
 	CustomerOrderService customerOrderService;
 
 	@Autowired
+	CustomerMailService customerMailService;
+
+	@Autowired
 	InvoiceService invoiceService;
 
 	@Autowired
@@ -107,15 +100,6 @@ public class OsirisScheduller {
 
 	@Autowired
 	CentralPayPaymentRequestService centralPayPaymentRequestService;
-
-	@Autowired
-	AzureInvoiceService azureInvoiceService;
-
-	@Autowired
-	AzureReceiptService azureReceiptService;
-
-	@Autowired
-	AuditService auditService;
 
 	@Autowired
 	BatchSettingsService batchSettingsService;
@@ -319,6 +303,17 @@ public class OsirisScheduller {
 	 * }
 	 * }
 	 */
+
+	@Scheduled(initialDelay = 1000, fixedDelay = 1000 * 60)
+	private void sendTemporizedMails() {
+		try {
+			if (nodeService.shouldIBatch())
+				customerMailService.sendTemporizedMails();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
 	@Scheduled(initialDelay = 1000, fixedDelay = Long.MAX_VALUE)
 	private void updateAllStatusEntityReferentials() {
 		try {

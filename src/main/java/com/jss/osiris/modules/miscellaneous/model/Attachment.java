@@ -40,8 +40,12 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 		@Index(name = "idx_competent_authority_attachment", columnList = "id_competent_authority"),
 		@Index(name = "idx_providion_attachment", columnList = "id_provision"),
 		@Index(name = "idx_invoice_attachment", columnList = "id_invoice"),
+		@Index(name = "idx_affaire_attachment", columnList = "id_affaire"),
+		@Index(name = "idx_parent_attachment", columnList = "id_parent_attachment"),
+		@Index(name = "idx_piece_jointe_attachment", columnList = "id_piece_jointe"),
 		@Index(name = "idx_azure_invoice_attachment", columnList = "id_azure_invoice"),
 		@Index(name = "idx_azure_receipt_attachment", columnList = "id_azure_receipt"),
+		@Index(name = "idx_uploaded_file_attachment", columnList = "id_uploaded_file"),
 		@Index(name = "idx_responsable_attachment", columnList = "id_responsable") })
 public class Attachment implements Serializable, IId {
 

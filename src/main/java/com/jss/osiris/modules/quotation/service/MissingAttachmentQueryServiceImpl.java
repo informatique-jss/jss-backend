@@ -58,7 +58,7 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
         query.setService(service);
         addOrUpdateMissingAttachmentQuery(query);
 
-        mailHelper.sendMissingAttachmentQueryToCustomer(query);
+        mailHelper.sendMissingAttachmentQueryToCustomer(query, false);
     }
 
 }

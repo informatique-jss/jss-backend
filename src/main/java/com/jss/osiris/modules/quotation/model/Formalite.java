@@ -9,10 +9,12 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -23,6 +25,9 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUniq
 
 @Entity
 @JsonIgnoreProperties
+@Table(indexes = { @Index(name = "idx_formalite_status", columnList = "id_formalite_status"),
+        @Index(name = "idx_formalite_id_waited_competent_authority", columnList = "id_waited_competent_authority"),
+})
 public class Formalite implements IId {
 
     @Id

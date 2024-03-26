@@ -18,7 +18,8 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 
 @Entity
 @Table(indexes = {
-        @Index(name = "idx_cart_formalite", columnList = "id_formalite_guichet_unique") })
+        @Index(name = "idx_cart_formalite", columnList = "id_formalite_guichet_unique"),
+        @Index(name = "idx_cart_invoice", columnList = "id_invoice") })
 public class Cart {
 
     @Id

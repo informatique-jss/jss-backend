@@ -7,6 +7,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.AssoServiceProvisionType;
@@ -26,6 +28,9 @@ public class ServiceServiceImpl implements ServiceService {
     @Autowired
     ServiceTypeService serviceTypeService;
 
+    @Autowired
+    ConstantService constantService;
+
     @Override
     public Service getService(Integer id) {
         Optional<Service> service = serviceRepository.findById(id);
@@ -38,6 +43,8 @@ public class ServiceServiceImpl implements ServiceService {
     @Transactional(rollbackFor = Exception.class)
     public Service addOrUpdateService(
             Service service) {
+        if (service.getCustomLabel() != null && service.getCustomLabel().trim().length() == 0)
+            service.setCustomLabel(null);
         return serviceRepository.save(service);
     }
 
@@ -200,6 +207,18 @@ public class ServiceServiceImpl implements ServiceService {
                 .addAll(getProvisionsFromServiceType(serviceType, service.getAssoAffaireOrder().getAffaire(), service));
 
         return addOrUpdateService(service);
+    }
+
+    @Override
+    public String getServiceLabel(Service service) throws OsirisException {
+        if (service != null) {
+            if (service.getCustomLabel() == null || service.getCustomLabel().length() == 0)
+                return service.getServiceType().getLabel();
+            if (service.getServiceType().getId().equals(constantService.getServiceTypeOther().getId()))
+                return service.getCustomLabel();
+            return service.getServiceType().getLabel();
+        }
+        return "";
     }
 
 }

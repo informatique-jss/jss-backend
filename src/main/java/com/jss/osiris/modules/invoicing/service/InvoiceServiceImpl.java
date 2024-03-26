@@ -419,7 +419,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         addOrUpdateInvoice(invoice);
 
         if (customerOrder != null)
-            mailHelper.sendCreditNoteToCustomer(customerOrder, false, creditNote, invoice);
+            mailHelper.sendCreditNoteToCustomer(customerOrder, false, creditNote);
 
         return invoice;
     }

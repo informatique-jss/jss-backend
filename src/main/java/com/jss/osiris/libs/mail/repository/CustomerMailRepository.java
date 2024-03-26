@@ -1,5 +1,6 @@
 package com.jss.osiris.libs.mail.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.QueryHint;
@@ -18,10 +19,6 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 
 public interface CustomerMailRepository extends QueryCacheCrudRepository<CustomerMail, Integer> {
 
-        @Query("select m from CustomerMail m where  isSent = false order by createdDateTime asc")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-        List<CustomerMail> findAllByOrderByCreatedDateTimeAsc();
-
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<CustomerMail> findByQuotation(Quotation quotation);
 
@@ -37,19 +34,9 @@ public interface CustomerMailRepository extends QueryCacheCrudRepository<Custome
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<CustomerMail> findByResponsable(Responsable responsable);
 
-        @Query(nativeQuery = true, value = "" +
-                        " select cm.* " +
-                        " from customer_mail cm  " +
-                        " where cm.id_responsable =:idResponsable " +
-                        " and cm.created_date_time >=date_trunc('month',now()) " +
-                        " and cm.subject ='Votre relevé de compte' ")
-        List<CustomerMail> findReceiptMailsForResponsable(@Param("idResponsable") Integer idResponsable);
+        @Query("select m from CustomerMail m where isCancelled=false and isSent = false and toSendAfter<:dateToSend  ")
+        List<CustomerMail> findTemporizesMailsToSend(@Param("dateToSend") LocalDateTime dateToSend);
 
-        @Query(nativeQuery = true, value = "" +
-                        " select cm.* " +
-                        " from customer_mail cm  " +
-                        " where cm.id_tiers =:idTiers " +
-                        " and cm.created_date_time >=date_trunc('month',now()) " +
-                        " and cm.subject ='Votre relevé de compte' ")
-        List<CustomerMail> findReceiptMailsForTiers(@Param("idTiers") Integer idTiers);
+        @Query("select m from CustomerMail m where isCancelled=false and isSent = false and toSendAfter is not null and customerOrder=:customerOrder ")
+        List<CustomerMail> findTemporizedMailsForCustomerOrder(@Param("customerOrder") CustomerOrder customerOrder);
 }

@@ -10,11 +10,13 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -39,6 +41,8 @@ import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Table(indexes = { @Index(name = "idx_tiers_commercial", columnList = "id_commercial"),
+})
 public class Tiers implements ITiers, IAttachment, IGenericTiers {
 
 	@Id

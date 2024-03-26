@@ -202,17 +202,19 @@
                                                                             th:text="${asso.affaire.lastname}"></span> :
                                                                     </p>
                                                                     <ul>
-                                                                        <th:block
-                                                                            th:each="provision : ${asso.provisions}">
+                                                                        <th:block th:each="service : ${asso.services}">
                                                                             <th:block
-                                                                                th:each="attachment : ${attachments}">
-                                                                                <li
-                                                                                    th:if="${attachment.parentAttachment.provision.id==provision.id}">
-                                                                                    <span
-                                                                                        th:text="${attachment.attachmentType.label}"></span>
-                                                                                    (<span
-                                                                                        th:text="${attachment.uploadedFile.filename}"></span>)
-                                                                                </li>
+                                                                                th:each="provision : ${service.provisions}">
+                                                                                <th:block
+                                                                                    th:each="attachment : ${attachments}">
+                                                                                    <li
+                                                                                        th:if="${attachment.parentAttachment.provision.id==provision.id}">
+                                                                                        <span
+                                                                                            th:text="${attachment.attachmentType.label}"></span>
+                                                                                        (<span
+                                                                                            th:text="${attachment.uploadedFile.filename}"></span>)
+                                                                                    </li>
+                                                                                </th:block>
                                                                             </th:block>
                                                                         </th:block>
                                                                     </ul>

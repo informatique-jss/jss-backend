@@ -33,6 +33,8 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 @Table(indexes = {
 		@Index(name = "idx_accounting_record_payment", columnList = "id_payment"),
 		@Index(name = "idx_accounting_record_customer_order", columnList = "id_customer_order"),
+		@Index(name = "idx_accounting_record_accounting_account", columnList = "id_accounting_account"),
+		@Index(name = "idx_accounting_record_accounting_journal", columnList = "id_accounting_journal"),
 		@Index(name = "idx_accounting_record_invoice_item", columnList = "id_invoice_item"),
 		@Index(name = "idx_accounting_record_invoice", columnList = "id_invoice")
 })

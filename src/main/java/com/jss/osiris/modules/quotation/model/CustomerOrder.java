@@ -39,6 +39,7 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 @Entity
 @Table(indexes = { @Index(name = "idx_customer_order_status", columnList = "id_customer_order_status"),
 		@Index(name = "idx_customer_order_responsable", columnList = "id_responsable"),
+		@Index(name = "idx_customer_order_assigned_to", columnList = "id_assigned_to"),
 		@Index(name = "idx_customer_order_tiers", columnList = "id_tiers") })
 public class CustomerOrder implements IQuotation, ICreatedDate {
 

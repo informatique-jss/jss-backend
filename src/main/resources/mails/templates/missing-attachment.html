@@ -195,6 +195,10 @@
                                                                 <p>Dans l'objectif de poursuivre rapidement le
                                                                     traitement de votre commande, pourriez-vous nous
                                                                     transmettre les pièces suivantes ?</p>
+                                                                <p th:if="${isLastReminder}"><strong>Merci de nous
+                                                                        confirmer la poursuite de votre commande. Sans
+                                                                        retour de votre part sous 8j nous
+                                                                        l'abandonnerons.</strong></p>
                                                                 <ul>
                                                                     <li
                                                                         th:each="assoServiceDocument : ${assoServiceDocuments}">

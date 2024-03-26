@@ -38,6 +38,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_responsable_tiers", columnList = "id_tiers"),
+		@Index(name = "idx_responsable_commercial", columnList = "id_commercial"),
 		@Index(name = "idx_responsable_login_web", columnList = "loginWeb", unique = true) })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Responsable implements ITiers, IAttachment, IGenericTiers {

@@ -52,30 +52,33 @@
     <table style="table-layout: fixed;width: 690px;margin-top: 20px;">
         <tr>
             <td style="text-align: left;">
-                <span th:if="${tiersReference!=null}">N° client : <span th:text="${tiersReference}"></span><br /></span>
-                <span>Commande : <span th:text="${customerOrder.id}"></span><br /></span>
                 <span th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">Avoir : <span
                         th:text="${invoice.id}"></span><br /></span>
                 <span th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">Facture : <span
                         th:text="${reverseCreditNote.id}"></span><br /></span>
                 <span th:if="${invoice.isCreditNote==false}">Facture : <span
                         th:text="${invoice.id}"></span><br /></span>
+                <span th:if="${tiersReference!=null}">N° client : <span th:text="${tiersReference}"></span><br /></span>
+                <span>Commande : <span th:text="${customerOrder.id}"></span><br /></span>
                 <span th:if="${quotation!=null}">Devis : <span th:text="${quotation.id}"></span><br /></span>
-                <span th:if="${externalReference!=null}">Votre référence : <span
-                        th:text="${externalReference}"></span><br /></span>
-                <span th:if="${invoice.isCommandNumberMandatory}">Votre référence annuelle :<span
-                        th:text="${invoice.commandNumber}"></span><br />
-                </span>
                 <span th:if="${responsableOnBilling!=null}">Commande transmise par :<span
                         th:text="${responsableOnBilling}"></span><br />
                 </span>
-                <span th:if="${invoice.billingLabelIntercommunityVat!=null}">Numéro de TVA :<span
-                        th:text="${invoice.billingLabelIntercommunityVat}"></span><br />
+                <span th:if="${invoice.isCommandNumberMandatory}">Votre référence annuelle :<span
+                        th:text="${invoice.commandNumber}"></span><br />
                 </span>
-                <p>Paris le <span th:text="${invoiceCreatedDate}"></span></p>
+                <span th:if="${externalReference!=null}">Votre référence : <span
+                        th:text="${externalReference}"></span><br /></span>
             </td>
             <td style="width: 100px;"></td>
             <td colspan="2">
+                <table style=" width: 100%;">
+                    <tr>
+                        <td style="padding-bottom: 10px;">
+                            <p>Paris le <span th:text="${invoiceCreatedDate}"></span></p>
+                        </td>
+                    </tr>
+                </table>
                 <table style="border : solid; border-color: rgb(0,83,159);width: 100%;">
                     <tr>
                         <td>
@@ -85,6 +88,14 @@
                                     th:text="${invoice.billingLabelCity.label}"></span><span
                                     th:if="${invoice.cedexComplement}"
                                     th:text="${invoice.cedexComplement}"></span></span>
+                        </td>
+                    </tr>
+                </table>
+                <table style=" width: 100%;">
+                    <tr>
+                        <td style="padding-top: 10px;">
+                            <span th:if="${invoice.billingLabelIntercommunityVat!=null}">Numéro de TVA :<span
+                                    th:text="${invoice.billingLabelIntercommunityVat}"></span>
                         </td>
                     </tr>
                 </table>
@@ -112,14 +123,17 @@
                             th:text="${asso.affaire.lastname}"></span></strong>
                 </td>
             </tr>
-            <th:block th:each="provision : ${asso.provisions}">
+            <th:block th:each="service : ${asso.services}">
                 <tr>
-                    <td>
-                        <span th:text="${provision.provisionType.label}"></span>
+                    <td style="padding-top: 20px; text-align : center">
+                        <strong><span th:if="${service.customLabel!=null}"
+                                th:text="${service.customLabel}"></span></strong>
+                        <strong><span th:if="${service.customLabel==null}"
+                                th:text="${service.serviceType.label}"></span></strong>
                     </td>
                     <td class="td-with-price"></td>
                 </tr>
-                <th:block th:each="invoiceItem : ${provision.invoiceItems}"
+                <th:block th:each="invoiceItem : ${service.provisions[0].invoiceItems}"
                     th:if="${invoiceItem.preTaxPrice!=0} or ${invoiceItem.isGifted}">
                     <tr>
                         <td>
@@ -166,10 +180,10 @@
         </th:block>
     </table>
     <p style="margin-top: 10px;">&#160;</p>
-    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
+    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;  break-inside: avoid;  ">
         <tr>
             <td>
-                Prix total HT
+                Total HT
             </td>
             <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
                     th:text="${#numbers.formatDecimal(preTaxPriceTotal,1,2)}"></span>
@@ -179,7 +193,7 @@
 
         <tr th:if="${discountTotal!=null}">
             <td>
-                Remise totale
+                Total remises
             </td>
             <td class="td-with-price" style="text-align: right;white-space: nowrap;"> - <span
                     th:text="${#numbers.formatDecimal(discountTotal,1,2)}"></span>
@@ -189,7 +203,7 @@
 
         <tr th:if="${discountTotal!=null}">
             <td>
-                Total HT
+                Total HT remisé
             </td>
             <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
                     th:text="${#numbers.formatDecimal(preTaxPriceTotalWithDicount,1,2)}"></span>
@@ -210,7 +224,7 @@
 
         <tr>
             <td>
-                Prix TTC
+                Total TTC
             </td>
             <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
                     th:text="${#numbers.formatDecimal(priceTotal,1,2)}"></span>
@@ -226,22 +240,24 @@
                 €
             </td>
         </tr>
-        <tr th:if="${refunds.size()>0}" th:each="refund : ${refunds}">
-            <td>
-                Remboursement <span th:text="${refund.label}"></span>
+        <tr th:if="(${invoice.isCreditNote==null} or ${invoice.isCreditNote==false})">
+            <td style="border-top: solid; border-color: rgb(0,83,159)">
+                <span th:if="${remainingToPay!=null} and ${remainingToPay>0 }">Restant dû</span><span
+                    th:if="${remainingToPay==null} or ${remainingToPay==0 }">Solde</span>
             </td>
-            <td class="td-with-price" style="text-align: right;white-space: nowrap;">
-                - <span th:text="${#numbers.formatDecimal(refund.refundAmount,1,2)}"></span>
-                €
+            <td class="td-with-price"
+                style="text-align: right;white-space: nowrap;border-top: solid; border-color: rgb(0,83,159)">
+                <strong><span th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span>
+                    €</strong>
             </td>
         </tr>
-        <tr th:if="${remainingToPay!=null}">
+        <tr th:if="${refunds.size()>0}" th:each="refund : ${refunds}">
             <td>
-                Reste à payer
+                <strong><span th:text="${refund.label}"></span></strong>
             </td>
-            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
-                    th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span>
-                €
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                <strong>- <span th:text="${#numbers.formatDecimal(refund.refundAmount,1,2)}"></span>
+                    €</strong>
             </td>
         </tr>
     </table>

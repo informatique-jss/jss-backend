@@ -942,10 +942,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.quotationService.generateCustomerOrderCreationConfirmationToCustomer(this.quotation).subscribe(response => { });
   }
 
-  generateCustomerOrderDepositConfirmationToCustomer() {
-    this.quotationService.generateCustomerOrderDepositConfirmationToCustomer(this.quotation).subscribe(response => { });
-  }
-
   generateInvoiceMail() {
     this.quotationService.generateInvoicetMail(this.quotation).subscribe(response => { });
   }

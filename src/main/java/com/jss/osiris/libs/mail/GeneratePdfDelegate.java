@@ -372,7 +372,26 @@ public class GeneratePdfDelegate {
         ctx.setVariable("preTaxPriceTotal", invoiceHelper.getPreTaxPriceTotal(invoice));
         if (Math.round(invoiceHelper.getDiscountTotal(invoice) * 100f) / 100f > 0)
             ctx.setVariable("discountTotal", invoiceHelper.getDiscountTotal(invoice));
-        ctx.setVariable("assos", customerOrder.getAssoAffaireOrders());
+
+        // Group debouts for asso invoice item debours
+        List<AssoAffaireOrder> assos = new ArrayList<AssoAffaireOrder>();
+        if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+                if (asso.getServices() != null)
+                    for (Service service : asso.getServices()) {
+                        if (service.getProvisions() != null) {
+                            ArrayList<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
+                            for (Provision provision : service.getProvisions()) {
+                                invoiceItems.addAll(provision.getInvoiceItems());
+                            }
+                            service.getProvisions().get(0)
+                                    .setInvoiceItems(getGroupedInvoiceItemsForDebours(invoiceItems));
+                        }
+                    }
+                assos.add(asso);
+            }
+        ctx.setVariable("assos", assos);
+
         ctx.setVariable("preTaxPriceTotalWithDicount", invoiceHelper.getPreTaxPriceTotal(invoice)
                 - (invoiceHelper.getDiscountTotal(invoice) != null
                         && Math.round(invoiceHelper.getDiscountTotal(invoice) * 100f) / 100f > 0
@@ -414,6 +433,11 @@ public class GeneratePdfDelegate {
         ctx.setVariable("vats", vats);
         ctx.setVariable("priceTotal", Math.round(invoiceHelper.getPriceTotal(invoice) * 100f) / 100f);
         ctx.setVariable("invoice", invoice);
+
+        // Group debours invoice items for credit note
+        if (originalInvoice != null && invoice != null && invoice.getInvoiceItems() != null) {
+            ctx.setVariable("reverseInvoiceItems", getGroupedInvoiceItemsForDebours(invoice.getInvoiceItems()));
+        }
 
         Document billingDocument = documentService.getDocumentByDocumentType(customerOrder.getDocuments(),
                 constantService.getDocumentTypeBilling());
@@ -500,6 +524,61 @@ public class GeneratePdfDelegate {
             throw new OsirisException(e, "Unable to create PDF file for invoice " + invoice.getId());
         }
         return tempFile;
+    }
+
+    private List<InvoiceItem> getGroupedInvoiceItemsForDebours(List<InvoiceItem> inInvoiceItems) {
+        ArrayList<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
+        InvoiceItem invoiceItemTaxable = null;
+        InvoiceItem invoiceItemNonTaxable = null;
+
+        if (inInvoiceItems != null)
+            for (InvoiceItem invoiceItem : inInvoiceItems) {
+                if ((invoiceItem.getIsGifted() == null || invoiceItem.getIsGifted() == false)
+                        && invoiceItem.getPreTaxPrice() != null) {
+                    if (invoiceItem.getBillingItem().getBillingType().getIsDebour()) {
+                        if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable()) {
+                            if (invoiceItemNonTaxable == null) {
+                                invoiceItemNonTaxable = invoiceItem;
+                                if (invoiceItemNonTaxable.getDiscountAmount() == null)
+                                    invoiceItemNonTaxable.setDiscountAmount(0f);
+                            } else {
+                                invoiceItemNonTaxable.setPreTaxPrice(
+                                        invoiceItemNonTaxable.getPreTaxPrice() + invoiceItem.getPreTaxPrice());
+                                if (invoiceItem.getDiscountAmount() != null)
+                                    invoiceItemNonTaxable.setDiscountAmount(invoiceItemNonTaxable.getDiscountAmount()
+                                            + invoiceItem.getDiscountAmount());
+                            }
+                        } else {
+                            if (invoiceItemTaxable == null) {
+                                invoiceItemTaxable = invoiceItem;
+                                if (invoiceItemTaxable.getDiscountAmount() == null)
+                                    invoiceItemTaxable.setDiscountAmount(0f);
+                            } else {
+                                invoiceItemTaxable.setPreTaxPrice(
+                                        invoiceItemTaxable.getPreTaxPrice() + invoiceItem.getPreTaxPrice());
+                                if (invoiceItem.getDiscountAmount() != null)
+                                    invoiceItemTaxable.setDiscountAmount(invoiceItemTaxable.getDiscountAmount()
+                                            + invoiceItem.getDiscountAmount());
+                            }
+                        }
+                    } else {
+                        invoiceItems.add(invoiceItem);
+                    }
+                } else {
+                    invoiceItems.add(invoiceItem);
+                }
+            }
+
+        if (invoiceItemTaxable != null) {
+            invoiceItemTaxable.setLabel(invoiceItemTaxable.getBillingItem().getBillingType().getLabel());
+            invoiceItems.add(invoiceItemTaxable);
+        }
+        if (invoiceItemNonTaxable != null) {
+            invoiceItemNonTaxable.setLabel(invoiceItemNonTaxable.getBillingItem().getBillingType().getLabel());
+            invoiceItems.add(invoiceItemNonTaxable);
+        }
+
+        return invoiceItems;
     }
 
     private File addHeaderAndFooterOnPublicationFlag(File pdfFile, Announcement announcement) throws OsirisException {

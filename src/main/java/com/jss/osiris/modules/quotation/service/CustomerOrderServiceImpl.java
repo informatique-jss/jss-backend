@@ -198,7 +198,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             boolean checkAllProvisionEnded)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
-        boolean isNewCustomerOrder = customerOrder.getId() == null;
         if (customerOrder.getCustomerOrderOrigin() == null)
             customerOrder.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
 
@@ -241,13 +240,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder = customerOrderRepository.save(customerOrder);
 
         customerOrder = getCustomerOrder(customerOrder.getId());
-
-        if (isNewCustomerOrder) {
-            notificationService.notifyNewCustomerOrderQuotation(customerOrder);
-            if (customerOrder.getCustomerOrderOrigin().getId()
-                    .equals(constantService.getCustomerOrderOriginWebSite().getId()))
-                mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, false); // TODO
-        }
 
         if (checkAllProvisionEnded)
             checkAllProvisionEnded(customerOrder);
@@ -365,10 +357,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (!customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED)) {
                 if (customerOrder.getCustomerOrderStatus().getCode()
                         .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
-                    if (!isFromUser)
-                        mailHelper.sendCustomerOrderDepositConfirmationToCustomer(customerOrder, false);
-                    else
-                        mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
+                    mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
                     notificationService.notifyCustomerOrderToBeingProcessedFromDeposit(customerOrder, isFromUser);
                 } else
                     notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, true);
