@@ -10,6 +10,7 @@ import { Confrere } from "../../quotation/model/Confrere";
 import { DomiciliationContractType } from "../../quotation/model/DomiciliationContractType";
 import { JournalType } from "../../quotation/model/JournalType";
 import { MailRedirectionType } from "../../quotation/model/MailRedirectionType";
+import { ProvisionType } from '../../quotation/model/ProvisionType';
 import { ServiceType } from '../../quotation/model/ServiceType';
 import { TransfertFundsType } from "../../quotation/model/TransfertFundsType";
 import { TypeFormalite } from '../../quotation/model/guichet-unique/referentials/TypeFormalite';
@@ -212,4 +213,5 @@ export interface Constant {
   rffFrequencyQuarterly: RffFrequency;
   rffFrequencyMonthly: RffFrequency;
   serviceTypeOther: ServiceType;
+  provisionTypeBilanPublication: ProvisionType;
 }

@@ -567,8 +567,8 @@
           <tr>
             <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeBilan"
-                label="Type de poste de facturation - Bilan" [form]="constantForm" propertyName="billingTypeBilan"
-                [isMandatory]="true" [isDisabled]="!editMode">
+                label="Type de poste de facturation - Bilan (relecture)" [form]="constantForm"
+                propertyName="billingTypeBilan" [isMandatory]="true" [isDisabled]="!editMode">
               </autocomplete-billing-type>
             </td>
           </tr>
@@ -1327,6 +1327,13 @@
               <autocomplete-service-type [(model)]="constant.serviceTypeOther" [form]="constantForm"
                 propertyName="serviceTypeOther" [isMandatory]="true" label="Service - Autre"
                 [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-provision-type [(model)]="constant.provisionTypeBilanPublication"
+                label="Type de prestation - Bilan" [form]="constantForm" propertyName="provisionTypeBilanPublication"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-provision-type>
             </td>
           </tr>
         </table>

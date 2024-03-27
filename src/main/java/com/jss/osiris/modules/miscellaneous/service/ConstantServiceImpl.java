@@ -36,6 +36,7 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.ServiceType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
@@ -428,6 +429,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public BillingType getBillingTypeBilan() throws OsirisException {
         return getConstants().getBillingTypeBilan();
+    }
+
+    @Override
+    public ProvisionType getProvisionTypeBilanPublication() throws OsirisException {
+        return getConstants().getProvisionTypeBilanPublication();
     }
 
     @Override

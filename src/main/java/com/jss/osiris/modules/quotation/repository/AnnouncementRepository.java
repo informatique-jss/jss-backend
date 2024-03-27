@@ -90,4 +90,17 @@ public interface AnnouncementRepository extends QueryCacheCrudRepository<Announc
         @Query("select a from Announcement a where a.announcementStatus=:announcementStatus and publicationDate is not null  and confrere <> :confrere  ")
         List<Announcement> getAnnouncementForConfrereReminderProviderInvoice(
                         AnnouncementStatus announcementStatus, @Param("confrere") Confrere confrere);
+
+        @Query(nativeQuery = true, value = "" +
+                        " select a.*  " +
+                        " from announcement a  " +
+                        " join provision p on p.id_announcement  =a.id " +
+                        " where a.id_announcement_status  = :announcementStatusDoneId and p.id_provision_type  = :provisionTypeBilanPublicationId "
+                        +
+                        " and a.publication_date between  date_trunc('year', current_date - interval '1 year') and   date_trunc('year', current_date) "
+                        +
+                        "")
+        List<Announcement> getAnnouncementForBilanPublicationReminder(
+                        @Param("announcementStatusDoneId") Integer announcementStatusDoneId,
+                        @Param("provisionTypeBilanPublicationId") Integer provisionTypeBilanPublicationId);
 }

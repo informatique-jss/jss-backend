@@ -54,6 +54,7 @@ public class CustomerMail {
     public static String TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER = "send-announcement-confrere-reminder";
     public static String TEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER = "send-confrere-provider-invoice-reminder";
     public static String TEMPLATE_CUSTOMER_ORDER_FINALIZATION = "customer-order-finalization";
+    public static String TEMPLATE_SEND_CUSTOMER_BILAN_PUBLICATION_REMINDER = "send-customer-bilan-publication-reminder";
     public static String TEMPLATE_BILLING_CLOSURE = "billing-closure";
     public static String TEMPLATE_INVOICE_REMINDER = "invoice-reminder";
     public static String TEMPLATE_MISSING_ATTACHMENT = "missing-attachment";

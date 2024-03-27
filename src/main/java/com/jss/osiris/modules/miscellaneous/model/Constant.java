@@ -22,6 +22,7 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.ServiceType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
@@ -721,6 +722,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_service_type_other")
 	private ServiceType serviceTypeOther;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_provision_type_bilan_publication")
+	private ProvisionType provisionTypeBilanPublication;
 
 	public Integer getId() {
 		return id;
@@ -2112,5 +2117,13 @@ public class Constant implements Serializable, IId {
 
 	public void setServiceTypeOther(ServiceType serviceTypeOther) {
 		this.serviceTypeOther = serviceTypeOther;
+	}
+
+	public ProvisionType getProvisionTypeBilanPublication() {
+		return provisionTypeBilanPublication;
+	}
+
+	public void setProvisionTypeBilanPublication(ProvisionType provisionTypeBilanPublication) {
+		this.provisionTypeBilanPublication = provisionTypeBilanPublication;
 	}
 }

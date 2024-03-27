@@ -245,6 +245,18 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REMINDERS));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_BILAN_PUBLICATION) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_BILAN_PUBLICATION);
+            batchSettings.setLabel("Relance par mail des clients pour la publication des bilans annuels");
+            batchSettings.setFixedRate(60 * 1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REMINDERS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
         if (getByCode(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_MISSING_ATTACHMENT_QUERIES) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_MISSING_ATTACHMENT_QUERIES);

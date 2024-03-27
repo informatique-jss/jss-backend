@@ -146,27 +146,9 @@
                                                                 style="padding-left:10px;padding-right:10px;text-align:center;width:100%;">
                                                                 <h1
                                                                     style="margin: 0; white-space: nowrap;color: rgb(35, 61, 86); direction: ltr; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 700; letter-spacing: normal; line-height: 24px; text-align: center; margin-top: 0; margin-bottom: 0;">
-                                                                    <strong><span>Vos pièces au format numérique sont
-                                                                            disponibles</span></strong>
+                                                                    <strong><span>Publication de vos comptes annuels
+                                                                        </span></strong>
                                                                 </h1>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                    <table class="text_block block-3" width="100%" border="0"
-                                                        cellpadding="0" cellspacing="0" role="presentation"
-                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
-                                                        <tr>
-                                                            <td
-                                                                style="padding-left:10px;padding-right:10px;padding-top:15px;">
-                                                                <div style="font-family: Arial, sans-serif">
-                                                                    <div
-                                                                        style="font-size: 22px;font-weight: 700; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; mso-line-height-alt: 16.8px; color: rgb(196, 174, 139); line-height: 1.2;text-align: center;">
-                                                                        <span>Commande n°<span
-                                                                                th:text="${customerOrder.id}"></span>
-                                                                            - Affaire <span th:text="${affaireLabel}">
-                                                                            </span></span>
-                                                                    </div>
-                                                                </div>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -192,34 +174,15 @@
                                                             <td
                                                                 style="padding-left:10px;padding-right:10px;width:100%;">
                                                                 <p>Bonjour <span th:text="${customerName}"></span>,</p>
-                                                                <th:block
-                                                                    th:each="asso : ${customerOrder.assoAffaireOrders}">
-                                                                    <p>Veuillez trouver en PJ la/les pièce(s)
-                                                                        numérique(s)
-                                                                        correspondant à l'affaire <span
-                                                                            th:text="${asso.affaire.denomination}"></span><span
-                                                                            th:text="${asso.affaire.firstname}"></span><span
-                                                                            th:text="${asso.affaire.lastname}"></span> :
-                                                                    </p>
-                                                                    <ul>
-                                                                        <th:block th:each="service : ${asso.services}">
-                                                                            <th:block
-                                                                                th:each="provision : ${service.provisions}">
-                                                                                <th:block
-                                                                                    th:each="attachment : ${attachments}"
-                                                                                    th:if="${attachment.parentAttachment.provision}!=null">
-                                                                                    <li
-                                                                                        th:if="${attachment.parentAttachment.provision.id==provision.id}">
-                                                                                        <span
-                                                                                            th:text="${attachment.attachmentType.label}"></span>
-                                                                                        (<span
-                                                                                            th:text="${attachment.uploadedFile.filename}"></span>)
-                                                                                    </li>
-                                                                                </th:block>
-                                                                            </th:block>
-                                                                        </th:block>
-                                                                    </ul>
-                                                                </th:block>
+                                                                <p>Nous avions publié l'année dernière les comptes
+                                                                    annuels de <span th:text="${affaireLabel}"></span>.
+                                                                </p>
+                                                                <p>Arrivant dans la période de publication (au plus tard
+                                                                    45 jours après la date de l'assemblée qui approuve
+                                                                    les comptes), nous serions heureux de vous
+                                                                    accompagner et ainsi vous faire bénéficier de
+                                                                    l'expertise du JSS et d'un service simple et rapide
+                                                                    pour publier vos comptes.</p>
                                                             </td>
                                                         </tr>
                                                     </table>

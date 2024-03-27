@@ -89,4 +89,9 @@ public interface AnnouncementService {
         public void completeAnnouncementWithAffaire(AssoAffaireOrder assoAffaireOrder)
                         throws OsirisException, OsirisClientMessageException;
 
+        public void sendRemindersToCustomerForBilanPublication() throws OsirisException;
+
+        public void sendReminderToCustomerForBilanPublication(Announcement announcement)
+                        throws OsirisException, OsirisClientMessageException;
+
 }

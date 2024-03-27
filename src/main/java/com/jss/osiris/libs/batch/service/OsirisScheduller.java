@@ -223,6 +223,19 @@ public class OsirisScheduller {
 		}
 	}
 
+	// @Scheduled(cron =
+	// "${schedulling.log.osiris.customer.bilan.publication.reminder}")
+	@Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
+	private void reminderToCustomerForBilanPublication() {
+		try {
+			if (nodeService.shouldIBatch())
+				announcementService.sendRemindersToCustomerForBilanPublication();
+
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
 	@Scheduled(cron = "${schedulling.log.osiris.customer.missing.attachment.queries}")
 	private void sendRemindersToCustomerForMissingAttachmentQuery() {
 		try {

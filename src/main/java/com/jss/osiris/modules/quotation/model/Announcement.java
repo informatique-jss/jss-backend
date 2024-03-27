@@ -106,6 +106,8 @@ public class Announcement implements IId, IDocument {
 
 	private Integer characterNumber;
 
+	private Boolean isBilanPublicationReminderIsSent;
+
 	public Integer getId() {
 		return id;
 	}
@@ -353,6 +355,14 @@ public class Announcement implements IId, IDocument {
 
 	public void setIsAnnouncementErratumAlreadySentToConfrere(Boolean isAnnouncementErratumAlreadySentToConfrere) {
 		this.isAnnouncementErratumAlreadySentToConfrere = isAnnouncementErratumAlreadySentToConfrere;
+	}
+
+	public Boolean getIsBilanPublicationReminderIsSent() {
+		return isBilanPublicationReminderIsSent;
+	}
+
+	public void setIsBilanPublicationReminderIsSent(Boolean isBilanPublicationReminderIsSent) {
+		this.isBilanPublicationReminderIsSent = isBilanPublicationReminderIsSent;
 	}
 
 }

@@ -27,6 +27,7 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.ServiceType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
@@ -188,6 +189,8 @@ public interface ConstantService {
     public BillingType getBillingTypeComplexeFile() throws OsirisException;
 
     public BillingType getBillingTypeBilan() throws OsirisException;
+
+    public ProvisionType getProvisionTypeBilanPublication() throws OsirisException;
 
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException;
 

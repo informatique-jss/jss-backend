@@ -383,7 +383,18 @@ public class MailHelper {
         IQuotation quotation = mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation();
         if (quotation != null) {
             ctx.setVariable("customerName", getCustomerName(quotation));
-            ctx.setVariable("affaireLabel", getCustomerOrderAffaireLabel(quotation, null));
+
+            AssoAffaireOrder assoAffaireOrderToUse = null;
+            if (mail.getProvision() != null)
+                outerloop: for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders())
+                    for (Service service : assoAffaireOrder.getServices())
+                        for (Provision provision : service.getProvisions())
+                            if (provision.getId().equals(mail.getProvision().getId())) {
+                                assoAffaireOrderToUse = assoAffaireOrder;
+                                break outerloop;
+                            }
+
+            ctx.setVariable("affaireLabel", getCustomerOrderAffaireLabel(quotation, assoAffaireOrderToUse));
             ctx.setVariable("invoiceLabelResult",
                     invoiceHelper.computeInvoiceLabelResult(
                             documentService.getBillingDocument(quotation.getDocuments()),
@@ -423,12 +434,13 @@ public class MailHelper {
         ctx.setVariable("attachments", mail.getAttachments());
         ctx.setVariable("provision", mail.getProvision());
         ctx.setVariable("tiers", mail.getTiers());
-        ctx.setVariable("explaination", mail.getExplaination()); // TODO : remove after refonte service et PM
+        ctx.setVariable("explaination", mail.getExplaination());
         ctx.setVariable("qrCodePicture", mail.getCbLink() != null ? "qrCodePicture" : null);
         ctx.setVariable("endOfYearDateString",
                 LocalDate.now().withMonth(12).withDayOfMonth(31).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
         if (mail.getProvision() != null && mail.getProvision().getAnnouncement() != null
+                && mail.getProvision().getAnnouncement().getIsAnnouncementAlreadySentToConfrere() != null
                 && mail.getProvision().getAnnouncement().getIsAnnouncementAlreadySentToConfrere()) {
             ctx.setVariable("sentDateToConfrere", mail.getProvision().getAnnouncement()
                     .getFirstConfrereSentMailDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm")));
@@ -808,6 +820,37 @@ public class MailHelper {
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForReadingProof(customerOrder));
         mail.setSubject("BAT à valider concernant la commande n°" + customerOrder.getId() + " - "
+                + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
+        mailService.addMailToQueue(mail);
+    }
+
+    public void sendReminderToCustomerForBilanPublication(Announcement announcement, CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException {
+
+        CustomerMail mail = new CustomerMail();
+        mail.setCustomerOrder(customerOrder);
+
+        mail.setHeaderPicture("images/mails/send-customer-bilan-publication-reminder.png");
+        mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_CUSTOMER_BILAN_PUBLICATION_REMINDER);
+
+        Provision currentProvision = null;
+        if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                for (Service service : asso.getServices())
+                    for (Provision provision : service.getProvisions())
+                        if (provision.getAnnouncement() != null
+                                && provision.getAnnouncement().getId().equals(announcement.getId())) {
+                            currentProvision = provision;
+                        }
+
+        if (currentProvision == null)
+            return;
+
+        mail.setProvision(currentProvision);
+        mail.setReplyTo(customerOrder.getAssignedTo());
+        mail.setSendToMe(true);
+        mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder));
+        mail.setSubject("Publication de vos comptes annuels - "
                 + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
         mailService.addMailToQueue(mail);
     }

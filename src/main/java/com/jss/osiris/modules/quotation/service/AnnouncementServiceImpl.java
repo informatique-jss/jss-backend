@@ -815,4 +815,35 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                     }
                 }
     }
+
+    @Override
+    @Transactional
+    public void sendRemindersToCustomerForBilanPublication() throws OsirisException {
+        List<Announcement> announcements = announcementRepository
+                .getAnnouncementForBilanPublicationReminder(announcementStatusService
+                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE).getId(),
+                        this.constantService.getProvisionTypeBilanPublication().getId());
+
+        if (announcements != null && announcements.size() > 0) {
+            for (Announcement announcement : announcements) {
+                batchService.declareNewBatch(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_BILAN_PUBLICATION,
+                        announcement.getId());
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void sendReminderToCustomerForBilanPublication(Announcement announcement)
+            throws OsirisException, OsirisClientMessageException {
+        announcement = getAnnouncement(announcement.getId());
+        if ((announcement.getIsBilanPublicationReminderIsSent() == null
+                || announcement.getIsBilanPublicationReminderIsSent() == false)
+                && announcement.getPublicationDate().plusYears(1).minusDays(30).isBefore(LocalDate.now())) {
+            mailHelper.sendReminderToCustomerForBilanPublication(announcement,
+                    customerOrderService.getCustomerOrderForAnnouncement(announcement));
+            announcement.setIsBilanPublicationReminderIsSent(true);
+            addOrUpdateAnnouncement(announcement);
+        }
+    }
 }

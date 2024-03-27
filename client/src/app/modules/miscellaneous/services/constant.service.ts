@@ -318,6 +318,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.billingTypeBilan;
   }
 
+  getProvisionTypeBilanPublication() {
+    return this.constant.provisionTypeBilanPublication;
+  }
+
   getBillingTypeInfogreffeDebour() {
     return this.constant.billingTypeInfogreffeDebour;
   }
