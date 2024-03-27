@@ -223,9 +223,7 @@ public class OsirisScheduller {
 		}
 	}
 
-	// @Scheduled(cron =
-	// "${schedulling.log.osiris.customer.bilan.publication.reminder}")
-	@Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
+	@Scheduled(cron = "${schedulling.log.osiris.customer.bilan.publication.reminder}")
 	private void reminderToCustomerForBilanPublication() {
 		try {
 			if (nodeService.shouldIBatch())
@@ -267,71 +265,67 @@ public class OsirisScheduller {
 		}
 	}
 
-	/*
-	 * @Scheduled(cron = "${schedulling.audit.clean}")
-	 * private void cleanAudit() throws OsirisException {
-	 * if (nodeService.shouldIBatch())
-	 * batchService.declareNewBatch(Batch.CLEAN_AUDIT, null);
-	 * }
-	 * 
-	 * @Scheduled(cron = "${schedulling.competant.authorities.update}")
-	 * private void updateCompetentAuthorities() throws OsirisException {
-	 * if (nodeService.shouldIBatch())
-	 * batchService.declareNewBatch(Batch.UPDATE_COMPETENT_AUTHORITY, null);
-	 * }
-	 * 
-	 * @Scheduled(cron = "${schedulling.affaire.rne.update}")
-	 * private void updateAffaireFromRne() {
-	 * try {
-	 * if (nodeService.shouldIBatch())
-	 * affaireService.updateAffairesFromRne();
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 * 
-	 * @Scheduled(initialDelay = 500, fixedDelayString =
-	 * "${schedulling.guichet.unique.refresh.opened}")
-	 * private void refreshAllOpenFormalities() {
-	 * try {
-	 * if (nodeService.shouldIBatch())
-	 * guichetUniqueDelegateService.refreshAllOpenFormalities();
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 * 
-	 * @Scheduled(initialDelay = 500, fixedDelayString =
-	 * "${schedulling.guichet.unique.refresh.update.last.hour}")
-	 * private void refreshFormalitiesFromLastHour() {
-	 * try {
-	 * if (nodeService.shouldIBatch())
-	 * guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 * 
-	 * @Scheduled(cron = "${schedulling.payment.automatch}")
-	 * private void automatchPayments() {
-	 * try {
-	 * if (nodeService.shouldIBatch())
-	 * paymentService.paymentGrab();
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 * 
-	 * @Scheduled(cron = "${schedulling.account.receipt.generation.sender}")
-	 * private void sendBillingClosureReceipt() {
-	 * try {
-	 * if (nodeService.shouldIBatch())
-	 * accountingRecordService.sendBillingClosureReceipt();
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 */
+	@Scheduled(cron = "${schedulling.audit.clean}")
+	private void cleanAudit() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.CLEAN_AUDIT, null);
+	}
+
+	@Scheduled(cron = "${schedulling.competant.authorities.update}")
+	private void updateCompetentAuthorities() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.UPDATE_COMPETENT_AUTHORITY, null);
+	}
+
+	@Scheduled(cron = "${schedulling.affaire.rne.update}")
+	private void updateAffaireFromRne() {
+		try {
+			if (nodeService.shouldIBatch())
+				affaireService.updateAffairesFromRne();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.opened}")
+	private void refreshAllOpenFormalities() {
+		try {
+			if (nodeService.shouldIBatch())
+				guichetUniqueDelegateService.refreshAllOpenFormalities();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.update.last.hour}")
+	private void refreshFormalitiesFromLastHour() {
+		try {
+			if (nodeService.shouldIBatch())
+				guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.payment.automatch}")
+	private void automatchPayments() {
+		try {
+			if (nodeService.shouldIBatch())
+				paymentService.paymentGrab();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.account.receipt.generation.sender}")
+	private void sendBillingClosureReceipt() {
+		try {
+			if (nodeService.shouldIBatch())
+				accountingRecordService.sendBillingClosureReceipt();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
 
 	@Scheduled(initialDelay = 1000, fixedDelay = 1000 * 60)
 	private void sendTemporizedMails() {

@@ -848,7 +848,7 @@ public class MailHelper {
 
         mail.setProvision(currentProvision);
         mail.setReplyTo(customerOrder.getAssignedTo());
-        mail.setSendToMe(true);
+        mail.setSendToMe(false);
         mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder));
         mail.setSubject("Publication de vos comptes annuels - "
                 + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
