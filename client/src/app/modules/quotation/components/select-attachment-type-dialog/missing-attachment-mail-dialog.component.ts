@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from 'src/app/services/app.service';
 import { AssoServiceDocument } from '../../model/AssoServiceDocument';
 import { MissingAttachmentQuery } from '../../model/MissingAttachmentQuery';
@@ -23,6 +24,8 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
   selectedAssoServiceDocument: AssoServiceDocument[] = [];
   tableValues: AssoServiceDocument[] = [];
   missingAttachmentQuery: MissingAttachmentQuery = {} as MissingAttachmentQuery;
+  editMode: boolean = true;
+
 
   constructor(private formBuilder: FormBuilder,
     private appService: AppService,
@@ -30,9 +33,14 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<SelectAttachmentsDialogComponent>,
     private missingAttachmentQueryService: MissingAttachmentQueryService,
     private serviceService: ServiceService,
+    private constantService: ConstantService,
   ) { }
 
   refreshTable: Subject<void> = new Subject<void>();
+
+  getServiceLabel(service: Service) {
+    return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
+  }
 
   ngOnInit() {
     this.displayedColumns = [];
@@ -48,13 +56,22 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
   }
 
   setTableValues() {
+    // load last one
     if (this.service && this.selectedAssoServiceDocument.length == 0 && this.service.missingAttachmentQueries && this.service.missingAttachmentQueries.length > 0) {
       this.service.missingAttachmentQueries.sort((a: MissingAttachmentQuery, b: MissingAttachmentQuery) => {
         return new Date(b.createdDateTime!).getTime() - new Date(a.createdDateTime!).getTime();
       })
       this.missingAttachmentQuery = this.service.missingAttachmentQueries[0];
-      this.missingAttachmentQuery.id = undefined;
+      if (this.editMode)
+        this.missingAttachmentQuery.id = undefined;
       this.selectedAssoServiceDocument = this.missingAttachmentQuery.assoServiceDocument;
+    }
+
+    // display specific one
+    if (this.missingAttachmentQuery && this.missingAttachmentQuery.id) {
+      this.selectedAssoServiceDocument = this.missingAttachmentQuery.assoServiceDocument;
+      if (this.editMode)
+        this.missingAttachmentQuery.id = undefined;
     }
 
     this.tableValues = this.getAssoServiceDocument();
@@ -65,6 +82,9 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
   });
 
   selectAssoServiceDocument(assoServiceDocument: AssoServiceDocument) {
+    if (!this.editMode)
+      return;
+
     if (this.selectedAssoServiceDocument)
       for (let att of this.selectedAssoServiceDocument)
         if (att.id == assoServiceDocument.id)
@@ -106,9 +126,9 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
   }
 
   generateMail() {
-    if (this.attachmentTypeForm.valid && this.selectedAssoServiceDocument.length > 0) {
+    if (this.attachmentTypeForm.valid && this.selectedAssoServiceDocument.length > 0 && this.editMode) {
       this.missingAttachmentQuery.assoServiceDocument = this.selectedAssoServiceDocument;
-      this.missingAttachmentQueryService.generateMissingAttachmentMail(this.missingAttachmentQuery).subscribe(response => this.closeDialog());
+      this.dialogRef.close(this.missingAttachmentQueryService.generateMissingAttachmentMail(this.missingAttachmentQuery).subscribe(response => this.closeDialog()));
     }
   }
 

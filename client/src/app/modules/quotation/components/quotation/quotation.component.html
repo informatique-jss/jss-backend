@@ -15,7 +15,7 @@
             <ng-container *ngFor="let provision of service.provisions">
               <tr *ngIf="service ">
                 <td class="affaire " colspan="2">
-                  <strong>{{getServiceLabel(service,false)}}</strong>
+                  <strong>{{getServiceLabel(service)}}</strong>
                 </td>
               </tr>
               <tr *ngIf="provision.provisionType">
@@ -157,7 +157,7 @@
                         <mat-accordion multi>
                           <mat-expansion-panel expanded="false" class="service-tab ">
                             <mat-expansion-panel-header>
-                              <mat-panel-title>Service - {{getServiceLabel(service,true)}}
+                              <mat-panel-title>Service - {{getServiceLabel(service)}}
                               </mat-panel-title>
                               <mat-panel-description>
                                 <mat-icon color="accent" *ngIf="!editMode && service.id"
@@ -211,7 +211,7 @@
                       <div class="row-field-container">
                         <button mat-raised-button *ngIf="editMode" (click)="createProvision(service)" color="primary"
                           class="mini-fab-add">
-                          Ajouter une prestation pour le service {{getServiceLabel(service,false)}}
+                          Ajouter une prestation pour le service {{getServiceLabel(service)}}
                         </button>
                       </div>
                     </ng-container>
@@ -240,6 +240,10 @@
         <mat-tab label="Documents" *ngIf="quotation.id!=null && quotation.id!=undefined">
           <attachments [entity]="quotation" [editMode]="editMode" [entityType]="getEntityType().entityType">
           </attachments>
+        </mat-tab>
+        <mat-tab label="Pièces manquantes" *ngIf="quotation && instanceOfCustomerOrderFn(quotation) && hasOnePm()">
+          <missing-attachment-queries [customerOrder]="quotation">
+          </missing-attachment-queries>
         </mat-tab>
         <mat-tab label="Mails" *ngIf="quotation.id && instanceOfQuotationFn(quotation)">
           <ng-template matTabContent>

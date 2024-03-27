@@ -9,6 +9,11 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.node.service.NodeService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
@@ -25,6 +30,7 @@ import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
+import com.jss.osiris.modules.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
@@ -90,6 +96,9 @@ public class OsirisScheduller {
 	AnnouncementService announcementService;
 
 	@Autowired
+	MissingAttachmentQueryService missingAttachmentQueryService;
+
+	@Autowired
 	EtablissementPublicsDelegate etablissementPublicsDelegate;
 
 	@Autowired
@@ -117,128 +126,135 @@ public class OsirisScheduller {
 		return scheduler;
 	}
 
+	@Scheduled(cron = "${schedulling.account.daily.close}")
+	private void dailyAccountClosing() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.DAILY_ACCOUNT_CLOSING, null);
+	}
+
+	@Scheduled(cron = "${schedulling.active.directory.user.update}")
+	private void activeDirectoryUserUpdate() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.ACTIVE_DIRECTORY_USER_UPDATE, null);
+	}
+
+	@Scheduled(cron = "${schedulling.notification.purge}")
+	private void purgeNotidication() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.PURGE_NOTIFICATION, null);
+	}
+
+	@Scheduled(cron = "${schedulling.log.purge}")
+	private void purgeLogs() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.PURGE_LOGS, null);
+	}
+
+	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.central.pay.payment.request.validation.check}")
+	private void checkAllCentralPayPaymentRequests()
+			throws OsirisException, OsirisClientMessageException,
+			OsirisValidationException, OsirisDuplicateException {
+		try {
+			if (nodeService.shouldIBatch())
+				centralPayPaymentRequestService.checkAllPaymentRequests();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.log.osiris.quotation.reminder}")
+	private void reminderQuotation() {
+		try {
+			if (nodeService.shouldIBatch())
+				quotationService.sendRemindersForQuotation();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.log.osiris.customerOrder.deposit.reminder}")
+	private void reminderCustomerOrderDeposit() {
+		try {
+			if (nodeService.shouldIBatch())
+				customerOrderService.sendRemindersForCustomerOrderDeposit();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.log.osiris.customerOrder.invoice.reminder}")
+	private void reminderCustomerOrderInvoice() {
+		try {
+			if (nodeService.shouldIBatch())
+				invoiceService.sendRemindersForInvoices();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.log.osiris.announcement.confrere.query.reminder}")
+	private void reminderConfrereForAnnouncementQuery() {
+		try {
+			if (nodeService.shouldIBatch())
+				announcementService.sendRemindersToConfrereForAnnouncement();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.log.osiris.invoice.confrere.query.reminder}")
+	private void reminderConfrereForProviderInvoice() {
+		try {
+			if (nodeService.shouldIBatch())
+				announcementService.sendRemindersToConfrereForProviderInvoice();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.log.osiris.customer.proof.reading.reminder}")
+	private void reminderClientReviewQuery() {
+		try {
+			if (nodeService.shouldIBatch())
+				announcementService.sendRemindersToCustomerForProofReading();
+
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.log.osiris.customer.missing.attachment.queries}")
+	private void sendRemindersToCustomerForMissingAttachmentQuery() {
+		try {
+			if (nodeService.shouldIBatch())
+				missingAttachmentQueryService.sendRemindersToCustomerForMissingAttachmentQuery();
+
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.announcement.publish.actu.legale}")
+	private void publishAnnouncementToActuLegale() {
+		try {
+			if (nodeService.shouldIBatch())
+				announcementService.publishAnnouncementsToActuLegale();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.announcement.publication.flag}")
+	private void sendPublicationFlagNotSent() {
+		try {
+			if (nodeService.shouldIBatch())
+				announcementService.sendPublicationFlagsNotSent();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
 	/*
-	 * @Scheduled(cron = "${schedulling.account.daily.close}")
-	 * private void dailyAccountClosing() throws OsirisException {
-	 * if (nodeService.shouldIBatch())
-	 * batchService.declareNewBatch(Batch.DAILY_ACCOUNT_CLOSING, null);
-	 * }
-	 * 
-	 * @Scheduled(cron = "${schedulling.active.directory.user.update}")
-	 * private void activeDirectoryUserUpdate() throws OsirisException {
-	 * if (nodeService.shouldIBatch())
-	 * batchService.declareNewBatch(Batch.ACTIVE_DIRECTORY_USER_UPDATE, null);
-	 * }
-	 * 
-	 * @Scheduled(cron = "${schedulling.notification.purge}")
-	 * private void purgeNotidication() throws OsirisException {
-	 * if (nodeService.shouldIBatch())
-	 * batchService.declareNewBatch(Batch.PURGE_NOTIFICATION, null);
-	 * }
-	 * 
-	 * @Scheduled(cron = "${schedulling.log.purge}")
-	 * private void purgeLogs() throws OsirisException {
-	 * if (nodeService.shouldIBatch())
-	 * batchService.declareNewBatch(Batch.PURGE_LOGS, null);
-	 * }
-	 * 
-	 * @Scheduled(initialDelay = 500, fixedDelayString =
-	 * "${schedulling.central.pay.payment.request.validation.check}")
-	 * private void checkAllCentralPayPaymentRequests()
-	 * throws OsirisException, OsirisClientMessageException,
-	 * OsirisValidationException, OsirisDuplicateException {
-	 * try {
-	 * if (nodeService.shouldIBatch())
-	 * centralPayPaymentRequestService.checkAllPaymentRequests();
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 * 
-	 * @Scheduled(cron = "${schedulling.log.osiris.quotation.reminder}")
-	 * private void reminderQuotation() {
-	 * try {
-	 * if (nodeService.shouldIBatch())
-	 * quotationService.sendRemindersForQuotation();
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 * 
-	 * @Scheduled(cron = "${schedulling.log.osiris.customerOrder.deposit.reminder}")
-	 * private void reminderCustomerOrderDeposit() {
-	 * try {
-	 * if (nodeService.shouldIBatch())
-	 * customerOrderService.sendRemindersForCustomerOrderDeposit();
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 * 
-	 * @Scheduled(cron = "${schedulling.log.osiris.customerOrder.invoice.reminder}")
-	 * private void reminderCustomerOrderInvoice() {
-	 * try {
-	 * if (nodeService.shouldIBatch())
-	 * invoiceService.sendRemindersForInvoices();
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 * 
-	 * @Scheduled(cron =
-	 * "${schedulling.log.osiris.announcement.confrere.query.reminder}")
-	 * private void reminderConfrereForAnnouncementQuery() {
-	 * try {
-	 * if (nodeService.shouldIBatch())
-	 * announcementService.sendRemindersToConfrereForAnnouncement();
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 * 
-	 * @Scheduled(cron =
-	 * "${schedulling.log.osiris.invoice.confrere.query.reminder}")
-	 * private void reminderConfrereForProviderInvoice() {
-	 * try {
-	 * if (nodeService.shouldIBatch())
-	 * announcementService.sendRemindersToConfrereForProviderInvoice();
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 * 
-	 * @Scheduled(cron =
-	 * "${schedulling.log.osiris.customer.proof.reading.reminder}")
-	 * private void reminderClientReviewQuery() {
-	 * try {
-	 * if (nodeService.shouldIBatch())
-	 * announcementService.sendRemindersToCustomerForProofReading();
-	 * 
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 * 
-	 * @Scheduled(cron = "${schedulling.announcement.publish.actu.legale}")
-	 * private void publishAnnouncementToActuLegale() {
-	 * try {
-	 * if (nodeService.shouldIBatch())
-	 * announcementService.publishAnnouncementsToActuLegale();
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 * 
-	 * @Scheduled(cron = "${schedulling.announcement.publication.flag}")
-	 * private void sendPublicationFlagNotSent() {
-	 * try {
-	 * if (nodeService.shouldIBatch())
-	 * announcementService.sendPublicationFlagsNotSent();
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 * 
 	 * @Scheduled(cron = "${schedulling.audit.clean}")
 	 * private void cleanAudit() throws OsirisException {
 	 * if (nodeService.shouldIBatch())
@@ -329,16 +345,15 @@ public class OsirisScheduller {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
-	/*
-	 * @Scheduled(initialDelay = 1000, fixedDelay = Long.MAX_VALUE)
-	 * private void initializeBatchSettings() {
-	 * try {
-	 * batchSettingsService.initializeBatchSettings();
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 */
+
+	@Scheduled(initialDelay = 1000, fixedDelay = Long.MAX_VALUE)
+	private void initializeBatchSettings() {
+		try {
+			batchSettingsService.initializeBatchSettings();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
 
 	@Scheduled(initialDelay = 1, fixedDelay = 1000)
 	private void checkBatch() {

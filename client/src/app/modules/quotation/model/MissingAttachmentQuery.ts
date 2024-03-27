@@ -6,4 +6,7 @@ export interface MissingAttachmentQuery {
   sendToMe: boolean;
   copyToMe: boolean;
   createdDateTime: Date | undefined;
+  firstCustomerReminderDateTime: Date | undefined;
+  secondCustomerReminderDateTime: Date | undefined;
+  thirdCustomerReminderDateTime: Date | undefined;
 }

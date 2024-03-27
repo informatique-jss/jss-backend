@@ -47,6 +47,7 @@ import { IdentiteComponent } from '../guichet-unique/identite/identite.component
 import { NatureCreationComponent } from '../guichet-unique/nature-creation/nature-creation.component';
 import { PersonnePhysiqueComponent } from '../guichet-unique/personne-physique/personne-physique.component';
 import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
+import { MissingAttachmentQueriesComponent } from '../missing-attachment-queries/missing-attachment-queries.component';
 import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { OrderingListComponent } from '../ordering-list/ordering-list.component';
@@ -161,6 +162,7 @@ const routes: Routes = [
     SelectServiceTypeDialogComponent,
     SelectServiceDialogComponent,
     SelectDocumentTypeDialogComponent,
+    MissingAttachmentQueriesComponent,
   ],
   exports: [
     OrderingListComponent,

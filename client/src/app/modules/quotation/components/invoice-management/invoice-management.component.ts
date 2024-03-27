@@ -21,6 +21,7 @@ import { CustomerOrder } from '../../model/CustomerOrder';
 import { IQuotation } from '../../model/IQuotation';
 import { InvoiceItem } from '../../model/InvoiceItem';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
+import { Service } from '../../model/Service';
 import { VatBase } from '../../model/VatBase';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { ServiceService } from '../../services/service.service';
@@ -69,7 +70,9 @@ export class InvoiceManagementComponent implements OnInit {
     private serviceService: ServiceService
   ) { }
 
-  getServiceLabel = this.serviceService.getServiceLabel;
+  getServiceLabel(service: Service) {
+    return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
+  }
 
   ngOnInit() {
     this.updateInvoiceLabelResult();

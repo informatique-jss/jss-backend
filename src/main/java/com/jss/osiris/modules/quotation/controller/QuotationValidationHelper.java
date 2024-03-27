@@ -485,9 +485,9 @@ public class QuotationValidationHelper {
                         // Do not verify date when quotation has started
                         if (isCustomerOrder) {
                                 CustomerOrderStatus status = ((CustomerOrder) quotation).getCustomerOrderStatus();
-                                if (status.getCode().equals(CustomerOrderStatus.OPEN)
+                                if (status != null && (status.getCode().equals(CustomerOrderStatus.OPEN)
                                                 || status.getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)
-                                                || status.getCode().equals(CustomerOrderStatus.ABANDONED))
+                                                || status.getCode().equals(CustomerOrderStatus.ABANDONED)))
                                         publicationDateVerification = null;
                                 else {
                                         if (currentAnnouncement != null)
@@ -518,7 +518,9 @@ public class QuotationValidationHelper {
 
                         boolean verifyAnnouncement = isCustomerOrder && targetStatusCode != null
                                         && (targetStatusCode.equals(CustomerOrderStatus.TO_BILLED)
-                                                        || targetStatusCode.equals(CustomerOrderStatus.BILLED));
+                                                        || targetStatusCode.equals(CustomerOrderStatus.BILLED)
+                                                        || announcement.getAnnouncementStatus().getCode().equals(
+                                                                        AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
 
                         validationHelper.validateDateMin(announcement.getPublicationDate(), verifyAnnouncement,
                                         publicationDateVerification,

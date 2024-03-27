@@ -40,6 +40,10 @@ public class MissingAttachmentQuery {
     private Boolean copyToMe;
     private LocalDateTime createdDateTime;
 
+    private LocalDateTime firstCustomerReminderDateTime;
+    private LocalDateTime secondCustomerReminderDateTime;
+    private LocalDateTime thirdCustomerReminderDateTime;
+
     public Integer getId() {
         return id;
     }
@@ -94,6 +98,30 @@ public class MissingAttachmentQuery {
 
     public void setCreatedDateTime(LocalDateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public LocalDateTime getFirstCustomerReminderDateTime() {
+        return firstCustomerReminderDateTime;
+    }
+
+    public void setFirstCustomerReminderDateTime(LocalDateTime firstCustomerReminderDateTime) {
+        this.firstCustomerReminderDateTime = firstCustomerReminderDateTime;
+    }
+
+    public LocalDateTime getSecondCustomerReminderDateTime() {
+        return secondCustomerReminderDateTime;
+    }
+
+    public void setSecondCustomerReminderDateTime(LocalDateTime secondCustomerReminderDateTime) {
+        this.secondCustomerReminderDateTime = secondCustomerReminderDateTime;
+    }
+
+    public LocalDateTime getThirdCustomerReminderDateTime() {
+        return thirdCustomerReminderDateTime;
+    }
+
+    public void setThirdCustomerReminderDateTime(LocalDateTime thirdCustomerReminderDateTime) {
+        this.thirdCustomerReminderDateTime = thirdCustomerReminderDateTime;
     }
 
 }

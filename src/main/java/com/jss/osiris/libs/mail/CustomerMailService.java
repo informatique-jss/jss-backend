@@ -32,4 +32,6 @@ public interface CustomerMailService {
     public void sendMail(CustomerMail mail)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
+    public void sendCustomerMailImmediatly(CustomerMail mail) throws OsirisException;
+
 }

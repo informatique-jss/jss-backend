@@ -53,7 +53,7 @@
     <mat-accordion multi>
       <mat-expansion-panel expanded="false" class="service-tab ">
         <mat-expansion-panel-header>
-          <mat-panel-title>Service - {{getServiceLabel(service,true)}}
+          <mat-panel-title>Service - {{getServiceLabel(service)}}
           </mat-panel-title>
           <mat-panel-description>
             <mat-icon color="accent" *ngIf="!editMode && service.id" matTooltip="Modifier le type de service"
@@ -100,7 +100,7 @@
   </div>
   <div class="row-field-container">
     <button mat-raised-button *ngIf="editMode" (click)="createProvision(service)" color="primary" class="mini-fab-add">
-      Ajouter une prestation pour le service {{getServiceLabel(service,false)}}
+      Ajouter une prestation pour le service {{getServiceLabel(service)}}
     </button>
   </div>
 </ng-container>
@@ -176,7 +176,7 @@
     <mat-divider></mat-divider>
     <ng-container *ngFor="let service of asso.services">
       <button mat-menu-item (click)="sendMissingAttachmentMail(service)">
-        <span>Demander des pièces manquantes pour le service {{getServiceLabel(service,false)}}</span>
+        <span>Demander des pièces manquantes pour le service {{getServiceLabel(service)}}</span>
       </button>
     </ng-container>
     <mat-divider></mat-divider>
@@ -192,7 +192,7 @@
   </button>
   <mat-divider></mat-divider>
   <button mat-menu-item (click)="sendMissingAttachmentMail(asso.services[0])" *ngIf="onlyOneProvision()">
-    <span>Demander des pièces manquantes pour le service {{getServiceLabel(asso.services[0],false)}}</span>
+    <span>Demander des pièces manquantes pour le service {{getServiceLabel(asso.services[0])}}</span>
   </button>
   <mat-divider></mat-divider>
   <button mat-menu-item

@@ -138,6 +138,7 @@ export class ProvisionListComponent implements OnInit {
       || this.affaireSearch.customerOrders
       || this.affaireSearch.affaire
       || this.affaireSearch.waitedCompetentAuthority
+      || this.affaireSearch.isMissingQueriesToManualRemind
     )) {
       if (!this.isForDashboard && !this.isForTiersIntegration)
         this.userPreferenceService.setUserSearchBookmark(this.affaireSearch, "prestations");

@@ -36,4 +36,8 @@ export class CustomerMailService extends AppRestService<CustomerMail>{
   getCustomerMailByConfrere(confrere: Confrere) {
     return this.getList(new HttpParams().set("idConfrere", confrere.id), "customer-mail/confrere");
   }
+
+  sendCustomerMailImmediatly(customerMail: CustomerMail) {
+    return this.get(new HttpParams().set("idCustomerMail", customerMail.id), "customer-mail/send/immediatly");
+  }
 }

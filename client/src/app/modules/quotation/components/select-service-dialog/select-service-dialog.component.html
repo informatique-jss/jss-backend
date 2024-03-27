@@ -4,9 +4,7 @@
   <ul>
     <ng-container *ngFor="let service of assoAffaireOrder.services">
       <li class="pointer" *ngIf="!currentService || currentService.id !=service.id" (click)="selectService(service)">
-        {{service.customLabel?service.customLabel : (service.serviceType.serviceFamily.serviceFamilyGroup.label+" -
-        "+service.serviceType.serviceFamily.label+" -
-        "+service.serviceType.label)}}</li>
+        {{getServiceLabel(service)}}</li>
     </ng-container>
   </ul>
 </div>

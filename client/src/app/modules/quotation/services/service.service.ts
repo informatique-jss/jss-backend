@@ -1,7 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
-import { ConstantService } from '../../miscellaneous/services/constant.service';
 import { Service } from '../../quotation/model/Service';
 import { Affaire } from '../model/Affaire';
 import { ServiceType } from '../model/ServiceType';
@@ -11,7 +10,7 @@ import { ServiceType } from '../model/ServiceType';
 })
 export class ServiceService extends AppRestService<Service>{
 
-  constructor(http: HttpClient, private constantService: ConstantService) {
+  constructor(http: HttpClient) {
     super(http, "quotation");
   }
 
@@ -31,13 +30,13 @@ export class ServiceService extends AppRestService<Service>{
     return this.get(new HttpParams().set("serviceTypeId", serviceType.id).set("serviceId", service.id), "service/modify");
   }
 
-  getServiceLabel(service: Service, displayGroupAndFamily: boolean) {
+  getServiceLabel(service: Service, displayGroupAndFamily: boolean, serviceTypeOther: ServiceType) {
     let label = "";
     if (service && service.serviceType) {
       if (displayGroupAndFamily)
         label = service.serviceType.serviceFamily.serviceFamilyGroup.label + " - " + service.serviceType.serviceFamily.label + " - ";
       label += service.serviceType.label
-      if (service.serviceType.id == this.constantService.getServiceTypeOther().id && service.customLabel && service.customLabel.length > 0)
+      if (service.serviceType.id == serviceTypeOther.id && service.customLabel && service.customLabel.length > 0)
         return service.customLabel;
     }
     return label;

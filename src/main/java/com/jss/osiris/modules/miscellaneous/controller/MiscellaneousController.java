@@ -1233,6 +1233,16 @@ public class MiscellaneousController {
         return new ResponseEntity<OsirisLog>(globalExceptionHandler.addOrUpdateLog(osirisLog), HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/customer-mail/send/immediatly")
+    public ResponseEntity<Boolean> sendCustomerMailImmediatly(@RequestParam Integer idCustomerMail)
+            throws OsirisValidationException, OsirisException {
+        CustomerMail customerMail = customerMailService.getMail(idCustomerMail);
+        if (customerMail == null)
+            throw new OsirisValidationException("customerMail");
+        customerMailService.sendCustomerMailImmediatly(customerMail);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/customer-mail/quotation")
     public ResponseEntity<List<CustomerMail>> getCustomerMailByQuotation(@RequestParam Integer idQuotation)
             throws OsirisValidationException, OsirisException {

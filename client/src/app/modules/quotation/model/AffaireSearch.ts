@@ -12,4 +12,6 @@ export interface AffaireSearch {
   customerOrders: ITiers[];
   affaire: Affaire;
   waitedCompetentAuthority: CompetentAuthority;
+  isMissingQueriesToManualRemind: boolean;
+  commercial: Employee | undefined;
 }

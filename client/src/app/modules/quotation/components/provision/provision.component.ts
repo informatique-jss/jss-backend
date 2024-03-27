@@ -91,7 +91,10 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   ) { }
 
   affaireForm = this.formBuilder.group({});
-  getServiceLabel = this.serviceService.getServiceLabel;
+
+  getServiceLabel(service: Service) {
+    return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
+  }
 
   ngOnInit() {
     this.appService.changeHeaderTitle("Prestation");
@@ -645,7 +648,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     if (provision.announcement && provision.announcement.department)
       label += " - Département " + provision.announcement.department.code;
     if (!doNotDisplayService)
-      label = this.serviceService.getServiceLabel(service, false) + " - " + label;
+      label = this.getServiceLabel(service) + " - " + label;
     return label;
   }
 }

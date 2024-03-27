@@ -58,6 +58,8 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " left join domiciliation_status doms on doms.id = dom.id_domicilisation_status " +
                         " left join simple_provision sp on sp.id = p.id_simple_provision" +
                         " left join simple_provision_status sps on sps.id = sp.id_simple_provision_status " +
+                        " left join missing_attachment_query ma on ma.id_service = service.id and ma.third_customer_reminder_date_time is not null and (sp.id_simple_provision_status = :simpleProvisionStatusWaitingAttachmentId or fo.id_formalite_status = :formaliteStatusWaitingAttachmentId ) and  ma.third_customer_reminder_date_time+INTERVAL '8 day' < now() "
+                        +
                         " left join competent_authority sp_ca on sp_ca.id = coalesce(sp.id_waited_competent_authority,fo.id_waited_competent_authority) "
                         +
                         " left join competent_authority ca on ca.id = a.id_competent_authority " +
@@ -78,8 +80,9 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         +
                         " and ( :waitedCompetentAuthorityId =0 or sp.id_waited_competent_authority =:waitedCompetentAuthorityId) "
                         +
-                        " and ( :affaireId =0 or a.id =:affaireId) "
-                        +
+                        " and ( :affaireId =0 or a.id =:affaireId) " +
+                        " and ( :isMissingQueriesToManualRemind = false or ma.id is not null) " +
+                        " and ( :commercialId = 0 or t2.id_commercial=:commercialId) " +
                         " and ( COALESCE(:assignedTo) =0 or p.id_employee in (:assignedTo)) " +
                         " and (:label ='' or upper(a.denomination)  like '%' || upper(CAST(:label as text))  || '%'  or upper(a.firstname)  like '%' || upper(CAST(:label as text)) || '%' or upper(a.lastname)  like '%' || upper(CAST(:label as text)) || '%') "
                         +
@@ -99,5 +102,9 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         @Param("excludedCustomerOrderStatusCode") List<String> excludedCustomerOrderStatusCode,
                         @Param("customerOrder") List<Integer> customerOrder,
                         @Param("waitedCompetentAuthorityId") Integer waitedCompetentAuthorityId,
-                        @Param("affaireId") Integer affaireId);
+                        @Param("affaireId") Integer affaireId,
+                        @Param("isMissingQueriesToManualRemind") Boolean isMissingQueriesToManualRemind,
+                        @Param("simpleProvisionStatusWaitingAttachmentId") Integer simpleProvisionStatusWaitingAttachmentId,
+                        @Param("formaliteStatusWaitingAttachmentId") Integer formaliteStatusWaitingAttachmentId,
+                        @Param("commercialId") Integer commercialId);
 }

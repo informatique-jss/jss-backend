@@ -7,6 +7,7 @@ import { QuotationComponent } from 'src/app/modules/quotation/components/quotati
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
+import { Service } from 'src/app/modules/quotation/model/Service';
 import { VatBase } from 'src/app/modules/quotation/model/VatBase';
 import { CustomerOrderService } from 'src/app/modules/quotation/services/customer.order.service';
 import { QuotationService } from 'src/app/modules/quotation/services/quotation.service';
@@ -123,7 +124,10 @@ export class InvoiceDetailsComponent implements OnInit {
 
   getResponsableName = getResponsableName;
   getLetteringDate = getLetteringDate;
-  getServiceLabel = this.serviceService.getServiceLabel;
+
+  getServiceLabel(service: Service) {
+    return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
+  }
 
   computePreTaxPriceTotal(quotation: IQuotation): number {
     return QuotationComponent.computePreTaxPriceTotal(quotation);

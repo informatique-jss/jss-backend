@@ -196,7 +196,7 @@
                                                                     commande dont le traitement débutera dès réception
                                                                     de votre acompte d'un montant de <span
                                                                         th:text="${#numbers.formatDecimal(depositAmount,1,2)}">
-                                                                        €</span>.</br>Le
+                                                                        €</span>.<br />Le
                                                                     montant de cet acompte sera déduit de la facture
                                                                     finale qui vous sera transmise par mail
                                                                     ultérieurement.</p>
@@ -205,7 +205,8 @@
                                                                 <p>➡️ <strong>Virement</strong> en indiquant cette
                                                                     référence dans le
                                                                     libellé : <span
-                                                                        th:text="${customerOrder.id}"></span></br>IBAN /
+                                                                        th:text="${customerOrder.id}"></span><br />IBAN
+                                                                    /
                                                                     BIC : <span th:text="${ibanJss}"></span> / <span
                                                                         th:text="${bicJss}"></span></p>
                                                                 <p>➡️ <strong>Carte bancaire</strong> en flashant le QR
@@ -254,10 +255,10 @@
                                                                 <p><span style="font-size: 18px;"><span
                                                                             th:text="${replyToEmployee.firstname}"></span>
                                                                         <span
-                                                                            th:text="${replyToEmployee.lastname}"></span></span></br>
+                                                                            th:text="${replyToEmployee.lastname}"></span></span><br />
                                                                     <span
-                                                                        th:text="${replyToEmployee.title}"></span></br>
-                                                                    01 47 03 10 10</br>
+                                                                        th:text="${replyToEmployee.title}"></span><br />
+                                                                    01 47 03 10 10<br />
                                                                     <a href="" style="text-decoration:underline">
                                                                         <span
                                                                             style="color:rgb(35, 61, 86);; text-decoration:none"><span

@@ -5,11 +5,20 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
 
 public interface MissingAttachmentQueryService {
-    public MissingAttachmentQuery getMissingAttachmentQuery(Integer id);
+        public MissingAttachmentQuery getMissingAttachmentQuery(Integer id);
 
-    public MissingAttachmentQuery addOrUpdateMissingAttachmentQuery(MissingAttachmentQuery missingAttachmentQuery);
+        public MissingAttachmentQuery addOrUpdateMissingAttachmentQuery(MissingAttachmentQuery missingAttachmentQuery);
 
-    public void sendMissingAttachmentQueryToCustomer(MissingAttachmentQuery query)
-            throws OsirisException, OsirisClientMessageException;
+        public MissingAttachmentQuery sendMissingAttachmentQueryToCustomer(MissingAttachmentQuery query,
+                        boolean isForcedReminder)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public void sendRemindersToCustomerForMissingAttachmentQuery() throws OsirisException;
+
+        public void sendReminderToCustomerForMissingAttachmentQuery(MissingAttachmentQuery query)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public MissingAttachmentQuery sendMissingAttachmentQueryImmediatly(MissingAttachmentQuery query)
+                        throws OsirisException, OsirisClientMessageException;
 
 }

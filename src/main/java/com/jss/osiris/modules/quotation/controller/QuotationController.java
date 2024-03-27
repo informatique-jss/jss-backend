@@ -859,7 +859,8 @@ public class QuotationController {
     if (affaireSearch.getLabel() == null
         && affaireSearch.getAssignedTo() == null && affaireSearch.getResponsible() == null
         && affaireSearch.getStatus() == null && affaireSearch.getCustomerOrders() == null
-        && affaireSearch.getAffaire() == null && affaireSearch.getWaitedCompetentAuthority() == null)
+        && affaireSearch.getAffaire() == null && affaireSearch.getWaitedCompetentAuthority() == null
+        && affaireSearch.getCommercial() == null)
       throw new OsirisValidationException("Label or AssignedTo or Responsible or Status");
 
     if (affaireSearch.getLabel() == null)
@@ -1956,7 +1957,7 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/mail/generate/missing-attachment")
-  public ResponseEntity<Boolean> generateAttachmentTypeMail(@RequestBody MissingAttachmentQuery query)
+  public ResponseEntity<MissingAttachmentQuery> generateAttachmentTypeMail(@RequestBody MissingAttachmentQuery query)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException {
 
     if (query.getAssoServiceDocument() == null || query.getAssoServiceDocument().size() == 0)
@@ -1975,9 +1976,23 @@ public class QuotationController {
       if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
         throw new OsirisValidationException("MailTo");
 
-      missingAttachmentQueryService.sendMissingAttachmentQueryToCustomer(query);
     }
-    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    return new ResponseEntity<MissingAttachmentQuery>(
+        missingAttachmentQueryService.sendMissingAttachmentQueryToCustomer(query, false), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/mail/generate/missing-attachment/reminder")
+  public ResponseEntity<MissingAttachmentQuery> sendMissingAttachmentQueryImmediatly(
+      @RequestParam Integer missingAttachmentQueryId)
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+
+    MissingAttachmentQuery query = missingAttachmentQueryService.getMissingAttachmentQuery(missingAttachmentQueryId);
+
+    if (missingAttachmentQueryId == null)
+      throw new OsirisValidationException("missingAttachmentQuery");
+
+    return new ResponseEntity<MissingAttachmentQuery>(
+        missingAttachmentQueryService.sendMissingAttachmentQueryImmediatly(query), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/mail/generate/publication/flag")

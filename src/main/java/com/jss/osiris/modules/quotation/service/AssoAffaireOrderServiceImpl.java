@@ -564,6 +564,11 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             responsibleId.add(0);
         }
 
+        Integer commercialId = 0;
+        if (affaireSearch.getCommercial() != null) {
+            commercialId = affaireSearch.getCommercial().getId();
+        }
+
         affaireId = 0;
         if (affaireSearch.getAffaire() != null)
             affaireId = affaireSearch.getAffaire().getId();
@@ -588,8 +593,17 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.WAITING_DEPOSIT);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.ABANDONED);
 
+        if (affaireSearch.getIsMissingQueriesToManualRemind() == null)
+            affaireSearch.setIsMissingQueriesToManualRemind(false);
+
         return assoAffaireOrderRepository.findAsso(responsibleId,
                 assignedId, affaireSearch.getLabel(),
-                statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId, affaireId);
+                statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId, affaireId,
+                affaireSearch.getIsMissingQueriesToManualRemind(),
+                simpleProvisionStatusService
+                        .getSimpleProvisionStatusByCode(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT)
+                        .getId(),
+                formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_WAITING_DOCUMENT).getId(),
+                commercialId);
     }
 }

@@ -74,7 +74,7 @@
             <td colspan="2">
                 <table style=" width: 100%;">
                     <tr>
-                        <td style="padding-bottom: 10px;">
+                        <td>
                             <p>Paris le <span th:text="${invoiceCreatedDate}"></span></p>
                         </td>
                     </tr>
@@ -93,7 +93,7 @@
                 </table>
                 <table style=" width: 100%;">
                     <tr>
-                        <td style="padding-top: 10px;">
+                        <td>
                             <span th:if="${invoice.billingLabelIntercommunityVat!=null}">Numéro de TVA :<span
                                     th:text="${invoice.billingLabelIntercommunityVat}"></span>
                         </td>
@@ -125,13 +125,12 @@
             </tr>
             <th:block th:each="service : ${asso.services}">
                 <tr>
-                    <td style="padding-top: 20px; text-align : center">
+                    <td style="padding-top: 20px; text-align : center" colspan="2">
                         <strong><span th:if="${service.customLabel!=null}"
                                 th:text="${service.customLabel}"></span></strong>
                         <strong><span th:if="${service.customLabel==null}"
                                 th:text="${service.serviceType.label}"></span></strong>
                     </td>
-                    <td class="td-with-price"></td>
                 </tr>
                 <th:block th:each="invoiceItem : ${service.provisions[0].invoiceItems}"
                     th:if="${invoiceItem.preTaxPrice!=0} or ${invoiceItem.isGifted}">

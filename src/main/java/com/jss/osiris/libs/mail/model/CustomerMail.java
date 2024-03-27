@@ -68,69 +68,11 @@ public class CustomerMail {
 
     private String headerPicture;
 
-    @Column(length = 1000)
-    private String title;
-
-    @Column(length = 2000)
-    private String subtitle;
-
-    @Column(length = 1000)
-    private String label;
-
-    @Column(length = 2000)
-    private String labelSubtitle;
-
     @Column(length = 2000)
     private String explaination;
 
-    @Column(columnDefinition = "TEXT")
-    private String explainationElements;
-
-    @Column(length = 2000)
-    private String explaination2;
-
-    @Column(length = 2000)
-    private String explaination3;
-
-    @Column(length = 2000)
-    private String paymentExplaination;
-
-    @Column(length = 2000)
-    private String paymentExplaination2;
-
-    @Column(length = 2000)
-    private String cbExplanation;
-
     @Column(length = 1000)
     private String cbLink;
-
-    @Column(length = 2000)
-    private String quotationValidation;
-
-    @Column(length = 1000)
-    private String quotationValidationLink;
-
-    @Column(length = 2000)
-    private String paymentExplainationWarning;
-
-    @OneToMany(mappedBy = "customerMail", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties(value = { "customerMail" }, allowSetters = true)
-    private List<VatMail> vatMails;
-
-    private Float preTaxPriceTotal;
-    private Float discountTotal;
-    private Float preTaxPriceTotalWithDicount;
-
-    @OneToMany(mappedBy = "customerMail", cascade = CascadeType.ALL)
-    private List<CustomerMailAssoAffaireOrder> customerMailAssoAffaireOrders;
-
-    private Float priceTotal;
-
-    @Column(length = 2000)
-    private String totalSubtitle;
-
-    @Column(length = 1000)
-    private String greetings;
 
     private Boolean sendToMe;
 
@@ -222,326 +164,6 @@ public class CustomerMail {
         this.headerPicture = headerPicture;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getSubtitle() {
-        return subtitle;
-    }
-
-    public void setSubtitle(String subtitle) {
-        this.subtitle = subtitle;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public String getLabelSubtitle() {
-        return labelSubtitle;
-    }
-
-    public void setLabelSubtitle(String labelSubtitle) {
-        this.labelSubtitle = labelSubtitle;
-    }
-
-    public String getExplaination() {
-        return explaination;
-    }
-
-    public void setExplaination(String explaination) {
-        this.explaination = explaination;
-    }
-
-    public String getExplainationElements() {
-        return explainationElements;
-    }
-
-    public void setExplainationElements(String explainationElements) {
-        this.explainationElements = explainationElements;
-    }
-
-    public String getExplaination2() {
-        return explaination2;
-    }
-
-    public void setExplaination2(String explaination2) {
-        this.explaination2 = explaination2;
-    }
-
-    public Float getDiscountTotal() {
-        return discountTotal;
-    }
-
-    public void setDiscountTotal(Float discountTotal) {
-        this.discountTotal = discountTotal;
-    }
-
-    public Float getPreTaxPriceTotalWithDicount() {
-        return preTaxPriceTotalWithDicount;
-    }
-
-    public void setPreTaxPriceTotalWithDicount(Float preTaxPriceTotalWithDicount) {
-        this.preTaxPriceTotalWithDicount = preTaxPriceTotalWithDicount;
-    }
-
-    public List<VatMail> getVatMails() {
-        return vatMails;
-    }
-
-    public void setVatMails(List<VatMail> vatMails) {
-        this.vatMails = vatMails;
-    }
-
-    public Float getPriceTotal() {
-        return priceTotal;
-    }
-
-    public void setPriceTotal(Float priceTotal) {
-        this.priceTotal = priceTotal;
-    }
-
-    public String getTotalSubtitle() {
-        return totalSubtitle;
-    }
-
-    public void setTotalSubtitle(String totalSubtitle) {
-        this.totalSubtitle = totalSubtitle;
-    }
-
-    public String getGreetings() {
-        return greetings;
-    }
-
-    public void setGreetings(String greetings) {
-        this.greetings = greetings;
-    }
-
-    public Float getPreTaxPriceTotal() {
-        return preTaxPriceTotal;
-    }
-
-    public void setPreTaxPriceTotal(Float preTaxPriceTotal) {
-        this.preTaxPriceTotal = preTaxPriceTotal;
-    }
-
-    public MailComputeResult getMailComputeResult() {
-        return mailComputeResult;
-    }
-
-    public void setMailComputeResult(MailComputeResult mailComputeResult) {
-        this.mailComputeResult = mailComputeResult;
-    }
-
-    public Employee getReplyTo() {
-        return replyTo;
-    }
-
-    public void setReplyTo(Employee replyTo) {
-        this.replyTo = replyTo;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public Boolean getSendToMe() {
-        return sendToMe;
-    }
-
-    public void setSendToMe(Boolean sendToMe) {
-        this.sendToMe = sendToMe;
-    }
-
-    public LocalDateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(LocalDateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
-    }
-
-    public List<CustomerMailAssoAffaireOrder> getCustomerMailAssoAffaireOrders() {
-        return customerMailAssoAffaireOrders;
-    }
-
-    public void setCustomerMailAssoAffaireOrders(List<CustomerMailAssoAffaireOrder> customerMailAssoAffaireOrders) {
-        this.customerMailAssoAffaireOrders = customerMailAssoAffaireOrders;
-    }
-
-    public CustomerOrder getCustomerOrder() {
-        return customerOrder;
-    }
-
-    public void setCustomerOrder(CustomerOrder customerOrder) {
-        this.customerOrder = customerOrder;
-    }
-
-    public String getCbExplanation() {
-        return cbExplanation;
-    }
-
-    public void setCbExplanation(String cbExplanation) {
-        this.cbExplanation = cbExplanation;
-    }
-
-    public String getCbLink() {
-        return cbLink;
-    }
-
-    public void setCbLink(String cbLink) {
-        this.cbLink = cbLink;
-    }
-
-    public Employee getSendToMeEmployee() {
-        return sendToMeEmployee;
-    }
-
-    public void setSendToMeEmployee(Employee sendToMeEmployee) {
-        this.sendToMeEmployee = sendToMeEmployee;
-    }
-
-    public String getExplaination3() {
-        return explaination3;
-    }
-
-    public void setExplaination3(String explaination3) {
-        this.explaination3 = explaination3;
-    }
-
-    public String getReplyToMail() {
-        return replyToMail;
-    }
-
-    public void setReplyToMail(String replyToMail) {
-        this.replyToMail = replyToMail;
-    }
-
-    public String getPaymentExplaination() {
-        return paymentExplaination;
-    }
-
-    public void setPaymentExplaination(String paymentExplaination) {
-        this.paymentExplaination = paymentExplaination;
-    }
-
-    public String getPaymentExplaination2() {
-        return paymentExplaination2;
-    }
-
-    public void setPaymentExplaination2(String paymentExplaination2) {
-        this.paymentExplaination2 = paymentExplaination2;
-    }
-
-    public String getPaymentExplainationWarning() {
-        return paymentExplainationWarning;
-    }
-
-    public void setPaymentExplainationWarning(String paymentExplainationWarning) {
-        this.paymentExplainationWarning = paymentExplainationWarning;
-    }
-
-    public List<Attachment> getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(List<Attachment> attachments) {
-        this.attachments = attachments;
-    }
-
-    public Boolean getIsSent() {
-        return isSent;
-    }
-
-    public void setIsSent(Boolean isSent) {
-        this.isSent = isSent;
-    }
-
-    public Tiers getTiers() {
-        return tiers;
-    }
-
-    public void setTiers(Tiers tiers) {
-        this.tiers = tiers;
-    }
-
-    public Quotation getQuotation() {
-        return quotation;
-    }
-
-    public void setQuotation(Quotation quotation) {
-        this.quotation = quotation;
-    }
-
-    public Responsable getResponsable() {
-        return responsable;
-    }
-
-    public void setResponsable(Responsable responsable) {
-        this.responsable = responsable;
-    }
-
-    public Confrere getConfrere() {
-        return confrere;
-    }
-
-    public void setConfrere(Confrere confrere) {
-        this.confrere = confrere;
-    }
-
-    public Boolean getCopyToMe() {
-        return copyToMe;
-    }
-
-    public void setCopyToMe(Boolean copyToMe) {
-        this.copyToMe = copyToMe;
-    }
-
-    public String getQuotationValidation() {
-        return quotationValidation;
-    }
-
-    public void setQuotationValidation(String quotationValidation) {
-        this.quotationValidation = quotationValidation;
-    }
-
-    public String getQuotationValidationLink() {
-        return quotationValidationLink;
-    }
-
-    public void setQuotationValidationLink(String quotationValidationLink) {
-        this.quotationValidationLink = quotationValidationLink;
-    }
-
-    public Rff getRff() {
-        return rff;
-    }
-
-    public void setRff(Rff rff) {
-        this.rff = rff;
-    }
-
-    public String getMailTemplate() {
-        return mailTemplate;
-    }
-
-    public void setMailTemplate(String mailTemplate) {
-        this.mailTemplate = mailTemplate;
-    }
-
     public static String getTEMPLATE_WAITING_DEPOSIT() {
         return TEMPLATE_WAITING_DEPOSIT;
     }
@@ -564,6 +186,14 @@ public class CustomerMail {
 
     public static void setTEMPLATE_QUOTATION_VALIDATED(String tEMPLATE_QUOTATION_VALIDATED) {
         TEMPLATE_QUOTATION_VALIDATED = tEMPLATE_QUOTATION_VALIDATED;
+    }
+
+    public static String getTEMPLATE_SEND_CREDIT_NOTE() {
+        return TEMPLATE_SEND_CREDIT_NOTE;
+    }
+
+    public static void setTEMPLATE_SEND_CREDIT_NOTE(String tEMPLATE_SEND_CREDIT_NOTE) {
+        TEMPLATE_SEND_CREDIT_NOTE = tEMPLATE_SEND_CREDIT_NOTE;
     }
 
     public static String getTEMPLATE_CUSTOMER_ORDER_IN_PROGRESS() {
@@ -612,14 +242,6 @@ public class CustomerMail {
 
     public static void setTEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE(String tEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE) {
         TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE = tEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE;
-    }
-
-    public Provision getProvision() {
-        return provision;
-    }
-
-    public void setProvision(Provision provision) {
-        this.provision = provision;
     }
 
     public static String getTEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE() {
@@ -705,12 +327,172 @@ public class CustomerMail {
         TEMPLATE_SEND_RFF = tEMPLATE_SEND_RFF;
     }
 
+    public String getExplaination() {
+        return explaination;
+    }
+
+    public void setExplaination(String explaination) {
+        this.explaination = explaination;
+    }
+
+    public String getCbLink() {
+        return cbLink;
+    }
+
+    public void setCbLink(String cbLink) {
+        this.cbLink = cbLink;
+    }
+
+    public Boolean getSendToMe() {
+        return sendToMe;
+    }
+
+    public void setSendToMe(Boolean sendToMe) {
+        this.sendToMe = sendToMe;
+    }
+
+    public Boolean getCopyToMe() {
+        return copyToMe;
+    }
+
+    public void setCopyToMe(Boolean copyToMe) {
+        this.copyToMe = copyToMe;
+    }
+
+    public MailComputeResult getMailComputeResult() {
+        return mailComputeResult;
+    }
+
+    public void setMailComputeResult(MailComputeResult mailComputeResult) {
+        this.mailComputeResult = mailComputeResult;
+    }
+
+    public Employee getReplyTo() {
+        return replyTo;
+    }
+
+    public void setReplyTo(Employee replyTo) {
+        this.replyTo = replyTo;
+    }
+
+    public String getReplyToMail() {
+        return replyToMail;
+    }
+
+    public void setReplyToMail(String replyToMail) {
+        this.replyToMail = replyToMail;
+    }
+
+    public Employee getSendToMeEmployee() {
+        return sendToMeEmployee;
+    }
+
+    public void setSendToMeEmployee(Employee sendToMeEmployee) {
+        this.sendToMeEmployee = sendToMeEmployee;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public LocalDateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(LocalDateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+    public CustomerOrder getCustomerOrder() {
+        return customerOrder;
+    }
+
+    public void setCustomerOrder(CustomerOrder customerOrder) {
+        this.customerOrder = customerOrder;
+    }
+
+    public Quotation getQuotation() {
+        return quotation;
+    }
+
+    public void setQuotation(Quotation quotation) {
+        this.quotation = quotation;
+    }
+
+    public Tiers getTiers() {
+        return tiers;
+    }
+
+    public void setTiers(Tiers tiers) {
+        this.tiers = tiers;
+    }
+
+    public Responsable getResponsable() {
+        return responsable;
+    }
+
+    public void setResponsable(Responsable responsable) {
+        this.responsable = responsable;
+    }
+
+    public Confrere getConfrere() {
+        return confrere;
+    }
+
+    public void setConfrere(Confrere confrere) {
+        this.confrere = confrere;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    public Boolean getIsSent() {
+        return isSent;
+    }
+
+    public void setIsSent(Boolean isSent) {
+        this.isSent = isSent;
+    }
+
+    public Rff getRff() {
+        return rff;
+    }
+
+    public void setRff(Rff rff) {
+        this.rff = rff;
+    }
+
     public MissingAttachmentQuery getMissingAttachmentQuery() {
         return missingAttachmentQuery;
     }
 
     public void setMissingAttachmentQuery(MissingAttachmentQuery missingAttachmentQuery) {
         this.missingAttachmentQuery = missingAttachmentQuery;
+    }
+
+    public Provision getProvision() {
+        return provision;
+    }
+
+    public void setProvision(Provision provision) {
+        this.provision = provision;
+    }
+
+    public String getMailTemplate() {
+        return mailTemplate;
+    }
+
+    public void setMailTemplate(String mailTemplate) {
+        this.mailTemplate = mailTemplate;
     }
 
     public LocalDateTime getToSendAfter() {
@@ -727,14 +509,6 @@ public class CustomerMail {
 
     public void setIsCancelled(Boolean isCancelled) {
         this.isCancelled = isCancelled;
-    }
-
-    public static String getTEMPLATE_SEND_CREDIT_NOTE() {
-        return TEMPLATE_SEND_CREDIT_NOTE;
-    }
-
-    public static void setTEMPLATE_SEND_CREDIT_NOTE(String tEMPLATE_SEND_CREDIT_NOTE) {
-        TEMPLATE_SEND_CREDIT_NOTE = tEMPLATE_SEND_CREDIT_NOTE;
     }
 
     public Boolean getIsLastReminder() {

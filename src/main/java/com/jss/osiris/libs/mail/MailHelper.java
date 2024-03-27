@@ -293,20 +293,29 @@ public class MailHelper {
             }
 
             if (mail.getAttachments() != null) {
+                List<Integer> attachmentsDone = new ArrayList<Integer>();
                 for (Attachment attachment : mail.getAttachments()) {
-                    message.addAttachment(attachment.getUploadedFile().getFilename(),
-                            new File(attachment.getUploadedFile().getPath()));
-
-                    if (mail.getSendToMe() == null || mail.getSendToMe() == false) {
-                        attachment.setIsAlreadySent(true);
-                        attachmentService.addOrUpdateAttachment(attachment);
+                    if ((attachment.getParentAttachment() == null && !attachmentsDone.contains(attachment.getId()))
+                            || (attachment.getParentAttachment() != null
+                                    && !attachmentsDone.contains(attachment.getParentAttachment().getId()))) {
                         if (attachment.getParentAttachment() != null)
-                            attachment.getParentAttachment().setIsAlreadySent(true);
-                        else if (attachment != null)
-                            attachment.setIsAlreadySent(true);
+                            attachmentsDone.add(attachment.getParentAttachment().getId());
+                        else
+                            attachmentsDone.add(attachment.getId());
+                        message.addAttachment(attachment.getUploadedFile().getFilename(),
+                                new File(attachment.getUploadedFile().getPath()));
 
-                        if (attachment != null && attachment.getParentAttachment() != null)
-                            attachmentService.addOrUpdateAttachment(attachment.getParentAttachment());
+                        if (mail.getSendToMe() == null || mail.getSendToMe() == false) {
+                            attachment.setIsAlreadySent(true);
+                            attachmentService.addOrUpdateAttachment(attachment);
+                            if (attachment.getParentAttachment() != null)
+                                attachment.getParentAttachment().setIsAlreadySent(true);
+                            else if (attachment != null)
+                                attachment.setIsAlreadySent(true);
+
+                            if (attachment != null && attachment.getParentAttachment() != null)
+                                attachmentService.addOrUpdateAttachment(attachment.getParentAttachment());
+                        }
                     }
                 }
             }
@@ -341,7 +350,8 @@ public class MailHelper {
             renderer.setDocumentFromString(
                     htmlContent.replaceAll("\\p{C}", " ")
                             .replace("&mail", "mail").replace("&validationToken", "validationToken")
-                            .replaceAll("&", "<![CDATA[&]]>").replaceAll("&#160;", " "));
+                            .replaceAll("&", "<![CDATA[&]]>").replaceAll("&#160;", " ")
+                            .replaceAll("<br/>", "<![CDATA[<br/>]]>"));
             renderer.setScaleToFit(true);
             renderer.layout();
             renderer.createPDF(outputStream);
@@ -793,9 +803,6 @@ public class MailHelper {
             throw new OsirisException(null,
                     "Unable to find reading proof PDF for CustomerOrder n°" + customerOrder.getId());
 
-        mail.setExplaination2(
-                "Merci de répondre directement à ce mail pour confirmer votre Bon à Tirer ou tout autre retour concernant cette annonce.");
-
         mail.setAttachments(attachments);
         mail.setReplyTo(currentProvision.getAssignedTo());
         mail.setSendToMe(sendToMe);
@@ -990,7 +997,7 @@ public class MailHelper {
         if (isReminder || isLastReminder)
             mail.setMailTemplate(CustomerMail.TEMPLATE_INVOICE_REMINDER);
 
-        mail.setIsLastReminder(true);
+        mail.setIsLastReminder(isLastReminder);
 
         Invoice invoice = null;
         for (Invoice invoiceCo : mail.getCustomerOrder().getInvoices())
@@ -1155,12 +1162,12 @@ public class MailHelper {
 
         if (creditNote != null)
             mail.setSubject(
-                    "Votre facture n°" + creditNote.getId() + " concernant la commande n°" + customerOrder.getId()
+                    "Votre avoir n°" + creditNote.getId() + " concernant la commande n°" + customerOrder.getId()
                             + " - "
                             + getCustomerOrderAffaireLabel(customerOrder, null));
         else
             mail.setSubject(
-                    "Votre facture concernant la commande n°" + customerOrder.getId() + " - "
+                    "Votre avoir concernant la commande n°" + customerOrder.getId() + " - "
                             + getCustomerOrderAffaireLabel(customerOrder, null));
 
         mailService.addMailToQueue(mail);

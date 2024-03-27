@@ -6,7 +6,8 @@
       </mat-form-field>
     </div>
     <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="customerMails"
-      tableName="Mails automatiques" [filterText]="searchText" [isSmallerHeight]="true">
+      tableName="Mails automatiques" [filterText]="searchText" [isSmallerHeight]="true"
+      [refreshTable]="refreshTable.asObservable()">
     </sort-table>
   </div>
 </div>

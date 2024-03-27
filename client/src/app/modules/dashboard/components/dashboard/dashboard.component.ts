@@ -67,6 +67,7 @@ export class DashboardComponent implements OnInit {
   AFFAIRE_SIMPLE_PROVISION_AUTHORITY_REJECTED = "Mes formalités rejetées par l'AC"
   AFFAIRE_SIMPLE_PROVISION_AUTHORITY_VALIDATED = "Mes formalités validées par l'AC"
   AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT = "Mes formalités simples en attente de documents"
+  AFFAIRE_MISSING_ATTACHMENT_QUERY_TO_MANUALLY_REMINDER = "Mes formalités en PM à relancer manuellement"
 
   affaireSearchInProgress: AffaireSearch = {} as AffaireSearch;
   affaireSearchToDo: AffaireSearch = {} as AffaireSearch;
@@ -76,6 +77,7 @@ export class DashboardComponent implements OnInit {
   affaireSearcAuthorityRejected: AffaireSearch = {} as AffaireSearch;
   affaireSearcAuthorityValidated: AffaireSearch = {} as AffaireSearch;
   affaireSearchWaitingDocument: AffaireSearch = {} as AffaireSearch;
+  affaireSearchMissingAttachmentQueryManually: AffaireSearch = {} as AffaireSearch;
 
   ORDER_OPEN = "Mes commandes ouvertes";
   ALL_ORDER_OPEN = "Commandes ouvertes";
@@ -115,7 +117,7 @@ export class DashboardComponent implements OnInit {
   this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDERS_AWAITING_DEPOSIT, this.ORDER_OPEN, this.ALL_ORDER_OPEN,
   this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY,
   this.AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO, this.QUOTATION_SENT,
-  this.PROVISION_BOARD, this.AFFAIRE_SIMPLE_PROVISION_AUTHORITY_REJECTED, this.AFFAIRE_SIMPLE_PROVISION_AUTHORITY_VALIDATED].sort((a, b) => a.localeCompare(b));
+  this.PROVISION_BOARD, this.AFFAIRE_SIMPLE_PROVISION_AUTHORITY_REJECTED, this.AFFAIRE_SIMPLE_PROVISION_AUTHORITY_VALIDATED, this.AFFAIRE_MISSING_ATTACHMENT_QUERY_TO_MANUALLY_REMINDER].sort((a, b) => a.localeCompare(b));
 
   BOX_SIZE_X_SMALL = "Zoom très petit";
   BOX_SIZE_SMALL = "Zoom petit";
@@ -188,6 +190,9 @@ export class DashboardComponent implements OnInit {
 
         this.affaireSearcAuthorityRejected.assignedTo = this.currentEmployee;
         this.affaireSearcAuthorityRejected.status = this.formaliteStatus.filter(stauts => stauts.code == FORMALITE_AUTHORITY_REJECTED);
+
+        this.affaireSearchMissingAttachmentQueryManually.commercial = this.currentEmployee;
+        this.affaireSearchMissingAttachmentQueryManually.isMissingQueriesToManualRemind = true;
 
         this.affaireSearcAuthorityValidated.assignedTo = this.currentEmployee;
         this.affaireSearcAuthorityValidated.status = this.formaliteStatus.filter(stauts => stauts.code == FORMALITE_AUTHORITY_VALIDATED);

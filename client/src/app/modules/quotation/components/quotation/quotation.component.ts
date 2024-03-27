@@ -134,7 +134,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private changeDetectorRef: ChangeDetectorRef) { }
 
   quotationForm = this.formBuilder.group({});
-  getServiceLabel = this.serviceService.getServiceLabel;
+
+  getServiceLabel(service: Service) {
+    return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
+  }
 
   ngAfterContentChecked(): void {
     this.changeDetectorRef.detectChanges();
@@ -303,7 +306,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   saveQuotation(): boolean {
-
+    this.setOpenStatus();
     // Can't find a way to make it work correctly ...
     replaceDocument(this.constantService.getDocumentTypeBilling(), this.quotation, this.quotationManagementComponent?.getBillingDocument()!);
     replaceDocument(this.constantService.getDocumentTypeDigital(), this.quotation, this.quotationManagementComponent?.getDigitalDocument()!);
@@ -590,15 +593,14 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
 
   changeStatus(targetStatus: QuotationStatus) {
-    let currentStatusOpen = this.isStatusOpen;
-    this.isStatusOpen = false;
+    this.isStatusOpen = true;
     this.editMode = true;
     setTimeout(() => {
       if (this.getFormsStatus() || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
         if (targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
           this.setQuotationAbandonReasonAndChangeStatus(targetStatus);
         } else {
-          this.isStatusOpen = currentStatusOpen;
+          this.setOpenStatus();
           this.changeQuotationStatus(targetStatus);
         }
       }
@@ -979,8 +981,18 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     if (provision.announcement && provision.announcement.department)
       label += " - Département " + provision.announcement.department.code;
     if (!doNotDisplayService)
-      label = this.serviceService.getServiceLabel(service, false) + " - " + label;
+      label = this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther()) + " - " + label;
     return label;
+  }
+
+  hasOnePm(): boolean {
+    if (this.quotation && instanceOfCustomerOrder(this.quotation) && this.quotation.assoAffaireOrders)
+      for (let asso of this.quotation.assoAffaireOrders)
+        if (asso.services)
+          for (let service of asso.services)
+            if (service.missingAttachmentQueries && service.missingAttachmentQueries.length > 0)
+              return true;
+    return false;
   }
 
 }

@@ -464,7 +464,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                         }
 
                 if (announcement.getNoticeHeader() != null)
-                    htmlContent += announcement.getNoticeHeader() + "</br>";
+                    htmlContent += announcement.getNoticeHeader() + "<br/>";
 
                 if (announcement.getNotice() != null)
                     htmlContent += announcement.getNotice();

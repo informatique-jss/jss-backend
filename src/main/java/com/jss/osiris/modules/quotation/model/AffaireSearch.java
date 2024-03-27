@@ -16,6 +16,8 @@ public class AffaireSearch {
     private List<Tiers> customerOrders;
     private Affaire affaire;
     private CompetentAuthority waitedCompetentAuthority;
+    private Boolean isMissingQueriesToManualRemind;
+    private Employee commercial;
 
     public List<Tiers> getCustomerOrders() {
         return customerOrders;
@@ -71,6 +73,22 @@ public class AffaireSearch {
 
     public void setAffaire(Affaire affaire) {
         this.affaire = affaire;
+    }
+
+    public Boolean getIsMissingQueriesToManualRemind() {
+        return isMissingQueriesToManualRemind;
+    }
+
+    public void setIsMissingQueriesToManualRemind(Boolean isMissingQueriesToManualRemind) {
+        this.isMissingQueriesToManualRemind = isMissingQueriesToManualRemind;
+    }
+
+    public Employee getCommercial() {
+        return commercial;
+    }
+
+    public void setCommercial(Employee commercial) {
+        this.commercial = commercial;
     }
 
 }
