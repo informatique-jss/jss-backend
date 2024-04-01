@@ -276,10 +276,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                             .getIsCloseState()) {
                                 formaliteGuichetUnique.setFormalite(formalite);
                                 formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
-
-                                batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE,
-                                        formaliteGuichetUnique.getId());
                             }
+
+                            batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE,
+                                    formaliteGuichetUnique.getId());
                         }
                     }
 
