@@ -34,7 +34,7 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
 
 
   displayLabel(object: any): string {
-    return object ? object.label + " - " + object.principalAccountingAccount.code + object.accountingAccountSubNumber : '';
+    return object ? object.label + " - " + object.principalAccountingAccount.code + object.accountingAccountSubNumber.toString().padStart(8 - object.principalAccountingAccount.code.length, '0') : '';
   }
 
   mapResponse(response: AccountingAccount[]): AccountingAccount[] {

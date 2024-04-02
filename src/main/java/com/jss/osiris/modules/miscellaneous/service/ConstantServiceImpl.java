@@ -125,6 +125,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AccountingJournal getAccountingJournalBilan() throws OsirisException {
+        return getConstants().getAccountingJournalBilan();
+    }
+
+    @Override
     public TiersType getTiersTypeProspect() throws OsirisException {
         return getConstants().getTiersTypeProspect();
     }

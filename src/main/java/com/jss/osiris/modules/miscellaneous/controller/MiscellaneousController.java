@@ -530,6 +530,13 @@ public class MiscellaneousController {
         validationHelper.validateReferential(provider.getVatCollectionType(), true, "VatCollectionType");
         validationHelper.validateReferential(provider.getPaymentType(), false, "PaymentType");
         validationHelper.validateReferential(provider.getDefaultBillingItem(), false, "DefaultBillingItem");
+        if (provider.getCountry() != null
+                && provider.getCountry().getId().equals(constantService.getCountryFrance().getId()))
+            validationHelper.validateString(provider.getPostalCode(), true, 10, "PostalCode");
+        validationHelper.validateString(provider.getCedexComplement(), false, 20, "CedexComplement");
+        validationHelper.validateString(provider.getAddress(), true, 100, "Address");
+        validationHelper.validateString(provider.getSiren(), false, 9, "SIREN");
+        validationHelper.validateString(provider.getSiret(), false, 14, "SIRET");
 
         return new ResponseEntity<Provider>(providerService.addOrUpdateProvider(provider), HttpStatus.OK);
     }

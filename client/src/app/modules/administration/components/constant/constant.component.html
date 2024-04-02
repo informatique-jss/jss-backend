@@ -83,6 +83,14 @@
           </tr>
           <tr>
             <td>
+              <select-accounting-journal [(model)]="constant.accountingJournalBilan" [form]="constantForm"
+                [isMandatory]="true" propertyName="accountingJournalBilan" label="Journal de comptabilité - Bilan"
+                [isDisabled]="!editMode">
+              </select-accounting-journal>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-tiers-type [(model)]="constant.tiersTypeProspect" [form]="constantForm" [isMandatory]="true"
                 propertyName="tiersTypeProspect" label="Type de tiers - prospect" [isDisabled]="!editMode">
               </select-tiers-type>

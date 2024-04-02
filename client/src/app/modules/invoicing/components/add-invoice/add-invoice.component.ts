@@ -24,6 +24,7 @@ import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { IndexEntity } from '../../../../routing/search/IndexEntity';
 import { IndexEntityService } from '../../../../routing/search/index.entity.service';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { BillingItem } from '../../../miscellaneous/model/BillingItem';
 import { CompetentAuthorityService } from '../../../miscellaneous/services/competent.authority.service';
 import { CustomerOrder } from '../../../quotation/model/CustomerOrder';
@@ -62,6 +63,7 @@ export class AddInvoiceComponent implements OnInit {
     private competentAuthorityService: CompetentAuthorityService,
     public deboursAmontInvoicedDialog: MatDialog,
     private indexEntityService: IndexEntityService,
+    private habilitationsService: HabilitationsService,
   ) {
   }
 
@@ -243,6 +245,22 @@ export class AddInvoiceComponent implements OnInit {
 
   saveInvoice() {
     if (this.invoiceForm.valid && (this.invoiceItems && this.invoiceItems.length > 0 || this.invoice.competentAuthority != null && this.invoice.customerOrderForInboundInvoice != null) || this.invoice.id) {
+      if (this.invoice.manualAccountingDocumentDate && !this.habilitationsService.canAddNewInvoiceForPreviousExercize()) {
+        let limitDateInvocing = new Date();
+        limitDateInvocing.setMonth(0);
+        limitDateInvocing.setDate(1);
+
+        let limitDateAdding = new Date();
+        limitDateAdding.setMonth(0);
+        limitDateAdding.setDate(31);
+
+        let nowDate = new Date();
+        if (this.invoice.manualAccountingDocumentDate.getTime() < limitDateInvocing.getTime() && limitDateAdding.getTime() < nowDate.getTime()) {
+          this.appService.displaySnackBar("Impossible de saisir une facture sur l'exercice précédent", true, 10);
+          return;
+        }
+      }
+
       if (this.invoice.dueDate)
         this.invoice.dueDate = new Date(this.invoice.dueDate.setHours(12));
 

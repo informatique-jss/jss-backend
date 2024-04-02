@@ -4,6 +4,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
+import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Provider } from 'src/app/modules/miscellaneous/model/Provider';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -13,6 +14,7 @@ import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { PROVIDER_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
+import { CityService } from '../../../miscellaneous/services/city.service';
 
 @Component({
   selector: 'provider',
@@ -26,7 +28,8 @@ export class ProviderComponent implements OnInit {
     private appService: AppService,
     protected paymentTypeService: PaymentTypeService,
     protected activatedRoute: ActivatedRoute,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
+    private cityService: CityService
   ) {
   }
 
@@ -150,5 +153,29 @@ export class ProviderComponent implements OnInit {
 
   restoreTab() {
     this.index = this.userPreferenceService.getUserTabsSelectionIndex('provider');
+  }
+
+  fillPostalCode(city: City) {
+    if (this.selectedProvider) {
+      if (this.selectedProvider.country == null || this.selectedProvider.country == undefined)
+        this.selectedProvider.country = city.country;
+
+      if (this.selectedProvider.country.id == this.constantService.getCountryFrance().id && city.postalCode != null && !this.selectedProvider.postalCode)
+        this.selectedProvider.postalCode = city.postalCode;
+    }
+  }
+
+  fillCity(postalCode: string) {
+    if (this.selectedProvider) {
+      this.cityService.getCitiesFilteredByPostalCode(postalCode).subscribe(response => {
+        if (response != null && response != undefined && response.length == 1) {
+          let city = response[0];
+          if (this.selectedProvider!.country == null || this.selectedProvider!.country == undefined)
+            this.selectedProvider!.country = city.country;
+
+          this.selectedProvider!.city = city;
+        }
+      })
+    }
   }
 }

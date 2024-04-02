@@ -57,14 +57,15 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " j.label as accountingJournalLabel, " +
                         " j.code as accountingJournalCode, " +
                         " pa.code as principalAccountingAccountCode, " +
-                        " lpad(concat(a.accounting_account_sub_number,''),5,'0') as accountingAccountSubNumber, " +
+                        " lpad(concat(a.accounting_account_sub_number,''),8-length(pa.code),'0') as accountingAccountSubNumber, "
+                        +
                         " a.label as accountingAccountLabel, " +
                         " coalesce(r.manual_accounting_document_number,r.id_invoice||'') as manualAccountingDocumentNumber, "
                         +
                         " coalesce(r.manual_accounting_document_date, i.created_date) as manualAccountingDocumentDate, "
                         +
-                        " r.debit_amount as debitAmount, " +
-                        " r.credit_amount as creditAmount, " +
+                        " round(cast(r.debit_amount as numeric), 2) as debitAmount, " +
+                        " round(cast(r.credit_amount as numeric), 2) as creditAmount, " +
                         " concat(r.label,' ',il.label) as label, " +
                         " r.lettering_number as letteringNumber, " +
                         " r.lettering_date_time as letteringDate, " +
@@ -72,6 +73,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " r.id_customer_order	 as customerId, " +
                         " r.id_payment as paymentId, " +
                         " r.is_temporary as isTemporary, " +
+                        " r.is_from_as400 as isFromAs400, " +
                         " r2.operation_id as contrePasseOperationId, " +
                         " (select STRING_AGG( case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')',', ' order by 1) as affaireLabel from asso_affaire_order asso join affaire af on af.id = asso.id_affaire left join city on city.id = af.id_city where  asso.id_customer_order = i.customer_order_id or asso.id_customer_order = r.id_customer_order)  as affaireLabel,"
                         +
@@ -126,13 +128,13 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
 
         @Query(nativeQuery = true, value = "" +
                         "select  sum(case "
-                        + "            when record.isanouveau=false or record.is_from_as400=true then record.credit_amount "
+                        + "            when record.isanouveau=false or record.is_from_as400=true then round(cast(record.credit_amount as numeric), 2) "
                         + "        end) as creditAmount," + "        sum(case "
-                        + "            when record.isanouveau=false or record.is_from_as400=true then record.debit_amount "
+                        + "            when record.isanouveau=false or record.is_from_as400=true then round(cast(record.debit_amount as numeric), 2) "
                         + "        end) as debitAmount," + "		accounting.label as accountingAccountLabel,"
                         + "		pa.code as principalAccountingAccountCode,"
                         + "		aac.label as accountingAccountClassLabel,"
-                        + "		lpad(concat(accounting_account_sub_number,''),5,'0') as accountingAccountSubNumber,"
+                        + "		lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0') as accountingAccountSubNumber,"
                         + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '30 day') then i.total_price  end) as echoir30, "
                         + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '60 day') and i.due_date> (now() +INTERVAL '30 day')  then i.total_price  end) as echoir60, "
                         + "		sum(case when  i.due_date>now() and i.due_date> (now() +INTERVAL '60 day')  then i.total_price  end) as echoir90, "
@@ -151,7 +153,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false ) " +
-                        " group by aac.label,accounting.label,pa.code,lpad(concat(accounting_account_sub_number,''),5,'0') order by pa.code   "
+                        " group by aac.label,accounting.label,pa.code,lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0') order by pa.code   "
                         +
                         "")
         List<AccountingBalance> searchAccountingBalance(
@@ -164,14 +166,14 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("isFromAs400") Boolean isFromAs400);
 
         @Query(nativeQuery = true, value = "select" + "        sum(case "
-                        + "            when record.isanouveau=false or record.is_from_as400=true then record.credit_amount "
+                        + "            when record.isanouveau=false or record.is_from_as400=true then round(cast(record.credit_amount as numeric), 2) "
                         + "        end) as creditAmount," + "        sum(case "
-                        + "            when record.isanouveau=false or record.is_from_as400=true then record.debit_amount "
+                        + "            when record.isanouveau=false or record.is_from_as400=true then round(cast(record.debit_amount as numeric), 2) "
                         + "        end) as debitAmount," + "	 "
                         + "		aac.label as accountingAccountClassLabel,"
                         + "		pa.code as principalAccountingAccountCode,"
                         + "		case when pa.code in ('401', '411', '4091', '4191') then pa.label else accounting.label end as principalAccountingAccountLabel,"
-                        + "		case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),5,'0') ||'' end as accountingAccountSubNumber,"
+                        + "		case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0') ||'' end as accountingAccountSubNumber,"
                         + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '30 day') then i.total_price  end) as echoir30, "
                         + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '60 day') and i.due_date> (now() +INTERVAL '30 day')  then i.total_price  end) as echoir60, "
                         + "		sum(case when  i.due_date>now() and i.due_date> (now() +INTERVAL '60 day')  then i.total_price  end) as echoir90, "
@@ -190,9 +192,9 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false)  " +
-                        " group by aac.label,pa.code,case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),5,'0') ||'' end, case when pa.code in ('401', '411', '4091', '4191') then pa.label else accounting.label end  "
+                        " group by aac.label,pa.code,case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0') ||'' end, case when pa.code in ('401', '411', '4091', '4191') then pa.label else accounting.label end  "
                         +
-                        " order by pa.code, case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),5,'0') ||'' end ")
+                        " order by pa.code, case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0') ||'' end ")
         List<AccountingBalance> searchAccountingBalanceGenerale(
                         @Param("accountingClassId") Integer accountingClassId,
                         @Param("accountingAccountId") Integer accountingAccountId,

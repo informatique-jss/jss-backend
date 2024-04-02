@@ -82,6 +82,13 @@
     </table>
   </div>
 </div>
+<div *ngIf="toLetteredValues && toLetteredValues.length>0">
+  <p>Ecritures à lettrer</p>
+  <sort-table [columns]="displayedColumns" [values]="toLetteredValues" tableName="Ecritures à lettrer"
+    [isSmallestHeight]="true" [actions]="tableActionToLetterValues"
+    [refreshTable]="refreshLetteringTable.asObservable()">
+  </sort-table>
+</div>
 <button matTooltip="Exporter" mat-fab color="accent" class="second-fab-button" [matMenuTriggerFor]="menu"
   *ngIf="!tiersToDisplay">
   <mat-icon>file_download</mat-icon>
@@ -114,6 +121,10 @@
 <button matTooltip="Télécharger un relevé de comptes" mat-fab color="accent" class="second-fab-button"
   *ngIf="tiersToDisplay" (click)="downloadBillingClosureReceipt()">
   <mat-icon>download</mat-icon>
+</button>
+<button matTooltip="Lettrer les lignes sélectionnées" mat-fab color="accent" class="third-fab-button"
+  *ngIf="toLetteredValues && toLetteredValues.length>0" (click)="letterSelectedRecords()">
+  <mat-icon>spellcheck</mat-icon>
 </button>
 <button matTooltip="Envoyer un relevé de comptes" mat-fab color="accent" class="fourth-fab-button"
   *ngIf="tiersToDisplay" (click)="sendBillingClosureReceipt()">

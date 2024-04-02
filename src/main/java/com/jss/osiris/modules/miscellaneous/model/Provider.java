@@ -86,6 +86,25 @@ public class Provider implements IAttachment, IGenericTiers {
 
 	private Integer idAs400;
 
+	@Column(length = 10)
+	@IndexedField
+	private String postalCode;
+
+	@Column(length = 20)
+	private String cedexComplement;
+
+	@Column(length = 100)
+	@IndexedField
+	private String address;
+
+	@Column(length = 9)
+	@IndexedField
+	private String siren;
+
+	@Column(length = 14)
+	@IndexedField
+	private String siret;
+
 	public Integer getId() {
 		return id;
 	}
@@ -228,6 +247,46 @@ public class Provider implements IAttachment, IGenericTiers {
 
 	public void setIdAs400(Integer idAs400) {
 		this.idAs400 = idAs400;
+	}
+
+	public String getPostalCode() {
+		return postalCode;
+	}
+
+	public void setPostalCode(String postalCode) {
+		this.postalCode = postalCode;
+	}
+
+	public String getCedexComplement() {
+		return cedexComplement;
+	}
+
+	public void setCedexComplement(String cedexComplement) {
+		this.cedexComplement = cedexComplement;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getSiren() {
+		return siren;
+	}
+
+	public void setSiren(String siren) {
+		this.siren = siren;
+	}
+
+	public String getSiret() {
+		return siret;
+	}
+
+	public void setSiret(String siret) {
+		this.siret = siret;
 	}
 
 }

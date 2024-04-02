@@ -3,12 +3,14 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import { Subject } from 'rxjs';
 import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { Payment } from 'src/app/modules/invoicing/model/Payment';
 import { PaymentDetailsDialogService } from 'src/app/modules/invoicing/services/payment.details.dialog.service';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { instanceOfConfrere } from '../../../../libs/TypeHelper';
@@ -41,15 +43,19 @@ export class AccountingRecordComponent implements OnInit {
     private habilitationService: HabilitationsService,
     private paymentDetailsDialogService: PaymentDetailsDialogService,
     public confirmationDialog: MatDialog,
+    private constantService: ConstantService,
   ) { }
 
   accountingRecords: AccountingRecordSearchResult[] | undefined;
+  toLetteredValues: AccountingRecordSearchResult[] | undefined;
   displayedColumnsTotal: string[] = ['label', 'debit', 'credit'];
   accumulatedDataSource = new MatTableDataSource<AccountingRecord>();
   currentUserPosition: Point = { x: 0, y: 0 };
   displayedColumns: SortTableColumn<AccountingRecordSearchResult>[] = [] as Array<SortTableColumn<AccountingRecordSearchResult>>;
   tableAction: SortTableAction<AccountingRecordSearchResult>[] = [] as Array<SortTableAction<AccountingRecordSearchResult>>;
+  tableActionToLetterValues: SortTableAction<AccountingRecordSearchResult>[] = [] as Array<SortTableAction<AccountingRecordSearchResult>>;
   bookmark: AccountingRecordSearch | undefined;
+  refreshLetteringTable: Subject<void> = new Subject<void>();
 
   canAddNewAccountingRecord() {
     return this.habilitationService.canAddNewAccountingRecord();
@@ -100,6 +106,47 @@ export class AccountingRecordComponent implements OnInit {
       }
     }
 
+    if (this.habilitationService.canManuallyLetterAccountingRecords())
+      this.tableAction.push({
+        actionIcon: 'add', actionName: "Ajouter au lettrage en cours", actionClick: (column: SortTableAction<AccountingRecordSearchResult>, element: AccountingRecordSearchResult, event: any) => {
+          if (element) {
+            if (!this.toLetteredValues)
+              this.toLetteredValues = [];
+            if (this.toLetteredValues.indexOf(element) < 0)
+              this.toLetteredValues.push(element);
+            this.refreshLetteringTable.next();
+          }
+        }, display: true,
+      } as SortTableAction<AccountingRecordSearchResult>);
+
+    this.tableActionToLetterValues.push({
+      actionIcon: 'delete', actionName: "Supprimer l'écriture", actionClick: (column: SortTableAction<AccountingRecordSearchResult>, element: AccountingRecordSearchResult, event: any) => {
+        if (element && this.toLetteredValues) {
+          this.toLetteredValues.splice(this.toLetteredValues.indexOf(element), 1);
+        }
+      }, display: true,
+    } as SortTableAction<AccountingRecordSearchResult>);
+
+  }
+
+  letterSelectedRecords() {
+    if (this.toLetteredValues) {
+      let as400Found = false;
+      for (let record of this.toLetteredValues) {
+        if (record.isFromAs400 && record.isFromAs400 == true) {
+          as400Found = true;
+          break;
+        }
+      }
+      if (!as400Found) {
+        this.appService.displaySnackBar("Les lignes sélectionnées doivent contenir au moins une ligne de l'AS400", true, 10);
+        return;
+      }
+      this.accountingRecordService.letterRecordsForAs400(this.toLetteredValues).subscribe(res => {
+        this.toLetteredValues = [];
+        this.searchRecords();
+      })
+    }
   }
 
 
@@ -180,9 +227,9 @@ export class AccountingRecordComponent implements OnInit {
 
   setCurentFiscalYear() {
     let d = new Date();
-    this.accountingRecordSearch.startDate = new Date(d.getFullYear(), 0, 1, 12, 0, 0);
+    this.accountingRecordSearch.startDate = new Date(d.getFullYear() - 1, 11, 31, 12, 0, 0);
     let d2 = new Date();
-    this.accountingRecordSearch.endDate = new Date(d2.getFullYear() + 1, 0, 0, 12, 0, 0);
+    this.accountingRecordSearch.endDate = new Date(d2.getFullYear() + 1, 0, 1, 12, 0, 0);
   }
 
   computeBalanceAndDebitAndCreditAccumulation() {
@@ -199,21 +246,21 @@ export class AccountingRecordComponent implements OnInit {
           debit += accountingRecord.debitAmount;
           balance -= accountingRecord.debitAmount;
         }
-        accountingRecord.balance = Math.round(balance * 100) / 100;
-        accountingRecord.debitAccumulation = Math.round(debit * 100) / 100;
-        accountingRecord.creditAccumulation = Math.round(credit * 100) / 100;
+        accountingRecord.balance = balance;
+        accountingRecord.debitAccumulation = debit;
+        accountingRecord.creditAccumulation = credit;
       }
 
       let accumulatedData = [];
       let totalLine = {} as any;
       totalLine.label = "Total";
-      totalLine.debit = Math.round(debit * 100) / 100;
-      totalLine.credit = Math.round(credit * 100) / 100;
+      totalLine.debit = debit;
+      totalLine.credit = credit;
       accumulatedData.push(totalLine);
 
       let balanceLine = {} as any;
       balanceLine.label = "Balance";
-      balanceLine.credit = Math.round(balance * 100) / 100;
+      balanceLine.credit = balance;
       accumulatedData.push(balanceLine);
 
       this.accumulatedDataSource.data = accumulatedData;

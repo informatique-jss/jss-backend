@@ -48,8 +48,8 @@ export class AccountingBalanceComponent implements OnInit {
     this.displayedColumns.push({ id: "accountingAccountLabel", fieldName: "accountingAccountLabel", label: "Libellé du compte" } as SortTableColumn<AccountingBalance>);
     this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
     this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
-    this.displayedColumns.push({ id: "debitAmountSolde", fieldName: "debitAmountSolde", label: "Solde débit", valueFonction: (element: AccountingBalance, column: SortTableColumn<AccountingBalance>) => { if (element && column) return (element.debitAmount > element.creditAmount ? Math.round((element.debitAmount - element.creditAmount) * 100) / 100 + " €" : ''); return "" } } as SortTableColumn<AccountingBalance>);
-    this.displayedColumns.push({ id: "creditAmountSolde", fieldName: "creditAmountSolde", label: "Solde crédit", valueFonction: (element: AccountingBalance, column: SortTableColumn<AccountingBalance>) => { if (element && column) return (element.debitAmount <= element.creditAmount ? Math.round((element.creditAmount - element.debitAmount) * 100) / 100 + " €" : ''); return "" } } as SortTableColumn<AccountingBalance>);
+    this.displayedColumns.push({ id: "debitAmountSolde", fieldName: "debitAmountSolde", label: "Solde débit", valueFonction: (element: AccountingBalance, column: SortTableColumn<AccountingBalance>) => { if (element && column) return (element.debitAmount > element.creditAmount ? (element.debitAmount - element.creditAmount).toFixed(2) + " €" : ''); return "" } } as SortTableColumn<AccountingBalance>);
+    this.displayedColumns.push({ id: "creditAmountSolde", fieldName: "creditAmountSolde", label: "Solde crédit", valueFonction: (element: AccountingBalance, column: SortTableColumn<AccountingBalance>) => { if (element && column) return (element.debitAmount <= element.creditAmount ? (element.creditAmount - element.debitAmount).toFixed(2) + " €" : ''); return "" } } as SortTableColumn<AccountingBalance>);
     this.displayedColumns.push({ id: "echoir30", fieldName: "echoir30", label: "Créances à échoir à -30 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
     this.displayedColumns.push({ id: "echoir60", fieldName: "echoir60", label: "Créances à échoir à -60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
     this.displayedColumns.push({ id: "echoir90", fieldName: "echoir90", label: "Créances à échoir à +60 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
@@ -61,7 +61,7 @@ export class AccountingBalanceComponent implements OnInit {
     this.displayedColumnsClassTotal.push({ id: "accountingAccountLabel", fieldName: "accountingAccountLabel", label: "Libellé" } as SortTableColumn<AccountingBalance>);
     this.displayedColumnsClassTotal.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
     this.displayedColumnsClassTotal.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
-    this.displayedColumnsClassTotal.push({ id: "soldeAmount", fieldName: "soldeAmount", label: "Solde", valueFonction: (element: AccountingBalance, column: SortTableColumn<AccountingBalance>) => { return ((Math.round((element.creditAmount - element.debitAmount) * 100) / 100) + "").replace(".", ",") + " €" } } as SortTableColumn<AccountingBalance>);
+    this.displayedColumnsClassTotal.push({ id: "soldeAmount", fieldName: "soldeAmount", label: "Solde", valueFonction: (element: AccountingBalance, column: SortTableColumn<AccountingBalance>) => { return ((element.creditAmount - element.debitAmount).toFixed(2) + "").replace(".", ",") + " €" } } as SortTableColumn<AccountingBalance>);
 
     this.bookmark = this.userPreferenceService.getUserSearchBookmark("accounting-balance") as AccountingBalanceSearch;
     if (this.bookmark) {
@@ -138,12 +138,12 @@ export class AccountingBalanceComponent implements OnInit {
       let balance: number = 0;
       for (let accountingBalance of this.accountingBalances) {
         if (accountingBalance.creditAmount) {
-          credit += Math.round(accountingBalance.creditAmount * 100) / 100;
-          balance += Math.round(accountingBalance.creditAmount * 100) / 100;
+          credit += accountingBalance.creditAmount;
+          balance += accountingBalance.creditAmount;
 
           if (accountingBalance.debitAmount) {
-            debit += Math.round(accountingBalance.debitAmount * 100) / 100;
-            balance -= Math.round(accountingBalance.debitAmount * 100) / 100;
+            debit += accountingBalance.debitAmount;
+            balance -= accountingBalance.debitAmount;
           }
         }
       }
@@ -151,9 +151,9 @@ export class AccountingBalanceComponent implements OnInit {
       let accumulatedData = [];
       let totalLine = {} as any;
       totalLine.label = "Total";
-      totalLine.debit = Math.round(debit * 100) / 100;
-      totalLine.credit = Math.round(credit * 100) / 100;
-      totalLine.balance = Math.round(balance * 100) / 100;
+      totalLine.debit = debit.toFixed(2);
+      totalLine.credit = credit.toFixed(2);
+      totalLine.balance = balance.toFixed(2);
       accumulatedData.push(totalLine);
 
       this.accumulatedDataSource.data = accumulatedData;
@@ -192,9 +192,9 @@ export class AccountingBalanceComponent implements OnInit {
 
   setCurentFiscalYear() {
     let d = new Date();
-    this.accountingBalanceSearch.startDate = new Date(d.getFullYear(), 0, 1, 12, 0, 0);
+    this.accountingBalanceSearch.startDate = new Date(d.getFullYear() - 1, 11, 31, 12, 0, 0);
     let d2 = new Date();
-    this.accountingBalanceSearch.endDate = new Date(d2.getFullYear() + 1, 0, 0, 12, 0, 0);
+    this.accountingBalanceSearch.endDate = new Date(d2.getFullYear() + 1, 0, 1, 12, 0, 0);
   }
 
 }

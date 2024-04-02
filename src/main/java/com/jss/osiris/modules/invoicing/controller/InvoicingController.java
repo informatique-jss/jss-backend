@@ -3,6 +3,7 @@ package com.jss.osiris.modules.invoicing.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -898,6 +899,16 @@ public class InvoicingController {
         if (invoice.getCompetentAuthority() != null) {
             validationHelper.validateReferential(invoice.getCompetentAuthority(), true, "CompetentAuthority");
             doFound++;
+        }
+
+        if (invoice.getManualAccountingDocumentDate() != null
+                && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP)) {
+            LocalDate limitDate = LocalDate.of(LocalDate.now().getYear(), 1, 1);
+            LocalDate limitDateAdding = LocalDate.of(LocalDate.now().getYear(), 1, 31);
+            if (invoice.getManualAccountingDocumentDate().isBefore(limitDate)
+                    && LocalDate.now().isAfter(limitDateAdding)) {
+                throw new OsirisClientMessageException("Impossible de saisir une facture sur l'exercice précédent");
+            }
         }
 
         if (doFound != 1)

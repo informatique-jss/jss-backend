@@ -128,6 +128,8 @@ public class AccountingRecord implements Serializable, IId {
 	@Column(nullable = false)
 	private Boolean isANouveau;
 
+	private Boolean isFromAs400;
+
 	public Integer getId() {
 		return id;
 	}
@@ -334,6 +336,14 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setBankTransfert(BankTransfert bankTransfert) {
 		this.bankTransfert = bankTransfert;
+	}
+
+	public Boolean getIsFromAs400() {
+		return isFromAs400;
+	}
+
+	public void setIsFromAs400(Boolean isFromAs400) {
+		this.isFromAs400 = isFromAs400;
 	}
 
 }

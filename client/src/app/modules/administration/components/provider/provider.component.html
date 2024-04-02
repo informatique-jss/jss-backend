@@ -34,6 +34,15 @@
                     [form]="entityForm2" propertyName="idAs400" [isMandatory]="false" [isDisabled]="!editMode"
                     type="number"></generic-input>
                 </td>
+                <td>
+                  <generic-input [(model)]="selectedProvider.siren" label="SIREN" [form]="entityForm2"
+                    propertyName="siren" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="9"></generic-input>
+                </td>
+                <td>
+                  <generic-input [(model)]="selectedProvider.siret" label="SIRET" [form]="entityForm2"
+                    propertyName="siret" [isMandatory]="false" [isDisabled]="!editMode"
+                    [maxLength]="14"></generic-input>
+                </td>
               </tr>
             </table>
             <table class="full-width">
@@ -67,9 +76,25 @@
             <table class="full-width">
               <tr>
                 <td>
+                  <generic-input [(model)]="selectedProvider.address" label="Adresse" [form]="entityForm2"
+                    propertyName="address" [isMandatory]="true" [isDisabled]="!editMode"
+                    [maxLength]="100"></generic-input>
+                </td>
+                <td>
+                  <autocomplete-postal-code [(model)]="selectedProvider.postalCode" [form]="entityForm2"
+                    propertyName="postalCode" label="Code postal" [isDisabled]="!editMode" [isMandatory]="true"
+                    [byPassAutocompletValidator]="true" (onOptionSelected)="fillCity($event)">
+                  </autocomplete-postal-code>
+                </td>
+                <td>
+                  <generic-input [(model)]="selectedProvider.cedexComplement" label="Complément CEDEX"
+                    [form]="entityForm2" propertyName="cedexComplement" [isMandatory]="false" [isDisabled]="!editMode"
+                    [maxLength]="20"></generic-input>
+                </td>
+                <td>
                   <autocomplete-city [(model)]="selectedProvider.city" [modelCountry]="selectedProvider.country"
-                    [form]="entityForm2" propertyName="city" [isMandatory]="true" [isDisabled]="!editMode"
-                    label="Ville">
+                    [form]="entityForm2" propertyName="city" [isMandatory]="true" [isDisabled]="!editMode" label="Ville"
+                    (onOptionSelected)="fillPostalCode($event)">
                   </autocomplete-city>
                 </td>
                 <td>
