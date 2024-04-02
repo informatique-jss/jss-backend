@@ -417,9 +417,9 @@ public class MailHelper {
                 if (invoiceCo.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
                         || invoiceCo.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusPayed().getId()))
                     invoice = invoiceCo;
-                if (invoiceCo.getInvoiceStatus().getId()
+                if (invoiceCo.getCreditNote() != null && invoiceCo.getCreditNote().getInvoiceStatus().getId()
                         .equals(constantService.getInvoiceStatusCreditNoteEmited().getId()))
-                    creditNote = invoiceCo;
+                    creditNote = invoiceCo.getCreditNote();
             }
             ctx.setVariable("remainingToPay",
                     Math.round(invoiceService.getRemainingAmountToPayForInvoice(invoice) * 100f) / 100f);

@@ -53,6 +53,7 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " left join announcement_status ans on an.id_announcement_status = ans.id" +
                         " left join confrere cf on cf.id = an.id_confrere" +
                         " left join formalite fo on fo.id = p.id_formalite" +
+                        " left join formalite_guichet_unique fgu on fgu.id_formalite = fo.id" +
                         " left join formalite_status fs on fs.id = fo.id_formalite_status" +
                         " left join domiciliation dom on dom.id = p.id_domiciliation" +
                         " left join domiciliation_status doms on doms.id = dom.id_domicilisation_status " +
@@ -83,6 +84,8 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " and ( :affaireId =0 or a.id =:affaireId) " +
                         " and ( :isMissingQueriesToManualRemind = false or ma.id is not null) " +
                         " and ( :commercialId = 0 or t2.id_commercial=:commercialId) " +
+                        " and ( :formaliteGuichetUniqueStatusCode = '0' or fgu.id_status=:formaliteGuichetUniqueStatusCode) "
+                        +
                         " and ( COALESCE(:assignedTo) =0 or p.id_employee in (:assignedTo)) " +
                         " and (:label ='' or upper(a.denomination)  like '%' || upper(CAST(:label as text))  || '%'  or upper(a.firstname)  like '%' || upper(CAST(:label as text)) || '%' or upper(a.lastname)  like '%' || upper(CAST(:label as text)) || '%') "
                         +
@@ -106,5 +109,6 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         @Param("isMissingQueriesToManualRemind") Boolean isMissingQueriesToManualRemind,
                         @Param("simpleProvisionStatusWaitingAttachmentId") Integer simpleProvisionStatusWaitingAttachmentId,
                         @Param("formaliteStatusWaitingAttachmentId") Integer formaliteStatusWaitingAttachmentId,
-                        @Param("commercialId") Integer commercialId);
+                        @Param("commercialId") Integer commercialId,
+                        @Param("formaliteGuichetUniqueStatusCode") String formaliteGuichetUniqueStatusCode);
 }

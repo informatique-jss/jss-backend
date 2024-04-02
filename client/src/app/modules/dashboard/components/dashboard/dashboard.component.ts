@@ -329,6 +329,9 @@ export class DashboardComponent implements OnInit {
     } else if (currentSize == this.BOX_SIZE_LARGE) {
       this.boxWidth = '650px';
       this.boxHeight = '500px';
+    } else if (currentSize == this.BOX_SIZE_X_LARGE) {
+      this.boxWidth = '750px';
+      this.boxHeight = '600px';
     } else if (currentSize == this.BOX_SIZE_FULL_WIDTH) {
       this.boxWidth = 'calc(95vw - 220px)';
       this.boxHeight = '600px';

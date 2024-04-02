@@ -516,11 +516,11 @@ public class QuotationValidationHelper {
                                 }
                         }
 
-                        boolean verifyAnnouncement = isCustomerOrder && targetStatusCode != null
-                                        && (targetStatusCode.equals(CustomerOrderStatus.TO_BILLED)
-                                                        || targetStatusCode.equals(CustomerOrderStatus.BILLED)
+                        boolean verifyAnnouncement = isCustomerOrder
+                                        && (announcement.getAnnouncementStatus().getCode().equals(
+                                                        AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)
                                                         || announcement.getAnnouncementStatus().getCode().equals(
-                                                                        AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
+                                                                        AnnouncementStatus.ANNOUNCEMENT_DONE));
 
                         validationHelper.validateDateMin(announcement.getPublicationDate(), verifyAnnouncement,
                                         publicationDateVerification,

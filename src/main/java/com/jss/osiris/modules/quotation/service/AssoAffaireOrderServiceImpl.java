@@ -588,6 +588,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (affaireSearch.getWaitedCompetentAuthority() != null)
             waitedCompetentAuthorityId = affaireSearch.getWaitedCompetentAuthority().getId();
 
+        String formaliteGuichetUniqueStatusCode = "0";
+        if (affaireSearch.getFormaliteGuichetUniqueStatus() != null)
+            formaliteGuichetUniqueStatusCode = affaireSearch.getFormaliteGuichetUniqueStatus().getCode();
+
         ArrayList<String> excludedCustomerOrderStatusCode = new ArrayList<String>();
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.OPEN);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.WAITING_DEPOSIT);
@@ -604,6 +608,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         .getSimpleProvisionStatusByCode(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT)
                         .getId(),
                 formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_WAITING_DOCUMENT).getId(),
-                commercialId);
+                commercialId, formaliteGuichetUniqueStatusCode);
     }
 }
