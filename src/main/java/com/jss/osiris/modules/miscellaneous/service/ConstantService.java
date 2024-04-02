@@ -66,6 +66,8 @@ public interface ConstantService {
 
     public AccountingJournal getAccountingJournalCash() throws OsirisException;
 
+    public AccountingJournal getAccountingJournalBilan() throws OsirisException;
+
     public AccountingJournal getAccountingJournalMiscellaneousOperations() throws OsirisException;
 
     public TiersType getTiersTypeProspect() throws OsirisException;

@@ -25,6 +25,11 @@ export interface Provider extends IReferential, IAttachment {
   vatCollectionType: VatCollectionType;
   paymentType: PaymentType;
   country: Country;
+  postalCode: string;
+  cedexComplement: string;
+  address: string;
+  siren: string;
+  siret: string;
   city: City;
   idAs400: number;
 }

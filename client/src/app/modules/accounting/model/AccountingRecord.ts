@@ -39,5 +39,6 @@ export interface AccountingRecord {
   payment: Payment;
   contrePasse: AccountingRecord;
   isANouveau: boolean;
+  isFromAs400: boolean;
 }
 

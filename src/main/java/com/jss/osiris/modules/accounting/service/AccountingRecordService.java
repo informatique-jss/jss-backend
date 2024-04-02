@@ -88,4 +88,9 @@ public interface AccountingRecordService {
                         boolean isFromAs400)
                         throws OsirisException;
 
+        public Boolean deleteAccountingRecords(AccountingRecord accountingRecord) throws OsirisValidationException;
+
+        public Boolean letterRecordsForAs400(List<AccountingRecord> accountingRecords)
+                        throws OsirisValidationException, OsirisClientMessageException;
+
 }

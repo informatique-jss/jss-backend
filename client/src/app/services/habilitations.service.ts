@@ -83,6 +83,18 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
+  canAddNewInvoiceForPreviousExercize() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
+  canDeleteAccountingRecordsOnBilanJournal() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
+  canManuallyLetterAccountingRecords() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE, ACCOUNTING])
+  }
+
   canAddNewAzureInvoice() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }

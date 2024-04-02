@@ -1,6 +1,6 @@
 
 export interface AccountingRecordSearchResult {
-  id: number;
+  recordId: number;
   operationId: number;
   accountingDateTime: Date;
   operationDateTime: Date;
@@ -36,4 +36,5 @@ export interface AccountingRecordSearchResult {
   responsable: string;
   isTemporary: boolean;
   temporaryOperationId: number;
+  isFromAs400: boolean;
 }

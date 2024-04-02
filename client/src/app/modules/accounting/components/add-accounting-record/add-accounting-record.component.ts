@@ -79,6 +79,8 @@ export class AddAccountingRecordComponent implements OnInit {
   addAccountingRecord() {
     if (this.accountingRecordForm.valid) {
       let newRecord = {} as AccountingRecord;
+      if (this.accountingRecords && this.accountingRecords.length > 0)
+        newRecord.accountingJournal = this.accountingRecords[this.accountingRecords.length - 1].accountingJournal;
       this.accountingRecords.push(newRecord);
       this.accountingRecord = newRecord;
       this.computeBalanceAndDebitAndCreditAccumulation();
@@ -108,9 +110,9 @@ export class AddAccountingRecordComponent implements OnInit {
           debit += parseFloat(accountingRecord.debitAmount + "");
           balance -= parseFloat(accountingRecord.debitAmount + '');
         }
-        accountingRecord.balance = Math.round(balance * 100) / 100;
-        accountingRecord.debitAccumulation = Math.round(debit * 100) / 100;
-        accountingRecord.creditAccumulation = Math.round(credit * 100) / 100;
+        accountingRecord.balance = balance;
+        accountingRecord.debitAccumulation = debit;
+        accountingRecord.creditAccumulation = credit;
       }
     }
   }
@@ -125,7 +127,7 @@ export class AddAccountingRecordComponent implements OnInit {
           balance -= parseFloat(accountingRecord.debitAmount + '');
         }
       }
-      return Math.round(balance * 100) / 100;
+      return balance;
     }
     return 0;
   }

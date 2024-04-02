@@ -1539,8 +1539,7 @@ public class QuotationController {
   @PostMapping(inputEntryPoint + "/affaire")
   public ResponseEntity<Affaire> addOrUpdateAffaire(@RequestBody Affaire affaire)
       throws OsirisValidationException, OsirisException, OsirisDuplicateException {
-    validationHelper.validateString(affaire.getAddress(), true, 100, "Address");
-    validationHelper.validateReferential(affaire.getCity(), true, "City");
+
     validationHelper.validateReferential(affaire.getCountry(), true, "Country");
     validationHelper.validateReferential(affaire.getMainActivity(), false, "MainActivity");
     validationHelper.validateReferential(affaire.getLegalForm(), false, "LegalForm");
@@ -1550,6 +1549,8 @@ public class QuotationController {
     if (affaire.getCountry() != null && affaire.getCountry().getId().equals(constantService.getCountryFrance().getId()))
       validationHelper.validateString(affaire.getPostalCode(), true, 10, "PostalCode");
     validationHelper.validateString(affaire.getCedexComplement(), false, 20, "CedexComplement");
+    validationHelper.validateString(affaire.getAddress(), true, 100, "Address");
+    validationHelper.validateReferential(affaire.getCity(), true, "City");
 
     if (affaire.getIsIndividual()) {
       validationHelper.validateReferential(affaire.getCivility(), true, "Civility");

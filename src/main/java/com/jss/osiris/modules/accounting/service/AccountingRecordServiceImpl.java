@@ -420,4 +420,76 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return billingClosureReceiptDelegate.getBillingClosureReceiptFile(tiersId, downloadFile);
   }
 
+  @Transactional(rollbackFor = Exception.class)
+  @Override
+  public Boolean deleteAccountingRecords(AccountingRecord inAccountingRecord) throws OsirisValidationException {
+    inAccountingRecord = getAccountingRecord(inAccountingRecord.getId());
+    List<AccountingRecord> accountingRecords = accountingRecordRepository
+        .findByTemporaryOperationId(inAccountingRecord.getTemporaryOperationId());
+
+    if (accountingRecords != null) {
+      Float balance = 0f;
+      for (AccountingRecord accountingRecord : accountingRecords) {
+        if (accountingRecord.getCreditAmount() != null)
+          balance += accountingRecord.getCreditAmount();
+        if (accountingRecord.getDebitAmount() != null)
+          balance -= accountingRecord.getDebitAmount();
+      }
+
+      if (Math.abs(Math.round(balance * 100f)) > 1)
+        throw new OsirisValidationException("Balance not null");
+
+      accountingRecordRepository.deleteAll(accountingRecords);
+    }
+    return true;
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  @Override
+  public Boolean letterRecordsForAs400(List<AccountingRecord> accountingRecords)
+      throws OsirisValidationException, OsirisClientMessageException {
+
+    Integer lastAccountId = null;
+    Float balance = 0f;
+    ArrayList<AccountingRecord> fetchRecords = new ArrayList<AccountingRecord>();
+
+    for (AccountingRecord record : accountingRecords) {
+      AccountingRecord fetchRecord = getAccountingRecord(record.getId());
+      fetchRecords.add(fetchRecord);
+
+      if (lastAccountId != null && !lastAccountId.equals(fetchRecord.getAccountingAccount().getId()))
+        throw new OsirisClientMessageException("L'ensemble des enregistrements doivent être sur le même compte");
+
+      if (fetchRecord.getLetteringNumber() != null)
+        throw new OsirisClientMessageException("Des lignes sont déjà lettrées");
+
+      lastAccountId = fetchRecord.getAccountingAccount().getId();
+      if (record.getCreditAmount() != null)
+        balance += record.getCreditAmount();
+      if (record.getDebitAmount() != null)
+        balance -= record.getDebitAmount();
+
+    }
+    if (Math.abs(Math.round(balance * 100f)) > 1)
+      throw new OsirisValidationException("Balance not null");
+
+    // Lettering
+    Integer maxLetteringNumber = findMaxLetteringNumberForMinLetteringDateTime(
+        LocalDateTime.now().with(ChronoField.DAY_OF_YEAR, 1)
+            .with(ChronoField.HOUR_OF_DAY, 0)
+            .with(ChronoField.MINUTE_OF_DAY, 0).with(ChronoField.SECOND_OF_DAY, 0));
+
+    if (maxLetteringNumber == null)
+      maxLetteringNumber = 0;
+    maxLetteringNumber++;
+
+    for (AccountingRecord accountingRecord : fetchRecords) {
+      accountingRecord.setLetteringDateTime(LocalDateTime.now());
+      accountingRecord.setLetteringNumber(maxLetteringNumber);
+      addOrUpdateAccountingRecord(accountingRecord);
+    }
+
+    return true;
+  }
+
 }

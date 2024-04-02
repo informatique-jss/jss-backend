@@ -71,9 +71,9 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         accountingRecord.setManualAccountingDocumentDate(manualAccountingDocumentDate);
         accountingRecord.setLabel(label);
         if (creditAmount != null)
-            accountingRecord.setCreditAmount(Math.round(creditAmount * 100f) / 100f);
+            accountingRecord.setCreditAmount(creditAmount);
         if (debitAmount != null)
-            accountingRecord.setDebitAmount(Math.round(debitAmount * 100f) / 100f);
+            accountingRecord.setDebitAmount(debitAmount);
         accountingRecord.setAccountingAccount(accountingAccount);
         accountingRecord.setIsTemporary(true);
         accountingRecord.setInvoiceItem(invoiceItem);

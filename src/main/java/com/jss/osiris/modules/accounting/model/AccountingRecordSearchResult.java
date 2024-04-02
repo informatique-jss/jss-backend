@@ -53,4 +53,6 @@ public interface AccountingRecordSearchResult {
   String getResponsable();
 
   Boolean getIsTemporary();
+
+  Boolean getIsFromAs400();
 }

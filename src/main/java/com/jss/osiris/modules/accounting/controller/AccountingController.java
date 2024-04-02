@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -232,6 +233,49 @@ public class AccountingController {
 
         return new ResponseEntity<List<AccountingRecordSearchResult>>(
                 accountingRecordService.searchAccountingRecords(accountingRecordSearch), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-record/letter")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<Boolean> letterRecordsForAs400(
+            @RequestParam List<Integer> recordIds)
+            throws OsirisValidationException, OsirisClientMessageException {
+        if (recordIds == null)
+            throw new OsirisValidationException("recordIds");
+
+        boolean as400Found = false;
+        ArrayList<AccountingRecord> fetchRecords = new ArrayList<AccountingRecord>();
+        for (Integer record : recordIds) {
+            AccountingRecord fetchRecord = accountingRecordService.getAccountingRecord(record);
+            if (fetchRecord == null)
+                throw new OsirisValidationException("fetchRecord");
+            if (fetchRecord.getIsFromAs400() != null && fetchRecord.getIsFromAs400())
+                as400Found = true;
+            fetchRecords.add(fetchRecord);
+        }
+
+        if (!as400Found)
+            throw new OsirisValidationException("as400Found");
+
+        return new ResponseEntity<Boolean>(
+                accountingRecordService.letterRecordsForAs400(fetchRecords), HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    @GetMapping(inputEntryPoint + "/accounting-record/delete")
+    public ResponseEntity<Boolean> deleteAccountingRecords(@RequestParam Integer accountingRecordId)
+            throws OsirisValidationException, OsirisClientMessageException, OsirisException {
+        AccountingRecord accountingRecord = accountingRecordService.getAccountingRecord(accountingRecordId);
+        if (accountingRecord == null)
+            throw new OsirisValidationException("accountingRecord");
+
+        if (!accountingRecord.getAccountingJournal().getId()
+                .equals(constantService.getAccountingJournalBilan().getId())) {
+            throw new OsirisValidationException("accountingRecord");
+        }
+
+        return new ResponseEntity<Boolean>(accountingRecordService.deleteAccountingRecords(accountingRecord),
+                HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/grand-livre/export")

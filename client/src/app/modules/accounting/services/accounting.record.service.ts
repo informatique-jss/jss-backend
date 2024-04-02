@@ -7,6 +7,7 @@ import { ITiers } from '../../tiers/model/ITiers';
 import { AccountingAccount } from '../model/AccountingAccount';
 import { AccountingAccountClass } from '../model/AccountingAccountClass';
 import { AccountingJournal } from '../model/AccountingJournal';
+import { AccountingRecordSearchResult } from '../model/AccountingRecordSearchResult';
 
 @Injectable({
   providedIn: 'root'
@@ -42,5 +43,13 @@ export class AccountingRecordService extends AppRestService<AccountingRecord>{
 
   sendBillingClosureReceipt(tiers: ITiers) {
     return this.get(new HttpParams().set("tiersId", tiers.id), "billing-closure-receipt/send", "Relevé(s) de compte envoyé(s) aux tiers / responsables");
+  }
+
+  deleteRecords(accountingRecord: AccountingRecordSearchResult) {
+    return this.get(new HttpParams().set("accountingRecordId", accountingRecord.recordId), "accounting-record/delete");
+  }
+
+  letterRecordsForAs400(accountingRecords: AccountingRecordSearchResult[]) {
+    return this.get(new HttpParams().set("recordIds", accountingRecords.map(value => value.recordId).join(",")), "accounting-record/letter");
   }
 }
