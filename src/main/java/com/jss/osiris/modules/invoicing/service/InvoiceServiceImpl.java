@@ -260,7 +260,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         "Paiement pour la facture " + invoice.getId() + " / Fournisseur : "
                                 + (invoice.getProvider() != null ? invoice.getProvider().getLabel()
                                         : invoice.getCompetentAuthority().getLabel()));
-                accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
+                accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment, false);
                 paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment, Arrays.asList(invoice), null, null,
                         null, null, null, null);
             }

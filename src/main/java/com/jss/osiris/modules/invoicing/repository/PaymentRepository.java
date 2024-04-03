@@ -12,7 +12,7 @@ import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
 
 public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Integer> {
 
-        @Query(nativeQuery = true, value = "select p.* from payment p  where p.id_invoice is null and id_customer_order is null and id_direct_debit_transfert is null and id_refund is null and id_competent_authority is null and id_provider is null and id_bank_transfert is null and p.is_externally_associated=false and p.is_cancelled=false ")
+        @Query(nativeQuery = true, value = "select p.* from payment p  where p.id_invoice is null and id_customer_order is null and id_direct_debit_transfert is null and id_refund is null and id_competent_authority is null and id_provider is null and id_bank_transfert is null and p.is_externally_associated=false and p.id_accounting_account is null and p.is_cancelled=false ")
         List<Payment> findNotAssociatedPayments();
 
         @Query(nativeQuery = true, value = " select p.id as id,"
@@ -24,12 +24,12 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
                         + " p.is_externally_associated  as isExternallyAssociated ,"
                         + " p.is_cancelled  as isCancelled ,"
                         + " p.is_appoint  as isAppoint ,"
-                        + " case when p.id_invoice is null and p.id_customer_order is null and id_direct_debit_transfert is null and p.id_refund is null and p.id_bank_transfert is null and p.is_externally_associated=false and p.is_cancelled=false and id_competent_authority is null and id_provider is null then false else true end as isAssociated ,"
+                        + " case when p.id_invoice is null and p.id_customer_order is null and id_direct_debit_transfert is null and p.id_refund is null and p.id_bank_transfert is null and p.is_externally_associated=false and p.is_cancelled=false and id_competent_authority is null and id_provider is null and id_accounting_account is null then false else true end as isAssociated ,"
                         + " p.id_invoice as invoiceId,"
                         + " p.id_origin_payment as originPaymentId"
                         + " from payment p "
                         + " join payment_type on payment_type.id = p.id_payment_type"
-                        + " where (:isHideAssociatedPayments=false OR ( p.id_invoice is null and p.id_customer_order is null and p.id_refund is null and p.id_bank_transfert is null and p.is_externally_associated=false and p.is_cancelled=false  and id_competent_authority is null and id_provider is null   )) "
+                        + " where (:isHideAssociatedPayments=false OR ( p.id_invoice is null and p.id_customer_order is null and p.id_refund is null and p.id_bank_transfert is null and p.is_externally_associated=false and p.is_cancelled=false  and id_competent_authority is null and id_provider is null and id_accounting_account is null   )) "
                         + " and (:isHideCancelledPayments=false or p.is_cancelled = false) "
                         + " and (:isHideAppoint=false or p.is_appoint = false) "
                         + " and (:idPayment=0 or p.id = :idPayment) "

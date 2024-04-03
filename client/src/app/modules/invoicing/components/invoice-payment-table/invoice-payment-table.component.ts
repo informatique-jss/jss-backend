@@ -66,7 +66,12 @@ export class InvoicePaymentTableComponent implements OnInit {
       let customerOrder: ITiers = getCustomerOrderForInvoice(this.invoice);
       if (instanceOfResponsable(customerOrder))
         customerOrder = (customerOrder as Responsable).tiers;
-      this.paymentService.refundPayment(payment, { entityId: customerOrder.id } as any, { entityId: "1" } as any).subscribe(response => {
+
+      let affaireId = 1;
+      if (this.invoice && this.invoice.customerOrder) {
+        affaireId = this.invoice.customerOrder.assoAffaireOrders[0].affaire.id;
+      }
+      this.paymentService.refundPayment(payment, { entityId: customerOrder.id } as any, { entityId: affaireId } as any).subscribe(response => {
         this.appService.openRoute(null, '/invoicing/view/' + this.invoice.id, null);
       });
     }

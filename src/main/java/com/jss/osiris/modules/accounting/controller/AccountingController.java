@@ -76,6 +76,9 @@ public class AccountingController {
     @Autowired
     TiersService tiersService;
 
+    @Autowired
+    ActiveDirectoryHelper activeDirectoryHelper;
+
     @GetMapping(inputEntryPoint + "/principal-accounting-accounts")
     public ResponseEntity<List<PrincipalAccountingAccount>> getPrincipalAccountingAccounts() {
         return new ResponseEntity<List<PrincipalAccountingAccount>>(
@@ -109,6 +112,7 @@ public class AccountingController {
         AccountingJournal salesJournal = constantService.getAccountingJournalSales();
         AccountingJournal purchasesJournal = constantService.getAccountingJournalPurchases();
         AccountingJournal aNouveauJournal = constantService.getAccountingJournalANouveau();
+        Integer accountingJournalId = null;
 
         for (AccountingRecord accountingRecord : accountingRecords) {
             if (accountingRecord.getId() != null
@@ -120,6 +124,11 @@ public class AccountingController {
                     || accountingRecord.getLetteringDateTime() != null
                     || accountingRecord.getLetteringNumber() != null)
                 throw new OsirisValidationException("accountingRecords completude");
+
+            if (accountingJournalId != null
+                    && accountingJournalId.equals(accountingRecord.getAccountingJournal().getId()))
+                throw new OsirisValidationException("Not same journal");
+            accountingJournalId = accountingRecord.getAccountingJournal().getId();
 
             validationHelper.validateReferential(accountingRecord.getAccountingAccount(), true, "getAccountingAccount");
             validationHelper.validateReferential(accountingRecord.getAccountingJournal(), true, "getAccountingJournal");
@@ -249,12 +258,14 @@ public class AccountingController {
             AccountingRecord fetchRecord = accountingRecordService.getAccountingRecord(record);
             if (fetchRecord == null)
                 throw new OsirisValidationException("fetchRecord");
+            if (fetchRecord.getLetteringNumber() != null)
+                throw new OsirisValidationException("letteringNumber");
             if (fetchRecord.getIsFromAs400() != null && fetchRecord.getIsFromAs400())
                 as400Found = true;
             fetchRecords.add(fetchRecord);
         }
 
-        if (!as400Found)
+        if (!as400Found && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP))
             throw new OsirisValidationException("as400Found");
 
         return new ResponseEntity<Boolean>(

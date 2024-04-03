@@ -117,6 +117,12 @@ public interface PaymentService {
 
         public Payment getOriginalPaymentOfPayment(Payment payment);
 
-        public void putPaymentInAccount(Payment payment, CompetentAuthority competentAuthority)
+        public void putPaymentInCompetentAuthorityAccount(Payment payment, CompetentAuthority competentAuthority)
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
+
+        public void putPaymentInAccount(Payment payment, AccountingAccount accountingAccount)
+                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
+
+        public Payment cutPayment(Payment payment, Float amount)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 }

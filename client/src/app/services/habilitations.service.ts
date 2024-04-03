@@ -91,8 +91,12 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
 
-  canManuallyLetterAccountingRecords() {
+  canManuallyLetterAs400AccountingRecords() {
     return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE, ACCOUNTING])
+  }
+
+  canManuallyLetterAccountingRecords() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
   }
 
   canAddNewAzureInvoice() {
@@ -132,6 +136,14 @@ export class HabilitationsService {
   }
 
   canMovePaymentToWaitingAccount() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
+  canPutInAnyAccountingAccount() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
+  canCutPayment() {
     return this.loginService.hasGroup([ADMINISTRATEURS])
   }
 

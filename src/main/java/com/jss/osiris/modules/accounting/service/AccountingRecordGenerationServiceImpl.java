@@ -727,11 +727,14 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     }
 
     @Override
-    public void generateAccountingRecordOnOutgoingPaymentCreation(Payment payment)
+    public void generateAccountingRecordOnOutgoingPaymentCreation(Payment payment, Boolean isOdJournal)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         AccountingJournal bankJournal = payment.getPaymentType().getId()
                 .equals(constantService.getPaymentTypeEspeces().getId()) ? constantService.getAccountingJournalCash()
                         : constantService.getAccountingJournalBank();
+
+        if (isOdJournal)
+            bankJournal = this.constantService.getAccountingJournalMiscellaneousOperations();
 
         if (payment.getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId()))
             bankJournal = constantService.getAccountingJournalCash();

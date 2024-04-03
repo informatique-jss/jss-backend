@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { AccountingAccount } from '../../accounting/model/AccountingAccount';
 import { CompetentAuthority } from '../../miscellaneous/model/CompetentAuthority';
 import { CustomerOrder } from '../../quotation/model/CustomerOrder';
 import { Invoice } from '../../quotation/model/Invoice';
@@ -65,7 +66,15 @@ export class PaymentService extends AppRestService<Payment>{
       return this.get(new HttpParams().set("paymentId", payment.id).set("tiersId", tiers.entityId).set("affaireId", 1), "refund/payment", "Paiement remboursé", "Erreur lors du remboursement du paiement");
   }
 
-  putInAccount(payment: PaymentSearchResult, competentAuthority: CompetentAuthority) {
-    return this.get(new HttpParams().set("paymentId", payment.id).set("competentAuthorityId", competentAuthority.id!), "payment/account", "Paiement mis en compte", "Erreur lors de la mise en compte du paiement");
+  putInCompetentAuthorityAccount(payment: PaymentSearchResult, competentAuthority: CompetentAuthority) {
+    return this.get(new HttpParams().set("paymentId", payment.id).set("competentAuthorityId", competentAuthority.id!), "payment/account/competent-authority", "Paiement mis en compte", "Erreur lors de la mise en compte du paiement");
+  }
+
+  putInAccount(payment: PaymentSearchResult, accountingAccount: AccountingAccount) {
+    return this.get(new HttpParams().set("paymentId", payment.id).set("accountingAccountId", accountingAccount.id!), "payment/account", "Paiement mis en compte", "Erreur lors de la mise en compte du paiement");
+  }
+
+  cutPayment(payment: PaymentSearchResult, amount: number) {
+    return this.get(new HttpParams().set("paymentId", payment.id).set("amount", amount + ""), "payment/cut");
   }
 }

@@ -134,6 +134,16 @@ export class AddAccountingRecordComponent implements OnInit {
 
   saveOperations() {
     if (this.accountingRecordForm.valid && this.accountingRecords && this.accountingRecords.length > 0) {
+      let journalId = 0;
+
+      for (let record of this.accountingRecords) {
+        if (journalId > 0 && journalId != record.accountingJournal.id) {
+          this.appService.displaySnackBar("Le journal doit être identique sur l'ensemble des lignes", true, 10);
+          return;
+        }
+        journalId = record.accountingJournal.id;
+      }
+
       if (this.getTotalBalance() == 0) {
         this.accountingRecordService.saveManualOperations(this.accountingRecords).subscribe(response => {
           if (response)

@@ -106,15 +106,39 @@ export class AccountingRecordComponent implements OnInit {
       }
     }
 
-    if (this.habilitationService.canManuallyLetterAccountingRecords())
+    if (this.habilitationService.canManuallyLetterAs400AccountingRecords())
       this.tableAction.push({
         actionIcon: 'add', actionName: "Ajouter au lettrage en cours", actionClick: (column: SortTableAction<AccountingRecordSearchResult>, element: AccountingRecordSearchResult, event: any) => {
           if (element) {
             if (!this.toLetteredValues)
               this.toLetteredValues = [];
-            if (this.toLetteredValues.indexOf(element) < 0)
+            if (this.toLetteredValues.indexOf(element) < 0 && element.letteringNumber == null)
               this.toLetteredValues.push(element);
             this.refreshLetteringTable.next();
+          }
+        }, display: true,
+      } as SortTableAction<AccountingRecordSearchResult>);
+
+    if (this.habilitationService.canDeleteAccountingRecordsOnBilanJournal())
+      this.tableAction.push({
+        actionIcon: 'delete', actionName: "Supprimer l'écriture", actionClick: (column: SortTableAction<AccountingRecordSearchResult>, element: AccountingRecordSearchResult, event: any) => {
+          if (element && element.accountingJournalCode == this.constantService.getAccountingJournalBilan().code) {
+            const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+              maxWidth: "400px",
+              data: {
+                title: "Supprimer les lignes de comptabilité ?",
+                content: "Êtes-vous sûr de vouloir supprimer la ligne sélectionnée et les lignes associées ?",
+                closeActionText: "Annuler",
+                validationActionText: "Supprimer"
+              }
+            });
+
+            dialogRef.afterClosed().subscribe(dialogResult => {
+              if (dialogResult)
+                this.accountingRecordService.deleteRecords(element).subscribe(res => { this.searchRecords() });
+            });
+          } else {
+            this.appService.displaySnackBar("La suppression n'est possible que sur des lignes du journal Bilan", true, 10);
           }
         }, display: true,
       } as SortTableAction<AccountingRecordSearchResult>);
@@ -138,7 +162,7 @@ export class AccountingRecordComponent implements OnInit {
           break;
         }
       }
-      if (!as400Found) {
+      if (!as400Found && !this.habilitationService.canManuallyLetterAccountingRecords()) {
         this.appService.displaySnackBar("Les lignes sélectionnées doivent contenir au moins une ligne de l'AS400", true, 10);
         return;
       }
