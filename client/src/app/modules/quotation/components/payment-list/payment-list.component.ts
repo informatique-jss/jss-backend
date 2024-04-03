@@ -3,6 +3,7 @@ import { FormBuilder } from "@angular/forms";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from "src/app/libs/FormatHelper";
+import { AmountDialogComponent } from "src/app/modules/invoicing/components/amount-dialog/amount-dialog.component";
 import { AssociatePaymentDialogComponent } from "src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component";
 import { PaymentSearch } from "src/app/modules/invoicing/model/PaymentSearch";
 import { PaymentSearchResult } from "src/app/modules/invoicing/model/PaymentSearchResult";
@@ -60,6 +61,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     public associatePaymentDialog: MatDialog,
     public refundPaymentDialog: MatDialog,
     public selectCompetentAuthorityDialog: MatDialog,
+    public amountDialog: MatDialog,
     private formBuilder: FormBuilder,
     private habilitationService: HabilitationsService,
     private editCommentDialog: MatDialog,
@@ -139,6 +141,33 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
           }, display: true,
         } as SortTableAction<PaymentSearchResult>);
       }
+      if (this.habilitationService.canCutPayment())
+        this.tableAction.push({
+          actionIcon: 'content_cut', actionName: 'Découper le paiement', actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
+            if (element.isAssociated == false) {
+              let dialogRef = this.editCommentDialog.open(AmountDialogComponent, {
+                width: '40%'
+              });
+              dialogRef.componentInstance.label = "Quel est le montant à utiliser pour le nouveau paiement ?";
+              dialogRef.componentInstance.title = "Découper le paiement";
+              dialogRef.componentInstance.maxAmount = Math.abs(element.paymentAmount);
+
+              dialogRef.afterClosed().subscribe(newAmount => {
+                if (newAmount) {
+                  this.paymentService.cutPayment(element, newAmount).subscribe(response => { this.searchPayments() });
+                }
+              });
+            }
+          }, display: true,
+        } as SortTableAction<PaymentSearchResult>);
+
+      if (this.habilitationService.canPutInAnyAccountingAccount())
+        this.tableAction.push({
+          actionIcon: "account_balance", actionName: "Mettre en compte comptable", actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
+            if (!element.isAssociated && !element.isCancelled)
+              this.displayPutInAccountingAccountDialog(element as any);
+          }, display: true,
+        } as SortTableAction<PaymentSearchResult>);
     } else {
       this.tableAction.push({
         actionIcon: this.overrideIconAction, actionName: this.overrideTooltipAction, actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
@@ -291,11 +320,23 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
         });
         dialogCompetentAuthorityDialogRef.afterClosed().subscribe(response => {
           if (response)
-            this.paymentService.putInAccount(payment, response).subscribe(response => this.searchPayments());
+            this.paymentService.putInCompetentAuthorityAccount(payment, response).subscribe(response => this.searchPayments());
         });
       })
     } else {
       this.appService.displaySnackBar("Impossible de mettre en compte un paiement entrant", true, 10);
     }
+  }
+
+  displayPutInAccountingAccountDialog(payment: PaymentSearchResult) {
+    this.selectAccountingAccountDialogComponentRef = this.selectAccountingAccountDialogComponent.open(SelectAccountingAccountDialogComponent, {
+    });
+
+    this.selectAccountingAccountDialogComponentRef.componentInstance.filteredAccountPrincipal = undefined;
+    this.selectAccountingAccountDialogComponentRef.afterClosed().subscribe(response => {
+      if (response) {
+        this.paymentService.putInAccount(payment, response).subscribe(response => this.searchPayments());
+      }
+    });
   }
 }

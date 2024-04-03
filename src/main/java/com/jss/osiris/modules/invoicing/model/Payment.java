@@ -123,6 +123,10 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	private CompetentAuthority competentAuthority;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_accounting_account")
+	private AccountingAccount accountingAccount;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provider")
 	private Provider provider;
 
@@ -341,6 +345,14 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	public void setProvider(Provider provider) {
 		this.provider = provider;
+	}
+
+	public AccountingAccount getAccountingAccount() {
+		return accountingAccount;
+	}
+
+	public void setAccountingAccount(AccountingAccount accountingAccount) {
+		this.accountingAccount = accountingAccount;
 	}
 
 }

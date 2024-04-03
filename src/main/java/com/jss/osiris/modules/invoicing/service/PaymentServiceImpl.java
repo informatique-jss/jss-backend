@@ -246,7 +246,8 @@ public class PaymentServiceImpl implements PaymentService {
                         accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment,
                                 false);
                     else
-                        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
+                        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment,
+                                false);
                 }
                 Payment payment = paymentRepository.findByBankId(transaction.id());
                 if (payment != null && (payment.getIsCancelled() == null || payment.getIsCancelled() == false))
@@ -739,7 +740,7 @@ public class PaymentServiceImpl implements PaymentService {
                         ? constantService.getAccountingAccountCaisse()
                         : constantService.getAccountingAccountBankJss());
         addOrUpdatePayment(payment);
-        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment);
+        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment, false);
         return payment;
     }
 
@@ -954,7 +955,7 @@ public class PaymentServiceImpl implements PaymentService {
             accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(newPayment,
                     false);
         else
-            accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(newPayment);
+            accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(newPayment, false);
         return newPayment;
     }
 
@@ -1012,7 +1013,7 @@ public class PaymentServiceImpl implements PaymentService {
                 -(invoiceItem.getPreTaxPrice() + invoiceItem.getVatPrice()),
                 constantService.getProviderCentralPay().getAccountingAccountDeposit(),
                 constantService.getProviderCentralPay().getAccountingAccountProvider(), invoiceLabel);
-        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(centralPayPayment);
+        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(centralPayPayment, false);
 
         associateOutboundPaymentAndInvoice(centralPayPayment, centralPayInvoice);
     }
@@ -1310,7 +1311,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public void putPaymentInAccount(Payment payment, CompetentAuthority competentAuthority)
+    public void putPaymentInCompetentAuthorityAccount(Payment payment, CompetentAuthority competentAuthority)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         cancelPayment(payment);
         Payment newPayment = null;
@@ -1331,5 +1332,72 @@ public class PaymentServiceImpl implements PaymentService {
             newPayment.setCompetentAuthority(competentAuthority);
         }
         addOrUpdatePayment(newPayment);
+    }
+
+    @Override
+    public void putPaymentInAccount(Payment payment, AccountingAccount accountingAccount)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+        cancelPayment(payment);
+        Payment newPayment = null;
+        if (payment.getPaymentAmount() > 0) {
+            newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
+                    accountingAccount);
+            newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+            newPayment.setTargetAccountingAccount(accountingAccount);
+            accountingRecordGenerationService
+                    .generateAccountingRecordOnIncomingPaymentOnDepositCompetentAuthorityAccount(newPayment);
+            newPayment.setAccountingAccount(accountingAccount);
+        } else {
+            newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
+                    accountingAccount);
+            newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+            newPayment.setTargetAccountingAccount(accountingAccount);
+            accountingRecordGenerationService
+                    .generateAccountingRecordOnOutgoingPaymentOnDepositCompetentAuthorityAccount(newPayment);
+            newPayment.setAccountingAccount(accountingAccount);
+        }
+        addOrUpdatePayment(newPayment);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Payment cutPayment(Payment payment, Float amount)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+        cancelPayment(payment);
+        Payment newPayment1 = null;
+        Payment newPayment2 = null;
+        if (payment.getPaymentAmount() > 0) {
+            newPayment1 = generateNewPaymentFromPayment(payment, payment.getPaymentAmount() - amount, false,
+                    accountingAccountService.getWaitingAccountingAccount());
+            newPayment1.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+            newPayment1.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
+            accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(newPayment1, true);
+
+            newPayment2 = generateNewPaymentFromPayment(payment, amount, false,
+                    accountingAccountService.getWaitingAccountingAccount());
+            newPayment2.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+            newPayment2.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
+            accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(newPayment2, true);
+            addOrUpdatePayment(newPayment1);
+            addOrUpdatePayment(newPayment2);
+        } else {
+            newPayment1 = generateNewPaymentFromPayment(payment, payment.getPaymentAmount() + amount, false,
+                    accountingAccountService.getWaitingAccountingAccount());
+            newPayment1.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+            newPayment1.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
+            accountingRecordGenerationService
+                    .generateAccountingRecordOnOutgoingPaymentCreation(newPayment1, true);
+
+            newPayment2 = generateNewPaymentFromPayment(payment, -amount, false,
+                    accountingAccountService.getWaitingAccountingAccount());
+            newPayment2.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+            newPayment2.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
+            accountingRecordGenerationService
+                    .generateAccountingRecordOnOutgoingPaymentCreation(newPayment2, true);
+            addOrUpdatePayment(newPayment1);
+            addOrUpdatePayment(newPayment2);
+        }
+
+        return payment;
     }
 }

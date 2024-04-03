@@ -21,7 +21,7 @@ export class SelectAccountingAccountDialogComponent implements OnInit {
   title: string = "Compte comptable cible";
   text: string = "Merci d'indiquer le compte comptable de banque cible : ";
 
-  @Input() filteredAccountPrincipal: PrincipalAccountingAccount = this.constantService.getPrincipalAccountingAccountBank();
+  @Input() filteredAccountPrincipal: PrincipalAccountingAccount | undefined = this.constantService.getPrincipalAccountingAccountBank();
 
   accountingAccountForm = this.formBuilder.group({
   });

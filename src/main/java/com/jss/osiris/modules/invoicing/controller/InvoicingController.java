@@ -28,6 +28,7 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailComputeHelper;
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordGenerationService;
 import com.jss.osiris.modules.invoicing.model.AzureInvoice;
@@ -163,6 +164,9 @@ public class InvoicingController {
     @Autowired
     RffService rffService;
 
+    @Autowired
+    AccountingRecordGenerationService accountingRecordGenerationService;
+
     @PostMapping(inputEntryPoint + "/azure-receipt/invoice")
     public ResponseEntity<AzureReceiptInvoice> updateAzureReceiptInvoice(
             @RequestBody AzureReceiptInvoice azureReceiptInvoice)
@@ -258,9 +262,6 @@ public class InvoicingController {
         return new ResponseEntity<Payment>(paymentService.getPayment(id), HttpStatus.OK);
     }
 
-    @Autowired
-    AccountingRecordGenerationService accountingRecordGenerationService;
-
     @GetMapping(inputEntryPoint + "/payment/waiting")
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     public ResponseEntity<Payment> movePaymentToWaitingAccount(@RequestParam Integer paymentId)
@@ -268,6 +269,20 @@ public class InvoicingController {
         Payment payment = paymentService.getPayment(paymentId);
         if (payment != null)
             payment = paymentService.movePaymentToWaitingAccount(payment);
+        return new ResponseEntity<Payment>(payment, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/payment/cut")
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    public ResponseEntity<Payment> cutPayment(@RequestParam Integer paymentId, @RequestParam Float amount)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+        validationHelper.validateFloat(amount, true, "amount");
+        Payment payment = paymentService.getPayment(paymentId);
+        if (payment != null) {
+            if (payment.getIsCancelled() || payment.getIsExternallyAssociated())
+                throw new OsirisValidationException("cancelled");
+            payment = paymentService.cutPayment(payment, amount);
+        }
         return new ResponseEntity<Payment>(payment, HttpStatus.OK);
     }
 
@@ -325,9 +340,9 @@ public class InvoicingController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
-    @GetMapping(inputEntryPoint + "/payment/account")
+    @GetMapping(inputEntryPoint + "/payment/account/competent-authority")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
-    public ResponseEntity<Boolean> putPaymentInAccount(@RequestParam Integer paymentId,
+    public ResponseEntity<Boolean> putPaymentInCompetentAuthorityAccount(@RequestParam Integer paymentId,
             @RequestParam Integer competentAuthorityId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         Payment payment = paymentService.getPayment(paymentId);
@@ -338,13 +353,41 @@ public class InvoicingController {
 
         if (payment.getIsCancelled() == true || payment.getBankTransfert() != null || payment.getCustomerOrder() != null
                 || payment.getInvoice() != null
-                || payment.getRefund() != null || payment.getCompetentAuthority() != null)
+                || payment.getRefund() != null || payment.getCompetentAuthority() != null
+                || payment.getAccountingAccount() != null
+                || payment.getIsExternallyAssociated() != null && payment.getIsExternallyAssociated())
             throw new OsirisValidationException("Paiement déjà associé");
 
         if (competentAuthority == null)
             throw new OsirisValidationException("competentAuthority");
 
-        paymentService.putPaymentInAccount(payment, competentAuthority);
+        paymentService.putPaymentInCompetentAuthorityAccount(payment, competentAuthority);
+
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/payment/account")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    public ResponseEntity<Boolean> putPaymentInAccount(@RequestParam Integer paymentId,
+            @RequestParam Integer accountingAccountId)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        Payment payment = paymentService.getPayment(paymentId);
+
+        if (payment == null)
+            throw new OsirisValidationException("payment");
+
+        if (payment.getIsCancelled() == true || payment.getBankTransfert() != null || payment.getCustomerOrder() != null
+                || payment.getInvoice() != null
+                || payment.getRefund() != null || payment.getCompetentAuthority() != null
+                || payment.getAccountingAccount() != null
+                || payment.getIsExternallyAssociated() != null && payment.getIsExternallyAssociated())
+            throw new OsirisValidationException("Paiement déjà associé");
+
+        AccountingAccount account = accountingAccountService.getAccountingAccount(accountingAccountId);
+        if (account == null)
+            throw new OsirisValidationException("account");
+
+        paymentService.putPaymentInAccount(payment, account);
 
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
