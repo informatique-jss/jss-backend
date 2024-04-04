@@ -278,13 +278,13 @@ export class AccountingRecordComponent implements OnInit {
       let accumulatedData = [];
       let totalLine = {} as any;
       totalLine.label = "Total";
-      totalLine.debit = debit;
-      totalLine.credit = credit;
+      totalLine.debit = debit.toFixed(2);
+      totalLine.credit = credit.toFixed(2);
       accumulatedData.push(totalLine);
 
       let balanceLine = {} as any;
       balanceLine.label = "Balance";
-      balanceLine.credit = balance;
+      balanceLine.credit = balance.toFixed(2);
       accumulatedData.push(balanceLine);
 
       this.accumulatedDataSource.data = accumulatedData;
@@ -327,6 +327,18 @@ export class AccountingRecordComponent implements OnInit {
           this.accountingRecordService.sendBillingClosureReceipt(this.tiersToDisplay!).subscribe(res => { });
       });
     }
+  }
+
+  getLetteringBalance() {
+    let balance = 0;
+    if (this.toLetteredValues)
+      for (let value of this.toLetteredValues) {
+        if (value.creditAmount && value.creditAmount > 0)
+          balance += value.creditAmount;
+        if (value.debitAmount && value.debitAmount > 0)
+          balance -= value.debitAmount;
+      }
+    return balance;
   }
 
 }

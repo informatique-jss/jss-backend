@@ -89,6 +89,9 @@
     [refreshTable]="refreshLetteringTable.asObservable()">
   </sort-table>
 </div>
+<div class="align-right">
+  <span class="mat-mdc-cell mdc-data-table__cell ">Balance : {{getLetteringBalance()}} €</span>
+</div>
 <button matTooltip="Exporter" mat-fab color="accent" class="second-fab-button" [matMenuTriggerFor]="menu"
   *ngIf="!tiersToDisplay">
   <mat-icon>file_download</mat-icon>

@@ -47,3 +47,7 @@
 .toggle-td {
   width: 160px;
 }
+
+.align-right {
+  text-align: right;
+}

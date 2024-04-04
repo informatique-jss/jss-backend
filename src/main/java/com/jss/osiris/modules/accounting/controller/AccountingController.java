@@ -232,7 +232,7 @@ public class AccountingController {
 
         if (accountingRecordSearch.getIdPayment() != null)
             return new ResponseEntity<List<AccountingRecordSearchResult>>(
-                    accountingRecordService.searchAccountingRecords(accountingRecordSearch), HttpStatus.OK);
+                    accountingRecordService.searchAccountingRecords(accountingRecordSearch, false), HttpStatus.OK);
 
         if (accountingRecordSearch.getTiersId() == null
                 && accountingRecordSearch.getConfrereId() == null) {
@@ -241,7 +241,7 @@ public class AccountingController {
         }
 
         return new ResponseEntity<List<AccountingRecordSearchResult>>(
-                accountingRecordService.searchAccountingRecords(accountingRecordSearch), HttpStatus.OK);
+                accountingRecordService.searchAccountingRecords(accountingRecordSearch, false), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/accounting-record/letter")

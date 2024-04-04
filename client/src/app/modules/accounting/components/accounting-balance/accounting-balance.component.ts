@@ -175,8 +175,8 @@ export class AccountingBalanceComponent implements OnInit {
           }
         }
         let balanceClass = {} as AccountingBalance;
-        balanceClass.creditAmount = credit;
-        balanceClass.debitAmount = debit;
+        balanceClass.creditAmount = parseFloat(credit.toFixed(2));
+        balanceClass.debitAmount = parseFloat(debit.toFixed(2));
         balanceClass.accountingAccountLabel = classe.label;
         this.classTotals.push(balanceClass);
       }

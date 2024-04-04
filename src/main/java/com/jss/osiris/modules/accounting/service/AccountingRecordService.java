@@ -53,7 +53,7 @@ public interface AccountingRecordService {
 
         // Front search method
         public List<AccountingRecordSearchResult> searchAccountingRecords(
-                        AccountingRecordSearch accountingRecordSearch);
+                        AccountingRecordSearch accountingRecordSearch, boolean fetchAll);
 
         public List<AccountingBalance> searchAccountingBalance(AccountingBalanceSearch accountingBalanceSearch);
 

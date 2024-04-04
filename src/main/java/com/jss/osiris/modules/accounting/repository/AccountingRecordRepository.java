@@ -98,7 +98,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " and (:tiersId =0 or t.id is not null and t.id = :tiersId) " +
                         " and (:hideLettered = false or r.lettering_date_time is null ) " +
                         " and (:isFromAs400 = false or r.is_from_as400=true ) " +
-                        " and coalesce(r.manual_accounting_document_date,r.operation_date_time)>=:startDate and coalesce(r.manual_accounting_document_date,r.operation_date_time)<=:endDate  "
+                        " and (coalesce(r.manual_accounting_document_date, r.operation_date_time)>= :startDate or coalesce(r.manual_accounting_document_date, r.operation_date_time)<= date_trunc('year', cast(:startDate as date)) and r.lettering_number  is not null) and coalesce(r.manual_accounting_document_date,r.operation_date_time)<=:endDate  "
                         +
                         " and (:canViewRestricted=true or a.is_view_restricted=false)  " +
                         " and (:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId) " +
@@ -106,7 +106,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " and (:idPayment = 0 or (r.id_payment  = :idPayment or r.id_customer_order = :idCustomerOrder or r.id_invoice = :idInvoice "
                         +
                         " or r.id_refund = :idRefund or r.id_bank_transfert = :idBankTransfert ))" +
-                        " order by  r.operation_date_time desc " +
+                        " order by  r.operation_date_time desc limit :limit" +
                         " " +
                         " ")
         List<AccountingRecordSearchResult> searchAccountingRecords(
@@ -124,7 +124,8 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("idCustomerOrder") Integer idCustomerOrder,
                         @Param("idInvoice") Integer idInvoice,
                         @Param("idRefund") Integer idRefund,
-                        @Param("idBankTransfert") Integer idBankTransfert);
+                        @Param("idBankTransfert") Integer idBankTransfert,
+                        @Param("limit") Integer limit);
 
         @Query(nativeQuery = true, value = "" +
                         "select  sum(case "
@@ -149,7 +150,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "   (:isFromAs400 = false or record.is_from_as400=true ) and " +
                         "(accounting.id_principal_accounting_account=:principalAccountingAccountId or :principalAccountingAccountId =0 ) and "
                         +
-                        "(record.operation_date_time is null or (coalesce(record.manual_accounting_document_date,record.operation_date_time) >=:startDate and coalesce(record.manual_accounting_document_date,record.operation_date_time) <=:endDate )) and "
+                        "(  (coalesce(record.manual_accounting_document_date, record.operation_date_time)>= :startDate or coalesce(record.manual_accounting_document_date, record.operation_date_time)<= date_trunc('year', cast(:startDate as date)) and record.lettering_number  is not null) and coalesce(record.manual_accounting_document_date,record.operation_date_time) <=:endDate ) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false ) " +
@@ -188,7 +189,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "  (:isFromAs400 = false or coalesce(record.is_from_as400,false)=true ) and " +
                         "(accounting.id_principal_accounting_account=:principalAccountingAccountId or :principalAccountingAccountId =0 ) and "
                         +
-                        "(record.operation_date_time is null or (coalesce(record.manual_accounting_document_date,record.operation_date_time) >=:startDate and coalesce(record.manual_accounting_document_date,record.operation_date_time) <=:endDate )) and "
+                        "(  (coalesce(record.manual_accounting_document_date, record.operation_date_time)>= :startDate or coalesce(record.manual_accounting_document_date, record.operation_date_time)<= date_trunc('year', cast(:startDate as date)) and record.lettering_number  is not null) and coalesce(record.manual_accounting_document_date,record.operation_date_time) <=:endDate ) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false)  " +
