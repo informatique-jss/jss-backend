@@ -517,6 +517,7 @@ public class QuotationValidationHelper {
                         }
 
                         boolean verifyAnnouncement = isCustomerOrder
+                                        && announcement.getAnnouncementStatus() != null
                                         && (announcement.getAnnouncementStatus().getCode().equals(
                                                         AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)
                                                         || announcement.getAnnouncementStatus().getCode().equals(
