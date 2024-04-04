@@ -49,9 +49,9 @@
           <table class="full-width">
             <tr>
               <td>
-                <select-provision-type [(model)]="assoServiceProvisionType.provisionType" label="Type de prestation"
-                  [form]="entityForm" [propertyName]="'provisionType'+index" [isMandatory]="true"
-                  [isDisabled]="!editMode"></select-provision-type>
+                <autocomplete-provision-type [(model)]="assoServiceProvisionType.provisionType" [form]="entityForm"
+                  [propertyName]="'provisionType'+index" [isMandatory]="true"
+                  [isDisabled]="!editMode"></autocomplete-provision-type>
               </td>
               <td>
                 <generic-textarea [(model)]="assoServiceProvisionType.apeCodes" label="Codes APE" [form]="entityForm"

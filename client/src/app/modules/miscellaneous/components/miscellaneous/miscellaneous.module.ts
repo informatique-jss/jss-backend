@@ -60,6 +60,7 @@ import { AutocompletePaymentComponent } from '../forms/autocomplete-payment/auto
 import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-code/autocomplete-postal-code.component';
 import { AutocompletePrincipalAccountingAccountComponent } from '../forms/autocomplete-principal-accounting-account/autocomplete-principal-accounting-account.component';
 import { AutocompleteProviderComponent } from '../forms/autocomplete-provider/autocomplete-provider.component';
+import { AutocompleteProvisionTypeComponent } from '../forms/autocomplete-provision-type/autocomplete-provision-type.component';
 import { AutocompleteRegieComponent } from '../forms/autocomplete-regie/autocomplete-regie.component';
 import { AutocompleteRegionComponent } from '../forms/autocomplete-region/autocomplete-region.component';
 import { AutocompleteResponsableComponent } from '../forms/autocomplete-responsable/autocomplete-responsable.component';
@@ -525,6 +526,7 @@ const routes: Routes = [
     SelectServiceTypeComponent,
     AutocompleteServiceTypeComponent,
     MultipleUploadComponent,
+    AutocompleteProvisionTypeComponent,
   ],
   exports: [
     HistoryComponent,
@@ -754,6 +756,7 @@ const routes: Routes = [
     SelectServiceTypeComponent,
     AutocompleteServiceTypeComponent,
     MultipleUploadComponent,
+    AutocompleteProvisionTypeComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

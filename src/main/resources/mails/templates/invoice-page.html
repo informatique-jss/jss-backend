@@ -160,8 +160,8 @@
         <th:block th:each="invoiceItem : ${invoice.invoiceItems}"
             th:if="${invoiceItem.preTaxPrice!=0} or ${invoiceItem.isGifted}">
             <tr>
-                <td>
-                    <span style="padding-left: 10px" th:text="${invoiceItem.label}"></span>
+                <td style="padding-left: 10px">
+                    <span th:text="${invoiceItem.label}"></span>
                 </td>
                 <td class="td-with-price" style="text-align: right;white-space: nowrap;">
                     <span th:text="${#numbers.formatDecimal(invoiceItem.preTaxPrice,1,2)}"></span>
