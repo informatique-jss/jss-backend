@@ -189,7 +189,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public List<AccountingRecordSearchResult> searchAccountingRecords(AccountingRecordSearch accountingRecordSearch) {
+  public List<AccountingRecordSearchResult> searchAccountingRecords(AccountingRecordSearch accountingRecordSearch,
+      boolean fetchAll) {
     ArrayList<Integer> accountingAccountId = new ArrayList<Integer>();
     if (accountingRecordSearch.getAccountingAccount() != null) {
       accountingAccountId.add(accountingRecordSearch.getAccountingAccount().getId());
@@ -246,7 +247,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         accountingRecordSearch.getIdCustomerOrder(),
         accountingRecordSearch.getIdInvoice(),
         accountingRecordSearch.getIdRefund(),
-        accountingRecordSearch.getIdBankTransfert());
+        accountingRecordSearch.getIdBankTransfert(), fetchAll ? Integer.MAX_VALUE : 1000);
   }
 
   @Override

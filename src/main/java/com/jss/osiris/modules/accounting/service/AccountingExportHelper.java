@@ -61,7 +61,7 @@ public class AccountingExportHelper {
                 search.setStartDate(startDate);
                 search.setEndDate(endDate);
                 List<AccountingRecordSearchResult> accountingRecords = accountingRecordService
-                                .searchAccountingRecords(search);
+                                .searchAccountingRecords(search, true);
 
                 List<String> accountingAccounts = getAccountingAccountInRecord(accountingRecords);
 
@@ -597,7 +597,7 @@ public class AccountingExportHelper {
                 search.setStartDate(startDate);
                 search.setEndDate(endDate);
                 List<AccountingRecordSearchResult> accountingRecords = accountingRecordService
-                                .searchAccountingRecords(search);
+                                .searchAccountingRecords(search, true);
 
                 accountingRecords.sort(new Comparator<AccountingRecordSearchResult>() {
                         @Override
@@ -859,7 +859,7 @@ public class AccountingExportHelper {
                 search.setStartDate(startDate);
                 search.setEndDate(endDate);
                 List<AccountingRecordSearchResult> accountingRecords = accountingRecordService
-                                .searchAccountingRecords(search);
+                                .searchAccountingRecords(search, true);
 
                 accountingRecords.sort(new Comparator<AccountingRecordSearchResult>() {
                         @Override
