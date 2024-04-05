@@ -76,6 +76,7 @@ import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
+import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.BillingLabelTypeService;
 import com.jss.osiris.modules.tiers.service.RffService;
@@ -166,6 +167,26 @@ public class InvoicingController {
 
     @Autowired
     AccountingRecordGenerationService accountingRecordGenerationService;
+
+    @GetMapping(inputEntryPoint + "/rff/invoice")
+    public ResponseEntity<Invoice> generateInvoiceForRff(@RequestParam Integer idRff)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+        if (idRff == null)
+            throw new OsirisValidationException("idRff");
+
+        Rff rff = rffService.getRff(idRff);
+        if (rff == null)
+            throw new OsirisValidationException("Rff");
+
+        if (rff.getRffTotal() == null || rff.getRffTotal() <= 0f)
+            throw new OsirisValidationException("Rff");
+
+        if (rff.getIsCancelled() == true || rff.getIsSent() == false
+                || rff.getInvoices() != null && rff.getInvoices().size() > 0)
+            throw new OsirisValidationException("Rff");
+
+        return new ResponseEntity<Invoice>(rffService.generateInvoiceForRff(rff), HttpStatus.OK);
+    }
 
     @PostMapping(inputEntryPoint + "/azure-receipt/invoice")
     public ResponseEntity<AzureReceiptInvoice> updateAzureReceiptInvoice(
