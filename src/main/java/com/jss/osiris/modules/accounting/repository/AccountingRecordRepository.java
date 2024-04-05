@@ -106,7 +106,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " and (:idPayment = 0 or (r.id_payment  = :idPayment or r.id_customer_order = :idCustomerOrder or r.id_invoice = :idInvoice "
                         +
                         " or r.id_refund = :idRefund or r.id_bank_transfert = :idBankTransfert ))" +
-                        " order by  r.operation_date_time desc limit :limit" +
+                        " order by  r.operation_date_time  limit :limit" +
                         " " +
                         " ")
         List<AccountingRecordSearchResult> searchAccountingRecords(
