@@ -599,13 +599,6 @@ public class AccountingExportHelper {
                 List<AccountingRecordSearchResult> accountingRecords = accountingRecordService
                                 .searchAccountingRecords(search, true);
 
-                accountingRecords.sort(new Comparator<AccountingRecordSearchResult>() {
-                        @Override
-                        public int compare(AccountingRecordSearchResult o1, AccountingRecordSearchResult o2) {
-                                return sortRecords(o1, o2);
-                        }
-                });
-
                 XSSFWorkbook wb = new XSSFWorkbook();
 
                 // Define style
@@ -860,13 +853,6 @@ public class AccountingExportHelper {
                 search.setEndDate(endDate);
                 List<AccountingRecordSearchResult> accountingRecords = accountingRecordService
                                 .searchAccountingRecords(search, true);
-
-                accountingRecords.sort(new Comparator<AccountingRecordSearchResult>() {
-                        @Override
-                        public int compare(AccountingRecordSearchResult o1, AccountingRecordSearchResult o2) {
-                                return sortRecords(o1, o2);
-                        }
-                });
 
                 XSSFWorkbook wb = new XSSFWorkbook();
 
@@ -1490,37 +1476,7 @@ public class AccountingExportHelper {
                                                 .equals(accountingRecord.getPrincipalAccountingAccountCode() +
                                                                 accountingRecord.getAccountingAccountSubNumber()))
                                         accountingRecords.add(accountingRecord);
-                accountingRecords.sort(new Comparator<AccountingRecordSearchResult>() {
-                        @Override
-                        public int compare(AccountingRecordSearchResult o1, AccountingRecordSearchResult o2) {
-                                return sortRecords(o1, o2);
-                        }
-                });
                 return accountingRecords;
-        }
-
-        private int sortRecords(AccountingRecordSearchResult a, AccountingRecordSearchResult b) {
-                if (a != null && b == null)
-                        return 1;
-                if (a == null && b != null)
-                        return -1;
-                if (a == null && b == null)
-                        return 0;
-                // First, by operation id
-                if (a != null && b != null && a.getOperationId() != null && b.getOperationId() != null) {
-                        return a.getOperationId().compareTo(b.getOperationId());
-                } else {
-                        // Next by operation date
-                        if (a != null && b != null) {
-                                if (a.getOperationDateTime() != null
-                                                && b.getOperationDateTime() != null) {
-                                        return a.getOperationDateTime().compareTo(b.getOperationDateTime());
-                                } else {
-                                        return a.getId().compareTo(b.getId());
-                                }
-                        }
-                }
-                return 0;
         }
 
         private void cleanBeforeMergeOnValidCells(XSSFSheet sheet, CellRangeAddress region, XSSFCellStyle cellStyle) {
@@ -1541,13 +1497,6 @@ public class AccountingExportHelper {
 
         public File generateBillingClosure(List<AccountingRecordSearchResult> accountingRecords, String tiersLabel,
                         boolean showAffaireDetails) throws OsirisException {
-
-                accountingRecords.sort(new Comparator<AccountingRecordSearchResult>() {
-                        @Override
-                        public int compare(AccountingRecordSearchResult o1, AccountingRecordSearchResult o2) {
-                                return sortRecords(o1, o2);
-                        }
-                });
 
                 if (showAffaireDetails)
                         accountingRecords.sort(new Comparator<AccountingRecordSearchResult>() {
