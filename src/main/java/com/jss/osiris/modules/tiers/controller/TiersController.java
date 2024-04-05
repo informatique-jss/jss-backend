@@ -229,26 +229,6 @@ public class TiersController {
     return new ResponseEntity<Rff>(rffService.cancelRff(rff), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/rff/invoice")
-  public ResponseEntity<Invoice> generateInvoiceForRff(@RequestParam Integer idRff)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-    if (idRff == null)
-      throw new OsirisValidationException("idRff");
-
-    Rff rff = rffService.getRff(idRff);
-    if (rff == null)
-      throw new OsirisValidationException("Rff");
-
-    if (rff.getRffTotal() == null || rff.getRffTotal() <= 0f)
-      throw new OsirisValidationException("Rff");
-
-    if (rff.getIsCancelled() == true || rff.getIsSent() == false
-        || rff.getInvoices() != null && rff.getInvoices().size() > 0)
-      throw new OsirisValidationException("Rff");
-
-    return new ResponseEntity<Invoice>(rffService.generateInvoiceForRff(rff), HttpStatus.OK);
-  }
-
   @GetMapping(inputEntryPoint + "/rff/send")
   public ResponseEntity<Rff> sendRff(@RequestParam Integer idRff, @RequestParam Float amount,
       @RequestParam boolean sendToMe)
