@@ -78,7 +78,7 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
         List<CustomerOrder> findCustomerOrderForReminder(
                         @Param("customerOrderStatus") CustomerOrderStatus customerOrderStatus);
 
-        @Query(value = "select c.* from customer_order c where exists (select 1 from asso_affaire_order a join provision p on p.id_asso_affaire_order = a.id where a.id_customer_order = c.id and  p.id_announcement = :announcementId)", nativeQuery = true)
+        @Query(value = "select c.* from customer_order c where exists (select 1 from asso_affaire_order a join service s on a.id =s.id_asso_affaire_order  join provision p on p.id_service = s.id where a.id_customer_order = c.id and  p.id_announcement = :announcementId)", nativeQuery = true)
         Optional<CustomerOrder> findCustomerOrderForAnnouncement(@Param("announcementId") Integer announcementId);
 
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })

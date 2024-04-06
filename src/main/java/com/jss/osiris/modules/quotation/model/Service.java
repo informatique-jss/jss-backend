@@ -49,7 +49,7 @@ public class Service implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
 	private List<AssoServiceDocument> assoServiceDocuments;
 
-	@OneToMany(targetEntity = MissingAttachmentQuery.class, mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = MissingAttachmentQuery.class, mappedBy = "service", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
 	private List<MissingAttachmentQuery> missingAttachmentQueries;
 

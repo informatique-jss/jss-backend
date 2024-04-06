@@ -135,12 +135,12 @@
 
 <ng-template #osirisAzureInvoices let-invoice='invoice' let-multiple="multiple">
   <ul *ngFor="let attachment of invoice.attachments">
-    <li>Commande : {{attachment.provision.assoAffaireOrder.customerOrder.id}} -
-      {{attachment.provision.assoAffaireOrder.customerOrder.customerOrderStatus.label}} <mat-icon
-        (click)="openCustomerOrder($event,attachment.provision.assoAffaireOrder.customerOrder)"
-        (auxclick)="openCustomerOrder($event, attachment.provision.assoAffaireOrder.customerOrder)"
+    <li>Commande : {{attachment.provision.service.assoAffaireOrder.customerOrder.id}} -
+      {{attachment.provision.service.assoAffaireOrder.customerOrder.customerOrderStatus.label}} <mat-icon
+        (click)="openCustomerOrder($event,attachment.provision.service.assoAffaireOrder.customerOrder)"
+        (auxclick)="openCustomerOrder($event, attachment.provision.service.assoAffaireOrder.customerOrder)"
         class="pointer small-icon" matTooltip="Voir la commande">visibility</mat-icon>
-    <li>Affaire : {{getAffaireLabel(attachment.provision.assoAffaireOrder.affaire)}}
+    <li>Affaire : {{getAffaireLabel(attachment.provision.service.assoAffaireOrder.affaire)}}
     <li>Prestation : {{attachment.provision.provisionFamilyType.label}} -
       {{attachment.provision.provisionType.label}} <mat-icon color="accent"
         (click)="openProvision($event,attachment.provision)" (auxclick)="openProvision($event, attachment.provision)"

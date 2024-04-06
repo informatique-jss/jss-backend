@@ -196,10 +196,12 @@
                                                                     votre commande n°<span
                                                                         th:text="${customerOrder.id}"></span> à
                                                                     télécharger en PJ. <br />
-                                                                <p th:if="${isLastReminder}"><span>Sans réglement de
-                                                                        votre part dans les 10 jours, nous nous verrons
-                                                                        contraints de vous mettre en demeure pour la
-                                                                        somme en question.</span></p>
+                                                                <p th:if="${isLastReminder}"><strong><span>Sans
+                                                                            réglement de
+                                                                            votre part dans les 10 jours, nous nous
+                                                                            verrons
+                                                                            contraints de vous mettre en demeure pour la
+                                                                            somme en question.</span></strong></p>
                                                                 <p>Afin de régler cette facture d'un montant de <span
                                                                         th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span>
                                                                     € dans les meilleurs délais, vous disposez de
