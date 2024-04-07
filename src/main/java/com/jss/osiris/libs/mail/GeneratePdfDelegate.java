@@ -39,6 +39,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.jss.osiris.libs.PictureHelper;
 import com.jss.osiris.libs.QrCodeHelper;
+import com.jss.osiris.libs.azure.TranslationService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -120,6 +121,9 @@ public class GeneratePdfDelegate {
 
     @Autowired
     InvoiceService invoiceService;
+
+    @Autowired
+    TranslationService translationService;
 
     @Transactional(rollbackFor = Exception.class)
     public File generatePublicationForAnnouncement(Announcement announcement, Provision provision,
@@ -998,6 +1002,17 @@ public class GeneratePdfDelegate {
 
         ctx.setVariable("mailDestinationLabel", getMailDestinationLabel(domiciliation, false));
         ctx.setVariable("mailDestinationLabelEnglish", getMailDestinationLabel(domiciliation, true));
+
+        String activityDescriptionEnglish = "";
+        if (domiciliation.getActivityDescription() != null)
+            activityDescriptionEnglish = translationService
+                    .translateTextToEnglish(domiciliation.getActivityDescription());
+        ctx.setVariable("activityDescriptionEnglish", activityDescriptionEnglish);
+
+        String legalGardianJobEnglish = "";
+        if (domiciliation.getLegalGardianJob() != null)
+            legalGardianJobEnglish = translationService.translateTextToEnglish(domiciliation.getLegalGardianJob());
+        ctx.setVariable("legalGardianJobEnglish", legalGardianJobEnglish);
 
         // Billing item
         String monthlyBillingAmount = "";

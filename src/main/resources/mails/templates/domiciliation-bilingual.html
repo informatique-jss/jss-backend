@@ -106,7 +106,7 @@
                 <td>Represented by <span th:text="${domiciliation.legalGardianCivility.label}"></span> <span
                         th:text="${domiciliation.legalGardianLastname}"></span> <span
                         th:text="${domiciliation.legalGardianFirstname}"></span>, acting as <span
-                        th:text="${domiciliation.legalGardianJob}"></span>, born on <span
+                        th:text="${legalGardianJobEnglish}"></span>, born on <span
                         th:text="${domiciliationLegalPersonBirthday}"></span> in <span
                         th:text="${domiciliation.legalGardianPlaceOfBirth}"></span> and living at <span
                         th:text="${domiciliation.legalGardianAddress}"></span> <span
@@ -165,7 +165,7 @@
             </tr>
             <tr>
                 <td><span th:text="${domiciliation.activityDescription}"></span></td>
-                <td><span th:text="${domiciliation.activityDescription}"></span></td>
+                <td><span th:text="${activityDescriptionEnglish}"></span></td>
             </tr>
             <tr>
                 <td>à se domicilier dans ses locaux du <strong>8 rue Saint Augustin, 75002 PARIS</strong></td>

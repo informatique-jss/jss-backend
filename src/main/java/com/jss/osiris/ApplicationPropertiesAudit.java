@@ -92,6 +92,10 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("azure.form.recognizer.model.invoices.name");
         isOk = isOk && checkProperty("azure.form.recognizer.model.receipts.name");
         isOk = isOk && checkProperty("azure.form.recognizer.confidence.threshold");
+        isOk = isOk && checkProperty("azure.translator.api.key");
+        isOk = isOk && checkProperty("azure.translator.api.endpoint");
+        isOk = isOk && checkProperty("azure.translator.api.route");
+        isOk = isOk && checkProperty("azure.translator.api.region");
         isOk = isOk && checkProperty("schedulling.audit.clean");
         isOk = isOk && checkProperty("schedulling.log.purge");
         isOk = isOk && checkProperty("schedulling.node.priority");
