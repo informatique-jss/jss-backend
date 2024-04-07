@@ -207,7 +207,7 @@
                                                                                 th:each="provision : ${service.provisions}">
                                                                                 <th:block
                                                                                     th:each="attachment : ${attachments}"
-                                                                                    th:if="${attachment.parentAttachment.provision}!=null">
+                                                                                    th:if="${attachment.parentAttachment}!=null and ${attachment.parentAttachment.provision}!=null">
                                                                                     <li
                                                                                         th:if="${attachment.parentAttachment.provision.id==provision.id}">
                                                                                         <span

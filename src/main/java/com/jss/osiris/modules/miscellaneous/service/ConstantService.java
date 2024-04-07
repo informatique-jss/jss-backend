@@ -124,6 +124,8 @@ public interface ConstantService {
 
     public AttachmentType getAttachmentTypeAnnouncement() throws OsirisException;
 
+    public AttachmentType getAttachmentTypeContract() throws OsirisException;
+
     public AttachmentType getAttachmentTypeComplexAnnouncement() throws OsirisException;
 
     public Country getCountryFrance() throws OsirisException;
@@ -210,6 +212,14 @@ public interface ConstantService {
 
     public BillingType getBillingtypeCorrespondenceFees() throws OsirisException;
 
+    public BillingType getBillingTypeDomiciliationContractTypeKeepMail() throws OsirisException;
+
+    public BillingType getBillingTypeDomiciliationContractTypeRouteEmail() throws OsirisException;
+
+    public BillingType getBillingTypeDomiciliationContractTypeRouteMail() throws OsirisException;
+
+    public BillingType getBillingTypeDomiciliationContractTypeRouteEmailAndMail() throws OsirisException;
+
     public String getStringNantissementDepositFormeJuridiqueCode() throws OsirisException;
 
     public String getStrinSocialShareNantissementRedactionFormeJuridiqueCode() throws OsirisException;
@@ -249,6 +259,10 @@ public interface ConstantService {
     public DomiciliationContractType getDomiciliationContractTypeRouteEmail() throws OsirisException;
 
     public MailRedirectionType getMailRedirectionTypeOther() throws OsirisException;
+
+    public MailRedirectionType getMailRedirectionTypeLegalGuardian() throws OsirisException;
+
+    public MailRedirectionType getMailRedirectionTypeActivity() throws OsirisException;
 
     public ActType getActTypeSeing() throws OsirisException;
 

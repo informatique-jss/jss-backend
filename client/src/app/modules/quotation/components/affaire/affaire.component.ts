@@ -44,7 +44,7 @@ export class AffaireComponent implements OnInit {
         if (response) {
           this.affaire = response;
           this.restoreTab();
-          this.orderingSearch.affaires = [this.affaire];
+          this.orderingSearch.affaire = this.affaire;
           this.quotationSearch.affaires = [this.affaire];
           this.appService.changeHeaderTitle("Affaire - " + (this.affaire.denomination ? this.affaire.denomination : this.affaire.firstname + " " + this.affaire.lastname));
           this.provisionSearch.affaire = this.affaire;

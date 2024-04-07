@@ -1,10 +1,9 @@
 package com.jss.osiris.modules.quotation.repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import javax.persistence.QueryHint;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -14,6 +13,8 @@ import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
+
+import jakarta.persistence.QueryHint;
 
 public interface CustomerOrderRepository extends QueryCacheCrudRepository<CustomerOrder, Integer> {
 
@@ -39,6 +40,13 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
                         + " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')' ,', ' ) as affaireLabel,"
                         + " STRING_AGG(DISTINCT af.siren ,', '  ) as affaireSiren,"
                         + " STRING_AGG(DISTINCT af.address ||' '||af.postal_code||' '||city.label ||' '||country.label ,', '  ) as affaireAddress,"
+                        + " co.id_customer_order_parent as customerOrderParentId, "
+                        + " co.id_customer_order_parent_recurring as customerOrderParentRecurringId, "
+                        + " co.recurring_period_start_date  as recurringPeriodStartDate, "
+                        + " co.recurring_period_end_date  as recurringPeriodEndDate, "
+                        + " co.recurring_start_date  as recurringStartDate, "
+                        + " co.recurring_end_date  as recurringEndDate, "
+                        + " co.is_recurring_automatically_billed  as isRecurringAutomaticallyBilled, "
                         + " co.description as customerOrderDescription"
                         + " from customer_order co"
                         + " join customer_order_origin origin on origin.id = co.id_customer_order_origin"
@@ -61,18 +69,28 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
                         + " and co.created_date>=:startDate and co.created_date<=:endDate "
                         + " and ( :quotationId =0 or asso_co.id_quotation = :quotationId)"
                         + " and ( :idCustomerOrder =0 or co.id = :idCustomerOrder)"
+                        + " and ( :recurringValidityDate<='1950-01-01'  or :isDisplayOnlyParentRecurringCustomerOrder =true and co.recurring_period_start_date <= :recurringValidityDate and  co.recurring_period_end_date >= :recurringValidityDate or  :isDisplayOnlyRecurringCustomerOrder =true and co.recurring_start_date <= :recurringValidityDate and  co.recurring_end_date >= :recurringValidityDate)"
+                        + " and ( :isDisplayOnlyRecurringCustomerOrder =false or co.is_recurring = true or co.id_customer_order_parent_recurring is not null)"
+                        + " and ( :isDisplayOnlyParentRecurringCustomerOrder =false or co.is_recurring = true)"
+                        + " and ( :idCustomerOrderParentRecurring =0 or co.id_customer_order_parent_recurring = :idCustomerOrderParentRecurring)"
+                        + " and ( :idCustomerOrderChildRecurring =0 or co.id = (select id_customer_order_parent_recurring from customer_order where id =:idCustomerOrderChildRecurring))"
                         + " and ( COALESCE(:assignedToEmployee) =0 or co.id_assigned_to in (:assignedToEmployee))"
                         + " and ( COALESCE(:salesEmployee) =0 or cf.id_commercial in (:salesEmployee) or r.id_commercial in (:salesEmployee) or t.id_commercial in (:salesEmployee) or t.id_commercial is null and t2.id_commercial in (:salesEmployee))"
                         + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder) or t2.id in (:customerOrder))"
-                        + " and ( COALESCE(:affaire)=0 or af.id in (:affaire) )"
+                        + " and ( COALESCE(:affaire)=0 or af.id =:affaire )"
                         + " group by cf.id, cf.label, r.id, r.firstname,origin.label,  r.lastname, t.denomination, t.firstname, t.lastname, t2.denomination, t2.firstname, t2.lastname, cos.label, "
                         + " co.created_date, cf.id_commercial, r.id_commercial, t.id_commercial, t2.id_commercial, co.id, r.id, t.id,t2.id, cf.id, co.description,co.id_assigned_to ")
         List<OrderingSearchResult> findCustomerOrders(@Param("salesEmployee") List<Integer> salesEmployee,
                         @Param("assignedToEmployee") List<Integer> assignedToEmployee,
                         @Param("customerOrderStatus") List<Integer> customerOrderStatus,
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                        @Param("customerOrder") List<Integer> customerOrder, @Param("affaire") List<Integer> affaire,
-                        @Param("quotationId") Integer quotationId, @Param("idCustomerOrder") Integer idCustomerOrder);
+                        @Param("customerOrder") List<Integer> customerOrder, @Param("affaire") Integer affaire,
+                        @Param("quotationId") Integer quotationId, @Param("idCustomerOrder") Integer idCustomerOrder,
+                        @Param("idCustomerOrderParentRecurring") Integer idCustomerOrderParentRecurring,
+                        @Param("idCustomerOrderChildRecurring") Integer idCustomerOrderChildRecurring,
+                        @Param("isDisplayOnlyRecurringCustomerOrder") Boolean isDisplayOnlyRecurringCustomerOrder,
+                        @Param("isDisplayOnlyParentRecurringCustomerOrder") Boolean isDisplayOnlyParentRecurringCustomerOrder,
+                        @Param("recurringValidityDate") LocalDate recurringValidityDate);
 
         @Query(value = "select n from CustomerOrder n where customerOrderStatus=:customerOrderStatus and thirdReminderDateTime is null ")
         List<CustomerOrder> findCustomerOrderForReminder(
@@ -83,5 +101,11 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
 
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<CustomerOrder> findByQuotations_Id(Integer idQuotation);
+
+        @Query(value = "select c from CustomerOrder c where isRecurring = true and customerOrderStatus not in (:openStatus, :waitingDepositStatus) and recurringPeriodStartDate<=current_date() and recurringPeriodEndDate>current_date()")
+        List<CustomerOrder> findAllActiveRecurringCustomerOrders(@Param("openStatus") CustomerOrderStatus openStatus,
+                        @Param("waitingDepositStatus") CustomerOrderStatus waitingDepositStatus);
+
+        List<CustomerOrder> findByCustomerOrderParentRecurringOrderByRecurringEndDateDesc(CustomerOrder customerOrder);
 
 }

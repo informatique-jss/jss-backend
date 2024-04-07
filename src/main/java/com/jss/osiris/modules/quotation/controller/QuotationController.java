@@ -77,6 +77,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.DebourDel;
 import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
+import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
@@ -125,6 +126,7 @@ import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DebourDelService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService;
+import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.quotation.service.FundTypeService;
@@ -292,6 +294,9 @@ public class QuotationController {
   DomiciliationStatusService domiciliationStatusService;
 
   @Autowired
+  DomiciliationService domiciliationService;
+
+  @Autowired
   FormaliteStatusService formaliteStatusService;
 
   @Autowired
@@ -350,6 +355,46 @@ public class QuotationController {
 
   @Autowired
   AssoServiceDocumentService assoServiceDocumentService;
+
+  @GetMapping(inputEntryPoint + "/domiciliation/contract")
+  public ResponseEntity<Provision> generateDomiciliationContract(@RequestParam Integer provisionId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    Provision provision = provisionService.getProvision(provisionId);
+    if (provision == null || provision.getDomiciliation() == null)
+      throw new OsirisValidationException("provision");
+
+    Affaire affaire = provision.getService().getAssoAffaireOrder().getAffaire();
+    Domiciliation domiciliation = provision.getDomiciliation();
+    if (affaire.getLegalForm() == null)
+      throw new OsirisClientMessageException("La forme juridique de l'affaire doit être renseignée");
+    if (affaire.getCompetentAuthority() == null)
+      throw new OsirisClientMessageException("L'autorité compétente de l'affaire doit être renseignée");
+    if (affaire.getCompetentAuthority().getCity() == null)
+      throw new OsirisClientMessageException("La ville de l'autorité compétente de l'affaire doit être renseignée");
+    if (affaire.getSiren() == null)
+      throw new OsirisClientMessageException("La SIREN de l'affaire doit être renseignée");
+
+    if (domiciliation.getIsLegalPerson() == null || !domiciliation.getIsLegalPerson()) {
+      if (domiciliation.getLegalGardianFirstname() == null || domiciliation.getLegalGardianLastname() == null
+          || domiciliation.getLegalGardianBirthdate() == null || domiciliation.getLegalGardianPlaceOfBirth() == null
+          || domiciliation.getLegalGardianCivility() == null || domiciliation.getLegalGardianJob() == null)
+        throw new OsirisClientMessageException("L'ensemble des informations du représentant légal sont obligatoires");
+    } else if (domiciliation.getLegalGardianDenomination() == null
+        || domiciliation.getLegalGardianLegalForm() == null) {
+      throw new OsirisClientMessageException("L'ensemble des informations du représentant légal sont obligatoires");
+    }
+    if (domiciliation.getLegalGardianAddress() == null || domiciliation.getLegalGardianCity() == null
+        || domiciliation.getLegalGardianCountry() == null || domiciliation.getLegalGardianPostalCode() == null)
+      throw new OsirisClientMessageException("L'ensemble des informations du représentant légal sont obligatoires");
+
+    if (domiciliation.getActivityDescription() == null)
+      throw new OsirisClientMessageException("La description de l'activité doit être renseignée");
+
+    return new ResponseEntity<Provision>(
+        domiciliationService.generateDomiciliationContract(provision),
+        HttpStatus.OK);
+  }
 
   @GetMapping(inputEntryPoint + "/service/modify")
   public ResponseEntity<Service> modifyServiceType(@RequestParam Integer serviceId,
@@ -582,6 +627,22 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/customer-order/quotation")
   public ResponseEntity<List<OrderingSearchResult>> getCustomerOrderByQuotationId(@RequestParam Integer idQuotation) {
     return new ResponseEntity<List<OrderingSearchResult>>(customerOrderService.searchByQuotationId(idQuotation),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/recurring")
+  public ResponseEntity<List<OrderingSearchResult>> getCustomerOrderByCustomerOrderParentRecurringId(
+      @RequestParam Integer idCustomerOrderRecurring) {
+    return new ResponseEntity<List<OrderingSearchResult>>(
+        customerOrderService.searchByCustomerOrderParentRecurringId(idCustomerOrderRecurring),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/recurring/parent")
+  public ResponseEntity<List<OrderingSearchResult>> getCustomerOrderParentRecurringByCustomerOrderId(
+      @RequestParam Integer idCustomerOrderRecurring) {
+    return new ResponseEntity<List<OrderingSearchResult>>(
+        customerOrderService.searchByCustomerOrderParentRecurringByCustomerOrderId(idCustomerOrderRecurring),
         HttpStatus.OK);
   }
 
@@ -1269,6 +1330,7 @@ public class QuotationController {
       validationHelper.validateReferential(domiciliationContractType, true, "domiciliationContractType");
     validationHelper.validateString(domiciliationContractType.getCode(), true, 20, "code");
     validationHelper.validateString(domiciliationContractType.getLabel(), true, 100, "label");
+    validationHelper.validateString(domiciliationContractType.getEnglishLabel(), true, 100, "englishLabel");
 
     return new ResponseEntity<DomiciliationContractType>(
         domiciliationContractTypeService.addOrUpdateDomiciliationContractType(domiciliationContractType),

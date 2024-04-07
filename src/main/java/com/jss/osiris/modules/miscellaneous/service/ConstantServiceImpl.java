@@ -272,6 +272,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AttachmentType getAttachmentTypeContract() throws OsirisException {
+        return getConstants().getAttachmentTypeContract();
+    }
+
+    @Override
     public Country getCountryFrance() throws OsirisException {
         return getConstants().getCountryFrance();
     }
@@ -482,6 +487,26 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public BillingType getBillingTypeDomiciliationContractTypeKeepMail() throws OsirisException {
+        return getConstants().getBillingTypeDomiciliationContractTypeKeepMail();
+    }
+
+    @Override
+    public BillingType getBillingTypeDomiciliationContractTypeRouteEmail() throws OsirisException {
+        return getConstants().getBillingTypeDomiciliationContractTypeRouteEmail();
+    }
+
+    @Override
+    public BillingType getBillingTypeDomiciliationContractTypeRouteMail() throws OsirisException {
+        return getConstants().getBillingTypeDomiciliationContractTypeRouteMail();
+    }
+
+    @Override
+    public BillingType getBillingTypeDomiciliationContractTypeRouteEmailAndMail() throws OsirisException {
+        return getConstants().getBillingTypeDomiciliationContractTypeRouteEmailAndMail();
+    }
+
+    @Override
     public String getStringNantissementDepositFormeJuridiqueCode() throws OsirisException {
         return getConstants().getStringNantissementDepositFormeJuridiqueCode();
     }
@@ -579,6 +604,16 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public MailRedirectionType getMailRedirectionTypeOther() throws OsirisException {
         return getConstants().getMailRedirectionTypeOther();
+    }
+
+    @Override
+    public MailRedirectionType getMailRedirectionTypeLegalGuardian() throws OsirisException {
+        return getConstants().getMailRedirectionTypeLegalGuardian();
+    }
+
+    @Override
+    public MailRedirectionType getMailRedirectionTypeActivity() throws OsirisException {
+        return getConstants().getMailRedirectionTypeActivity();
     }
 
     @Override

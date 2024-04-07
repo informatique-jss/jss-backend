@@ -2,23 +2,24 @@ package com.jss.osiris.modules.invoicing.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
+import com.jss.osiris.modules.quotation.model.DomiciliationFee;
 import com.jss.osiris.modules.quotation.model.Provision;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_invoice_item_invoice", columnList = "id_invoice"),
@@ -58,6 +59,11 @@ public class InvoiceItem implements Serializable, IId {
 	@JoinColumn(name = "id_provision")
 	@JsonIgnoreProperties(value = { "invoiceItems", "assoAffaireOrder", "providerInvoices" }, allowSetters = true)
 	Provision provision;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_domiciliation_fee")
+	@JsonIgnoreProperties(value = { "domiciliation" }, allowSetters = true)
+	DomiciliationFee domiciliationFee;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice")
@@ -174,5 +180,13 @@ public class InvoiceItem implements Serializable, IId {
 
 	public void setOriginProviderInvoice(Invoice originProviderInvoice) {
 		this.originProviderInvoice = originProviderInvoice;
+	}
+
+	public DomiciliationFee getDomiciliationFee() {
+		return domiciliationFee;
+	}
+
+	public void setDomiciliationFee(DomiciliationFee domiciliationFee) {
+		this.domiciliationFee = domiciliationFee;
 	}
 }

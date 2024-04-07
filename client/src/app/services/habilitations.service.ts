@@ -51,6 +51,10 @@ export class HabilitationsService {
     return true;
   }
 
+  canViewRecurringCustomerOrderModule() {
+    return true;
+  }
+
   canViewAdministrationModule() {
     return this.loginService.hasGroup([ADMINISTRATEURS])
   }

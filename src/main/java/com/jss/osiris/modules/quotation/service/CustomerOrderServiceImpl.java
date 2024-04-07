@@ -13,24 +13,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
+import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
+import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
-import com.jss.osiris.libs.DateHelper;
 import com.jss.osiris.libs.JacksonLocalDateDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
@@ -63,24 +60,31 @@ import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.controller.QuotationValidationHelper;
-import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
+import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
+import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.Service;
+import com.jss.osiris.modules.quotation.model.SimpleProvision;
+import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.repository.CustomerOrderRepository;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @org.springframework.stereotype.Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
@@ -140,6 +144,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     AnnouncementStatusService announcementStatusService;
 
     @Autowired
+    FormaliteStatusService formaliteStatusService;
+
+    @Autowired
+    DomiciliationStatusService domiciliationStatusService;
+
+    @Autowired
     PaymentService paymentService;
 
     @Autowired
@@ -169,11 +179,23 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     BatchService batchService;
 
+    @Autowired
+    SimpleProvisionService simpleProvisionService;
+
+    @Autowired
+    SimpleProvisionStatusService simpleProvisionStatusService;
+
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
         Optional<CustomerOrder> customerOrder = customerOrderRepository.findById(id);
-        if (customerOrder.isPresent())
-            return customerOrder.get();
+        if (customerOrder.isPresent()) {
+            CustomerOrder customerOrderOut = customerOrder.get();
+            if (customerOrderOut.getCustomerOrderParentRecurring() != null)
+                customerOrderOut.setHasCustomerOrderParentRecurring(true);
+            if (customerOrderOut.getCustomerOrderParent() != null)
+                customerOrderOut.setHasCustomerOrderParent(true);
+            return customerOrderOut;
+        }
         return null;
     }
 
@@ -211,8 +233,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         customerOrder.setIsQuotation(false);
 
-        // TODO findDuplicatesForCustomerOrder(customerOrder);
-
         if (customerOrder.getDocuments() != null)
             for (Document document : customerOrder.getDocuments()) {
                 mailService.populateMailIds(document.getMailsAffaire());
@@ -243,6 +263,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         if (checkAllProvisionEnded)
             checkAllProvisionEnded(customerOrder);
+
+        // Generate recurring
+        if (customerOrder.getIsRecurring() != null && customerOrder.getIsRecurring()
+                && customerOrder.getRecurringStartDate() == null) {
+            customerOrder.setRecurringStartDate(customerOrder.getRecurringPeriodStartDate());
+            customerOrder.setRecurringEndDate(customerOrder.getRecurringPeriodStartDate()
+                    .plusMonths(customerOrder.getCustomerOrderFrequency().getMonthNumber()).minusDays(1));
+            customerOrderRepository.save(customerOrder);
+        }
 
         batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
         return customerOrder;
@@ -620,13 +649,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrderId.add(0);
         }
 
-        ArrayList<Integer> affaireId = new ArrayList<Integer>();
-        if (orderingSearch.getAffaires() != null && orderingSearch.getAffaires().size() > 0) {
-            for (Affaire affaire : orderingSearch.getAffaires())
-                affaireId.add(affaire.getId());
-        } else {
-            affaireId.add(0);
-        }
+        Integer affaireId = 0;
+        if (orderingSearch.getAffaire() != null)
+            affaireId = orderingSearch.getAffaire().getId();
 
         if (orderingSearch.getStartDate() == null)
             orderingSearch.setStartDate(LocalDateTime.now().minusYears(100));
@@ -637,12 +662,35 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (orderingSearch.getIdCustomerOrder() == null)
             orderingSearch.setIdCustomerOrder(0);
 
+        if (orderingSearch.getIdQuotation() == null)
+            orderingSearch.setIdQuotation(0);
+
+        if (orderingSearch.getIdCustomerOrderParentRecurring() == null)
+            orderingSearch.setIdCustomerOrderParentRecurring(0);
+
+        if (orderingSearch.getIdCustomerOrderChildRecurring() == null)
+            orderingSearch.setIdCustomerOrderChildRecurring(0);
+
+        if (orderingSearch.getIsDisplayOnlyParentRecurringCustomerOrder() == null)
+            orderingSearch.setIsDisplayOnlyParentRecurringCustomerOrder(false);
+
+        if (orderingSearch.getIsDisplayOnlyRecurringCustomerOrder() == null)
+            orderingSearch.setIsDisplayOnlyRecurringCustomerOrder(false);
+
+        if (orderingSearch.getRecurringValidityDate() == null)
+            orderingSearch.setRecurringValidityDate(LocalDate.of(1949, 1, 1));
+
         List<OrderingSearchResult> customerOrders = customerOrderRepository.findCustomerOrders(
                 salesEmployeeId, assignedToEmployeeId,
                 statusId,
                 orderingSearch.getStartDate().withHour(0).withMinute(0),
-                orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId, 0,
-                orderingSearch.getIdCustomerOrder());
+                orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId,
+                orderingSearch.getIdQuotation(),
+                orderingSearch.getIdCustomerOrder(), orderingSearch.getIdCustomerOrderParentRecurring(),
+                orderingSearch.getIdCustomerOrderChildRecurring(),
+                orderingSearch.getIsDisplayOnlyRecurringCustomerOrder(),
+                orderingSearch.getIsDisplayOnlyParentRecurringCustomerOrder(),
+                orderingSearch.getRecurringValidityDate());
         return customerOrders;
     }
 
@@ -664,8 +712,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 quotation.getResponsable(),
                 quotation.getConfrere(), quotation.getSpecialOffers(), LocalDateTime.now(), statusOpen,
                 quotation.getObservations(), quotation.getDescription(), quotation.getInstructions(), null,
-                quotation.getDocuments(), quotation.getAssoAffaireOrders(), null, quotation.getQuotationLabel(), false,
-                null, null);
+                quotation.getDocuments(), quotation.getAssoAffaireOrders(), null, false,
+                null);
 
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
@@ -674,7 +722,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         simpleModule.addDeserializer(LocalDateTime.class, new JacksonLocalDateTimeDeserializer());
         simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
         objectMapper.registerModule(simpleModule);
-        Hibernate5Module module = new Hibernate5Module();
+        Hibernate5JakartaModule module = new Hibernate5JakartaModule();
         module.enable(Feature.FORCE_LAZY_LOADING);
         objectMapper.registerModule(module);
         String customerOrderString;
@@ -1062,73 +1110,204 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation) {
-        return customerOrderRepository.findCustomerOrders(
-                Arrays.asList(0), Arrays.asList(0), Arrays.asList(0), LocalDateTime.now().minusYears(100),
-                LocalDateTime.now().plusYears(100), Arrays.asList(0), Arrays.asList(0), idQuotation, 0);
+        OrderingSearch search = new OrderingSearch();
+        search.setIdQuotation(idQuotation);
+        return this.searchOrders(search);
     }
 
-    private void findDuplicatesForCustomerOrder(CustomerOrder customerOrder) throws OsirisDuplicateException {
-        // Check duplicate
-        // Find first affaire customer order
-        if (customerOrder.getId() == null && customerOrder.getAssoAffaireOrders() != null
-                && customerOrder.getAssoAffaireOrders().size() > 0) {
-            OrderingSearch orderingSearch = new OrderingSearch();
-            orderingSearch.setAffaires(Arrays.asList(customerOrder.getAssoAffaireOrders().get(0).getAffaire()));
-            orderingSearch.setCustomerOrders(new ArrayList<Tiers>());
-            if (customerOrder.getResponsable() != null) {
-                Tiers tiers = new Tiers();
-                tiers.setId(customerOrder.getResponsable().getId());
-                orderingSearch.getCustomerOrders().add(tiers);
-            } else if (customerOrder.getTiers() != null) {
-                orderingSearch.getCustomerOrders().add(customerOrder.getTiers());
-            } else if (customerOrder.getConfrere() != null) {
-                Tiers tiers = new Tiers();
-                tiers.setId(customerOrder.getConfrere().getId());
-                orderingSearch.getCustomerOrders().add(tiers);
-            }
+    @Override
+    public List<OrderingSearchResult> searchByCustomerOrderParentRecurringId(Integer idCustomerOrder) {
+        OrderingSearch search = new OrderingSearch();
+        search.setIdCustomerOrderParentRecurring(idCustomerOrder);
+        return this.searchOrders(search);
+    }
 
-            // Only last 3 days
-            orderingSearch.setStartDate(DateHelper.subtractDaysSkippingWeekends(LocalDateTime.now(), 3));
-            List<OrderingSearchResult> duplicatedCustomerOrders = searchOrders(orderingSearch);
-            List<CustomerOrder> duplicatedFound = new ArrayList<CustomerOrder>();
+    @Override
+    public List<OrderingSearchResult> searchByCustomerOrderParentRecurringByCustomerOrderId(Integer idCustomerOrder) {
+        OrderingSearch search = new OrderingSearch();
+        search.setIdCustomerOrderChildRecurring(idCustomerOrder);
+        return this.searchOrders(search);
+    }
 
-            if (duplicatedCustomerOrders != null && duplicatedCustomerOrders.size() > 0) {
-                outerloop: for (OrderingSearchResult potentialCustomerOrderResult : duplicatedCustomerOrders) {
-                    CustomerOrder potentialCustomerOrder = getCustomerOrder(
-                            potentialCustomerOrderResult.getCustomerOrderId());
-                    if (!potentialCustomerOrder.getCustomerOrderStatus().getCode()
-                            .equals(CustomerOrderStatus.ABANDONED)) {
-                        for (AssoAffaireOrder currentAsso : customerOrder.getAssoAffaireOrders()) {
-                            boolean foundAsso = false;
-                            for (AssoAffaireOrder duplicateAsso : potentialCustomerOrder.getAssoAffaireOrders()) {
-                                if (currentAsso.getAffaire().getId().equals(duplicateAsso.getAffaire().getId())) {
-                                    foundAsso = true;
-                                    for (Service service : currentAsso.getServices())
-                                        for (Provision currentProvision : service.getProvisions()) {
-                                            boolean foundProvision = false;
-                                            for (Service duplicateService : duplicateAsso.getServices())
-                                                for (Provision duplicateProvision : duplicateService.getProvisions()) {
-                                                    if (duplicateProvision.getProvisionType().getId()
-                                                            .equals(currentProvision.getProvisionType().getId())) {
-                                                        foundProvision = true;
-                                                    }
-                                                }
-                                            if (!foundProvision)
-                                                break outerloop;
-                                        }
-                                }
+    // Recuring
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void generateRecurringCustomerOrders()
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+        List<CustomerOrder> allActiveRecuringCustomerOrders = customerOrderRepository
+                .findAllActiveRecurringCustomerOrders(
+                        customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN),
+                        customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT));
+
+        if (allActiveRecuringCustomerOrders != null) {
+            for (CustomerOrder customerOrder : allActiveRecuringCustomerOrders) {
+                List<CustomerOrder> childCustomerOrders = customerOrderRepository
+                        .findByCustomerOrderParentRecurringOrderByRecurringEndDateDesc(customerOrder);
+
+                CustomerOrder newChild = null;
+                if (childCustomerOrders == null || childCustomerOrders.size() == 0) {
+                    newChild = createNewCustomerOrderFromRecurringCustomerOrder(customerOrder);
+                    newChild.setRecurringStartDate(customerOrder.getRecurringPeriodStartDate());
+                    newChild.setRecurringEndDate(customerOrder.getRecurringPeriodStartDate()
+                            .plusMonths(customerOrder.getCustomerOrderFrequency().getMonthNumber()).minusDays(1));
+                } else {
+                    for (CustomerOrder childCustomerOrder : childCustomerOrders) {
+                        if (customerOrder.getRecurringPeriodEndDate().isAfter(LocalDate.now())) {
+                            if (childCustomerOrder.getRecurringEndDate().isBefore(LocalDate.now())) {
+                                newChild = createNewCustomerOrderFromRecurringCustomerOrder(customerOrder);
+                                newChild.setRecurringStartDate(childCustomerOrder.getRecurringEndDate().plusDays(1));
+                                newChild.setRecurringEndDate(newChild.getRecurringStartDate()
+                                        .plusMonths(customerOrder.getCustomerOrderFrequency().getMonthNumber())
+                                        .minusDays(1));
                             }
-                            if (!foundAsso)
-                                break outerloop;
                         }
-                        duplicatedFound.add(potentialCustomerOrder);
                     }
                 }
 
-                if (duplicatedFound.size() > 0) {
-                    throw new OsirisDuplicateException(duplicatedFound.stream().map(CustomerOrder::getId).toList());
+                if (newChild != null) {
+                    newChild.setCustomerOrderParentRecurring(customerOrder);
+                    addOrUpdateCustomerOrder(newChild, false, false);
+                    addOrUpdateCustomerOrderStatus(newChild, CustomerOrderStatus.BEING_PROCESSED, false);
+
+                    if (customerOrder.getIsRecurringAutomaticallyBilled()) {
+                        newChild = getCustomerOrder(newChild.getId());
+                        if (newChild.getCustomerOrderStatus() != null && newChild.getCustomerOrderStatus().getCode()
+                                .equals(CustomerOrderStatus.BEING_PROCESSED)) {
+                            if (newChild.getAssoAffaireOrders() != null) {
+                                for (AssoAffaireOrder asso : newChild.getAssoAffaireOrders()) {
+                                    if (asso.getServices() != null) {
+                                        for (Service service : asso.getServices()) {
+                                            if (service.getProvisions() != null) {
+                                                for (Provision provision : service.getProvisions()) {
+                                                    if (provision.getSimpleProvision() != null) {
+                                                        SimpleProvision simpleProvision = provision
+                                                                .getSimpleProvision();
+                                                        simpleProvision
+                                                                .setSimpleProvisionStatus(simpleProvisionStatusService
+                                                                        .getSimpleProvisionStatusByCode(
+                                                                                SimpleProvisionStatus.SIMPLE_PROVISION_DONE));
+                                                        simpleProvisionService
+                                                                .addOrUpdateSimpleProvision(simpleProvision);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            newChild = getCustomerOrder(newChild.getId());
+                            try {
+                                addOrUpdateCustomerOrder(newChild, false, true); // Put to billed if all ended
+                            } catch (Exception e) {
+                                if (!(e instanceof OsirisClientMessageException
+                                        || e instanceof OsirisValidationException))
+                                    throw e;
+                            }
+                        }
+                    }
                 }
             }
         }
+    }
+
+    private CustomerOrder createNewCustomerOrderFromRecurringCustomerOrder(CustomerOrder customerOrderRecurring)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+        CustomerOrderStatus statusOpen = customerOrderStatusService
+                .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
+        CustomerOrder customerOrder = new CustomerOrder(customerOrderRecurring.getAssignedTo(),
+                customerOrderRecurring.getTiers(),
+                customerOrderRecurring.getResponsable(),
+                customerOrderRecurring.getConfrere(), customerOrderRecurring.getSpecialOffers(), LocalDateTime.now(),
+                statusOpen,
+                customerOrderRecurring.getObservations(), customerOrderRecurring.getDescription(),
+                customerOrderRecurring.getInstructions(), null,
+                customerOrderRecurring.getDocuments(), customerOrderRecurring.getAssoAffaireOrders(), null, false,
+                null);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule simpleModule = new SimpleModule("SimpleModule");
+        simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
+        simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
+        simpleModule.addDeserializer(LocalDateTime.class, new JacksonLocalDateTimeDeserializer());
+        simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
+        objectMapper.registerModule(simpleModule);
+        Hibernate5JakartaModule module = new Hibernate5JakartaModule();
+        module.enable(Feature.FORCE_LAZY_LOADING);
+        objectMapper.registerModule(module);
+        String customerOrderString;
+        try {
+            customerOrderString = objectMapper.writeValueAsString(customerOrder);
+        } catch (JsonProcessingException e) {
+            throw new OsirisException(e,
+                    "Error when cloning quotation to customer order for customerOrderRecurring "
+                            + customerOrderRecurring.getId());
+        }
+
+        CustomerOrder customerOrder2;
+        try {
+            customerOrder2 = objectMapper.readValue(customerOrderString, CustomerOrder.class);
+        } catch (JsonProcessingException e) {
+            throw new OsirisException(e,
+                    "Error when reading clone of customerOrder for customerOrderRecurring "
+                            + customerOrderRecurring.getId());
+        }
+
+        if (customerOrder2.getDocuments() != null) {
+            ArrayList<Document> documents = new ArrayList<Document>();
+            for (Document document : customerOrder2.getDocuments()) {
+                document = documentService.cloneDocument(document);
+                document.setId(null);
+                documents.add(document);
+            }
+            customerOrder2.setDocuments(documents);
+        }
+
+        if (customerOrder2.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : customerOrder2.getAssoAffaireOrders()) {
+                asso.setId(null);
+                asso.setCustomerOrder(null);
+                asso.setQuotation(null);
+                for (Service service : asso.getServices()) {
+                    service.setId(null);
+                    if (service.getAssoServiceDocuments() != null)
+                        for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
+                            assoServiceDocument.setId(null);
+                            assoServiceDocument.setAttachments(null);
+                        }
+                    for (Provision provision : service.getProvisions()) {
+                        provision.setId(null);
+                        if (provision.getAnnouncement() != null) {
+                            provision.getAnnouncement().setId(null);
+                            provision.getAnnouncement().setAnnouncementStatus(announcementStatusService
+                                    .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
+                            if (provision.getAnnouncement().getDocuments() != null)
+                                for (Document document : provision.getAnnouncement().getDocuments())
+                                    document.setId(null);
+                        }
+                        if (provision.getFormalite() != null) {
+                            provision.getFormalite().setFormaliteStatus(
+                                    formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
+                            provision.getFormalite().setId(null);
+                        }
+                        if (provision.getSimpleProvision() != null) {
+                            provision.getSimpleProvision().setSimpleProvisionStatus(simpleProvisionStatusService
+                                    .getSimpleProvisionStatusByCode(SimpleProvisionStatus.SIMPLE_PROVISION_NEW));
+                            provision.getSimpleProvision().setId(null);
+                        }
+                        if (provision.getDomiciliation() != null) {
+                            provision.getDomiciliation().setDomiciliationStatus(domiciliationStatusService
+                                    .getDomiciliationStatusByCode(DomiciliationStatus.DOMICILIATION_NEW));
+                            provision.getDomiciliation().setId(null);
+                        }
+                        if (provision.getInvoiceItems() != null)
+                            for (InvoiceItem invoiceItem : provision.getInvoiceItems())
+                                invoiceItem.setId(null);
+                        provision.setAttachments(null);
+                    }
+                }
+            }
+        addOrUpdateCustomerOrder(customerOrder2, false, true);
+
+        return customerOrder2;
     }
 }

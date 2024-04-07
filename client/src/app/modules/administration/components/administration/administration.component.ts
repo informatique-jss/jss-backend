@@ -90,6 +90,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   QUOTATION_ABANDON_REASON_REFERENTIAL = "Raison d'abandon des commandes/devis";
   SERVICE_FAMILY_REFERENTIAL = "Famille de service";
   SERVICE_FAMILY_GROUP_REFERENTIAL = "Groupe de famille de service";
+  CUSTOMER_ORDER_FREQUENCY_REFERENTIAL = "Fréquence des commandes récurrentes";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -143,6 +144,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.BILLING_ITEM_REFERENTIAL);
     this.referentials.push(this.BILLING_TYPE_REFERENTIAL);
     this.referentials.push(this.DEPARTMENT_REFERENTIAL);
+    this.referentials.push(this.CUSTOMER_ORDER_FREQUENCY_REFERENTIAL);
     this.referentials.push(this.GIFT_REFERENTIAL);
     this.referentials.push(this.SPECIAL_OFFER_REFERENTIAL);
     this.referentials.push(this.ACCOUNTING_ACCOUNT_CLASS_REFERENTIAL);

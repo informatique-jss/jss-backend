@@ -3,13 +3,13 @@ package com.jss.osiris.modules.miscellaneous.repository;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.QueryHint;
-
 import org.springframework.data.jpa.repository.QueryHints;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
+
+import jakarta.persistence.QueryHint;
 
 public interface CompetentAuthorityRepository extends QueryCacheCrudRepository<CompetentAuthority, Integer> {
 

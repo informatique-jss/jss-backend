@@ -47,6 +47,7 @@ import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.miscellaneous.model.Constant;
 import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderFrequency;
 import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.miscellaneous.model.Department;
@@ -74,6 +75,7 @@ import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityTypeService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CountryService;
+import com.jss.osiris.modules.miscellaneous.service.CustomerOrderFrequencyService;
 import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.miscellaneous.service.DeliveryServiceService;
 import com.jss.osiris.modules.miscellaneous.service.DepartmentService;
@@ -251,6 +253,30 @@ public class MiscellaneousController {
 
     @Autowired
     DepartmentVatSettingService departmentVatSettingService;
+
+    @Autowired
+    CustomerOrderFrequencyService customerOrderFrequencyService;
+
+    @GetMapping(inputEntryPoint + "/customer-order-frequencies")
+    public ResponseEntity<List<CustomerOrderFrequency>> getCustomerOrderFrequencies() {
+        return new ResponseEntity<List<CustomerOrderFrequency>>(
+                customerOrderFrequencyService.getCustomerOrderFrequencies(), HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/customer-order-frequency")
+    public ResponseEntity<CustomerOrderFrequency> addOrUpdateCustomerOrderFrequency(
+            @RequestBody CustomerOrderFrequency customerOrderFrequencies)
+            throws OsirisValidationException, OsirisException {
+        if (customerOrderFrequencies.getId() != null)
+            validationHelper.validateReferential(customerOrderFrequencies, true, "customerOrderFrequencies");
+        validationHelper.validateString(customerOrderFrequencies.getCode(), true, "code");
+        validationHelper.validateString(customerOrderFrequencies.getLabel(), true, "label");
+        validationHelper.validateInteger(customerOrderFrequencies.getMonthNumber(), true, "daysNumber");
+
+        return new ResponseEntity<CustomerOrderFrequency>(
+                customerOrderFrequencyService.addOrUpdateCustomerOrderFrequency(customerOrderFrequencies),
+                HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/department-vat-settings")
     public ResponseEntity<List<DepartmentVatSetting>> getDepartmentVatSettings() {

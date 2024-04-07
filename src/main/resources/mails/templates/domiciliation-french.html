@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        * {
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        @page {
+            size: A4 portrait;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        p {
+            text-align: justify;
+            line-height: 21px;
+            margin-left: 5px;
+        }
+
+        ul {
+            text-align: justify;
+            line-height: 21px;
+        }
+    </style>
+</head>
+
+<body style="background-color: #FFFFFF; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+    <div>
+        <table>
+            <tr>
+                <td><img width="690px" th:src="@{classpath:/images/invoice-page1-header.png}" src="picture.png" />
+                </td>
+            </tr>
+        </table>
+        <div>
+            <p style="text-align: center;"><strong>CONTRAT DE DOMICILIATION COMMERCIALE JOURNAL SPECIAL DES
+                    SOCIETES</strong></p>
+        </div>
+        <div style="padding-bottom: 15px;">
+            <p style="text-align: center;"><strong>Adresse de domiciliation : </strong>Adresse de domiciliation : 8 rue
+                Saint Augustin – 75002 PARIS
+            </p>
+        </div>
+        <p><strong>ENTRE LES SOUSSIGNÉS :</strong></p>
+        <p>La Société de Publications et de Publicité pour les Sociétés, Société par Actions Simplifiées au capital de
+            216 000 euros, dont le siège social est à Paris 2ème arrondissement, 8 rue Saint Augustin, immatriculée au
+            Registre du Commerce et des Sociétés de PARIS, sous le numéro 552 074 627, représentée par sa Présidente
+            Myriam de Montis, et dénommée ci-après <strong>SPPS</strong>, dont le numéro d'agrément est le
+            n°<strong><span th:text="${jssDomiciliationAgreementNumber}"></span></strong> obtenu le
+            <span th:text="${jssDomiciliationAgreementDate}"></span> auprès de la Préfecture de Paris ;
+        </p>
+        <p>D'UNE PART,</p>
+        <p>Et la société <strong><span th:text="${affaire.denomination}"></span>, <span
+                    th:text="${affaire.legalForm.labelShort}"></span> immatriculée au RCS de <span
+                    th:text="${affaire.competentAuthority.city.label}"></span> sous le numéro
+                <span th:text="${affaire.siren}"></span></strong></p>
+        <p th:if="${domiciliation.isLegalPerson==false}">Représentée par <span
+                th:text="${domiciliation.legalGardianCivility.label}"></span> <span
+                th:text="${domiciliation.legalGardianLastname}"></span> <span
+                th:text="${domiciliation.legalGardianFirstname}"></span>, agissant en qualité de <span
+                th:text="${domiciliation.legalGardianJob}"></span>, né le <span
+                th:text="${domiciliationLegalPersonBirthday}"></span> à <span
+                th:text="${domiciliation.legalGardianPlaceOfBirth}"></span> et demeurant au <span
+                th:text="${domiciliation.legalGardianAddress}"></span> <span
+                th:text="${domiciliation.legalGardianPostalCode}"></span> <span
+                th:text="${domiciliation.legalGardianCity.label}"></span><span
+                th:text="${domiciliation.legalGardianCountry.label}"></span></p>
+        <p th:if="${domiciliation.isLegalPerson==true}">Représentée par la société <strong><span
+                    th:text="${domiciliation.legalGardianDenomination}"></span>, <span
+                    th:text="${domiciliation.legalGardianLegalForm.labelShort}"></span> domiciliée au <span
+                    th:text="${domiciliation.legalGardianAddress}"></span> <span
+                    th:text="${domiciliation.legalGardianPostalCode}"></span> <span
+                    th:text="${domiciliation.legalGardianCity.label}"></span><span
+                    th:text="${domiciliation.legalGardianCountry.label}"></span></p>
+        <p>D'AUTRE PART, dénommé(e) ci-après <strong>Le Domicilié,</strong></p>
+        <div style="padding-bottom: 20px;padding-top: 20px;">
+            <p style="text-align: center">IL A ÉTÉ CONVENU ET ARRÊTÉ CE QUI SUIT :</p>
+        </div>
+        <p>La société <strong>SPPS</strong> autorise la société <strong><span th:text="${affaire.denomination}"></span>,
+                <span th:text="${affaire.legalForm.labelShort}"></span> immatriculée au RCS de <span
+                    th:text="${affaire.competentAuthority.city.label}"></span> sous le numéro
+                <span th:text="${affaire.siren}"></span></strong></p>
+        <p>Ayant pour activité :</p>
+        <p><span th:text="${domiciliation.activityDescription}"></span></p>
+        <p>à se domicilier dans ses locaux du <strong>8 rue Saint Augustin, 75002 PARIS</strong></p>
+        <p>pour l'accomplissement des formalités légales auprès de l'organisme compétent pour le régime juridique
+            de l'entreprise à savoir au Centre de Formalités des Entreprises, au Registre de Commerce et des
+            Sociétés, au Répertoire des Métiers ou à la Préfecture pour les associations, relatives à la création et au
+            fonctionnement de ses activités. L'adresse de domiciliation devra donc devenir le siège social de
+            l'entreprise.</p>
+        <p>Le Domicilié est habilité par la présente convention à recevoir à cette même adresse le courrier qui lui
+            est destiné. Il pourra également utiliser cette adresse sur son papier à en-tête ainsi que sur ses documents
+            commerciaux.</p>
+        <p>Le Domicilié dégage la société SPPS de toutes responsabilités quant à la transmission du courrier
+            effectuée par la Poste ou par des entreprises assimilées ainsi que pour tout envoi mal libellé (adresse
+            incomplète ou illisible, absence de cedex, ou tout autre nom, etc…) reçu à l'intention du Domicilié.
+            Etant précisé que l'autorisation que la société SPPS lui accorde ne saurait en aucun cas engager sa
+            responsabilité, sous quelque forme que ce soit, présente et à venir.<br />
+            Le Domicilié ne pourra utiliser la présente domiciliation en cas de création de nouvelles enseignes et
+            publications ou pour toutes adjonctions concernant la dénomination sociale de l'entreprise et devra
+            conclure un nouvel engagement en cas de non-respect des dispositions énoncées ci-dessus.</p>
+        <p>La société SPPS ne saurait être tenue en aucune façon responsable du rejet du Domicilié par les
+            différents organismes administratifs nécessaires à son inscription ou pour tout autre motif et <strong>ne
+                procédera donc à aucun remboursement.</strong></p>
+        <p><strong>I) Durée</strong></p>
+        <p>Ladite domiciliation commence à courir à partir du <span th:text="${domiciliationStartDate}"></span> pour une
+            durée de trois mois,
+            renouvelable trimestriellement par tacite reconduction.</p>
+        <p>Ce contrat est conclu irrévocablement pour une durée minimum de 3 mois afin de permettre l'immatriculation de
+            l'entreprise.</p>
+        <p>Le Domicilié s'engage à fournir sous 10 jours de sa date d'immatriculation ou de transfert de siège au
+            domiciliataire un justificatif émanant du Registre de Commerce et des Sociétés (RCS) ou du Centre de
+            Formalités des Entreprises (CFE).</p>
+        <p><strong>II) Tarifs</strong></p>
+        <p style="text-decoration: underline;">Option :</p>
+        <p><span th:text="${provision.provisionType.label}"></span><span th:text="${mailDestinationLabel}"></span></p>
+        <p>Le présent engagement est fait moyennant un loyer mensuel de <strong><span
+                    th:text="${monthlyBillingAmount}"></span></strong>
+            euros Hors Taxes que Le Domicilié s'engage à payer à SPPS trimestriellement et d'avance. Tout trimestre
+            civil commencé est dû.</p>
+        <p>Les coûts d'affranchissement des courriers renvoyés en RAR, dans les DOM-TOM et à l'étranger sont
+            facturés en plus.</p>
+        <p>Le montant de toutes les prestations souscrites par Le Domicilié, seront révisables tous les ans à la date
+            anniversaire sans qu'il soit besoin d'une notification préalable.</p>
+        <p>Lors de l'établissement du présent contrat, il est versé par Le Domicilié une somme égale à 3 mois de
+            prestations. Cette somme est destinée à couvrir les frais d'exploitation des 3 derniers mois après avoir
+            fourni à SPPS le justificatif de la demande de résiliation (radiation, transfert du siège social, non
+            immatriculation). Elle ne peut être considérée comme paiement d'une facture trimestrielle et ne sera en
+            aucun cas remboursable. En cas d'augmentation de loyer, cette avance sera réajustée dans les mêmes
+            proportions pour qu'elle reste toujours égale à la valeur de trois mois de prestation.</p>
+        <p>Pour la retransmission de courrier par mail ; Le domicilié autorise expressément SPPS à ouvrir son
+            courrier, à le numériser et à lui adresser sur un mail définit. </p>
+        <p>Le domicilié peut louer ponctuellement et à la demande un bureau de réunion qui sera facturé en plus. Toute
+            demande doit être faite au moins 8 jours à l'avance et en fonction des disponibilités.</p>
+        <p><strong>III) Conditions et clauses d'acceptation</strong></p>
+        <p>Le présent engagement de domiciliation est fait aux conditions prévues par les recommandations émises par la
+            Chambre de Commerce et d'Industrie de Paris pour l'exercice de la domiciliation commerciale.</p>
+        <p>Le Domicilié doit donner procuration à la société SPPS pour le retrait de lettres recommandées. Cellesci
+            seront acheminées par courrier ordinaire. La société SPPS se dégage de toute responsabilité en cas de
+            perte ou de transmission tardive de tous courriers.</p>
+        <p>Tout changement concernant l'entreprise (adresse, raison sociale, dirigeant, activité, forma juridique,
+            etc…), devra être notifié par écrit à la société SPPS par Le Domicilié qui s'engage à fournir tout
+            nouveau document justificatif dès que ce changement aura été pris en compte par l'organisme
+            d'immatriculation concerné.</p>
+        <p>Le Domicilié certifie sur l'honneur l'exactitude des renseignements fournis à la société SPPS et
+            nécessaires à la conclusion du contrat.</p>
+        <p>Le contrat est ferme et définitif à la signature et aucun remboursement partiel ou total ne pourra être
+            revendiqué par Le Domicilié pour quel que motif que ce soit.</p>
+        <p><strong>IV) Résiliation</strong></p>
+        <p>Le présent contrat pourra être dénoncé par l'une des parties avec notification à l'autre par lettre
+            recommandée avec accusé de réception.</p>
+        <p>Le Domicilié devra obligatoirement joindre à sa lettre recommandée un justificatif délivré par le
+            Tribunal de Commerce ou par le Répertoire des Métiers (ou par la Préfecture pour les associations) soit
+            pour la radiation ou le transfert du siège social, soit la non immatriculation de l'entreprise (pour les
+            Autos Entrepreneurs le récépissé de radiation auprès du CFE).</p>
+        <p><strong>V) Description des prestations de services</strong></p>
+        <p>En regard des sommes versées à la conclusion du contrat, la société SPPS s'engage à fournir les
+            prestations suivantes :</p>
+        <ul>
+            <li>Domiciliation commerciale dans les locaux sis : 8 rue Saint Augustin – 75002 PARIS</li>
+            <li>SPPS met à la disposition du Domicilié à titre onéreux des bureaux permettant une réunion
+                régulière des organes chargés de la direction, de l'administration ou de la surveillance de
+                l'entreprise et l'installation des services nécessaires à la tenue, conservation et la consultation de
+                leurs registres et documents prescrits par les lois et règlements (Décret N.85.1280 du 5
+                Décembre 1985, Article 26.1.).</li>
+            <li>En aucun cas, la location de bureau à titre onéreux ne peut être utilisée par Le Domicilié pour le
+                recrutement de personnel. L'ANPE devra diriger les postulants à l'adresse d'activité du
+                Domicilié et non à l'adresse de son siège social.</li>
+            <li>La société SPPS peut réceptionner des colis moyennant un loyer mensuel de 10 € HT par mois.
+                Cependant ceux-ci ne devront pas excéder un poids de 5 kg et des dimensions de 1m x 1m et
+                devront être retirés dans un délai de 48 h.</li>
+            <li>Le délai de garde est de 30 jours concernant les courriers simples, et de 15 jours concernant les
+                courriers recommandés. Excédant le délai de garde mentionné, ces courriers seront retournés à
+                l'expéditeur.</li>
+        </ul>
+        <p><strong>VI) Clauses résolutoires</strong></p>
+        <p>A défaut de paiement d'une seule facture et à compter de 30 jours de son échéance ou en cas
+            d'inexécution d'une des clauses du présent engagement, la société SPPS se réserve le droit de
+            suspendre la prestation de traitement du courrier, la réexpédition ainsi que la garde. Tout courrier
+            sera conservé en agence pour une durée de 15 jours. Pour les mêmes conditions de carence relatives
+            au courrier simple, les objets recommandés, lettres ou autres envois, ne seront plus acceptés et ne
+            seront qu'avisés. Au-delà de ce délai, la société SPPS s'autorisera le droit de le retourner avec la
+            mention NPAI sans mise en demeure, ni avertissement préalable. Une indemnité forfaitaire de 15%
+            sur les sommes dues sera exigée.</p>
+        <p>Le contrat pourra être dénoncé de plein droit par la société SPPS sans notification en respectant un
+            préavis de 30 jours et la carence du Domicilié sera signalée au Greffe du Tribunal de Commerce ou
+            au Registre des Métiers (ou à la Préfecture pour les associations) afin de procéder à la radiation
+            d'office de l'entreprise.</p>
+        <p>En cas de contestation liée aux présentes, seul le Tribunal de Commerce concerné sera compétent.</p>
+        <p>Contrat établi en 2 exemplaires originaux dont un remis au Domicilié</p>
+        <p>Fait à Paris, le <span th:text="${currentDate}"></span></p>
+        <p>En deux exemplaires</p>
+        <table style="width: 100%;">
+            <tr>
+                <td colspan="2">Lu et Approuvé</td>
+            </tr>
+            <tr>
+                <td><strong>SPPS</strong></td>
+                <td style="padding-left: 15px;"><strong>Le Domicilié</strong></td>
+            </tr>
+            <tr>
+                <td>
+                    Myriam de MONTIS
+                </td>
+                <td style="padding-left: 15px;">
+                    <span th:text="${affaire.denomination}"></span>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+</body>
+
+</html>

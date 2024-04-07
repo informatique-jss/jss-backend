@@ -235,9 +235,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         domiciliation.setDomiciliationStatus(domiciliationStatusService
                                 .getDomiciliationStatusByCode(DomiciliationStatus.DOMICILIATION_NEW));
 
-                    if (domiciliation.getEndDate() == null && domiciliation.getStartDate() != null)
-                        domiciliation.setEndDate(domiciliation.getStartDate().plusYears(1));
-
                     // If mails already exists, get their ids
                     if (domiciliation != null && domiciliation.getMails() != null
                             && domiciliation.getMails().size() > 0)

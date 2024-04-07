@@ -206,6 +206,7 @@ import { SelectBillingTypeDebourComponent } from '../forms/select-billing-type-d
 import { SelectBuildingDomicilationComponent } from '../forms/select-building-domicilation/select-building-domicilation.component';
 import { SelectCompetentAuthorityTypeComponent } from '../forms/select-competent-authority-type/select-competent-authority-type.component';
 import { SelectContractTypeComponent } from '../forms/select-contract-type/select-contract-type.component';
+import { SelectCustomerOrderFrequencyComponent } from '../forms/select-customer-order-frequency/select-customer-order-frequency.component';
 import { SelectCustomerOrderOriginComponent } from '../forms/select-customer-order-origin/select-customer-order-origin.component';
 import { SelectCustomerOrderStatusComponent } from '../forms/select-customer-order-status/select-customer-order-status.component';
 import { SelectDayComponent } from '../forms/select-day/select-day.component';
@@ -527,6 +528,7 @@ const routes: Routes = [
     AutocompleteServiceTypeComponent,
     MultipleUploadComponent,
     AutocompleteProvisionTypeComponent,
+    SelectCustomerOrderFrequencyComponent,
   ],
   exports: [
     HistoryComponent,
@@ -757,6 +759,7 @@ const routes: Routes = [
     AutocompleteServiceTypeComponent,
     MultipleUploadComponent,
     AutocompleteProvisionTypeComponent,
+    SelectCustomerOrderFrequencyComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

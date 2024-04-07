@@ -26,13 +26,11 @@ import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.DepartmentVatSetting;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
-import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DepartmentVatSettingService;
@@ -86,9 +84,6 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Autowired
     PricingHelper pricingHelper;
-
-    @Autowired
-    BillingItemService billingItemService;
 
     @Autowired
     FormaliteService formaliteService;
@@ -661,20 +656,17 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     }
 
     private void extractVatFromCartRate(InvoiceItem invoiceItem, CartRate cartRate) throws OsirisException {
-        List<BillingItem> deboursBillingItem;
-
         if (Math.abs(cartRate.getAmount()) == Math.abs(cartRate.getHtAmount())) {
-            deboursBillingItem = billingItemService
-                    .getBillingItemByBillingType(constantService.getBillingTypeDeboursNonTaxable());
             invoiceItem.setVat(constantService.getVatZero());
             invoiceItem.setVatPrice(0f);
+            invoiceItem.setBillingItem(
+                    pricingHelper.getAppliableBillingItem(constantService.getBillingTypeDeboursNonTaxable(), null));
         } else {
-            deboursBillingItem = billingItemService
-                    .getBillingItemByBillingType(constantService.getBillingTypeEmolumentsDeGreffeDebour());
-
             Float vatRate = (cartRate.getAmount() - cartRate.getHtAmount()) * 1.0f / cartRate.getHtAmount() * 100f;
             vatRate = Math.round(vatRate * 10f) / 10f;
             Vat vat = null;
+            invoiceItem.setBillingItem(pricingHelper
+                    .getAppliableBillingItem(constantService.getBillingTypeEmolumentsDeGreffeDebour(), null));
 
             if (isVatEqual(vatRate, constantService.getVatDeductible().getRate()))
                 vat = constantService.getVatDeductible();
@@ -697,8 +689,6 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 invoiceItem.setVat(vat);
             }
         }
-
-        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(deboursBillingItem, null));
     }
 
     private boolean isVatEqual(Float vat1, Float vat2) {

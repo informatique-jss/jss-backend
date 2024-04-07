@@ -61,6 +61,9 @@ import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
 import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
+import { RecurringChildOrderingListComponent } from '../recurring-child-ordering-list/recurring-child-ordering-list.component';
+import { RecurringOrderingListComponent } from '../recurring-ordering-list/recurring-ordering-list.component';
+import { RecurringParentOrderingListComponent } from '../recurring-parent-ordering-list/recurring-parent-ordering-list.component';
 import { RefundPaymentDialogComponent } from '../refund-payment-dialog/refund-payment-dialog.component';
 import { SelectAccountingAccountDialogComponent } from '../select-accounting-account-dialog/select-accounting-account-dialog.component';
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
@@ -77,6 +80,7 @@ const routes: Routes = [
   { path: 'quotation', component: QuotationComponent },
   { path: 'quotation/:id', component: QuotationComponent },
   { path: 'order', component: QuotationComponent },
+  { path: 'recurring-order', component: RecurringOrderingListComponent },
   { path: 'order/:id', component: QuotationComponent },
   { path: 'provision', component: ProvisionListComponent },
   { path: 'provisions/:employeeId', component: ProvisionListComponent },
@@ -163,6 +167,9 @@ const routes: Routes = [
     SelectServiceDialogComponent,
     SelectDocumentTypeDialogComponent,
     MissingAttachmentQueriesComponent,
+    RecurringOrderingListComponent,
+    RecurringParentOrderingListComponent,
+    RecurringChildOrderingListComponent,
   ],
   exports: [
     OrderingListComponent,

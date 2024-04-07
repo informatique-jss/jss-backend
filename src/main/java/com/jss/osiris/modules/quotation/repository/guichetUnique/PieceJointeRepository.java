@@ -7,5 +7,5 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 
 public interface PieceJointeRepository extends QueryCacheCrudRepository<PiecesJointe, String> {
 
-    Optional<PiecesJointe> findByAttachmentId(Integer id);
+    Optional<PiecesJointe> findByAttachmentId(String id);
 }

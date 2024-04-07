@@ -32,7 +32,11 @@
   </a>
   <a mat-list-item routerLink="/order" *ngIf="canViewCustomerOrderModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/order' )>=0}">
-    <mat-icon>shopping_cart</mat-icon> <span>Commande</span>
+    <mat-icon>shopping_cart</mat-icon> <span>Commandes</span>
+  </a>
+  <a mat-list-item routerLink="/recurring-order" *ngIf="canViewCustomerOrderModule()"
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/recurring-order' )>=0}">
+    <mat-icon>repeat</mat-icon> <span>Commandes récurrentes</span>
   </a>
   <a mat-list-item routerLink="/affaire" *ngIf="canViewAffaireModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/affaire' )>=0}">

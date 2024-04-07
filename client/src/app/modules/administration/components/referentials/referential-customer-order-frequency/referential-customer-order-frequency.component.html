@@ -1,0 +1,47 @@
+<div>
+  <div>
+    <mat-form-field class="full-width">
+      <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+    </mat-form-field>
+  </div>
+  <div class="table-container-scroll">
+    <sort-table [columns]="displayedColumns" (onRowClick)="selectEntity($event)" [values]="entities"
+      [noMaxHeight]="true" [noPaddingBottom]="true" tableName="Référentiel" [idRowSelected]="idRowSelected"
+      [filterText]="searchText">
+    </sort-table>
+  </div>
+</div>
+<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
+  <form [formGroup]="entityForm">
+    <div class="full-width">
+      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+        <table class="full-width">
+          <tr *ngIf="selectedEntity.id">
+            <td>
+              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
+                propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="200"
+                [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.monthNumber" label="Nombre de jours" [form]="entityForm"
+                propertyName="daysNumber" [isMandatory]="true" type="number" [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+    </div>
+  </form>
+</div>

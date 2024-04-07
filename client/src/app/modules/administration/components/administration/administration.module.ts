@@ -50,6 +50,7 @@ import { ReferentialComplainCauseComponent } from '../referentials/referential-c
 import { ReferentialComplainOriginComponent } from '../referentials/referential-complain-origin/referential-complain-origin.component';
 import { ReferentialComplainProblemComponent } from '../referentials/referential-complain-problem/referential-complain-problem.component';
 import { ReferentialCountryComponent } from '../referentials/referential-country/referential-country.component';
+import { ReferentialCustomerOrderFrequencyComponent } from '../referentials/referential-customer-order-frequency/referential-customer-order-frequency.component';
 import { ReferentialCustomerOrderOriginComponent } from '../referentials/referential-customer-order-origin/referential-customer-order-origin.component';
 import { ReferentialDeliveryServiceComponent } from '../referentials/referential-delivery-service/referential-delivery-service.component';
 import { ReferentialDepartmentVatSettingComponent } from '../referentials/referential-department-vat-setting/referential-department-vat-setting.component';
@@ -198,6 +199,7 @@ const routes: Routes = [
     ReferentialServiceFamilyComponent,
     ReferentialServiceFamilyGroupComponent,
     ReferentialServiceTypeComponent,
+    ReferentialCustomerOrderFrequencyComponent,
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

@@ -10,10 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import java.util.logging.Level;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.util.IOUtils;
@@ -30,11 +27,12 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
+import org.xhtmlrenderer.util.XRLog;
 
 import com.jss.osiris.libs.QrCodeHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -72,6 +70,10 @@ import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
 @org.springframework.stereotype.Service
 public class MailHelper {
@@ -346,6 +348,7 @@ public class MailHelper {
             throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
         try {
             renderer.setDocumentFromString(
                     htmlContent.replaceAll("\\p{C}", " ")

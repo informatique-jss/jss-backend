@@ -103,7 +103,15 @@ public interface CustomerOrderService {
 
         public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation);
 
+        public List<OrderingSearchResult> searchByCustomerOrderParentRecurringId(Integer idCustomerOrder);
+
+        public List<OrderingSearchResult> searchByCustomerOrderParentRecurringByCustomerOrderId(
+                        Integer idCustomerOrder);
+
         public void offerCustomerOrder(CustomerOrder customerOrder) throws OsirisException,
                         OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException;
+
+        public void generateRecurringCustomerOrders() throws OsirisException, OsirisClientMessageException,
+                        OsirisValidationException, OsirisDuplicateException;
 
 }

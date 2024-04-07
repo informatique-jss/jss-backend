@@ -1,12 +1,12 @@
 package com.jss.osiris;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.exception.OsirisException;
+
+import jakarta.annotation.PostConstruct;
 
 @Service
 public class ApplicationPropertiesAudit {
@@ -37,6 +37,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.competant.authorities.update");
         isOk = isOk && checkProperty("schedulling.log.osiris.announcement.confrere.query.reminder");
         isOk = isOk && checkProperty("schedulling.log.osiris.customer.proof.reading.reminder");
+        isOk = isOk && checkProperty("schedulling.customer.order.recurring.generation");
         isOk = isOk && checkProperty("schedulling.guichet.unique.refresh.update.last.hour");
         isOk = isOk && checkProperty("schedulling.guichet.unique.refresh.opened");
         isOk = isOk && checkProperty("schedulling.central.pay.payment.request.validation.check");

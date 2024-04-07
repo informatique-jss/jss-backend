@@ -6,18 +6,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.ldap.core.support.BaseLdapPathContextSource;
+import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.BeanIds;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.ldap.LdapBindAuthenticationManagerFactory;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
-// @EnableWebMvc
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
 
 	@Value("${ldap.dc.level.0}")
 	private String dc0;
@@ -47,63 +47,57 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private Boolean devMode;
 
 	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		final CorsConfiguration configuration = new CorsConfiguration();
+	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+		if (devMode == null || devMode == false) {
+			http.authorizeHttpRequests((auth) -> auth.requestMatchers(HttpMethod.OPTIONS).permitAll()
+					.requestMatchers("/profile/login").permitAll()
+					.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/order/deposit").permitAll()
+					.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/deposit").permitAll()
+					.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/order/deposit/validate").permitAll()
+					.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/quotation/deposit/validate").permitAll()
+					.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/order/invoice").permitAll()
+					.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/order/invoice/validate").permitAll()
+					.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/validate").permitAll()
+					.anyRequest().authenticated()).cors((cors) -> cors
+							.configurationSource(customConfigurationSource()))
+					.csrf((csrf -> csrf.disable()));
+		} else {
+			http.authorizeHttpRequests((auth) -> auth.anyRequest().permitAll()).cors((cors) -> cors
+					.configurationSource(customConfigurationSource())).csrf((csrf -> csrf.disable()));
+		}
+		return http.build();
+	}
+
+	CorsConfigurationSource customConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
 		ArrayList<String> all = new ArrayList<String>();
 		all.add("*");
 		configuration.setAllowedOriginPatterns(all);
 		configuration.setAllowedMethods(all);
 		configuration.setAllowCredentials(true);
 		configuration.setAllowedHeaders(all);
-
-		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
-
 		return source;
 	}
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		if (devMode == null || devMode == false) {
-			http.authorizeRequests()
-					.antMatchers(HttpMethod.OPTIONS).permitAll()
-					.antMatchers("/profile/login").permitAll()
-					.antMatchers(HttpMethod.GET, "/quotation/payment/cb/order/deposit").permitAll()
-					.antMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/deposit").permitAll()
-					.antMatchers(HttpMethod.POST, "/quotation/payment/cb/order/deposit/validate").permitAll()
-					.antMatchers(HttpMethod.POST, "/quotation/payment/cb/quotation/deposit/validate").permitAll()
-					.antMatchers(HttpMethod.GET, "/quotation/payment/cb/order/invoice").permitAll()
-					.antMatchers(HttpMethod.POST, "/quotation/payment/cb/order/invoice/validate").permitAll()
-					.antMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/validate").permitAll()
-					.anyRequest().authenticated()
-					.and().cors().and().csrf().disable();
-		} else {
-			http.authorizeRequests()
-					.anyRequest().permitAll()
-					.and().cors().and().csrf().disable();
-		}
+	@Bean
+	public LdapContextSource contextSource() {
+		LdapContextSource contextSource = new LdapContextSource();
+		contextSource.setUrl("ldap://" + ldapHost + ":" + ldapPort);
+		contextSource.setUserDn(ldapLogin);
+		contextSource.setPassword(ldapPassword);
+		contextSource.afterPropertiesSet();
+		return contextSource;
 	}
 
-	@Override
-	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth
-				.ldapAuthentication()
-				.userSearchFilter(
-						"(&(sAMAccountName={0})(memberOf=CN=" + osirisUserGroup + ",OU=OSIRIS,DC=" + dc1 + ",DC=" + dc0
-								+ "))")
-				.userSearchBase("DC=" + dc1 + ",DC=" + dc0)
-				.groupSearchBase("OU=" + ouOsiris + ",DC=" + dc1 + ",DC=" + dc0)
-				.groupSearchFilter("member={0}")
-				.contextSource()
-				.url("ldap://" + ldapHost + ":" + ldapPort)
-				.managerDn(ldapLogin)
-				.managerPassword(ldapPassword);
-	}
+	@Bean
+	AuthenticationManager authenticationManager(BaseLdapPathContextSource contextSource) {
+		LdapBindAuthenticationManagerFactory factory = new LdapBindAuthenticationManagerFactory(contextSource);
 
-	@Bean(name = BeanIds.AUTHENTICATION_MANAGER)
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
+		factory.setUserSearchBase("DC=" + dc1 + ",DC=" + dc0);
+		factory.setUserSearchFilter(
+				"(&(sAMAccountName={0})(memberOf=CN=" + osirisUserGroup + ",OU=OSIRIS,DC=" + dc1 + ",DC=" + dc0 + "))");
+		return factory.createAuthenticationManager();
 	}
-
 }

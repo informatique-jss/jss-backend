@@ -40,10 +40,8 @@ import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.repository.PaymentRepository;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
-import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
@@ -127,9 +125,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     AffaireService affaireService;
-
-    @Autowired
-    BillingItemService billingItemService;
 
     @Autowired
     PricingHelper pricingHelper;
@@ -977,11 +972,9 @@ public class PaymentServiceImpl implements PaymentService {
         invoice.setProvider(constantService.getProviderCentralPay());
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
 
-        List<BillingItem> centralPayBillingItem = billingItemService
-                .getBillingItemByBillingType(constantService.getBillingTypeCentralPayFees());
-
         InvoiceItem invoiceItem = new InvoiceItem();
-        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(centralPayBillingItem, null));
+        invoiceItem.setBillingItem(
+                pricingHelper.getAppliableBillingItem(constantService.getBillingTypeCentralPayFees(), null));
         invoiceItem.setDiscountAmount(0f);
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.xhtmlrenderer.pdf.ITextRenderer;
+import org.xhtmlrenderer.util.XRLog;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
@@ -51,6 +53,7 @@ import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
@@ -59,6 +62,7 @@ import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Service;
@@ -92,6 +96,12 @@ public class GeneratePdfDelegate {
 
     @Value("${jss.bic}")
     private String bicJss;
+
+    @Value("${jss.domiciliation.agreement.number}")
+    private String jssDomiciliationAgreementNumber;
+
+    @Value("${jss.domiciliation.agreement.date}")
+    private String jssDomiciliationAgreementDate;
 
     @Value("${invoicing.payment.limit.refund.euros}")
     private String payementLimitRefundInEuros;
@@ -154,6 +164,7 @@ public class GeneratePdfDelegate {
                 throw new OsirisException(e, "Unable to create temp file");
             }
             ITextRenderer renderer = new ITextRenderer();
+            XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
             renderer.setDocumentFromString(
                     htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
                             .replaceAll("line-height: normal",
@@ -256,6 +267,7 @@ public class GeneratePdfDelegate {
             throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
         renderer.setDocumentFromString(
                 htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
                         .replaceAll("line-height: normal",
@@ -350,6 +362,7 @@ public class GeneratePdfDelegate {
             throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
         renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " "));
         renderer.layout();
         try {
@@ -515,6 +528,7 @@ public class GeneratePdfDelegate {
             throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
         renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>"));
         renderer.layout();
         try {
@@ -631,6 +645,7 @@ public class GeneratePdfDelegate {
         try {
             out = new FileOutputStream(pdfPathOut);
             stamper = new PdfStamper(reader, out);
+            XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
         } catch (DocumentException | IOException e2) {
             throw new OsirisException(e2, "Impossible to create output PDF file");
         }
@@ -868,6 +883,7 @@ public class GeneratePdfDelegate {
         try {
             out = new FileOutputStream(pdfPathOut);
             stamper = new PdfStamper(reader, out);
+            XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
         } catch (DocumentException | IOException e2) {
             throw new OsirisException(e2, "Impossible to create output PDF file");
         }
@@ -943,6 +959,276 @@ public class GeneratePdfDelegate {
                     table.writeSelectedRows(0, -1, headerPositionX, headerPositionY, stamper.getOverContent(i));
                 }
             }
+        }
+
+        // Close the stamper
+        try {
+            stamper.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e, "Impossible to close PDF File stamper");
+        }
+        reader.close();
+
+        return tempPdfFile;
+    }
+
+    public File generateDomiciliationContract(Provision provision)
+            throws OsirisException, OsirisClientMessageException {
+        final Context ctx = new Context();
+
+        String template = Domiciliation.DOMICILIATION_CONTRACT_TEMPLATE_BILINGUAL;
+        Domiciliation domiciliation = provision.getDomiciliation();
+        if (provision.getDomiciliation().getLanguage().getId()
+                .equals(constantService.getLanguageFrench().getId()))
+            template = Domiciliation.DOMICILIATION_CONTRACT_TEMPLATE_FRENCH;
+
+        ctx.setVariable("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        ctx.setVariable("jssDomiciliationAgreementNumber", jssDomiciliationAgreementNumber);
+        ctx.setVariable("jssDomiciliationAgreementDate", jssDomiciliationAgreementDate);
+        ctx.setVariable("provision", provision);
+        ctx.setVariable("affaire", provision.getService().getAssoAffaireOrder().getAffaire());
+        ctx.setVariable("domiciliationStartDate",
+                provision.getService().getAssoAffaireOrder().getCustomerOrder().getRecurringPeriodStartDate()
+                        .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+        ctx.setVariable("domiciliation", domiciliation);
+        if (domiciliation.getIsLegalPerson() == null || !domiciliation.getIsLegalPerson())
+            ctx.setVariable("domiciliationLegalPersonBirthday", domiciliation.getLegalGardianBirthdate()
+                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+        ctx.setVariable("mailDestinationLabel", getMailDestinationLabel(domiciliation, false));
+        ctx.setVariable("mailDestinationLabelEnglish", getMailDestinationLabel(domiciliation, true));
+
+        // Billing item
+        String monthlyBillingAmount = "";
+        if (provision.getInvoiceItems() != null)
+            for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                if (invoiceItem.getBillingItem().getBillingType().getId()
+                        .equals(constantService.getBillingTypeDomiciliationContractTypeKeepMail().getId())
+                        || invoiceItem.getBillingItem().getBillingType().getId()
+                                .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmail().getId())
+                        || invoiceItem.getBillingItem().getBillingType().getId()
+                                .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmailAndMail()
+                                        .getId())
+                        || invoiceItem.getBillingItem().getBillingType().getId()
+                                .equals(constantService.getBillingTypeDomiciliationContractTypeRouteMail().getId()))
+                    monthlyBillingAmount = invoiceItem.getBillingItem().getPreTaxPrice() + "";
+            }
+        ctx.setVariable("monthlyBillingAmount", monthlyBillingAmount);
+
+        // Create the HTML body using Thymeleaf
+        String htmlContent = StringEscapeUtils
+                .unescapeHtml4(mailHelper.emailTemplateEngine().process(template, ctx));
+
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("domiciliation-contract", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        renderer.setDocumentFromString(
+                htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
+                        .replaceAll("line-height: normal",
+                                "line-height: normal;padding:0;margin:0"));
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e, "Unable to create PDF file for domiciliation contracts");
+        }
+        return addFooterOnDomiciliationContract(tempFile);
+    }
+
+    private String getMailDestinationLabel(Domiciliation domiciliation, boolean englishLangage) throws OsirisException {
+        String mailDestinationLabel = "";
+        if (domiciliation.getDomiciliationContractType().getId()
+                .equals(constantService.getDomiciliationContractTypeRouteEmailAndMail().getId())
+                || domiciliation.getDomiciliationContractType().getId()
+                        .equals(constantService.getDomiciliationContractTypeRouteMail().getId())) {
+            // Postal
+            mailDestinationLabel = englishLangage ? "; Sending of mail " : "; Envoi du courrier ";
+            if (domiciliation.getMailRedirectionType().getId()
+                    .equals(constantService.getMailRedirectionTypeActivity().getId())) {
+                mailDestinationLabel += englishLangage ? "at " : "à ";
+                mailDestinationLabel += domiciliation.getActivityMailRecipient() != null
+                        ? domiciliation.getActivityMailRecipient()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getActivityAddress() != null ? domiciliation.getActivityAddress()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getActivityPostalCode() != null
+                        ? domiciliation.getActivityPostalCode()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getActivityCity() != null
+                        ? domiciliation.getActivityCity().getLabel()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getAcitivityCedexComplement() != null
+                        ? domiciliation.getAcitivityCedexComplement()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getActivityCountry() != null
+                        ? domiciliation.getActivityCountry().getLabel()
+                        : "";
+            } else if (domiciliation.getMailRedirectionType().getId()
+                    .equals(constantService.getMailRedirectionTypeOther().getId())) {
+                mailDestinationLabel += englishLangage ? "at " : "à ";
+                mailDestinationLabel += domiciliation.getMailRecipient() != null ? domiciliation.getMailRecipient()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getAddress() != null ? domiciliation.getAddress() : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getPostalCode() != null ? domiciliation.getPostalCode() : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getCity() != null ? domiciliation.getCity().getLabel() : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getCedexComplement() != null ? domiciliation.getCedexComplement()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getCountry() != null ? domiciliation.getCountry().getLabel() : "";
+            } else if (domiciliation.getMailRedirectionType().getId()
+                    .equals(constantService.getMailRedirectionTypeLegalGuardian().getId())) {
+                mailDestinationLabel += englishLangage ? "at " : "à ";
+                mailDestinationLabel += domiciliation.getLegalGardianDenomination() != null
+                        ? domiciliation.getLegalGardianDenomination()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getLegalGardianCivility() != null
+                        ? domiciliation.getLegalGardianCivility().getLabel()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getLegalGardianLastname() != null
+                        ? domiciliation.getLegalGardianLastname()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getLegalGardianFirstname() != null
+                        ? domiciliation.getLegalGardianFirstname()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getLegalGardianMailRecipient() != null
+                        ? domiciliation.getLegalGardianMailRecipient()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getLegalGardianAddress() != null
+                        ? domiciliation.getLegalGardianAddress()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getLegalGardianPostalCode() != null
+                        ? domiciliation.getLegalGardianPostalCode()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getLegalGardianCity() != null
+                        ? domiciliation.getLegalGardianCity().getLabel()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getLegalGardianCedexComplement() != null
+                        ? domiciliation.getLegalGardianCedexComplement()
+                        : "";
+                mailDestinationLabel += " ";
+                mailDestinationLabel += domiciliation.getLegalGardianCountry() != null
+                        ? domiciliation.getLegalGardianCountry().getLabel()
+                        : "";
+            }
+        }
+        if (domiciliation.getDomiciliationContractType().getId()
+                .equals(constantService.getDomiciliationContractTypeRouteEmailAndMail().getId())
+                || domiciliation.getDomiciliationContractType().getId()
+                        .equals(constantService.getDomiciliationContractTypeRouteEmail().getId())) {
+            // Mail
+            ArrayList<String> mailList = new ArrayList<String>();
+            if (domiciliation.getMailRedirectionType().getId()
+                    .equals(constantService.getMailRedirectionTypeActivity().getId())) {
+                if (domiciliation.getActivityMails() != null)
+                    for (Mail mail : domiciliation.getActivityMails())
+                        mailList.add(mail.getMail());
+            } else if (domiciliation.getMailRedirectionType().getId()
+                    .equals(constantService.getMailRedirectionTypeOther().getId())) {
+                if (domiciliation.getMails() != null)
+                    for (Mail mail : domiciliation.getMails())
+                        mailList.add(mail.getMail());
+            } else if (domiciliation.getMailRedirectionType().getId()
+                    .equals(constantService.getMailRedirectionTypeLegalGuardian().getId())) {
+                if (domiciliation.getLegalGardianMails() != null)
+                    for (Mail mail : domiciliation.getLegalGardianMails())
+                        mailList.add(mail.getMail());
+            }
+            if (mailList.size() > 0)
+                mailDestinationLabel += (englishLangage ? "; Sending of email at " : "; Envoi par mail à ")
+                        + String.join(", ", mailList);
+        }
+        return mailDestinationLabel;
+    }
+
+    private File addFooterOnDomiciliationContract(File pdfFile) throws OsirisException {
+        String pdfPath = pdfFile.getAbsolutePath();
+        File tempPdfFile;
+        try {
+            tempPdfFile = File.createTempFile("pdfDomiciliationFooter", "Add");
+        } catch (IOException e) {
+            throw new OsirisException(e, "Impossible to create temp file");
+        }
+        String pdfPathOut = tempPdfFile.getAbsolutePath();
+        float footerPositionX = 60;
+        float footerPositionY = 6;
+
+        FileInputStream in;
+        PdfReader reader;
+        try {
+            in = new FileInputStream(pdfPath);
+            reader = new PdfReader(in);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Impossible to read input PDF file");
+        }
+
+        // Create output PDF
+        FileOutputStream out;
+        PdfStamper stamper;
+        try {
+            out = new FileOutputStream(pdfPathOut);
+            stamper = new PdfStamper(reader, out);
+            XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        } catch (DocumentException | IOException e2) {
+            throw new OsirisException(e2, "Impossible to create output PDF file");
+        }
+
+        // Loop over the pages and add a header to each page
+        int n = reader.getNumberOfPages();
+
+        for (int i = 1; i <= n; i++) {
+
+            // add footer
+            PdfPTable tableFooter = new PdfPTable(1);
+            try {
+                tableFooter.setWidths(new int[] { 100 });
+            } catch (DocumentException e) {
+                throw new OsirisException(e, "Wrong columns sizes for PDF");
+            }
+            tableFooter.setTotalWidth(PageSize.A4.getWidth() - (footerPositionX * 2));
+            tableFooter.setLockedWidth(true);
+            tableFooter.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+
+            // Details 1
+
+            Font footerFont = new Font(FontFamily.TIMES_ROMAN);
+            footerFont.setSize(10);
+
+            final PdfPCell detailsCell1 = new PdfPCell(new Phrase(
+                    "Agrément n°" + jssDomiciliationAgreementNumber + " obtenu le " + jssDomiciliationAgreementDate
+                            + " auprès de la Préfecture de Paris",
+                    footerFont));
+            detailsCell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+            detailsCell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            detailsCell1.setBorderWidth(0);
+            tableFooter.addCell(detailsCell1);
+
+            tableFooter.writeSelectedRows(0, -1, footerPositionX, footerPositionY * 4, stamper.getOverContent(i));
         }
 
         // Close the stamper

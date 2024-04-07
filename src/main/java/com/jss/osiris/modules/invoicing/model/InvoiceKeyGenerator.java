@@ -6,7 +6,6 @@ import java.math.BigInteger;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;
-import org.hibernate.query.spi.NativeQueryImplementor;
 
 public class InvoiceKeyGenerator implements IdentifierGenerator {
 
@@ -20,7 +19,7 @@ public class InvoiceKeyGenerator implements IdentifierGenerator {
         } else {
             seqName = "invoice_sequence";
         }
-        NativeQueryImplementor query = session.createNativeQuery("SELECT nextval('" + seqName + "')");
-        return ((BigInteger) query.getSingleResult()).intValue();
+        return ((BigInteger) session.createNativeQuery("SELECT nextval('" + seqName + "')").getSingleResult())
+                .intValue();
     }
 }

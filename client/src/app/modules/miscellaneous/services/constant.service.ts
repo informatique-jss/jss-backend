@@ -6,7 +6,7 @@ import { Constant } from '../../miscellaneous/model/Constant';
 @Injectable({
   providedIn: 'root'
 })
-export class ConstantService extends AppRestService<Constant>{
+export class ConstantService extends AppRestService<Constant> {
 
   constructor(http: HttpClient) {
     super(http, "miscellaneous");
@@ -186,6 +186,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.attachmentTypeComplexAnnouncement;
   }
 
+  getAttachmentTypeContract() {
+    return this.constant.attachmentTypeContract;
+  }
+
   getCountryFrance() {
     return this.constant.countryFrance;
   }
@@ -358,6 +362,22 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.billingTypeCorrespondenceFees;
   }
 
+  getBillingTypeDomiciliationContractTypeKeepMail() {
+    return this.constant.billingTypeDomiciliationContractTypeKeepMail;
+  }
+
+  getBillingTypeDomiciliationContractTypeRouteEmail() {
+    return this.constant.billingTypeDomiciliationContractTypeRouteEmail;
+  }
+
+  getBillingTypeDomiciliationContractTypeRouteMail() {
+    return this.constant.billingTypeDomiciliationContractTypeRouteMail;
+  }
+
+  getBillingTypeDomiciliationContractTypeRouteEmailAndMail() {
+    return this.constant.billingTypeDomiciliationContractTypeRouteEmailAndMail;
+  }
+
   getStringNantissementDepositFormeJuridiqueCode() {
     return this.constant.stringNantissementDepositFormeJuridiqueCode;
   }
@@ -434,6 +454,14 @@ export class ConstantService extends AppRestService<Constant>{
 
   getMailRedirectionTypeOther() {
     return this.constant.mailRedirectionTypeOther;
+  }
+
+  getMailRedirectionTypeLegalGuardian() {
+    return this.constant.mailRedirectionTypeLegalGuardian;
+  }
+
+  getMailRedirectionTypeActivity() {
+    return this.constant.mailRedirectionTypeActivity;
   }
 
   getActTypeSeing() {

@@ -38,6 +38,60 @@
             </td>
           </tr>
         </table>
+        <table class="full-width" *ngIf="quotation && instanceOfCustomerOrder(quotation)">
+          <tr>
+            <td><generic-toggle [(model)]="quotation.isRecurring" label="Est récurrente ?" [form]="orderingCustomerForm"
+                propertyName="propeisRecurringrtyName" [isDisabled]="!editMode"></generic-toggle></td>
+          </tr>
+        </table>
+        <table class="full-width" *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.isRecurring">
+          <tr>
+            <td>
+              <generic-datepicker [(model)]="quotation.recurringPeriodStartDate" label="Date de début de récurrence"
+                [form]="orderingCustomerForm" propertyName="recurringPeriodStartDate" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-datepicker>
+            </td>
+            <td>
+              <generic-datepicker [(model)]="quotation.recurringPeriodEndDate" label="Date de fin de récurrence"
+                [form]="orderingCustomerForm" propertyName="recurringPeriodEndDate" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-datepicker>
+            </td>
+          <tr>
+            <td>
+              <select-customer-order-frequency [(model)]="quotation.customerOrderFrequency"
+                label="Fréquence de génération" [form]="orderingCustomerForm" propertyName="customerOrderFrequency"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-customer-order-frequency>
+            </td>
+            <td>
+              <generic-toggle [(model)]="quotation.isRecurringAutomaticallyBilled"
+                label="Facturation automatique des commandes générées ?" [form]="orderingCustomerForm"
+                propertyName="isRecurringAutomaticallyBilled" [isDisabled]="!editMode"></generic-toggle>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width"
+          *ngIf="quotation && instanceOfCustomerOrder(quotation) && (quotation.hasCustomerOrderParentRecurring || quotation.isRecurring)">
+          <tr>
+            <td>
+              <generic-datepicker [(model)]="quotation.recurringStartDate" label="Date de début"
+                [form]="orderingCustomerForm" propertyName="recurringStartDate" [isMandatory]="false"
+                [isDisabled]="true"></generic-datepicker>
+            </td>
+            <td>
+              <generic-datepicker [(model)]="quotation.recurringEndDate" label="Date de fin"
+                [form]="orderingCustomerForm" propertyName="recurringEndDate" [isMandatory]="false"
+                [isDisabled]="true"></generic-datepicker>
+            </td>
+        </table>
+        <div class="div-customer-order"
+          *ngIf="quotation && instanceOfCustomerOrder(quotation) &&   customerOrderRecurring && customerOrderRecurring.length>0">
+          <p *ngIf=" quotation.isRecurring">Commandes enfants issues de cette commande</p>
+          <p *ngIf=" !quotation.isRecurring">Commande récurrente parente</p>
+          <sort-table [actions]="customerOrderRecurringTableActions" [columns]="customerOrderRecurringDisplayedColumns"
+            [noMaxHeight]="true" [noPaddingBottom]="true" [values]="customerOrderRecurring"
+            tableName="Liste commandes récurrentes">
+          </sort-table>
+        </div>
         <div *ngIf="quotation.tiers ||quotation.confrere">
           <table class="full-width">
             <tr>

@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
-import com.jss.osiris.libs.DateHelper;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -47,7 +46,6 @@ import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.repository.QuotationRepository;
 import com.jss.osiris.modules.tiers.model.ITiers;
-import com.jss.osiris.modules.tiers.model.Tiers;
 
 @org.springframework.stereotype.Service
 public class QuotationServiceImpl implements QuotationService {
@@ -147,10 +145,6 @@ public class QuotationServiceImpl implements QuotationService {
             quotation.setAssignedTo(
                     getCustomerOrderOfQuotation(quotation).getDefaultCustomerOrderEmployee());
 
-        // Check duplicate
-        // Find first affaire customer order
-        // TODO findDuplicatesForQuotation(quotation);
-
         // Complete provisions
         boolean oneNewProvision = false;
         if (quotation.getAssoAffaireOrders() != null)
@@ -195,65 +189,6 @@ public class QuotationServiceImpl implements QuotationService {
                 mailHelper.sendQuotationCreationConfirmationToCustomer(quotation);
         }
         return quotation;
-    }
-
-    private void findDuplicatesForQuotation(Quotation quotation) throws OsirisDuplicateException {
-        if (quotation.getId() == null && quotation.getAssoAffaireOrders() != null
-                && quotation.getAssoAffaireOrders().size() > 0) {
-            QuotationSearch orderingSearch = new QuotationSearch();
-            orderingSearch.setAffaires(Arrays.asList(quotation.getAssoAffaireOrders().get(0).getAffaire()));
-            orderingSearch.setCustomerOrders(new ArrayList<Tiers>());
-            if (quotation.getResponsable() != null) {
-                Tiers tiers = new Tiers();
-                tiers.setId(quotation.getResponsable().getId());
-                orderingSearch.getCustomerOrders().add(tiers);
-            } else if (quotation.getTiers() != null) {
-                orderingSearch.getCustomerOrders().add(quotation.getTiers());
-            } else if (quotation.getConfrere() != null) {
-                Tiers tiers = new Tiers();
-                tiers.setId(quotation.getConfrere().getId());
-                orderingSearch.getCustomerOrders().add(tiers);
-            }
-            orderingSearch.setStartDate(DateHelper.subtractDaysSkippingWeekends(LocalDateTime.now(), 3));
-            List<QuotationSearchResult> duplicatedCustomerOrders = searchQuotations(orderingSearch);
-            List<Quotation> duplicatedFound = new ArrayList<Quotation>();
-
-            if (duplicatedCustomerOrders != null && duplicatedCustomerOrders.size() > 0) {
-                outerloop: for (QuotationSearchResult potentialQuotationResult : duplicatedCustomerOrders) {
-                    Quotation potentialQuotation = getQuotation(potentialQuotationResult.getQuotationId());
-                    if (!potentialQuotation.getQuotationStatus().getCode().equals(QuotationStatus.ABANDONED)) {
-                        for (AssoAffaireOrder currentAsso : quotation.getAssoAffaireOrders()) {
-                            boolean foundAsso = false;
-                            for (AssoAffaireOrder duplicateAsso : potentialQuotation.getAssoAffaireOrders()) {
-                                if (currentAsso.getAffaire().getId().equals(duplicateAsso.getAffaire().getId())) {
-                                    foundAsso = true;
-                                    for (Service service : currentAsso.getServices())
-                                        for (Provision currentProvision : service.getProvisions()) {
-                                            boolean foundProvision = false;
-                                            for (Service duplicateService : duplicateAsso.getServices())
-                                                for (Provision duplicateProvision : duplicateService.getProvisions()) {
-                                                    if (duplicateProvision.getProvisionType().getId()
-                                                            .equals(currentProvision.getProvisionType().getId())) {
-                                                        foundProvision = true;
-                                                    }
-                                                }
-                                            if (!foundProvision)
-                                                break outerloop;
-                                        }
-                                }
-                            }
-                            if (!foundAsso)
-                                break outerloop;
-                        }
-                        duplicatedFound.add(potentialQuotation);
-                    }
-                }
-
-                if (duplicatedFound.size() > 0) {
-                    throw new OsirisDuplicateException(duplicatedFound.stream().map(Quotation::getId).toList());
-                }
-            }
-        }
     }
 
     @Override

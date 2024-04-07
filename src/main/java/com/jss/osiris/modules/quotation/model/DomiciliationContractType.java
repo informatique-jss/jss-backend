@@ -2,14 +2,14 @@ package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-
 import com.jss.osiris.modules.miscellaneous.model.IId;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 
 @Entity
 public class DomiciliationContractType implements Serializable, IId {
@@ -21,6 +21,9 @@ public class DomiciliationContractType implements Serializable, IId {
 
 	@Column(nullable = false, length = 100)
 	private String label;
+
+	@Column(length = 100)
+	private String englishLabel;
 
 	@Column(nullable = false, length = 20)
 	private String code;
@@ -47,6 +50,14 @@ public class DomiciliationContractType implements Serializable, IId {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getEnglishLabel() {
+		return englishLabel;
+	}
+
+	public void setEnglishLabel(String englishLabel) {
+		this.englishLabel = englishLabel;
 	}
 
 }

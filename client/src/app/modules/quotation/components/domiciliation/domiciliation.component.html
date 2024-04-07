@@ -11,7 +11,8 @@
             </td>
             <td style="vertical-align: baseline;">
               <radio-group-language [(model)]="domiciliation.language" [form]="domiciliationForm"
-                [isDisabled]="!editMode" propertyName="language" label="Langue de contrat"></radio-group-language>
+                [isAutoSelectLanguageFrench]="false" [isDisabled]="!editMode" propertyName="language"
+                label="Langue de contrat"></radio-group-language>
             </td>
           </tr>
         </table>
@@ -79,34 +80,7 @@
             </td>
           </tr>
         </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-datepicker [(model)]="domiciliation.startDate" label="Date de début de domiciliation"
-                [form]="domiciliationForm" propertyName="startDate" [isMandatory]="true"
-                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
-              </generic-datepicker>
-            </td>
-            <td>
-              <p *ngIf="domiciliation.endDate !=undefined && domiciliation.endDate !=null">Date de
-                fin : {{domiciliation.endDate | date:'dd/MM/yyyy'}}</p>
-            </td>
-          </tr>
-        </table>
       </div>
-    </mat-tab>
-    <mat-tab label="Options">
-      <provision-options [editMode]="editMode" (provisionChange)="provisionChangeFunction()" [provision]="provision">
-      </provision-options>
-    </mat-tab>
-    <mat-tab label="Documents" *ngIf="domiciliation.id && provision">
-      <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
-      </attachments>
-    </mat-tab>
-    <mat-tab label="Paiements & factures"
-      *ngIf="domiciliation.id && provision && quotation &&  instanceOfCustomerOrderFn(quotation)">
-      <provision-payment [editMode]="editMode" [provision]="provision" [quotation]="quotation">
-      </provision-payment>
     </mat-tab>
     <mat-tab label="Activité">
       <div class=" form-div">
@@ -164,10 +138,10 @@
         </table>
         <table class="full-width">
           <tr>
-            <td *ngIf="mustDecribeMail()">
+            <td *ngIf="mustDecribeActivityMail()">
               <chips-mail [(model)]="domiciliation.activityMails" label="Mails" [form]="domiciliationForm"
                 propertyName="activityMails" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="instanceOfCustomerOrder && mustDecribeMail() && !isStatusOpen"></chips-mail>
+                [conditionnalRequired]="instanceOfCustomerOrder && mustDecribeActivityMail() && !isStatusOpen"></chips-mail>
             </td>
             <td>
               <generic-textarea [(model)]="domiciliation.accountingRecordDomiciliation"
@@ -180,7 +154,7 @@
         </table>
       </div>
     </mat-tab>
-    <mat-tab label="Responsable légal">
+    <mat-tab label="Représentant légal">
       <div class=" form-div">
         <table class="full-width">
           <tr>
@@ -324,21 +298,20 @@
             </td>
           </tr>
         </table>
-        <table class="full-width" *ngIf="!domiciliation.isLegalPerson">
-          <tr>
-            <td *ngIf="domiciliation && domiciliation.id && provision">
-              <single-attachment [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE.entityType"
-                [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypeCni">
-              </single-attachment>
-            </td>
-            <td *ngIf="domiciliation && domiciliation.id &&provision">
-              <single-attachment [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE.entityType"
-                [editMode]="editMode" [attachmentTypeToDisplay]="attachmentProofOfAddress">
-              </single-attachment>
-            </td>
-          </tr>
-        </table>
       </div>
+    </mat-tab>
+    <mat-tab label="Options">
+      <provision-options [editMode]="editMode" (provisionChange)="provisionChangeFunction()" [provision]="provision">
+      </provision-options>
+    </mat-tab>
+    <mat-tab label="Documents" *ngIf="domiciliation.id && provision">
+      <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
+      </attachments>
+    </mat-tab>
+    <mat-tab label="Paiements & factures"
+      *ngIf="domiciliation.id && provision && quotation &&  instanceOfCustomerOrderFn(quotation)">
+      <provision-payment [editMode]="editMode" [provision]="provision" [quotation]="quotation">
+      </provision-payment>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="domiciliation && domiciliation.id">
       <history [entity]="domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE"></history>

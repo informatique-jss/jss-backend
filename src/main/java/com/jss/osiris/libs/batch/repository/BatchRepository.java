@@ -76,7 +76,7 @@ public interface BatchRepository extends CrudRepository<Batch, Integer> {
         List<IBatchTimeStatistics> getTimeStatisticsOfBatch(@Param("batchSettingsId") Integer batchSettingsId,
                         @Param("batchStatusErrorCode") String batchStatusErrorCode);
 
-        @Query("select b from Batch b where  cast( created_date as date)  between :startDate and :endDate and (coalesce(:batchSettings) is null or b.batchSettings in :batchSettings) and (coalesce(:batchStatus) is null or b.batchStatus in :batchStatus)  and (coalesce(:nodes) is null or b.node in :nodes)  and (:entityId is null or b.entityId = :entityId)  order by createdDate desc ")
+        @Query("select b from Batch b where createdDate  between :startDate and :endDate and (coalesce(:batchSettings) is null or b.batchSettings in :batchSettings) and (coalesce(:batchStatus) is null or b.batchStatus in :batchStatus)  and (coalesce(:nodes) is null or b.node in :nodes)  and (:entityId is null or b.entityId = :entityId)  order by createdDate desc ")
         List<Batch> searchBatchs(@Param("startDate") Date startDate,
                         @Param("endDate") Date endDate,
                         @Param("batchSettings") List<BatchSettings> batchSettings,

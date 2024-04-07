@@ -2,23 +2,26 @@ package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import com.jss.osiris.modules.miscellaneous.model.IId;
-import javax.persistence.Id;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class ServiceFamilyGroup implements Serializable,IId {
+public class ServiceFamilyGroup implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	private Integer id;
 
 	@Column(nullable = false)
 	private String label;
-	
+
 	private String code;
 
 	public Integer getId() {
@@ -36,7 +39,7 @@ public class ServiceFamilyGroup implements Serializable,IId {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	
+
 	public String getCode() {
 		return code;
 	}

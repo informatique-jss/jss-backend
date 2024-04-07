@@ -2,15 +2,6 @@ package com.jss.osiris.modules.miscellaneous.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
@@ -38,11 +29,22 @@ import com.jss.osiris.modules.tiers.model.TiersCategory;
 import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+
 @Entity
 public class Constant implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -198,6 +200,10 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeAutomaticMail;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_contract")
+	private AttachmentType attachmentTypeContract;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_country_france")
 	private Country countryFrance;
 
@@ -349,6 +355,22 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_billing_type_rne_update")
 	private BillingType billingTypeRneUpdate;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_domiciliation_contract_keep_mail")
+	private BillingType billingTypeDomiciliationContractTypeKeepMail;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_domiciliation_contract_route_email")
+	private BillingType billingTypeDomiciliationContractTypeRouteEmail;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_domiciliation_contract_route_mail")
+	private BillingType billingTypeDomiciliationContractTypeRouteMail;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_domiciliation_contract_route_mail_email")
+	private BillingType billingTypeDomiciliationContractTypeRouteEmailAndMail;
+
 	@Column(length = 1000)
 	private String stringNantissementDepositFormeJuridiqueCode;
 	@Column(length = 1000)
@@ -423,6 +445,14 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_mail_redirection_type_other")
 	private MailRedirectionType mailRedirectionTypeOther;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_mail_redirection_type_legal_guardian")
+	private MailRedirectionType mailRedirectionTypeLegalGuardian;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_mail_redirection_type_activity")
+	private MailRedirectionType mailRedirectionTypeActivity;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_act_type_seing")
@@ -2138,4 +2168,65 @@ public class Constant implements Serializable, IId {
 	public void setAccountingJournalBilan(AccountingJournal accountingJournalBilan) {
 		this.accountingJournalBilan = accountingJournalBilan;
 	}
+
+	public BillingType getBillingTypeDomiciliationContractTypeKeepMail() {
+		return billingTypeDomiciliationContractTypeKeepMail;
+	}
+
+	public void setBillingTypeDomiciliationContractTypeKeepMail(
+			BillingType billingTypeDomiciliationContractTypeKeepMail) {
+		this.billingTypeDomiciliationContractTypeKeepMail = billingTypeDomiciliationContractTypeKeepMail;
+	}
+
+	public BillingType getBillingTypeDomiciliationContractTypeRouteEmail() {
+		return billingTypeDomiciliationContractTypeRouteEmail;
+	}
+
+	public void setBillingTypeDomiciliationContractTypeRouteEmail(
+			BillingType billingTypeDomiciliationContractTypeRouteEmail) {
+		this.billingTypeDomiciliationContractTypeRouteEmail = billingTypeDomiciliationContractTypeRouteEmail;
+	}
+
+	public BillingType getBillingTypeDomiciliationContractTypeRouteMail() {
+		return billingTypeDomiciliationContractTypeRouteMail;
+	}
+
+	public void setBillingTypeDomiciliationContractTypeRouteMail(
+			BillingType billingTypeDomiciliationContractTypeRouteMail) {
+		this.billingTypeDomiciliationContractTypeRouteMail = billingTypeDomiciliationContractTypeRouteMail;
+	}
+
+	public BillingType getBillingTypeDomiciliationContractTypeRouteEmailAndMail() {
+		return billingTypeDomiciliationContractTypeRouteEmailAndMail;
+	}
+
+	public void setBillingTypeDomiciliationContractTypeRouteEmailAndMail(
+			BillingType billingTypeDomiciliationContractTypeRouteEmailAndMail) {
+		this.billingTypeDomiciliationContractTypeRouteEmailAndMail = billingTypeDomiciliationContractTypeRouteEmailAndMail;
+	}
+
+	public AttachmentType getAttachmentTypeContract() {
+		return attachmentTypeContract;
+	}
+
+	public void setAttachmentTypeContract(AttachmentType attachmentTypeContract) {
+		this.attachmentTypeContract = attachmentTypeContract;
+	}
+
+	public MailRedirectionType getMailRedirectionTypeLegalGuardian() {
+		return mailRedirectionTypeLegalGuardian;
+	}
+
+	public void setMailRedirectionTypeLegalGuardian(MailRedirectionType mailRedirectionTypeLegalGuardian) {
+		this.mailRedirectionTypeLegalGuardian = mailRedirectionTypeLegalGuardian;
+	}
+
+	public MailRedirectionType getMailRedirectionTypeActivity() {
+		return mailRedirectionTypeActivity;
+	}
+
+	public void setMailRedirectionTypeActivity(MailRedirectionType mailRedirectionTypeActivity) {
+		this.mailRedirectionTypeActivity = mailRedirectionTypeActivity;
+	}
+
 }

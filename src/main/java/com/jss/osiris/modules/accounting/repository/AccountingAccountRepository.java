@@ -2,8 +2,6 @@ package com.jss.osiris.modules.accounting.repository;
 
 import java.util.List;
 
-import javax.persistence.QueryHint;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
+
+import jakarta.persistence.QueryHint;
 
 public interface AccountingAccountRepository extends QueryCacheCrudRepository<AccountingAccount, Integer> {
         @Query(nativeQuery = true, value = "" +

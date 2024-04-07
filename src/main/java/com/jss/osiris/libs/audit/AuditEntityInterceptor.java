@@ -1,12 +1,11 @@
 package com.jss.osiris.libs.audit;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.hibernate.EmptyInterceptor;
+import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.type.Type;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ import com.jss.osiris.libs.search.repository.IndexEntityRepository;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Service
-public class AuditEntityInterceptor extends EmptyInterceptor {
+public class AuditEntityInterceptor implements Interceptor {
 
     Session session;
 
@@ -44,19 +43,19 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
     @Override
     public boolean onFlushDirty(
             Object entity,
-            Serializable id,
+            Object id,
             Object[] currentState,
             Object[] previousState,
             String[] propertyNames,
             Type[] types) {
         this.auditEntity(previousState, currentState, entity, id, propertyNames);
-        return super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
+        return Interceptor.super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
     }
 
     @Override
     public boolean onSave(
             Object entity,
-            Serializable id,
+            Object id,
             Object[] state,
             String[] propertyNames,
             Type[] types) {
@@ -72,11 +71,11 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
             audit.setFieldName("id");
             auditService.addOrUpdateAudit(audit);
         }
-        return super.onSave(entity, id, state, propertyNames, types);
+        return Interceptor.super.onSave(entity, id, state, propertyNames, types);
     }
 
     private void auditEntity(Object[] previousState, Object[] currentState, Object entity,
-            Serializable id, String[] propertyNames) {
+            Object id, String[] propertyNames) {
         if (!entity.getClass().getName().equals(IndexEntity.class.getName())
                 && !entity.getClass().getName().equals(Batch.class.getName())
                 && !entity.getClass().getName().equals(Node.class.getName()) && id instanceof Integer) {

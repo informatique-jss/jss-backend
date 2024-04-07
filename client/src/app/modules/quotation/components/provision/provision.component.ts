@@ -25,6 +25,7 @@ import { AnnouncementService } from '../../services/announcement.service';
 import { AnnouncementStatusService } from '../../services/announcement.status.service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { DomiciliationStatusService } from '../../services/domiciliation-status.service';
+import { DomiciliationService } from '../../services/domiciliation.service';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
 import { MissingAttachmentQueryService } from '../../services/missing-attachment-query.service';
 import { ProvisionService } from '../../services/provision.service';
@@ -88,6 +89,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private userPreferenceService: UserPreferenceService,
     private affaireService: AffaireService,
     private serviceService: ServiceService,
+    private domiciliationService: DomiciliationService,
   ) { }
 
   affaireForm = this.formBuilder.group({});
@@ -655,5 +657,9 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     if (!doNotDisplayService)
       label = this.getServiceLabel(service) + " - " + label;
     return label;
+  }
+
+  generateDomiciliationContract(provision: Provision) {
+    this.domiciliationService.generateDomiciliationContract(provision).subscribe(response => { this.saveAsso() });
   }
 }

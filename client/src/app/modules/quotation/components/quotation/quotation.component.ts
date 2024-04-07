@@ -504,7 +504,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         // Check if another quotation / affaire already exists
         let orderingSearch = {} as OrderingSearch;
         orderingSearch.customerOrders = [getCustomerOrderForIQuotation(this.quotation)];
-        orderingSearch.affaires = [asso.affaire];
+        orderingSearch.affaire = asso.affaire;
         orderingSearch.customerOrderStatus = [];
         let d = new Date();
         d.setDate(d.getDate() - 3);

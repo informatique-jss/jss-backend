@@ -320,6 +320,14 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeContract" label="Type de pièce-jointe - contrat"
+                [form]="constantForm" propertyName="attachmentTypeContract" [isMandatory]="true"
+                [isDisabled]="!editMode" [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-country [(model)]="constant.countryFrance" [form]="constantForm" label="Pays - France"
                 propertyName="countryFrance" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
             </td>
@@ -647,6 +655,42 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeDomiciliationContractTypeKeepMail"
+                label="Type de poste de facturation - Domiciliation - Conservation du courrier" [form]="constantForm"
+                propertyName="billingTypeDomiciliationContractTypeKeepMail" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeDomiciliationContractTypeRouteEmail"
+                label="Type de poste de facturation - Domiciliation - Envoi du courrier par mail" [form]="constantForm"
+                propertyName="billingTypeDomiciliationContractTypeRouteEmail" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeDomiciliationContractTypeRouteMail"
+                label="Type de poste de facturation - Domiciliation - Envoi du courrier par La Poste"
+                [form]="constantForm" propertyName="billingTypeDomiciliationContractTypeRouteMail" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeDomiciliationContractTypeRouteEmailAndMail"
+                label="Type de poste de facturation - Domiciliation - Envoi du courrier par La Poste et par mail"
+                [form]="constantForm" propertyName="billingTypeDomiciliationContractTypeRouteEmailAndMail"
+                [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-input [(model)]="constant.stringNantissementDepositFormeJuridiqueCode "
                 label="Code de forme juridique - Depot de nantissement" [form]="constantForm"
                 propertyName="stringNantissementDepositFormeJuridiqueCode " [isMandatory]="true"
@@ -795,6 +839,22 @@
               <select-mail-redirection [(model)]="constant.mailRedirectionTypeOther"
                 label="Type de redirection du courier - autres" [form]="constantForm"
                 propertyName="mailRedirectionTypeOther" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-mail-redirection>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-mail-redirection [(model)]="constant.mailRedirectionTypeLegalGuardian"
+                label="Type de redirection du courier - Représentant légal" [form]="constantForm"
+                propertyName="mailRedirectionTypeLegalGuardian" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-mail-redirection>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-mail-redirection [(model)]="constant.mailRedirectionTypeActivity"
+                label="Type de redirection du courier - Exercice de l'activité" [form]="constantForm"
+                propertyName="mailRedirectionTypeActivity" [isMandatory]="true" [isDisabled]="!editMode">
               </select-mail-redirection>
             </td>
           </tr>

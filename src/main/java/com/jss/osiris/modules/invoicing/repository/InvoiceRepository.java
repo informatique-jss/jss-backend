@@ -4,8 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.QueryHint;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -18,6 +16,8 @@ import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
+
+import jakarta.persistence.QueryHint;
 
 public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Integer> {
 
@@ -111,7 +111,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
         List<Invoice> findByCompetentAuthorityAndManualAccountingDocumentNumberContainingIgnoreCase(
                         CompetentAuthority competentAuthority, String manualDocumentNumber);
 
-        @Query("select i from Invoice i where id_direct_debit_transfert=:id")
+        @Query(value = "select i.* from invoice i where id_direct_debit_transfert=:id", nativeQuery = true)
         Invoice searchInvoicesByIdDirectDebitTransfert(@Param("id") Integer idToFind);
 
         @Query(value = "select n from Invoice n where invoiceStatus=:invoiceStatus and thirdReminderDateTime is null and billingLabelType=:billingLabelType and dueDate>=:startDate and dueDate<:endDate ")

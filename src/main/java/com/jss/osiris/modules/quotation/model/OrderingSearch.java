@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,8 +14,14 @@ public class OrderingSearch {
     private Employee assignedToEmployee;
     private List<CustomerOrderStatus> customerOrderStatus;
     private List<Tiers> customerOrders;
-    private List<Affaire> affaires;
+    private Affaire affaire;
     private Integer idCustomerOrder;
+    private Integer idQuotation;
+    private Integer idCustomerOrderParentRecurring;
+    private Integer idCustomerOrderChildRecurring;
+    private Boolean isDisplayOnlyRecurringCustomerOrder;
+    private Boolean isDisplayOnlyParentRecurringCustomerOrder;
+    private LocalDate recurringValidityDate;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -56,14 +63,6 @@ public class OrderingSearch {
         this.customerOrders = customerOrders;
     }
 
-    public List<Affaire> getAffaires() {
-        return affaires;
-    }
-
-    public void setAffaires(List<Affaire> affaires) {
-        this.affaires = affaires;
-    }
-
     public Employee getAssignedToEmployee() {
         return assignedToEmployee;
     }
@@ -78,6 +77,62 @@ public class OrderingSearch {
 
     public void setIdCustomerOrder(Integer idCustomerOrder) {
         this.idCustomerOrder = idCustomerOrder;
+    }
+
+    public Integer getIdCustomerOrderParentRecurring() {
+        return idCustomerOrderParentRecurring;
+    }
+
+    public void setIdCustomerOrderParentRecurring(Integer idCustomerOrderParentRecurring) {
+        this.idCustomerOrderParentRecurring = idCustomerOrderParentRecurring;
+    }
+
+    public Integer getIdCustomerOrderChildRecurring() {
+        return idCustomerOrderChildRecurring;
+    }
+
+    public void setIdCustomerOrderChildRecurring(Integer idCustomerOrderChildRecurring) {
+        this.idCustomerOrderChildRecurring = idCustomerOrderChildRecurring;
+    }
+
+    public Boolean getIsDisplayOnlyRecurringCustomerOrder() {
+        return isDisplayOnlyRecurringCustomerOrder;
+    }
+
+    public void setIsDisplayOnlyRecurringCustomerOrder(Boolean isDisplayOnlyRecurringCustomerOrder) {
+        this.isDisplayOnlyRecurringCustomerOrder = isDisplayOnlyRecurringCustomerOrder;
+    }
+
+    public Boolean getIsDisplayOnlyParentRecurringCustomerOrder() {
+        return isDisplayOnlyParentRecurringCustomerOrder;
+    }
+
+    public void setIsDisplayOnlyParentRecurringCustomerOrder(Boolean isDisplayOnlyParentRecurringCustomerOrder) {
+        this.isDisplayOnlyParentRecurringCustomerOrder = isDisplayOnlyParentRecurringCustomerOrder;
+    }
+
+    public LocalDate getRecurringValidityDate() {
+        return recurringValidityDate;
+    }
+
+    public void setRecurringValidityDate(LocalDate recurringValidityDate) {
+        this.recurringValidityDate = recurringValidityDate;
+    }
+
+    public Integer getIdQuotation() {
+        return idQuotation;
+    }
+
+    public void setIdQuotation(Integer idQuotation) {
+        this.idQuotation = idQuotation;
+    }
+
+    public Affaire getAffaire() {
+        return affaire;
+    }
+
+    public void setAffaire(Affaire affaire) {
+        this.affaire = affaire;
     }
 
 }

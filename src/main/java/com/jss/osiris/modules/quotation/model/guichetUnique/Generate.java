@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.CellType;
@@ -56,9 +56,9 @@ public class Generate {
                                         writer.println("");
                                         writer.println("import java.io.Serializable;");
                                         writer.println("");
-                                        writer.println("import javax.persistence.Column;");
-                                        writer.println("import javax.persistence.Entity;");
-                                        writer.println("import javax.persistence.Id;");
+                                        writer.println("import jakarta.persistence.Column;");
+                                        writer.println("import jakarta.persistence.Entity;");
+                                        writer.println("import jakarta.persistence.Id;");
                                         writer.println("");
                                         writer.println("import com.jss.osiris.modules.miscellaneous.model.ICode;");
                                         writer.println("");
@@ -696,13 +696,13 @@ public class Generate {
                                 newLines.add("");
                                 newLines.add("import java.io.Serializable;");
                                 newLines.add("");
-                                newLines.add("import javax.persistence.Column;");
-                                newLines.add("import javax.persistence.Entity;");
-                                newLines.add("import javax.persistence.GeneratedValue;");
-                                newLines.add("import javax.persistence.GenerationType;");
-                                newLines.add("import javax.persistence.Id;");
-                                newLines.add("import javax.persistence.JoinColumn;");
-                                newLines.add("import javax.persistence.ManyToOne;");
+                                newLines.add("import jakarta.persistence.Column;");
+                                newLines.add("import jakarta.persistence.Entity;");
+                                newLines.add("import jakarta.persistence.GeneratedValue;");
+                                newLines.add("import jakarta.persistence.GenerationType;");
+                                newLines.add("import jakarta.persistence.Id;");
+                                newLines.add("import jakarta.persistence.JoinColumn;");
+                                newLines.add("import jakarta.persistence.ManyToOne;");
                                 newLines.add("");
                                 newLines.add("import com.jss.osiris.modules.miscellaneous.model.IId;");
                                 newLines.add("");

@@ -3,8 +3,6 @@ package com.jss.osiris.libs.mail.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.QueryHint;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -16,6 +14,8 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
+
+import jakarta.persistence.QueryHint;
 
 public interface CustomerMailRepository extends QueryCacheCrudRepository<CustomerMail, Integer> {
 

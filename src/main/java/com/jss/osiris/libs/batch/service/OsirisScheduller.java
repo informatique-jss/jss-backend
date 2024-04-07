@@ -287,26 +287,29 @@ public class OsirisScheduller {
 		}
 	}
 
-	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.opened}")
-	private void refreshAllOpenFormalities() {
-		try {
-			if (nodeService.shouldIBatch())
-				guichetUniqueDelegateService.refreshAllOpenFormalities();
-		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e);
-		}
-	}
-
-	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.update.last.hour}")
-	private void refreshFormalitiesFromLastHour() {
-		try {
-			if (nodeService.shouldIBatch())
-				guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
-		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e);
-		}
-	}
-
+	/*
+	 * @Scheduled(initialDelay = 500, fixedDelayString =
+	 * "${schedulling.guichet.unique.refresh.opened}")
+	 * private void refreshAllOpenFormalities() {
+	 * try {
+	 * if (nodeService.shouldIBatch())
+	 * guichetUniqueDelegateService.refreshAllOpenFormalities();
+	 * } catch (Exception e) {
+	 * globalExceptionHandler.handleExceptionOsiris(e);
+	 * }
+	 * }
+	 * 
+	 * @Scheduled(initialDelay = 500, fixedDelayString =
+	 * "${schedulling.guichet.unique.refresh.update.last.hour}")
+	 * private void refreshFormalitiesFromLastHour() {
+	 * try {
+	 * if (nodeService.shouldIBatch())
+	 * guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
+	 * } catch (Exception e) {
+	 * globalExceptionHandler.handleExceptionOsiris(e);
+	 * }
+	 * }
+	 */
 	@Scheduled(cron = "${schedulling.payment.automatch}")
 	private void automatchPayments() {
 		try {
@@ -322,6 +325,17 @@ public class OsirisScheduller {
 		try {
 			if (nodeService.shouldIBatch())
 				accountingRecordService.sendBillingClosureReceipt();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	// @Scheduled(cron = "${schedulling.customer.order.recurring.generation}")
+	@Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
+	private void generateRecurringCustomerOrders() {
+		try {
+			if (nodeService.shouldIBatch())
+				customerOrderService.generateRecurringCustomerOrders();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

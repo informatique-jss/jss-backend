@@ -79,6 +79,7 @@ export interface Constant {
   attachmentTypeAutomaticMail: AttachmentType;
   attachmentTypeAnnouncement: AttachmentType;
   attachmentTypeComplexAnnouncement: AttachmentType;
+  attachmentTypeContract: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
   billingTypeDeboursNonTaxable: BillingType;
@@ -120,6 +121,10 @@ export interface Constant {
   billingTypeFormalityAdditionalDeclaration: BillingType;
   billingTypeCorrespondenceFees: BillingType;
   billingTypeRff: BillingType;
+  billingTypeDomiciliationContractTypeKeepMail: BillingType;
+  billingTypeDomiciliationContractTypeRouteEmail: BillingType;
+  billingTypeDomiciliationContractTypeRouteMail: BillingType;
+  billingTypeDomiciliationContractTypeRouteEmailAndMail: BillingType;
   stringNantissementDepositFormeJuridiqueCode: string;
   strinSocialShareNantissementRedactionFormeJuridiqueCode: string;
   stringBusinnessNantissementRedactionFormeJuridiqueCode: string;
@@ -141,6 +146,8 @@ export interface Constant {
   domiciliationContractTypeRouteMail: DomiciliationContractType;
   domiciliationContractTypeRouteEmailAndMail: DomiciliationContractType;
   mailRedirectionTypeOther: MailRedirectionType;
+  mailRedirectionTypeLegalGuardian: MailRedirectionType;
+  mailRedirectionTypeActivity: MailRedirectionType;
   actTypeSeing: ActType;
   actTypeAuthentic: ActType;
   assignationTypeEmployee: AssignationType;

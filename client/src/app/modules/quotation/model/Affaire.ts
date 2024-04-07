@@ -41,4 +41,5 @@ export interface Affaire extends IReferential, IAttachment {
   tiersFollowups: TiersFollowup[];
   employeeNumber: number;
   apeCodes: string;
+  isMainOffice: boolean;
 }

@@ -353,6 +353,8 @@ public class AffaireServiceImpl implements AffaireService {
                                         .getCode()));
         }
 
+        affaire.setIsMainOffice(isEtablissementPrincipal(rneCompany, affaire.getSiren(), affaire.getSiret()));
+
         if (affaire.getMainActivity() == null
                 && rneCompany.getFormality().getContent().getFormeExerciceActivitePrincipale() != null) {
             if (affaire.getMainActivity() == null)
@@ -387,6 +389,32 @@ public class AffaireServiceImpl implements AffaireService {
                 if (affaire.getCompetentAuthority() == null)
                     affaire.setCompetentAuthority(competentAuthoritiesFound.get(0));
         }
+    }
+
+    private Boolean isEtablissementPrincipal(RneCompany company, String siren, String siret) {
+        if (company == null || company.getFormality() == null || company.getFormality().getContent() == null
+                || company.getFormality().getContent().getPersonneMorale() == null)
+            return null;
+
+        if (siren != null && (siret == null || siret.length() == 0)) {
+            return true;
+        } else if (siret != null) {
+            if (company.getFormality().getContent().getPersonneMorale().getAutresEtablissements() != null)
+                for (AutresEtablissement other : company.getFormality().getContent().getPersonneMorale()
+                        .getAutresEtablissements()) {
+                    if (other.getDescriptionEtablissement() != null
+                            && other.getDescriptionEtablissement().getSiret() != null
+                            && other.getDescriptionEtablissement().getSiret().equals(siret))
+                        return false;
+                }
+            if (company.getFormality().getContent().getPersonneMorale()
+                    .getEtablissementPrincipal() != null
+                    && siret.equals(company.getFormality().getContent().getPersonneMorale()
+                            .getEtablissementPrincipal().getDescriptionEtablissement().getSiret()))
+                return true;
+            return false;
+        }
+        return null;
     }
 
     private AdresseDomicile getAddressFromRneCompany(RneCompany company, String siren, String siret) {

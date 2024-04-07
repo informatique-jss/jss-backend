@@ -2,9 +2,9 @@ package com.jss.osiris.modules.quotation.model.guichetUnique.referentials;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 import com.jss.osiris.modules.miscellaneous.model.ICode;
 
@@ -23,7 +23,6 @@ public class FormeJuridique implements Serializable, ICode {
     @Column(columnDefinition = "TEXT")
     private String label;
 
-    
     private String labelShort;
 
     public String getCode() {

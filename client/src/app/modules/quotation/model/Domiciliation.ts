@@ -23,8 +23,6 @@ export interface Domiciliation {
   country: Country;
   mails: Mail[];
   mailRecipient: string;
-  startDate: Date;
-  endDate: Date;
   activityDescription: string;
   activityAddress: string;
   activityPostalCode: string;

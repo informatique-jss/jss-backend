@@ -228,6 +228,11 @@
     <span>Envoyer des pièces jointes</span>
   </button>
   <button mat-menu-item
+    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.domiciliation && asso.customerOrder && asso.customerOrder.isRecurring"
+    (click)="generateDomiciliationContract(currentProvisionWorkflow)">
+    <span>Générer le contrat</span>
+  </button>
+  <button mat-menu-item
     *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id!=journalTypeSpel.id"
     (click)="generateAnnouncementRequestToConfrereMail(currentProvisionWorkflow.announcement)">
     <span>Recevoir le mail d'envoi au confrère</span>

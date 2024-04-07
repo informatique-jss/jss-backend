@@ -157,6 +157,19 @@ public class QuotationValidationHelper {
                         for (SpecialOffer specialOffer : quotation.getSpecialOffers())
                                 validationHelper.validateReferential(specialOffer, false, "specialOffer");
 
+                // Check recursivity
+                if (isCustomerOrder && ((CustomerOrder) quotation).getIsRecurring() != null
+                                && ((CustomerOrder) quotation).getIsRecurring()) {
+                        CustomerOrder currentCustomerOrder = (CustomerOrder) quotation;
+                        validationHelper.validateDate(currentCustomerOrder.getRecurringPeriodStartDate(), true,
+                                        "recurringStartDate");
+                        validationHelper.validateDateMin(currentCustomerOrder.getRecurringPeriodEndDate(), true,
+                                        currentCustomerOrder.getRecurringPeriodStartDate().plusDays(1),
+                                        "recurringEndDate");
+                        validationHelper.validateReferential(currentCustomerOrder.getCustomerOrderFrequency(), true,
+                                        "customerOrderFrequency");
+                }
+
                 // If new or if from website, grab special offer from tiers / responsable /
                 // confrere
                 if (quotation.getCustomerOrderOrigin().getId()

@@ -92,3 +92,7 @@ mat-nav-list a span {
   overflow-y: auto;
   max-height: calc(100vh - 185px);
 }
+
+.mat-mdc-list-base {
+  --mdc-list-list-item-label-text-size: 13px !important;
+}

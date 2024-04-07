@@ -61,19 +61,4 @@ echo "    validationHelper.validateString($entityPluralLowerCased.getLabel(), tr
 echo " "
 echo "  return new ResponseEntity<$entityUpperCased>(${entityLowerCased}Service.addOrUpdate$entityUpperCased($entityPluralLowerCased), HttpStatus.OK);"
 echo "}"
-
-echo ""
-echo ""
-
-echo "  <cache alias=\"${entityLowerCased}List\" uses-template=\"default\"> "
-echo "         <key-type>java.lang.String</key-type> "
-echo "         <value-type>java.util.List</value-type> "
-echo "     </cache> "
-
-echo ""
-echo ""
-
-echo "  <cache alias=\"${entityLowerCased}\" uses-template=\"default\"> "
-echo "         <key-type>java.lang.Integer</key-type> "
-echo "         <value-type>com.jss.osiris.modules.${module}.model.${entityUpperCased}</value-type> "
-echo "     </cache> "
+ 

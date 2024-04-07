@@ -3,18 +3,7 @@ package com.jss.osiris.modules.quotation.model;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
@@ -27,8 +16,25 @@ import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+
 @Entity
 public class Domiciliation implements IId {
+
+	public static String DOMICILIATION_CONTRACT_TEMPLATE_FRENCH = "domiciliation-french";
+	public static String DOMICILIATION_CONTRACT_TEMPLATE_BILINGUAL = "domiciliation-bilingual";
 
 	@Id
 	@SequenceGenerator(name = "domiciliation_sequence", sequenceName = "domiciliation_sequence", allocationSize = 1)
@@ -78,12 +84,6 @@ public class Domiciliation implements IId {
 
 	@Column(length = 60)
 	private String mailRecipient;
-
-	@JsonSerialize(using = JacksonLocalDateSerializer.class)
-	private LocalDate startDate;
-
-	@JsonSerialize(using = JacksonLocalDateSerializer.class)
-	private LocalDate endDate;
 
 	@Column(columnDefinition = "TEXT")
 	private String activityDescription;
@@ -175,6 +175,10 @@ public class Domiciliation implements IId {
 	@ManyToMany
 	@JoinTable(name = "asso_domiciliation_legal_guardian_phone", joinColumns = @JoinColumn(name = "id_domiciliation"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> legalGardianPhones;
+
+	@OneToMany(mappedBy = "domiciliation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = { "domiciliation" }, allowSetters = true)
+	private List<DomiciliationFee> domiciliationFees;
 
 	public Integer getId() {
 		return id;
@@ -416,22 +420,6 @@ public class Domiciliation implements IId {
 		this.mailRecipient = mailRecipient;
 	}
 
-	public LocalDate getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(LocalDate startDate) {
-		this.startDate = startDate;
-	}
-
-	public LocalDate getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(LocalDate endDate) {
-		this.endDate = endDate;
-	}
-
 	public String getActivityDescription() {
 		return activityDescription;
 	}
@@ -518,6 +506,14 @@ public class Domiciliation implements IId {
 
 	public void setLegalGardianCedexComplement(String legalGardianCedexComplement) {
 		this.legalGardianCedexComplement = legalGardianCedexComplement;
+	}
+
+	public List<DomiciliationFee> getDomiciliationFees() {
+		return domiciliationFees;
+	}
+
+	public void setDomiciliationFees(List<DomiciliationFee> domiciliationFees) {
+		this.domiciliationFees = domiciliationFees;
 	}
 
 }

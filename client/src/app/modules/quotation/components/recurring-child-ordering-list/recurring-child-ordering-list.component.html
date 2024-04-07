@@ -1,0 +1,40 @@
+<div class="mat-elevation-z2 form-div ">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout" *ngIf="  orderingSearch">
+      <tr>
+        <td>
+          <autocomplete-employee [(model)]="orderingSearch.salesEmployee" label="Commercial" [form]="orderingSearchForm"
+            propertyName="salesEmployee" [isMandatory]="false">
+          </autocomplete-employee>
+        </td>
+        <td>
+          <autocomplete-employee [(model)]="orderingSearch.assignedToEmployee" label="Assignée à"
+            [form]="orderingSearchForm" propertyName="assignedToEmployee" [isMandatory]="false">
+          </autocomplete-employee>
+        </td>
+        <td>
+          <autocomplete-affaire [(model)]="orderingSearch.affaire" [form]="orderingSearchForm" propertyName="affaire"
+            [isMandatory]="false" (onOptionSelected)="fillAffaire($event)" label="Affaire"></autocomplete-affaire>
+        </td>
+        <td>
+          <select-customer-order-status [(model)]="orderingSearch.customerOrderStatus" label="Statut"
+            [form]="orderingSearchForm" propertyName="customerOrderStatus" [isMandatory]="false"
+            [isDisabled]="false"></select-customer-order-status>
+        </td>
+        <td>
+          <generic-datepicker [(model)]="orderingSearch.recurringValidityDate" label="Valable à date"
+            [form]="orderingSearchForm" propertyName="recurringValidityDate" [isMandatory]="false"
+            [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchOrders()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="orders" tableName="Commandes récurrentes"
+      *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true">
+    </sort-table>
+  </div>
+</div>
