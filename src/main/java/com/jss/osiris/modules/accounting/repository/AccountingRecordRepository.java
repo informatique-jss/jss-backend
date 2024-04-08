@@ -98,7 +98,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " and (:tiersId =0 or t.id is not null and t.id = :tiersId) " +
                         " and (:hideLettered = false or r.lettering_date_time is null ) " +
                         " and (:isFromAs400 = false or r.is_from_as400=true ) " +
-                        " and (coalesce(r.manual_accounting_document_date, r.operation_date_time)>= :startDate or coalesce(r.manual_accounting_document_date, r.operation_date_time)<= date_trunc('year', cast(:startDate as date)) and r.lettering_number  is not null) and coalesce(r.manual_accounting_document_date,r.operation_date_time)<=:endDate  "
+                        " and (coalesce(r.manual_accounting_document_date, r.operation_date_time)>= :startDate or coalesce(r.manual_accounting_document_date, r.operation_date_time)<= date_trunc('year', cast(:startDate as date)) and r.lettering_number  is  null) and coalesce(r.manual_accounting_document_date,r.operation_date_time)<=:endDate  "
                         +
                         " and (:canViewRestricted=true or a.is_view_restricted=false)  " +
                         " and (:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId) " +

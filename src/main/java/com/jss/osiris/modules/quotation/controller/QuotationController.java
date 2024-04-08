@@ -1353,7 +1353,9 @@ public class QuotationController {
     validationHelper.validateReferential(provisionType.getProvisionScreenType(), true, "ProvisionScreenType");
     validationHelper.validateReferential(provisionType.getAssignationType(), true, "AssignationType");
     validationHelper.validateReferential(provisionType.getDefaultCompetentAuthorityServiceProvider(), false,
-        "DefaultCompetentAuthorityServiceProvider");
+        "defaultCompetentAuthorityServiceProvider");
+    validationHelper.validateReferential(provisionType.getRecurringFrequency(),
+        provisionType.getIsRecurring() != null && provisionType.getIsRecurring(), "recurringFrequency");
     if (provisionType.getAssignationType().getCode().equals(AssignationType.EMPLOYEE))
       ;
     validationHelper.validateReferential(provisionType.getDefaultEmployee(), true, "DefaultEmployee");

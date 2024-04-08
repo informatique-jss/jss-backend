@@ -47,6 +47,7 @@ import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -398,6 +399,9 @@ public class MailHelper {
                             }
 
             ctx.setVariable("affaireLabel", getCustomerOrderAffaireLabel(quotation, assoAffaireOrderToUse));
+            ctx.setVariable("affaireLabelDetails",
+                    getCustomerOrderAffaireDetailLabel(quotation, assoAffaireOrderToUse));
+            ctx.setVariable("referenceLabel", getCustomerOrderReferenceLabel(quotation, assoAffaireOrderToUse));
             ctx.setVariable("invoiceLabelResult",
                     invoiceHelper.computeInvoiceLabelResult(
                             documentService.getBillingDocument(quotation.getDocuments()),
@@ -494,6 +498,70 @@ public class MailHelper {
             affaireLabel = affaire.getDenomination() != null ? affaire.getDenomination()
                     : (affaire.getFirstname() + " " + affaire.getLastname());
         }
+        return affaireLabel;
+    }
+
+    private String getCustomerOrderReferenceLabel(IQuotation customerOrder, AssoAffaireOrder asso)
+            throws OsirisException {
+        ArrayList<String> references = new ArrayList<String>();
+        AssoAffaireOrder assoToUse = asso;
+        if (assoToUse == null)
+            assoToUse = customerOrder.getAssoAffaireOrders().get(0);
+
+        if (assoToUse.getAffaire().getExternalReference() != null
+                && assoToUse.getAffaire().getExternalReference().length() > 0)
+            references.add(assoToUse.getAffaire().getExternalReference());
+
+        if (customerOrder.getDocuments() != null) {
+            Document invoiceDocument = documentService.getBillingDocument(customerOrder.getDocuments());
+            if (invoiceDocument != null) {
+                if (invoiceDocument.getIsCommandNumberMandatory() != null
+                        && invoiceDocument.getIsCommandNumberMandatory() && invoiceDocument.getCommandNumber() != null
+                        && invoiceDocument.getCommandNumber().length() > 0) {
+                    references.add(invoiceDocument.getCommandNumber());
+                }
+                if (invoiceDocument.getExternalReference() != null
+                        && invoiceDocument.getExternalReference().length() > 0)
+                    references.add(invoiceDocument.getExternalReference());
+            }
+        }
+
+        if (references.size() > 0)
+            return "Référence : " + String.join(" / ", references);
+        return null;
+    }
+
+    private String getCustomerOrderAffaireDetailLabel(IQuotation customerOrder, AssoAffaireOrder asso)
+            throws OsirisException {
+        String affaireLabel = "";
+        AssoAffaireOrder assoToUse = asso;
+        if (assoToUse == null)
+            assoToUse = customerOrder.getAssoAffaireOrders().get(0);
+
+        Affaire affaire = assoToUse.getAffaire();
+
+        if (affaire.getAddress() != null) {
+            affaireLabel += affaire.getAddress();
+        }
+
+        if (affaire.getPostalCode() != null) {
+            affaireLabel += " ";
+            affaireLabel += affaire.getPostalCode();
+        }
+
+        if (affaire.getCity() != null) {
+            affaireLabel += " ";
+            affaireLabel += affaire.getCity().getLabel();
+        }
+
+        if (affaire.getSiret() != null && affaire.getSiret().length() > 0) {
+            affaireLabel += " - ";
+            affaireLabel += affaire.getSiret();
+        } else if (affaire.getSiren() != null && affaire.getSiren().length() > 0) {
+            affaireLabel += " - ";
+            affaireLabel += affaire.getSiren();
+        }
+
         return affaireLabel;
     }
 

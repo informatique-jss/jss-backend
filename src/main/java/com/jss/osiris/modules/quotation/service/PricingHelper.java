@@ -334,6 +334,9 @@ public class PricingHelper {
     private void setInvoiceItemsForProvision(Provision provision, IQuotation quotation, boolean persistInvoiceItem)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
+        if (provision == null)
+            return;
+
         if (quotation != null && provision != null) {
             if (provision.getInvoiceItems() == null)
                 provision.setInvoiceItems(new ArrayList<InvoiceItem>());
@@ -419,7 +422,8 @@ public class PricingHelper {
                 } else
                     tempInvoiceItem = invoiceItem;
 
-                if (tempInvoiceItem.getInvoice() == null && tempInvoiceItem.getOriginProviderInvoice() == null) {
+                if (tempInvoiceItem.getInvoice() == null && tempInvoiceItem.getOriginProviderInvoice() == null
+                        && provisionType != null) {
                     boolean found = false;
                     for (BillingType billingType : provisionType.getBillingTypes()) {
                         if (invoiceItem.getBillingItem() != null
@@ -449,7 +453,7 @@ public class PricingHelper {
         // Delete cancelled invoice
         ArrayList<InvoiceItem> invoiceItemsDeleted = new ArrayList<InvoiceItem>();
         ArrayList<Integer> idInvoiceAlreadyDone = new ArrayList<Integer>();
-        if (provision.getInvoiceItems() != null) {
+        if (provision != null && provision.getInvoiceItems() != null) {
             for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
 
                 InvoiceItem tempInvoiceItem;
@@ -458,7 +462,7 @@ public class PricingHelper {
                 } else
                     tempInvoiceItem = invoiceItem;
 
-                if (tempInvoiceItem.getOriginProviderInvoice() != null) {
+                if (tempInvoiceItem != null && tempInvoiceItem.getOriginProviderInvoice() != null) {
                     if (tempInvoiceItem.getOriginProviderInvoice().getInvoiceStatus()
                             .getId().equals(constantService.getInvoiceStatusCancelled().getId())) {
                         invoiceItemsDeleted.add(invoiceItem);

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -987,18 +988,32 @@ public class GeneratePdfDelegate {
             template = Domiciliation.DOMICILIATION_CONTRACT_TEMPLATE_FRENCH;
 
         ctx.setVariable("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        ctx.setVariable("currentDateEnglish",
+                LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.ENGLISH)));
         ctx.setVariable("jssDomiciliationAgreementNumber", jssDomiciliationAgreementNumber);
         ctx.setVariable("jssDomiciliationAgreementDate", jssDomiciliationAgreementDate);
         ctx.setVariable("provision", provision);
         ctx.setVariable("affaire", provision.getService().getAssoAffaireOrder().getAffaire());
+        ctx.setVariable("isRegistered",
+                provision.getService().getAssoAffaireOrder().getAffaire().getIsUnregistered() == null
+                        || !provision.getService().getAssoAffaireOrder().getAffaire().getIsUnregistered());
+        ctx.setVariable("isSuccursale",
+                provision.getService().getAssoAffaireOrder().getAffaire().getIsMainOffice() == null
+                        || !provision.getService().getAssoAffaireOrder().getAffaire().getIsMainOffice());
         ctx.setVariable("domiciliationStartDate",
                 provision.getService().getAssoAffaireOrder().getCustomerOrder().getRecurringPeriodStartDate()
                         .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        ctx.setVariable("domiciliationStartDateEnglish", provision.getService().getAssoAffaireOrder().getCustomerOrder()
+                .getRecurringPeriodStartDate().format(DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.ENGLISH)));
 
         ctx.setVariable("domiciliation", domiciliation);
-        if (domiciliation.getIsLegalPerson() == null || !domiciliation.getIsLegalPerson())
+        if (domiciliation.getIsLegalPerson() == null || !domiciliation.getIsLegalPerson()) {
             ctx.setVariable("domiciliationLegalPersonBirthday", domiciliation.getLegalGardianBirthdate()
                     .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            ctx.setVariable("domiciliationLegalPersonBirthdayEnglish",
+                    domiciliation.getLegalGardianBirthdate()
+                            .format(DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.ENGLISH)));
+        }
 
         ctx.setVariable("mailDestinationLabel", getMailDestinationLabel(domiciliation, false));
         ctx.setVariable("mailDestinationLabelEnglish", getMailDestinationLabel(domiciliation, true));

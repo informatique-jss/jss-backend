@@ -192,8 +192,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             CustomerOrder customerOrderOut = customerOrder.get();
             if (customerOrderOut.getCustomerOrderParentRecurring() != null)
                 customerOrderOut.setHasCustomerOrderParentRecurring(true);
-            if (customerOrderOut.getCustomerOrderParent() != null)
-                customerOrderOut.setHasCustomerOrderParent(true);
             return customerOrderOut;
         }
         return null;
@@ -1161,6 +1159,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                         .minusDays(1));
                             }
                         }
+                        break;
                     }
                 }
 
@@ -1268,6 +1267,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 asso.setCustomerOrder(null);
                 asso.setQuotation(null);
                 for (Service service : asso.getServices()) {
+                    List<Provision> nonRecuringProvisionToDelete = new ArrayList<Provision>();
                     service.setId(null);
                     if (service.getAssoServiceDocuments() != null)
                         for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
@@ -1303,7 +1303,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             for (InvoiceItem invoiceItem : provision.getInvoiceItems())
                                 invoiceItem.setId(null);
                         provision.setAttachments(null);
+
+                        if (provision.getProvisionType().getIsRecurring() == null
+                                || !provision.getProvisionType().getIsRecurring()) {
+                            nonRecuringProvisionToDelete.add(provision);
+                        }
                     }
+                    if (nonRecuringProvisionToDelete.size() > 0)
+                        service.getProvisions().removeAll(nonRecuringProvisionToDelete);
                 }
             }
         addOrUpdateCustomerOrder(customerOrder2, false, true);

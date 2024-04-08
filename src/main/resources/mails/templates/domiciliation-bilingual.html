@@ -84,13 +84,16 @@
             </tr>
             <tr>
                 <td>Et la société <strong><span th:text="${affaire.denomination}"></span>, <span
-                            th:text="${affaire.legalForm.labelShort}"></span> immatriculée au RCS de <span
-                            th:text="${affaire.competentAuthority.city.label}"></span> sous le numéro
-                        <span th:text="${affaire.siren}"></span></strong></td>
+                            th:text="${affaire.legalForm.labelShort}"></span> <span th:if="${isRegistered}">immatriculée
+                            au RCS de <span th:text="${affaire.competentAuthority.city.label}"></span> sous le numéro
+                            <span th:text="${affaire.siren}"></span></span><span th:if="${!isRegistered}">en cours
+                            d'immatriculation</span></strong></td>
                 <td>And the company <strong><span th:text="${affaire.denomination}"></span>, <span
-                            th:text="${affaire.legalForm.labelShort}"></span> registered in the RCS of <span
-                            th:text="${affaire.competentAuthority.city.label}"></span> under the number
-                        <span th:text="${affaire.siren}"></span></strong></td>
+                            th:text="${affaire.legalForm.labelShort}"></span> <span th:if="${isRegistered}">registered
+                            in the RCS of <span th:text="${affaire.competentAuthority.city.label}"></span> under the
+                            number
+                            <span th:text="${affaire.siren}"></span></span><span th:if="${!isRegistered}">in the process
+                            of registration</span></strong></td>
             </tr>
             <tr th:if="${domiciliation.isLegalPerson==false}">
                 <td>Représentée par <span th:text="${domiciliation.legalGardianCivility.label}"></span> <span
@@ -107,7 +110,7 @@
                         th:text="${domiciliation.legalGardianLastname}"></span> <span
                         th:text="${domiciliation.legalGardianFirstname}"></span>, acting as <span
                         th:text="${legalGardianJobEnglish}"></span>, born on <span
-                        th:text="${domiciliationLegalPersonBirthday}"></span> in <span
+                        th:text="${domiciliationLegalPersonBirthdayEnglish}"></span> in <span
                         th:text="${domiciliation.legalGardianPlaceOfBirth}"></span> and living at <span
                         th:text="${domiciliation.legalGardianAddress}"></span> <span
                         th:text="${domiciliation.legalGardianPostalCode}"></span> <span
@@ -146,15 +149,19 @@
             <tr>
                 <td>La société <strong>SPPS</strong> autorise la société <strong><span
                             th:text="${affaire.denomination}"></span>,
-                        <span th:text="${affaire.legalForm.labelShort}"></span> immatriculée au RCS de <span
-                            th:text="${affaire.competentAuthority.city.label}"></span> sous le numéro
-                        <span th:text="${affaire.siren}"></span></strong>
+                        <span th:text="${affaire.legalForm.labelShort}"></span> <span
+                            th:if="${isRegistered}">immatriculée au RCS de <span
+                                th:text="${affaire.competentAuthority.city.label}"></span> sous le numéro
+                            <span th:text="${affaire.siren}"></span></span><span th:if="${!isRegistered}">en cours
+                            d'immatriculation</span></strong>
                 </td>
                 <td>La société <strong>SPPS</strong> authorizes the company <strong><span
                             th:text="${affaire.denomination}"></span>,
-                        <span th:text="${affaire.legalForm.labelShort}"></span> registered in the RCS of <span
-                            th:text="${affaire.competentAuthority.city.label}"></span> under the number
-                        <span th:text="${affaire.siren}"></span></strong>
+                        <span th:text="${affaire.legalForm.labelShort}"></span> <span th:if="${isRegistered}">registered
+                            in the RCS of <span th:text="${affaire.competentAuthority.city.label}"></span> under the
+                            number
+                            <span th:text="${affaire.siren}"></span></span><span th:if="${!isRegistered}">in the process
+                            of registration</span></strong>
                 </td>
             </tr>
             <tr>
@@ -235,7 +242,8 @@
                     pour une
                     durée de trois mois,
                     renouvelable trimestriellement par tacite reconduction.</td>
-                <td>The said direct debit starts to run from <span th:text="${domiciliationStartDate}"></span> for a
+                <td>The said direct debit starts to run from <span th:text="${domiciliationStartDateEnglish}"></span>
+                    for a
                     period of three months, which may be renewed automatically quarterly</td>
             </tr>
             <tr>
@@ -497,7 +505,7 @@
                 <td style="padding-top: 10px;padding-bottom: 10px;">Fait à Paris, le <span
                         th:text="${currentDate}"></span><br />En deux exemplaires</td>
                 <td style="padding-top: 10px;padding-bottom: 10px;">In Paris, on <span
-                        th:text="${currentDate}"></span><br />In duplicate</td>
+                        th:text="${currentDateEnglish}"></span><br />In duplicate</td>
             </tr>
             <tr>
                 <td style="padding-bottom: 20px;">Pour la société <strong>SPPS</strong><br /> Myriam de MONTIS</td>

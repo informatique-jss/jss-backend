@@ -16,6 +16,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderFrequency;
 import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IDocument;
@@ -156,19 +157,6 @@ public class QuotationValidationHelper {
                 if (quotation.getSpecialOffers() != null && quotation.getSpecialOffers().size() > 0)
                         for (SpecialOffer specialOffer : quotation.getSpecialOffers())
                                 validationHelper.validateReferential(specialOffer, false, "specialOffer");
-
-                // Check recursivity
-                if (isCustomerOrder && ((CustomerOrder) quotation).getIsRecurring() != null
-                                && ((CustomerOrder) quotation).getIsRecurring()) {
-                        CustomerOrder currentCustomerOrder = (CustomerOrder) quotation;
-                        validationHelper.validateDate(currentCustomerOrder.getRecurringPeriodStartDate(), true,
-                                        "recurringStartDate");
-                        validationHelper.validateDateMin(currentCustomerOrder.getRecurringPeriodEndDate(), true,
-                                        currentCustomerOrder.getRecurringPeriodStartDate().plusDays(1),
-                                        "recurringEndDate");
-                        validationHelper.validateReferential(currentCustomerOrder.getCustomerOrderFrequency(), true,
-                                        "customerOrderFrequency");
-                }
 
                 // If new or if from website, grab special offer from tiers / responsable /
                 // confrere
@@ -343,6 +331,7 @@ public class QuotationValidationHelper {
                         }
                 }
 
+                CustomerOrderFrequency lastProvisionFrequency = null;
                 for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                         if (assoAffaireOrder.getAffaire() == null)
                                 throw new OsirisValidationException("Affaire");
@@ -363,7 +352,38 @@ public class QuotationValidationHelper {
                         for (Service service : assoAffaireOrder.getServices())
                                 for (Provision provision : service.getProvisions()) {
                                         validateProvision(provision, targetStatusCode, isCustomerOrder, quotation);
+
+                                        // Check unique frequency in all customer order
+                                        if (provision.getProvisionType().getIsRecurring() != null
+                                                        && provision.getProvisionType().getIsRecurring()
+                                                        && provision.getProvisionType()
+                                                                        .getRecurringFrequency() != null) {
+                                                if (lastProvisionFrequency != null && !lastProvisionFrequency.getId()
+                                                                .equals(provision.getProvisionType()
+                                                                                .getRecurringFrequency().getId()))
+                                                        throw new OsirisClientMessageException(
+                                                                        "Une seule fréquence de récurence est possible pour l'ensemble des prestations récurrentes de la commande");
+                                                lastProvisionFrequency = provision.getProvisionType()
+                                                                .getRecurringFrequency();
+                                        }
                                 }
+                }
+
+                // Check recursivity
+                if (isCustomerOrder && ((CustomerOrder) quotation).getIsRecurring() != null
+                                && ((CustomerOrder) quotation).getIsRecurring()) {
+                        CustomerOrder currentCustomerOrder = (CustomerOrder) quotation;
+                        validationHelper.validateDate(currentCustomerOrder.getRecurringPeriodStartDate(), true,
+                                        "recurringStartDate");
+                        validationHelper.validateDateMin(currentCustomerOrder.getRecurringPeriodEndDate(), true,
+                                        currentCustomerOrder.getRecurringPeriodStartDate().plusDays(1),
+                                        "recurringEndDate");
+                        validationHelper.validateReferential(currentCustomerOrder.getCustomerOrderFrequency(), true,
+                                        "customerOrderFrequency");
+                } else if (lastProvisionFrequency != null) {
+                        ((CustomerOrder) quotation).setIsRecurring(true);
+                        ((CustomerOrder) quotation).setRecurringPeriodStartDate(LocalDate.now());
+                        ((CustomerOrder) quotation).setRecurringPeriodEndDate(LocalDate.now().plusYears(100));
                 }
 
                 if (quotation.getAssoAffaireOrders().size() > 1) {

@@ -10,7 +10,6 @@ export interface CustomerOrder extends IQuotation {
   isGifted: boolean;
   refunds: Refund[];
   isRecurring: boolean;
-  hasCustomerOrderParent: boolean;
   hasCustomerOrderParentRecurring: boolean;
   recurringPeriodStartDate: Date;
   recurringPeriodEndDate: Date;

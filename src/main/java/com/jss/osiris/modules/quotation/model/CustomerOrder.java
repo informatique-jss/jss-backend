@@ -174,14 +174,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private CustomerOrderOrigin customerOrderOrigin;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_customer_order_parent")
-	@JsonIgnore // For client-side performance purpose
-	private CustomerOrder customerOrderParent;
-
-	@Transient
-	private Boolean hasCustomerOrderParent;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_parent_recurring")
 	@JsonIgnore // For client-side performance purpose
 	private CustomerOrder customerOrderParentRecurring;
@@ -419,14 +411,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.refunds = refunds;
 	}
 
-	public CustomerOrder getCustomerOrderParent() {
-		return customerOrderParent;
-	}
-
-	public void setCustomerOrderParent(CustomerOrder customerOrderParent) {
-		this.customerOrderParent = customerOrderParent;
-	}
-
 	public CustomerOrder getCustomerOrderParentRecurring() {
 		return customerOrderParentRecurring;
 	}
@@ -473,14 +457,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setRecurringPeriodEndDate(LocalDate recurringPeriodEndDate) {
 		this.recurringPeriodEndDate = recurringPeriodEndDate;
-	}
-
-	public Boolean getHasCustomerOrderParent() {
-		return hasCustomerOrderParent;
-	}
-
-	public void setHasCustomerOrderParent(Boolean hasCustomerOrderParent) {
-		this.hasCustomerOrderParent = hasCustomerOrderParent;
 	}
 
 	public Boolean getHasCustomerOrderParentRecurring() {
