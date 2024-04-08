@@ -48,8 +48,6 @@ public interface OrderingSearchResult {
 
     // Recurring
 
-    public Integer getCustomerOrderParentId();
-
     public Integer getCustomerOrderParentRecurringId();
 
     public LocalDate getRecurringPeriodStartDate();

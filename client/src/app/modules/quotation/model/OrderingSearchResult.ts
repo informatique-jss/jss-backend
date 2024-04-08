@@ -22,7 +22,6 @@ export interface OrderingSearchResult {
   serviceTypeLabel: string;
 
   // Recurring
-  customerOrderParentId: number;
   customerOrderParentRecurringId: number;
   recurringPeriodStartDate: Date;
   recurringPeriodEndDate: Date;

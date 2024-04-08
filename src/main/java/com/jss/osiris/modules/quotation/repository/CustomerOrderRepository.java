@@ -40,7 +40,6 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
                         + " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')' ,', ' ) as affaireLabel,"
                         + " STRING_AGG(DISTINCT af.siren ,', '  ) as affaireSiren,"
                         + " STRING_AGG(DISTINCT af.address ||' '||af.postal_code||' '||city.label ||' '||country.label ,', '  ) as affaireAddress,"
-                        + " co.id_customer_order_parent as customerOrderParentId, "
                         + " co.id_customer_order_parent_recurring as customerOrderParentRecurringId, "
                         + " co.recurring_period_start_date  as recurringPeriodStartDate, "
                         + " co.recurring_period_end_date  as recurringPeriodEndDate, "
