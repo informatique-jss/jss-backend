@@ -1660,19 +1660,6 @@ public class QuotationController {
   @PostMapping(inputEntryPoint + "/invoice-item/generate")
   public ResponseEntity<IQuotation> generateInvoiceItemForQuotation(@RequestBody Quotation quotation)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException {
-    if (quotation != null && quotation.getAssoAffaireOrders() != null)
-      for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders())
-        for (Service service : assoAffaireOrder.getServices())
-          for (Provision provision : service.getProvisions())
-            if (provision.getAnnouncement() != null) {
-              if (provision.getAnnouncement().getConfrere() == null
-                  || provision.getAnnouncement().getDepartment() == null
-                  || provision.getAnnouncement().getPublicationDate() == null)
-                return null;
-              provision.getAnnouncement().setConfrere((Confrere) validationHelper
-                  .validateReferential(provision.getAnnouncement().getConfrere(), true, "Confrere"));
-            }
-
     return new ResponseEntity<IQuotation>(pricingHelper.getAndSetInvoiceItemsForQuotationForFront(quotation, false),
         HttpStatus.OK);
   }

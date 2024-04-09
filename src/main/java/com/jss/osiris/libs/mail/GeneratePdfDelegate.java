@@ -520,6 +520,16 @@ public class GeneratePdfDelegate {
         ctx.setVariable("invoiceCreatedDate", localDate.format(formatter));
         ctx.setVariable("invoiceDueDate", invoice.getDueDate().format(formatter));
 
+        // Recurring
+        if (customerOrder.getRecurringStartDate() != null) {
+            ctx.setVariable("recurringStartDate",
+                    customerOrder.getRecurringStartDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            ctx.setVariable("recurringEndDate",
+                    customerOrder.getRecurringEndDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            if (customerOrder.getCustomerOrderParentRecurring() != null)
+                ctx.setVariable("recurringParentId", customerOrder.getCustomerOrderParentRecurring().getId());
+        }
+
         // Create the HTML body using Thymeleaf
         final String htmlContent = StringEscapeUtils
                 .unescapeHtml4(mailHelper.emailTemplateEngine().process("invoice-page", ctx));

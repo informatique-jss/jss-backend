@@ -59,7 +59,8 @@
                 <span th:if="${invoice.isCreditNote==false}">Facture : <span
                         th:text="${invoice.id}"></span><br /></span>
                 <span th:if="${tiersReference!=null}">N° client : <span th:text="${tiersReference}"></span><br /></span>
-                <span>Commande : <span th:text="${customerOrder.id}"></span><br /></span>
+                <span>Commande n°<span th:text="${customerOrder.id}"></span><span th:id="${recurringParentId!=null}"> -
+                        <span th:text="${recurringParentId}"></span></span><br /></span>
                 <span th:if="${quotation!=null}">Devis : <span th:text="${quotation.id}"></span><br /></span>
                 <span th:if="${responsableOnBilling!=null}">Commande transmise par :<span
                         th:text="${responsableOnBilling}"></span><br />
@@ -69,6 +70,8 @@
                 </span>
                 <span th:if="${externalReference!=null}">Votre référence : <span
                         th:text="${externalReference}"></span><br /></span>
+                <span th:if="${recurringStartDate!=null}">Période du <span th:text="${recurringStartDate}"></span> au
+                    <span th:text="${recurringEndDate}"></span><br /></span>
             </td>
             <td style="width: 100px;"></td>
             <td colspan="2">
