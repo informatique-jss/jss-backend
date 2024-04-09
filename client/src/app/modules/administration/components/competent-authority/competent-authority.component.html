@@ -4,7 +4,7 @@
       <tr>
         <td>
           <select-competent-authority-type [(model)]="selectedCompetentAuthorityType" label="Type d'autorité"
-            [form]="entityForm2" propertyName="selectedCompetentAuthorityType" [isMandatory]="true"
+            [form]="entityForm2" propertyName="selectedCompetentAuthorityType" [isMandatory]="false"
             (selectionChange)="fetchCompetentAuthorities()" [isDisabled]="false"></select-competent-authority-type>
         </td>
         <td *ngIf="selectedCompetentAuthorityType">
@@ -67,6 +67,11 @@
                       label="Type d'autorité compétente" [form]="entityForm2" propertyName="competentAuthorityType"
                       [isMandatory]="true" [isDisabled]="!editMode"></select-competent-authority-type>
                   </td>
+                  <td>
+                    <generic-toggle [(model)]="selectedcompetentAuthority.isNotToReminder"
+                      label="Est à ne pas relancer ?" [form]="entityForm2" propertyName="isNotToReminder"
+                      [isDisabled]="!editMode"></generic-toggle>
+                  </td>
                 </tr>
               </table>
               <table class="full-width">
@@ -111,6 +116,44 @@
                       [form]="entityForm2" propertyName="accountingMails" [isMandatory]="false"
                       [isDisabled]="!editMode"></chips-mail>
                   </td>
+                  <table class="full-width">
+                    <tr>
+                      <td colspan="3">
+                        <button mat-raised-button *ngIf="editMode"
+                          (click)="addAssoMailCompetentAuthorityServiceFamilyGroups()" color="primary"
+                          class="mini-fab-add">
+                          Ajouter un mail pour un groupe de famille de service
+                        </button>
+                      </td>
+                    </tr>
+                    <ng-container *ngIf="selectedcompetentAuthority.assoMailCompetentAuthorityServiceFamilyGroups">
+                      <tr
+                        *ngFor="let assoMail of selectedcompetentAuthority.assoMailCompetentAuthorityServiceFamilyGroups;let index = index">
+                        <td>
+                          <select-service-family-group [(model)]="assoMail.serviceFamilyGroup"
+                            label="Groupe de famille de service" [form]="entityForm2"
+                            [propertyName]="'serviceFamilyGroup'+index" [isMandatory]="true"
+                            [isDisabled]="!editMode"></select-service-family-group>
+                        </td>
+                        <td>
+                          <chips-mail [(model)]="assoMail.mails" label="Mails" [form]="entityForm2"
+                            [propertyName]="'assoMails'+index" [isMandatory]="true"
+                            [isDisabled]="!editMode"></chips-mail>
+                        </td>
+                        <td>
+                          <button *ngIf="editMode"
+                            (click)="deleteAssoMailCompetentAuthorityServiceFamilyGroups(assoMail)" mat-raised-button
+                            color="accent">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </table>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
                   <td>
                     <chips-phone [(model)]="selectedcompetentAuthority.phones" label="Téléphones" [form]="entityForm2"
                       propertyName="phones" [isMandatory]="false" [isDisabled]="!editMode"></chips-phone>

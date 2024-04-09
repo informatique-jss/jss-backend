@@ -38,6 +38,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.log.osiris.announcement.confrere.query.reminder");
         isOk = isOk && checkProperty("schedulling.log.osiris.customer.proof.reading.reminder");
         isOk = isOk && checkProperty("schedulling.customer.order.recurring.generation");
+        isOk = isOk && checkProperty("schedulling.log.osiris.competent.authority.reminder");
         isOk = isOk && checkProperty("schedulling.guichet.unique.refresh.update.last.hour");
         isOk = isOk && checkProperty("schedulling.guichet.unique.refresh.opened");
         isOk = isOk && checkProperty("schedulling.central.pay.payment.request.validation.check");

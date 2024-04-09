@@ -2,6 +2,7 @@ package com.jss.osiris.libs.mail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -402,5 +403,22 @@ public class MailComputeHelper {
                 throw new OsirisClientMessageException("Aucune adresse postale trouvée pour le client");
         }
         return invoiceLabelResult;
+    }
+
+    public MailComputeResult computeMailForMailList(List<Mail> mails)
+            throws OsirisException, OsirisClientMessageException {
+        if (mails == null)
+            throw new OsirisException(null, "No mail provided");
+
+        // Compute recipients
+        MailComputeResult mailComputeResult = new MailComputeResult();
+        mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
+        mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
+        mailComputeResult.setIsSendToClient(false);
+        mailComputeResult.setIsSendToAffaire(false);
+
+        mailComputeResult.getRecipientsMailTo().addAll(mails);
+
+        return mailComputeResult;
     }
 }

@@ -1,5 +1,6 @@
 import { AccountingAccount } from "../../accounting/model/AccountingAccount";
 import { IReferential } from "../../administration/model/IReferential";
+import { AssoMailCompetentAuthorityServiceFamilyGroup } from "./AssoMailCompetentAuthorityServiceFamilyGroup";
 import { City } from "./City";
 import { CompetentAuthorityType } from "./CompetentAuthorityType";
 import { Country } from "./Country";
@@ -38,4 +39,6 @@ export interface CompetentAuthority extends IReferential, IAttachment {
   inpiReference: string;
   azureCustomReference: string;
   intercommunityVat: string;
+  isNotToReminder: boolean;
+  assoMailCompetentAuthorityServiceFamilyGroups: AssoMailCompetentAuthorityServiceFamilyGroup[];
 }

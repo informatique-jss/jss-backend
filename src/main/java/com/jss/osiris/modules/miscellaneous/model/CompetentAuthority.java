@@ -2,6 +2,11 @@ package com.jss.osiris.modules.miscellaneous.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,11 +20,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
 public class CompetentAuthority implements IAttachment, IGenericTiers {
@@ -135,6 +135,12 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 
 	@Column(length = 20)
 	private String intercommunityVat;
+
+	private Boolean isNotToReminder;
+
+	@OneToMany(mappedBy = "competentAuthority", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "competentAuthority" }, allowSetters = true)
+	private List<AssoMailCompetentAuthorityServiceFamilyGroup> assoMailCompetentAuthorityServiceFamilyGroups;
 
 	public Integer getId() {
 		return id;
@@ -398,6 +404,23 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 
 	public void setIntercommunityVat(String intercommunityVat) {
 		this.intercommunityVat = intercommunityVat;
+	}
+
+	public Boolean getIsNotToReminder() {
+		return isNotToReminder;
+	}
+
+	public void setIsNotToReminder(Boolean isNotToReminder) {
+		this.isNotToReminder = isNotToReminder;
+	}
+
+	public List<AssoMailCompetentAuthorityServiceFamilyGroup> getAssoMailCompetentAuthorityServiceFamilyGroups() {
+		return assoMailCompetentAuthorityServiceFamilyGroups;
+	}
+
+	public void setAssoMailCompetentAuthorityServiceFamilyGroups(
+			List<AssoMailCompetentAuthorityServiceFamilyGroup> assoMailCompetentAuthorityServiceFamilyGroups) {
+		this.assoMailCompetentAuthorityServiceFamilyGroups = assoMailCompetentAuthorityServiceFamilyGroups;
 	}
 
 }

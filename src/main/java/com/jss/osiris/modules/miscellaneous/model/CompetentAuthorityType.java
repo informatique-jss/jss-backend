@@ -26,6 +26,8 @@ public class CompetentAuthorityType implements Serializable, IId {
 	@Column(nullable = false)
 	private Boolean isDirectCharge;
 
+	private Boolean isToReminder;
+
 	public Integer getId() {
 		return id;
 	}
@@ -56,6 +58,14 @@ public class CompetentAuthorityType implements Serializable, IId {
 
 	public void setIsDirectCharge(Boolean isDirectCharge) {
 		this.isDirectCharge = isDirectCharge;
+	}
+
+	public Boolean getIsToReminder() {
+		return isToReminder;
+	}
+
+	public void setIsToReminder(Boolean isToReminder) {
+		this.isToReminder = isToReminder;
 	}
 
 }

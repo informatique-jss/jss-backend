@@ -19,6 +19,7 @@ import com.jss.osiris.libs.node.service.NodeService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.EtablissementPublicsDelegate;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
@@ -55,6 +56,9 @@ public class OsirisScheduller {
 
 	@Value("${schedulling.pool.size}")
 	private Integer schedullingPoolSize;
+
+	@Value("${dev.mode}")
+	private Boolean devMode;
 
 	@Autowired
 	QuotationStatusService quotationStatusService;
@@ -115,6 +119,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	BatchService batchService;
+
+	@Autowired
+	CompetentAuthorityService competentAuthorityService;
 
 	@Autowired
 	NodeService nodeService;
@@ -245,6 +252,18 @@ public class OsirisScheduller {
 		}
 	}
 
+	// @Scheduled(cron = "${schedulling.log.osiris.competent.authority.reminder}")
+	@Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
+	private void sendRemindersToCompetentAuthorities() {
+		try {
+			if (nodeService.shouldIBatch())
+				competentAuthorityService.sendRemindersToCompetentAuthorities();
+
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
 	@Scheduled(cron = "${schedulling.announcement.publish.actu.legale}")
 	private void publishAnnouncementToActuLegale() {
 		try {
@@ -290,7 +309,7 @@ public class OsirisScheduller {
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.opened}")
 	private void refreshAllOpenFormalities() {
 		try {
-			if (nodeService.shouldIBatch())
+			if (nodeService.shouldIBatch() && !devMode)
 				guichetUniqueDelegateService.refreshAllOpenFormalities();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
@@ -300,7 +319,7 @@ public class OsirisScheduller {
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.update.last.hour}")
 	private void refreshFormalitiesFromLastHour() {
 		try {
-			if (nodeService.shouldIBatch())
+			if (nodeService.shouldIBatch() && !devMode)
 				guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);

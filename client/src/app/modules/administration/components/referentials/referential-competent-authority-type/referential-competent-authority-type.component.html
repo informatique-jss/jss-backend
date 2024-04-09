@@ -39,7 +39,13 @@
           <tr>
             <td>
               <generic-toggle [(model)]="selectedEntity.isDirectCharge" label="Est à charges directes ?"
-                [form]="entityForm" propertyName="isDirectCharge"></generic-toggle>
+                [form]="entityForm" propertyName="isDirectCharge" [isDisabled]="!editMode"></generic-toggle>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isToReminder" label="Est à relancer ?" [form]="entityForm"
+                propertyName="isToReminder" [isDisabled]="!editMode"></generic-toggle>
             </td>
           </tr>
         </table>

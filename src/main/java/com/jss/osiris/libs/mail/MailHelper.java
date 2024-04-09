@@ -47,12 +47,14 @@ import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
+import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
@@ -64,6 +66,7 @@ import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.Service;
+import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
@@ -484,6 +487,13 @@ public class MailHelper {
         }
 
         ctx.setVariable("isLastReminder", mail.getIsLastReminder() != null && mail.getIsLastReminder());
+
+        // For AC reminder
+        if (mail.getCompetentAuthority() != null) {
+            ctx.setVariable("competentAuthority", mail.getCompetentAuthority());
+            ctx.setVariable("provisionDetails", mail.getExplaination().split("removeme"));
+        }
+
     }
 
     private String getCustomerOrderAffaireLabel(IQuotation customerOrder, AssoAffaireOrder asso) {
@@ -1288,6 +1298,52 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
+    public void sendCompetentAuthorityMailForReminder(Employee employee, CompetentAuthority competentAuthority,
+            List<Provision> provisionToSend, List<Mail> mails) throws OsirisException, OsirisClientMessageException {
+
+        CustomerMail mail = new CustomerMail();
+        mail.setCompetentAuthority(competentAuthority);
+        mail.setMailComputeResult(mailComputeHelper.computeMailForMailList(mails));
+        mail.setHeaderPicture("images/mails/send-credit-note.png");
+        mail.setReplyTo(employee);
+        mail.setSendToMe(false);
+        mail.setCopyToMe(true);
+        mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER);
+
+        List<String> provisionDetails = new ArrayList<String>();
+        for (Provision provision : provisionToSend) {
+            String label = "";
+            label += provision.getLastStatusReminderAcDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+            Affaire affaire = provision.getService().getAssoAffaireOrder().getAffaire();
+            if (affaire.getIsUnregistered() != null && affaire.getIsUnregistered()
+                    || affaire.getSiren() == null && affaire.getSiret() == null) {
+                label += " dénomination " + affaire.getDenomination();
+            } else {
+                label += " RSH / RCS " + (affaire.getSiret() != null ? affaire.getSiret() : affaire.getSiren());
+            }
+            label += " / "
+                    + provision.getService().getServiceType().getServiceFamily().getServiceFamilyGroup().getLabel();
+
+            if (provision.getFormalite() != null && provision.getFormalite().getFormalitesGuichetUnique() != null) {
+                ArrayList<String> liasseList = new ArrayList<String>();
+                for (FormaliteGuichetUnique formaliteGuichetUnique : provision.getFormalite()
+                        .getFormalitesGuichetUnique()) {
+                    if (!formaliteGuichetUnique.getStatus().getIsCloseState())
+                        liasseList.add(formaliteGuichetUnique.getLiasseNumber());
+                }
+                if (liasseList.size() > 0)
+                    label += " / liasse(s) GU " + String.join(", ", liasseList);
+            }
+            provisionDetails.add(label);
+        }
+
+        mail.setExplaination(String.join("removeme", provisionDetails));
+        mail.setSubject(competentAuthority.getLabel() + " - Dossier en attente de validation");
+
+        mailService.addMailToQueue(mail);
+    }
+
     public void sendCustomerOrderAttachmentOnFinalisationToCustomer(CustomerOrder customerOrder, boolean sendToMe)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         List<Attachment> attachments = new ArrayList<Attachment>();
@@ -1326,5 +1382,4 @@ public class MailHelper {
             sendCustomerOrderAttachmentsToCustomer(customerOrder, customerOrder.getAssoAffaireOrders().get(0), sendToMe,
                     attachments);
     }
-
 }

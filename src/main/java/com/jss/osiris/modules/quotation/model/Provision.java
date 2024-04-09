@@ -1,6 +1,17 @@
 package com.jss.osiris.modules.quotation.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.model.Payment;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.IAttachment;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.profile.model.Employee;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -16,16 +27,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.invoicing.model.Invoice;
-import com.jss.osiris.modules.invoicing.model.InvoiceItem;
-import com.jss.osiris.modules.invoicing.model.Payment;
-import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.IAttachment;
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.profile.model.Employee;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_provision_service", columnList = "id_service"),
@@ -198,6 +200,9 @@ public class Provision implements IId, IAttachment {
 			"childrenPayments",
 			"invoice" }, allowSetters = true)
 	private List<Payment> payments;
+
+	@Transient
+	private LocalDateTime lastStatusReminderAcDateTime;
 
 	public Integer getId() {
 		return id;
@@ -573,6 +578,14 @@ public class Provision implements IId, IAttachment {
 
 	public void setService(Service service) {
 		this.service = service;
+	}
+
+	public LocalDateTime getLastStatusReminderAcDateTime() {
+		return lastStatusReminderAcDateTime;
+	}
+
+	public void setLastStatusReminderAcDateTime(LocalDateTime lastStatusReminderAcDateTime) {
+		this.lastStatusReminderAcDateTime = lastStatusReminderAcDateTime;
 	}
 
 }

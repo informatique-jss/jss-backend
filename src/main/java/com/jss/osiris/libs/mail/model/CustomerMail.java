@@ -3,6 +3,20 @@ package com.jss.osiris.libs.mail.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
+import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.model.Rff;
+import com.jss.osiris.modules.tiers.model.Tiers;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,19 +30,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.profile.model.Employee;
-import com.jss.osiris.modules.quotation.model.Confrere;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
-import com.jss.osiris.modules.quotation.model.Provision;
-import com.jss.osiris.modules.quotation.model.Quotation;
-import com.jss.osiris.modules.tiers.model.Responsable;
-import com.jss.osiris.modules.tiers.model.Rff;
-import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
 @Table(indexes = {
@@ -61,6 +62,7 @@ public class CustomerMail {
     public static String TEMPLATE_RENEW_PASSWORD = "renew-password";
     public static String TEMPLATE_REQUEST_RIB = "request-rib";
     public static String TEMPLATE_SEND_RFF = "send-rff";
+    public static String TEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER = "send-competent-authority-reminder";
 
     @Id
     @SequenceGenerator(name = "customer_mail_sequence", sequenceName = "customer_mail_sequence", allocationSize = 1)
@@ -69,7 +71,7 @@ public class CustomerMail {
 
     private String headerPicture;
 
-    @Column(length = 2000)
+    @Column(columnDefinition = "TEXT")
     private String explaination;
 
     @Column(length = 1000)
@@ -140,6 +142,10 @@ public class CustomerMail {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_provision")
     private Provision provision;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_competent_authority")
+    private CompetentAuthority competentAuthority;
 
     private String mailTemplate;
 
@@ -518,6 +524,23 @@ public class CustomerMail {
 
     public void setIsLastReminder(Boolean isLastReminder) {
         this.isLastReminder = isLastReminder;
+    }
+
+    public static String getTEMPLATE_SEND_CUSTOMER_BILAN_PUBLICATION_REMINDER() {
+        return TEMPLATE_SEND_CUSTOMER_BILAN_PUBLICATION_REMINDER;
+    }
+
+    public static void setTEMPLATE_SEND_CUSTOMER_BILAN_PUBLICATION_REMINDER(
+            String tEMPLATE_SEND_CUSTOMER_BILAN_PUBLICATION_REMINDER) {
+        TEMPLATE_SEND_CUSTOMER_BILAN_PUBLICATION_REMINDER = tEMPLATE_SEND_CUSTOMER_BILAN_PUBLICATION_REMINDER;
+    }
+
+    public CompetentAuthority getCompetentAuthority() {
+        return competentAuthority;
+    }
+
+    public void setCompetentAuthority(CompetentAuthority competentAuthority) {
+        this.competentAuthority = competentAuthority;
     }
 
 }
