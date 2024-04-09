@@ -11,6 +11,7 @@ import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.ldap.LdapBindAuthenticationManagerFactory;
+import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -98,6 +99,12 @@ public class WebSecurityConfig {
 		factory.setUserSearchBase("DC=" + dc1 + ",DC=" + dc0);
 		factory.setUserSearchFilter(
 				"(&(sAMAccountName={0})(memberOf=CN=" + osirisUserGroup + ",OU=OSIRIS,DC=" + dc1 + ",DC=" + dc0 + "))");
+
+		DefaultLdapAuthoritiesPopulator populator = new DefaultLdapAuthoritiesPopulator(
+				contextSource(), "OU=" + ouOsiris + ",DC=" + dc1 + ",DC=" + dc0);
+		populator.setGroupSearchFilter("member={0}");
+		factory.setLdapAuthoritiesPopulator(populator);
+
 		return factory.createAuthenticationManager();
 	}
 }
