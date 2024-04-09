@@ -90,7 +90,7 @@
               <generic-toggle [(model)]="selectedEntity.isRecurring" label="Est recurrente par défaut ?"
                 [form]="entityForm" propertyName="isRecurring"></generic-toggle>
             </td>
-            <td>
+            <td *ngIf="selectedEntity.isRecurring">
               <select-customer-order-frequency [(model)]="selectedEntity.recurringFrequency"
                 label="Fréquence de récurrence" [form]="entityForm" propertyName="recurringFrequency"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-customer-order-frequency>

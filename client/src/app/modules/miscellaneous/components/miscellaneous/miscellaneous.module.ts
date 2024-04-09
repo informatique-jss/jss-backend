@@ -203,6 +203,7 @@ import { SelectBatchSettingsComponent } from '../forms/select-batch-settings/sel
 import { SelectBatchStatusComponent } from '../forms/select-batch-status/select-batch-status.component';
 import { SelectBillingItemsComponent } from '../forms/select-billing-items/select-billing-items.component';
 import { SelectBillingTypeDebourComponent } from '../forms/select-billing-type-debour/select-billing-type-debour.component';
+import { SelectBillingTypeComponent } from '../forms/select-billing-type/select-billing-type.component';
 import { SelectBuildingDomicilationComponent } from '../forms/select-building-domicilation/select-building-domicilation.component';
 import { SelectCompetentAuthorityTypeComponent } from '../forms/select-competent-authority-type/select-competent-authority-type.component';
 import { SelectContractTypeComponent } from '../forms/select-contract-type/select-contract-type.component';
@@ -231,7 +232,7 @@ import { SelectProvisionScreenTypeComponent } from '../forms/select-provision-sc
 import { SelectProvisionStautsComponent } from '../forms/select-provision-stauts/select-provision-stauts.component';
 import { SelectProvisionTypeComponent } from '../forms/select-provision-type/select-provision-type.component';
 import { SelectProvisionComponent } from '../forms/select-provision/select-provision.component';
-import { SelectQuotationAbandonReasonComponent } from '../forms/select-quotation-abandon-reason/select-quotation-abandon-reason';
+import { SelectQuotationAbandonReasonComponent } from '../forms/select-quotation-abandon-reason/select-quotation-abandon-reason.component';
 import { SelectQuotationStatusComponent } from '../forms/select-quotation-status/select-quotation-status.component';
 import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-refund-type.component';
 import { SelectRegionsComponent } from '../forms/select-regions/select-regions.component';
@@ -529,6 +530,7 @@ const routes: Routes = [
     MultipleUploadComponent,
     AutocompleteProvisionTypeComponent,
     SelectCustomerOrderFrequencyComponent,
+    SelectBillingTypeComponent,
   ],
   exports: [
     HistoryComponent,
@@ -760,6 +762,7 @@ const routes: Routes = [
     MultipleUploadComponent,
     AutocompleteProvisionTypeComponent,
     SelectCustomerOrderFrequencyComponent,
+    SelectBillingTypeComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

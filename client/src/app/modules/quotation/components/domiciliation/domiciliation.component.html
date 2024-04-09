@@ -300,6 +300,11 @@
         </table>
       </div>
     </mat-tab>
+    <mat-tab label="Frais postaux" *ngIf="provision && provision.domiciliation && provision.domiciliation.id">
+      <domiciliation-fees [editMode]="editMode" (provisionChange)="provisionChangeFunction()" [provision]="provision"
+        [quotation]="quotation">
+      </domiciliation-fees>
+    </mat-tab>
     <mat-tab label="Options">
       <provision-options [editMode]="editMode" (provisionChange)="provisionChangeFunction()" [provision]="provision">
       </provision-options>

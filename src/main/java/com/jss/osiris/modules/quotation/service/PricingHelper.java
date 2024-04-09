@@ -281,20 +281,22 @@ public class PricingHelper {
 
         // Domiciliation pricing
         // First one => double price for base
-        if (provision.getDomiciliation() != null) {
+        if (provision.getDomiciliation() != null && quotation.getId() != null) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotation.getId());
             CustomerOrder masterCustomerOrder = customerOrder.getIsRecurring() ? customerOrder
                     : customerOrder.getCustomerOrderParentRecurring();
-            if (billingItem.getBillingType().getId()
-                    .equals(constantService.getBillingTypeDomiciliationContractTypeKeepMail().getId())
-                    || billingItem.getBillingType().getId()
-                            .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmail().getId())
-                    || billingItem.getBillingType().getId()
-                            .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmailAndMail().getId())
-                    || billingItem.getBillingType().getId()
-                            .equals(constantService.getBillingTypeDomiciliationContractTypeRouteMail().getId()))
-                invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
-                        * masterCustomerOrder.getCustomerOrderFrequency().getMonthNumber());
+            if (masterCustomerOrder != null && masterCustomerOrder.getCustomerOrderFrequency() != null)
+                if (billingItem.getBillingType().getId()
+                        .equals(constantService.getBillingTypeDomiciliationContractTypeKeepMail().getId())
+                        || billingItem.getBillingType().getId()
+                                .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmail().getId())
+                        || billingItem.getBillingType().getId()
+                                .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmailAndMail()
+                                        .getId())
+                        || billingItem.getBillingType().getId()
+                                .equals(constantService.getBillingTypeDomiciliationContractTypeRouteMail().getId()))
+                    invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
+                            * masterCustomerOrder.getCustomerOrderFrequency().getMonthNumber());
 
             if (customerOrder.getIsRecurring())
                 invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice() * 2);
@@ -578,9 +580,20 @@ public class PricingHelper {
                         invoiceItem.setInvoice(null);
                         invoiceItem.setProvision(provision);
                         if (invoiceItem.getIsOverridePrice() == null)
-                            invoiceItem.setIsOverridePrice(false);
+                            invoiceItem.setIsOverridePrice(true);
                         setInvoiceItemPreTaxPriceAndLabel(invoiceItem, invoiceItem.getBillingItem(), provision,
                                 quotation);
+                        Float preTaxPrice = domiciliationFee.getAmount();
+                        if (domiciliationFee.getBillingType().getIsOverrideVat() != null
+                                && domiciliationFee.getBillingType().getIsOverrideVat()) {
+                            if (domiciliationFee.getBillingType().getVat() != null
+                                    && domiciliationFee.getBillingType().getVat().getRate() > 0)
+                                preTaxPrice = preTaxPrice
+                                        / (1f + domiciliationFee.getBillingType().getVat().getRate() / 100f);
+                        } else {
+                            preTaxPrice = preTaxPrice / 1.2f;
+                        }
+                        invoiceItem.setPreTaxPrice(preTaxPrice);
                         invoiceItem.setLabel(invoiceItem.getLabel() + " le "
                                 + domiciliationFee.getFeeDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                         computeInvoiceItemsVatAndDiscount(invoiceItem, quotation, provision);

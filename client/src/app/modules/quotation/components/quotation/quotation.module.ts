@@ -39,6 +39,7 @@ import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialo
 import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
 import { CustomerOrderPaymentComponent } from '../customer-order-payment/customer-order-payment.component';
 import { DebourComponent } from '../debour/debour.component';
+import { DomiciliationFeesComponent } from '../domiciliation-fees/domiciliation-fees.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { FormaliteComponent } from '../formalite/formalite.component';
 import { ContentComponent } from '../guichet-unique/content/content.component';
@@ -170,6 +171,7 @@ const routes: Routes = [
     RecurringOrderingListComponent,
     RecurringParentOrderingListComponent,
     RecurringChildOrderingListComponent,
+    DomiciliationFeesComponent,
   ],
   exports: [
     OrderingListComponent,

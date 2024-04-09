@@ -79,6 +79,7 @@ import com.jss.osiris.modules.quotation.model.DebourDel;
 import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
+import com.jss.osiris.modules.quotation.model.DomiciliationFee;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.FundType;
@@ -126,6 +127,7 @@ import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DebourDelService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService;
+import com.jss.osiris.modules.quotation.service.DomiciliationFeeService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
@@ -355,6 +357,9 @@ public class QuotationController {
 
   @Autowired
   AssoServiceDocumentService assoServiceDocumentService;
+
+  @Autowired
+  DomiciliationFeeService domiciliationFeeService;
 
   @GetMapping(inputEntryPoint + "/domiciliation/contract")
   public ResponseEntity<Provision> generateDomiciliationContract(@RequestParam Integer provisionId)
@@ -921,7 +926,7 @@ public class QuotationController {
         && affaireSearch.getAssignedTo() == null && affaireSearch.getResponsible() == null
         && affaireSearch.getStatus() == null && affaireSearch.getCustomerOrders() == null
         && affaireSearch.getAffaire() == null && affaireSearch.getWaitedCompetentAuthority() == null
-        && affaireSearch.getCommercial() == null)
+        && affaireSearch.getCommercial() == null && affaireSearch.getFormaliteGuichetUniqueStatus() == null)
       throw new OsirisValidationException("Label or AssignedTo or Responsible or Status");
 
     if (affaireSearch.getLabel() == null)
@@ -1289,6 +1294,32 @@ public class QuotationController {
 
     return new ResponseEntity<MailRedirectionType>(
         mailRedirectionTypeService.addOrUpdateMailRedirectionType(mailRedirectionType), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/domiciliation/fee/delete")
+  public ResponseEntity<Boolean> deleteDomiciliationFee(@RequestParam Integer domiciliationFeeId)
+      throws OsirisValidationException {
+    DomiciliationFee domiciliationFee = domiciliationFeeService.getDomiciliationFee(domiciliationFeeId);
+    if (domiciliationFee == null)
+      throw new OsirisValidationException("domiciliationFee");
+
+    domiciliationFeeService.deleteDomiciliationFee(domiciliationFee);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/domiciliation/fee/add")
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  public ResponseEntity<DomiciliationFee> addDomiciliationFee(
+      @RequestBody DomiciliationFee domiciliationFee) throws OsirisValidationException, OsirisException {
+    if (domiciliationFee.getId() != null)
+      validationHelper.validateReferential(domiciliationFee, true, "domiciliationFee");
+    validationHelper.validateReferential(domiciliationFee.getBillingType(), true, "BillingType");
+    validationHelper.validateReferential(domiciliationFee.getDomiciliation(), true, "Domiciliation");
+    validationHelper.validateFloat(domiciliationFee.getAmount(), true, "amount");
+    validationHelper.validateDateMax(domiciliationFee.getFeeDate(), true, LocalDate.now(), "feeDate");
+
+    return new ResponseEntity<DomiciliationFee>(
+        domiciliationFeeService.addDomiciliationFee(domiciliationFee), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/building-domiciliations")

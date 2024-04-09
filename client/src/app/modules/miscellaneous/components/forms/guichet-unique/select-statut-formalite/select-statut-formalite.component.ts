@@ -20,7 +20,7 @@ export class SelectStatutFormaliteComponent extends GenericSelectComponent<Statu
 
   initTypes(): void {
     this.StatutFormaliteService.getStatutFormalite().subscribe(response => {
-      this.types = response;
+      this.types = response.sort((a, b) => { return a.label.localeCompare(b.label) });
     })
   }
 }

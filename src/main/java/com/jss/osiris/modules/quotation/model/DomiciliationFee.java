@@ -2,8 +2,10 @@ package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -15,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -29,7 +32,7 @@ public class DomiciliationFee implements Serializable, IId {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @JsonIgnoreProperties(value = { "domiciliationFees" }, allowSetters = true)
     @JoinColumn(name = "id_domiciliation")
     private Domiciliation domiciliation;
 
@@ -40,6 +43,10 @@ public class DomiciliationFee implements Serializable, IId {
     private Float amount;
 
     private LocalDate feeDate;
+
+    @OneToMany(mappedBy = "domiciliationFee")
+    @JsonIgnoreProperties(value = { "domiciliationFee" }, allowSetters = true)
+    private List<InvoiceItem> invoiceItems;
 
     public Integer getId() {
         return id;
@@ -79,6 +86,14 @@ public class DomiciliationFee implements Serializable, IId {
 
     public void setFeeDate(LocalDate feeDate) {
         this.feeDate = feeDate;
+    }
+
+    public List<InvoiceItem> getInvoiceItems() {
+        return invoiceItems;
+    }
+
+    public void setInvoiceItems(List<InvoiceItem> invoiceItems) {
+        this.invoiceItems = invoiceItems;
     }
 
 }
