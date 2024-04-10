@@ -780,7 +780,7 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setIsExternallyAssociated(false);
         newPayment.setOriginPayment(payment);
         newPayment.setPaymentAmount(paymentAmount);
-        newPayment.setPaymentDate(LocalDateTime.now());
+        newPayment.setPaymentDate(payment.getPaymentDate());
         newPayment.setPaymentType(payment.getPaymentType());
         newPayment.setLabel(payment.getLabel());
 
