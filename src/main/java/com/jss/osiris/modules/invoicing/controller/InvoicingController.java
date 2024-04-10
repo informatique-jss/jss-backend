@@ -168,7 +168,7 @@ public class InvoicingController {
     @Autowired
     AccountingRecordGenerationService accountingRecordGenerationService;
 
-    @GetMapping(inputEntryPoint + "/rff/invoice")
+    @GetMapping(inputEntryPoint + "/rff/create")
     public ResponseEntity<Invoice> generateInvoiceForRff(@RequestParam Integer idRff)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         if (idRff == null)
