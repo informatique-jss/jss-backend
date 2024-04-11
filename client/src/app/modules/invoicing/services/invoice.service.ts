@@ -6,7 +6,7 @@ import { Invoice } from '../../quotation/model/Invoice';
 @Injectable({
   providedIn: 'root'
 })
-export class InvoiceService extends AppRestService<Invoice>{
+export class InvoiceService extends AppRestService<Invoice> {
 
   constructor(http: HttpClient) {
     super(http, "invoicing");
@@ -33,6 +33,6 @@ export class InvoiceService extends AppRestService<Invoice>{
   }
 
   createInvoiceFromRff(rffId: number) {
-    return this.get(new HttpParams().set("rffId", rffId), "rff/create");
+    return this.get(new HttpParams().set("idRff", rffId), "rff/create");
   }
 }
