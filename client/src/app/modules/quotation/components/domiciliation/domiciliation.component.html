@@ -46,8 +46,7 @@
             <td>
               <autocomplete-postal-code [(model)]="domiciliation.postalCode" [form]="domiciliationForm"
                 [byPassAutocompletValidator]="true" propertyName="postalCode" [isMandatory]="false" label="Code postal"
-                [isDisabled]="!editMode" [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen"
-                (onOptionSelected)="fillCity($event)">
+                [isDisabled]="!editMode" (onOptionSelected)="fillCity($event)">
               </autocomplete-postal-code>
             </td>
             <td>
@@ -110,9 +109,7 @@
             <td>
               <autocomplete-postal-code [(model)]="domiciliation.activityPostalCode" [form]="domiciliationForm"
                 [byPassAutocompletValidator]="true" propertyName="activityPostalCode" [isMandatory]="false"
-                label="Code postal" [isDisabled]="!editMode"
-                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
-                (onOptionSelected)="fillActivityCity($event)">
+                label="Code postal" [isDisabled]="!editMode" (onOptionSelected)="fillActivityCity($event)">
               </autocomplete-postal-code>
             </td>
             <td>
@@ -259,9 +256,7 @@
             <td>
               <autocomplete-postal-code [(model)]="domiciliation.legalGardianPostalCode" [form]="domiciliationForm"
                 [byPassAutocompletValidator]="true" propertyName="legalGardianPostalCode" [isMandatory]="false"
-                label="Code postal" [isDisabled]="!editMode"
-                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
-                (onOptionSelected)="fillLegalGardianCity($event)">
+                label="Code postal" [isDisabled]="!editMode" (onOptionSelected)="fillLegalGardianCity($event)">
               </autocomplete-postal-code>
             </td>
             <td>
