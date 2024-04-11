@@ -90,6 +90,7 @@ public class CustomerMail {
     private Employee replyTo;
 
     private String replyToMail;
+    private String copyToMail;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_employee_send_to_me")
@@ -541,6 +542,23 @@ public class CustomerMail {
 
     public void setCompetentAuthority(CompetentAuthority competentAuthority) {
         this.competentAuthority = competentAuthority;
+    }
+
+    public static String getTEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER() {
+        return TEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER;
+    }
+
+    public static void setTEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER(
+            String tEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER) {
+        TEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER = tEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER;
+    }
+
+    public String getCopyToMail() {
+        return copyToMail;
+    }
+
+    public void setCopyToMail(String copyToMail) {
+        this.copyToMail = copyToMail;
     }
 
 }

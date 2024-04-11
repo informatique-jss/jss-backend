@@ -209,6 +209,7 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
         if (competentMailResult != null && competentMailResult.size() > 0) {
             String currentKey = null;
             List<Provision> provisionToSend = new ArrayList<Provision>();
+            ICompetentAuthorityMailReminder lastReminder = null;
 
             for (ICompetentAuthorityMailReminder reminder : competentMailResult) {
                 String newKey = computeKeyForICompetentAuthorityMailReminder(reminder);
@@ -216,21 +217,35 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
                     currentKey = newKey;
 
                     // fetch mail
-                    List<String> mailsId = Arrays.asList(reminder.getMailId().split(","));
+                    List<String> mailsId = Arrays.asList(lastReminder.getMailId());
                     List<Mail> mails = new ArrayList<Mail>();
                     for (String mailId : mailsId) {
                         mails.add(mailService.getMail(Integer.parseInt(mailId)));
                     }
 
                     mailHelper.sendCompetentAuthorityMailForReminder(
-                            employeeService.getEmployee(reminder.getEmployeeId()),
-                            getCompetentAuthority(reminder.getCompetentAuthorityId()), provisionToSend, mails);
+                            employeeService.getEmployee(lastReminder.getEmployeeId()),
+                            getCompetentAuthority(lastReminder.getCompetentAuthorityId()), provisionToSend, mails);
                     provisionToSend = new ArrayList<Provision>();
                 }
                 currentKey = newKey;
+                lastReminder = reminder;
                 Provision provision = provisionService.getProvision(reminder.getProvisionId());
                 provision.setLastStatusReminderAcDateTime(reminder.getStatusDate());
                 provisionToSend.add(provisionService.getProvision(reminder.getProvisionId()));
+            }
+            // Send last one
+            if (provisionToSend.size() > 0 && lastReminder != null) {
+                // fetch mail
+                List<String> mailsId = Arrays.asList(lastReminder.getMailId());
+                List<Mail> mails = new ArrayList<Mail>();
+                for (String mailId : mailsId) {
+                    mails.add(mailService.getMail(Integer.parseInt(mailId)));
+                }
+
+                mailHelper.sendCompetentAuthorityMailForReminder(
+                        employeeService.getEmployee(lastReminder.getEmployeeId()),
+                        getCompetentAuthority(lastReminder.getCompetentAuthorityId()), provisionToSend, mails);
             }
 
         }

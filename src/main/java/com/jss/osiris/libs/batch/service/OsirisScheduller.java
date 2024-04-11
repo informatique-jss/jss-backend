@@ -252,12 +252,11 @@ public class OsirisScheduller {
 		}
 	}
 
-	// @Scheduled(cron = "${schedulling.log.osiris.competent.authority.reminder}")
-	@Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
+	@Scheduled(cron = "${schedulling.log.osiris.competent.authority.reminder}")
 	private void sendRemindersToCompetentAuthorities() {
 		try {
-			if (nodeService.shouldIBatch())
-				competentAuthorityService.sendRemindersToCompetentAuthorities();
+			// if (nodeService.shouldIBatch())
+			competentAuthorityService.sendRemindersToCompetentAuthorities();
 
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);

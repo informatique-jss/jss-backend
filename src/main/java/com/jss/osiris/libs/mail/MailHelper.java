@@ -231,6 +231,9 @@ public class MailHelper {
             if (mail.getReplyToMail() != null)
                 message.setReplyTo(mail.getReplyToMail());
 
+            if (mail.getCopyToMail() != null)
+                message.addCc(mail.getCopyToMail());
+
             if (mail.getCopyToMe() != null && mail.getCopyToMe())
                 message.addCc(mail.getSendToMeEmployee().getMail());
 
@@ -1307,7 +1310,8 @@ public class MailHelper {
         mail.setHeaderPicture("images/mails/send-credit-note.png");
         mail.setReplyTo(employee);
         mail.setSendToMe(false);
-        mail.setCopyToMe(true);
+        mail.setCopyToMe(false);
+        mail.setCopyToMail(employee.getMail());
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER);
 
         List<String> provisionDetails = new ArrayList<String>();
