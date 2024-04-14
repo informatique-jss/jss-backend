@@ -322,6 +322,16 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-customer-order-frequency>
+        <referential-active-directory-group *ngIf="selectedReferential==ACTIVE_DIRECTORY_GROUP_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-active-directory-group>
+        <referential-paper-set-type *ngIf="selectedReferential==PAPER_SET_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-paper-set-type>
         <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode"
           (click)="saveEntity()">
           <mat-icon>save</mat-icon>

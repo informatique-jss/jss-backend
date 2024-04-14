@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -213,7 +214,7 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
 
             for (ICompetentAuthorityMailReminder reminder : competentMailResult) {
                 String newKey = computeKeyForICompetentAuthorityMailReminder(reminder);
-                if (currentKey != null && !currentKey.equals(newKey)) {
+                if (currentKey != null && !currentKey.equals(newKey) && lastReminder != null) {
                     currentKey = newKey;
 
                     // fetch mail
@@ -231,6 +232,8 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
                 currentKey = newKey;
                 lastReminder = reminder;
                 Provision provision = provisionService.getProvision(reminder.getProvisionId());
+                provision.setLastStatusReminderAcDateTime(LocalDateTime.now());
+                provisionService.addOrUpdateProvision(provision);
                 provision.setLastStatusReminderAcDateTime(reminder.getStatusDate());
                 provisionToSend.add(provisionService.getProvision(reminder.getProvisionId()));
             }

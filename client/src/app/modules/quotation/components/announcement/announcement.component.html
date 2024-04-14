@@ -99,6 +99,8 @@
           </table>
         </div>
       </fieldset>
+      <mat-divider class="margin-mat-divider"></mat-divider>
+      <customer-order-comment *ngIf="provision " [provision]="provision"></customer-order-comment>
     </mat-tab>
     <mat-tab label="Annonce">
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
@@ -259,6 +261,7 @@
       </provision-options>
     </mat-tab>
     <mat-tab label="Documents" *ngIf="announcement.id!=null && announcement.id!=undefined && provision">
+      <paper-set *ngIf="quotation &&  instanceOfCustomerOrderFn(quotation)" [customerOrder]="quotation"></paper-set>
       <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>

@@ -91,6 +91,8 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   SERVICE_FAMILY_REFERENTIAL = "Famille de service";
   SERVICE_FAMILY_GROUP_REFERENTIAL = "Groupe de famille de service";
   CUSTOMER_ORDER_FREQUENCY_REFERENTIAL = "Fréquence des commandes récurrentes";
+  ACTIVE_DIRECTORY_GROUP_REFERENTIAL = "Groupes Active Directory";
+  PAPER_SET_TYPE_REFERENTIAL = "Types d'action documentaire";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -114,6 +116,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.PROVISION_FAMILY_TYPE_REFERENTIAL);
     this.referentials.push(this.PROVISION_TYPE_REFERENTIAL);
     this.referentials.push(this.RECORD_TYPE_REFERENTIAL);
+    this.referentials.push(this.PAPER_SET_TYPE_REFERENTIAL);
     this.referentials.push(this.TRANSFERT_FUNDS_TYPE_REFERENTIAL);
     this.referentials.push(this.BILLING_CLOSURE_RECIPIENT_TYPE_REFERENTIAL);
     this.referentials.push(this.BILLING_CLOSURE_TYPE_REFERENTIAL);
@@ -131,6 +134,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.COMPETENT_AUTHORITY_TYPE_REFERENTIAL);
     this.referentials.push(this.COUNTRY_REFERENTIAL);
     this.referentials.push(this.DELIVERY_SERVICE_REFERENTIAL);
+    this.referentials.push(this.ACTIVE_DIRECTORY_GROUP_REFERENTIAL);
     this.referentials.push(this.DOCUMENT_TYPE_REFERENTIAL);
     this.referentials.push(this.LANGUAGE_REFERENTIAL);
     this.referentials.push(this.LEGAL_FORM_REFERENTIAL);

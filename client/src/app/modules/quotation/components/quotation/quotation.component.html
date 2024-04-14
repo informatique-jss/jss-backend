@@ -173,7 +173,7 @@
                           </mat-expansion-panel>
                         </mat-accordion>
                       </div>
-                      <div class="mat-accordion-container full-width">
+                      <div class="mat-accordion-container full-width" style="padding-bottom:15px">
                         <mat-accordion multi class="mat-accordion-container">
                           <mat-expansion-panel *ngFor="let provision of service.provisions"
                             [expanded]="!provision.id || inputProvision && provision.id==inputProvision.id">
@@ -208,18 +208,17 @@
                           </mat-expansion-panel>
                         </mat-accordion>
                       </div>
-                      <div class="row-field-container">
-                        <button mat-raised-button *ngIf="editMode" (click)="createProvision(service)" color="primary"
-                          class="mini-fab-add">
+                      <div class="fab-extended-button-containter"><button mat-fab extended color="primary"
+                          (click)="createProvision(service)">
+                          <mat-icon>work</mat-icon>
                           Ajouter une prestation pour le service {{getServiceLabel(service)}}
-                        </button>
-                      </div>
+                        </button></div>
                     </ng-container>
-                    <div class="row-field-container">
-                      <button mat-raised-button *ngIf="editMode" (click)="createService(asso)" color="primary"
-                        class="mini-fab-add">Ajouter un service
-                      </button>
-                    </div>
+                    <div class="fab-extended-button-containter"><button mat-fab extended color="primary"
+                        (click)="createService(asso)">
+                        <mat-icon>room_service</mat-icon>
+                        Ajouter un service
+                      </button></div>
                   </ng-template>
                 </mat-tab>
               </mat-tab-group>

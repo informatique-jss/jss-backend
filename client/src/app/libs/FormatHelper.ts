@@ -57,14 +57,20 @@ export function formatDateFrance(date: Date) {
   ].join('/');
 }
 
+export function formatDateTimeFrance(date: Date) {
+  if (!(date instanceof Date))
+    date = new Date(date);
+  return formatDateFrance(date) + " " + [
+    padTo2Digits(date.getHours()),
+    padTo2Digits(date.getMinutes()),
+    padTo2Digits(date.getSeconds()),
+  ].join(':');
+}
+
 export function formatDateTimeForSortTable<T>(element: T, column: SortTableColumn<T>): string {
   if (element && column && column.fieldName && getObjectPropertybyString(element, column.fieldName)) {
     let date = new Date(getObjectPropertybyString(element, column.fieldName));
-    return formatDateFrance(date) + " " + [
-      padTo2Digits(date.getHours()),
-      padTo2Digits(date.getMinutes()),
-      padTo2Digits(date.getSeconds()),
-    ].join(':');
+    return formatDateTimeFrance(date);
   }
 
   return "";

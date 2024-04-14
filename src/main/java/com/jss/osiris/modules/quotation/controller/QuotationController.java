@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +38,7 @@ import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.Department;
@@ -74,6 +76,7 @@ import com.jss.osiris.modules.quotation.model.BuildingDomiciliation;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.DebourDel;
 import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
@@ -83,6 +86,7 @@ import com.jss.osiris.modules.quotation.model.DomiciliationFee;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.FundType;
+import com.jss.osiris.modules.quotation.model.IPaperSetResult;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
@@ -91,6 +95,7 @@ import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.NoticeTypeFamily;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
+import com.jss.osiris.modules.quotation.model.PaperSet;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
 import com.jss.osiris.modules.quotation.model.ProvisionFamilyType;
@@ -122,6 +127,7 @@ import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.BuildingDomiciliationService;
 import com.jss.osiris.modules.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DebourDelService;
@@ -137,6 +143,7 @@ import com.jss.osiris.modules.quotation.service.MailRedirectionTypeService;
 import com.jss.osiris.modules.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.quotation.service.NoticeTypeFamilyService;
 import com.jss.osiris.modules.quotation.service.NoticeTypeService;
+import com.jss.osiris.modules.quotation.service.PaperSetService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
 import com.jss.osiris.modules.quotation.service.ProvisionFamilyTypeService;
 import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
@@ -360,6 +367,91 @@ public class QuotationController {
 
   @Autowired
   DomiciliationFeeService domiciliationFeeService;
+
+  @Autowired
+  CustomerOrderCommentService customerOrderCommentService;
+
+  @Autowired
+  ActiveDirectoryHelper activeDirectoryHelper;
+
+  @Autowired
+  PaperSetService paperSetService;
+
+  @GetMapping(inputEntryPoint + "/paper-sets/search")
+  public ResponseEntity<List<IPaperSetResult>> searchPaperSets() throws OsirisValidationException, OsirisException {
+    return new ResponseEntity<List<IPaperSetResult>>(paperSetService.searchPaperSets(), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/paper-set/cancel")
+  public ResponseEntity<PaperSet> cancelPaperSet(
+      @RequestParam Integer paperSetId) throws OsirisValidationException, OsirisException {
+    PaperSet paperSet = paperSetService.getPaperSet(paperSetId);
+
+    if (paperSet == null)
+      throw new OsirisValidationException("paperSet");
+    return new ResponseEntity<PaperSet>(paperSetService.cancelPaperSet(paperSet), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/paper-set")
+  public ResponseEntity<PaperSet> addOrUpdatePaperSet(
+      @RequestBody PaperSet paperSet) throws OsirisValidationException, OsirisException {
+    PaperSet currentPaperSet = null;
+    if (paperSet.getId() != null) {
+      currentPaperSet = (PaperSet) validationHelper.validateReferential(paperSet, true, "paperSets");
+      paperSet.setLocationNumber(currentPaperSet.getLocationNumber());
+    }
+    validationHelper.validateReferential(paperSet.getCustomerOrder(), true, "CustomerOrder");
+    validationHelper.validateReferential(paperSet.getPaperSetType(), true, "paperSetType");
+
+    return new ResponseEntity<PaperSet>(paperSetService.addOrUpdatePaperSet(paperSet), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/customer-order-comment")
+  public ResponseEntity<CustomerOrderComment> addOrUpdateCustomerOrderComment(
+      @RequestBody CustomerOrderComment customerOrderComment) throws OsirisValidationException, OsirisException {
+    CustomerOrderComment customerOrderCommentOriginal = null;
+    if (customerOrderComment.getId() != null) {
+      customerOrderCommentOriginal = (CustomerOrderComment) validationHelper.validateReferential(customerOrderComment,
+          true, "customerOrderComments");
+      customerOrderComment.setProvision(customerOrderCommentOriginal.getProvision());
+      customerOrderComment.setCustomerOrder(customerOrderCommentOriginal.getCustomerOrder());
+      customerOrderComment.setQuotation(customerOrderCommentOriginal.getQuotation());
+
+      if (!employeeService.getCurrentEmployee().getId().equals(customerOrderComment.getEmployee().getId())
+          && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP)) {
+        throw new OsirisValidationException("not authorizes");
+      }
+    }
+    validationHelper.validateString(customerOrderComment.getComment(), true, "comment");
+
+    validationHelper.validateReferential(customerOrderComment.getEmployee(), true, "employee");
+
+    if (customerOrderComment.getProvision() != null)
+      validationHelper.validateReferential(customerOrderComment.getProvision(), false, "provision");
+
+    if (customerOrderComment.getCustomerOrder() != null)
+      validationHelper.validateReferential(customerOrderComment.getCustomerOrder(), false, "customerOrder");
+
+    if (customerOrderComment.getQuotation() != null)
+      validationHelper.validateReferential(customerOrderComment.getQuotation(), false, "quotation");
+
+    if (customerOrderComment.getCustomerOrder() == null && customerOrderComment.getProvision() == null
+        && customerOrderComment.getQuotation() == null)
+      throw new OsirisValidationException("customerOrder, quotation and provision are null");
+
+    if (customerOrderComment.getActiveDirectoryGroups() != null)
+      for (ActiveDirectoryGroup group : customerOrderComment.getActiveDirectoryGroups()) {
+        validationHelper.validateReferential(group, false, "group");
+      }
+
+    if (customerOrderComment.getId() == null)
+      customerOrderComment.setCreatedDateTime(LocalDateTime.now());
+    else if (customerOrderCommentOriginal != null)
+      customerOrderComment.setCreatedDateTime(customerOrderCommentOriginal.getCreatedDateTime());
+
+    return new ResponseEntity<CustomerOrderComment>(
+        customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment), HttpStatus.OK);
+  }
 
   @GetMapping(inputEntryPoint + "/domiciliation/contract")
   public ResponseEntity<Provision> generateDomiciliationContract(@RequestParam Integer provisionId)
@@ -743,8 +835,7 @@ public class QuotationController {
     if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
       throw new OsirisValidationException("MailTo");
 
-    // mailHelper.generateCustomerOrderCreationConfirmationToCustomer(customerOrder);
-    // // TODO
+    mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, true);
     return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
   }
 

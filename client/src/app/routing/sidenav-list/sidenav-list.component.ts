@@ -85,12 +85,20 @@ export class SidenavListComponent implements OnInit {
     return this.habilitationService.canViewCustomerOrderModule();
   }
 
+  canViewPaperSetModule() {
+    return this.habilitationService.canViewPaperSetModule();
+  }
+
   canViewRecurringCustomerOrderModule() {
     return this.habilitationService.canViewRecurringCustomerOrderModule();
   }
 
   canViewAdministrationModule() {
     return this.habilitationService.canViewAdministrationModule();
+  }
+
+  canViewSupervisionModule() {
+    return this.habilitationService.canViewSupervisionModule();
   }
 
   canViewAccountingModule() {

@@ -225,6 +225,7 @@ import { SelectJournalTypeComponent } from '../forms/select-journal-type/select-
 import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection/select-mail-redirection.component';
 import { SelectNodeComponent } from '../forms/select-node/select-node.component';
 import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/select-notice-family.component';
+import { SelectPaperSetTypeComponent } from '../forms/select-paper-set-type/select-paper-set-type.component';
 import { SelectPaymentDeadlineComponent } from '../forms/select-payment-deadline/select-payment-deadline.component';
 import { SelectPaymentTypesComponent } from '../forms/select-payment-types/select-payment-types.component';
 import { SelectProvisionFamilyComponent } from '../forms/select-provision-family/select-provision-familiy.component';
@@ -531,6 +532,7 @@ const routes: Routes = [
     AutocompleteProvisionTypeComponent,
     SelectCustomerOrderFrequencyComponent,
     SelectBillingTypeComponent,
+    SelectPaperSetTypeComponent,
   ],
   exports: [
     HistoryComponent,
@@ -763,6 +765,7 @@ const routes: Routes = [
     AutocompleteProvisionTypeComponent,
     SelectCustomerOrderFrequencyComponent,
     SelectBillingTypeComponent,
+    SelectPaperSetTypeComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

@@ -100,6 +100,12 @@ registerLocaleData(localeFr, 'fr');
   },
   { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
   { provide: LOCALE_ID, useValue: 'fr' },
+  {
+    provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+    useValue: {
+      subscriptSizing: 'dynamic'
+    }
+  }
   ],
   bootstrap: [AppComponent]
 })

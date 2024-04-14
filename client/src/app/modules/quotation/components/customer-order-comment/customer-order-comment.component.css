@@ -1,0 +1,89 @@
+.div-speech {
+  padding: 30px 40px;
+}
+
+editor {
+  margin: 10px;
+  outline: 1px solid;
+}
+
+.dark editor {
+  border-color: rgba(255, 255, 255, 0.87);
+}
+
+.light editor {
+  border-color: rgba(0, 0, 0, 0.87);
+}
+
+.mce-content-body {
+  padding: 10px;
+}
+
+.edit-icon {
+  padding: 0px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.speech-wrapper {
+  .bubble-for-myself {
+    border-color: var(--warn-color) !important;
+  }
+
+  .bubble {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+    position: relative;
+    margin: 0 0 25px;
+    border: solid var(--primary-color);
+
+    .txt {
+      padding: 8px 55px 8px 14px;
+
+      .name {
+        font-weight: 800;
+        font-size: 12px;
+        margin: 0 0 4px;
+        color: #3498db;
+      }
+
+      .message {
+        font-size: 14px;
+        margin: 0;
+      }
+
+      .timestamp {
+        font-size: 11px;
+        position: absolute;
+        bottom: 8px;
+        right: 10px;
+        text-transform: uppercase;
+      }
+    }
+
+    .bubble-arrow {
+      position: absolute;
+      width: 0;
+      top: -3px;
+      left: -20px;
+      height: 0;
+    }
+
+    .bubble-arrow:after {
+      border-top: 20px solid transparent;
+      border-left: 20px solid transparent;
+      border-top: 20px solid;
+      content: '';
+      position: absolute;
+      border-top-color: var(--primary-color);
+    }
+
+    .bubble-arrow-for-myself:after {
+      border-top-color: var(--warn-color) !important;
+    }
+
+  }
+}

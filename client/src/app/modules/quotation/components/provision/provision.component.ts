@@ -645,14 +645,14 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     })
   }
 
-  public computeProvisionLabel(provision: Provision): string {
+  computeProvisionLabel(provision: Provision): string {
     let label = provision.provisionType.label;
     if (provision.announcement && provision.announcement.department)
       label += " - Département " + provision.announcement.department.code;
     return label;
   }
 
-  public computeServiceLabel(service: Service, doNotDisplayService: boolean): string {
+  computeServiceLabel(service: Service, doNotDisplayService: boolean): string {
     let label = '';
     if (!doNotDisplayService)
       label = this.getServiceLabel(service) + " - " + label;

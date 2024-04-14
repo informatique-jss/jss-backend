@@ -69,7 +69,7 @@
       </mat-expansion-panel>
     </mat-accordion>
   </div>
-  <div class="mat-accordion-container full-width" *ngIf="asso && service.provisions">
+  <div class="mat-accordion-container full-width" *ngIf="asso && service.provisions" style="padding-bottom:15px">
     <mat-accordion multi class="mat-accordion-container">
       <mat-expansion-panel *ngFor="let provision of service.provisions" [expanded]="!provision.id"
         (afterExpand)="onExpandedChange(provision.id)" [expanded]=" provision.id==inputProvisionId">
@@ -98,17 +98,16 @@
       </mat-expansion-panel>
     </mat-accordion>
   </div>
-  <div class="row-field-container">
-    <button mat-raised-button *ngIf="editMode" (click)="createProvision(service)" color="primary" class="mini-fab-add">
+  <div class="fab-extended-button-containter"><button mat-fab extended color="primary"
+      (click)="createProvision(service)">
+      <mat-icon>work</mat-icon>
       Ajouter une prestation pour le service {{getServiceLabel(service)}}
-    </button>
-  </div>
+    </button></div>
 </ng-container>
-<div class="row-field-container">
-  <button mat-raised-button *ngIf="editMode" (click)="createService(asso)" color="primary" class="mini-fab-add">Ajouter
-    un service
-  </button>
-</div>
+<div class="fab-extended-button-containter"><button mat-fab extended color="primary" (click)="createService(asso)">
+    <mat-icon>room_service</mat-icon>
+    Ajouter un service
+  </button></div>
 <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true" (click)="saveAsso()">
   <mat-icon>save</mat-icon>
 </button>

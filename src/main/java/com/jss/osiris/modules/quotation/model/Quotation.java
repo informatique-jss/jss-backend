@@ -77,14 +77,8 @@ public class Quotation implements IQuotation {
 
 	private LocalDateTime lastStatusUpdate;
 
-	@Column(columnDefinition = "TEXT")
-	private String observations;
-
-	@Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "TEXT") // TODO : delete when new website
 	private String description;
-
-	@Column(columnDefinition = "TEXT")
-	private String instructions;
 
 	@OneToMany(mappedBy = "quotation")
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
@@ -125,6 +119,10 @@ public class Quotation implements IQuotation {
 	@JoinColumn(name = "id_customer_order_origin")
 	private CustomerOrderOrigin customerOrderOrigin;
 
+	@OneToMany(targetEntity = CustomerOrderComment.class, mappedBy = "quotation", cascade = CascadeType.REMOVE)
+	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
+	private List<CustomerOrderComment> customerOrderComments;
+
 	public Integer getId() {
 		return id;
 	}
@@ -163,14 +161,6 @@ public class Quotation implements IQuotation {
 
 	public void setCreatedDate(LocalDateTime createdDate) {
 		this.createdDate = createdDate;
-	}
-
-	public String getObservations() {
-		return observations;
-	}
-
-	public void setObservations(String observations) {
-		this.observations = observations;
 	}
 
 	public String getDescription() {
@@ -309,12 +299,12 @@ public class Quotation implements IQuotation {
 		this.abandonReason = abandonReason;
 	}
 
-	public String getInstructions() {
-		return instructions;
+	public List<CustomerOrderComment> getCustomerOrderComments() {
+		return customerOrderComments;
 	}
 
-	public void setInstructions(String instructions) {
-		this.instructions = instructions;
+	public void setCustomerOrderComments(List<CustomerOrderComment> customerOrderComments) {
+		this.customerOrderComments = customerOrderComments;
 	}
 
 }

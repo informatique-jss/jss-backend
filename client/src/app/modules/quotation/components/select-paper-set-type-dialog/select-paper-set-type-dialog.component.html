@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>Choix de l'action à réaliser</h1>
+<div mat-dialog-content>
+  <p>Choisissez le type d'action à réaliser :</p>
+  <select-paper-set-type [(model)]="selectedPaperSetType" label="Type d'action à réaliser" [form]="serviceTypeForm"
+    propertyName="selectedPaperSetType" [isMandatory]="true" [isDisabled]="false"
+    [excludedPaperSetTypes]="excludedPaperSetTypes"></select-paper-set-type>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="closeDialog()">Annuler</button>
+  <button mat-raised-button color="warn" *ngIf="selectedPaperSetType" (click)="validatePaperSetType()">Valider</button>
+</div>

@@ -2,6 +2,7 @@ import { Payment } from "../../invoicing/model/Payment";
 import { IAttachment } from "../../miscellaneous/model/IAttachment";
 import { Employee } from "../../profile/model/Employee";
 import { Announcement } from "./Announcement";
+import { CustomerOrderComment } from "./CustomerOrderComment";
 import { Domiciliation } from "./Domiciliation";
 import { Formalite } from './Formalite';
 import { Invoice } from "./Invoice";
@@ -58,4 +59,6 @@ export interface Provision extends IAttachment {
   isCorrespondenceFees: boolean;
   providerInvoices: Invoice[];
   payments: Payment[];
+  lastCompetentAuthorityReminderDateTime: Date;
+  customerOrderComments: CustomerOrderComment[];
 }

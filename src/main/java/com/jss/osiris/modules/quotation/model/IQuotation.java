@@ -39,14 +39,6 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 
 	public void setCreatedDate(LocalDateTime createdDate);
 
-	public String getObservations();
-
-	public void setObservations(String observations);
-
-	public String getInstructions();
-
-	public void setInstructions(String instructions);
-
 	public String getDescription();
 
 	public void setDescription(String description);

@@ -10,22 +10,22 @@
                 [form]="simpleProvisionForm" propertyName="waitedCompetentAuthority" [isMandatory]="false"
                 label="Autorité compétente en attente" [isDisabled]="true"></autocomplete-competent-authority>
             </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-textarea [(model)]="simpleProvision.observations" label="Observations"
-                [form]="simpleProvisionForm" propertyName="observations" [isMandatory]="false" [isDisabled]="!editMode"
-                [numberOfLines]="10"></generic-textarea>
-            </td>
+            <td><generic-datepicker *ngIf="provision.lastCompetentAuthorityReminderDateTime"
+                [(model)]="provision.lastCompetentAuthorityReminderDateTime" label="Dernière relance de l'AC"
+                [form]="simpleProvisionForm" propertyName="lastCompetentAuthorityReminderDateTime"
+                [isDisabled]="true"></generic-datepicker></td>
           </tr>
         </table>
       </div>
+      <mat-divider class="margin-mat-divider"></mat-divider>
+      <customer-order-comment *ngIf="provision " [provision]="provision"></customer-order-comment>
     </mat-tab>
     <mat-tab label="Options">
       <provision-options [editMode]="editMode" [provision]="provision" (provisionChange)="provisionChangeFunction()">
       </provision-options>
     </mat-tab>
     <mat-tab label="Documents" *ngIf="simpleProvision.id && provision ">
+      <paper-set *ngIf="quotation &&  instanceOfCustomerOrderFn(quotation)" [customerOrder]="quotation"></paper-set>
       <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>

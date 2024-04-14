@@ -163,10 +163,6 @@ export class OrderingCustomerComponent implements OnInit {
       this.quotation.tiers = response;
       this.quotation.responsable = undefined;
       this.quotation.responsable = undefined;
-      if (this.quotation.tiers) {
-        this.quotation.observations = this.quotation.tiers.observations;
-        this.quotation.instructions = this.quotation.tiers.instructions;
-      }
       this.setDocument();
     })
   }
@@ -175,9 +171,6 @@ export class OrderingCustomerComponent implements OnInit {
     this.quotation.confrere = confrere;
     this.quotation.tiers = undefined;
     this.quotation.responsable = undefined;
-    if (this.quotation.confrere) {
-      this.quotation.observations = this.quotation.confrere.observations;
-    }
     this.setDocument();
   }
 
@@ -189,8 +182,6 @@ export class OrderingCustomerComponent implements OnInit {
     this.tiersService.getTiersByResponsable(responsable.entityId).subscribe(response => {
       if (this.quotation.responsable != null) {
         this.quotation.responsable.tiers = response;
-        this.quotation.observations = this.quotation.responsable.tiers.observations;
-        this.quotation.instructions = this.quotation.responsable.tiers.instructions;
         this.setDocument();
       }
     })

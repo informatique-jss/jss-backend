@@ -3,18 +3,6 @@ package com.jss.osiris.modules.miscellaneous.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.mail.model.CustomerMail;
@@ -30,6 +18,19 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_tiers_attachment", columnList = "id_tiers"),
@@ -156,7 +157,7 @@ public class Attachment implements Serializable, IId {
 
 	private Boolean isAlreadySent;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	@JoinColumn(name = "id_parent_attachment")
 	private Attachment parentAttachment;

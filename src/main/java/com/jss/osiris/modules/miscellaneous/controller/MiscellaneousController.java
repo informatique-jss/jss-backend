@@ -36,6 +36,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.invoicing.service.RefundService;
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
@@ -57,6 +58,7 @@ import com.jss.osiris.modules.miscellaneous.model.Gift;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.miscellaneous.model.Notification;
+import com.jss.osiris.modules.miscellaneous.model.PaperSetType;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.model.Regie;
@@ -65,6 +67,7 @@ import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.model.VatCollectionType;
 import com.jss.osiris.modules.miscellaneous.model.WeekDay;
+import com.jss.osiris.modules.miscellaneous.service.ActiveDirectoryGroupService;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
@@ -85,6 +88,7 @@ import com.jss.osiris.modules.miscellaneous.service.GiftService;
 import com.jss.osiris.modules.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
+import com.jss.osiris.modules.miscellaneous.service.PaperSetTypeService;
 import com.jss.osiris.modules.miscellaneous.service.PaymentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.ProviderService;
 import com.jss.osiris.modules.miscellaneous.service.RegieService;
@@ -256,6 +260,48 @@ public class MiscellaneousController {
 
     @Autowired
     CustomerOrderFrequencyService customerOrderFrequencyService;
+
+    @Autowired
+    ActiveDirectoryGroupService activeDirectoryGroupService;
+
+    @Autowired
+    PaperSetTypeService paperSetTypeService;
+
+    @GetMapping(inputEntryPoint + "/paper-set-types")
+    public ResponseEntity<List<PaperSetType>> getPaperSetTypes() {
+        return new ResponseEntity<List<PaperSetType>>(paperSetTypeService.getPaperSetTypes(), HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/paper-set-type")
+    public ResponseEntity<PaperSetType> addOrUpdatePaperSetType(
+            @RequestBody PaperSetType paperSetTypes) throws OsirisValidationException, OsirisException {
+        if (paperSetTypes.getId() != null)
+            validationHelper.validateReferential(paperSetTypes, true, "paperSetTypes");
+        validationHelper.validateString(paperSetTypes.getCode(), true, "code");
+        validationHelper.validateString(paperSetTypes.getLabel(), true, "label");
+
+        return new ResponseEntity<PaperSetType>(paperSetTypeService.addOrUpdatePaperSetType(paperSetTypes),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/active-directory-groups")
+    public ResponseEntity<List<ActiveDirectoryGroup>> getActiveDirectoryGroups() {
+        return new ResponseEntity<List<ActiveDirectoryGroup>>(activeDirectoryGroupService.getActiveDirectoryGroups(),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/active-directory-group")
+    public ResponseEntity<ActiveDirectoryGroup> addOrUpdateActiveDirectoryGroup(
+            @RequestBody ActiveDirectoryGroup activeDirectoryGroups) throws OsirisValidationException, OsirisException {
+        if (activeDirectoryGroups.getId() != null)
+            validationHelper.validateReferential(activeDirectoryGroups, true, "activeDirectoryGroups");
+        validationHelper.validateString(activeDirectoryGroups.getCode(), true, "code");
+        validationHelper.validateString(activeDirectoryGroups.getLabel(), true, "label");
+        validationHelper.validateString(activeDirectoryGroups.getActiveDirectoryPath(), true, "activeDirectoryPath");
+
+        return new ResponseEntity<ActiveDirectoryGroup>(
+                activeDirectoryGroupService.addOrUpdateActiveDirectoryGroup(activeDirectoryGroups), HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/customer-order-frequencies")
     public ResponseEntity<List<CustomerOrderFrequency>> getCustomerOrderFrequencies() {

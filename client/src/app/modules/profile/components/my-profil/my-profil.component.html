@@ -37,9 +37,11 @@
       <table class="full-width">
         <tr>
           <td>
-            <button mat-raised-button (click)="deleteSearchPreferences()" color="primary" class="mini-fab-add">
-              Effacer mes recherches sauvegardées
-            </button>
+            <div class="fab-extended-button-containter"><button mat-fab extended color="primary"
+                (click)="deleteSearchPreferences()">
+                <mat-icon>cleaning_services</mat-icon>
+                Effacer mes recherches sauvegardées
+              </button></div>
           </td>
         </tr>
       </table>

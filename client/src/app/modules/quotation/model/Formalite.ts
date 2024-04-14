@@ -5,7 +5,6 @@ import { FormaliteGuichetUnique } from './guichet-unique/FormaliteGuichetUnique'
 
 export interface Formalite {
   id: number;
-  observations: string;
   waitedCompetentAuthority: CompetentAuthority;
   formaliteStatus: FormaliteStatus;
   competentAuthorityServiceProvider: CompetentAuthority;

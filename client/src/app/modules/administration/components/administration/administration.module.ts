@@ -33,6 +33,7 @@ import { ReferentialAccountingAccountClassComponent } from '../referentials/refe
 import { ReferentialAccountingAccountComponent } from '../referentials/referential-accounting-account/referential-accounting-account.component';
 import { ReferentialAccountingJournalComponent } from '../referentials/referential-accounting-journal/referential-accounting-journal.component';
 import { ReferentialActTypeComponent } from '../referentials/referential-act-type/referential-act-type.component';
+import { ReferentialActiveDirectoryGroupComponent } from '../referentials/referential-active-directory-group/referential-active-directory-group.component';
 import { ReferentialAnnouncementNoticeTemplateComponent } from '../referentials/referential-announcement-notice-template/referential-announcement-notice-template.component';
 import { ReferentialAttachmentTypeComponent } from '../referentials/referential-attachment-type/referential-attachment-type.component';
 import { ReferentialBillingClosureRecipientTypeComponent } from '../referentials/referential-billing-closure-recipient-type/referential-billing-closure-recipient-type.component';
@@ -66,6 +67,7 @@ import { ReferentialLegalFormComponent } from '../referentials/referential-legal
 import { ReferentialMailRedirectionTypeComponent } from '../referentials/referential-mail-redirection-type/referential-mail-redirection-type.component';
 import { ReferentialNoticeTypeFamilyComponent } from '../referentials/referential-notice-type-family/referential-notice-type-family.component';
 import { ReferentialNoticeTypeComponent } from '../referentials/referential-notice-type/referential-notice-type.component';
+import { ReferentialPaperSetTypeComponent } from '../referentials/referential-paper-set/referential-paper-set.component';
 import { ReferentialPaymentDeadlineTypeComponent } from '../referentials/referential-payment-deadline-type/referential-payment-deadline-type.component';
 import { ReferentialPaymentTypeComponent } from '../referentials/referential-payment-type/referential-payment-type.component';
 import { ReferentialPrincipalAccountingAccountComponent } from '../referentials/referential-principal-accounting-account/referential-principal-accounting-account.component';
@@ -200,6 +202,8 @@ const routes: Routes = [
     ReferentialServiceFamilyGroupComponent,
     ReferentialServiceTypeComponent,
     ReferentialCustomerOrderFrequencyComponent,
+    ReferentialActiveDirectoryGroupComponent,
+    ReferentialPaperSetTypeComponent,
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

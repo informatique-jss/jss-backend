@@ -37,6 +37,7 @@ import { AnnouncementListComponent } from '../announcement-list/announcement-lis
 import { AnnouncementComponent } from '../announcement/announcement.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
+import { CustomerOrderCommentComponent } from '../customer-order-comment/customer-order-comment.component';
 import { CustomerOrderPaymentComponent } from '../customer-order-payment/customer-order-payment.component';
 import { DebourComponent } from '../debour/debour.component';
 import { DomiciliationFeesComponent } from '../domiciliation-fees/domiciliation-fees.component';
@@ -52,6 +53,8 @@ import { MissingAttachmentQueriesComponent } from '../missing-attachment-queries
 import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { OrderingListComponent } from '../ordering-list/ordering-list.component';
+import { PaperSetListComponent } from '../paper-set-list/paper-set-list.component';
+import { PaperSetComponent } from '../paper-set/paper-set.component';
 import { PaymentListComponent } from '../payment-list/payment-list.component';
 import { PrintLabelDialogComponent } from '../print-label-dialog/print-label-dialog.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
@@ -71,6 +74,7 @@ import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 import { SelectCompetentAuthorityDialogComponent } from '../select-competent-authority-dialog/select-competent-authority-dialog.component';
 import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialog/select-document-type-dialog.component';
+import { SelectPaperSetTypeDialogComponent } from '../select-paper-set-type-dialog/select-paper-set-type-dialog.component';
 import { SelectServiceDialogComponent } from '../select-service-dialog/select-service-dialog.component';
 import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 import { ServiceComponent } from '../service/service.component';
@@ -89,6 +93,7 @@ const routes: Routes = [
   { path: 'provision/:id/:idProvision', component: ProvisionComponent },
   { path: 'affaire', component: AffaireListComponent },
   { path: 'affaire/:id', component: AffaireComponent },
+  { path: 'paper-set', component: PaperSetListComponent },
 ];
 
 @NgModule({
@@ -172,6 +177,10 @@ const routes: Routes = [
     RecurringParentOrderingListComponent,
     RecurringChildOrderingListComponent,
     DomiciliationFeesComponent,
+    CustomerOrderCommentComponent,
+    PaperSetListComponent,
+    PaperSetComponent,
+    SelectPaperSetTypeDialogComponent,
   ],
   exports: [
     OrderingListComponent,

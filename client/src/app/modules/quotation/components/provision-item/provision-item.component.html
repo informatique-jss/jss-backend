@@ -13,8 +13,7 @@
         [isDisabled]="!editMode || ( provision.announcement!=undefined && provision.announcement.actuLegaleId!=undefined && provision.announcement.actuLegaleId>0)"
         [filteredProvisionFamilyType]="provision.provisionFamilyType"></select-provision-type>
     </td>
-  </tr>
-  <tr *ngIf="instanceOfCustomerOrder && provision && provision.id">
+    <td *ngIf="instanceOfCustomerOrder && provision && provision.id">
     <td colspan="2">
       <autocomplete-employee [(model)]="provision.assignedTo" [form]="provisionItemForm" propertyName="assignedTo"
         [isMandatory]="true" [isDisabled]="false" label="Prestation assignée à"
@@ -23,6 +22,7 @@
     </td>
   </tr>
 </table>
+<mat-divider class="margin-mat-divider"></mat-divider>
 <domiciliation [domiciliation]="provision.domiciliation" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
   [quotation]="quotation" [instanceOfCustomerOrder]="instanceOfCustomerOrder" [(provision)]="provision"
   (provisionChange)="noticeChange()"

@@ -2,6 +2,19 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.Formalite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DiffusionINSEE;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,18 +27,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.quotation.model.Formalite;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DiffusionINSEE;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
-
 @Entity
 @JsonIgnoreProperties
 @Table(indexes = {
@@ -35,6 +36,7 @@ public class FormaliteGuichetUnique implements IId {
     @Id
     private Integer id;
 
+    @IndexedField
     private String liasseNumber;
 
     private Integer formalityDraftId;

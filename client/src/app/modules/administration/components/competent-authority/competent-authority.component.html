@@ -119,11 +119,11 @@
                   <table class="full-width">
                     <tr>
                       <td colspan="3">
-                        <button mat-raised-button *ngIf="editMode"
-                          (click)="addAssoMailCompetentAuthorityServiceFamilyGroups()" color="primary"
-                          class="mini-fab-add">
-                          Ajouter un mail pour un groupe de famille de service
-                        </button>
+                        <div class="fab-extended-button-containter"><button mat-fab extended color="primary"
+                            (click)="addAssoMailCompetentAuthorityServiceFamilyGroups()">
+                            <mat-icon>mail</mat-icon>
+                            Ajouter un mail pour un groupe de famille de service
+                          </button></div>
                       </td>
                     </tr>
                     <ng-container *ngIf="selectedcompetentAuthority.assoMailCompetentAuthorityServiceFamilyGroups">

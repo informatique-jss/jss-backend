@@ -3,7 +3,7 @@ package com.jss.osiris.libs.exception;
 /**
  * Used to send a message to client on frontend for outside JSS erroers
  */
-public class OsirisClientMessageException extends Exception {
+public class OsirisClientMessageException extends OsirisException {
     public OsirisClientMessageException() {
         super();
     }

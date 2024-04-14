@@ -66,6 +66,7 @@ import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
@@ -185,6 +186,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     SimpleProvisionStatusService simpleProvisionStatusService;
 
+    @Autowired
+    CustomerOrderCommentService customerOrderCommentService;
+
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
         Optional<CustomerOrder> customerOrder = customerOrderRepository.findById(id);
@@ -217,6 +221,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder, boolean isFromUser,
             boolean checkAllProvisionEnded)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+
+        boolean isNewCustomerOrder = customerOrder.getId() == null;
 
         if (customerOrder.getCustomerOrderOrigin() == null)
             customerOrder.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
@@ -256,6 +262,24 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
 
         customerOrder = customerOrderRepository.save(customerOrder);
+
+        // Generate first comment
+        if (isNewCustomerOrder && isFromUser) {
+            CustomerOrderComment comment = new CustomerOrderComment();
+            comment.setEmployee(employeeService.getCurrentEmployee());
+            comment.setCreatedDateTime(LocalDateTime.now());
+            comment.setCustomerOrder(customerOrder);
+
+            Tiers tiers = customerOrder.getTiers();
+            if (customerOrder.getResponsable() != null)
+                tiers = customerOrder.getResponsable().getTiers();
+            if (tiers != null && (tiers.getInstructions() != null || tiers.getObservations() != null)) {
+                comment.setComment("<p>Intructions du tiers : " + tiers.getInstructions() + "</p>" +
+                        "<p>Observations du tiers : " + tiers.getObservations() + "</p>" +
+                        "<p>Description de la demande : " + customerOrder.getDescription() + "</p>");
+                customerOrderCommentService.addOrUpdateCustomerOrderComment(comment);
+            }
+        }
 
         customerOrder = getCustomerOrder(customerOrder.getId());
 
@@ -709,9 +733,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         CustomerOrder customerOrder = new CustomerOrder(quotation.getAssignedTo(), quotation.getTiers(),
                 quotation.getResponsable(),
                 quotation.getConfrere(), quotation.getSpecialOffers(), LocalDateTime.now(), statusOpen,
-                quotation.getObservations(), quotation.getDescription(), quotation.getInstructions(), null,
+                quotation.getDescription(), null,
                 quotation.getDocuments(), quotation.getAssoAffaireOrders(), null, false,
-                null);
+                null, quotation.getCustomerOrderComments());
 
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
@@ -747,6 +771,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 documents.add(document);
             }
             customerOrder2.setDocuments(documents);
+        }
+
+        if (customerOrder2.getCustomerOrderComments() != null) {
+            ArrayList<CustomerOrderComment> customerOrderComments = new ArrayList<CustomerOrderComment>();
+            for (CustomerOrderComment customerOrderComment : customerOrder2.getCustomerOrderComments()) {
+                customerOrderComment.setId(null);
+                customerOrderComment.setCustomerOrder(customerOrder2);
+                customerOrderComment.setQuotation(null);
+                customerOrderComments.add(customerOrderComment);
+            }
+            customerOrder2.setCustomerOrderComments(customerOrderComments);
         }
 
         if (customerOrder2.getAssoAffaireOrders() != null)
@@ -1217,11 +1252,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 customerOrderRecurring.getTiers(),
                 customerOrderRecurring.getResponsable(),
                 customerOrderRecurring.getConfrere(), customerOrderRecurring.getSpecialOffers(), LocalDateTime.now(),
-                statusOpen,
-                customerOrderRecurring.getObservations(), customerOrderRecurring.getDescription(),
-                customerOrderRecurring.getInstructions(), null,
+                statusOpen, customerOrderRecurring.getDescription(), null,
                 customerOrderRecurring.getDocuments(), customerOrderRecurring.getAssoAffaireOrders(), null, false,
-                null);
+                null, null);
 
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule("SimpleModule");

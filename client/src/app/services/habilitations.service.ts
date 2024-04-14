@@ -19,6 +19,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ADMINISTRATEURS])
   }
 
+  canEditAllCustomerOrderComments() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
   canViewDashboardModule() {
     return true;
   }
@@ -51,11 +55,19 @@ export class HabilitationsService {
     return true;
   }
 
+  canViewPaperSetModule() {
+    return true;
+  }
+
   canViewRecurringCustomerOrderModule() {
     return true;
   }
 
   canViewAdministrationModule() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
+  canViewSupervisionModule() {
     return this.loginService.hasGroup([ADMINISTRATEURS])
   }
 

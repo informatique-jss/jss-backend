@@ -17,8 +17,6 @@ import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/u
   styleUrls: ['./attachments.component.css']
 })
 export class AttachmentsComponent implements OnInit {
-
-
   @Input() entity: IAttachment = {} as IAttachment;
   @Input() entityType: string = "";
   @Input() editMode: boolean = false;

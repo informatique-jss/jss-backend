@@ -201,8 +201,14 @@ public class Provision implements IId, IAttachment {
 			"invoice" }, allowSetters = true)
 	private List<Payment> payments;
 
+	@OneToMany(targetEntity = CustomerOrderComment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
+	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
+	private List<CustomerOrderComment> customerOrderComments;
+
 	@Transient
 	private LocalDateTime lastStatusReminderAcDateTime;
+
+	private LocalDateTime lastCompetentAuthorityReminderDateTime;
 
 	public Integer getId() {
 		return id;
@@ -586,6 +592,22 @@ public class Provision implements IId, IAttachment {
 
 	public void setLastStatusReminderAcDateTime(LocalDateTime lastStatusReminderAcDateTime) {
 		this.lastStatusReminderAcDateTime = lastStatusReminderAcDateTime;
+	}
+
+	public LocalDateTime getLastCompetentAuthorityReminderDateTime() {
+		return lastCompetentAuthorityReminderDateTime;
+	}
+
+	public void setLastCompetentAuthorityReminderDateTime(LocalDateTime lastCompetentAuthorityReminderDateTime) {
+		this.lastCompetentAuthorityReminderDateTime = lastCompetentAuthorityReminderDateTime;
+	}
+
+	public List<CustomerOrderComment> getCustomerOrderComments() {
+		return customerOrderComments;
+	}
+
+	public void setCustomerOrderComments(List<CustomerOrderComment> customerOrderComments) {
+		this.customerOrderComments = customerOrderComments;
 	}
 
 }

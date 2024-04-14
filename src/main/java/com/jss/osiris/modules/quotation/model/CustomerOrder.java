@@ -51,11 +51,11 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public CustomerOrder(Employee assignedTo, Tiers tiers, Responsable responsable, Confrere confrere,
 			List<SpecialOffer> specialOffers, LocalDateTime createdDate, CustomerOrderStatus customerOrderStatus,
-			String observations, String description, String instructions, List<Attachment> attachments,
+			String description, List<Attachment> attachments,
 			List<Document> documents,
 			List<AssoAffaireOrder> assoAffaireOrders,
 			List<Quotation> quotations, Boolean isQuotation,
-			List<Invoice> invoices) {
+			List<Invoice> invoices, List<CustomerOrderComment> customerOrderComments) {
 		this.assignedTo = assignedTo;
 		this.tiers = tiers;
 		this.responsable = responsable;
@@ -63,15 +63,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.specialOffers = specialOffers;
 		this.createdDate = createdDate;
 		this.customerOrderStatus = customerOrderStatus;
-		this.observations = observations;
 		this.description = description;
-		this.instructions = instructions;
 		this.attachments = attachments;
 		this.documents = documents;
 		this.assoAffaireOrders = assoAffaireOrders;
 		this.quotations = quotations;
 		this.isQuotation = isQuotation;
 		this.invoices = invoices;
+		this.customerOrderComments = customerOrderComments;
 	}
 
 	@Id
@@ -117,14 +116,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JoinColumn(name = "id_abandon_reason")
 	private QuotationAbandonReason abandonReason;
 
-	@Column(columnDefinition = "TEXT")
-	private String observations;
-
-	@Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "TEXT") // TODO : delete when new website
 	private String description;
-
-	@Column(columnDefinition = "TEXT")
-	private String instructions;
 
 	@OneToMany(mappedBy = "customerOrder")
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
@@ -133,6 +126,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@OneToMany(targetEntity = Document.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<Document> documents;
+
+	@OneToMany(targetEntity = PaperSet.class, mappedBy = "customerOrder", cascade = CascadeType.REMOVE)
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	private List<PaperSet> paperSets;
 
 	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
@@ -194,6 +191,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private Boolean isRecurringAutomaticallyBilled;
 
 	private Boolean isGifted;
+
+	@OneToMany(targetEntity = CustomerOrderComment.class, mappedBy = "customerOrder", cascade = CascadeType.REMOVE)
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	private List<CustomerOrderComment> customerOrderComments;
 
 	public Integer getId() {
 		return id;
@@ -257,14 +258,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setLastStatusUpdate(LocalDateTime lastStatusUpdate) {
 		this.lastStatusUpdate = lastStatusUpdate;
-	}
-
-	public String getObservations() {
-		return observations;
-	}
-
-	public void setObservations(String observations) {
-		this.observations = observations;
 	}
 
 	public String getDescription() {
@@ -395,14 +388,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.abandonReason = abandonReason;
 	}
 
-	public String getInstructions() {
-		return instructions;
-	}
-
-	public void setInstructions(String instructions) {
-		this.instructions = instructions;
-	}
-
 	public List<Refund> getRefunds() {
 		return refunds;
 	}
@@ -481,6 +466,22 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setCustomerOrderFrequency(CustomerOrderFrequency customerOrderFrequency) {
 		this.customerOrderFrequency = customerOrderFrequency;
+	}
+
+	public List<CustomerOrderComment> getCustomerOrderComments() {
+		return customerOrderComments;
+	}
+
+	public void setCustomerOrderComments(List<CustomerOrderComment> customerOrderComments) {
+		this.customerOrderComments = customerOrderComments;
+	}
+
+	public List<PaperSet> getPaperSets() {
+		return paperSets;
+	}
+
+	public void setPaperSets(List<PaperSet> paperSets) {
+		this.paperSets = paperSets;
 	}
 
 }

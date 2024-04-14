@@ -8,7 +8,7 @@ import { ServiceType } from '../model/ServiceType';
 @Injectable({
   providedIn: 'root'
 })
-export class ServiceService extends AppRestService<Service>{
+export class ServiceService extends AppRestService<Service> {
 
   constructor(http: HttpClient) {
     super(http, "quotation");
@@ -36,7 +36,7 @@ export class ServiceService extends AppRestService<Service>{
       if (displayGroupAndFamily)
         label = service.serviceType.serviceFamily.serviceFamilyGroup.label + " - " + service.serviceType.serviceFamily.label + " - ";
       label += service.serviceType.label
-      if (service.serviceType.id == serviceTypeOther.id && service.customLabel && service.customLabel.length > 0)
+      if (service.serviceType.id == serviceTypeOther.id && service.customLabel && service.customLabel.trim().length > 0)
         return service.customLabel;
     }
     return label;

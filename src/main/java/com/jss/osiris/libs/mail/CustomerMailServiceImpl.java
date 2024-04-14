@@ -24,6 +24,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.repository.CustomerMailRepository;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -407,6 +408,13 @@ public class CustomerMailServiceImpl implements CustomerMailService {
                         attachments = attachmentService.addAttachment(new FileInputStream(mailPdf),
                                 mail.getConfrere().getId(),
                                 Confrere.class.getSimpleName(), constantService.getAttachmentTypeAutomaticMail(),
+                                "Customer_mail_" + formatter.format(LocalDateTime.now()) + ".pdf", false,
+                                "Mail automatique n°" + mail.getId(), null, null, null);
+                    if (mail.getCompetentAuthority() != null)
+                        attachments = attachmentService.addAttachment(new FileInputStream(mailPdf),
+                                mail.getCompetentAuthority().getId(),
+                                CompetentAuthority.class.getSimpleName(),
+                                constantService.getAttachmentTypeAutomaticMail(),
                                 "Customer_mail_" + formatter.format(LocalDateTime.now()) + ".pdf", false,
                                 "Mail automatique n°" + mail.getId(), null, null, null);
 

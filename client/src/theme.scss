@@ -24,12 +24,6 @@ $dark-disabled-text: rgba($dark-primary-text, 0.38);
 $dark-dividers: rgba($dark-primary-text, 0.12);
 $dark-focused: rgba($dark-primary-text, 0.12);
 
-// global isDisabled new color
-
-[disabled] {
-  color: rgba($dark-text, 0.78) !important;
-}
-
 $mat-light-theme-foreground: (
   base: black,
   divider: $dark-dividers,
@@ -375,4 +369,14 @@ tr.selected-mat-row {
 .mdc-checkbox .mdc-checkbox__native-control:checked~.mdc-checkbox__background {
   border-color: mat.get-color-from-palette($mat-accent, main);
   background-color: mat.get-color-from-palette($mat-accent, main);
+}
+
+// global isDisabled new color
+
+.light [disabled] {
+  color: rgba($dark-text, 0.78) !important;
+}
+
+.dark [disabled] {
+  color: rgba($light-text, 0.78) !important;
 }

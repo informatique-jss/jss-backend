@@ -481,123 +481,126 @@ public class PricingHelper {
         }
 
         // Reinvoiced provider invoices
-        if (provision.getProviderInvoices() != null) {
-            for (Invoice invoice : provision.getProviderInvoices()) {
-                if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusCancelled().getId())
-                        && !idInvoiceAlreadyDone.contains(invoice.getId()) && invoice.getInvoiceItems() != null) {
-                    for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-                        InvoiceItem newInvoiceItem = invoiceItemService.cloneInvoiceItem(invoiceItem);
-                        newInvoiceItem.setOriginProviderInvoice(invoice);
-                        newInvoiceItem.setInvoice(null);
-                        newInvoiceItem.setIsOverridePrice(false);
-                        if (invoice.getCompetentAuthority() != null) {
-                            if (invoice.getCompetentAuthority().getId()
-                                    .equals(constantService.getCompetentAuthorityInpi().getId())) {
-                                newInvoiceItem.setLabel(invoiceItem.getLabel().replace("<", ""));
-                            } else {
-                                newInvoiceItem.setLabel(invoice.getCompetentAuthority().getLabel() + " - "
+        if (provision != null) {
+            if (provision.getProviderInvoices() != null) {
+                for (Invoice invoice : provision.getProviderInvoices()) {
+                    if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusCancelled().getId())
+                            && !idInvoiceAlreadyDone.contains(invoice.getId()) && invoice.getInvoiceItems() != null) {
+                        for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+                            InvoiceItem newInvoiceItem = invoiceItemService.cloneInvoiceItem(invoiceItem);
+                            newInvoiceItem.setOriginProviderInvoice(invoice);
+                            newInvoiceItem.setInvoice(null);
+                            newInvoiceItem.setIsOverridePrice(false);
+                            if (invoice.getCompetentAuthority() != null) {
+                                if (invoice.getCompetentAuthority().getId()
+                                        .equals(constantService.getCompetentAuthorityInpi().getId())) {
+                                    newInvoiceItem.setLabel(invoiceItem.getLabel().replace("<", ""));
+                                } else {
+                                    newInvoiceItem.setLabel(invoice.getCompetentAuthority().getLabel() + " - "
+                                            + invoiceItem.getBillingItem().getBillingType().getLabel());
+                                }
+                            } else if (invoice.getProvider() != null) {
+                                newInvoiceItem.setLabel(invoiceItem.getBillingItem().getBillingType().getLabel());
+                            } else if (invoice.getConfrere() != null) {
+                                newInvoiceItem.setLabel(invoice.getConfrere().getLabel() + " -  "
                                         + invoiceItem.getBillingItem().getBillingType().getLabel());
                             }
-                        } else if (invoice.getProvider() != null) {
-                            newInvoiceItem.setLabel(invoiceItem.getBillingItem().getBillingType().getLabel());
-                        } else if (invoice.getConfrere() != null) {
-                            newInvoiceItem.setLabel(invoice.getConfrere().getLabel() + " -  "
-                                    + invoiceItem.getBillingItem().getBillingType().getLabel());
-                        }
-                        newInvoiceItem.setProvision(provision);
-                        newInvoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPriceReinvoiced());
-                        if (invoiceItem.getVat().getRate() > 0)
-                            newInvoiceItem.setVat(null);
+                            newInvoiceItem.setProvision(provision);
+                            newInvoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPriceReinvoiced());
+                            if (invoiceItem.getVat().getRate() > 0)
+                                newInvoiceItem.setVat(null);
 
-                        if (invoiceItem.getVat().getRate() <= 0
-                                || invoiceItem.getBillingItem().getBillingType().getIsNonTaxable())
-                            newInvoiceItem.setVat(constantService.getVatZero());
-                        vatService.completeVatOnInvoiceItem(newInvoiceItem, quotation);
-
-                        // Keep less rate of both and recompute price
-                        if (invoiceItem.getVat() != null
-                                && invoiceItem.getVat().getRate() < newInvoiceItem.getVat().getRate()) {
-                            newInvoiceItem.setVat(invoiceItem.getVat());
+                            if (invoiceItem.getVat().getRate() <= 0
+                                    || invoiceItem.getBillingItem().getBillingType().getIsNonTaxable())
+                                newInvoiceItem.setVat(constantService.getVatZero());
                             vatService.completeVatOnInvoiceItem(newInvoiceItem, quotation);
+
+                            // Keep less rate of both and recompute price
+                            if (invoiceItem.getVat() != null
+                                    && invoiceItem.getVat().getRate() < newInvoiceItem.getVat().getRate()) {
+                                newInvoiceItem.setVat(invoiceItem.getVat());
+                                vatService.completeVatOnInvoiceItem(newInvoiceItem, quotation);
+                            }
+                            if (persistInvoiceItem)
+                                invoiceItemService.addOrUpdateInvoiceItem(newInvoiceItem);
+                            provision.getInvoiceItems().add(newInvoiceItem);
                         }
-                        if (persistInvoiceItem)
-                            invoiceItemService.addOrUpdateInvoiceItem(newInvoiceItem);
-                        provision.getInvoiceItems().add(newInvoiceItem);
                     }
                 }
             }
-        }
 
-        // Authorize gift for provider invoices
-        for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-            InvoiceItem tempInvoiceItem;
-            if (invoiceItem.getId() != null) {
-                tempInvoiceItem = invoiceItemService.getInvoiceItem(invoiceItem.getId());
-            } else
-                tempInvoiceItem = invoiceItem;
+            // Authorize gift for provider invoices
+            for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                InvoiceItem tempInvoiceItem;
+                if (invoiceItem.getId() != null) {
+                    tempInvoiceItem = invoiceItemService.getInvoiceItem(invoiceItem.getId());
+                } else
+                    tempInvoiceItem = invoiceItem;
 
-            if (tempInvoiceItem.getOriginProviderInvoice() != null) {
-                if (invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()) {
-                    invoiceItem.setPreTaxPrice(0f);
-                    if (!invoiceItem.getLabel().contains("(offert)"))
-                        invoiceItem.setLabel(invoiceItem.getLabel() + " (offert)");
-                    vatService.completeVatOnInvoiceItem(invoiceItem, quotation);
-                    invoiceItem.setProvision(provision);
-                    if (persistInvoiceItem)
-                        invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
-                }
-                if ((invoiceItem.getIsGifted() == null || !invoiceItem.getIsGifted())) {
-                    tempInvoiceItem.setPreTaxPrice(tempInvoiceItem.getPreTaxPriceReinvoiced());
-                    tempInvoiceItem.setLabel(invoiceItem.getLabel().replace(" (offert)", ""));
-                    tempInvoiceItem.setProvision(provision);
-                    vatService.completeVatOnInvoiceItem(tempInvoiceItem, quotation);
+                if (tempInvoiceItem.getOriginProviderInvoice() != null) {
+                    if (invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()) {
+                        invoiceItem.setPreTaxPrice(0f);
+                        if (!invoiceItem.getLabel().contains("(offert)"))
+                            invoiceItem.setLabel(invoiceItem.getLabel() + " (offert)");
+                        vatService.completeVatOnInvoiceItem(invoiceItem, quotation);
+                        invoiceItem.setProvision(provision);
+                        if (persistInvoiceItem)
+                            invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                    }
+                    if ((invoiceItem.getIsGifted() == null || !invoiceItem.getIsGifted())) {
+                        tempInvoiceItem.setPreTaxPrice(tempInvoiceItem.getPreTaxPriceReinvoiced());
+                        tempInvoiceItem.setLabel(invoiceItem.getLabel().replace(" (offert)", ""));
+                        tempInvoiceItem.setProvision(provision);
+                        vatService.completeVatOnInvoiceItem(tempInvoiceItem, quotation);
 
-                    if (persistInvoiceItem)
-                        invoiceItemService.addOrUpdateInvoiceItem(tempInvoiceItem);
+                        if (persistInvoiceItem)
+                            invoiceItemService.addOrUpdateInvoiceItem(tempInvoiceItem);
+                    }
                 }
             }
-        }
 
-        // Manage domiciliation fees
-        if (provision.getDomiciliation() != null && provision.getDomiciliation().getDomiciliationFees() != null) {
-            for (DomiciliationFee domiciliationFee : provision.getDomiciliation().getDomiciliationFees()) {
-                if (domiciliationFee.getId() != null) {
-                    boolean found = false;
-                    if (provision.getInvoiceItems() != null)
-                        for (InvoiceItem domiciliationInvoiceItem : provision.getInvoiceItems()) {
-                            if (domiciliationInvoiceItem.getDomiciliationFee() != null && domiciliationInvoiceItem
-                                    .getDomiciliationFee().getId().equals(domiciliationFee.getId())) {
-                                found = true;
-                                break;
+            // Manage domiciliation fees
+            if (provision.getDomiciliation() != null && provision.getDomiciliation().getDomiciliationFees() != null) {
+                for (DomiciliationFee domiciliationFee : provision.getDomiciliation().getDomiciliationFees()) {
+                    if (domiciliationFee.getId() != null) {
+                        boolean found = false;
+                        if (provision.getInvoiceItems() != null)
+                            for (InvoiceItem domiciliationInvoiceItem : provision.getInvoiceItems()) {
+                                if (domiciliationInvoiceItem.getDomiciliationFee() != null && domiciliationInvoiceItem
+                                        .getDomiciliationFee().getId().equals(domiciliationFee.getId())) {
+                                    found = true;
+                                    break;
+                                }
                             }
-                        }
 
-                    if (!found) {
-                        InvoiceItem invoiceItem = new InvoiceItem();
-                        provision.getInvoiceItems().add(invoiceItem);
-                        invoiceItem
-                                .setBillingItem(getAppliableBillingItem(domiciliationFee.getBillingType(), quotation));
-                        invoiceItem.setInvoice(null);
-                        invoiceItem.setProvision(provision);
-                        if (invoiceItem.getIsOverridePrice() == null)
-                            invoiceItem.setIsOverridePrice(true);
-                        setInvoiceItemPreTaxPriceAndLabel(invoiceItem, invoiceItem.getBillingItem(), provision,
-                                quotation);
-                        Float preTaxPrice = domiciliationFee.getAmount();
-                        if (domiciliationFee.getBillingType().getIsOverrideVat() != null
-                                && domiciliationFee.getBillingType().getIsOverrideVat()) {
-                            if (domiciliationFee.getBillingType().getVat() != null
-                                    && domiciliationFee.getBillingType().getVat().getRate() > 0)
-                                preTaxPrice = preTaxPrice
-                                        / (1f + domiciliationFee.getBillingType().getVat().getRate() / 100f);
-                        } else {
-                            preTaxPrice = preTaxPrice / 1.2f;
+                        if (!found) {
+                            InvoiceItem invoiceItem = new InvoiceItem();
+                            provision.getInvoiceItems().add(invoiceItem);
+                            invoiceItem
+                                    .setBillingItem(
+                                            getAppliableBillingItem(domiciliationFee.getBillingType(), quotation));
+                            invoiceItem.setInvoice(null);
+                            invoiceItem.setProvision(provision);
+                            if (invoiceItem.getIsOverridePrice() == null)
+                                invoiceItem.setIsOverridePrice(true);
+                            setInvoiceItemPreTaxPriceAndLabel(invoiceItem, invoiceItem.getBillingItem(), provision,
+                                    quotation);
+                            Float preTaxPrice = domiciliationFee.getAmount();
+                            if (domiciliationFee.getBillingType().getIsOverrideVat() != null
+                                    && domiciliationFee.getBillingType().getIsOverrideVat()) {
+                                if (domiciliationFee.getBillingType().getVat() != null
+                                        && domiciliationFee.getBillingType().getVat().getRate() > 0)
+                                    preTaxPrice = preTaxPrice
+                                            / (1f + domiciliationFee.getBillingType().getVat().getRate() / 100f);
+                            } else {
+                                preTaxPrice = preTaxPrice / 1.2f;
+                            }
+                            invoiceItem.setPreTaxPrice(preTaxPrice);
+                            invoiceItem.setLabel(invoiceItem.getLabel() + " le "
+                                    + domiciliationFee.getFeeDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                            computeInvoiceItemsVatAndDiscount(invoiceItem, quotation, provision);
+                            invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
                         }
-                        invoiceItem.setPreTaxPrice(preTaxPrice);
-                        invoiceItem.setLabel(invoiceItem.getLabel() + " le "
-                                + domiciliationFee.getFeeDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                        computeInvoiceItemsVatAndDiscount(invoiceItem, quotation, provision);
-                        invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
                     }
                 }
             }
