@@ -73,10 +73,10 @@
       </table>
       <mat-divider class="margin-mat-divider"></mat-divider>
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <table class="full-width" *ngIf="quotation && instanceOfCustomerOrder(quotation)">
+        <table class="full-width" *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.isRecurring">
           <tr>
             <td><generic-toggle [(model)]="quotation.isRecurring" label="Est récurrente ?" [form]="orderingCustomerForm"
-                propertyName="propeisRecurringrtyName" [isDisabled]="!editMode"></generic-toggle></td>
+                propertyName="propeisRecurringrtyName" [isDisabled]="true"></generic-toggle></td>
           </tr>
         </table>
         <table class="full-width" *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.isRecurring">
@@ -95,7 +95,7 @@
             <td>
               <select-customer-order-frequency [(model)]="quotation.customerOrderFrequency"
                 label="Fréquence de génération" [form]="orderingCustomerForm" propertyName="customerOrderFrequency"
-                [isMandatory]="true" [isDisabled]="!editMode"></select-customer-order-frequency>
+                [isMandatory]="false" [isDisabled]="false"></select-customer-order-frequency>
             </td>
             <td>
               <generic-toggle [(model)]="quotation.isRecurringAutomaticallyBilled"

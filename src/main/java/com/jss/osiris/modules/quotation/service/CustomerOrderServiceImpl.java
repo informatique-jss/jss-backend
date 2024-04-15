@@ -1173,7 +1173,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         List<CustomerOrder> allActiveRecuringCustomerOrders = customerOrderRepository
                 .findAllActiveRecurringCustomerOrders(
                         customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN),
-                        customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT));
+                        customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT),
+                        customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED));
 
         if (allActiveRecuringCustomerOrders != null) {
             for (CustomerOrder customerOrder : allActiveRecuringCustomerOrders) {

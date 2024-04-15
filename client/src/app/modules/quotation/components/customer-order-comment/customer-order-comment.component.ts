@@ -190,6 +190,7 @@ export class CustomerOrderCommentComponent implements OnInit {
   }
 
   editComment(comment: CustomerOrderComment) {
+    this.isDisplayCommentInput = true;
     this.newComment = comment;
   }
 

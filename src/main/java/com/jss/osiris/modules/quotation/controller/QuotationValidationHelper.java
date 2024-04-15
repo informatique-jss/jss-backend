@@ -378,8 +378,6 @@ public class QuotationValidationHelper {
                         validationHelper.validateDateMin(currentCustomerOrder.getRecurringPeriodEndDate(), true,
                                         currentCustomerOrder.getRecurringPeriodStartDate().plusDays(1),
                                         "recurringEndDate");
-                        validationHelper.validateReferential(currentCustomerOrder.getCustomerOrderFrequency(), true,
-                                        "customerOrderFrequency");
                 } else if (lastProvisionFrequency != null) {
                         ((CustomerOrder) quotation).setCustomerOrderFrequency(lastProvisionFrequency);
                         ((CustomerOrder) quotation).setIsRecurring(true);

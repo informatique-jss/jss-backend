@@ -101,9 +101,10 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<CustomerOrder> findByQuotations_Id(Integer idQuotation);
 
-        @Query(value = "select c from CustomerOrder c where isRecurring = true and customerOrderStatus not in (:openStatus, :waitingDepositStatus) and recurringPeriodStartDate<=current_date() and recurringPeriodEndDate>current_date()")
+        @Query(value = "select c from CustomerOrder c where isRecurring = true and customerOrderStatus not in (:openStatus, :waitingDepositStatus,:abandonnedStatus) and recurringPeriodStartDate<=current_date() and recurringPeriodEndDate>current_date()")
         List<CustomerOrder> findAllActiveRecurringCustomerOrders(@Param("openStatus") CustomerOrderStatus openStatus,
-                        @Param("waitingDepositStatus") CustomerOrderStatus waitingDepositStatus);
+                        @Param("waitingDepositStatus") CustomerOrderStatus waitingDepositStatus,
+                        @Param("abandonnedStatus") CustomerOrderStatus abandonnedStatus);
 
         List<CustomerOrder> findByCustomerOrderParentRecurringOrderByRecurringEndDateDesc(CustomerOrder customerOrder);
 

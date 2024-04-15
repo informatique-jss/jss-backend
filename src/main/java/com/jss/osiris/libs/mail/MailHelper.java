@@ -1320,11 +1320,11 @@ public class MailHelper {
             label += provision.getLastStatusReminderAcDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
             Affaire affaire = provision.getService().getAssoAffaireOrder().getAffaire();
-            if (affaire.getIsUnregistered() != null && affaire.getIsUnregistered()
-                    || affaire.getSiren() == null && affaire.getSiret() == null) {
-                label += " dénomination " + affaire.getDenomination();
-            } else {
-                label += " RSH / RCS " + (affaire.getSiret() != null ? affaire.getSiret() : affaire.getSiren());
+            label += " dénomination " + (affaire.getDenomination() != null ? affaire.getDenomination()
+                    : (affaire.getFirstname() + " " + affaire.getLastname()));
+            if ((affaire.getIsUnregistered() == null || !affaire.getIsUnregistered())
+                    && (affaire.getSiren() != null || affaire.getSiret() != null)) {
+                label += "  / RCS " + (affaire.getSiret() != null ? affaire.getSiret() : affaire.getSiren());
             }
             label += " / "
                     + provision.getService().getServiceType().getServiceFamily().getServiceFamilyGroup().getLabel();
