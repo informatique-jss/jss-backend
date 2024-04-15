@@ -2,6 +2,10 @@ package com.jss.osiris.modules.quotation.model.guichetUnique.referentials;
 
 import java.io.Serializable;
 
+import com.jss.osiris.libs.search.model.DoNotAudit;
+import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
+import com.jss.osiris.modules.miscellaneous.model.ICode;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,10 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
-import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
-import com.jss.osiris.modules.miscellaneous.model.ICode;
-
 @Entity
+@DoNotAudit
 public class TypeDocument implements Serializable, ICode {
 
     public static String UNSIGNED_SYNTHESES_DOCUMENT_CODE = "PJ_99";

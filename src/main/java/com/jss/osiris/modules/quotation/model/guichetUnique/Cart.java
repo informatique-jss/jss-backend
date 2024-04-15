@@ -2,6 +2,11 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.DoNotAudit;
+import com.jss.osiris.modules.invoicing.model.Invoice;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,11 +17,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.invoicing.model.Invoice;
-
 @Entity
+@DoNotAudit
 @Table(indexes = {
         @Index(name = "idx_cart_formalite", columnList = "id_formalite_guichet_unique"),
         @Index(name = "idx_cart_invoice", columnList = "id_invoice") })

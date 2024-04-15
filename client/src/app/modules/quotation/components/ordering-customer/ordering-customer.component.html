@@ -54,7 +54,7 @@
           </fieldset>
         </tr>
       </table>
-      <table class="full-width">
+      <table class="full-width" *ngIf="quotation && quotation.id">
         <tr>
           <td>
             <chips-mail [(model)]="getCustomerOrderForIQuotation(quotation).mails" label="Mails"
@@ -153,9 +153,9 @@
         </div>
       </fieldset>
       <mat-divider class="margin-mat-divider"></mat-divider>
-      <customer-order-comment *ngIf="quotation && instanceOfCustomerOrder(quotation)"
+      <customer-order-comment *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.id"
         [customerOrder]="quotation"></customer-order-comment>
-      <customer-order-comment *ngIf="quotation && instanceOfQuotation(quotation)"
+      <customer-order-comment *ngIf="quotation && instanceOfQuotation(quotation) && quotation.id"
         [quotation]="quotation"></customer-order-comment>
       <div *ngIf=" quotation.abandonReason">Abandonné avec le motif : {{quotation.abandonReason.label}}
       </div>

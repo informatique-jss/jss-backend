@@ -4,6 +4,16 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.DoNotAudit;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.CapaciteEngagement;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Perimetre;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.RoleEntreprise;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.SecondRoleEntreprise;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutPourLaFormalite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDePersonne;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,16 +28,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.CapaciteEngagement;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Perimetre;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.RoleEntreprise;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.SecondRoleEntreprise;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutPourLaFormalite;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDePersonne;
-
 @Entity
+@DoNotAudit
 @Table(indexes = {
         @Index(name = "idx_pouvoir_composition", columnList = "id_composition"),
         @Index(name = "idx_pouvoir_detail_cessation", columnList = "id_detail_cessation_entreprise"),

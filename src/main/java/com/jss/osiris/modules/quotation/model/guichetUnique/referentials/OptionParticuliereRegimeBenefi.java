@@ -2,13 +2,15 @@ package com.jss.osiris.modules.quotation.model.guichetUnique.referentials;
 
 import java.io.Serializable;
 
+import com.jss.osiris.libs.search.model.DoNotAudit;
+import com.jss.osiris.modules.miscellaneous.model.ICode;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
-import com.jss.osiris.modules.miscellaneous.model.ICode;
-
 @Entity
+@DoNotAudit
 public class OptionParticuliereRegimeBenefi implements Serializable, ICode {
     public OptionParticuliereRegimeBenefi(String code) {
         this.code = code;

@@ -4,6 +4,18 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.DoNotAudit;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.ActiviteReguliere;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.ExerciceActivite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeExercice;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.PrecisionActivite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.QualiteNonSedentaire;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutFormalite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutPraticien;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TotalitePartie;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,18 +30,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.ActiviteReguliere;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.ExerciceActivite;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeExercice;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.PrecisionActivite;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.QualiteNonSedentaire;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutFormalite;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutPraticien;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TotalitePartie;
-
 @Entity
+@DoNotAudit
 @Table(indexes = {
         @Index(name = "idx_activite_autre_etablissement", columnList = "id_autres_etablissement"),
         @Index(name = "idx_activite_etablissement_principal", columnList = "id_etablissement_principal") })

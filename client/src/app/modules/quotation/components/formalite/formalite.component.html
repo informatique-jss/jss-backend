@@ -40,7 +40,7 @@
           </tr>
         </table>
         <mat-divider class="margin-mat-divider"></mat-divider>
-        <customer-order-comment *ngIf="provision " [provision]="provision"></customer-order-comment>
+        <customer-order-comment *ngIf="provision && provision.id" [provision]="provision"></customer-order-comment>
       </div>
     </mat-tab>
     <mat-tab label="Dépôt d'actes"

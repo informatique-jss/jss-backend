@@ -1,9 +1,12 @@
 package com.jss.osiris.modules.quotation.model.guichetUnique;
 
+import com.jss.osiris.libs.search.model.DoNotAudit;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
+@DoNotAudit
 public class PartnerCenter {
 
     @Id

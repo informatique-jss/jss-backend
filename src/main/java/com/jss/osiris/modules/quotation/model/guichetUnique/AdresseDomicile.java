@@ -3,6 +3,11 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.jss.osiris.libs.search.model.DoNotAudit;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.CodePays;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeVoie;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,11 +19,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.CodePays;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeVoie;
-
 @Entity
+@DoNotAudit
 public class AdresseDomicile implements Serializable, IId {
 
     @Id

@@ -274,9 +274,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (customerOrder.getResponsable() != null)
                 tiers = customerOrder.getResponsable().getTiers();
             if (tiers != null && (tiers.getInstructions() != null || tiers.getObservations() != null)) {
-                comment.setComment("<p>Intructions du tiers : " + tiers.getInstructions() + "</p>" +
-                        "<p>Observations du tiers : " + tiers.getObservations() + "</p>" +
-                        "<p>Description de la demande : " + customerOrder.getDescription() + "</p>");
+                comment.setComment("<p>Intructions du tiers : "
+                        + (tiers.getInstructions() != null ? tiers.getInstructions() : "") + "</p>" +
+                        "<p>Observations du tiers : " + (tiers.getObservations() != null ? tiers.getObservations() : "")
+                        + "</p>" +
+                        "<p>Description de la demande : "
+                        + (customerOrder.getDescription() != null ? customerOrder.getDescription() : "") + "</p>");
                 customerOrderCommentService.addOrUpdateCustomerOrderComment(comment);
             }
         }

@@ -3,6 +3,12 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.DoNotAudit;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.NatureDomaine;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutDomaine;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,12 +22,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.NatureDomaine;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutDomaine;
-
 @Entity
+@DoNotAudit
 @Table(indexes = {
         @Index(name = "idx_nom_domaine_autre_etablissement", columnList = "id_autres_etablissement"),
         @Index(name = "idx_nom_domaine_etablissement_principal", columnList = "id_etablissement_principal") })

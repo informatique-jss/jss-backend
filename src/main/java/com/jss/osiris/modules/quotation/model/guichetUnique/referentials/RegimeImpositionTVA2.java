@@ -2,12 +2,14 @@ package com.jss.osiris.modules.quotation.model.guichetUnique.referentials;
 
 import java.io.Serializable;
 
+import com.jss.osiris.libs.search.model.DoNotAudit;
+import com.jss.osiris.modules.miscellaneous.model.ICode;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
-import com.jss.osiris.modules.miscellaneous.model.ICode;
-
 @Entity
+@DoNotAudit
 public class RegimeImpositionTVA2 implements Serializable, ICode {
     public RegimeImpositionTVA2(String code) {
         this.code = code;

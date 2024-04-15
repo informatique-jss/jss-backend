@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.quotation.model.guichetUnique;
 
+import com.jss.osiris.libs.search.model.DoNotAudit;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,6 +15,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
+@DoNotAudit
 @Table(indexes = {
         @Index(name = "idx_cart_rate_cart", columnList = "id_cart") })
 public class CartRate {

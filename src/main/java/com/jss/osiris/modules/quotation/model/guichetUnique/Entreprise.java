@@ -3,6 +3,14 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.jss.osiris.libs.search.model.DoNotAudit;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Role;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.RoleEntreprise;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutPourLaFormalite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeRepresentant;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,14 +22,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Role;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.RoleEntreprise;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutPourLaFormalite;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeRepresentant;
-
 @Entity
+@DoNotAudit
 public class Entreprise implements Serializable, IId {
 
     @Id

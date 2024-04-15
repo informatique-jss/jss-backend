@@ -4,6 +4,17 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.DoNotAudit;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.CodeNationalite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeSociale;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Genre;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.QualiteDeNonSedentarite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Role;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.SituationMatrimoniale;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutVisAVisFormalite;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,17 +26,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.CodeNationalite;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeSociale;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Genre;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.QualiteDeNonSedentarite;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Role;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.SituationMatrimoniale;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutVisAVisFormalite;
-
 @Entity
+@DoNotAudit
 public class DescriptionPersonne implements Serializable, IId {
 
     @Id

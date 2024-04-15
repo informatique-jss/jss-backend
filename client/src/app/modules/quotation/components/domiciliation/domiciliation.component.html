@@ -80,6 +80,8 @@
           </tr>
         </table>
       </div>
+      <mat-divider class="margin-mat-divider"></mat-divider>
+      <customer-order-comment *ngIf="provision && provision.id" [provision]="provision"></customer-order-comment>
     </mat-tab>
     <mat-tab label="Activité">
       <div class=" form-div">

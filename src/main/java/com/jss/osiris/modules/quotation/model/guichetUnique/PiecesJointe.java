@@ -3,6 +3,13 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.DoNotAudit;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DocumentExtension;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TaciteReconduction;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,13 +20,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DocumentExtension;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TaciteReconduction;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
-
 @Entity
+@DoNotAudit
 @Table(indexes = {
         @Index(name = "idx_piece_jointe_content", columnList = "id_content"),
         @Index(name = "idx_piece_jointe_id", columnList = "attachmentId") })

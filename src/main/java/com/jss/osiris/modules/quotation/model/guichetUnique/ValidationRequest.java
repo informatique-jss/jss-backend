@@ -2,6 +2,11 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.DoNotAudit;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.RejectionReason;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.ValidationsRequestStatus;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,11 +19,8 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.RejectionReason;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.ValidationsRequestStatus;
-
 @Entity
+@DoNotAudit
 @JsonIgnoreProperties
 @Table(indexes = {
         @Index(name = "idx_validation_request_formalite", columnList = "id_formalite_guichet_unique") })
