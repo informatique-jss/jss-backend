@@ -99,6 +99,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "description", fieldName: "customerOrderDescription", label: "Description" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "payments", fieldName: "paymentId", label: "Paiement(s) associé(s)" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "dueDate", fieldName: "dueDate", label: "Date d'échéance", valueFonction: formatDateForSortTable } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "manualAccountingDocumentDate", fieldName: "manualAccountingDocumentDate", label: "Date pièce", valueFonction: formatDateForSortTable } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "firstReminderDateTime", fieldName: "firstReminderDateTime", label: "Date de première relance", valueFonction: formatDateForSortTable } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "secondReminderDateTime", fieldName: "secondReminderDateTime", label: "Date de seconde relance", valueFonction: formatDateForSortTable } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "thirdReminderDateTime", fieldName: "thirdReminderDateTime", label: "Date de troisième relance", valueFonction: formatDateForSortTable } as SortTableColumn<InvoiceSearchResult>);

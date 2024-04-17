@@ -19,6 +19,7 @@ export interface InvoiceSearchResult {
   secondReminderDateTime: Date;
   thirdReminderDateTime: Date;
   manualAccountingDocumentNumber: string;
+  manualAccountingDocumentDate: Date;
   dueDate: Date;
   lastFollowupDate: Date;
   totalPrice: number;
