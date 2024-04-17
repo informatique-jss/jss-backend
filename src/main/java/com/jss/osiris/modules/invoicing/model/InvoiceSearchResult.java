@@ -49,6 +49,8 @@ public interface InvoiceSearchResult {
 
     public String getManualAccountingDocumentNumber();
 
+    public String getManualAccountingDocumentDate();
+
     public LocalDate getDueDate();
 
     public LocalDate getLastFollowupDate();
