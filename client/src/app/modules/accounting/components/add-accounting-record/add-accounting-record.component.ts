@@ -144,7 +144,7 @@ export class AddAccountingRecordComponent implements OnInit {
         journalId = record.accountingJournal.id;
       }
 
-      if (this.getTotalBalance() == 0) {
+      if ((Math.round(this.getTotalBalance() * 100) / 100) == 0) {
         this.accountingRecordService.saveManualOperations(this.accountingRecords).subscribe(response => {
           if (response)
             this.location.back();
