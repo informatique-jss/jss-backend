@@ -14,7 +14,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 public interface EmployeeRepository extends QueryCacheCrudRepository<Employee, Integer> {
 
     @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-    Employee findByUsername(String username);
+    Employee findByUsernameIgnoreCase(String username);
 
     @Query(nativeQuery = true, value = "select e.* from asso_employee_backup a join employee e on a.id_employee = e.id where id_employee_backup = :employeeId")
     @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
