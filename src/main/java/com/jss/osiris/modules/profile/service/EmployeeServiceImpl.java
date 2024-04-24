@@ -50,7 +50,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee getEmployeeByUsername(String username) {
-        return employeeRepository.findByUsername(username);
+        return employeeRepository.findByUsernameIgnoreCase(username);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             for (Employee employee : adEmployees)
                 if (employee != null && !employee.getAdPath().contains("OU=Divers")
                         && !employee.getAdPath().contains("OU=Systeme")) {
-                    Employee existingEmployee = employeeRepository.findByUsername(employee.getUsername());
+                    Employee existingEmployee = employeeRepository.findByUsernameIgnoreCase(employee.getUsername());
                     if (existingEmployee != null) {
                         existingEmployee.setAdPath(employee.getAdPath());
                         existingEmployee.setFirstname(employee.getFirstname());
@@ -95,7 +95,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                             break;
                         }
                     }
-                    Employee existingEmployeeDb = employeeRepository.findByUsername(existingEmployee.getUsername());
+                    Employee existingEmployeeDb = employeeRepository
+                            .findByUsernameIgnoreCase(existingEmployee.getUsername());
                     if (!found) {
                         existingEmployeeDb.setIsActive(false);
                     } else {
@@ -111,7 +112,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee getCurrentEmployee() {
         String username = activeDirectoryHelper.getCurrentUsername();
         if (username != null)
-            return employeeRepository.findByUsername(username);
+            return employeeRepository.findByUsernameIgnoreCase(username);
         return null;
     }
 
