@@ -126,7 +126,7 @@ public class AccountingController {
                 throw new OsirisValidationException("accountingRecords completude");
 
             if (accountingJournalId != null
-                    && accountingJournalId.equals(accountingRecord.getAccountingJournal().getId()))
+                    && !accountingJournalId.equals(accountingRecord.getAccountingJournal().getId()))
                 throw new OsirisValidationException("Not same journal");
             accountingJournalId = accountingRecord.getAccountingJournal().getId();
 
