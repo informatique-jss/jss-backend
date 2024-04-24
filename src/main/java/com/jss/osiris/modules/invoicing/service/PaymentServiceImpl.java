@@ -1011,7 +1011,7 @@ public class PaymentServiceImpl implements PaymentService {
         Invoice centralPayInvoice = invoiceService.addOrUpdateInvoiceFromUser(invoice);
         Payment centralPayPayment = generateNewAccountPayment(
                 -(invoiceItem.getPreTaxPrice() + invoiceItem.getVatPrice()),
-                constantService.getProviderCentralPay().getAccountingAccountDeposit(),
+                constantService.getAccountingAccountBankCentralPay(),
                 constantService.getProviderCentralPay().getAccountingAccountProvider(), invoiceLabel);
         accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(centralPayPayment, false);
 
