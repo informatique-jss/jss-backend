@@ -199,23 +199,31 @@ export class AccountingRecordComponent implements OnInit {
   }
 
   exportGrandLivre() {
-    if (this.accountingRecordSearch.startDate)
-      this.accountingRecordService.exportGrandLivre(this.accountingRecordSearch.accountingClass, new Date(this.accountingRecordSearch.startDate.setHours(12)), this.accountingRecordSearch.endDate!);
+    if (this.accountingRecordSearch.startDate) {
+      this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
+      this.accountingRecordService.exportGrandLivre(this.accountingRecordSearch);
+    }
   }
 
   exportAllGrandLivre() {
-    if (this.accountingRecordSearch.startDate)
-      this.accountingRecordService.exportAllGrandLivre(new Date(this.accountingRecordSearch.startDate.setHours(12)), this.accountingRecordSearch.endDate!);
+    if (this.accountingRecordSearch.startDate) {
+      this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
+      this.accountingRecordService.exportGrandLivre(this.accountingRecordSearch);
+    }
   }
 
   exportJournal() {
-    if (this.accountingRecordSearch.startDate)
-      this.accountingRecordService.exportJournal(this.accountingRecordSearch.accountingJournal!, new Date(this.accountingRecordSearch.startDate.setHours(12)), this.accountingRecordSearch.endDate!);
+    if (this.accountingRecordSearch.startDate) {
+      this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
+      this.accountingRecordService.exportJournal(this.accountingRecordSearch);
+    }
   }
 
   exportAccountingAccount() {
-    if (this.accountingRecordSearch.startDate)
-      this.accountingRecordService.exportAccountingAccount(this.accountingRecordSearch.accountingAccount!, new Date(this.accountingRecordSearch.startDate.setHours(12)), this.accountingRecordSearch.endDate!);
+    if (this.accountingRecordSearch.startDate) {
+      this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
+      this.accountingRecordService.exportAccountingAccount(this.accountingRecordSearch);
+    }
   }
 
   createAccountingRecords(event: any) {

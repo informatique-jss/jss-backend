@@ -22,7 +22,6 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
-import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceBilan;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceSearch;
@@ -31,6 +30,7 @@ import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
+import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Refund;
@@ -258,14 +258,19 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     Integer accountingClassId = accountingBalanceSearch.getAccountingClass() != null
         ? accountingBalanceSearch.getAccountingClass().getId()
         : 0;
-    Integer principalAccountingAccountId = accountingBalanceSearch.getPrincipalAccountingAccount() != null
-        ? accountingBalanceSearch.getPrincipalAccountingAccount().getId()
-        : 0;
+    List<Integer> principalAccountingAccountIds = new ArrayList<Integer>();
+    if (accountingBalanceSearch.getPrincipalAccountingAccounts() != null)
+      for (PrincipalAccountingAccount principalAccountingAccount : accountingBalanceSearch
+          .getPrincipalAccountingAccounts())
+        principalAccountingAccountIds.add(principalAccountingAccount.getId());
+    else
+      principalAccountingAccountIds.add(0);
+
     if (accountingBalanceSearch.getIsFromAs400() == null)
       accountingBalanceSearch.setIsFromAs400(false);
     List<AccountingBalance> aa = accountingRecordRepository.searchAccountingBalance(
         accountingClassId,
-        accountingAccountId, principalAccountingAccountId,
+        accountingAccountId, principalAccountingAccountIds,
         accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
         accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
         activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
@@ -282,14 +287,19 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     Integer accountingClassId = accountingBalanceSearch.getAccountingClass() != null
         ? accountingBalanceSearch.getAccountingClass().getId()
         : 0;
-    Integer principalAccountingAccountId = accountingBalanceSearch.getPrincipalAccountingAccount() != null
-        ? accountingBalanceSearch.getPrincipalAccountingAccount().getId()
-        : 0;
+    List<Integer> principalAccountingAccountIds = new ArrayList<Integer>();
+    if (accountingBalanceSearch.getPrincipalAccountingAccounts() != null)
+      for (PrincipalAccountingAccount principalAccountingAccount : accountingBalanceSearch
+          .getPrincipalAccountingAccounts())
+        principalAccountingAccountIds.add(principalAccountingAccount.getId());
+    else
+      principalAccountingAccountIds.add(0);
+
     if (accountingBalanceSearch.getIsFromAs400() == null)
       accountingBalanceSearch.setIsFromAs400(false);
     return accountingRecordRepository.searchAccountingBalanceGenerale(
         accountingClassId,
-        accountingAccountId, principalAccountingAccountId,
+        accountingAccountId, principalAccountingAccountIds,
         accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
         accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
         activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
@@ -331,21 +341,24 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public File getGrandLivreExport(AccountingAccountClass accountingClass, LocalDateTime startDate,
-      LocalDateTime endDate) throws OsirisException {
-    return accountingExportHelper.getGrandLivre(accountingClass, startDate, endDate);
+  public File getGrandLivreExport(AccountingRecordSearch accountingRecordSearch) throws OsirisException {
+    return accountingExportHelper.getGrandLivre(searchAccountingRecords(accountingRecordSearch, true),
+        accountingRecordSearch.getStartDate(), accountingRecordSearch.getEndDate());
   }
 
   @Override
-  public File getJournalExport(AccountingJournal accountingJournal, LocalDateTime startDate, LocalDateTime endDate)
+  public File getJournalExport(AccountingRecordSearch accountingRecordSearch)
       throws OsirisException {
-    return accountingExportHelper.getJournal(accountingJournal, startDate, endDate);
+    return accountingExportHelper.getJournal(searchAccountingRecords(accountingRecordSearch, true),
+        accountingRecordSearch.getAccountingJournal(), accountingRecordSearch.getStartDate(),
+        accountingRecordSearch.getEndDate());
   }
 
   @Override
-  public File getAccountingAccountExport(AccountingAccount accountingAccount, LocalDateTime startDate,
-      LocalDateTime endDate) throws OsirisException {
-    return accountingExportHelper.getAccountingAccount(accountingAccount, startDate, endDate);
+  public File getAccountingAccountExport(AccountingRecordSearch accountingRecordSearch) throws OsirisException {
+    return accountingExportHelper.getAccountingAccount(searchAccountingRecords(accountingRecordSearch, true),
+        accountingRecordSearch.getAccountingAccount(), accountingRecordSearch.getStartDate(),
+        accountingRecordSearch.getEndDate());
   }
 
   @Override
@@ -376,31 +389,17 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public File getAccountingBalanceExport(Integer accountingClassId, Integer principalAccountingAccountId,
-      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate, boolean isFromAs400)
+  public File getAccountingBalanceExport(AccountingBalanceSearch accountingRecordSearch)
       throws OsirisException {
-    List<AccountingBalance> accountingBalanceRecords = accountingRecordRepository.searchAccountingBalance(
-        accountingClassId != null ? accountingClassId : 0,
-        accountingAccountId != null ? accountingAccountId : 0,
-        (principalAccountingAccountId != null && !principalAccountingAccountId.equals(0) ? principalAccountingAccountId
-            : 0),
-        startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
-        isFromAs400);
-    return accountingExportHelper.getBalance(accountingBalanceRecords, false, startDate, endDate);
+    return accountingExportHelper.getBalance(searchAccountingBalanceGenerale(accountingRecordSearch), false,
+        accountingRecordSearch.getStartDate(), accountingRecordSearch.getEndDate());
   }
 
   @Override
-  public File getAccountingBalanceGeneraleExport(Integer accountingClassId, Integer principalAccountingAccountId,
-      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate, boolean isFromAs400)
+  public File getAccountingBalanceGeneraleExport(AccountingBalanceSearch accountingRecordSearch)
       throws OsirisException {
-    List<AccountingBalance> accountingBalanceRecords = accountingRecordRepository.searchAccountingBalanceGenerale(
-        accountingClassId != null ? accountingClassId : 0,
-        accountingAccountId != null ? accountingAccountId : 0,
-        (principalAccountingAccountId != null && !principalAccountingAccountId.equals(0) ? principalAccountingAccountId
-            : 0),
-        startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
-        isFromAs400);
-    return accountingExportHelper.getBalance(accountingBalanceRecords, true, startDate, endDate);
+    return accountingExportHelper.getBalance(searchAccountingBalanceGenerale(accountingRecordSearch), true,
+        accountingRecordSearch.getStartDate(), accountingRecordSearch.getEndDate());
   }
 
   @Override

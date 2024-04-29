@@ -8,9 +8,9 @@
           </autocomplete-accounting-account>
         </td>
         <td>
-          <autocomplete-principal-accounting-account [(model)]="accountingBalanceSearch.principalAccountingAccount"
-            [form]="accountingBalanceForm" propertyName="principalAccountingAccount" [isMandatory]="false"
-            [isDisabled]="false" label="Compte comptable principal"></autocomplete-principal-accounting-account>
+          <chips-principal-accounting-account [(model)]="accountingBalanceSearch.principalAccountingAccounts"
+            [form]="accountingBalanceForm" propertyName="principalAccountingAccounts" [isMandatory]="false"
+            label="Compte comptable principal" [isDisabled]="false"></chips-principal-accounting-account>
         </td>
         <td>
           <select-accounting-account-class [(model)]="accountingBalanceSearch.accountingClass" label="Classe comptable"

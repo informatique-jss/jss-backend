@@ -48,7 +48,7 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
 
     // Column init
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: AccountingBalance, column: SortTableColumn<AccountingBalance>) => { if (element && column) return element.principalAccountingAccountCode + (element.accountingAccountSubNumber ? (+ element.accountingAccountSubNumber) : ''); return "" } } as SortTableColumn<AccountingBalance>);
+    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: AccountingBalance, column: SortTableColumn<AccountingBalance>) => { if (element && column) return element.principalAccountingAccountCode + (element.accountingAccountSubNumber ? (element.accountingAccountSubNumber) : ''); return "" } } as SortTableColumn<AccountingBalance>);
     this.displayedColumns.push({ id: "principalAccountingAccountLabel", fieldName: "principalAccountingAccountLabel", label: "Libellé du compte" } as SortTableColumn<AccountingBalance>);
     this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);
     this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn<AccountingBalance>);

@@ -1,6 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { toIsoString } from 'src/app/libs/FormatHelper';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { AccountingBalance } from '../model/AccountingBalance';
 import { AccountingBalanceSearch } from '../model/AccountingBalanceSearch';
@@ -8,7 +7,7 @@ import { AccountingBalanceSearch } from '../model/AccountingBalanceSearch';
 @Injectable({
   providedIn: 'root'
 })
-export class AccountingBalanceService extends AppRestService<AccountingBalance>{
+export class AccountingBalanceService extends AppRestService<AccountingBalance> {
 
   constructor(http: HttpClient) {
     super(http, "accounting");
@@ -19,7 +18,7 @@ export class AccountingBalanceService extends AppRestService<AccountingBalance>{
   }
 
   exportBalance(accountingBalanceSearch: AccountingBalanceSearch) {
-    this.downloadGet(new HttpParams().set("accountingClassId", accountingBalanceSearch.accountingClass ? accountingBalanceSearch.accountingClass.id : "").set("principalAccountingAccountId", accountingBalanceSearch.principalAccountingAccount ? accountingBalanceSearch.principalAccountingAccount.id + "" : "0").set("accountingAccountId", accountingBalanceSearch.accountingAccount ? accountingBalanceSearch.accountingAccount.id! : "").set("startDate", toIsoString(accountingBalanceSearch.startDate!)).set("endDate", toIsoString(accountingBalanceSearch.endDate!)).set("isFromAs400", accountingBalanceSearch.isFromAs400 + ""), "accounting-balance/export");
+    this.downloadPost("accounting-balance/export", accountingBalanceSearch as any as AccountingBalance);
   }
 
   searchAccountingBalanceGenerale(accountingBalanceSearch: AccountingBalanceSearch) {
@@ -27,7 +26,7 @@ export class AccountingBalanceService extends AppRestService<AccountingBalance>{
   }
 
   exportBalanceGenerale(accountingBalanceSearch: AccountingBalanceSearch) {
-    this.downloadGet(new HttpParams().set("accountingClassId", accountingBalanceSearch.accountingClass ? accountingBalanceSearch.accountingClass.id : "").set("principalAccountingAccountId", accountingBalanceSearch.principalAccountingAccount ? accountingBalanceSearch.principalAccountingAccount.id + "" : "0").set("accountingAccountId", accountingBalanceSearch.accountingAccount ? accountingBalanceSearch.accountingAccount.id! : "").set("startDate", toIsoString(accountingBalanceSearch.startDate!)).set("endDate", toIsoString(accountingBalanceSearch.endDate!)).set("isFromAs400", accountingBalanceSearch.isFromAs400 + ""), "accounting-balance/generale/export");
+    this.downloadPost("accounting-balance/generale/export", accountingBalanceSearch as any as AccountingBalance);
   }
 
 }

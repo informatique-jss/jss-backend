@@ -1,11 +1,12 @@
 package com.jss.osiris.modules.accounting.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class AccountingBalanceSearch {
   private AccountingAccountClass accountingClass;
   private AccountingAccount accountingAccount;
-  private PrincipalAccountingAccount principalAccountingAccount;
+  private List<PrincipalAccountingAccount> principalAccountingAccounts;
 
   private LocalDateTime startDate;
   private LocalDateTime endDate;
@@ -52,12 +53,12 @@ public class AccountingBalanceSearch {
     this.endDate = endDate;
   }
 
-  public PrincipalAccountingAccount getPrincipalAccountingAccount() {
-    return principalAccountingAccount;
+  public List<PrincipalAccountingAccount> getPrincipalAccountingAccounts() {
+    return principalAccountingAccounts;
   }
 
-  public void setPrincipalAccountingAccount(PrincipalAccountingAccount principalAccountingAccount) {
-    this.principalAccountingAccount = principalAccountingAccount;
+  public void setPrincipalAccountingAccounts(List<PrincipalAccountingAccount> principalAccountingAccounts) {
+    this.principalAccountingAccounts = principalAccountingAccounts;
   }
 
 }
