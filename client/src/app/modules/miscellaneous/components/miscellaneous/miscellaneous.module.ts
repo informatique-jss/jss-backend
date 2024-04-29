@@ -78,6 +78,7 @@ import { ChipsFormeJuridiqueComponent } from '../forms/chips-forme-juridique/chi
 import { ChipsMailComponent } from '../forms/chips-mail/chips-mail.component';
 import { ChipsPaymentTypeComponent } from '../forms/chips-payment-type/chips-payment-type.component';
 import { ChipsPhoneComponent } from '../forms/chips-phone/chips-phone.component';
+import { ChipsPrincipalAccountingAccountComponent } from '../forms/chips-principal-accounting-account/chips-principal-accounting-account.component';
 import { ChipsProvisionFamilyTypeComponent } from '../forms/chips-provision-family/chips-provision-family.component';
 import { ChipsSpecialOffersComponent } from '../forms/chips-special-offers/chips-special-offers.component';
 import { ChipsTypeDocumentComponent } from '../forms/chips-type-document/chips-type-document.component';
@@ -533,6 +534,7 @@ const routes: Routes = [
     SelectCustomerOrderFrequencyComponent,
     SelectBillingTypeComponent,
     SelectPaperSetTypeComponent,
+    ChipsPrincipalAccountingAccountComponent,
   ],
   exports: [
     HistoryComponent,
@@ -766,6 +768,7 @@ const routes: Routes = [
     SelectCustomerOrderFrequencyComponent,
     SelectBillingTypeComponent,
     SelectPaperSetTypeComponent,
+    ChipsPrincipalAccountingAccountComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

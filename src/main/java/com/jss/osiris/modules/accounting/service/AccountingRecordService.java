@@ -9,11 +9,9 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
-import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceSearch;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceViewTitle;
-import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
@@ -64,28 +62,21 @@ public interface AccountingRecordService {
 
         public List<AccountingBalanceViewTitle> getProfitAndLost(LocalDateTime startDate, LocalDateTime endDate);
 
-        public File getGrandLivreExport(AccountingAccountClass accountingClass, LocalDateTime startDate,
-                        LocalDateTime endDate) throws OsirisException;
+        public File getGrandLivreExport(AccountingRecordSearch accountingRecordSearch) throws OsirisException;
 
-        public File getJournalExport(AccountingJournal accountingJournal, LocalDateTime startDate,
-                        LocalDateTime endDate)
+        public File getJournalExport(AccountingRecordSearch accountingRecordSearch)
                         throws OsirisException;
 
-        public File getAccountingAccountExport(AccountingAccount accountingAccount, LocalDateTime startDate,
-                        LocalDateTime endDate) throws OsirisException;
+        public File getAccountingAccountExport(AccountingRecordSearch accountingRecordSearch) throws OsirisException;
 
         public File getProfitLostExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException;
 
         public File getBilanExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException;
 
-        public File getAccountingBalanceExport(Integer accountingClassId, Integer principalAccountingAccountId,
-                        Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate,
-                        boolean isFromAs400)
+        public File getAccountingBalanceExport(AccountingBalanceSearch accountingRecordSearch)
                         throws OsirisException;
 
-        public File getAccountingBalanceGeneraleExport(Integer accountingClassId, Integer principalAccountingAccountId,
-                        Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate,
-                        boolean isFromAs400)
+        public File getAccountingBalanceGeneraleExport(AccountingBalanceSearch accountingRecordSearch)
                         throws OsirisException;
 
         public Boolean deleteAccountingRecords(AccountingRecord accountingRecord) throws OsirisValidationException;

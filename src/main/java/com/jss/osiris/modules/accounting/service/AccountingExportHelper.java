@@ -32,13 +32,11 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
-import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceViewItem;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceViewTitle;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
-import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 
@@ -54,15 +52,8 @@ public class AccountingExportHelper {
         @Value("${jss.siret}")
         private String siretJss;
 
-        public File getGrandLivre(AccountingAccountClass accountingAccountClass, LocalDateTime startDate,
+        public File getGrandLivre(List<AccountingRecordSearchResult> accountingRecords, LocalDateTime startDate,
                         LocalDateTime endDate) throws OsirisException {
-                AccountingRecordSearch search = new AccountingRecordSearch();
-                search.setAccountingClass(accountingAccountClass);
-                search.setStartDate(startDate);
-                search.setEndDate(endDate);
-                List<AccountingRecordSearchResult> accountingRecords = accountingRecordService
-                                .searchAccountingRecords(search, true);
-
                 List<String> accountingAccounts = getAccountingAccountInRecord(accountingRecords);
 
                 XSSFWorkbook wb = new XSSFWorkbook();
@@ -454,9 +445,8 @@ public class AccountingExportHelper {
                                 currentColumn = 0;
                                 currentCell = currentRow.createCell(currentColumn++);
                                 currentCell.setCellValue(
-                                                balanceRecord.getPrincipalAccountingAccountCode() + (!isGenerale
-                                                                ? balanceRecord.getAccountingAccountSubNumber()
-                                                                : ""));
+                                                balanceRecord.getPrincipalAccountingAccountCode()
+                                                                + balanceRecord.getAccountingAccountSubNumber());
                                 currentCell.setCellStyle(styleDate);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 currentCell.setCellValue(
@@ -590,15 +580,9 @@ public class AccountingExportHelper {
                 return file;
         }
 
-        public File getJournal(AccountingJournal accountingJournal, LocalDateTime startDate,
+        public File getJournal(List<AccountingRecordSearchResult> accountingRecords,
+                        AccountingJournal accountingJournal, LocalDateTime startDate,
                         LocalDateTime endDate) throws OsirisException {
-                AccountingRecordSearch search = new AccountingRecordSearch();
-                search.setAccountingJournal(accountingJournal);
-                search.setStartDate(startDate);
-                search.setEndDate(endDate);
-                List<AccountingRecordSearchResult> accountingRecords = accountingRecordService
-                                .searchAccountingRecords(search, true);
-
                 XSSFWorkbook wb = new XSSFWorkbook();
 
                 // Define style
@@ -845,15 +829,9 @@ public class AccountingExportHelper {
                 return file;
         }
 
-        public File getAccountingAccount(AccountingAccount accountingAccount, LocalDateTime startDate,
+        public File getAccountingAccount(List<AccountingRecordSearchResult> accountingRecords,
+                        AccountingAccount accountingAccount, LocalDateTime startDate,
                         LocalDateTime endDate) throws OsirisException {
-                AccountingRecordSearch search = new AccountingRecordSearch();
-                search.setAccountingAccount(accountingAccount);
-                search.setStartDate(startDate);
-                search.setEndDate(endDate);
-                List<AccountingRecordSearchResult> accountingRecords = accountingRecordService
-                                .searchAccountingRecords(search, true);
-
                 XSSFWorkbook wb = new XSSFWorkbook();
 
                 // Define style

@@ -1,18 +1,15 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { toIsoString } from 'src/app/libs/FormatHelper';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { AccountingRecord } from '../../accounting/model/AccountingRecord';
 import { ITiers } from '../../tiers/model/ITiers';
-import { AccountingAccount } from '../model/AccountingAccount';
-import { AccountingAccountClass } from '../model/AccountingAccountClass';
-import { AccountingJournal } from '../model/AccountingJournal';
+import { AccountingRecordSearch } from '../model/AccountingRecordSearch';
 import { AccountingRecordSearchResult } from '../model/AccountingRecordSearchResult';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AccountingRecordService extends AppRestService<AccountingRecord>{
+export class AccountingRecordService extends AppRestService<AccountingRecord> {
   constructor(http: HttpClient) {
     super(http, "accounting");
   }
@@ -21,20 +18,16 @@ export class AccountingRecordService extends AppRestService<AccountingRecord>{
     return this.postList(new HttpParams(), "accounting-records/manual/add", accountingRecords, "Opérations correctement ajoutées", "Erreur lors de l'ajout des opérations");
   }
 
-  exportGrandLivre(accountingClass: AccountingAccountClass, startDate: Date, endDate: Date) {
-    this.downloadGet(new HttpParams().set("accountingClassId", accountingClass.id).set("startDate", toIsoString(startDate)).set("endDate", toIsoString(endDate)), "grand-livre/export");
+  exportGrandLivre(accountingRecordSearch: AccountingRecordSearch) {
+    this.downloadPost("grand-livre/export", accountingRecordSearch as any as AccountingRecord);
   }
 
-  exportAllGrandLivre(startDate: Date, endDate: Date) {
-    this.downloadGet(new HttpParams().set("startDate", toIsoString(startDate)).set("endDate", toIsoString(endDate)), "grand-livre/export");
+  exportJournal(accountingRecordSearch: AccountingRecordSearch) {
+    this.downloadPost("journal/export", accountingRecordSearch as any as AccountingRecord);
   }
 
-  exportJournal(accountingJournal: AccountingJournal, startDate: Date, endDate: Date) {
-    this.downloadGet(new HttpParams().set("accountingJournalId", accountingJournal.id).set("startDate", toIsoString(startDate)).set("endDate", toIsoString(endDate)), "journal/export");
-  }
-
-  exportAccountingAccount(accountingAccount: AccountingAccount, startDate: Date, endDate: Date) {
-    this.downloadGet(new HttpParams().set("accountingAccountId", accountingAccount.id!).set("startDate", toIsoString(startDate)).set("endDate", toIsoString(endDate)), "accounting-account/export");
+  exportAccountingAccount(accountingRecordSearch: AccountingRecordSearch) {
+    this.downloadPost("accounting-account/export", accountingRecordSearch as any as AccountingRecord);
   }
 
   downloadBillingClosureReceipt(tiers: ITiers) {

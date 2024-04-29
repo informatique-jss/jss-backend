@@ -289,29 +289,22 @@ public class AccountingController {
                 HttpStatus.OK);
     }
 
-    @GetMapping(inputEntryPoint + "/grand-livre/export")
-    public ResponseEntity<byte[]> downloadGrandLivre(
-            @RequestParam(name = "accountingClassId", required = false) Integer accountingClassId,
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+    @PostMapping(inputEntryPoint + "/grand-livre/export")
+    public ResponseEntity<byte[]> downloadGrandLivre(@RequestBody AccountingRecordSearch accountingRecordSearch)
             throws OsirisValidationException, OsirisException {
         byte[] data = null;
         HttpHeaders headers = null;
 
-        AccountingAccountClass accountingClass = null;
+        if (accountingRecordSearch == null)
+            throw new OsirisValidationException("accountingRecordSearch");
 
-        if (accountingClassId != null) {
-            accountingClass = accountingAccountClassService
-                    .getAccountingAccountClass(accountingClassId);
-
-            if (accountingClass == null)
-                throw new OsirisValidationException("accountingClass");
+        if (accountingRecordSearch.getTiersId() == null
+                && accountingRecordSearch.getConfrereId() == null) {
+            if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
+                throw new OsirisValidationException("StartDate or EndDate");
         }
 
-        if (startDate == null || endDate == null)
-            throw new OsirisValidationException("StartDate or EndDate");
-
-        File grandLivre = accountingRecordService.getGrandLivreExport(accountingClass, startDate, endDate);
+        File grandLivre = accountingRecordService.getGrandLivreExport(accountingRecordSearch);
 
         if (grandLivre != null) {
             try {
@@ -322,9 +315,12 @@ public class AccountingController {
 
             headers = new HttpHeaders();
             headers.add("filename",
-                    "SPPS - Grand livre - " + (accountingClass != null ? accountingClass.getLabel() + " - " : "")
-                            + startDate.format(dateFormatter) + " - "
-                            + endDate.format(dateFormatter) + ".xlsx");
+                    "SPPS - Grand livre - "
+                            + (accountingRecordSearch.getAccountingClass() != null
+                                    ? accountingRecordSearch.getAccountingClass().getLabel() + " - "
+                                    : "")
+                            + accountingRecordSearch.getStartDate().format(dateFormatter) + " - "
+                            + accountingRecordSearch.getEndDate().format(dateFormatter) + ".xlsx");
             headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
             headers.setContentLength(data.length);
             headers.set("content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -335,26 +331,24 @@ public class AccountingController {
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
     }
 
-    @GetMapping(inputEntryPoint + "/journal/export")
-    public ResponseEntity<byte[]> downloadJournal(@RequestParam("accountingJournalId") Integer accountingJournalId,
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+    @PostMapping(inputEntryPoint + "/journal/export")
+    public ResponseEntity<byte[]> downloadJournal(@RequestBody AccountingRecordSearch accountingRecordSearch)
             throws OsirisValidationException, OsirisException {
         byte[] data = null;
         HttpHeaders headers = null;
 
-        if (accountingJournalId == null)
-            throw new OsirisValidationException("accountingJournalId");
+        if (accountingRecordSearch == null)
+            throw new OsirisValidationException("accountingRecordSearch");
 
-        AccountingJournal accountingJournal = accountingJournalService.getAccountingJournal(accountingJournalId);
+        if (accountingRecordSearch.getTiersId() == null
+                && accountingRecordSearch.getConfrereId() == null) {
+            if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
+                throw new OsirisValidationException("StartDate or EndDate");
+        }
 
-        if (accountingJournal == null)
-            throw new OsirisValidationException("accountingJournal");
+        validationHelper.validateReferential(accountingRecordSearch.getAccountingJournal(), true, "accoutingJournal");
 
-        if (startDate == null || endDate == null)
-            throw new OsirisValidationException("StartDate or EndDate");
-
-        File grandLivre = accountingRecordService.getJournalExport(accountingJournal, startDate, endDate);
+        File grandLivre = accountingRecordService.getJournalExport(accountingRecordSearch);
 
         if (grandLivre != null) {
             try {
@@ -365,9 +359,10 @@ public class AccountingController {
 
             headers = new HttpHeaders();
             headers.add("filename",
-                    "SPPS - Journal - " + accountingJournal.getLabel() + " - " + startDate.format(dateFormatter)
+                    "SPPS - Journal - " + accountingRecordSearch.getAccountingJournal().getLabel() + " - "
+                            + accountingRecordSearch.getStartDate().format(dateFormatter)
                             + " - "
-                            + endDate.format(dateFormatter) + ".xlsx");
+                            + accountingRecordSearch.getEndDate().format(dateFormatter) + ".xlsx");
             headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
             headers.setContentLength(data.length);
             headers.set("content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -379,27 +374,24 @@ public class AccountingController {
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
     }
 
-    @GetMapping(inputEntryPoint + "/accounting-account/export")
-    public ResponseEntity<byte[]> downloadAccountingAccount(
-            @RequestParam("accountingAccountId") Integer accountingAccountId,
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+    @PostMapping(inputEntryPoint + "/accounting-account/export")
+    public ResponseEntity<byte[]> downloadAccountingAccount(@RequestBody AccountingRecordSearch accountingRecordSearch)
             throws OsirisValidationException, OsirisException {
         byte[] data = null;
         HttpHeaders headers = null;
 
-        if (accountingAccountId == null)
-            throw new OsirisValidationException("accountingAccountId");
+        if (accountingRecordSearch == null)
+            throw new OsirisValidationException("accountingRecordSearch");
 
-        AccountingAccount accountingAccount = accountingAccountService.getAccountingAccount(accountingAccountId);
+        if (accountingRecordSearch.getTiersId() == null
+                && accountingRecordSearch.getConfrereId() == null) {
+            if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
+                throw new OsirisValidationException("StartDate or EndDate");
+        }
 
-        if (accountingAccount == null)
-            throw new OsirisValidationException("accountingAccount");
+        validationHelper.validateReferential(accountingRecordSearch.getAccountingAccount(), true, "accoutingAccount");
 
-        if (startDate == null || endDate == null)
-            throw new OsirisValidationException("StartDate or EndDate");
-
-        File grandLivre = accountingRecordService.getAccountingAccountExport(accountingAccount, startDate, endDate);
+        File grandLivre = accountingRecordService.getAccountingAccountExport(accountingRecordSearch);
 
         if (grandLivre != null) {
             try {
@@ -410,10 +402,11 @@ public class AccountingController {
 
             headers = new HttpHeaders();
             headers.add("filename",
-                    "SPPS - Compte - " + accountingAccount.getPrincipalAccountingAccount().getCode()
-                            + accountingAccount.getAccountingAccountSubNumber() + " - "
-                            + startDate.format(dateFormatter) + " - "
-                            + endDate.format(dateFormatter) + ".xlsx");
+                    "SPPS - Compte - "
+                            + accountingRecordSearch.getAccountingAccount().getPrincipalAccountingAccount().getCode()
+                            + accountingRecordSearch.getAccountingAccount().getAccountingAccountSubNumber() + " - "
+                            + accountingRecordSearch.getStartDate().format(dateFormatter) + " - "
+                            + accountingRecordSearch.getEndDate().format(dateFormatter) + ".xlsx");
             headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
             headers.setContentLength(data.length);
             headers.set("content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -477,40 +470,31 @@ public class AccountingController {
         if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        validationHelper.validateReferential(accountingRecordSearch.getPrincipalAccountingAccount(), false,
-                "PrincipalAccountingAccount");
+        if (accountingRecordSearch.getPrincipalAccountingAccounts() != null)
+            for (PrincipalAccountingAccount principalAccountingAccount : accountingRecordSearch
+                    .getPrincipalAccountingAccounts())
+                validationHelper.validateReferential(principalAccountingAccount, false,
+                        "PrincipalAccountingAccount");
 
         return new ResponseEntity<List<AccountingBalance>>(
                 accountingRecordService.searchAccountingBalance(accountingRecordSearch), HttpStatus.OK);
     }
 
-    @GetMapping(inputEntryPoint + "/accounting-balance/export")
-    public ResponseEntity<byte[]> downloadAccountingBalance(
-            @RequestParam(name = "accountingClassId", required = false) Integer accountingClassId,
-            @RequestParam(name = "principalAccountingAccountId", required = false) Integer principalAccountingAccountId,
-            @RequestParam(name = "accountingAccountId", required = false) Integer accountingAccountId,
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
-            @RequestParam("isFromAs400") Boolean isFromAs400)
+    @PostMapping(inputEntryPoint + "/accounting-balance/export")
+    public ResponseEntity<byte[]> downloadAccountingBalance(@RequestBody AccountingBalanceSearch accountingRecordSearch)
             throws OsirisValidationException, OsirisException {
         byte[] data = null;
         HttpHeaders headers = null;
 
         AccountingAccountClass accountingClass = null;
 
-        if (accountingClassId != null) {
-            accountingClass = accountingAccountClassService
-                    .getAccountingAccountClass(accountingClassId);
+        if (accountingRecordSearch == null)
+            throw new OsirisValidationException("accountingRecordSearch");
 
-            if (accountingClass == null)
-                throw new OsirisValidationException("accountingClass");
-        }
-
-        if (startDate == null || endDate == null)
+        if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        File grandLivre = accountingRecordService.getAccountingBalanceExport(accountingClassId,
-                principalAccountingAccountId, accountingAccountId, startDate, endDate, isFromAs400);
+        File grandLivre = accountingRecordService.getAccountingBalanceExport(accountingRecordSearch);
 
         if (grandLivre != null) {
             try {
@@ -522,8 +506,8 @@ public class AccountingController {
             headers = new HttpHeaders();
             headers.add("filename",
                     "SPPS - Balances - "
-                            + startDate.format(dateFormatter) + " - "
-                            + endDate.format(dateFormatter) + ".xlsx");
+                            + accountingRecordSearch.getStartDate().format(dateFormatter) + " - "
+                            + accountingRecordSearch.getEndDate().format(dateFormatter) + ".xlsx");
             headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
             headers.setContentLength(data.length);
             headers.set("content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -544,40 +528,30 @@ public class AccountingController {
         if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        validationHelper.validateReferential(accountingRecordSearch.getPrincipalAccountingAccount(), false,
-                "PrincipalAccountingAccount");
+        if (accountingRecordSearch.getPrincipalAccountingAccounts() != null)
+            for (PrincipalAccountingAccount principalAccountingAccount : accountingRecordSearch
+                    .getPrincipalAccountingAccounts())
+                validationHelper.validateReferential(principalAccountingAccount, false,
+                        "PrincipalAccountingAccount");
 
         return new ResponseEntity<List<AccountingBalance>>(
                 accountingRecordService.searchAccountingBalanceGenerale(accountingRecordSearch), HttpStatus.OK);
     }
 
-    @GetMapping(inputEntryPoint + "/accounting-balance/generale/export")
+    @PostMapping(inputEntryPoint + "/accounting-balance/generale/export")
     public ResponseEntity<byte[]> downloadAccountingBalanceGenerale(
-            @RequestParam(name = "accountingClassId", required = false) Integer accountingClassId,
-            @RequestParam(name = "principalAccountingAccountId", required = false) Integer principalAccountingAccountId,
-            @RequestParam(name = "accountingAccountId", required = false) Integer accountingAccountId,
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
-            @RequestParam("isFromAs400") Boolean isFromAs400)
+            @RequestBody AccountingBalanceSearch accountingRecordSearch)
             throws OsirisValidationException, OsirisException {
         byte[] data = null;
         HttpHeaders headers = null;
 
-        AccountingAccountClass accountingClass = null;
+        if (accountingRecordSearch == null)
+            throw new OsirisValidationException("accountingRecordSearch");
 
-        if (accountingClassId != null) {
-            accountingClass = accountingAccountClassService
-                    .getAccountingAccountClass(accountingClassId);
-
-            if (accountingClass == null)
-                throw new OsirisValidationException("accountingClass");
-        }
-
-        if (startDate == null || endDate == null)
+        if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        File grandLivre = accountingRecordService.getAccountingBalanceGeneraleExport(accountingClassId,
-                principalAccountingAccountId, accountingAccountId, startDate, endDate, isFromAs400);
+        File grandLivre = accountingRecordService.getAccountingBalanceGeneraleExport(accountingRecordSearch);
 
         if (grandLivre != null) {
             try {
@@ -589,8 +563,8 @@ public class AccountingController {
             headers = new HttpHeaders();
             headers.add("filename",
                     "SPPS - Balances - "
-                            + startDate.format(dateFormatter) + " - "
-                            + endDate.format(dateFormatter) + ".xlsx");
+                            + accountingRecordSearch.getStartDate().format(dateFormatter) + " - "
+                            + accountingRecordSearch.getEndDate().format(dateFormatter) + ".xlsx");
             headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
             headers.setContentLength(data.length);
             headers.set("content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
