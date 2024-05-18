@@ -839,6 +839,9 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setOriginPayment(paymentToRefund);
         newPayment.setPaymentType(constantService.getPaymentTypeVirement());
         newPayment.setTargetAccountingAccount(tiersToRefund.getAccountingAccountCustomer());
+        // /!\ Override in
+        // AccountingRecordGenerationServiceImpl.generateAccountingRecordsForRefundGeneration
+        // to put debit amount in CentralPay account and not JSS Bank account
         newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
 
         return addOrUpdatePayment(newPayment);

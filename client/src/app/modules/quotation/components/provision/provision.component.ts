@@ -146,6 +146,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     if (promise)
       promise.subscribe(response => {
         this.asso = response;
+        this.idAffaire = this.asso.id;
         if (this.asso.affaire)
           this.appService.changeHeaderTitle("Prestation - " + (this.asso.affaire.denomination ? this.asso.affaire.denomination : (this.asso.affaire.firstname + " " + this.asso.affaire.lastname)));
       })
