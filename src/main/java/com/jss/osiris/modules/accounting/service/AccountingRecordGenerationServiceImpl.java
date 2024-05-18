@@ -85,6 +85,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         accountingRecord.setPayment(payment);
         accountingRecord.setRefund(refund);
         accountingRecord.setBankTransfert(bankTransfert);
+        accountingRecord.setEquilibrated("15-reprise-pre-final");
         accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
 
         if (accountingRecord.getCreditAmount() != null && accountingRecord.getCreditAmount() < 0
@@ -1010,9 +1011,17 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         if (payment.getSourceAccountingAccount() == null)
             throw new OsirisException(null, "No source accounting account for payment n°" + payment.getId());
 
+        AccountingAccount sourceAccountingAccount = payment.getSourceAccountingAccount();
+        // /!\ Override it
+        // to put debit amount in CentralPay account and not JSS Bank account
+        // when payment to refund is a CB
+        if (payment.getOriginPayment() != null && payment.getOriginPayment().getPaymentType().getId()
+                .equals(constantService.getPaymentTypeCB().getId()))
+            sourceAccountingAccount = constantService.getAccountingAccountBankCentralPay();
+
         generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
-                null, Math.abs(payment.getPaymentAmount()), payment.getSourceAccountingAccount(), null, null,
+                null, Math.abs(payment.getPaymentAmount()), sourceAccountingAccount, null, null,
                 null,
                 bankJournal, payment, refund, null);
 

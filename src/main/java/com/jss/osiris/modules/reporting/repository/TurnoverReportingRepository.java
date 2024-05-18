@@ -58,6 +58,15 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " e2.lastname)) as salesEmployeeLabel, " +
                         " c1.label as confrereLabel, " +
                         " ist.label as invoiceStatusLabel, " +
+                        " case " +
+                        " when i.first_reminder_date_time is null then 'Non relancé' " +
+                        " when i.first_reminder_date_time is not null " +
+                        " and i.second_reminder_date_time is null then 'Relancé une fois' " +
+                        " when i.second_reminder_date_time is not null " +
+                        " and i.third_reminder_date_time is null then 'Relancé deux fois'  " +
+                        " when i.third_reminder_date_time is not null " +
+                        "  then 'Relancé trois fois'  " +
+                        " end reminderType, " +
                         " sum(coalesce((select count(*) from announcement a join provision p on p.id_announcement =a.id join asso_affaire_order aao on aao.id = p.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id),0)) as nbrAnnouncement, "
                         +
                         " (select string_agg(distinct cast(d.code as text),', ' )  from announcement a join department d on d.id = a.id_department  join provision p on p.id_announcement = a.id join asso_affaire_order aao on aao.id = p.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id) as announcementDepartment "
@@ -129,6 +138,15 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " concat (e2.firstname, " +
                         " ' ', " +
                         " e2.lastname)) , " +
+                        " case " +
+                        " when i.first_reminder_date_time is null then 'Non relancé' " +
+                        " when i.first_reminder_date_time is not null " +
+                        " and i.second_reminder_date_time is null then 'Relancé une fois' " +
+                        " when i.second_reminder_date_time is not null " +
+                        " and i.third_reminder_date_time is null then 'Relancé deux fois'  " +
+                        " when i.third_reminder_date_time is not null " +
+                        "  then 'Relancé trois fois'  " +
+                        " end ," +
                         " ist.label,  " +
                         " (select  string_agg(distinct  cast(d.code as text),', ' )  from announcement a join department d on d.id = a.id_department  join provision p on p.id_announcement = a.id join asso_affaire_order aao on aao.id = p.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id) "
                         +

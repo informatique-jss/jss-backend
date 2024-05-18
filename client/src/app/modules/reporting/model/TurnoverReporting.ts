@@ -18,4 +18,5 @@ export interface TurnoverReporting {
   nbrAnnouncement: number;
   announcementDepartment: string;
   confrereLabel: string;
+  reminderType: string;
 }

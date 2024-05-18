@@ -703,7 +703,7 @@ public class TiersController {
     if (tiers.getPhones() != null && tiers.getPhones().size() > 0) {
       for (Phone phone : tiers.getPhones()) {
         if (!validationHelper.validateFrenchPhone(phone.getPhoneNumber())
-            || !validationHelper.validateInternationalPhone(phone.getPhoneNumber()))
+            && !validationHelper.validateInternationalPhone(phone.getPhoneNumber()))
           throw new OsirisValidationException("Phones");
       }
     }
@@ -767,6 +767,19 @@ public class TiersController {
 
     if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
       for (Responsable responsable : tiers.getResponsables()) {
+
+        if (responsable.getMails() != null && responsable.getMails().size() > 0) {
+          if (!validationHelper.validateMailList(responsable.getMails()))
+            throw new OsirisValidationException("Mails");
+        }
+
+        if (responsable.getPhones() != null && responsable.getPhones().size() > 0) {
+          for (Phone phone : responsable.getPhones()) {
+            if (!validationHelper.validateFrenchPhone(phone.getPhoneNumber())
+                && !validationHelper.validateInternationalPhone(phone.getPhoneNumber()))
+              throw new OsirisValidationException("Phones");
+          }
+        }
 
         validationHelper.validateReferential(responsable.getCivility(), true, "Civility");
         validationHelper.validateString(responsable.getFirstname(), true, 40, "Firstname");

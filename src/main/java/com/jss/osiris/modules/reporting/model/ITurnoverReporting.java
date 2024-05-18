@@ -39,4 +39,6 @@ public interface ITurnoverReporting {
     Integer getNbrAnnouncement();
 
     String getAnnouncementDepartment();
+
+    String getReminderType();
 }
