@@ -119,6 +119,7 @@ import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
 @RestController
+@PreAuthorize(ActiveDirectoryHelper.OSIRIS_USERS)
 public class MiscellaneousController {
 
     private static final String inputEntryPoint = "/miscellaneous";

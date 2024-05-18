@@ -83,6 +83,7 @@ import com.jss.osiris.modules.tiers.service.RffService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
 @RestController
+@PreAuthorize(ActiveDirectoryHelper.OSIRIS_USERS)
 public class InvoicingController {
 
     private static final String inputEntryPoint = "/invoicing";

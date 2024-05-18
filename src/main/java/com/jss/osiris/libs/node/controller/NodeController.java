@@ -18,6 +18,7 @@ import com.jss.osiris.libs.node.model.Node;
 import com.jss.osiris.libs.node.service.NodeService;
 
 @RestController
+@PreAuthorize(ActiveDirectoryHelper.OSIRIS_USERS)
 public class NodeController {
 
 	private static final String inputEntryPoint = "/node";

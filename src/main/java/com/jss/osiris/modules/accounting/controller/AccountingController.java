@@ -46,6 +46,7 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
 @RestController
+@PreAuthorize(ActiveDirectoryHelper.OSIRIS_USERS)
 public class AccountingController {
 
     private static final String inputEntryPoint = "/accounting";
@@ -485,8 +486,6 @@ public class AccountingController {
             throws OsirisValidationException, OsirisException {
         byte[] data = null;
         HttpHeaders headers = null;
-
-        AccountingAccountClass accountingClass = null;
 
         if (accountingRecordSearch == null)
             throw new OsirisValidationException("accountingRecordSearch");

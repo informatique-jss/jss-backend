@@ -35,6 +35,7 @@ import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.service.BillingLabelTypeService;
 
 @RestController
+@PreAuthorize(ActiveDirectoryHelper.OSIRIS_USERS)
 public class BatchController {
 
 	private static final String inputEntryPoint = "/batch";

@@ -103,6 +103,11 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("mail.temporized.temporization.seconds");
         isOk = isOk && checkProperty("schedulling.log.osiris.customer.bilan.publication.reminder");
         isOk = isOk && checkProperty("schedulling.log.osiris.customer.missing.attachment.queries");
+        isOk = isOk && checkProperty("wordpress.entry.point");
+        isOk = isOk && checkProperty("wordpress.media.base.url");
+        isOk = isOk && checkProperty("apache.media.base.url");
+        isOk = isOk && checkProperty("wordpress.category.interview.id");
+        isOk = isOk && checkProperty("wordpress.category.podcast.id");
 
         isOk = isOk && checkAccountingParams();
 

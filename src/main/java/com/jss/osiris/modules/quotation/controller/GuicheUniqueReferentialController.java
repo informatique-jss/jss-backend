@@ -207,6 +207,7 @@ import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.TypeR
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.TypeVoieService;
 
 @RestController
+@PreAuthorize(ActiveDirectoryHelper.OSIRIS_USERS)
 public class GuicheUniqueReferentialController {
 
     private static final String inputEntryPoint = "/quotation/guichet-unique";

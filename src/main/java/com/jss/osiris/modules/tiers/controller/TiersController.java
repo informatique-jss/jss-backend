@@ -80,6 +80,7 @@ import com.jss.osiris.modules.tiers.service.TiersService;
 import com.jss.osiris.modules.tiers.service.TiersTypeService;
 
 @RestController
+@PreAuthorize(ActiveDirectoryHelper.OSIRIS_USERS)
 public class TiersController {
 
   private static final String inputEntryPoint = "/tiers";

@@ -47,6 +47,8 @@ public class ActiveDirectoryHelper {
     @Autowired
     EmployeeService employeeService;
 
+    public static final String OSIRIS_USERS = "@activeDirectoryHelper.isUserHasGroup('"
+            + ActiveDirectoryHelper.OSIRIS_USERS_GROUP + "')";
     public static final String ADMINISTRATEUR = "@activeDirectoryHelper.isUserHasGroup('"
             + ActiveDirectoryHelper.ADMINISTRATEUR_GROUP + "')";
     public static final String ACCOUNTING = "@activeDirectoryHelper.isUserHasGroup('"
@@ -54,6 +56,7 @@ public class ActiveDirectoryHelper {
     public static final String ACCOUNTING_RESPONSIBLE = "@activeDirectoryHelper.isUserHasGroup('"
             + ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP + "')";
     public static final String ADMINISTRATEUR_GROUP = "ROLE_OSIRIS_ADMINISTRATEURS";
+    public static final String OSIRIS_USERS_GROUP = "ROLE_OSIRIS_UTILISATEURS";
     public static final String ACCOUNTING_GROUP = "ROLE_OSIRIS_COMPTABILITÉ";
     public static final String ACCOUNTING_RESPONSIBLE_GROUP = "ROLE_OSIRIS_RESPONSABLE_COMPTABILITÉ";
 
