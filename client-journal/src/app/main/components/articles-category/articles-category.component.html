@@ -1,0 +1,86 @@
+<!-- =======================
+Inner intro START -->
+<section class="pt-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-12" *ngIf="currentCategory">
+        <div class="bg-primary bg-opacity-10 p-4 p-md-5 rounded-3 text-center"
+          style=" background-position: center left; background-size: cover;"
+          [style.background-image]="'url('+currentCategory.picture.urlFull+')'">
+          <div class="row justify-content-md-center">
+            <div class="col-lg-5  bg-white bg-opacity-75 rounded-3 text-center">
+              <h1>{{currentCategory.name}}</h1>
+              <nav class="d-flex justify-content-center" aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-dots m-0">
+                  <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house me-1"></i> Accueil</a></li>
+                  <li class="breadcrumb-item "><a href="index.html">{{currentCategory.name}}</a></li>
+                  <li class="breadcrumb-item active">Tous les posts</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- =======================
+Inner intro END -->
+
+<!-- =======================
+Main content START -->
+<section class="position-relative pt-0" *ngIf="currentCategory">
+  <div class="container">
+    <div class="row">
+      <!-- Main Post START -->
+      <div class="col-12" *ngFor="let post of posts">
+        <!-- Card item START -->
+        <div class="card border rounded-3 up-hover p-4 mb-4">
+          <div class="row g-3">
+            <div class="col-lg-5">
+              <!-- Categories -->
+              <ng-container *ngIf="post.fullCategories!=null && post.fullCategories.length>0">
+                <a *ngFor="let category of post.fullCategories" href="#"
+                  class="badge text-bg-danger mb-2 margin-category btn-primary-soft"
+                  [style.background-color]="category.color+' !important'"><i
+                    class="fas fa-circle me-2 small fw-bold"></i>{{category.name}}</a>
+              </ng-container>
+              <!-- Title -->
+              <h2 class="card-title">
+                <a href="#" class="btn-link text-reset stretched-link" [innerHTML]="post.title.rendered| trustHtml"></a>
+              </h2>
+              <!-- Author info -->
+              <div class="d-flex align-items-center position-relative mt-3">
+                <div class="avatar me-2">
+                  <img class="avatar-img rounded-circle" [src]="post.fullAuthor.avatar_urls['24']" alt="avatar">
+                </div>
+                <div>
+                  <h5 class="mb-1"><a href="#" class="stretched-link text-reset btn-link">{{post.fullAuthor.name}}</a>
+                  </h5>
+                  <ul class="nav align-items-center small">
+                    <li class="nav-item me-3">{{post.date | date:'EEEE d MMMM'}}</li>
+                    <li class="nav-item"><i class="far fa-clock me-1"></i>{{getTimeReading(post.content.rendered)}}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <!-- Detail -->
+            <div class="col-md-6 col-lg-4">
+              <p *ngIf="post.excerpt && post.excerpt.rendered && post.excerpt.rendered.length>0"
+                [innerHTML]="post.excerpt.rendered| trustHtml"></p>
+            </div>
+            <!-- Image -->
+            <div class="col-md-6 col-lg-3">
+              <img class="rounded-3" [src]="post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
+                alt="Card image">
+            </div>
+          </div>
+        </div>
+        <!-- Card item END -->
+      </div>
+      <!-- Load more -->
+      <button type="button" class="btn btn-primary-soft w-100" *ngIf="displayLoadMoreButton"
+        (click)="getNextPosts()">Voir + d'articles <i class="bi bi-arrow-down-circle ms-2 align-middle"></i></button>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,230 @@
+<section class="position-relative">
+  <div class="container" data-sticky-container>
+    <div class="row">
+      <!-- Main Post START -->
+      <div class="col-lg-9">
+        <!-- Title -->
+        <div class="mb-4">
+          <h2 class="m-0"><i class="bi bi-hourglass-top me-2"></i>Derniers articles</h2>
+          <p>Dernières news, vidéos, podcasts et interviews</p>
+        </div>
+        <div class="row gy-4">
+          <!-- Card item START -->
+          <div class="col-sm-6" *ngFor="let post of posts | slice :4">
+            <div class="card">
+              <!-- Card img -->
+              <div class="position-relative">
+                <img class="card-img"
+                  [src]="post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlMedium" alt="Card image">
+                <span class="card-featured" title="Featured post" *ngIf="post.premium==true"><i
+                    class="fas fa-star"></i></span>
+                <div class="card-img-overlay d-flex align-items-start flex-column p-3">
+                  <!-- Card overlay bottom -->
+                  <div class="w-100 mt-auto">
+                    <!-- Card category -->
+                    <ng-container *ngIf="post.fullCategories!=null && post.fullCategories.length>0">
+                      <a *ngFor="let category of post.fullCategories" href="#"
+                        class="badge text-bg-danger mb-2 margin-category btn-primary-soft"
+                        [style.background-color]="category.color+' !important'"><i
+                          class="fas fa-circle me-2 small fw-bold"></i>{{category.name}}</a>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body px-0 pt-3">
+                <h4 class="card-title mt-2"><a href="post-single.html" class="btn-link text-reset fw-bold"
+                    [innerHTML]="post.title.rendered| trustHtml"></a></h4>
+                <p class="card-text" *ngIf="post.excerpt && post.excerpt.rendered && post.excerpt.rendered.length>0"
+                  [innerHTML]="post.excerpt.rendered| trustHtml"></p>
+                <!-- Card info -->
+                <ul class="nav nav-divider align-items-center d-none d-sm-inline-block">
+                  <li class="nav-item">
+                    <div class="nav-link">
+                      <div class="d-flex align-items-center position-relative">
+                        <div class="avatar avatar-xs">
+                          <img class="avatar-img rounded-circle" [src]="post.fullAuthor.avatar_urls['24']" alt="avatar">
+                        </div>
+                        <span class="ms-3">par <a href="#"
+                            class="stretched-link text-reset btn-link">{{post.fullAuthor.name}}</a></span>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="nav-item">{{post.date | date:'EEEE d MMMM'}}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- Card item END -->
+          <!-- Card item END -->
+          <!-- Load more START -->
+          <div class="col-12 text-center mt-5">
+            <button type="button" class="btn btn-primary-soft" (click)="getNextPosts()">Voir + d'articles <i
+                class="bi bi-arrow-down-circle ms-2 align-middle"></i></button>
+          </div>
+          <!-- Load more END -->
+        </div>
+      </div>
+      <!-- Main Post END -->
+      <!-- Sidebar START -->
+      <div class="col-lg-3 mt-5 mt-lg-0">
+        <div data-sticky data-margin-top="80" data-sticky-for="767">
+
+          <!-- Social widget START -->
+          <div class="row g-2">
+            <div class="col-4">
+              <a href="https://www.facebook.com/Journal.Special.des.Societes"
+                class="bg-facebook rounded text-center text-white-force p-3 d-block">
+                <i class="fab fa-facebook-square fs-5 mb-2"></i>
+                <h6 class="m-0">1K</h6>
+                <span class="small">Abonnés</span>
+              </a>
+            </div>
+            <div class="col-4">
+              <a href="#" class="bg-instagram-gradient rounded text-center text-white-force p-3 d-block">
+                <i class="fab fa-instagram fs-5 mb-2"></i>
+                <h6 class="m-0">1k</h6>
+                <span class="small">Followers</span>
+              </a>
+            </div>
+            <div class="col-4">
+              <a href="https://www.instagram.com/journalspecialdessocietes/"
+                class="bg-linkedin rounded text-center text-white-force p-3 d-block">
+                <i class="fab fa-youtube-square fs-5 mb-2"></i>
+                <h6 class="m-0">6K</h6>
+                <span class="small">Abonnés</span>
+              </a>
+            </div>
+          </div>
+          <!-- Social widget END -->
+
+          <!-- Category widget START -->
+          <div>
+            <h4 class="mt-4 mb-3">Catégories</h4>
+            <!-- Category item -->
+            <ng-container *ngFor="let category of categories; let index = index">
+              <div *ngIf="index<5"
+                class="text-center mb-3 card-bg-scale position-relative overflow-hidden rounded bg-dark-overlay-4 "
+                style=" background-position: center left; background-size: cover;"
+                [style.background-image]="'url('+category.picture.urlMedium+')'">
+                <div class="p-3">
+                  <a [href]="'/articles/category/'+category.slug"
+                    class="stretched-link btn-link fw-bold text-white h5">{{category.name}}</a>
+                </div>
+              </div>
+            </ng-container>
+            <!-- View All Category button -->
+            <div class="text-center mt-3">
+              <a href="#" class="fw-bold text-body text-primary-hover"><u>Voir toutes les catégories</u></a><!--TODO-->
+            </div>
+          </div>
+          <!-- Category topics widget END -->
+
+          <div class="row">
+            <!-- IDF post widget START -->
+            <div class="col-12 col-sm-6 col-lg-12">
+              <h4 class="mt-4 mb-3">Articles Île-de-France</h4>
+              <!-- Recent post item -->
+              <div class="card mb-3" *ngFor="let departmentPost of departmentPosts">
+                <div class="row g-3">
+                  <div class="col-4">
+                    <img class="rounded" [src]="departmentPost.media.urlThumbnail" alt="Card image">
+                  </div>
+                  <div class="col-8">
+                    <h6><a href="post-single-2.html" class="btn-link stretched-link text-reset fw-bold"
+                        [innerHTML]="('('+departmentPost.fullDepartment[0].code+') ') + departmentPost.title.rendered | trustHtml"></a>
+                    </h6>
+                    <div class="small mt-1">{{departmentPost.date | date:'EEEE d MMMM'}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- IDF post widget END -->
+
+            <!-- IDF post widget START -->
+            <div class="col-12 col-sm-6 col-lg-12">
+              <h4 class="mt-4 mb-3">Dernières interviews</h4>
+              <!-- Recent post item -->
+              <ng-container *ngFor="let interview of interviews ; let index = index">
+                <div class="card mb-3" *ngIf="index<5">
+                  <div class="row g-3">
+                    <div class="col-4">
+                      <img class="rounded" [src]="interview.media.urlThumbnail" alt="Card image">
+                    </div>
+                    <div class="col-8">
+                      <h6><a href="post-single-2.html" class="btn-link stretched-link text-reset fw-bold"
+                          [innerHTML]="  interview.title.rendered | trustHtml"></a>
+                      </h6>
+                      <div class="small mt-1">{{interview.date | date:'EEEE d MMMM'}}</div>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+            <!-- IDF post widget END -->
+
+          </div>
+        </div>
+      </div>
+      <!-- Sidebar END -->
+    </div> <!-- Row end -->
+  </div>
+</section>
+
+
+<!-- Section Podcast START -->
+<section class="pt-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- Title -->
+        <div class="mb-4 d-md-flex justify-content-between align-items-center">
+          <h2 class="m-0"><i class="bi bi-mic"></i> Podcasts</h2>
+        </div>
+        <div class="tiny-slider arrow-hover arrow-blur arrow-dark arrow-round">
+          <div class="tiny-slider-inner" data-autoplay="true" data-hoverpause="true" data-gutter="24" data-arrow="true"
+            data-dots="false" data-items-xl="4" data-items-md="3" data-items-sm="2" data-items-xs="1">
+
+            <!-- Card item START -->
+            <div class="card" *ngFor="let podcast of podcasts">
+              <!-- Card img -->
+              <div class="position-relative">
+                <img class="card-img" [src]="podcast.media.urlMedium" alt="Card image">
+                <div class="card-img-overlay d-flex align-items-start flex-column p-3">
+                  <!-- Card overlay bottom -->
+                  <!-- Card category -->
+                  <div class="w-100 mt-auto" *ngIf="podcast.fullCategories!=null && podcast.fullCategories.length>0">
+                    <a *ngFor="let category of podcast.fullCategories" href="#"
+                      class="badge text-bg-danger mb-2 margin-category btn-primary-soft"
+                      [style.background-color]="category.color+' !important'"><i
+                        class="fas fa-circle me-2 small fw-bold"></i>{{category.name}}</a>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body px-0 pt-3">
+                <h5 class="card-title"><a href="post-single-3.html" class="btn-link text-reset fw-bold"
+                    [innerHTML]="  podcast.title.rendered | trustHtml"> </a></h5>
+                <!-- Card info -->
+                <ul class="nav nav-divider align-items-center d-none d-sm-inline-block">
+                  <li class="nav-item">
+                    <div class="nav-link">
+                      <div class="d-flex align-items-center position-relative">
+                        <div class="avatar avatar-xs">
+                          <img class="avatar-img rounded-circle" [src]="podcast.fullAuthor.avatar_urls['24']"
+                            alt="avatar">
+                        </div>
+                        <span class="ms-3">par <a href="#"
+                            class="stretched-link text-reset btn-link">{{podcast.fullAuthor.name}}</a></span>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="nav-item">{{podcast.date | date:'EEEE d MMMM'}}</li>
+                </ul>
+              </div>
+            </div>
+            <!-- Card item END -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
