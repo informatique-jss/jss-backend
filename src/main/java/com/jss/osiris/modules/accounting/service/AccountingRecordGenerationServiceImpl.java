@@ -85,7 +85,6 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         accountingRecord.setPayment(payment);
         accountingRecord.setRefund(refund);
         accountingRecord.setBankTransfert(bankTransfert);
-        accountingRecord.setEquilibrated("15-reprise-pre-final");
         accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
 
         if (accountingRecord.getCreditAmount() != null && accountingRecord.getCreditAmount() < 0
