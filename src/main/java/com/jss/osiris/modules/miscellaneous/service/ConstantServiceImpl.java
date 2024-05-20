@@ -1,9 +1,11 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,12 +58,20 @@ public class ConstantServiceImpl implements ConstantService {
     @Autowired
     ConstantRepository constantRepository;
 
+    LocalDateTime lastFetchedConstant = null;
+    Constant cachedConstant = null;
+
     @Override
     public Constant getConstants() throws OsirisException {
-        List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
-        if (constants == null || constants.size() != 1)
-            throw new OsirisException(null, "Constants not defined or multiple");
-        return constants.get(0);
+        if (cachedConstant == null || lastFetchedConstant == null
+                || lastFetchedConstant.isBefore(LocalDateTime.now().minusSeconds(5))) {
+            List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
+            if (constants == null || constants.size() != 1)
+                throw new OsirisException(null, "Constants not defined or multiple");
+            cachedConstant = (Constant) Hibernate.unproxy(constants.get(0));
+            lastFetchedConstant = LocalDateTime.now();
+        }
+        return cachedConstant;
     }
 
     @Override
@@ -76,6 +86,8 @@ public class ConstantServiceImpl implements ConstantService {
     @Transactional(rollbackFor = Exception.class)
     public Constant addOrUpdateConstant(
             Constant constant) throws OsirisException {
+        cachedConstant = null;
+        lastFetchedConstant = null;
         return constantRepository.save(constant);
     }
 
