@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,15 +64,23 @@ public class ConstantServiceImpl implements ConstantService {
 
     @Override
     public Constant getConstants() throws OsirisException {
-        if (cachedConstant == null || lastFetchedConstant == null
-                || lastFetchedConstant.isBefore(LocalDateTime.now().minusSeconds(5))) {
-            List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
-            if (constants == null || constants.size() != 1)
-                throw new OsirisException(null, "Constants not defined or multiple");
-            cachedConstant = (Constant) Hibernate.unproxy(constants.get(0));
-            lastFetchedConstant = LocalDateTime.now();
-        }
-        return cachedConstant;
+        // TODO : erreur proxy, sur pricingHelper par exemple...
+        /*
+         * if (cachedConstant == null || lastFetchedConstant == null
+         * || lastFetchedConstant.isBefore(LocalDateTime.now().minusSeconds(5))) {
+         * List<Constant> constants =
+         * IterableUtils.toList(constantRepository.findAll());
+         * if (constants == null || constants.size() != 1)
+         * throw new OsirisException(null, "Constants not defined or multiple");
+         * cachedConstant = (Constant) Hibernate.unproxy(constants.get(0));
+         * lastFetchedConstant = LocalDateTime.now();
+         * }
+         * return cachedConstant;
+         */
+        List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
+        if (constants == null || constants.size() != 1)
+            throw new OsirisException(null, "Constants not defined or multiple");
+        return constants.get(0);
     }
 
     @Override
