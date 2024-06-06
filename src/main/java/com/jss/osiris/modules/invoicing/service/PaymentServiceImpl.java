@@ -895,7 +895,8 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment generateNewDirectDebitPayment(Float paymentAmount, String label) throws OsirisException {
+    public Payment generateNewDirectDebitPayment(Float paymentAmount, String label,
+            DirectDebitTransfert directDebitTransfert) throws OsirisException {
 
         Payment payment = new Payment();
         payment.setIsExternallyAssociated(false);
@@ -905,6 +906,7 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPaymentType(constantService.getPaymentTypePrelevement());
         payment.setIsAppoint(false);
         payment.setIsDeposit(false);
+        payment.setDirectDebitTransfert(directDebitTransfert);
         payment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
         payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
 

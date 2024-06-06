@@ -577,7 +577,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 .getCompetentAuthorityByInpiReference(cartRate.getRecipientCode());
 
         CompetentAuthority competentAuthority;
-        if (competentAuthorities == null || competentAuthorities.size() > 1)
+        // TODO : handle multiple INPI code for same AC, for CMA for instance
+        if (competentAuthorities == null || competentAuthorities.size() != 1)
             competentAuthority = constantService.getCompetentAuthorityInpi();
         else
             competentAuthority = competentAuthorities.get(0);
@@ -647,4 +648,5 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     public List<FormaliteGuichetUnique> getFormaliteGuichetUniqueByLiasseNumber(String value) {
         return formaliteGuichetUniqueRepository.findByLiasseNumber(value);
     }
+
 }

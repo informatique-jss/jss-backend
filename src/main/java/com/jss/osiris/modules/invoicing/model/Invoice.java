@@ -48,6 +48,7 @@ import com.jss.osiris.modules.tiers.model.TiersFollowup;
 @Table(indexes = { @Index(name = "idx_invoice_status", columnList = "id_invoice_status"),
 		@Index(name = "idx_invoice_manual_document_number", columnList = "id_competent_authority,manualAccountingDocumentNumber"),
 		@Index(name = "idx_invoice_tiers", columnList = "id_tiers"),
+		@Index(name = "idx_invoice_provider", columnList = "id_provider"),
 		@Index(name = "idx_invoice_provision", columnList = "id_provision"),
 		@Index(name = "idx_invoice_customer_order_id ", columnList = "customer_order_id"),
 		@Index(name = "idx_invoice_customer_order_for_inbound_invoice", columnList = "id_customer_order_for_inbound_invoice"),

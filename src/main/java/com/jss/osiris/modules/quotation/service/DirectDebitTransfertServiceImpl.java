@@ -368,7 +368,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                     addOrUpdateDirectDebitTransfert(completeTransfert);
 
                     Payment payment = paymentService.generateNewDirectDebitPayment(
-                            completeTransfert.getTransfertAmount(), completeTransfert.getLabel());
+                            completeTransfert.getTransfertAmount(), completeTransfert.getLabel(), completeTransfert);
                     accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment, false);
 
                     paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment,
