@@ -20,6 +20,7 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -87,7 +88,8 @@ public interface PaymentService {
                         String label)
                         throws OsirisException;
 
-        public Payment generateNewDirectDebitPayment(Float paymentAmount, String label) throws OsirisException;
+        public Payment generateNewDirectDebitPayment(Float paymentAmount, String label,
+                        DirectDebitTransfert directDebitTransfert) throws OsirisException;
 
         public void refundPayment(Payment payment, Tiers tiers, Affaire affaire)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;

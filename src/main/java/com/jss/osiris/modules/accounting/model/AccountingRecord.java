@@ -36,6 +36,7 @@ import jakarta.persistence.Table;
 		@Index(name = "idx_accounting_record_accounting_account", columnList = "id_accounting_account"),
 		@Index(name = "idx_accounting_record_accounting_journal", columnList = "id_accounting_journal"),
 		@Index(name = "idx_accounting_record_invoice_item", columnList = "id_invoice_item"),
+		@Index(name = "idx_accounting_record_accounting_account", columnList = "id_accounting_account"),
 		@Index(name = "idx_accounting_record_invoice", columnList = "id_invoice")
 })
 public class AccountingRecord implements Serializable, IId {

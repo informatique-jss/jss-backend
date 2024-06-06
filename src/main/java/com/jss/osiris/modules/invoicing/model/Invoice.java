@@ -4,6 +4,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -31,19 +44,6 @@ import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.model.TiersFollowup;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-
 @Entity
 @Table(indexes = { @Index(name = "idx_invoice_status", columnList = "id_invoice_status"),
 		@Index(name = "idx_invoice_manual_document_number", columnList = "id_competent_authority,manualAccountingDocumentNumber"),
@@ -52,6 +52,7 @@ import jakarta.persistence.Table;
 		@Index(name = "idx_invoice_rff", columnList = "id_rff"),
 		@Index(name = "idx_invoice_provider", columnList = "id_provider"),
 		@Index(name = "idx_invoice_credit_note", columnList = "id_credit_note"),
+		@Index(name = "idx_invoice_provider", columnList = "id_provider"),
 		@Index(name = "idx_invoice_provision", columnList = "id_provision"),
 		@Index(name = "idx_invoice_customer_order_id ", columnList = "customer_order_id"),
 		@Index(name = "idx_invoice_customer_order_for_inbound_invoice", columnList = "id_customer_order_for_inbound_invoice"),
