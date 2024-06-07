@@ -1314,7 +1314,7 @@ public class MailHelper {
 
         mail.setGreetings("En vous remerciant pour votre confiance !");
 
-        mail.setReplyTo(asso.getAssignedTo());
+        mail.setReplyTo(provision.getAssignedTo());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
 
