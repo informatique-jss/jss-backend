@@ -111,7 +111,7 @@ public class AccountingExportHelper {
                 styleCurrency.setBorderTop(BorderStyle.THIN);
                 styleCurrency.setBorderRight(BorderStyle.THIN);
                 styleCurrency.setBorderLeft(BorderStyle.THIN);
-                styleCurrency.setDataFormat((short) 8);
+                styleCurrency.setDataFormat((short) 4);
 
                 // Date cells
                 XSSFCellStyle styleDate = wb.createCellStyle();
@@ -139,7 +139,9 @@ public class AccountingExportHelper {
                                                         + " - "
                                                         + startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                                                         + " - "
-                                                        + endDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                                                        + endDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                                        + " - le " + LocalDate.now().format(
+                                                                        DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
                         CellRangeAddress region = new CellRangeAddress(0, 1, 0, 9);
                         cleanBeforeMergeOnValidCells(currentSheet, region, titleCellStyle);
@@ -363,7 +365,7 @@ public class AccountingExportHelper {
                 styleCurrency.setBorderTop(BorderStyle.THIN);
                 styleCurrency.setBorderRight(BorderStyle.THIN);
                 styleCurrency.setBorderLeft(BorderStyle.THIN);
-                styleCurrency.setDataFormat((short) 8);
+                styleCurrency.setDataFormat((short) 4);
 
                 // Date cells
                 XSSFCellStyle styleDate = wb.createCellStyle();
@@ -387,7 +389,9 @@ public class AccountingExportHelper {
                                 "SPPS - " + siretJss + " - "
                                                 + startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                                                 + " - "
-                                                + endDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                                                + endDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                                + " - le "
+                                                + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
                 CellRangeAddress region = new CellRangeAddress(0, 1, 0, isGenerale ? 5 : 11);
                 cleanBeforeMergeOnValidCells(currentSheet, region, titleCellStyle);
@@ -638,7 +642,7 @@ public class AccountingExportHelper {
                 styleCurrency.setBorderTop(BorderStyle.THIN);
                 styleCurrency.setBorderRight(BorderStyle.THIN);
                 styleCurrency.setBorderLeft(BorderStyle.THIN);
-                styleCurrency.setDataFormat((short) 8);
+                styleCurrency.setDataFormat((short) 4);
 
                 // Date cells
                 XSSFCellStyle styleDate = wb.createCellStyle();
@@ -656,8 +660,9 @@ public class AccountingExportHelper {
 
                 XSSFRow currentRow = currentSheet.createRow(currentLine++);
                 XSSFCell currentCell = currentRow.createCell(0);
-                currentCell.setCellValue("SPPS - " + siretJss + " - Compte : "
-                                + accountingJournal.getLabel());
+                currentCell.setCellValue("SPPS - " + siretJss + " - Journal : "
+                                + accountingJournal.getLabel()
+                                + " - le " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
                 CellRangeAddress region = new CellRangeAddress(0, 1, 0, 9);
                 cleanBeforeMergeOnValidCells(currentSheet, region, titleCellStyle);
@@ -887,7 +892,7 @@ public class AccountingExportHelper {
                 styleCurrency.setBorderTop(BorderStyle.THIN);
                 styleCurrency.setBorderRight(BorderStyle.THIN);
                 styleCurrency.setBorderLeft(BorderStyle.THIN);
-                styleCurrency.setDataFormat((short) 8);
+                styleCurrency.setDataFormat((short) 4);
 
                 // Date cells
                 XSSFCellStyle styleDate = wb.createCellStyle();
@@ -900,7 +905,9 @@ public class AccountingExportHelper {
 
                 XSSFSheet currentSheet = wb.createSheet(
                                 "Compte " + accountingAccount.getPrincipalAccountingAccount().getCode()
-                                                + accountingAccount.getAccountingAccountSubNumber());
+                                                + accountingAccount.getAccountingAccountSubNumber()
+                                                + " - le "
+                                                + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
                 // Title
                 int currentLine = 0;
@@ -1216,7 +1223,7 @@ public class AccountingExportHelper {
                 styleCurrency.setBorderTop(BorderStyle.THIN);
                 styleCurrency.setBorderRight(BorderStyle.THIN);
                 styleCurrency.setBorderLeft(BorderStyle.THIN);
-                styleCurrency.setDataFormat((short) 8);
+                styleCurrency.setDataFormat((short) 4);
 
                 // Debit / credit header cells
                 XSSFCellStyle styleCurrencyHeader = wb.createCellStyle();
@@ -1224,7 +1231,7 @@ public class AccountingExportHelper {
                 styleCurrencyHeader.setBorderTop(BorderStyle.THIN);
                 styleCurrencyHeader.setBorderRight(BorderStyle.THIN);
                 styleCurrencyHeader.setBorderLeft(BorderStyle.THIN);
-                styleCurrencyHeader.setDataFormat((short) 8);
+                styleCurrencyHeader.setDataFormat((short) 4);
                 headerCellStyle.setFillForegroundColor(colorHeader);
                 headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
@@ -1539,7 +1546,7 @@ public class AccountingExportHelper {
                 styleCurrency.setBorderTop(BorderStyle.THIN);
                 styleCurrency.setBorderRight(BorderStyle.THIN);
                 styleCurrency.setBorderLeft(BorderStyle.THIN);
-                styleCurrency.setDataFormat((short) 8);
+                styleCurrency.setDataFormat((short) 4);
 
                 // Date cells
                 XSSFCellStyle styleDate = wb.createCellStyle();
