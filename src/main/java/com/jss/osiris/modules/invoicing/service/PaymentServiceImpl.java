@@ -1133,7 +1133,8 @@ public class PaymentServiceImpl implements PaymentService {
                 if (idToFind != null) {
                     tmpEntitiesFound = searchService.searchForEntitiesById(idToFind, entityTypesToSearch);
                 }
-                if ((tmpEntitiesFound == null || tmpEntitiesFound.size() == 0) && payment.getPaymentAmount() < 0) {
+                if ((tmpEntitiesFound == null || tmpEntitiesFound.size() == 0) && payment.getPaymentAmount() < 0
+                        && payment.getLabel().contains("CHEQUE ")) {
                     // Try check on outbound payments
                     tmpEntitiesFound = searchService.searchForEntities("\"checkNumber\":\"" + idToFind + "\"",
                             Payment.class.getSimpleName(), true);
