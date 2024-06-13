@@ -391,7 +391,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public File getAccountingBalanceExport(AccountingBalanceSearch accountingRecordSearch)
       throws OsirisException {
-    return accountingExportHelper.getBalance(searchAccountingBalanceGenerale(accountingRecordSearch), false,
+    return accountingExportHelper.getBalance(searchAccountingBalance(accountingRecordSearch), false,
         accountingRecordSearch.getStartDate(), accountingRecordSearch.getEndDate());
   }
 
