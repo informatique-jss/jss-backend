@@ -322,9 +322,11 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     }
 
     private LocalDateTime getInvoiceOperationDateTime(Invoice invoice) {
-        return invoice.getManualAccountingDocumentDate() != null
-                ? invoice.getManualAccountingDocumentDate().atTime(12, 00)
-                : LocalDateTime.now();
+        if (invoice.getManualAccountingDocumentDate() != null)
+            return invoice.getManualAccountingDocumentDate().atTime(12, 00);
+        if (invoice.getCreatedDate() != null)
+            return invoice.getCreatedDate();
+        return LocalDateTime.now();
     }
 
     @Override
