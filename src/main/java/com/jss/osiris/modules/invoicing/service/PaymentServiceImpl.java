@@ -959,7 +959,11 @@ public class PaymentServiceImpl implements PaymentService {
         cancelPayment(payment);
         Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                 accountingAccountService.getWaitingAccountingAccount());
-        newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+        // If not from bank or null, set it to default bank account
+        if (newPayment.getSourceAccountingAccount() == null
+                || !newPayment.getSourceAccountingAccount().getPrincipalAccountingAccount().getId()
+                        .equals(constantService.getPrincipalAccountingAccountBank().getId()))
+            newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
         newPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         addOrUpdatePayment(newPayment);
         if (newPayment.getPaymentAmount() > 0)
@@ -1330,14 +1334,22 @@ public class PaymentServiceImpl implements PaymentService {
         if (payment.getPaymentAmount() > 0) {
             newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                     competentAuthority.getAccountingAccountDeposit());
-            newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
+            // If not from bank or null, set it to default bank account
+            if (newPayment.getTargetAccountingAccount() == null
+                    || !newPayment.getTargetAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountBank().getId()))
+                newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
             accountingRecordGenerationService
                     .generateAccountingRecordOnIncomingPaymentOnDepositCompetentAuthorityAccount(newPayment);
             newPayment.setCompetentAuthority(competentAuthority);
         } else {
             newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                     competentAuthority.getAccountingAccountDeposit());
-            newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+            // If not from bank or null, set it to default bank account
+            if (newPayment.getSourceAccountingAccount() == null
+                    || !newPayment.getSourceAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountBank().getId()))
+                newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment.setTargetAccountingAccount(competentAuthority.getAccountingAccountProvider());
             accountingRecordGenerationService
                     .generateAccountingRecordOnOutgoingPaymentOnDepositCompetentAuthorityAccount(newPayment);
@@ -1354,6 +1366,11 @@ public class PaymentServiceImpl implements PaymentService {
         if (payment.getPaymentAmount() > 0) {
             newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                     accountingAccount);
+            // If not from bank or null, set it to default bank account
+            if (newPayment.getSourceAccountingAccount() == null
+                    || !newPayment.getSourceAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountBank().getId()))
+                newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment.setTargetAccountingAccount(accountingAccount);
             accountingRecordGenerationService
@@ -1362,6 +1379,11 @@ public class PaymentServiceImpl implements PaymentService {
         } else {
             newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                     accountingAccount);
+            // If not from bank or null, set it to default bank account
+            if (newPayment.getSourceAccountingAccount() == null
+                    || !newPayment.getSourceAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountBank().getId()))
+                newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment.setTargetAccountingAccount(accountingAccount);
             accountingRecordGenerationService
@@ -1381,12 +1403,22 @@ public class PaymentServiceImpl implements PaymentService {
         if (payment.getPaymentAmount() > 0) {
             newPayment1 = generateNewPaymentFromPayment(payment, payment.getPaymentAmount() - amount, false,
                     accountingAccountService.getWaitingAccountingAccount());
+            // If not from bank or null, set it to default bank account
+            if (newPayment1.getSourceAccountingAccount() == null
+                    || !newPayment1.getSourceAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountBank().getId()))
+                newPayment1.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment1.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment1.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
             accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(newPayment1, true);
 
             newPayment2 = generateNewPaymentFromPayment(payment, amount, false,
                     accountingAccountService.getWaitingAccountingAccount());
+            // If not from bank or null, set it to default bank account
+            if (newPayment2.getSourceAccountingAccount() == null
+                    || !newPayment2.getSourceAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountBank().getId()))
+                newPayment2.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment2.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment2.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
             accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(newPayment2, true);
@@ -1395,6 +1427,11 @@ public class PaymentServiceImpl implements PaymentService {
         } else {
             newPayment1 = generateNewPaymentFromPayment(payment, payment.getPaymentAmount() + amount, false,
                     accountingAccountService.getWaitingAccountingAccount());
+            // If not from bank or null, set it to default bank account
+            if (newPayment1.getSourceAccountingAccount() == null
+                    || !newPayment1.getSourceAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountBank().getId()))
+                newPayment1.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment1.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment1.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
             accountingRecordGenerationService
@@ -1402,6 +1439,11 @@ public class PaymentServiceImpl implements PaymentService {
 
             newPayment2 = generateNewPaymentFromPayment(payment, -amount, false,
                     accountingAccountService.getWaitingAccountingAccount());
+            // If not from bank or null, set it to default bank account
+            if (newPayment2.getSourceAccountingAccount() == null
+                    || !newPayment2.getSourceAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountBank().getId()))
+                newPayment2.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment2.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment2.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
             accountingRecordGenerationService

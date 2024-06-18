@@ -6,18 +6,18 @@
           <table class="full-width">
             <tr>
               <td>
-                <autocomplete-confrere [(model)]="announcement.confrere" [form]="announcementForm"
-                  propertyName="confrere" [isMandatory]="true" [isDisabled]="!editMode"
-                  [filteredDepartment]="announcement.department" (onOptionSelected)="updateHeaderFree()">
-                </autocomplete-confrere>
-              </td>
-              <td>
                 <autocomplete-department [(model)]="announcement.department" [form]="announcementForm"
                   propertyName="department" [isMandatory]="true" [isDisabled]="!editMode" label="Département"
-                  [isDisabled]="!editMode" (onOptionSelected)="updateCharacterPrice()"
+                  [isDisabled]="!editMode" (onOptionSelected)="updateConfrereAndCharacterPrice()"
                   [filterAvailableEntities]="announcement.confrere?announcement.confrere.departments:undefined"
                   [conditionnalRequired]=" !isStatusOpen">
                 </autocomplete-department>
+              </td>
+              <td>
+                <autocomplete-confrere [(model)]="announcement.confrere" [form]="announcementForm"
+                  propertyName="confrere" [isMandatory]="true" [isDisabled]="!editMode" *ngIf="announcement.department"
+                  [filteredDepartment]="announcement.department" (onOptionSelected)="updateHeaderFree()">
+                </autocomplete-confrere>
               </td>
             </tr>
           </table>
@@ -154,7 +154,7 @@
                 <div *ngIf="!editMode">
                   <span [innerHTML]="announcement.noticeHeader | trustHtml" class="announce-container"></span>
                 </div>
-                <editor apiKey="tuyvqqbiskpltllm13hwnc00n4gjq5sc3gzrhlocmr75s1fw" *ngIf="editMode"
+                <editor apiKey="7hx3s724hmzwlzwrnwpyss45j2tp31yjutysm78id6s2gtgh" *ngIf="editMode"
                   formControlName="noticeHeader" [disabled]="!editMode" [(ngModel)]="announcement.noticeHeader" [init]="{
                     height: 500,
                     menubar: true,
@@ -176,7 +176,7 @@
                 <div *ngIf="!editMode">
                   <span [innerHTML]="announcement.notice | trustHtml" class="announce-container"></span>
                 </div>
-                <editor apiKey="tuyvqqbiskpltllm13hwnc00n4gjq5sc3gzrhlocmr75s1fw" *ngIf="editMode"
+                <editor apiKey="7hx3s724hmzwlzwrnwpyss45j2tp31yjutysm78id6s2gtgh" *ngIf="editMode"
                   formControlName="notice" [disabled]="!editMode" [(ngModel)]="announcement.notice" [init]="{
      height: 500,
      menubar: true,

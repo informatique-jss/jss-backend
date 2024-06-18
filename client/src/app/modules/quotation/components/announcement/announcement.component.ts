@@ -32,6 +32,7 @@ import { AnnouncementNoticeTemplateService } from '../../services/announcement.n
 import { AnnouncementStatusService } from '../../services/announcement.status.service';
 import { CharacterNumberService } from '../../services/character.number.service';
 import { CharacterPriceService } from '../../services/character.price.service';
+import { ConfrereService } from '../../services/confrere.service';
 import { JournalTypeService } from '../../services/journal.type.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
 
@@ -91,7 +92,8 @@ export class AnnouncementComponent implements OnInit {
     private characterNumberService: CharacterNumberService,
     private habilitationsService: HabilitationsService,
     private announcementStatusService: AnnouncementStatusService,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
+    private confrereService: ConfrereService
   ) { }
 
   canAddNewInvoice() {
@@ -135,8 +137,6 @@ export class AnnouncementComponent implements OnInit {
     if (changes.announcement && this.announcement) {
       if (!this.announcement)
         this.announcement = {} as Announcement;
-      if (!this.announcement.confrere)
-        this.announcement.confrere = this.constantService.getConfrereJssSpel();
       if (!this.announcement.isHeader)
         this.announcement.isHeader = false;
       if (!this.announcement.isHeaderFree)
@@ -187,6 +187,15 @@ export class AnnouncementComponent implements OnInit {
 
   getCurrentDate(): Date {
     return new Date();
+  }
+
+  updateConfrereAndCharacterPrice() {
+    if (!this.announcement.department)
+      this.announcement.confrere = undefined!;
+    if (this.announcement.department) {
+      this.confrereService.getConfrereFilteredByDepartmentAndName(this.announcement.department, '').subscribe(confreres => (confreres && confreres.length > 0) ? this.announcement.confrere = confreres[0] : '');
+    }
+    this.updateCharacterPrice();
   }
 
   updateCharacterPrice() {

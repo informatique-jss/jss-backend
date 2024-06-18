@@ -37,16 +37,7 @@ export class ConfrereDialogComponent implements OnInit {
 
     this.displayedColumns = [];
     this.confrereService.getConfreres().subscribe(response => {
-      this.confreres = response.sort((a, b) => {
-        if (!a.boardGrade && !b.boardGrade)
-          return 0;
-        if (!a.boardGrade && b.boardGrade)
-          return -1;
-        if (a.boardGrade && !b.boardGrade)
-          return 1;
-        return (a.boardGrade).localeCompare(b.boardGrade)
-      }
-      ).filter(confrere => this.journalType == undefined || this.journalType.id == confrere.journalType.id);
+      this.confreres = response.filter(confrere => this.journalType == undefined || this.journalType.id == confrere.journalType.id);
 
       if (this.filteredDepartments) {
         let filteredConfrere = [];
