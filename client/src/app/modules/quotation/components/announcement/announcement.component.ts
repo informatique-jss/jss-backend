@@ -185,6 +185,12 @@ export class AnnouncementComponent implements OnInit {
     return this.announcementForm.valid && (this.isStatusOpen || !this.instanceOfCustomerOrder || this.announcement.noticeTypes && this.announcement.noticeTypes.length > 0);
   }
 
+  getPublicationDays(confrere: Confrere): string {
+    if (confrere && confrere.weekDays)
+      return 'Parution le : ' + confrere.weekDays.map(item => item.label).join(', ');
+    return '';
+  }
+
   getCurrentDate(): Date {
     return new Date();
   }

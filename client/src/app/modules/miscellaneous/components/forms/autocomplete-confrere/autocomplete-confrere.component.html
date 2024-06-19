@@ -22,4 +22,5 @@
       {{displayLabel(confrere)}}
     </mat-option>
   </mat-autocomplete>
+  <mat-hint *ngIf="hint && hint.length>0">{{hint}}</mat-hint>
 </mat-form-field>
