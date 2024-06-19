@@ -16,7 +16,8 @@
               <td>
                 <autocomplete-confrere [(model)]="announcement.confrere" [form]="announcementForm"
                   propertyName="confrere" [isMandatory]="true" [isDisabled]="!editMode" *ngIf="announcement.department"
-                  [filteredDepartment]="announcement.department" (onOptionSelected)="updateHeaderFree()">
+                  [filteredDepartment]="announcement.department" (onOptionSelected)="updateHeaderFree()"
+                  [hint]="getPublicationDays(announcement.confrere)">
                 </autocomplete-confrere>
               </td>
             </tr>
