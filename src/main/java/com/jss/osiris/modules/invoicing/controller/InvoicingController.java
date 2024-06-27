@@ -916,7 +916,7 @@ public class InvoicingController {
             throw new OsirisValidationException("Must be same provider");
 
         if (originInvoice.getConfrere() != null
-                && !newInvoice.getConfrere().getId().equals(originInvoice.getProvider().getId()))
+                && !newInvoice.getConfrere().getId().equals(originInvoice.getConfrere().getId()))
             throw new OsirisValidationException("Must be same Confrere");
 
         if (newInvoice.getIsProviderCreditNote() == null || newInvoice.getIsProviderCreditNote() == false)
