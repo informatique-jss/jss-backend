@@ -53,6 +53,7 @@ export class AddAccountingRecordComponent implements OnInit {
     this.displayedColumns.push({ id: "accountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N° de pièce justificative" } as SortTableColumn<AccountingRecord>);
     this.displayedColumns.push({ id: "accountingDocumentDate", fieldName: "manualAccountingDocumentDate", label: "Date pièce justificative", valueFonction: formatDateForSortTable } as SortTableColumn<AccountingRecord>);
     this.displayedColumns.push({ id: "manualAccountingDocumentDeadline", fieldName: "manualAccountingDocumentDeadline", label: "Date limite de paiement", valueFonction: formatDateForSortTable } as SortTableColumn<AccountingRecord>);
+    this.displayedColumns.push({ id: "operationDateTime", fieldName: "operationDateTime", label: "Date de l'opération", valueFonction: formatDateForSortTable } as SortTableColumn<AccountingRecord>);
     this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: formatEurosForSortTable } as SortTableColumn<AccountingRecord>);
     this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: formatEurosForSortTable } as SortTableColumn<AccountingRecord>);
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", isShrinkColumn: true } as SortTableColumn<AccountingRecord>);
@@ -137,6 +138,8 @@ export class AddAccountingRecordComponent implements OnInit {
       let journalId = 0;
 
       for (let record of this.accountingRecords) {
+        if (record.operationDateTime)
+          record.operationDateTime = new Date(record.operationDateTime.setHours(12))
         if (journalId > 0 && journalId != record.accountingJournal.id) {
           this.appService.displaySnackBar("Le journal doit être identique sur l'ensemble des lignes", true, 10);
           return;

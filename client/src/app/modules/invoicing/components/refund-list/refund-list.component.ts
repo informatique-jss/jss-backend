@@ -46,6 +46,7 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "refundAmount", fieldName: "refundAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn<RefundSearchResult>);
     this.availableColumns.push({ id: "refundTiersLabel", fieldName: "refundTiersLabel", label: "Tiers remboursé" } as SortTableColumn<RefundSearchResult>);
     this.availableColumns.push({ id: "refundLabel", fieldName: "refundLabel", label: "Libellé" } as SortTableColumn<RefundSearchResult>);
+    this.availableColumns.push({ id: "refundIban", fieldName: "refundIban", label: "IBAN" } as SortTableColumn<RefundSearchResult>);
     this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire" } as SortTableColumn<RefundSearchResult>);
     this.availableColumns.push({ id: "isMatched", fieldName: "isMatched", label: "Est rapproché", valueFonction: (element: RefundSearchResult, column: SortTableColumn<RefundSearchResult>) => { return (element.isMatched) ? "Oui" : "Non" } } as SortTableColumn<RefundSearchResult>);
     this.availableColumns.push({ id: "isAlreadyExported", fieldName: "isAlreadyExported", label: "A été exporté", valueFonction: (element: RefundSearchResult, column: SortTableColumn<RefundSearchResult>) => { return (element.isAlreadyExported) ? "Oui" : "Non" } } as SortTableColumn<RefundSearchResult>);
