@@ -25,4 +25,12 @@ export class SelectServiceFamilyComponent extends GenericSelectComponent<Service
       this.types = response;
     })
   }
+
+  displayLabel(object: any): string {
+    if (object && object.label && object.code)
+      return object.code + ' ' + object.label;
+    if (typeof object === "string")
+      return object;
+    return "";
+  }
 }
