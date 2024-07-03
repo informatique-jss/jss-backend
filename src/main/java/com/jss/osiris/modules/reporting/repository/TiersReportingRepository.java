@@ -51,6 +51,7 @@ public interface TiersReportingRepository extends CrudRepository<Quotation, Inte
                         +
                         " to_char(date_trunc('day',min(a1.datetime)  ),'YYYY-MM-DD') as createdDateDay, " +
                         " to_char(date_trunc('day',max(tf1.followup_date)  ),'YYYY-MM-DD') as lastTiersFollowupDate, " +
+                        " count(distinct coalesce(co1.id, co2.id)) as nbrCustomerOrder, " +
                         " to_char(date_trunc('day',max(tf2.followup_date)  ),'YYYY-MM-DD') as lastResponsableFollowupDate "
                         +
                         " from " +

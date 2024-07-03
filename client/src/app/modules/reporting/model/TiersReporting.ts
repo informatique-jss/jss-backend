@@ -18,4 +18,5 @@ export interface TiersReporting {
   createdDateDay: string;
   lastResponsableFollowupDate: string;
   lastTiersFollowupDate: string;
+  nbrCustomerOrder: number;
 }
