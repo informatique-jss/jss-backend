@@ -199,7 +199,17 @@ export class AnnouncementComponent implements OnInit {
     if (!this.announcement.department)
       this.announcement.confrere = undefined!;
     if (this.announcement.department) {
-      this.confrereService.getConfrereFilteredByDepartmentAndName(this.announcement.department, '').subscribe(confreres => (confreres && confreres.length > 0) ? this.announcement.confrere = confreres[0] : '');
+      this.confrereService.getConfrereFilteredByDepartmentAndName(this.announcement.department, '').subscribe(confreres => {
+        (confreres && confreres.length > 0) ? this.announcement.confrere = confreres[0] : '';
+        if (this.announcement.confrere && this.provision) {
+          if (this.announcement.confrere.journalType.id == this.constantService.getJournalTypePaper().id)
+            this.provision.isPublicationFlag = false;
+          this.provision.isPublicationPaper = true;
+          if (this.announcement.confrere.journalType.id == this.constantService.getJournalTypeSpel().id)
+            this.provision.isPublicationPaper = false;
+          this.provision.isPublicationFlag = true;
+        }
+      });
     }
     this.updateCharacterPrice();
   }

@@ -7,6 +7,7 @@ export interface ProvisionReporting {
   customerOrderStatusLabel: string;
   provisionAssignedToLabel: string;
   provisionFamilyTypeLabel: string;
+  provisionTypeLabel: string;
   aggregateProvisionTypeLabel: string;
   provisionNumber: number;
   provisionStatus: string;
