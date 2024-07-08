@@ -8,7 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import jakarta.imageio.ImageIO;
+import javax.imageio.ImageIO;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.springframework.stereotype.Service;

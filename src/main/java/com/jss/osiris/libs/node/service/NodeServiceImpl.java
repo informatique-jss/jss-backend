@@ -10,10 +10,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.management.Attribute;
-import jakarta.management.AttributeList;
-import jakarta.management.MBeanServer;
-import jakarta.management.ObjectName;
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.SystemUtils;
