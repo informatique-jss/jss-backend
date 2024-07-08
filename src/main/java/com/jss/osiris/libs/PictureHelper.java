@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 
-import javax.imageio.ImageIO;
+import jakarta.imageio.ImageIO;
 
 import org.springframework.stereotype.Service;
 

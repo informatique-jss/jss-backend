@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
+import jakarta.xml.parsers.DocumentBuilderFactory;
+import jakarta.xml.xpath.XPathConstants;
+import jakarta.xml.xpath.XPathFactory;
 
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
