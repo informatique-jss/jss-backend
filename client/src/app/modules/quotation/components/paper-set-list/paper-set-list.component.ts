@@ -66,15 +66,38 @@ export class PaperSetListComponent implements OnInit {
     } as SortTableAction<PaperSetResult>);
 
     this.tableAction.push({
-      actionIcon: "delete", actionName: "Supprimer cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
+      actionIcon: "valid", actionName: "Valider cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
         if (element) {
           const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
             maxWidth: "400px",
             data: {
-              title: "Supprimer l'action",
-              content: "Êtes-vous sûr de vouloir supprimer cette action et de libérer l'emplacement associé ?",
+              title: "Valider l'action",
+              content: "Êtes-vous sûr de vouloir valider cette action et de libérer l'emplacement associé ?",
               closeActionText: "Annuler",
-              validationActionText: "Supprimer"
+              validationActionText: "Confirmer"
+            }
+          });
+
+          dialogRef.afterClosed().subscribe(dialogResult => {
+            if (dialogResult) {
+              this.paperSetService.validatePaperSet(element.id).subscribe(response => this.searchPaperSets());
+            }
+          });
+        }
+        return undefined;
+      }, display: true,
+    } as SortTableAction<PaperSetResult>);
+
+    this.tableAction.push({
+      actionIcon: "cancel", actionName: "Annuler cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
+        if (element) {
+          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+            maxWidth: "400px",
+            data: {
+              title: "Annuler l'action",
+              content: "Êtes-vous sûr de vouloir annuler cette action et de libérer l'emplacement associé ?",
+              closeActionText: "Annuler",
+              validationActionText: "Confirmer"
             }
           });
 

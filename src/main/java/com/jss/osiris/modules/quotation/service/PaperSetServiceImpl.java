@@ -43,7 +43,7 @@ public class PaperSetServiceImpl implements PaperSetService {
                 for (PaperSet currentPaperSet : paperSets) {
                     if (currentPaperSet.getLocationNumber().equals(location)) {
                         location++;
-                    } else {
+                    } else { 
                         break;
                     }
                 }
@@ -60,6 +60,12 @@ public class PaperSetServiceImpl implements PaperSetService {
     public PaperSet cancelPaperSet(PaperSet paperSet) {
         paperSet = getPaperSet(paperSet.getId());
         paperSet.setIsCancelled(true);
+        return addOrUpdatePaperSet(paperSet);
+    }
+
+    public PaperSet validatePaperSet(PaperSet paperSet) {
+        paperSet = getPaperSet(paperSet.getId());
+        paperSet.setIsValidated(true);
         return addOrUpdatePaperSet(paperSet);
     }
 }

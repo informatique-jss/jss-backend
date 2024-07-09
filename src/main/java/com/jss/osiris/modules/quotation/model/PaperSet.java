@@ -36,6 +36,8 @@ public class PaperSet implements Serializable, IId {
 
 	private Boolean isCancelled;
 
+	private Boolean isValidated; 
+
 	public Integer getId() {
 		return id;
 	}
@@ -76,4 +78,11 @@ public class PaperSet implements Serializable, IId {
 		this.isCancelled = isCancelled;
 	}
 
+	public Boolean getIsValidated() {
+		return isValidated;
+	}
+
+	public void setIsValidated(Boolean isValidated) {
+		this.isValidated = isValidated;
+	}
 }

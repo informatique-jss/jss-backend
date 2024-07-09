@@ -24,4 +24,8 @@ export class PaperSetService extends AppRestService<PaperSet> {
     return this.addOrUpdate(new HttpParams(), "paper-set", paperSet, "Enregistré", "Erreur lors de l'enregistrement");
   }
 
+  validatePaperSet(paperSetId: number) {
+    return this.get(new HttpParams().set("paperSetId", paperSetId), "paper-set/validate");
+  }
+
 }

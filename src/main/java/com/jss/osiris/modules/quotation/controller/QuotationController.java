@@ -392,6 +392,16 @@ public class QuotationController {
     return new ResponseEntity<PaperSet>(paperSetService.cancelPaperSet(paperSet), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/paper-set/validate")
+  public ResponseEntity<PaperSet> validatePaperSet(
+      @RequestParam Integer paperSetId) throws OsirisValidationException, OsirisException {
+    PaperSet paperSet = paperSetService.getPaperSet(paperSetId);
+
+    if (paperSet == null)
+      throw new OsirisValidationException("paperSet");
+    return new ResponseEntity<PaperSet>(paperSetService.validatePaperSet(paperSet), HttpStatus.OK);
+  }
+
   @PostMapping(inputEntryPoint + "/paper-set")
   public ResponseEntity<PaperSet> addOrUpdatePaperSet(
       @RequestBody PaperSet paperSet) throws OsirisValidationException, OsirisException {

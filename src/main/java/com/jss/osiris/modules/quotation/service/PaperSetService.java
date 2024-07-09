@@ -15,4 +15,6 @@ public interface PaperSetService {
     public List<IPaperSetResult> searchPaperSets();
 
     public PaperSet cancelPaperSet(PaperSet paperSet);
+
+    public PaperSet validatePaperSet(PaperSet paperSet); 
 }
