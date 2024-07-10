@@ -12,8 +12,8 @@ export class PaperSetResultService extends AppRestService<PaperSetResult> {
     super(http, "quotation");
   }
 
-  searchPaperSets() {
-    return this.getList(new HttpParams(), "paper-sets/search");
+  searchPaperSets(textSearch: string, isDisplayValidated: boolean, isDisplayCanceled: boolean) {
+    return this.getList(new HttpParams().set("textSearch", textSearch).set("isDisplayValidated", isDisplayValidated).set("isDisplayCanceled", isDisplayCanceled),
+     "paper-sets/search");
   }
-
 }

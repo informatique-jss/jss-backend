@@ -7,5 +7,5 @@ export interface PaperSet {
   customerOrder: CustomerOrder;
   locationNumber: number;
   isCancelled: boolean;
-  isDone: boolean;
+  isValidated: boolean;
 }

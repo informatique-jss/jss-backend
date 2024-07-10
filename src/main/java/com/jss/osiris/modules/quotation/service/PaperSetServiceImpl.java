@@ -53,8 +53,11 @@ public class PaperSetServiceImpl implements PaperSetService {
         return paperSetRepository.save(paperSet);
     }
 
-    public List<IPaperSetResult> searchPaperSets() {
-        return paperSetRepository.findPaperSets();
+    public List<IPaperSetResult> searchPaperSets(String textSearch, Boolean isDisplayValidated, Boolean isDisplayCanceled) {
+        if(textSearch.isEmpty() && isDisplayCanceled==false && isDisplayValidated==false)
+            return paperSetRepository.findPaperSets();
+        else 
+            return paperSetRepository.filteredPaperSets(textSearch, isDisplayValidated, isDisplayCanceled);
     }
 
     public PaperSet cancelPaperSet(PaperSet paperSet) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
@@ -21,6 +21,8 @@ export class PaperSetListComponent implements OnInit {
   paperSetResults: PaperSetResult[] | undefined;
   displayedColumns: SortTableColumn<PaperSetResult>[] = [];
   tableAction: SortTableAction<PaperSetResult>[] = [];
+  isDisplayCanceled: boolean = false;
+  isDisplayValidated: boolean=false;
 
   constructor(
     private appService: AppService,
@@ -30,6 +32,8 @@ export class PaperSetListComponent implements OnInit {
     private paperSetService: PaperSetService
   ) { }
 
+  ngOnChanges(change: SimpleChanges) {
+  }
   ngOnInit() {
     this.appService.changeHeaderTitle("Gestion des documents")
     this.displayedColumns = [];
@@ -57,6 +61,7 @@ export class PaperSetListComponent implements OnInit {
         return undefined;
       }, display: true,
     } as SortTableAction<PaperSetResult>);
+
     this.tableAction.push({
       actionIcon: "group", actionName: "Voir le responsable", actionLinkFunction: (action: SortTableAction<PaperSetResult>, element: any) => {
         if (element)
@@ -66,7 +71,7 @@ export class PaperSetListComponent implements OnInit {
     } as SortTableAction<PaperSetResult>);
 
     this.tableAction.push({
-      actionIcon: "valid", actionName: "Valider cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
+      actionIcon: "check", actionName: "Valider cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
         if (element) {
           const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
             maxWidth: "400px",
@@ -111,6 +116,7 @@ export class PaperSetListComponent implements OnInit {
       }, display: true,
     } as SortTableAction<PaperSetResult>);
 
+
     this.searchPaperSets();
   }
 
@@ -118,18 +124,9 @@ export class PaperSetListComponent implements OnInit {
   });
 
   searchPaperSets() {
-    this.paperSetResultService.searchPaperSets().subscribe(response => {
+    this.paperSetResultService.searchPaperSets(this.textSearch, this.isDisplayValidated, this.isDisplayCanceled).subscribe(response => {
       this.paperSetResults = response;
-      this.filterPaperSets();
     }
     );
-  }
-
-  filterPaperSets() {
-    if (this.paperSetResults && this.textSearch && this.textSearch.trim().length > 0) {
-      this.filteredPaperSetResults = this.paperSetResults.filter(result => JSON.stringify(result).toLocaleLowerCase().indexOf(this.textSearch.toLocaleLowerCase()) >= 0);
-    } else {
-      this.filteredPaperSetResults = this.paperSetResults;
-    }
   }
 }
