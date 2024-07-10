@@ -51,7 +51,7 @@ public class DescriptionEtablissement implements Serializable, IId {
     @Column(length = 255)
     private String enseigne;
 
-    @Column(length = 255)
+    @Column(length = 2500)
     private String nomCommercial;
 
     private Boolean autonomieJuridique;
