@@ -3,8 +3,8 @@ package com.jss.osiris.modules.profile.model;
 import java.io.Serializable;
 import java.util.List;
 
-import jakarta.naming.NamingException;
-import jakarta.naming.directory.Attributes;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
 
 import org.springframework.ldap.core.AttributesMapper;
 
