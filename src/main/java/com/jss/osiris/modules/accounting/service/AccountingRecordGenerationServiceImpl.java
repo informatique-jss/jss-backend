@@ -262,13 +262,6 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     private void letterCounterPartRecords(AccountingRecord record, AccountingRecord counterPart)
             throws OsirisException {
 
-        // Need to letter only provider and client accounts
-        if (!record.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                .equals(constantService.getPrincipalAccountingAccountCustomer().getId())
-                && !record.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                        .equals(constantService.getPrincipalAccountingAccountProvider().getId()))
-            return;
-
         Integer maxLetteringNumber = accountingRecordService
                 .findMaxLetteringNumberForMinLetteringDateTime(LocalDateTime.now().with(ChronoField.DAY_OF_YEAR, 1)
                         .with(ChronoField.HOUR_OF_DAY, 0)
