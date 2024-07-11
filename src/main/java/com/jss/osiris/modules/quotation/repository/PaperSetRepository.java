@@ -3,6 +3,7 @@ package com.jss.osiris.modules.quotation.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.quotation.model.IPaperSetResult;
@@ -13,6 +14,8 @@ public interface PaperSetRepository extends QueryCacheCrudRepository<PaperSet, I
     @Query(nativeQuery = true, value = " " +
             "     select " +
             " 	ps.id, " +
+            "   ps.is_validated as isValidated," +
+            "   ps.is_cancelled as isCancelled, " +
             " 	pst.label as paperSetTypeLabel, " +
             " 	co.id as customerOrderId, " +
             " 	cos.label as customerOrderStatus, " +
@@ -60,9 +63,13 @@ public interface PaperSetRepository extends QueryCacheCrudRepository<PaperSet, I
             " 	s.id_asso_affaire_order = aao.id " +
             " join service_type st on " +
             " 	st.id = s.id_service_type " +
-            " 	where coalesce(ps.is_cancelled,false)=false " +
+            " 	where (:isDisplayCancelled or ps.is_cancelled=:isDisplayCancelled) " +
+            " and  (:isDisplayValidated or ps.is_validated=:isDisplayValidated) " +
+            " and concat(co.id, '-', ps.location_number, '-', af.id) like '%' || :textSearch || '%' " +
             " group by " +
             " 	ps.id, " +
+            "   ps.is_validated, " +
+            "   ps.is_cancelled, " +
             " 	pst.label, " +
             " 	co.id, " +
             " 	cos.label, " +
@@ -77,8 +84,10 @@ public interface PaperSetRepository extends QueryCacheCrudRepository<PaperSet, I
             " 	r.id, " +
             " 	ps.location_number order by ps.location_number" +
             "")
-    List<IPaperSetResult> findPaperSets();
+    List<IPaperSetResult> findPaperSets(@Param("textSearch") String textSearch,
+            @Param("isDisplayValidated") Boolean isDisplayValidated,
+            @Param("isDisplayCancelled") Boolean isDisplayCancelled);
 
-    @Query("select p from PaperSet p where coalesce(isCancelled,false) = false order by locationNumber asc")
+    @Query("select p from PaperSet p where isCancelled = false and isValidated = false order by locationNumber asc")
     List<PaperSet> findAllByOrderByLocationNumberAsc();
 }

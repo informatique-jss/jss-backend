@@ -378,8 +378,8 @@ public class QuotationController {
   PaperSetService paperSetService;
 
   @GetMapping(inputEntryPoint + "/paper-sets/search")
-  public ResponseEntity<List<IPaperSetResult>> searchPaperSets() throws OsirisValidationException, OsirisException {
-    return new ResponseEntity<List<IPaperSetResult>>(paperSetService.searchPaperSets(), HttpStatus.OK);
+  public ResponseEntity<List<IPaperSetResult>> searchPaperSets(@RequestParam String textSearch, @RequestParam Boolean isDisplayValidated, @RequestParam Boolean isDisplayCancelled) throws OsirisValidationException, OsirisException {
+    return new ResponseEntity<List<IPaperSetResult>>(paperSetService.searchPaperSets(textSearch, isDisplayValidated, isDisplayCancelled), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/paper-set/cancel")
@@ -390,6 +390,16 @@ public class QuotationController {
     if (paperSet == null)
       throw new OsirisValidationException("paperSet");
     return new ResponseEntity<PaperSet>(paperSetService.cancelPaperSet(paperSet), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/paper-set/validate")
+  public ResponseEntity<PaperSet> validatePaperSet(
+      @RequestParam Integer paperSetId) throws OsirisValidationException, OsirisException {
+    PaperSet paperSet = paperSetService.getPaperSet(paperSetId);
+
+    if (paperSet == null)
+      throw new OsirisValidationException("paperSet");
+    return new ResponseEntity<PaperSet>(paperSetService.validatePaperSet(paperSet), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/paper-set")

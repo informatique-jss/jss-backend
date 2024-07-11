@@ -33,8 +33,7 @@ public class PaperSetServiceImpl implements PaperSetService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PaperSet addOrUpdatePaperSet(
-            PaperSet paperSet) {
+    public PaperSet addOrUpdatePaperSet(PaperSet paperSet) {
         if (paperSet.getLocationNumber() == null) {
             // Allocate new location number
             List<PaperSet> paperSets = paperSetRepository.findAllByOrderByLocationNumberAsc();
@@ -43,23 +42,33 @@ public class PaperSetServiceImpl implements PaperSetService {
                 for (PaperSet currentPaperSet : paperSets) {
                     if (currentPaperSet.getLocationNumber().equals(location)) {
                         location++;
-                    } else {
+                    } else { 
                         break;
                     }
                 }
             }
             paperSet.setLocationNumber(location);
+            if(paperSet.getIsCancelled() == null)   
+                paperSet.setIsCancelled(false);
+            if(paperSet.getIsValidated() == null)
+                paperSet.setIsValidated(false);
         }
         return paperSetRepository.save(paperSet);
     }
 
-    public List<IPaperSetResult> searchPaperSets() {
-        return paperSetRepository.findPaperSets();
+    public List<IPaperSetResult> searchPaperSets(String textSearch, Boolean isDisplayValidated, Boolean isDisplayCancelled) {
+        return paperSetRepository.findPaperSets(textSearch, isDisplayValidated, isDisplayCancelled);
     }
 
     public PaperSet cancelPaperSet(PaperSet paperSet) {
         paperSet = getPaperSet(paperSet.getId());
         paperSet.setIsCancelled(true);
+        return addOrUpdatePaperSet(paperSet);
+    }
+
+    public PaperSet validatePaperSet(PaperSet paperSet) {
+        paperSet = getPaperSet(paperSet.getId());
+        paperSet.setIsValidated(true);
         return addOrUpdatePaperSet(paperSet);
     }
 }

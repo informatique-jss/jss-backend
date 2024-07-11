@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
@@ -21,6 +21,8 @@ export class PaperSetListComponent implements OnInit {
   paperSetResults: PaperSetResult[] | undefined;
   displayedColumns: SortTableColumn<PaperSetResult>[] = [];
   tableAction: SortTableAction<PaperSetResult>[] = [];
+  isDisplayCancelled: boolean = false;
+  isDisplayValidated: boolean = false;
 
   constructor(
     private appService: AppService,
@@ -41,6 +43,14 @@ export class PaperSetListComponent implements OnInit {
     this.displayedColumns.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "servicesLabel", fieldName: "servicesLabel", label: "Service(s)" } as SortTableColumn<PaperSetResult>);
+    this.displayedColumns.push({
+      id: "isDone", fieldName: "isDone", label: "Statut action", valueFonction: (element: PaperSetResult, column: SortTableColumn<PaperSetResult>) => {
+        if (element && column)
+          if (element.isCancelled) return "Annulée"
+          else if (element.isValidated) return "Validée";
+        return ""
+      }
+    } as SortTableColumn<PaperSetResult>);
 
     this.tableAction.push({
       actionIcon: "shopping_cart", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction<PaperSetResult>, element: PaperSetResult) => {
@@ -57,6 +67,7 @@ export class PaperSetListComponent implements OnInit {
         return undefined;
       }, display: true,
     } as SortTableAction<PaperSetResult>);
+
     this.tableAction.push({
       actionIcon: "group", actionName: "Voir le responsable", actionLinkFunction: (action: SortTableAction<PaperSetResult>, element: any) => {
         if (element)
@@ -66,15 +77,38 @@ export class PaperSetListComponent implements OnInit {
     } as SortTableAction<PaperSetResult>);
 
     this.tableAction.push({
-      actionIcon: "delete", actionName: "Supprimer cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
+      actionIcon: "check", actionName: "Valider cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
         if (element) {
           const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
             maxWidth: "400px",
             data: {
-              title: "Supprimer l'action",
-              content: "Êtes-vous sûr de vouloir supprimer cette action et de libérer l'emplacement associé ?",
+              title: "Valider l'action",
+              content: "Êtes-vous sûr de vouloir valider cette action et de libérer l'emplacement associé ?",
               closeActionText: "Annuler",
-              validationActionText: "Supprimer"
+              validationActionText: "Confirmer"
+            }
+          });
+
+          dialogRef.afterClosed().subscribe(dialogResult => {
+            if (dialogResult) {
+              this.paperSetService.validatePaperSet(element.id).subscribe(response => this.searchPaperSets());
+            }
+          });
+        }
+        return undefined;
+      }, display: true,
+    } as SortTableAction<PaperSetResult>);
+
+    this.tableAction.push({
+      actionIcon: "cancel", actionName: "Annuler cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
+        if (element) {
+          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+            maxWidth: "400px",
+            data: {
+              title: "Annuler l'action",
+              content: "Êtes-vous sûr de vouloir annuler cette action et de libérer l'emplacement associé ?",
+              closeActionText: "Annuler",
+              validationActionText: "Confirmer"
             }
           });
 
@@ -88,6 +122,7 @@ export class PaperSetListComponent implements OnInit {
       }, display: true,
     } as SortTableAction<PaperSetResult>);
 
+
     this.searchPaperSets();
   }
 
@@ -95,18 +130,9 @@ export class PaperSetListComponent implements OnInit {
   });
 
   searchPaperSets() {
-    this.paperSetResultService.searchPaperSets().subscribe(response => {
+    this.paperSetResultService.searchPaperSets(this.textSearch, this.isDisplayValidated, this.isDisplayCancelled).subscribe(response => {
       this.paperSetResults = response;
-      this.filterPaperSets();
     }
     );
-  }
-
-  filterPaperSets() {
-    if (this.paperSetResults && this.textSearch && this.textSearch.trim().length > 0) {
-      this.filteredPaperSetResults = this.paperSetResults.filter(result => JSON.stringify(result).toLocaleLowerCase().indexOf(this.textSearch.toLocaleLowerCase()) >= 0);
-    } else {
-      this.filteredPaperSetResults = this.paperSetResults;
-    }
   }
 }
