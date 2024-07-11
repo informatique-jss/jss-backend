@@ -94,6 +94,7 @@ import { ReferentialProvisionFamilyTypeComponent } from '../referentials/referen
 import { ReferentialRecordTypeComponent } from '../referentials/referentiel-record-type/referential-record-type.component';
 import { ViewLogComponent } from '../view-log/view-log.component';
 import { AdministrationComponent } from './administration.component';
+import { ReferentialServiceFieldTypeComponent } from '../referentials/referential-service-field-type/referential-service-field-type.component';
 
 const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
@@ -204,6 +205,7 @@ const routes: Routes = [
     ReferentialCustomerOrderFrequencyComponent,
     ReferentialActiveDirectoryGroupComponent,
     ReferentialPaperSetTypeComponent,
+    ReferentialServiceFieldTypeComponent
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

@@ -110,6 +110,7 @@ import com.jss.osiris.modules.quotation.model.RecordType;
 import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.ServiceFamily;
 import com.jss.osiris.modules.quotation.model.ServiceFamilyGroup;
+import com.jss.osiris.modules.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.quotation.model.ServiceType;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
@@ -156,6 +157,7 @@ import com.jss.osiris.modules.quotation.service.RecordTypeService;
 import com.jss.osiris.modules.quotation.service.RnaDelegateService;
 import com.jss.osiris.modules.quotation.service.ServiceFamilyGroupService;
 import com.jss.osiris.modules.quotation.service.ServiceFamilyService;
+import com.jss.osiris.modules.quotation.service.ServiceFieldTypeService;
 import com.jss.osiris.modules.quotation.service.ServiceService;
 import com.jss.osiris.modules.quotation.service.ServiceTypeService;
 import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
@@ -377,9 +379,32 @@ public class QuotationController {
   @Autowired
   PaperSetService paperSetService;
 
+  @Autowired
+  ServiceFieldTypeService serviceFieldTypeService;
+
+  @GetMapping(inputEntryPoint + "/service-field-types")
+  public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
+    return new ResponseEntity<List<ServiceFieldType>>(serviceFieldTypeService.getServiceFieldTypes(), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/service-field-type")
+  public ResponseEntity<ServiceFieldType> addOrUpdateServiceFieldType(
+      @RequestBody ServiceFieldType serviceFieldTypes) throws OsirisValidationException, OsirisException {
+    if (serviceFieldTypes.getId() != null)
+      validationHelper.validateReferential(serviceFieldTypes, true, "serviceFieldTypes");
+    validationHelper.validateString(serviceFieldTypes.getCode(), true, "code");
+    validationHelper.validateString(serviceFieldTypes.getLabel(), true, "label");
+
+    return new ResponseEntity<ServiceFieldType>(serviceFieldTypeService.addOrUpdateServiceFieldType(serviceFieldTypes),
+        HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/paper-sets/search")
-  public ResponseEntity<List<IPaperSetResult>> searchPaperSets(@RequestParam String textSearch, @RequestParam Boolean isDisplayValidated, @RequestParam Boolean isDisplayCancelled) throws OsirisValidationException, OsirisException {
-    return new ResponseEntity<List<IPaperSetResult>>(paperSetService.searchPaperSets(textSearch, isDisplayValidated, isDisplayCancelled), HttpStatus.OK);
+  public ResponseEntity<List<IPaperSetResult>> searchPaperSets(@RequestParam String textSearch,
+      @RequestParam Boolean isDisplayValidated, @RequestParam Boolean isDisplayCancelled)
+      throws OsirisValidationException, OsirisException {
+    return new ResponseEntity<List<IPaperSetResult>>(
+        paperSetService.searchPaperSets(textSearch, isDisplayValidated, isDisplayCancelled), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/paper-set/cancel")
