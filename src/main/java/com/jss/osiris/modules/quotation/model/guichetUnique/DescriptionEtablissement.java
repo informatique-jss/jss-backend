@@ -292,5 +292,4 @@ public class DescriptionEtablissement implements Serializable, IId {
     public void setStatutOuvertFerme(String statutOuvertFerme) {
         this.statutOuvertFerme = statutOuvertFerme;
     }
-
 }
