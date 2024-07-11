@@ -32,8 +32,6 @@ export class PaperSetListComponent implements OnInit {
     private paperSetService: PaperSetService
   ) { }
 
-  ngOnChanges(change: SimpleChanges) {
-  }
   ngOnInit() {
     this.appService.changeHeaderTitle("Gestion des documents")
     this.displayedColumns = [];
