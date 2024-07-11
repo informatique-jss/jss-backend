@@ -378,8 +378,8 @@ public class QuotationController {
   PaperSetService paperSetService;
 
   @GetMapping(inputEntryPoint + "/paper-sets/search")
-  public ResponseEntity<List<IPaperSetResult>> searchPaperSets(@RequestParam String textSearch, @RequestParam Boolean isDisplayValidated, @RequestParam Boolean isDisplayCanceled) throws OsirisValidationException, OsirisException {
-    return new ResponseEntity<List<IPaperSetResult>>(paperSetService.searchPaperSets(textSearch, isDisplayValidated, isDisplayCanceled), HttpStatus.OK);
+  public ResponseEntity<List<IPaperSetResult>> searchPaperSets(@RequestParam String textSearch, @RequestParam Boolean isDisplayValidated, @RequestParam Boolean isDisplayCancelled) throws OsirisValidationException, OsirisException {
+    return new ResponseEntity<List<IPaperSetResult>>(paperSetService.searchPaperSets(textSearch, isDisplayValidated, isDisplayCancelled), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/paper-set/cancel")

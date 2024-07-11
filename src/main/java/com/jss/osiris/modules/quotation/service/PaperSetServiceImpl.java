@@ -33,8 +33,7 @@ public class PaperSetServiceImpl implements PaperSetService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PaperSet addOrUpdatePaperSet(
-            PaperSet paperSet) {
+    public PaperSet addOrUpdatePaperSet(PaperSet paperSet) {
         if (paperSet.getLocationNumber() == null) {
             // Allocate new location number
             List<PaperSet> paperSets = paperSetRepository.findAllByOrderByLocationNumberAsc();
@@ -49,15 +48,16 @@ public class PaperSetServiceImpl implements PaperSetService {
                 }
             }
             paperSet.setLocationNumber(location);
+            if(paperSet.getIsCancelled() == null)   
+                paperSet.setIsCancelled(false);
+            if(paperSet.getIsValidated() == null)
+                paperSet.setIsValidated(false);
         }
         return paperSetRepository.save(paperSet);
     }
 
-    public List<IPaperSetResult> searchPaperSets(String textSearch, Boolean isDisplayValidated, Boolean isDisplayCanceled) {
-        if(textSearch.isEmpty() && isDisplayCanceled==false && isDisplayValidated==false)
-            return paperSetRepository.findPaperSets();
-        else 
-            return paperSetRepository.filteredPaperSets(textSearch, isDisplayValidated, isDisplayCanceled);
+    public List<IPaperSetResult> searchPaperSets(String textSearch, Boolean isDisplayValidated, Boolean isDisplayCancelled) {
+        return paperSetRepository.findPaperSets(textSearch, isDisplayValidated, isDisplayCancelled);
     }
 
     public PaperSet cancelPaperSet(PaperSet paperSet) {

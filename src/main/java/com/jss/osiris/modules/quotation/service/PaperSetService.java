@@ -12,7 +12,7 @@ public interface PaperSetService {
 
     public PaperSet addOrUpdatePaperSet(PaperSet paperSet);
 
-    public List<IPaperSetResult> searchPaperSets(String textSearch, Boolean isDisplayValidated, Boolean isDisplayCanceled);
+    public List<IPaperSetResult> searchPaperSets(String textSearch, Boolean isDisplayValidated, Boolean isDisplayCancelled);
 
     public PaperSet cancelPaperSet(PaperSet paperSet);
 

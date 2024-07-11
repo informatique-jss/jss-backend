@@ -21,8 +21,8 @@ export class PaperSetListComponent implements OnInit {
   paperSetResults: PaperSetResult[] | undefined;
   displayedColumns: SortTableColumn<PaperSetResult>[] = [];
   tableAction: SortTableAction<PaperSetResult>[] = [];
-  isDisplayCanceled: boolean = false;
-  isDisplayValidated: boolean=false;
+  isDisplayCancelled: boolean = false;
+  isDisplayValidated: boolean = false;
 
   constructor(
     private appService: AppService,
@@ -45,6 +45,14 @@ export class PaperSetListComponent implements OnInit {
     this.displayedColumns.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "servicesLabel", fieldName: "servicesLabel", label: "Service(s)" } as SortTableColumn<PaperSetResult>);
+    this.displayedColumns.push({
+      id: "isDone", fieldName: "isDone", label: "Statut action", valueFonction: (element: PaperSetResult, column: SortTableColumn<PaperSetResult>) => {
+        if (element && column)
+          if (element.isCancelled) return "Annulée"
+          else if (element.isValidated) return "Validée";
+        return ""
+      }
+    } as SortTableColumn<PaperSetResult>);
 
     this.tableAction.push({
       actionIcon: "shopping_cart", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction<PaperSetResult>, element: PaperSetResult) => {
@@ -124,7 +132,7 @@ export class PaperSetListComponent implements OnInit {
   });
 
   searchPaperSets() {
-    this.paperSetResultService.searchPaperSets(this.textSearch, this.isDisplayValidated, this.isDisplayCanceled).subscribe(response => {
+    this.paperSetResultService.searchPaperSets(this.textSearch, this.isDisplayValidated, this.isDisplayCancelled).subscribe(response => {
       this.paperSetResults = response;
     }
     );

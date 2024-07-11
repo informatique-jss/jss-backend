@@ -7,14 +7,14 @@
             [isMandatory]="false" [isDisabled]="false" (onFormChange)="searchPaperSets()"></generic-input>
         </td>
         <td>
-          <generic-toggle [(model)]="isDisplayValidated" label="Afficher les actions validées ?" [form]="paperSetForm" propertyName="isDisplayValidated" [isDisabled]="false"> </generic-toggle>
+          <generic-toggle [(model)]="isDisplayValidated" label="Afficher les actions validées ?" [form]="paperSetForm" propertyName="isDisplayValidated" [isDisabled]="false" (onFormChange)="searchPaperSets()"> </generic-toggle>
         </td>
         <td>
-          <generic-toggle [(model)]="isDisplayCanceled" label="Afficher les actions annulées ?" [form]="paperSetForm" propertyName="isDisplayCanceled" [isDisabled]="false" ></generic-toggle>
+          <generic-toggle [(model)]="isDisplayCancelled" label="Afficher les actions annulées ?" [form]="paperSetForm" propertyName="isDisplayCancelled" [isDisabled]="false" (onFormChange)="searchPaperSets()"></generic-toggle>
         </td>
       </tr>
     </table>
-    <sort-table *ngIf="paperSetResults " [actions]="tableAction" [columns]="displayedColumns"
+    <sort-table *ngIf="paperSetResults" [actions]="tableAction" [columns]="displayedColumns"
       [displayTotalLines]="true" [values]="paperSetResults" tableName="Gestion des documents">
     </sort-table>
   </div>
