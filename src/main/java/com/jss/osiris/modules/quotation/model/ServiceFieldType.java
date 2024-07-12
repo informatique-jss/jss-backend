@@ -24,6 +24,8 @@ public class ServiceFieldType implements Serializable, IId {
 
 	private String code;
 
+	private String dataType;
+
 	public Integer getId() {
 		return id;
 	}
@@ -46,6 +48,14 @@ public class ServiceFieldType implements Serializable, IId {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getDataType() {
+		return dataType;
+	}
+
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
 	}
 
 }

@@ -136,6 +136,35 @@
             </td>
           </tr>
         </table>
+
+        <p>Types de champs du service</p>
+        <table class="full-width">
+          <tr *ngFor="let assoServiceFieldType of selectedEntity.assoServiceFieldType; let index = index">
+            <td>
+              <autocomplete-type-document [(model)]="assoServiceFieldType.serviceFieldType" [form]="entityForm"
+                [propertyName]="'fieldType'+index" [isMandatory]="true" [isDisabled]="!editMode" matTooltip=""
+                [onlyDisplayWithAttachmentType]="true"></autocomplete-type-document>
+            </td>
+            <td>
+              <generic-toggle [(model)]="assoServiceFieldType.isMandatory" label="Est obligatoire ?" [form]="entityForm"
+                [propertyName]="'isMandatory'+index" [isDisabled]="!editMode"></generic-toggle>
+            </td>
+            <td>
+              <button *ngIf="editMode" (click)="deleteFieldType(assoServiceFieldType)" mat-raised-button color="accent">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <button *ngIf="editMode" (click)="addTypeDocument()" mat-raised-button color="accent">Ajouter un type de
+                pièce-jointe au service </button>
+            </td>
+          </tr>
+        </table>
+
       </fieldset>
     </div>
   </form>

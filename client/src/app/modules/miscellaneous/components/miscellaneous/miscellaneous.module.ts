@@ -261,6 +261,7 @@ import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.compone
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
+import { SelectServiceFieldTypeComponent } from '../forms/select-service-field-type/select-service-field-type.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
@@ -535,6 +536,7 @@ const routes: Routes = [
     SelectBillingTypeComponent,
     SelectPaperSetTypeComponent,
     ChipsPrincipalAccountingAccountComponent,
+    SelectServiceFieldTypeComponent,
   ],
   exports: [
     HistoryComponent,
@@ -769,6 +771,7 @@ const routes: Routes = [
     SelectBillingTypeComponent,
     SelectPaperSetTypeComponent,
     ChipsPrincipalAccountingAccountComponent,
+    SelectServiceFieldTypeComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

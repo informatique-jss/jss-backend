@@ -8,6 +8,7 @@ import { ServiceType } from 'src/app/modules/quotation/model/ServiceType';
 import { ServiceTypeService } from 'src/app/modules/quotation/services/service.type.service';
 import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
+import { AssoServiceFieldType } from '../../../../quotation/model/AssoServiceFieldType';
 
 @Component({
   selector: 'referential-service-type',
@@ -55,5 +56,13 @@ export class ReferentialServiceTypeComponent extends GenericReferentialComponent
       for (let i = 0; i < this.selectedEntity.assoServiceTypeDocuments.length; i++)
         if (this.selectedEntity.assoServiceTypeDocuments[i].id == assoServiceTypeDocument.id)
           this.selectedEntity.assoServiceTypeDocuments.splice(i, 1);
+  }
+
+  addFieldType() {
+
+  }
+
+  deleteFieldType(assoServiceFieldType: AssoServiceFieldType) {
+
   }
 }

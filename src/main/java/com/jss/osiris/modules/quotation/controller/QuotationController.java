@@ -394,7 +394,7 @@ public class QuotationController {
       validationHelper.validateReferential(serviceFieldTypes, true, "serviceFieldTypes");
     validationHelper.validateString(serviceFieldTypes.getCode(), true, "code");
     validationHelper.validateString(serviceFieldTypes.getLabel(), true, "label");
-
+    validationHelper.validateString(serviceFieldTypes.getDataType(), true, "dataType");
     return new ResponseEntity<ServiceFieldType>(serviceFieldTypeService.addOrUpdateServiceFieldType(serviceFieldTypes),
         HttpStatus.OK);
   }
