@@ -49,6 +49,7 @@ public class Formalite implements IId {
 
     @OneToMany(mappedBy = "formalite")
     @JsonIgnoreProperties(value = { "content" })
+    @IndexedField
     private List<FormaliteGuichetUnique> formalitesGuichetUnique;
 
     @OneToMany(mappedBy = "formalite")
