@@ -1013,13 +1013,13 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 .equals(constantService.getPaymentTypeCB().getId()))
             sourceAccountingAccount = constantService.getAccountingAccountBankCentralPay();
 
-        generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
+        generateNewAccountingRecord(payment.getOriginPayment().getPaymentDate(), operationId, null, null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
                 null, Math.abs(payment.getPaymentAmount()), sourceAccountingAccount, null, null,
                 null,
                 bankJournal, payment, refund, null);
 
-        generateNewAccountingRecord(payment.getPaymentDate(), operationId, null, null,
+        generateNewAccountingRecord(payment.getOriginPayment().getPaymentDate(), operationId, null, null,
                 "Paiement n°" + payment.getId() + getPaymentOriginLabel(payment) + " - " + payment.getLabel(),
                 Math.abs(payment.getPaymentAmount()), null,
                 payment.getTargetAccountingAccount(), null, null, null, bankJournal, payment, refund, null);
