@@ -16,26 +16,15 @@ export class SelectReferentialServiceFieldTypeComponent extends GenericSelectCom
 
   constructor(private formBuild: UntypedFormBuilder,
     private userNoteService2: UserNoteService,
-    private ServiceFieldTypeService: ServiceFieldTypeService) {
+    private serviceFieldTypeService: ServiceFieldTypeService) {
     super(formBuild, userNoteService2)
   }
 
   initTypes(): void {
     this.types = [];
-    this.ServiceFieldTypeService.getServiceFieldTypes().subscribe(response => {
+    this.serviceFieldTypeService.getServiceFieldTypes().subscribe(response => {
       if (response)
         this.types = response;
     });
-    //  this.types = this.types.sort((a, b) => a.localeCompare(b));
-  }
-
-  compareWithId = this.compareWithLabel;
-
-  compareWithLabel(o1: any, o2: any): boolean {
-    if (o1 == null && o2 != null || o1 != null && o2 == null)
-      return false;
-    if (o1 && o2)
-      return o1 == o2;
-    return false
   }
 }
