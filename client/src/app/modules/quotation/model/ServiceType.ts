@@ -1,4 +1,4 @@
-import { AssoServiceFieldType } from "./AssoServiceFieldType";
+import { AssoServiceTypeFieldType } from "./AssoServiceTypeFieldType";
 import { AssoServiceProvisionType } from "./AssoServiceProvisionType";
 import { AssoServiceTypeDocument } from "./AssoServiceTypeDocument";
 import { ServiceFamily } from "./ServiceFamily";
@@ -10,5 +10,5 @@ export interface ServiceType {
   serviceFamily: ServiceFamily;
   assoServiceProvisionTypes: AssoServiceProvisionType[];
   assoServiceTypeDocuments: AssoServiceTypeDocument[];
-  assoServiceFieldType: AssoServiceFieldType[];
+  assoServiceTypeFieldTypes: AssoServiceTypeFieldType[];
 }

@@ -177,6 +177,7 @@ import { SelectStatutExerciceActiviteSimultanComponent } from '../forms/guichet-
 import { SelectStatutFormaliteComponent } from '../forms/guichet-unique/select-statut-formalite/select-statut-formalite.component';
 import { SelectStatutPourFormaliteComponent } from '../forms/guichet-unique/select-statut-pour-formalite/select-statut-pour-formalite.component';
 import { SelectStatutPourLaFormaliteComponent } from '../forms/guichet-unique/select-statut-pour-la-formalite/select-statut-pour-la-formalite.component';
+import { SelectReferentialServiceFieldTypeComponent } from '../forms/select-referential-service-field-type/select-referential-service-fied-type.component';
 import { SelectStatutVisAVisFormaliteComponent } from '../forms/guichet-unique/select-statut-visavis-formalite/select-statut-visavis-formalite.component';
 import { SelectSuccursaleOuFilialeComponent } from '../forms/guichet-unique/select-succursale-ou-filiale/select-succursale-ou-filiale.component';
 import { SelectTutelleCuratelleComponent } from '../forms/guichet-unique/select-tutelle-curatelle/select-tutelle-curatelle.component';
@@ -537,6 +538,7 @@ const routes: Routes = [
     SelectPaperSetTypeComponent,
     ChipsPrincipalAccountingAccountComponent,
     SelectServiceFieldTypeComponent,
+    SelectReferentialServiceFieldTypeComponent
   ],
   exports: [
     HistoryComponent,
@@ -772,6 +774,7 @@ const routes: Routes = [
     SelectPaperSetTypeComponent,
     ChipsPrincipalAccountingAccountComponent,
     SelectServiceFieldTypeComponent,
+    SelectReferentialServiceFieldTypeComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

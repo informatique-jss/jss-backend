@@ -18,7 +18,7 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_asso_service_type_field_type", columnList = "id_service_type_field_type") })
-public class AssoServiceFieldType implements Serializable, IId {
+public class AssoServiceTypeFieldType implements Serializable, IId {
 
 	@Id
 	@SequenceGenerator(name = "asso_service_type_field_type_sequence", sequenceName = "asso_service_type_field_type_sequence", allocationSize = 1)
@@ -31,7 +31,7 @@ public class AssoServiceFieldType implements Serializable, IId {
 	private ServiceType serviceType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_field_type")
+	@JoinColumn(name = "id_service_field_type")
 	@IndexedField
 	private ServiceFieldType serviceFieldType;
 

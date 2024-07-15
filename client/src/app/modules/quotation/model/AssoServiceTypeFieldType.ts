@@ -1,7 +1,7 @@
 import { ServiceType } from "./ServiceType";
 import { ServiceFieldType } from './ServiceFieldType';
 
-export interface AssoServiceFieldType {
+export interface AssoServiceTypeFieldType {
   id: number;
   service: ServiceType;
   serviceFieldType: ServiceFieldType;

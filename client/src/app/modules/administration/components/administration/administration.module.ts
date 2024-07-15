@@ -205,7 +205,7 @@ const routes: Routes = [
     ReferentialCustomerOrderFrequencyComponent,
     ReferentialActiveDirectoryGroupComponent,
     ReferentialPaperSetTypeComponent,
-    ReferentialServiceFieldTypeComponent
+    ReferentialServiceFieldTypeComponent,
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

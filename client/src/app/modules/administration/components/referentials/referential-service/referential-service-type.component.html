@@ -113,8 +113,8 @@
             <td>
               <autocomplete-type-document [(model)]="assoServiceTypeDocument.typeDocument" [form]="entityForm"
                 [propertyName]="'typeDocument'+index" [isMandatory]="true" [isDisabled]="!editMode"
-                matTooltip="Seuls les types attachés à un Type de pièce jointe sont affichés"
-                [onlyDisplayWithAttachmentType]="true"></autocomplete-type-document>
+                matTooltip="Seuls les types attachés à un Type de pièce jointe sont affichés" [onlyDisplayWithAttachm
+                entType]="true"></autocomplete-type-document>
             </td>
             <td>
               <generic-toggle [(model)]="assoServiceTypeDocument.isMandatory" label="Est obligatoire ?"
@@ -139,11 +139,12 @@
 
         <p>Types de champs du service</p>
         <table class="full-width">
-          <tr *ngFor="let assoServiceFieldType of selectedEntity.assoServiceFieldType; let index = index">
+          <tr *ngFor="let assoServiceFieldType of selectedEntity.assoServiceTypeFieldTypes; let index = index">
             <td>
-              <autocomplete-type-document [(model)]="assoServiceFieldType.serviceFieldType" [form]="entityForm"
-                [propertyName]="'fieldType'+index" [isMandatory]="true" [isDisabled]="!editMode" matTooltip=""
-                [onlyDisplayWithAttachmentType]="true"></autocomplete-type-document>
+              <select-referential-service-field-type [(model)]="assoServiceFieldType.serviceFieldType"
+                [propertyName]="'serviceFieldType'+index" [form]="entityForm" [isMandatory]="true"
+                label="Libellé champ type"
+                [isDisabled]="!editMode">{{assoServiceFieldType.serviceFieldType.label}}</select-referential-service-field-type>
             </td>
             <td>
               <generic-toggle [(model)]="assoServiceFieldType.isMandatory" label="Est obligatoire ?" [form]="entityForm"
@@ -159,8 +160,8 @@
         <table class="full-width">
           <tr>
             <td>
-              <button *ngIf="editMode" (click)="addTypeDocument()" mat-raised-button color="accent">Ajouter un type de
-                pièce-jointe au service </button>
+              <button *ngIf="editMode" (click)="addFieldType()" mat-raised-button color="accent">Ajouter un champ au
+                service </button>
             </td>
           </tr>
         </table>

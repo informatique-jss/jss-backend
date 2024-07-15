@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
-import { DATE_SERVICE_FIELD_TYPE, INTEGER_SERVICE_FIELD_TYPE, RADIO_SERVICE_FIELD_TYPE, TEXT_SERVICE_FIELD_TYPE } from '../../../../../libs/Constants';
+import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_RADIO, SERVICE_FIELD_TYPE_TEXT } from '../../../../../libs/Constants';
 
 @Component({
   selector: 'select-service-field-type',
@@ -20,10 +20,10 @@ export class SelectServiceFieldTypeComponent extends GenericSelectComponent<stri
 
   initTypes(): void {
     this.types = [];
-    this.types.push(INTEGER_SERVICE_FIELD_TYPE);
-    this.types.push(TEXT_SERVICE_FIELD_TYPE);
-    this.types.push(DATE_SERVICE_FIELD_TYPE);
-    this.types.push(RADIO_SERVICE_FIELD_TYPE);
+    this.types.push(SERVICE_FIELD_TYPE_INTEGER);
+    this.types.push(SERVICE_FIELD_TYPE_TEXT);
+    this.types.push(SERVICE_FIELD_TYPE_DATE);
+    this.types.push(SERVICE_FIELD_TYPE_RADIO);
     this.types = this.types.sort((a, b) => a.localeCompare(b));
   }
 

@@ -69,6 +69,7 @@ import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
+import com.jss.osiris.modules.quotation.model.AssoServiceTypeFieldType;
 import com.jss.osiris.modules.quotation.model.AssoServiceProvisionType;
 import com.jss.osiris.modules.quotation.model.AttachmentMailRequest;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
@@ -623,6 +624,11 @@ public class QuotationController {
       }
     }
 
+    if (serviceType.getAssoServiceTypeFieldTypes() != null) {
+      for (AssoServiceTypeFieldType assoServiceFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
+        validationHelper.validateReferential(assoServiceFieldType.getServiceFieldType(), null, inputEntryPoint);
+      }
+    }
     return new ResponseEntity<ServiceType>(serviceTypeService.addOrUpdateServiceType(serviceType), HttpStatus.OK);
   }
 
