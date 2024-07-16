@@ -1,10 +1,6 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
-import java.util.List;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
