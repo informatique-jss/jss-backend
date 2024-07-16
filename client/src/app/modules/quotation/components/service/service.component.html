@@ -68,4 +68,36 @@
       <mat-icon>post_add</mat-icon>
     </button>
   </div>
+  <div *ngIf="service.assoServiceFieldTypes ">
+    <table class="full-width">
+      <tr>
+        <ng-container *ngFor="let assoServiceFieldType of service.assoServiceFieldTypes; let i = index">
+          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT">
+            <generic-input [(model)]="assoServiceFieldType.stringValue"
+              [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+              [propertyName]='"stringFieldType"+i' [isDisabled]="!editMode"
+              [isMandatory]="assoServiceFieldType.serviceFieldType.isMandatory" [maxLength]="3000"></generic-input>
+          </td>
+          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE">
+            <generic-datepicker [(model)]="assoServiceFieldType.dateValue"
+              label={{assoServiceFieldType.serviceFieldType.label}} [form]="serviceForm"
+              [propertyName]='"dateFieldType"+i' [isMandatory]="assoServiceFieldType.serviceFieldType.isMandatory"
+              [isDisabled]="!editMode"></generic-datepicker>
+          </td>
+          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER">
+            <generic-input [(model)]="assoServiceFieldType.integerValue"
+              label={{assoServiceFieldType.serviceFieldType.label}} [form]="serviceForm"
+              [propertyName]='"integerFieldType"+i' [isMandatory]="assoServiceFieldType.serviceFieldType.isMandatory"
+              [isDisabled]="!editMode"></generic-input>
+          </td>
+          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_RADIO">
+            <generic-input [(model)]="assoServiceFieldType.radioValue"
+              [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+              [propertyName]='"stringFieldType"+i' [isDisabled]="!editMode"
+              [isMandatory]="assoServiceFieldType.serviceFieldType.isMandatory" [maxLength]="3000"></generic-input>
+          </td>
+        </ng-container>
+      </tr>
+    </table>
+  </div>
 </ng-container>

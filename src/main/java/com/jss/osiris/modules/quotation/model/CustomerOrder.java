@@ -135,6 +135,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<AssoAffaireOrder> assoAffaireOrders;
 
+	@OneToMany(targetEntity = AssoServiceFieldType.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	private List<AssoServiceFieldType> assoServiceFieldTypes;
+
 	@ManyToMany(mappedBy = "customerOrders")
 	@JsonIgnoreProperties(value = { "customerOrders" }, allowSetters = true)
 	@JsonIgnore // For client-side performance purpose
@@ -482,6 +486,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setPaperSets(List<PaperSet> paperSets) {
 		this.paperSets = paperSets;
+	}
+
+	public List<AssoServiceFieldType> getAssoServiceFieldTypes() {
+		return assoServiceFieldTypes;
+	}
+
+	public void setAssoServiceFieldTypes(List<AssoServiceFieldType> assoServiceFieldTypes) {
+		this.assoServiceFieldTypes = assoServiceFieldTypes;
 	}
 
 }

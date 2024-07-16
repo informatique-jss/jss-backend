@@ -39,12 +39,13 @@ export class AutocompleteServiceTypeComponent extends GenericLocalAutocompleteCo
 
   displayLabel(object: ServiceType): string {
     let label = "";
-    if (object)
+    if (object) {
       if (object.serviceFamily && object.serviceFamily.serviceFamilyGroup)
         label += object.serviceFamily.serviceFamilyGroup.label + " - ";
-    if (object.serviceFamily)
-      label += object.serviceFamily.label + " - ";
-    label += object.label;
+      if (object.serviceFamily)
+        label += object.serviceFamily.label + " - ";
+      label += object.label;
+    }
     return label;
   }
 }

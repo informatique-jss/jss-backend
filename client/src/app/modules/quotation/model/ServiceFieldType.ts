@@ -3,4 +3,5 @@ export interface ServiceFieldType {
   code: string;
   label: string;
   dataType: string;
+  isMandatory: boolean;
 }

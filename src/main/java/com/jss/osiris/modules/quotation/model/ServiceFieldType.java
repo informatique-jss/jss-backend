@@ -13,7 +13,11 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 public class ServiceFieldType implements Serializable, IId {
-
+	public static String SERVICE_FIELD_TYPE_INTEGER = "SERVICE_FIELD_TYPE_INTEGER";
+	public static String SERVICE_FIELD_TYPE_TEXT = "SERVICE_FIELD_TYPE_TEXT";
+	public static String SERVICE_FIELD_TYPE_TEXTAREA = "SERVICE_FIELD_TYPE_TEXTAREA";
+	public static String SERVICE_FIELD_TYPE_DATE = "SERVICE_FIELD_TYPE_DATE";
+	public static String SERVICE_FIELD_TYPE_RADIO = "SERVICE_FIELD_TYPE_RADIO";
 	@Id
 	@SequenceGenerator(name = "service_field_type_sequence", sequenceName = "service_field_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "service_field_type_sequence")
@@ -25,6 +29,8 @@ public class ServiceFieldType implements Serializable, IId {
 	private String code;
 
 	private String dataType;
+
+	private Boolean isMandatory;
 
 	public Integer getId() {
 		return id;
@@ -56,6 +62,14 @@ public class ServiceFieldType implements Serializable, IId {
 
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
+	}
+
+	public Boolean getIsMandatory() {
+		return isMandatory;
+	}
+
+	public void setIsMandatory(Boolean isMandatory) {
+		this.isMandatory = isMandatory;
 	}
 
 }

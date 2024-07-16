@@ -125,6 +125,7 @@ import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.quotation.service.AssignationTypeService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.AssoServiceDocumentService;
+import com.jss.osiris.modules.quotation.service.AssoServiceFieldTypeService;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.BuildingDomiciliationService;
 import com.jss.osiris.modules.quotation.service.CharacterPriceService;
@@ -383,6 +384,9 @@ public class QuotationController {
   @Autowired
   ServiceFieldTypeService serviceFieldTypeService;
 
+  @Autowired
+  AssoServiceFieldTypeService assoServiceFieldTypeService;
+
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
     return new ResponseEntity<List<ServiceFieldType>>(serviceFieldTypeService.getServiceFieldTypes(), HttpStatus.OK);
@@ -395,7 +399,14 @@ public class QuotationController {
       validationHelper.validateReferential(serviceFieldTypes, true, "serviceFieldTypes");
     validationHelper.validateString(serviceFieldTypes.getCode(), true, "code");
     validationHelper.validateString(serviceFieldTypes.getLabel(), true, "label");
-    validationHelper.validateString(serviceFieldTypes.getDataType(), true, "dataType");
+
+    if (serviceFieldTypes.getDataType() == ServiceFieldType.SERVICE_FIELD_TYPE_DATE
+        || serviceFieldTypes.getDataType() == ServiceFieldType.SERVICE_FIELD_TYPE_INTEGER
+        || serviceFieldTypes.getDataType() == ServiceFieldType.SERVICE_FIELD_TYPE_RADIO
+        || serviceFieldTypes.getDataType() == ServiceFieldType.SERVICE_FIELD_TYPE_TEXT
+        || serviceFieldTypes.getDataType() == ServiceFieldType.SERVICE_FIELD_TYPE_TEXTAREA) {
+      validationHelper.validateString(serviceFieldTypes.getDataType(), true, "dataType");
+    }
     return new ResponseEntity<ServiceFieldType>(serviceFieldTypeService.addOrUpdateServiceFieldType(serviceFieldTypes),
         HttpStatus.OK);
   }
@@ -1702,6 +1713,7 @@ public class QuotationController {
     if (customerOrder.getCustomerOrderStatus() == null)
       customerOrder.setCustomerOrderStatus(customerOrderStatus);
 
+    // assoServiceFieldTypeService.addOrUpdateServiceFieldType(customerOrder) ;
     return new ResponseEntity<CustomerOrder>(customerOrderService.addOrUpdateCustomerOrderFromUser(customerOrder),
         HttpStatus.OK);
   }

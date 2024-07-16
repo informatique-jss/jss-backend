@@ -1,6 +1,10 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Date;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +20,7 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_asso_service_field_type", columnList = "id_service") })
+@Table(indexes = { @Index(name = "idx_asso_service_field_type_service", columnList = "id_service") })
 public class AssoServiceFieldType implements Serializable, IId {
 
     @Id
@@ -33,6 +37,17 @@ public class AssoServiceFieldType implements Serializable, IId {
     @JoinColumn(name = "id_field_type")
     @IndexedField
     private ServiceFieldType serviceFieldType;
+
+    private String stringValue;
+
+    private Integer integerValue;
+
+    private LocalDate dateValue;
+
+    private String radioValue;
+
+    @Column(columnDefinition = "TEXT")
+    private String textAreaValue;
 
     private Boolean isMandatory;
 
@@ -64,8 +79,48 @@ public class AssoServiceFieldType implements Serializable, IId {
         return isMandatory;
     }
 
+    public String getStringValue() {
+        return stringValue;
+    }
+
+    public void setStringValue(String stringValue) {
+        this.stringValue = stringValue;
+    }
+
+    public Integer getIntegerValue() {
+        return integerValue;
+    }
+
+    public void setIntegerValue(Integer integerValue) {
+        this.integerValue = integerValue;
+    }
+
+    public LocalDate getDateValue() {
+        return dateValue;
+    }
+
+    public void setDateValue(LocalDate dateValue) {
+        this.dateValue = dateValue;
+    }
+
     public void setIsMandatory(Boolean isMandatory) {
         this.isMandatory = isMandatory;
+    }
+
+    public String getRadioValue() {
+        return radioValue;
+    }
+
+    public void setRadioValue(String radioValue) {
+        this.radioValue = radioValue;
+    }
+
+    public String getTextAreaValue() {
+        return textAreaValue;
+    }
+
+    public void setTextAreaValue(String textAreaValue) {
+        this.textAreaValue = textAreaValue;
     }
 
 }

@@ -3,6 +3,7 @@ import { AssoServiceDocument } from "./AssoServiceDocument";
 import { MissingAttachmentQuery } from "./MissingAttachmentQuery";
 import { Provision } from "./Provision";
 import { ServiceType } from "./ServiceType";
+import { AssoServiceFieldType } from './AssoServiceFieldType';
 
 export interface Service {
   id: number;
@@ -13,4 +14,5 @@ export interface Service {
   customLabel: string;
   customerComment: string;
   missingAttachmentQueries: MissingAttachmentQuery[];
+  assoServiceFieldTypes: AssoServiceFieldType[];
 }
