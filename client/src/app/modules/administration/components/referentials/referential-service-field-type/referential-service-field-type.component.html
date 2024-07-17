@@ -37,8 +37,8 @@
           <tr>
             <td>
               <select-service-field-data-type [(model)]="selectedEntity.dataType" label="Type de données"
-                [form]="entityForm" propertyName="dataType" [isMandatory]="true"
-                [isDisabled]="!editMode"></select-service-field-data-type>
+                [form]="entityForm" propertyName="dataType" [isMandatory]="true" [isDisabled]="!editMode"
+                (selectionChange)="clearPossibleValues()"></select-service-field-data-type>
             </td>
           </tr>
         </table>

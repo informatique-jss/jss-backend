@@ -1,4 +1,5 @@
 import { ServiceFieldType } from "./ServiceFieldType";
+import { ServiceFieldTypePossibleValue } from "./ServiceFieldTypePossibleValue";
 import { ServiceType } from "./ServiceType";
 
 export interface AssoServiceFieldType {
@@ -8,7 +9,7 @@ export interface AssoServiceFieldType {
   stringValue: string;
   integerValue: number;
   dateValue: Date;
-  radioValue: string;
+  selectValue: ServiceFieldTypePossibleValue;
   textAreaValue: string;
   isMandatory: boolean;
 }

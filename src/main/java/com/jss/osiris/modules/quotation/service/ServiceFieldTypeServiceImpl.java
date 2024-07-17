@@ -37,6 +37,7 @@ public class ServiceFieldTypeServiceImpl implements ServiceFieldTypeService {
         if (serviceFieldType.getServiceFieldTypePossibleValues() != null)
             for (ServiceFieldTypePossibleValue possibleValue : serviceFieldType.getServiceFieldTypePossibleValues())
                 possibleValue.setServiceFieldType(serviceFieldType);
+
         return serviceFieldTypeRepository.save(serviceFieldType);
     }
 }

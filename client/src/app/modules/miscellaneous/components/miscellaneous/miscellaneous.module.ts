@@ -263,7 +263,7 @@ import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/u
 import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
 import { SelectServiceFieldDataTypeComponent } from '../forms/select-service-field-data-type/select-service-field-data-type.component';
-import { SelectRadioValueServiceFieldTypeComponent } from '../forms/select-radio-value-service-field-type/select-radio-value-service-field-type.component'
+import { SelectValueServiceFieldTypeComponent } from '../forms/select-value-service-field-type/select-value-service-field-type.component'
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
@@ -540,8 +540,8 @@ const routes: Routes = [
     ChipsPrincipalAccountingAccountComponent,
     SelectServiceFieldTypeComponent,
     SelectServiceFieldTypeComponent,
-    SelectRadioValueServiceFieldTypeComponent,
-    SelectServiceFieldDataTypeComponent
+    SelectValueServiceFieldTypeComponent,
+    SelectServiceFieldDataTypeComponent,
   ],
   exports: [
     HistoryComponent,
@@ -778,8 +778,8 @@ const routes: Routes = [
     ChipsPrincipalAccountingAccountComponent,
     SelectServiceFieldTypeComponent,
     SelectServiceFieldTypeComponent,
-    SelectRadioValueServiceFieldTypeComponent,
-    SelectServiceFieldDataTypeComponent
+    SelectValueServiceFieldTypeComponent,
+    SelectServiceFieldDataTypeComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

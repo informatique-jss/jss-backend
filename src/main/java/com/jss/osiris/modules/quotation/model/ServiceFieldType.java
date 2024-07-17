@@ -36,7 +36,7 @@ public class ServiceFieldType implements Serializable, IId {
 
 	private Boolean isMandatory;
 
-	@OneToMany(mappedBy = "serviceFieldType", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "serviceFieldType", cascade = CascadeType.ALL)
 	@JsonIgnoreProperties(value = { "serviceFieldType" }, allowSetters = true)
 	private List<ServiceFieldTypePossibleValue> serviceFieldTypePossibleValues;
 

@@ -11,8 +11,10 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
+import com.jss.osiris.modules.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.quotation.model.AssoServiceProvisionType;
 import com.jss.osiris.modules.quotation.model.AssoServiceTypeDocument;
+import com.jss.osiris.modules.quotation.model.AssoServiceTypeFieldType;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.ServiceType;
@@ -65,6 +67,16 @@ public class ServiceServiceImpl implements ServiceService {
 
         // Provision
         service.setProvisions(getProvisionsFromServiceType(serviceType, affaire, service));
+
+        // Service Fields
+        ArrayList<AssoServiceFieldType> assoServiceFieldTypes = new ArrayList<AssoServiceFieldType>();
+        if (serviceType.getAssoServiceTypeFieldTypes() != null)
+            for (AssoServiceTypeFieldType assoServiceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
+                assoServiceFieldTypes
+                        .add(getAssoServiceFieldTypeFromAssoServiceTypeFieldType(assoServiceTypeFieldType, service));
+            }
+        service.setAssoServiceDocuments(assoServiceDocuments);
+
         return service;
     }
 
@@ -75,6 +87,15 @@ public class ServiceServiceImpl implements ServiceService {
         assoServiceDocument.setService(service);
         assoServiceDocument.setTypeDocument(assoServiceTypeDocument.getTypeDocument());
         return assoServiceDocument;
+    }
+
+    private AssoServiceFieldType getAssoServiceFieldTypeFromAssoServiceTypeFieldType(
+            AssoServiceTypeFieldType assoServiceTypeFieldType, Service service) {
+        AssoServiceFieldType assoServiceFieldType = new AssoServiceFieldType();
+        assoServiceFieldType.setIsMandatory(assoServiceTypeFieldType.getIsMandatory());
+        assoServiceFieldType.setService(service);
+        assoServiceFieldType.setServiceFieldType(assoServiceTypeFieldType.getServiceFieldType());
+        return assoServiceFieldType;
     }
 
     private List<Provision> getProvisionsFromServiceType(ServiceType serviceType, Affaire affaire, Service service) {

@@ -43,7 +43,10 @@ public class AssoServiceFieldType implements Serializable, IId {
 
     private LocalDate dateValue;
 
-    private String radioValue;
+    @ManyToOne
+    @JoinColumn(name = "id_service_field_type_possible_value")
+    @IndexedField
+    private ServiceFieldTypePossibleValue selectValue;
 
     @Column(columnDefinition = "TEXT")
     private String textAreaValue;
@@ -106,20 +109,20 @@ public class AssoServiceFieldType implements Serializable, IId {
         this.isMandatory = isMandatory;
     }
 
-    public String getRadioValue() {
-        return radioValue;
-    }
-
-    public void setRadioValue(String radioValue) {
-        this.radioValue = radioValue;
-    }
-
     public String getTextAreaValue() {
         return textAreaValue;
     }
 
     public void setTextAreaValue(String textAreaValue) {
         this.textAreaValue = textAreaValue;
+    }
+
+    public ServiceFieldTypePossibleValue getSelectValue() {
+        return selectValue;
+    }
+
+    public void setSelectValue(ServiceFieldTypePossibleValue selectValue) {
+        this.selectValue = selectValue;
     }
 
 }

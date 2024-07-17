@@ -64,6 +64,7 @@ import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
+import com.jss.osiris.modules.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
@@ -797,7 +798,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     if (service.getAssoServiceDocuments() != null)
                         for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
                             assoServiceDocument.setId(null);
-                            assoServiceDocument.setAttachments(null);
+                            assoServiceDocument.setAttachments(null); // TODO AGN ...
+                        }
+                    if (service.getAssoServiceFieldTypes() != null && service.getAssoServiceFieldTypes().size() > 0)
+                        for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes()) {
+                            assoServiceFieldType.setId(null);
                         }
                     for (Provision provision : service.getProvisions()) {
                         provision.setId(null);

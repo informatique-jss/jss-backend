@@ -45,4 +45,9 @@ export class ReferentialServiceFieldTypeComponent extends GenericReferentialComp
         if (this.selectedEntity.serviceFieldTypePossibleValues[i].value == serviceFieldTypePossibleValue.value)
           this.selectedEntity.serviceFieldTypePossibleValues.splice(i, 1);
   }
+
+  clearPossibleValues() {
+    if (this.selectedEntity && this.selectedEntity.dataType != SERVICE_FIELD_TYPE_SELECT)
+      this.selectedEntity.serviceFieldTypePossibleValues = [];
+  }
 }
