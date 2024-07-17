@@ -11,7 +11,7 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 import { AssoServiceTypeFieldType } from '../../../../quotation/model/AssoServiceTypeFieldType';
 import { ServiceFieldTypeService } from 'src/app/modules/quotation/services/service.field.type.service';
 import { ServiceFieldType } from 'src/app/modules/quotation/model/ServiceFieldType';
-import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_RADIO, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
+import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
 
 @Component({
   selector: 'referential-service-type',
@@ -77,17 +77,5 @@ export class ReferentialServiceTypeComponent extends GenericReferentialComponent
         if (this.selectedEntity.assoServiceTypeFieldTypes[i].id == assoServiceFieldType.id)
           this.selectedEntity.assoServiceTypeFieldTypes.splice(i, 1);
   }
-  displayLabel(object: string): string {
-    if (object == SERVICE_FIELD_TYPE_INTEGER)
-      return "Nombre";
-    if (object == SERVICE_FIELD_TYPE_DATE)
-      return "Date";
-    if (object == SERVICE_FIELD_TYPE_RADIO)
-      return "Radio";
-    if (object == SERVICE_FIELD_TYPE_TEXT)
-      return "Texte simple";
-    if (object == SERVICE_FIELD_TYPE_TEXTAREA)
-      return "Texte long";
-    return "";
-  }
+
 }

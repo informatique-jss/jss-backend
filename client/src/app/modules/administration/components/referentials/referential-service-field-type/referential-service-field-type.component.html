@@ -36,11 +36,37 @@
           </tr>
           <tr>
             <td>
-              <select-service-field-type [(model)]="selectedEntity.dataType" label="label" [form]="entityForm"
-                propertyName="dataType" [isMandatory]="true" [isDisabled]="!editMode"></select-service-field-type>
+              <select-service-field-data-type [(model)]="selectedEntity.dataType" label="Type de données"
+                [form]="entityForm" propertyName="dataType" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-service-field-data-type>
             </td>
           </tr>
         </table>
+        <ng-container *ngIf="selectedEntity.dataType==SERVICE_FIELD_TYPE_SELECT">
+          <table class="full-width">
+            <tr *ngFor="let possibleValue of selectedEntity.serviceFieldTypePossibleValues;let i = index">
+              <td>
+                <generic-input [(model)]="selectedEntity.serviceFieldTypePossibleValues[i].value" label="Valeur"
+                  [form]="entityForm" [propertyName]='"value"+i' [isMandatory]="true" [isDisabled]="!editMode"
+                  [maxLength]="255"></generic-input>
+              </td>
+              <td>
+                <button *ngIf="editMode" (click)="deletePossibleValue(possibleValue)" mat-raised-button color="accent">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <button *ngIf="editMode" (click)="addPossibleValue()" mat-raised-button color="accent">Ajouter une
+                  valeur
+                </button>
+              </td>
+            </tr>
+          </table>
+        </ng-container>
       </fieldset>
     </div>
   </form>

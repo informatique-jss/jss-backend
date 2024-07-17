@@ -78,6 +78,12 @@
               [propertyName]='"stringFieldType"+i' [isDisabled]="!editMode"
               [isMandatory]="assoServiceFieldType.serviceFieldType.isMandatory" [maxLength]="3000"></generic-input>
           </td>
+          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA">
+            <generic-input [(model)]="assoServiceFieldType.textAreaValue"
+              [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+              [propertyName]='"textAreaFieldType"+i' [isDisabled]="!editMode"
+              [isMandatory]="assoServiceFieldType.serviceFieldType.isMandatory"></generic-input>
+          </td>
           <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE">
             <generic-datepicker [(model)]="assoServiceFieldType.dateValue"
               label={{assoServiceFieldType.serviceFieldType.label}} [form]="serviceForm"
@@ -88,13 +94,14 @@
             <generic-input [(model)]="assoServiceFieldType.integerValue"
               label={{assoServiceFieldType.serviceFieldType.label}} [form]="serviceForm"
               [propertyName]='"integerFieldType"+i' [isMandatory]="assoServiceFieldType.serviceFieldType.isMandatory"
-              [isDisabled]="!editMode"></generic-input>
+              [isDisabled]=" !editMode"></generic-input>
           </td>
-          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_RADIO">
-            <generic-input [(model)]="assoServiceFieldType.radioValue"
-              [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
-              [propertyName]='"stringFieldType"+i' [isDisabled]="!editMode"
-              [isMandatory]="assoServiceFieldType.serviceFieldType.isMandatory" [maxLength]="3000"></generic-input>
+          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT">
+            <select-radio-value-service-field-type
+              [(model)]="assoServiceFieldType.serviceFieldType.serviceFieldTypePossibleValues" label="label"
+              [form]="serviceForm" [propertyName]='"radioFieldType"+i'
+              [isMandatory]="assoServiceFieldType.serviceFieldType.isMandatory"
+              [isDisabled]="!editMode"></select-radio-value-service-field-type>
           </td>
         </ng-container>
       </tr>

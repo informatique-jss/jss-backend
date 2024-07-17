@@ -1,14 +1,18 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
@@ -17,7 +21,7 @@ public class ServiceFieldType implements Serializable, IId {
 	public static String SERVICE_FIELD_TYPE_TEXT = "SERVICE_FIELD_TYPE_TEXT";
 	public static String SERVICE_FIELD_TYPE_TEXTAREA = "SERVICE_FIELD_TYPE_TEXTAREA";
 	public static String SERVICE_FIELD_TYPE_DATE = "SERVICE_FIELD_TYPE_DATE";
-	public static String SERVICE_FIELD_TYPE_RADIO = "SERVICE_FIELD_TYPE_RADIO";
+	public static String SERVICE_FIELD_TYPE_SELECT = "SERVICE_FIELD_TYPE_SELECT";
 	@Id
 	@SequenceGenerator(name = "service_field_type_sequence", sequenceName = "service_field_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "service_field_type_sequence")
@@ -31,6 +35,18 @@ public class ServiceFieldType implements Serializable, IId {
 	private String dataType;
 
 	private Boolean isMandatory;
+
+	@OneToMany(mappedBy = "serviceFieldType", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "serviceFieldType" }, allowSetters = true)
+	private List<ServiceFieldTypePossibleValue> serviceFieldTypePossibleValues;
+
+	public List<ServiceFieldTypePossibleValue> getServiceFieldTypePossibleValues() {
+		return serviceFieldTypePossibleValues;
+	}
+
+	public void setServiceFieldTypePossibleValues(List<ServiceFieldTypePossibleValue> serviceFieldTypePossibleValues) {
+		this.serviceFieldTypePossibleValues = serviceFieldTypePossibleValues;
+	}
 
 	public Integer getId() {
 		return id;

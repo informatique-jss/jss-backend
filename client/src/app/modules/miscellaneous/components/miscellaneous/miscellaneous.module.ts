@@ -177,7 +177,7 @@ import { SelectStatutExerciceActiviteSimultanComponent } from '../forms/guichet-
 import { SelectStatutFormaliteComponent } from '../forms/guichet-unique/select-statut-formalite/select-statut-formalite.component';
 import { SelectStatutPourFormaliteComponent } from '../forms/guichet-unique/select-statut-pour-formalite/select-statut-pour-formalite.component';
 import { SelectStatutPourLaFormaliteComponent } from '../forms/guichet-unique/select-statut-pour-la-formalite/select-statut-pour-la-formalite.component';
-import { SelectReferentialServiceFieldTypeComponent } from '../forms/select-referential-service-field-type/select-referential-service-fied-type.component';
+import { SelectServiceFieldTypeComponent } from '../forms/select-service-field-type/select-service-field-type.component';
 import { SelectStatutVisAVisFormaliteComponent } from '../forms/guichet-unique/select-statut-visavis-formalite/select-statut-visavis-formalite.component';
 import { SelectSuccursaleOuFilialeComponent } from '../forms/guichet-unique/select-succursale-ou-filiale/select-succursale-ou-filiale.component';
 import { SelectTutelleCuratelleComponent } from '../forms/guichet-unique/select-tutelle-curatelle/select-tutelle-curatelle.component';
@@ -262,7 +262,8 @@ import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.compone
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
-import { SelectServiceFieldTypeComponent } from '../forms/select-service-field-type/select-service-field-type.component';
+import { SelectServiceFieldDataTypeComponent } from '../forms/select-service-field-data-type/select-service-field-data-type.component';
+import { SelectRadioValueServiceFieldTypeComponent } from '../forms/select-radio-value-service-field-type/select-radio-value-service-field-type.component'
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
@@ -538,7 +539,9 @@ const routes: Routes = [
     SelectPaperSetTypeComponent,
     ChipsPrincipalAccountingAccountComponent,
     SelectServiceFieldTypeComponent,
-    SelectReferentialServiceFieldTypeComponent
+    SelectServiceFieldTypeComponent,
+    SelectRadioValueServiceFieldTypeComponent,
+    SelectServiceFieldDataTypeComponent
   ],
   exports: [
     HistoryComponent,
@@ -774,7 +777,9 @@ const routes: Routes = [
     SelectPaperSetTypeComponent,
     ChipsPrincipalAccountingAccountComponent,
     SelectServiceFieldTypeComponent,
-    SelectReferentialServiceFieldTypeComponent,
+    SelectServiceFieldTypeComponent,
+    SelectRadioValueServiceFieldTypeComponent,
+    SelectServiceFieldDataTypeComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

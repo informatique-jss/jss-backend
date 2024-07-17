@@ -112,6 +112,7 @@ import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.ServiceFamily;
 import com.jss.osiris.modules.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.quotation.model.ServiceFieldType;
+import com.jss.osiris.modules.quotation.model.ServiceFieldTypePossibleValue;
 import com.jss.osiris.modules.quotation.model.ServiceType;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
@@ -400,13 +401,24 @@ public class QuotationController {
     validationHelper.validateString(serviceFieldTypes.getCode(), true, "code");
     validationHelper.validateString(serviceFieldTypes.getLabel(), true, "label");
 
-    if (serviceFieldTypes.getDataType() == ServiceFieldType.SERVICE_FIELD_TYPE_DATE
-        || serviceFieldTypes.getDataType() == ServiceFieldType.SERVICE_FIELD_TYPE_INTEGER
-        || serviceFieldTypes.getDataType() == ServiceFieldType.SERVICE_FIELD_TYPE_RADIO
-        || serviceFieldTypes.getDataType() == ServiceFieldType.SERVICE_FIELD_TYPE_TEXT
-        || serviceFieldTypes.getDataType() == ServiceFieldType.SERVICE_FIELD_TYPE_TEXTAREA) {
-      validationHelper.validateString(serviceFieldTypes.getDataType(), true, "dataType");
+    if (!serviceFieldTypes.getDataType().equals(ServiceFieldType.SERVICE_FIELD_TYPE_DATE)
+        && !serviceFieldTypes.getDataType().equals(ServiceFieldType.SERVICE_FIELD_TYPE_INTEGER)
+        && !serviceFieldTypes.getDataType().equals(ServiceFieldType.SERVICE_FIELD_TYPE_SELECT)
+        && !serviceFieldTypes.getDataType().equals(ServiceFieldType.SERVICE_FIELD_TYPE_TEXT)
+        && !serviceFieldTypes.getDataType().equals(ServiceFieldType.SERVICE_FIELD_TYPE_TEXTAREA)) {
+      throw new OsirisValidationException("dataType");
     }
+    if (!serviceFieldTypes.getDataType().equals(ServiceFieldType.SERVICE_FIELD_TYPE_SELECT))
+      serviceFieldTypes.setServiceFieldTypePossibleValues(null);
+    else {
+      if (serviceFieldTypes.getServiceFieldTypePossibleValues() == null
+          || serviceFieldTypes.getServiceFieldTypePossibleValues().size() == 0)
+        throw new OsirisValidationException("serviceFieldTypePossibleValues");
+      else
+        for (ServiceFieldTypePossibleValue possibleValue : serviceFieldTypes.getServiceFieldTypePossibleValues())
+          validationHelper.validateString(possibleValue.getValue(), true, 255, "serviceFieldTypePossibleValues");
+    }
+
     return new ResponseEntity<ServiceFieldType>(serviceFieldTypeService.addOrUpdateServiceFieldType(serviceFieldTypes),
         HttpStatus.OK);
   }

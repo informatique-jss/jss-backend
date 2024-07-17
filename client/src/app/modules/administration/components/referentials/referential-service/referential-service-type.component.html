@@ -118,7 +118,8 @@
             </td>
             <td>
               <generic-toggle [(model)]="assoServiceTypeDocument.isMandatory" label="Est obligatoire ?"
-                [form]="entityForm" [propertyName]="'isMandatory'+index" [isDisabled]="!editMode"></generic-toggle>
+                [form]="entityForm" [propertyName]="'isMandatoryDocument'+index"
+                [isDisabled]="!editMode"></generic-toggle>
             </td>
             <td>
               <button *ngIf="editMode" (click)="deleteTypeDocument(assoServiceTypeDocument)" mat-raised-button
@@ -141,14 +142,16 @@
         <table class="full-width">
           <tr *ngFor="let assoServiceFieldType of selectedEntity.assoServiceTypeFieldTypes; let index = index">
             <td>
-              <select-referential-service-field-type [(model)]="assoServiceFieldType.serviceFieldType"
+              <select-service-field-type [(model)]="assoServiceFieldType.serviceFieldType"
                 [propertyName]="'serviceFieldType'+index" [form]="entityForm" [isMandatory]="true"
-                label="Libellé champ type"
-                [isDisabled]="!editMode">{{displayLabel(assoServiceFieldType.serviceFieldType.dataType)}}</select-referential-service-field-type>
+                label="Libellé champ type" [isDisabled]="!editMode"></select-service-field-type>
             </td>
             <td>
               <generic-toggle [(model)]="assoServiceFieldType.isMandatory" label="Est obligatoire ?" [form]="entityForm"
-                [propertyName]="'isMandatory'+index" [isDisabled]="!editMode"></generic-toggle>
+                [propertyName]="'isMandatoryField'+index" [isDisabled]="!editMode"></generic-toggle>
+            </td>
+            <td>
+
             </td>
             <td>
               <button *ngIf="editMode" (click)="deleteFieldType(assoServiceFieldType)" mat-raised-button color="accent">

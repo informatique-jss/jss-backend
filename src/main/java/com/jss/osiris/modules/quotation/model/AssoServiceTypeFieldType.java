@@ -1,7 +1,9 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -10,9 +12,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -34,6 +38,10 @@ public class AssoServiceTypeFieldType implements Serializable, IId {
 	@JoinColumn(name = "id_service_field_type")
 	@IndexedField
 	private ServiceFieldType serviceFieldType;
+
+	@OneToMany(mappedBy = "assoServiceTypeFieldType", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "assoServiceTypeFieldType" }, allowSetters = true)
+	private List<AssoRadioValueServiceTypeFieldType> assoRadioValueServiceTypeFieldTypes;
 
 	private Boolean isMandatory;
 

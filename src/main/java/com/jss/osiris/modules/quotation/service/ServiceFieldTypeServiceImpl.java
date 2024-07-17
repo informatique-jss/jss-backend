@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import com.jss.osiris.modules.quotation.model.ServiceFieldType;
-import com.jss.osiris.modules.quotation.repository.ServiceFieldTypeRepository; 
+import com.jss.osiris.modules.quotation.model.ServiceFieldTypePossibleValue;
+import com.jss.osiris.modules.quotation.repository.ServiceFieldTypeRepository;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,9 @@ public class ServiceFieldTypeServiceImpl implements ServiceFieldTypeService {
     @Transactional(rollbackFor = Exception.class)
     public ServiceFieldType addOrUpdateServiceFieldType(
             ServiceFieldType serviceFieldType) {
+        if (serviceFieldType.getServiceFieldTypePossibleValues() != null)
+            for (ServiceFieldTypePossibleValue possibleValue : serviceFieldType.getServiceFieldTypePossibleValues())
+                possibleValue.setServiceFieldType(serviceFieldType);
         return serviceFieldTypeRepository.save(serviceFieldType);
     }
 }
