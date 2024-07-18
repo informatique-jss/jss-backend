@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -8,6 +8,10 @@ import { ServiceType } from 'src/app/modules/quotation/model/ServiceType';
 import { ServiceTypeService } from 'src/app/modules/quotation/services/service.type.service';
 import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
+import { AssoServiceTypeFieldType } from '../../../../quotation/model/AssoServiceTypeFieldType';
+import { ServiceFieldTypeService } from 'src/app/modules/quotation/services/service.field.type.service';
+import { ServiceFieldType } from 'src/app/modules/quotation/model/ServiceFieldType';
+import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
 
 @Component({
   selector: 'referential-service-type',
@@ -16,6 +20,7 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 })
 export class ReferentialServiceTypeComponent extends GenericReferentialComponent<ServiceType> implements OnInit {
   constructor(private serviceService: ServiceTypeService,
+    private serviceFieldTypeService: ServiceFieldTypeService,
     private formBuilder2: FormBuilder,
     private constantService: ConstantService,
     private appService2: AppService,) {
@@ -44,10 +49,11 @@ export class ReferentialServiceTypeComponent extends GenericReferentialComponent
   }
 
   addTypeDocument() {
-    if (this.selectedEntity)
+    if (this.selectedEntity) {
       if (!this.selectedEntity.assoServiceTypeDocuments)
         this.selectedEntity.assoServiceTypeDocuments = [] as Array<AssoServiceTypeDocument>;
-    this.selectedEntity?.assoServiceTypeDocuments.push({} as AssoServiceTypeDocument);
+      this.selectedEntity.assoServiceTypeDocuments.push({} as AssoServiceTypeDocument);
+    }
   }
 
   deleteTypeDocument(assoServiceTypeDocument: AssoServiceTypeDocument) {
@@ -56,4 +62,20 @@ export class ReferentialServiceTypeComponent extends GenericReferentialComponent
         if (this.selectedEntity.assoServiceTypeDocuments[i].id == assoServiceTypeDocument.id)
           this.selectedEntity.assoServiceTypeDocuments.splice(i, 1);
   }
+
+  addFieldType() {
+    if (this.selectedEntity) {
+      if (!this.selectedEntity.assoServiceTypeFieldTypes)
+        this.selectedEntity.assoServiceTypeFieldTypes = [] as Array<AssoServiceTypeFieldType>;
+      this.selectedEntity.assoServiceTypeFieldTypes.push({} as AssoServiceTypeFieldType);
+    }
+  }
+
+  deleteFieldType(assoServiceFieldType: AssoServiceTypeFieldType) {
+    if (this.selectedEntity && this.selectedEntity.assoServiceTypeFieldTypes)
+      for (let i = 0; i < this.selectedEntity.assoServiceTypeFieldTypes.length; i++)
+        if (this.selectedEntity.assoServiceTypeFieldTypes[i].id == assoServiceFieldType.id)
+          this.selectedEntity.assoServiceTypeFieldTypes.splice(i, 1);
+  }
+
 }

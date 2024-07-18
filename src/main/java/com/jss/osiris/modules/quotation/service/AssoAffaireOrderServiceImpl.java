@@ -37,6 +37,7 @@ import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
+import com.jss.osiris.modules.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
@@ -214,6 +215,27 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments())
                     assoServiceDocument.setService(service);
 
+            // Complete field id_service in AssoServiceFieldType table
+            if (service.getAssoServiceFieldTypes() != null)
+                for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes())
+                    assoServiceFieldType.setService(service);
+
+            // Complete field id_asso_service_type_field_type in
+            // AssoRadioValueServiceTypeFieldType
+            // si serviceFieldType = radio alors get id de assoServiceTypeFieldType pour set
+            // la value de radio dans AssoRadioValueServiceTypeFieldType avec l'id
+            // correspondant
+            /*
+             * if (service.getServiceType().getAssoServiceTypeFieldTypes() != null) {
+             * for (AssoServiceTypeFieldType assoServiceTypeFieldType :
+             * service.getServiceType()
+             * .getAssoServiceTypeFieldTypes())
+             * if (assoServiceTypeFieldType.getServiceFieldType()
+             * .getDataType() == ServiceFieldType.SERVICE_FIELD_TYPE_SELECT)
+             * // TO-DO
+             * }
+             */
+
             for (Provision provision : service.getProvisions()) {
                 provision.setService(service);
 
@@ -262,17 +284,20 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     Formalite formalite = provision.getFormalite();
                     if (customerOrder.getId() == null || formalite.getFormaliteStatus() == null)
                         formalite.setFormaliteStatus(
-                                formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
+                                formaliteStatusService
+                                        .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
 
                     else if (formalite.getFormalitesGuichetUnique() != null) {
-                        for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique()) {
+                        for (FormaliteGuichetUnique formaliteGuichetUnique : formalite
+                                .getFormalitesGuichetUnique()) {
                             if (formaliteGuichetUnique.getStatus() == null
                                     || !formaliteGuichetUniqueStatusService
                                             .getFormaliteGuichetUniqueStatus(
                                                     formaliteGuichetUnique.getStatus().getCode())
                                             .getIsCloseState()) {
                                 formaliteGuichetUnique.setFormalite(formalite);
-                                formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+                                formaliteGuichetUniqueService
+                                        .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
                             }
 
                             batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE,
@@ -282,7 +307,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                     if (formalite.getId() != null) {
                         Formalite originalFormalite = formaliteService.getFormalite(formalite.getId());
-                        if (originalFormalite != null && originalFormalite.getFormalitesGuichetUnique() != null
+                        if (originalFormalite != null
+                                && originalFormalite.getFormalitesGuichetUnique() != null
                                 && originalFormalite.getFormalitesGuichetUnique().size() > 0) {
                             for (FormaliteGuichetUnique formaliteGuichetUniqueOrigin : originalFormalite
                                     .getFormalitesGuichetUnique()) {
@@ -290,7 +316,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 if (formalite.getFormalitesGuichetUnique() != null)
                                     for (FormaliteGuichetUnique formaliteGuichetUnique : formalite
                                             .getFormalitesGuichetUnique())
-                                        if (formaliteGuichetUnique.getId().equals(formaliteGuichetUniqueOrigin.getId()))
+                                        if (formaliteGuichetUnique.getId()
+                                                .equals(formaliteGuichetUniqueOrigin.getId()))
                                             found = true;
                                 if (!found)
                                     formaliteGuichetUniqueOrigin.setFormalite(null);
@@ -312,7 +339,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             for (FormaliteGuichetUnique formaliteGuichetUnique : formalite
                                     .getFormalitesGuichetUnique()) {
                                 formaliteGuichetUnique.setFormalite(formalite);
-                                formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+                                formaliteGuichetUniqueService
+                                        .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
                             }
 
                     }
@@ -339,10 +367,12 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                     // If complex, extract string from PDF and put it to notice
                     if (announcement.getIsComplexAnnouncement())
-                        announcement = announcementService.updateComplexAnnouncementNotice(announcement, provision,
+                        announcement = announcementService.updateComplexAnnouncementNotice(announcement,
+                                provision,
                                 isFromUser);
 
-                    announcement.setCharacterNumber(characterPriceService.getCharacterNumber(provision, true));
+                    announcement
+                            .setCharacterNumber(characterPriceService.getCharacterNumber(provision, true));
 
                     if (customerOrder.getId() == null || announcement.getAnnouncementStatus() == null)
                         announcement.setAnnouncementStatus(announcementStatusService
@@ -357,7 +387,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
                             for (Attachment attachment : provision.getAttachments())
                                 if (attachment.getAttachmentType().getId()
-                                        .equals(constantService.getAttachmentTypePublicationProof().getId())) {
+                                        .equals(constantService.getAttachmentTypePublicationProof()
+                                                .getId())) {
                                     publicationProofFound = true;
                                     break;
                                 }
@@ -367,7 +398,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     if (announcement.getAnnouncementStatus() != null
                             && announcement.getConfrere() != null) {
 
-                        if (announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId()) &&
+                        if (announcement.getConfrere().getId()
+                                .equals(constantService.getConfrereJssSpel().getId())
+                                &&
                                 announcement.getAnnouncementStatus().getCode()
                                         .equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)) {
                             announcement.setAnnouncementStatus(announcementStatusService
@@ -375,7 +408,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         }
 
                         // If JSS generate publication receipt if user accept
-                        if (announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
+                        if (announcement.getConfrere().getId()
+                                .equals(constantService.getConfrereJssSpel().getId())) {
                             if (announcement.getAnnouncementStatus().getCode()
                                     .equals(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS)) {
                                 announcementService.generateStoreAndSendPublicationReceipt(
@@ -387,7 +421,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
                                 for (Attachment attachment : provision.getAttachments())
                                     if (attachment.getAttachmentType().getId()
-                                            .equals(constantService.getAttachmentTypePublicationReceipt().getId())) {
+                                            .equals(constantService.getAttachmentTypePublicationReceipt()
+                                                    .getId())) {
                                         announcementService.generateStoreAndSendPublicationReceipt(
                                                 (CustomerOrder) customerOrder,
                                                 announcement);
@@ -397,16 +432,19 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                         if (announcement.getAnnouncementStatus().getCode()
                                 .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE)) {
-                            announcementService.generateAndStoreAnnouncementWordFile((CustomerOrder) customerOrder,
+                            announcementService.generateAndStoreAnnouncementWordFile(
+                                    (CustomerOrder) customerOrder,
                                     assoAffaireOrder, provision, announcement);
                         }
                         if (publicationProofFound && announcement.getAnnouncementStatus().getCode()
                                 .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED))
                             announcement.setAnnouncementStatus(announcementStatusService
-                                    .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
+                                    .getAnnouncementStatusByCode(
+                                            AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
 
-                        if (announcement.getIsProofReadingDocument() && announcement.getAnnouncementStatus().getCode()
-                                .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER)) {
+                        if (announcement.getIsProofReadingDocument()
+                                && announcement.getAnnouncementStatus().getCode()
+                                        .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER)) {
                             if (announcement.getFirstClientReviewSentMailDateTime() == null) {
                                 announcement.setFirstClientReviewReminderDateTime(null);
                                 announcement.setSecondClientReviewReminderDateTime(null);
@@ -418,7 +456,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                         if (announcement.getAnnouncementStatus().getCode()
                                 .equals(AnnouncementStatus.ANNOUNCEMENT_DONE)) {
-                            announcementService.generateStoreAndSendPublicationFlag((CustomerOrder) customerOrder,
+                            announcementService.generateStoreAndSendPublicationFlag(
+                                    (CustomerOrder) customerOrder,
                                     announcement);
                         }
                     }
@@ -429,7 +468,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     SimpleProvision simpleProvision = provision.getSimpleProvision();
                     if (customerOrder.getId() == null || simpleProvision.getSimpleProvisionStatus() == null)
                         simpleProvision.setSimpleProvisionStatus(simpleProvisionStatusService
-                                .getSimpleProvisionStatusByCode(SimpleProvisionStatus.SIMPLE_PROVISION_NEW));
+                                .getSimpleProvisionStatusByCode(
+                                        SimpleProvisionStatus.SIMPLE_PROVISION_NEW));
                 }
 
                 // Auto associate payment and provider invoice if only one match is found
@@ -450,7 +490,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                             .equals(constantService.getInvoiceStatusReceived().getId())) {
                                         if (Math.round(
                                                 invoice.getTotalPrice()
-                                                        * 100f) == (Math.round(-payment.getPaymentAmount() * 100f))) {
+                                                        * 100f) == (Math
+                                                                .round(-payment.getPaymentAmount()
+                                                                        * 100f))) {
                                             if (invoiceFound != null)
                                                 continue outerloop;
                                             invoiceFound = invoice;
@@ -459,7 +501,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 }
                                 if (invoiceFound != null)
                                     paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment,
-                                            Arrays.asList(invoiceFound), null, null, null, null, null, null);
+                                            Arrays.asList(invoiceFound), null, null, null, null, null,
+                                            null);
                             }
                         }
                     }
@@ -478,8 +521,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             if (customerOrder.getResponsable() != null) {
                                 if (customerOrder.getResponsable().getFormalisteEmployee() != null)
                                     employee = customerOrder.getResponsable().getFormalisteEmployee();
-                                else if (customerOrder.getResponsable().getTiers().getFormalisteEmployee() != null)
-                                    employee = customerOrder.getResponsable().getTiers().getFormalisteEmployee();
+                                else if (customerOrder.getResponsable().getTiers()
+                                        .getFormalisteEmployee() != null)
+                                    employee = customerOrder.getResponsable().getTiers()
+                                            .getFormalisteEmployee();
                             } else if (customerOrder.getTiers() != null
                                     && customerOrder.getTiers().getFormalisteEmployee() != null)
                                 employee = customerOrder.getTiers().getFormalisteEmployee();
@@ -492,8 +537,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             if (customerOrder.getResponsable() != null) {
                                 if (customerOrder.getResponsable().getInsertionEmployee() != null)
                                     employee = customerOrder.getResponsable().getInsertionEmployee();
-                                else if (customerOrder.getResponsable().getTiers().getInsertionEmployee() != null)
-                                    employee = customerOrder.getResponsable().getTiers().getInsertionEmployee();
+                                else if (customerOrder.getResponsable().getTiers()
+                                        .getInsertionEmployee() != null)
+                                    employee = customerOrder.getResponsable().getTiers()
+                                            .getInsertionEmployee();
                             } else if (customerOrder.getTiers() != null
                                     && customerOrder.getTiers().getInsertionEmployee() != null)
                                 employee = customerOrder.getTiers().getInsertionEmployee();

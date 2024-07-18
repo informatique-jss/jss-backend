@@ -15,6 +15,7 @@ import { Service } from '../../model/Service';
 import { ServiceType } from '../../model/ServiceType';
 import { TypeDocument } from '../../model/guichet-unique/referentials/TypeDocument';
 import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialog/select-document-type-dialog.component';
+import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
 
 @Component({
   selector: 'service',
@@ -22,11 +23,17 @@ import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialo
   styleUrls: ['./service.component.css']
 })
 export class ServiceComponent implements OnInit {
+  [x: string]: any;
 
   @Input() service: Service | undefined;
   @Input() quotation: IQuotation | undefined;
   @Input() editMode: boolean = false;
   searchText: string = "";
+  SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
+  SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
+  SERVICE_FIELD_TYPE_DATE = SERVICE_FIELD_TYPE_DATE;
+  SERVICE_FIELD_TYPE_TEXTAREA = SERVICE_FIELD_TYPE_TEXTAREA;
+  SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
 
   constructor(
     private formBuilder: FormBuilder,

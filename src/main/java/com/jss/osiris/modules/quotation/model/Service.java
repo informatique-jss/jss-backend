@@ -53,6 +53,10 @@ public class Service implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
 	private List<MissingAttachmentQuery> missingAttachmentQueries;
 
+	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
+	private List<AssoServiceFieldType> assoServiceFieldTypes;
+
 	public List<AssoServiceDocument> getAssoServiceDocuments() {
 		return assoServiceDocuments;
 	}
@@ -120,6 +124,14 @@ public class Service implements Serializable, IId {
 
 	public void setMissingAttachmentQueries(List<MissingAttachmentQuery> missingAttachmentQueries) {
 		this.missingAttachmentQueries = missingAttachmentQueries;
+	}
+
+	public List<AssoServiceFieldType> getAssoServiceFieldTypes() {
+		return assoServiceFieldTypes;
+	}
+
+	public void setAssoServiceFieldTypes(List<AssoServiceFieldType> assoServiceFieldTypes) {
+		this.assoServiceFieldTypes = assoServiceFieldTypes;
 	}
 
 }

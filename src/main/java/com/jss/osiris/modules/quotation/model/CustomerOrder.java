@@ -483,5 +483,4 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	public void setPaperSets(List<PaperSet> paperSets) {
 		this.paperSets = paperSets;
 	}
-
 }

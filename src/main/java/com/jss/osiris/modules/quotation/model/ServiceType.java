@@ -45,6 +45,10 @@ public class ServiceType implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "serviceType" }, allowSetters = true)
 	private List<AssoServiceTypeDocument> assoServiceTypeDocuments;
 
+	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "serviceType" }, allowSetters = true)
+	private List<AssoServiceTypeFieldType> assoServiceTypeFieldTypes;
+
 	public Integer getId() {
 		return id;
 	}
@@ -91,6 +95,14 @@ public class ServiceType implements Serializable, IId {
 
 	public void setAssoServiceTypeDocuments(List<AssoServiceTypeDocument> assoServiceTypeDocuments) {
 		this.assoServiceTypeDocuments = assoServiceTypeDocuments;
+	}
+
+	public List<AssoServiceTypeFieldType> getAssoServiceTypeFieldTypes() {
+		return assoServiceTypeFieldTypes;
+	}
+
+	public void setAssoServiceTypeFieldTypes(List<AssoServiceTypeFieldType> assoServiceTypeFieldType) {
+		this.assoServiceTypeFieldTypes = assoServiceTypeFieldType;
 	}
 
 }

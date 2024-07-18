@@ -42,7 +42,7 @@
             </td>
           </tr>
           <tr>
-            <td *ngIf="selectedEntity.isToDownloadOnProvision">
+            <td>
               <select-attachment-type [(model)]="selectedEntity.attachmentType"
                 label="Type de pièce jointe correspondante" [form]="entityForm" propertyName="attachmentType"
                 [isMandatory]="selectedEntity.isToDownloadOnProvision"

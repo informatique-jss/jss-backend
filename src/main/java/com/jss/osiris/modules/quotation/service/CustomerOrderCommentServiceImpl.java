@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
-import com.jss.osiris.modules.quotation.repository.CustomerOrderCommentRepository; 
+import com.jss.osiris.modules.quotation.repository.CustomerOrderCommentRepository;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,5 +34,11 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     public CustomerOrderComment addOrUpdateCustomerOrderComment(
             CustomerOrderComment customerOrderComment) {
         return customerOrderCommentRepository.save(customerOrderComment);
+    }
+
+    @Override
+    public CustomerOrderComment createCustomerOrderComment() {
+
+        return null;
     }
 }

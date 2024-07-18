@@ -8,6 +8,8 @@ public interface CustomerOrderCommentService {
     public List<CustomerOrderComment> getCustomerOrderComments();
 
     public CustomerOrderComment getCustomerOrderComment(Integer id);
-	
-	 public CustomerOrderComment addOrUpdateCustomerOrderComment(CustomerOrderComment customerOrderComment);
+
+    public CustomerOrderComment addOrUpdateCustomerOrderComment(CustomerOrderComment customerOrderComment);
+
+    public CustomerOrderComment createCustomerOrderComment();
 }
