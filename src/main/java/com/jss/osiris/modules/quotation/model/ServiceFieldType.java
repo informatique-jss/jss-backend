@@ -34,8 +34,6 @@ public class ServiceFieldType implements Serializable, IId {
 
 	private String dataType;
 
-	private Boolean isMandatory;
-
 	@OneToMany(mappedBy = "serviceFieldType", cascade = CascadeType.ALL)
 	@JsonIgnoreProperties(value = { "serviceFieldType" }, allowSetters = true)
 	private List<ServiceFieldTypePossibleValue> serviceFieldTypePossibleValues;
@@ -79,13 +77,4 @@ public class ServiceFieldType implements Serializable, IId {
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
 	}
-
-	public Boolean getIsMandatory() {
-		return isMandatory;
-	}
-
-	public void setIsMandatory(Boolean isMandatory) {
-		this.isMandatory = isMandatory;
-	}
-
 }

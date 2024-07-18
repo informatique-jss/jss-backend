@@ -75,7 +75,7 @@ public class ServiceServiceImpl implements ServiceService {
                 assoServiceFieldTypes
                         .add(getAssoServiceFieldTypeFromAssoServiceTypeFieldType(assoServiceTypeFieldType, service));
             }
-        service.setAssoServiceDocuments(assoServiceDocuments);
+        service.setAssoServiceFieldTypes(assoServiceFieldTypes);
 
         return service;
     }
@@ -191,6 +191,52 @@ public class ServiceServiceImpl implements ServiceService {
         service = getService(service.getId());
 
         service.setServiceType(serviceType);
+
+        for (AssoServiceTypeFieldType serviceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
+            boolean found = false;
+            for (AssoServiceFieldType serviceFieldType : service.getAssoServiceFieldTypes()) {
+                if (serviceFieldType.getServiceFieldType().getId().equals(serviceTypeFieldType.getId())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                service.getAssoServiceFieldTypes()
+                        .add(getAssoServiceFieldTypeFromAssoServiceTypeFieldType(serviceTypeFieldType, service));
+            }
+        }
+
+        ArrayList<AssoServiceFieldType> assoToDelete = new ArrayList<AssoServiceFieldType>();
+        for (AssoServiceFieldType serviceFieldType : service.getAssoServiceFieldTypes()) {
+            boolean found = false;
+            for (AssoServiceTypeFieldType serviceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
+                if (serviceFieldType.getServiceFieldType().getId().equals(serviceTypeFieldType.getId())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+                assoToDelete.add(serviceFieldType);
+        }
+        if (assoToDelete.size() > 0)
+            service.getAssoServiceFieldTypes().removeAll(assoToDelete);
+
+        // start over
+        ArrayList<AssoServiceFieldType> oldFields = new ArrayList<AssoServiceFieldType>();
+        if (service.getAssoServiceFieldTypes() != null && service.getAssoServiceFieldTypes().size() > 0) {
+            for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes()) {
+                if (assoServiceFieldType.getServiceFieldType() != null) {
+                    oldFields.add(assoServiceFieldType);
+                }
+            }
+        }
+        ArrayList<AssoServiceFieldType> newFields = new ArrayList<AssoServiceFieldType>();
+        if (serviceType.getAssoServiceTypeFieldTypes() != null
+                & serviceType.getAssoServiceTypeFieldTypes().size() > 0) {
+            for (AssoServiceTypeFieldType assoServiceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
+                Boolean found = false;
+            }
+        }
 
         // remove empty service association
         ArrayList<AssoServiceDocument> finalAssos = new ArrayList<AssoServiceDocument>();

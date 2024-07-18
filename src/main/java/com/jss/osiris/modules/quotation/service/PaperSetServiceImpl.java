@@ -18,6 +18,8 @@ public class PaperSetServiceImpl implements PaperSetService {
     @Autowired
     PaperSetRepository paperSetRepository;
 
+    CustomerOrderCommentService customerOrderCommentService;
+
     @Override
     public List<PaperSet> getPaperSets() {
         return IterableUtils.toList(paperSetRepository.findAll());
@@ -42,27 +44,29 @@ public class PaperSetServiceImpl implements PaperSetService {
                 for (PaperSet currentPaperSet : paperSets) {
                     if (currentPaperSet.getLocationNumber().equals(location)) {
                         location++;
-                    } else { 
+                    } else {
                         break;
                     }
                 }
             }
             paperSet.setLocationNumber(location);
-            if(paperSet.getIsCancelled() == null)   
+            if (paperSet.getIsCancelled() == null)
                 paperSet.setIsCancelled(false);
-            if(paperSet.getIsValidated() == null)
+            if (paperSet.getIsValidated() == null)
                 paperSet.setIsValidated(false);
         }
         return paperSetRepository.save(paperSet);
     }
 
-    public List<IPaperSetResult> searchPaperSets(String textSearch, Boolean isDisplayValidated, Boolean isDisplayCancelled) {
+    public List<IPaperSetResult> searchPaperSets(String textSearch, Boolean isDisplayValidated,
+            Boolean isDisplayCancelled) {
         return paperSetRepository.findPaperSets(textSearch, isDisplayValidated, isDisplayCancelled);
     }
 
     public PaperSet cancelPaperSet(PaperSet paperSet) {
         paperSet = getPaperSet(paperSet.getId());
         paperSet.setIsCancelled(true);
+        customerOrderCommentService.createCustomerOrderComment();
         return addOrUpdatePaperSet(paperSet);
     }
 

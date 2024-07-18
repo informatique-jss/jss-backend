@@ -76,31 +76,32 @@
             <generic-input [(model)]="assoServiceFieldType.stringValue"
               [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
               [propertyName]='"stringFieldType"+i' [isDisabled]="!editMode"
-              [isMandatory]="assoServiceFieldType.serviceFieldType.isMandatory" [maxLength]="255"></generic-input>
+              [isMandatory]="assoServiceFieldType.isMandatory" [maxLength]="255"></generic-input>
           </td>
           <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA">
             <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
               [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
               [propertyName]='"textAreaFieldType"+i' [isDisabled]="!editMode"
-              [isMandatory]="assoServiceFieldType.serviceFieldType.isMandatory"></generic-textarea>
+              [isMandatory]="assoServiceFieldType.isMandatory"></generic-textarea>
           </td>
           <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE">
             <generic-datepicker [(model)]="assoServiceFieldType.dateValue"
               [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
-              [propertyName]='"dateFieldType"+i' [isMandatory]="assoServiceFieldType.serviceFieldType.isMandatory"
+              [propertyName]='"dateFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
               [isDisabled]="!editMode"></generic-datepicker>
           </td>
           <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER">
             <generic-input [(model)]="assoServiceFieldType.integerValue"
               [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
-              [propertyName]='"integerFieldType"+i' [isMandatory]="assoServiceFieldType.serviceFieldType.isMandatory"
+              [propertyName]='"integerFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
               [isDisabled]=" !editMode" type="number"></generic-input>
           </td>
           <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT">
-            <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue" label="label"
-              [form]="serviceForm" [propertyName]='"radioFieldType"+i'
-              [serviceFieldType]="assoServiceFieldType.serviceFieldType"
-              [isMandatory]="assoServiceFieldType.serviceFieldType.isMandatory"
+            <select-value-service-field-type
+              [(model)]="assoServiceFieldType.serviceFieldType.serviceFieldTypePossibleValues"
+              [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+              [propertyName]='"radioFieldType"+i' [serviceFieldType]="assoServiceFieldType.serviceFieldType"
+              [isMandatory]="assoServiceFieldType.isMandatory"
               [isDisabled]="!editMode"></select-value-service-field-type>
           </td>
         </tr>

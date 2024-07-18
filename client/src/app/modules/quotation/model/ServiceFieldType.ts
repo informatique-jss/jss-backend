@@ -6,5 +6,4 @@ export interface ServiceFieldType {
   label: string;
   dataType: string;
   serviceFieldTypePossibleValues: ServiceFieldTypePossibleValue[];
-  isMandatory: boolean;
 }
