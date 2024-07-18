@@ -97,8 +97,7 @@
               [isDisabled]=" !editMode" type="number"></generic-input>
           </td>
           <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT">
-            <select-value-service-field-type
-              [(model)]="assoServiceFieldType.serviceFieldType.serviceFieldTypePossibleValues"
+            <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
               [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
               [propertyName]='"radioFieldType"+i' [serviceFieldType]="assoServiceFieldType.serviceFieldType"
               [isMandatory]="assoServiceFieldType.isMandatory"

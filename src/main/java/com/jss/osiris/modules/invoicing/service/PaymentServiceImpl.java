@@ -60,6 +60,7 @@ import com.jss.osiris.modules.quotation.model.centralPay.CentralPayTransaction;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CentralPayDelegateService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
@@ -146,6 +147,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     BatchService batchService;
+
+    @Autowired
+    CustomerOrderCommentService customerOrderCommentService;
 
     @Override
     public Payment getPayment(Integer id) {
@@ -527,6 +531,9 @@ public class PaymentServiceImpl implements PaymentService {
                     tiers.getAccountingAccountDeposit());
             newPayment.setCustomerOrder(correspondingCustomerOrder.get(i));
             addOrUpdatePayment(newPayment);
+
+            customerOrderCommentService.createCustomerOrderComment(correspondingCustomerOrder.get(i),
+                    "Nouveau paiement effectué");
 
             accountingRecordGenerationService.generateAccountingRecordsForSaleOnCustomerOrderDeposit(
                     correspondingCustomerOrder.get(i), newPayment);

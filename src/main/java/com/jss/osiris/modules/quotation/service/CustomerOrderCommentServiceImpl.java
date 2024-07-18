@@ -2,7 +2,9 @@ package com.jss.osiris.modules.quotation.service;
 
 import java.util.List;
 import java.util.Optional;
-
+import java.time.LocalDateTime;
+import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.repository.CustomerOrderCommentRepository;
 import org.apache.commons.collections4.IterableUtils;
@@ -15,6 +17,9 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
 
     @Autowired
     CustomerOrderCommentRepository customerOrderCommentRepository;
+
+    @Autowired
+    EmployeeService employeeService;
 
     @Override
     public List<CustomerOrderComment> getCustomerOrderComments() {
@@ -37,8 +42,13 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     }
 
     @Override
-    public CustomerOrderComment createCustomerOrderComment() {
-
-        return null;
+    public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment) {
+        CustomerOrderComment customerOrderComment = new CustomerOrderComment();
+        customerOrderComment.setCustomerOrder(customerOrder);
+        customerOrderComment.setComment(contentComment);
+        customerOrderComment.setEmployee(employeeService.getCurrentEmployee());
+        customerOrderComment.setCreatedDateTime(LocalDateTime.now());
+        addOrUpdateCustomerOrderComment(customerOrderComment);
+        return customerOrderComment;
     }
 }

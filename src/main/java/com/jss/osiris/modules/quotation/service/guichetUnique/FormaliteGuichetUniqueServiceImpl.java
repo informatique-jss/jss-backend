@@ -52,6 +52,7 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDoc
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.ValidationsRequestStatus;
 import com.jss.osiris.modules.quotation.repository.guichetUnique.FormaliteGuichetUniqueRepository;
 import com.jss.osiris.modules.quotation.repository.guichetUnique.PartnerCenterRepository;
+import com.jss.osiris.modules.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
@@ -114,6 +115,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Autowired
     FormaliteGuichetUniqueStatusService formaliteGuichetUniqueStatusService;
+
+    @Autowired
+    CustomerOrderCommentService customerOrderCommentService;
 
     private String cartStatusPayed = "PAID";
     private String cartStatusRefund = "REFUNDED";
@@ -395,7 +399,13 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     originalFormalite.getFormalite().setFormaliteStatus(formaliteStatusService
                             .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED));
 
+                else if (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED))
+                    customerOrderCommentService.createCustomerOrderComment(originalFormalite.getFormalite()
+                            .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
+                            "Formalité GU Validée");
+
                 formaliteService.addOrUpdateFormalite(originalFormalite.getFormalite());
+
             }
 
             if (formalite != null) {

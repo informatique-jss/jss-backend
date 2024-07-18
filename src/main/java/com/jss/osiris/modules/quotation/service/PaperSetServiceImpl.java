@@ -66,13 +66,14 @@ public class PaperSetServiceImpl implements PaperSetService {
     public PaperSet cancelPaperSet(PaperSet paperSet) {
         paperSet = getPaperSet(paperSet.getId());
         paperSet.setIsCancelled(true);
-        customerOrderCommentService.createCustomerOrderComment();
+        customerOrderCommentService.createCustomerOrderComment(paperSet.getCustomerOrder(), "Annulation effectuée");
         return addOrUpdatePaperSet(paperSet);
     }
 
     public PaperSet validatePaperSet(PaperSet paperSet) {
         paperSet = getPaperSet(paperSet.getId());
         paperSet.setIsValidated(true);
+        customerOrderCommentService.createCustomerOrderComment(paperSet.getCustomerOrder(), "Validation effectuée");
         return addOrUpdatePaperSet(paperSet);
     }
 }
