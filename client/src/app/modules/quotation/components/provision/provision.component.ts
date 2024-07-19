@@ -56,7 +56,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   formaliteStatus: FormaliteStatus[] = [] as Array<FormaliteStatus>;
   simpleProvisionStatus: SimpleProvisionStatus[] = [] as Array<SimpleProvisionStatus>;
   domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
-
+  newProvisionDuplicated: Provision = {} as Provision;
   confrereJssSpel = this.constantService.getConfrereJssSpel();
   journalTypePaper = this.constantService.getJournalTypePaper();
   journalTypeSpel = this.constantService.getJournalTypeSpel();
@@ -269,6 +269,15 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     let provision = {} as Provision;
     service.provisions.push(provision);
     return provision;
+  }
+
+  duplicateProvision(service: Service, provision: Provision): Provision {
+    this.newProvisionDuplicated.assignedTo = provision.assignedTo;
+    this.newProvisionDuplicated.provisionFamilyType = provision.provisionFamilyType;
+    this.newProvisionDuplicated.provisionType = provision.provisionType;
+    this.newProvisionDuplicated.service = provision.service;
+    service.provisions.push(this.newProvisionDuplicated);
+    return this.newProvisionDuplicated;
   }
 
   editAsso() {

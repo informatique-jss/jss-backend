@@ -70,6 +70,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   quotationStatusList: QuotationStatus[] = [] as Array<QuotationStatus>;
   customerOrderStatusList: CustomerOrderStatus[] = [] as Array<CustomerOrderStatus>;
   isQuotationUrl = false;
+  newProvisionDuplicated: Provision = {} as Provision;
 
   VALIDATED_BY_CUSTOMER = VALIDATED_BY_CUSTOMER;
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
@@ -591,6 +592,14 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     service.provisions.splice(service.provisions.indexOf(provision), 1);
   }
 
+  duplicateProvision(service: Service, provision: Provision): Provision {
+    this.newProvisionDuplicated.assignedTo = provision.assignedTo;
+    this.newProvisionDuplicated.provisionFamilyType = provision.provisionFamilyType;
+    this.newProvisionDuplicated.provisionType = provision.provisionType;
+    this.newProvisionDuplicated.service = provision.service;
+    service.provisions.push(this.newProvisionDuplicated);
+    return this.newProvisionDuplicated;
+  }
 
   changeStatus(targetStatus: QuotationStatus) {
     this.isStatusOpen = true;

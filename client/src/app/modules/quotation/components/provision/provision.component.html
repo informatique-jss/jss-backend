@@ -90,6 +90,11 @@
               class="pointer">
               delete</mat-icon>
           </mat-panel-description>
+          <mat-panel-description *ngIf="editMode">
+            <mat-icon color="accent" matTooltip="Dupliquer la prestation"
+              (click)="duplicateProvision(service,provision)" class="pointer">
+              duplicate</mat-icon>
+          </mat-panel-description>
         </mat-expansion-panel-header>
         <provision-item [quotation]="asso.customerOrder?asso.customerOrder:asso.quotation"
           *ngIf="asso.affaire && asso.affaire.id" [editMode]="editMode" [provision]="provision" [affaire]="asso.affaire"
