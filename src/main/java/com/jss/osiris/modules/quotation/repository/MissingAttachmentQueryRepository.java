@@ -46,4 +46,13 @@ public interface MissingAttachmentQueryRepository extends QueryCacheCrudReposito
         List<MissingAttachmentQuery> getMissingAttachmentQueriesForCustomerReminder(
                         @Param("simpleProvisionStatusWaitingAttachmentId") Integer simpleProvisionStatusWaitingAttachmentId,
                         @Param("formaliteStatusWaitingAttachmentId") Integer formaliteStatusWaitingAttachmentId);
+
+        @Query(nativeQuery = true, value = "" +
+                        " select " +
+                        " 	* " +
+                        " from " +
+                        " 	missing_attachment_query " +
+                        " where " +
+                        " 	id_service = :idService ")
+        List<MissingAttachmentQuery> findMissingAttachmentQueriesByIdService(@Param("idService") Integer idService);
 }

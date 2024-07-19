@@ -49,6 +49,15 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
     }
 
     @Override
+    public List<MissingAttachmentQuery> getMissingAttachmentQueriesByIdService(Integer idService) {
+        List<MissingAttachmentQuery> missingAttachmentQueries = missingAttachmentQueryRepository
+                .findMissingAttachmentQueriesByIdService(idService);
+        if (missingAttachmentQueries != null && missingAttachmentQueries.size() > 0)
+            return missingAttachmentQueries;
+        return null;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public MissingAttachmentQuery addOrUpdateMissingAttachmentQuery(MissingAttachmentQuery missingAttachmentQuery) {
         return missingAttachmentQueryRepository.save(missingAttachmentQuery);

@@ -40,6 +40,7 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
@@ -47,10 +48,12 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDoc
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.AssoServiceDocumentService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
+import com.jss.osiris.modules.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -135,6 +138,12 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     PdfTools pdfTools;
+
+    @Autowired
+    CustomerOrderCommentService customerOrderCommentService;
+
+    @Autowired
+    MissingAttachmentQueryService missingAttachmentQueryService;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -317,6 +326,19 @@ public class AttachmentServiceImpl implements AttachmentService {
     public Attachment addOrUpdateAttachment(Attachment attachment) {
         if (attachment != null && attachment.getIsAlreadySent() == null)
             attachment.setIsAlreadySent(false);
+
+        if (attachment.getProvision().getService().getMissingAttachmentQueries() != null
+                && attachment.getProvision().getService().getMissingAttachmentQueries().size() > 0) {
+            for (MissingAttachmentQuery missingAttachmentQuery : attachment.getProvision().getService()
+                    .getMissingAttachmentQueries()) {
+                for (AssoServiceDocument assoServiceDocument : missingAttachmentQuery.getAssoServiceDocument()) {
+                    if (attachment.getAttachmentType()
+                            .equals(assoServiceDocument.getTypeDocument().getAttachmentType()))
+                        customerOrderCommentService.createCustomerOrderComment(attachment.getCustomerOrder(),
+                                "Document pièce jointe ajouté");
+                }
+            }
+        }
         return attachmentRepository.save(attachment);
     }
 

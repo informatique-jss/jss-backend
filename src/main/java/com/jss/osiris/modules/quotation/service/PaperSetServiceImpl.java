@@ -18,6 +18,7 @@ public class PaperSetServiceImpl implements PaperSetService {
     @Autowired
     PaperSetRepository paperSetRepository;
 
+    @Autowired
     CustomerOrderCommentService customerOrderCommentService;
 
     @Override

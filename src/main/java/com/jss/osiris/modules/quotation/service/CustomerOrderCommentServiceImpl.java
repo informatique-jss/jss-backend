@@ -42,13 +42,13 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     }
 
     @Override
-    public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment) {
+    public void createCustomerOrderComment(CustomerOrder customerOrder, String contentComment) {
         CustomerOrderComment customerOrderComment = new CustomerOrderComment();
         customerOrderComment.setCustomerOrder(customerOrder);
         customerOrderComment.setComment(contentComment);
         customerOrderComment.setEmployee(employeeService.getCurrentEmployee());
         customerOrderComment.setCreatedDateTime(LocalDateTime.now());
         addOrUpdateCustomerOrderComment(customerOrderComment);
-        return customerOrderComment;
+        // return customerOrderComment;
     }
 }

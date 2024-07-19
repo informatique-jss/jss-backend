@@ -399,7 +399,10 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     originalFormalite.getFormalite().setFormaliteStatus(formaliteStatusService
                             .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED));
 
-                else if (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED))
+                else if (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED)
+                        || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED_DGFIP)
+                        || originalFormalite.getStatus().getCode()
+                                .equals(FormaliteGuichetUniqueStatus.VALIDATED_PARTNER))
                     customerOrderCommentService.createCustomerOrderComment(originalFormalite.getFormalite()
                             .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
                             "Formalité GU Validée");
