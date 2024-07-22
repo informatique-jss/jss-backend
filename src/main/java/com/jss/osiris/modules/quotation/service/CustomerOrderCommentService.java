@@ -12,5 +12,5 @@ public interface CustomerOrderCommentService {
 
     public CustomerOrderComment addOrUpdateCustomerOrderComment(CustomerOrderComment customerOrderComment);
 
-    public void createCustomerOrderComment(CustomerOrder customerOrder, String contentComment);
+    public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment);
 }

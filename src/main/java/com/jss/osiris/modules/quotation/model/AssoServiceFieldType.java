@@ -46,7 +46,7 @@ public class AssoServiceFieldType implements Serializable, IId {
     @ManyToOne
     @JoinColumn(name = "id_service_field_type_possible_value")
     @IndexedField
-    private ServiceFieldTypePossibleValue selectValue;
+    private ServiceTypeFieldTypePossibleValue selectValue;
 
     @Column(columnDefinition = "TEXT")
     private String textAreaValue;
@@ -117,11 +117,11 @@ public class AssoServiceFieldType implements Serializable, IId {
         this.textAreaValue = textAreaValue;
     }
 
-    public ServiceFieldTypePossibleValue getSelectValue() {
+    public ServiceTypeFieldTypePossibleValue getSelectValue() {
         return selectValue;
     }
 
-    public void setSelectValue(ServiceFieldTypePossibleValue selectValue) {
+    public void setSelectValue(ServiceTypeFieldTypePossibleValue selectValue) {
         this.selectValue = selectValue;
     }
 

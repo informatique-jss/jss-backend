@@ -1,6 +1,6 @@
 import { ServiceFieldType } from "./ServiceFieldType";
 
-export interface ServiceFieldTypePossibleValue {
+export interface ServiceTypeFieldTypePossibleValue {
   id: number;
   value: string;
 }

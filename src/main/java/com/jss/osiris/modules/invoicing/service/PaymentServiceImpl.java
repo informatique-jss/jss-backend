@@ -370,13 +370,13 @@ public class PaymentServiceImpl implements PaymentService {
 
             // Invoices to payed found
             if (correspondingInvoices.size() > 0) {
-                remainingMoney = associateInboundPaymentAndInvoices(payment, correspondingInvoices, null);
+                remainingMoney = associateInboundPaymentAndInvoices(payment, correspondingInvoices, null, false);
             }
 
             // Customer order waiting for deposit found
             if (correspondingCustomerOrder.size() > 0 && remainingMoney > 0) {
                 associateInboundPaymentAndCustomerOrders(payment, correspondingCustomerOrder, correspondingInvoices,
-                        null, remainingMoney);
+                        null, remainingMoney, false);
             }
         } else {
             // Get corresponding entities
@@ -463,13 +463,14 @@ public class PaymentServiceImpl implements PaymentService {
         if (payment.getPaymentAmount() >= 0) {
             // Invoices to payed found
             if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
-                remainingMoney = associateInboundPaymentAndInvoices(payment, correspondingInvoices, byPassAmount);
+                remainingMoney = associateInboundPaymentAndInvoices(payment, correspondingInvoices, byPassAmount,
+                        false);
             }
 
             // Customer order waiting for deposit found
             if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0) {
                 remainingMoney = associateInboundPaymentAndCustomerOrders(payment, correspondingCustomerOrder,
-                        correspondingInvoices, byPassAmount, remainingMoney);
+                        correspondingInvoices, byPassAmount, remainingMoney, false);
             }
 
             if (remainingMoney > Integer.parseInt(payementLimitRefundInEuros)) {
@@ -497,7 +498,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private Float associateInboundPaymentAndCustomerOrders(Payment payment,
             List<CustomerOrder> correspondingCustomerOrder, List<Invoice> correspondingInvoice,
-            List<Float> byPassAmount, float remainingMoney)
+            List<Float> byPassAmount, float remainingMoney, boolean isMovedFromInvoice)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         int amountIndex = 0;
@@ -532,8 +533,10 @@ public class PaymentServiceImpl implements PaymentService {
             newPayment.setCustomerOrder(correspondingCustomerOrder.get(i));
             addOrUpdatePayment(newPayment);
 
-            customerOrderCommentService.createCustomerOrderComment(correspondingCustomerOrder.get(i),
-                    "Nouveau paiement effectué");
+            if (!isMovedFromInvoice)
+                customerOrderCommentService.createCustomerOrderComment(correspondingCustomerOrder.get(i),
+                        "Nouveau paiement n°" + newPayment.getId() + " de " + newPayment.getPaymentAmount()
+                                + " € placé sur la commande");
 
             accountingRecordGenerationService.generateAccountingRecordsForSaleOnCustomerOrderDeposit(
                     correspondingCustomerOrder.get(i), newPayment);
@@ -550,7 +553,8 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Float associateInboundPaymentAndInvoices(Payment payment, List<Invoice> correspondingInvoices,
-            List<Float> byPassAmount) throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+            List<Float> byPassAmount, boolean isMovedFromCustomerOrder)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         int amountIndex = 0;
         Float remainingMoney = payment.getPaymentAmount();
 
@@ -590,7 +594,7 @@ public class PaymentServiceImpl implements PaymentService {
 
                     // Check appoint only for last invoice
                     associatePaymentAndInvoice(newPayment, correspondingInvoices.get(i),
-                            i == correspondingInvoices.size() - 1);
+                            i == correspondingInvoices.size() - 1, isMovedFromCustomerOrder);
                     remainingMoney -= effectivePayment;
 
                 } else if (correspondingInvoices.get(i).getInvoiceStatus().getId()
@@ -610,7 +614,8 @@ public class PaymentServiceImpl implements PaymentService {
                     newPayment.setInvoice(correspondingInvoices.get(i));
                     addOrUpdatePayment(newPayment);
 
-                    associatePaymentAndInvoice(newPayment, correspondingInvoices.get(i), false);
+                    associatePaymentAndInvoice(newPayment, correspondingInvoices.get(i), false,
+                            isMovedFromCustomerOrder);
                     remainingMoney = 0f;
                 }
             }
@@ -642,7 +647,7 @@ public class PaymentServiceImpl implements PaymentService {
             } else {
                 newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankCentralPay());
             }
-            associatePaymentAndInvoice(newPayment, correspondingInvoice, false);
+            associatePaymentAndInvoice(newPayment, correspondingInvoice, false, false);
         }
 
         return Math.round(paymentAmount * 100f) / 100f;
@@ -723,7 +728,7 @@ public class PaymentServiceImpl implements PaymentService {
         cashPayment.setSourceAccountingAccount(constantService.getAccountingAccountCaisse());
         addOrUpdatePayment(cashPayment);
         accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(cashPayment, false);
-        associateInboundPaymentAndInvoices(getPayment(cashPayment.getId()), Arrays.asList(invoice), null);
+        associateInboundPaymentAndInvoices(getPayment(cashPayment.getId()), Arrays.asList(invoice), null, false);
     }
 
     @Override
@@ -761,7 +766,7 @@ public class PaymentServiceImpl implements PaymentService {
         addOrUpdatePayment(cashPayment);
         accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(cashPayment, false);
         associateInboundPaymentAndCustomerOrders(getPayment(cashPayment.getId()), Arrays.asList(customerOrder),
-                new ArrayList<Invoice>(), null, cashPayment.getPaymentAmount());
+                new ArrayList<Invoice>(), null, cashPayment.getPaymentAmount(), false);
     }
 
     @Override
@@ -915,7 +920,8 @@ public class PaymentServiceImpl implements PaymentService {
         return addOrUpdatePayment(payment);
     }
 
-    private void associatePaymentAndInvoice(Payment payment, Invoice invoice, boolean checkForAppoint)
+    private void associatePaymentAndInvoice(Payment payment, Invoice invoice, boolean checkForAppoint,
+            boolean isMovedFromCustomerOrder)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         invoice = invoiceService.getInvoice(invoice.getId());
         payment.setInvoice(invoice);
@@ -931,6 +937,11 @@ public class PaymentServiceImpl implements PaymentService {
             } else {
                 accountingRecordGenerationService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, payment);
 
+                if (!isMovedFromCustomerOrder && invoice.getCustomerOrder() != null)
+                    customerOrderCommentService.createCustomerOrderComment(invoice.getCustomerOrder(),
+                            "Nouveau paiement n°" + payment.getId() + " de " + payment.getPaymentAmount()
+                                    + " € placé sur la facture n°" + invoice.getId());
+
                 Float remainingToPayForCurrentInvoice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
                 // Handle appoint
                 if (checkForAppoint && Math.abs(remainingToPayForCurrentInvoice) > 0
@@ -938,7 +949,7 @@ public class PaymentServiceImpl implements PaymentService {
                     Payment appoint = generateNewAppointPayment(remainingToPayForCurrentInvoice,
                             invoiceHelper.getCustomerOrder(invoice), invoice);
 
-                    associatePaymentAndInvoice(appoint, invoice, false);
+                    associatePaymentAndInvoice(appoint, invoice, false, isMovedFromCustomerOrder);
                 }
             }
         } else {
@@ -950,7 +961,7 @@ public class PaymentServiceImpl implements PaymentService {
     public void movePaymentFromInvoiceToCustomerOrder(Payment payment, Invoice invoice, CustomerOrder customerOrder)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException, OsirisDuplicateException {
         associateInboundPaymentAndCustomerOrders(payment, Arrays.asList(customerOrder), null,
-                Arrays.asList(payment.getPaymentAmount()), payment.getPaymentAmount());
+                Arrays.asList(payment.getPaymentAmount()), payment.getPaymentAmount(), true);
     }
 
     @Override
@@ -979,7 +990,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void movePaymentFromCustomerOrderToInvoice(Payment payment, CustomerOrder customerOrder, Invoice invoice)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
-        associateInboundPaymentAndInvoices(payment, Arrays.asList(invoice), null);
+        associateInboundPaymentAndInvoices(payment, Arrays.asList(invoice), null, true);
     }
 
     private void generateInvoiceForCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest,
@@ -1042,7 +1053,7 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, null, customerOrder);
         generateInvoiceForCentralPayPayment(centralPayPaymentRequest, payment, null, customerOrder);
         associateInboundPaymentAndCustomerOrders(payment, Arrays.asList(customerOrder), null, null,
-                payment.getPaymentAmount());
+                payment.getPaymentAmount(), false);
         return payment;
     }
 
@@ -1053,7 +1064,7 @@ public class PaymentServiceImpl implements PaymentService {
         // Generate payment to materialize CB payment
         Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, invoice, null);
         generateInvoiceForCentralPayPayment(centralPayPaymentRequest, payment, invoice, null);
-        associateInboundPaymentAndInvoices(payment, Arrays.asList(invoice), null);
+        associateInboundPaymentAndInvoices(payment, Arrays.asList(invoice), null, false);
     }
 
     @Override

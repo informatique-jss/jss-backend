@@ -389,24 +389,22 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 .equals(FormaliteGuichetUniqueStatus.ERROR_DECLARATION_INSEE)
                         || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.ERROR)
                         || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.EXPIRED)
-                        || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.REJECTED))
+                        || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.REJECTED)) {
                     originalFormalite.getFormalite().setFormaliteStatus(formaliteStatusService
                             .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED));
-                else if (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED_DGFIP)
-                        || originalFormalite.getStatus().getCode()
-                                .equals(FormaliteGuichetUniqueStatus.VALIDATED_PARTNER)
-                        || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED))
-                    originalFormalite.getFormalite().setFormaliteStatus(formaliteStatusService
-                            .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED));
-
-                else if (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED)
-                        || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED_DGFIP)
-                        || originalFormalite.getStatus().getCode()
-                                .equals(FormaliteGuichetUniqueStatus.VALIDATED_PARTNER))
                     customerOrderCommentService.createCustomerOrderComment(originalFormalite.getFormalite()
                             .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
-                            "Formalité GU Validée");
-
+                            "Formalité GU n°" + originalFormalite.getLiasseNumber() + " rejetée");
+                } else if (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED_DGFIP)
+                        || originalFormalite.getStatus().getCode()
+                                .equals(FormaliteGuichetUniqueStatus.VALIDATED_PARTNER)
+                        || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED)) {
+                    originalFormalite.getFormalite().setFormaliteStatus(formaliteStatusService
+                            .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED));
+                    customerOrderCommentService.createCustomerOrderComment(originalFormalite.getFormalite()
+                            .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
+                            "Formalité GU n°" + originalFormalite.getLiasseNumber() + " validée");
+                }
                 formaliteService.addOrUpdateFormalite(originalFormalite.getFormalite());
 
             }

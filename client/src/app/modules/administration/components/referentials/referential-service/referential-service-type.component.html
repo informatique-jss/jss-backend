@@ -143,8 +143,8 @@
           <tr *ngFor="let assoServiceFieldType of selectedEntity.assoServiceTypeFieldTypes; let index = index">
             <td>
               <select-service-field-type [(model)]="assoServiceFieldType.serviceFieldType"
-                [propertyName]="'serviceFieldType'+index" [form]="entityForm" [isMandatory]="true"
-                label="Libellé champ type" [isDisabled]="!editMode"></select-service-field-type>
+                [propertyName]="'serviceFieldType'+index" [form]="entityForm" [isMandatory]="true" label="Type de champ"
+                [isDisabled]="!editMode"></select-service-field-type>
             </td>
             <td>
               <generic-toggle [(model)]="assoServiceFieldType.isMandatory" label="Est obligatoire ?" [form]="entityForm"
@@ -163,8 +163,8 @@
         <table class="full-width">
           <tr>
             <td>
-              <button *ngIf="editMode" (click)="addFieldType()" mat-raised-button color="accent">Ajouter un champ au
-                service </button>
+              <button *ngIf="editMode" (click)="addFieldType()" mat-raised-button color="accent">Ajouter un champ type
+              </button>
             </td>
           </tr>
         </table>

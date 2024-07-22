@@ -36,13 +36,14 @@ public class ServiceFieldType implements Serializable, IId {
 
 	@OneToMany(mappedBy = "serviceFieldType", cascade = CascadeType.ALL)
 	@JsonIgnoreProperties(value = { "serviceFieldType" }, allowSetters = true)
-	private List<ServiceFieldTypePossibleValue> serviceFieldTypePossibleValues;
+	private List<ServiceTypeFieldTypePossibleValue> serviceFieldTypePossibleValues;
 
-	public List<ServiceFieldTypePossibleValue> getServiceFieldTypePossibleValues() {
+	public List<ServiceTypeFieldTypePossibleValue> getServiceFieldTypePossibleValues() {
 		return serviceFieldTypePossibleValues;
 	}
 
-	public void setServiceFieldTypePossibleValues(List<ServiceFieldTypePossibleValue> serviceFieldTypePossibleValues) {
+	public void setServiceFieldTypePossibleValues(
+			List<ServiceTypeFieldTypePossibleValue> serviceFieldTypePossibleValues) {
 		this.serviceFieldTypePossibleValues = serviceFieldTypePossibleValues;
 	}
 
