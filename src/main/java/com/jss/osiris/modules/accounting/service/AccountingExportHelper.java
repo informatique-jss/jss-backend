@@ -448,9 +448,7 @@ public class AccountingExportHelper {
                         Float currentClassDebit = 0f;
                         Float currentClassCredit = 0f;
                         for (AccountingBalance balanceRecord : balanceRecords) {
-                                if (!balanceRecord.getAccountingAccountClassLabel().equals(currentClass)
-                                                || (balanceRecords.indexOf(balanceRecord) == balanceRecords.size()
-                                                                - 1)) {
+                                if (!balanceRecord.getAccountingAccountClassLabel().equals(currentClass)) {
                                         currentRow = currentSheet.createRow(currentLine++);
                                         currentRow = currentSheet.createRow(currentLine++);
                                         currentColumn = 0;
@@ -561,6 +559,41 @@ public class AccountingExportHelper {
                                                 currentCell
                                                                 .setCellValue(balanceRecord.getEchu90());
                                         currentCell.setCellStyle(styleCurrency);
+                                }
+
+                                if ((balanceRecords.indexOf(balanceRecord) == balanceRecords.size() - 1)) {
+                                        currentRow = currentSheet.createRow(currentLine++);
+                                        currentRow = currentSheet.createRow(currentLine++);
+                                        currentColumn = 0;
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        currentCell.setCellValue("");
+                                        currentCell.setCellStyle(styleDate);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        currentCell.setCellValue("Total de la classe " + currentClass);
+                                        currentCell.setCellStyle(recordCellStyle);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        currentCell.setCellValue(currentClassDebit);
+
+                                        currentCell.setCellStyle(styleCurrency);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        currentCell.setCellValue(currentClassCredit);
+                                        currentCell.setCellStyle(styleCurrency);
+
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        if (currentClassDebit > currentClassCredit) {
+                                                currentCell.setCellValue(currentClassDebit - currentClassCredit);
+                                        }
+                                        currentCell.setCellStyle(styleCurrency);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        if (currentClassDebit <= currentClassCredit) {
+                                                currentCell.setCellValue(currentClassCredit - currentClassDebit);
+                                        }
+                                        currentCell.setCellStyle(styleCurrency);
+
+                                        currentRow = currentSheet.createRow(currentLine++);
+                                        currentClass = balanceRecord.getAccountingAccountClassLabel();
+                                        currentClassDebit = 0f;
+                                        currentClassCredit = 0f;
                                 }
                         }
                 }

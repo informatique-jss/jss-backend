@@ -211,7 +211,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         " from AccountingRecord a  JOIN a.accountingAccount aa  JOIN aa.principalAccountingAccount pa  where "
                         +
-                        "(a.accountingDateTime is null or (coalesce(a.manualAccountingDocumentDate,a.accountingDateTime) >=:startDate and coalesce(a.manualAccountingDocumentDate,a.accountingDateTime) <=:endDate ))   "
+                        "( (coalesce(a.manualAccountingDocumentDate,a.operationDateTime) >=:startDate and coalesce(a.manualAccountingDocumentDate,a.operationDateTime) <=:endDate ))   "
                         + " and (:canViewRestricted=true or aa.isViewRestricted=false)  " +
                         " group by pa.code ")
         List<AccountingBalanceBilan> getAccountingRecordAggregateByAccountingNumber(
