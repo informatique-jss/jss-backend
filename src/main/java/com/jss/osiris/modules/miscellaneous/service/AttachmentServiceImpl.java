@@ -411,10 +411,10 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     private void checkCompleteAttachmentListAndComment(AssoServiceDocument assoServiceDocument, Attachment attachment) {
-        if (attachment.getProvision().getService().getMissingAttachmentQueries() != null
-                && attachment.getProvision().getService().getMissingAttachmentQueries().size() > 0) {
+        if (assoServiceDocument.getService().getMissingAttachmentQueries() != null
+                && assoServiceDocument.getService().getMissingAttachmentQueries().size() > 0) {
 
-            List<MissingAttachmentQuery> missingAttchmentQueries = attachment.getProvision().getService()
+            List<MissingAttachmentQuery> missingAttchmentQueries = assoServiceDocument.getService()
                     .getMissingAttachmentQueries();
             missingAttchmentQueries.sort(new Comparator<MissingAttachmentQuery>() {
                 @Override
@@ -427,10 +427,10 @@ public class AttachmentServiceImpl implements AttachmentService {
                 }
             });
 
-            for (MissingAttachmentQuery missingAttachmentQuery : attachment.getProvision().getService()
+            for (MissingAttachmentQuery missingAttachmentQuery : assoServiceDocument.getService()
                     .getMissingAttachmentQueries()) {
                 if (missingAttachmentQuery.getSendToMe() == false) {
-                    for (AssoServiceDocument assoServiceDocumentService : attachment.getProvision().getService()
+                    for (AssoServiceDocument assoServiceDocumentService : assoServiceDocument.getService()
                             .getAssoServiceDocuments())
                         for (AssoServiceDocument assoServiceDocumentMissingQuery : missingAttachmentQuery
                                 .getAssoServiceDocument()) {
@@ -455,7 +455,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                             }
                         }
                     customerOrderCommentService.createCustomerOrderComment(
-                            attachment.getCustomerOrder(),
+                            assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder(),
                             "La demande de pièces manquantes du " + missingAttachmentQuery.getCreatedDateTime()
                                     .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " a été complétée");
                     return;
