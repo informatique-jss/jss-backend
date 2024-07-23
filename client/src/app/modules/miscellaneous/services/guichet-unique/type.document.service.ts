@@ -20,8 +20,4 @@ export class TypeDocumentService extends AppRestService<TypeDocument> {
     this.clearListCache(new HttpParams(), "type-document");
     return this.addOrUpdate(new HttpParams(), "type-document", typeDocument, "Enregistré", "Erreur lors de l'enregistrement");
   }
-  uploadTemplateFile() {
-
-  }
-
 }
