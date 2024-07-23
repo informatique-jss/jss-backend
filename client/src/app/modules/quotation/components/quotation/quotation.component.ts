@@ -591,6 +591,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     service.provisions.splice(service.provisions.indexOf(provision), 1);
   }
 
+  duplicateProvision(service: Service, provision: Provision): Provision {
+    let newProvisionDuplicated = {} as Provision;
+    newProvisionDuplicated.provisionFamilyType = provision.provisionFamilyType;
+    newProvisionDuplicated.provisionType = provision.provisionType;
+    service.provisions.push(newProvisionDuplicated);
+    return newProvisionDuplicated;
+  }
 
   changeStatus(targetStatus: QuotationStatus) {
     this.isStatusOpen = true;

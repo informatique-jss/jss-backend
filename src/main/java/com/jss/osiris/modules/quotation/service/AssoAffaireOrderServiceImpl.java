@@ -220,22 +220,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes())
                     assoServiceFieldType.setService(service);
 
-            // Complete field id_asso_service_type_field_type in
-            // AssoRadioValueServiceTypeFieldType
-            // si serviceFieldType = radio alors get id de assoServiceTypeFieldType pour set
-            // la value de radio dans AssoRadioValueServiceTypeFieldType avec l'id
-            // correspondant
-            /*
-             * if (service.getServiceType().getAssoServiceTypeFieldTypes() != null) {
-             * for (AssoServiceTypeFieldType assoServiceTypeFieldType :
-             * service.getServiceType()
-             * .getAssoServiceTypeFieldTypes())
-             * if (assoServiceTypeFieldType.getServiceFieldType()
-             * .getDataType() == ServiceFieldType.SERVICE_FIELD_TYPE_SELECT)
-             * // TO-DO
-             * }
-             */
-
             for (Provision provision : service.getProvisions()) {
                 provision.setService(service);
 

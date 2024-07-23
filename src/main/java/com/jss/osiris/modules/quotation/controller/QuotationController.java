@@ -112,7 +112,7 @@ import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.ServiceFamily;
 import com.jss.osiris.modules.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.quotation.model.ServiceFieldType;
-import com.jss.osiris.modules.quotation.model.ServiceFieldTypePossibleValue;
+import com.jss.osiris.modules.quotation.model.ServiceTypeFieldTypePossibleValue;
 import com.jss.osiris.modules.quotation.model.ServiceType;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
@@ -415,7 +415,7 @@ public class QuotationController {
           || serviceFieldTypes.getServiceFieldTypePossibleValues().size() == 0)
         throw new OsirisValidationException("serviceFieldTypePossibleValues");
       else
-        for (ServiceFieldTypePossibleValue possibleValue : serviceFieldTypes.getServiceFieldTypePossibleValues())
+        for (ServiceTypeFieldTypePossibleValue possibleValue : serviceFieldTypes.getServiceFieldTypePossibleValues())
           validationHelper.validateString(possibleValue.getValue(), true, 255, "serviceFieldTypePossibleValues");
     }
 

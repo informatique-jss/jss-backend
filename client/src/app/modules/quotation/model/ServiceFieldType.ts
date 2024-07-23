@@ -1,9 +1,9 @@
-import { ServiceFieldTypePossibleValue } from "./ServiceFieldTypePossibleValue";
+import { ServiceTypeFieldTypePossibleValue } from "./ServiceTypeFieldTypePossibleValue";
 
 export interface ServiceFieldType {
   id: number;
   code: string;
   label: string;
   dataType: string;
-  serviceFieldTypePossibleValues: ServiceFieldTypePossibleValue[];
+  serviceFieldTypePossibleValues: ServiceTypeFieldTypePossibleValue[];
 }

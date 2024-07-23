@@ -7,7 +7,7 @@ import { ServiceFieldTypeService } from 'src/app/modules/quotation/services/serv
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 import { SERVICE_FIELD_TYPE_SELECT } from 'src/app/libs/Constants';
 import { AssoServiceProvisionType } from 'src/app/modules/quotation/model/AssoServiceProvisionType';
-import { ServiceFieldTypePossibleValue } from 'src/app/modules/quotation/model/ServiceFieldTypePossibleValue';
+import { ServiceTypeFieldTypePossibleValue } from 'src/app/modules/quotation/model/ServiceTypeFieldTypePossibleValue';
 
 @Component({
   selector: 'referential-service-field-type',
@@ -34,12 +34,12 @@ export class ReferentialServiceFieldTypeComponent extends GenericReferentialComp
   addPossibleValue() {
     if (this.selectedEntity) {
       if (!this.selectedEntity.serviceFieldTypePossibleValues)
-        this.selectedEntity.serviceFieldTypePossibleValues = [] as Array<ServiceFieldTypePossibleValue>;
-      this.selectedEntity.serviceFieldTypePossibleValues.push({} as ServiceFieldTypePossibleValue);
+        this.selectedEntity.serviceFieldTypePossibleValues = [] as Array<ServiceTypeFieldTypePossibleValue>;
+      this.selectedEntity.serviceFieldTypePossibleValues.push({} as ServiceTypeFieldTypePossibleValue);
     }
   }
 
-  deletePossibleValue(serviceFieldTypePossibleValue: ServiceFieldTypePossibleValue) {
+  deletePossibleValue(serviceFieldTypePossibleValue: ServiceTypeFieldTypePossibleValue) {
     if (this.selectedEntity && this.selectedEntity.serviceFieldTypePossibleValues)
       for (let i = 0; i < this.selectedEntity.serviceFieldTypePossibleValues.length; i++)
         if (this.selectedEntity.serviceFieldTypePossibleValues[i].value == serviceFieldTypePossibleValue.value)

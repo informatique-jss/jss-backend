@@ -14,11 +14,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class ServiceFieldTypePossibleValue implements Serializable, IId {
+public class ServiceTypeFieldTypePossibleValue implements Serializable, IId {
 
     @Id
-    @SequenceGenerator(name = "paper_set_sequence", sequenceName = "paper_set_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "paper_set_sequence")
+    @SequenceGenerator(name = "service_type_field_type_possible_value_sequence", sequenceName = "service_type_field_type_possible_value_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "service_type_field_type_possible_value_sequence")
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)

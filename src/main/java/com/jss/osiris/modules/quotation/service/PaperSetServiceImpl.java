@@ -18,6 +18,7 @@ public class PaperSetServiceImpl implements PaperSetService {
     @Autowired
     PaperSetRepository paperSetRepository;
 
+    @Autowired
     CustomerOrderCommentService customerOrderCommentService;
 
     @Override
@@ -66,13 +67,18 @@ public class PaperSetServiceImpl implements PaperSetService {
     public PaperSet cancelPaperSet(PaperSet paperSet) {
         paperSet = getPaperSet(paperSet.getId());
         paperSet.setIsCancelled(true);
-        customerOrderCommentService.createCustomerOrderComment();
+        customerOrderCommentService.createCustomerOrderComment(paperSet.getCustomerOrder(),
+                "L'action " + paperSet.getPaperSetType().getLabel() + " n°" + paperSet.getId()
+                        + " a été annulée (emplacement n°" + paperSet.getLocationNumber() + ")");
         return addOrUpdatePaperSet(paperSet);
     }
 
     public PaperSet validatePaperSet(PaperSet paperSet) {
         paperSet = getPaperSet(paperSet.getId());
         paperSet.setIsValidated(true);
+        customerOrderCommentService.createCustomerOrderComment(paperSet.getCustomerOrder(),
+                "L'action " + paperSet.getPaperSetType().getLabel() + " n°" + paperSet.getId()
+                        + " a été effectuée (emplacement n°" + paperSet.getLocationNumber() + ")");
         return addOrUpdatePaperSet(paperSet);
     }
 }

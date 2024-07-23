@@ -33,6 +33,7 @@ export const REFUND_ENTITY_TYPE: EntityType = { entityType: 'Refund', tabName: '
 export const BANK_TRANSFERT_ENTITY_TYPE: EntityType = { entityType: 'BankTransfert', tabName: 'Virements', entryPoint: 'invoicing/bankTransfert' };
 export const DIRECT_DEBIT_TRANSFERT_ENTITY_TYPE: EntityType = { entityType: 'DirectDebitTransfert', tabName: 'Prélèvements', entryPoint: 'invoicing/directDebit' };
 export const ASSO_SERVICE_DOCUMENT_ENTITY_TYPE: EntityType = { entityType: 'AssoServiceDocument', tabName: 'Documents du service', entryPoint: 'quotation/service' };
+//export const ASSO_SERVICE_DOCUMENT_ENTITY_TYPE: EntityType = { entityType: 'AssoServiceDocument', tabName: 'Documents du service', entryPoint: 'quotation/service' };
 
 @Component({
   selector: 'app-search',

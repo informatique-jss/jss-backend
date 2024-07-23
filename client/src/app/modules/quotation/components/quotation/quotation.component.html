@@ -198,6 +198,9 @@
                                 <mat-icon color="accent" *ngIf="editMode" matTooltip="Supprimer la prestation"
                                   (click)="deleteProvision(service,provision);$event.stopPropagation()" class="pointer">
                                   delete</mat-icon>
+                                <mat-icon color="accent" *ngIf="editMode" matTooltip="Dupliquer la prestation"
+                                  (click)="duplicateProvision(service,provision)" class="pointer">
+                                  content_copy</mat-icon>
                               </mat-panel-description>
                             </mat-expansion-panel-header>
                             <provision-item [quotation]="quotation" *ngIf="asso.affaire && asso.affaire.id"

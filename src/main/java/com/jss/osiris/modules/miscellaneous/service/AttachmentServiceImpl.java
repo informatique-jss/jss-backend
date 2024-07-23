@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
+import java.time.format.DateTimeFormatter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +41,7 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
@@ -47,10 +49,12 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDoc
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.AssoServiceDocumentService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
+import com.jss.osiris.modules.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -135,6 +139,12 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     PdfTools pdfTools;
+
+    @Autowired
+    CustomerOrderCommentService customerOrderCommentService;
+
+    @Autowired
+    MissingAttachmentQueryService missingAttachmentQueryService;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -238,6 +248,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachment.setQuotation(quotation);
         } else if (entityType.equals(AssoServiceDocument.class.getSimpleName())) {
             AssoServiceDocument assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(idEntity);
+            checkCompleteAttachmentListAndComment(assoServiceDocument, attachment);
             if (assoServiceDocument == null)
                 return new ArrayList<Attachment>();
             attachment.setAssoServiceDocument(assoServiceDocument);
@@ -317,6 +328,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     public Attachment addOrUpdateAttachment(Attachment attachment) {
         if (attachment != null && attachment.getIsAlreadySent() == null)
             attachment.setIsAlreadySent(false);
+
         return attachmentRepository.save(attachment);
     }
 
@@ -396,5 +408,59 @@ public class AttachmentServiceImpl implements AttachmentService {
         newAttachment.setAssoServiceDocument(attachment.getAssoServiceDocument());
         newAttachment.setUploadedFile(attachment.getUploadedFile());
         return newAttachment;
+    }
+
+    private void checkCompleteAttachmentListAndComment(AssoServiceDocument assoServiceDocument, Attachment attachment) {
+        if (assoServiceDocument.getService().getMissingAttachmentQueries() != null
+                && assoServiceDocument.getService().getMissingAttachmentQueries().size() > 0) {
+
+            List<MissingAttachmentQuery> missingAttchmentQueries = assoServiceDocument.getService()
+                    .getMissingAttachmentQueries();
+            missingAttchmentQueries.sort(new Comparator<MissingAttachmentQuery>() {
+                @Override
+                public int compare(MissingAttachmentQuery o1, MissingAttachmentQuery o2) {
+                    if (o1 == null && o2 != null)
+                        return 1;
+                    if (o1 != null && o2 == null)
+                        return -1;
+                    return o2.getCreatedDateTime().compareTo(o1.getCreatedDateTime());
+                }
+            });
+
+            for (MissingAttachmentQuery missingAttachmentQuery : assoServiceDocument.getService()
+                    .getMissingAttachmentQueries()) {
+                if (missingAttachmentQuery.getSendToMe() == false) {
+                    for (AssoServiceDocument assoServiceDocumentService : assoServiceDocument.getService()
+                            .getAssoServiceDocuments())
+                        for (AssoServiceDocument assoServiceDocumentMissingQuery : missingAttachmentQuery
+                                .getAssoServiceDocument()) {
+                            if (assoServiceDocumentService.getTypeDocument().getCode()
+                                    .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode())) {
+                                if (assoServiceDocumentMissingQuery.getAttachments() != null
+                                        && assoServiceDocumentMissingQuery.getAttachments().size() > 0) {
+                                    boolean isAtLeastOneAttachmentAvailable = false;
+                                    for (Attachment attachmentDocument : assoServiceDocumentMissingQuery
+                                            .getAttachments()) {
+                                        if (!attachmentDocument.getIsDisabled()) {
+                                            isAtLeastOneAttachmentAvailable = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!isAtLeastOneAttachmentAvailable && !attachment.getTypeDocument().getCode()
+                                            .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode()))
+                                        return;
+                                } else if (!attachment.getTypeDocument().getCode()
+                                        .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode()))
+                                    return;
+                            }
+                        }
+                    customerOrderCommentService.createCustomerOrderComment(
+                            assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder(),
+                            "La demande de pièces manquantes du " + missingAttachmentQuery.getCreatedDateTime()
+                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " a été complétée");
+                    return;
+                }
+            }
+        }
     }
 }

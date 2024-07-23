@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
+import com.jss.osiris.modules.quotation.model.Service;
 
 public interface MissingAttachmentQueryRepository extends QueryCacheCrudRepository<MissingAttachmentQuery, Integer> {
 
@@ -46,4 +47,6 @@ public interface MissingAttachmentQueryRepository extends QueryCacheCrudReposito
         List<MissingAttachmentQuery> getMissingAttachmentQueriesForCustomerReminder(
                         @Param("simpleProvisionStatusWaitingAttachmentId") Integer simpleProvisionStatusWaitingAttachmentId,
                         @Param("formaliteStatusWaitingAttachmentId") Integer formaliteStatusWaitingAttachmentId);
+
+        List<MissingAttachmentQuery> findByService(Service service);
 }

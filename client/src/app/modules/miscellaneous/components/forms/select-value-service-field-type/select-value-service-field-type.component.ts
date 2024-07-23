@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 import { UserNoteService } from '../../../../../services/user.notes.service';
-import { ServiceFieldTypePossibleValue } from 'src/app/modules/quotation/model/ServiceFieldTypePossibleValue';
+import { ServiceTypeFieldTypePossibleValue } from 'src/app/modules/quotation/model/ServiceTypeFieldTypePossibleValue';
 import { ServiceFieldType } from 'src/app/modules/quotation/model/ServiceFieldType';
 
 @Component({
@@ -11,8 +11,8 @@ import { ServiceFieldType } from 'src/app/modules/quotation/model/ServiceFieldTy
   styleUrls: ['../generic-select/generic-select.component.css']
 })
 
-export class SelectValueServiceFieldTypeComponent extends GenericSelectComponent<ServiceFieldTypePossibleValue> implements OnInit {
-  types: ServiceFieldTypePossibleValue[] = [] as Array<ServiceFieldTypePossibleValue>;
+export class SelectValueServiceFieldTypeComponent extends GenericSelectComponent<ServiceTypeFieldTypePossibleValue> implements OnInit {
+  types: ServiceTypeFieldTypePossibleValue[] = [] as Array<ServiceTypeFieldTypePossibleValue>;
 
   @Input() serviceFieldType: ServiceFieldType | undefined;
 
@@ -24,8 +24,16 @@ export class SelectValueServiceFieldTypeComponent extends GenericSelectComponent
   initTypes(): void {
     this.types = [];
     if (this.serviceFieldType && this.serviceFieldType.serviceFieldTypePossibleValues)
-      this.types.push(...this.serviceFieldType.serviceFieldTypePossibleValues.sort((a: ServiceFieldTypePossibleValue, b: ServiceFieldTypePossibleValue) => {
+      this.types.push(...this.serviceFieldType.serviceFieldTypePossibleValues.sort((a: ServiceTypeFieldTypePossibleValue, b: ServiceTypeFieldTypePossibleValue) => {
         return a.value.localeCompare(b.value);
       }));
+  }
+
+  displayLabel(object: any): string {
+    if (object && object.value)
+      return object.value;
+    if (typeof object === "string")
+      return object;
+    return "";
   }
 }
