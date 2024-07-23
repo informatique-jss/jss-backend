@@ -6,6 +6,7 @@ import { IAttachment } from '../../model/IAttachment';
 import { AttachmentTypeService } from '../../services/attachment.type.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
+import { IAttachmentCode } from '../../model/IAttachmentCode';
 
 @Component({
   selector: 'single-attachment',
@@ -14,7 +15,7 @@ import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/u
 })
 export class SingleAttachmentComponent implements OnInit {
 
-  @Input() entity: IAttachment = {} as IAttachment;
+  @Input() entity: IAttachment | IAttachmentCode = {} as IAttachment;
   @Input() entityType: string = "";
   @Input() editMode: boolean = false;
   @Input() attachmentTypeToDisplay: AttachmentType | undefined;

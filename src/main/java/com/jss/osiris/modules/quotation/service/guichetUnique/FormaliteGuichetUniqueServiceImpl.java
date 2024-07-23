@@ -479,7 +479,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 }
                 if (file != null)
                     try {
-                        attachmentService.addAttachment(new FileInputStream(file), provision.getId(),
+                        attachmentService.addAttachment(new FileInputStream(file), provision.getId(),null,
                                 Provision.class.getSimpleName(),
                                 typeDocument.getAttachmentType(), piecesJointe.getNomDocument(), false,
                                 piecesJointe.getNomDocument(), piecesJointe, null, piecesJointe.getTypeDocument());

@@ -10,6 +10,8 @@ import { AttachmentType } from '../../model/AttachmentType';
 import { IAttachment } from '../../model/IAttachment';
 import { AttachmentTypeService } from '../../services/attachment.type.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
+import { IAttachmentCode } from '../../model/IAttachmentCode';
+import { instanceOfIAttachmentCode } from 'src/app/libs/TypeHelper';
 
 @Component({
   selector: 'multiple-upload',
@@ -18,7 +20,7 @@ import { UploadAttachmentService } from '../../services/upload.attachment.servic
 })
 export class MultipleUploadComponent implements OnInit {
 
-  @Input() entity: IAttachment = {} as IAttachment;
+  @Input() entity: IAttachment | IAttachmentCode = {} as IAttachment;
   @Input() entityType: string = "";
   @Output() endOfUpload: EventEmitter<any> = new EventEmitter<any>();
   pageSelection: string | null = null;
@@ -36,6 +38,8 @@ export class MultipleUploadComponent implements OnInit {
   @Input() attachmentType: AttachmentType | null = null;
   filename: string = "";
   @Input() typeDocument: TypeDocument | null = null;
+
+  instanceOfIAttachmentCode = instanceOfIAttachmentCode;
 
   constructor(private formBuilder: UntypedFormBuilder,
     protected attachmentTypeService: AttachmentTypeService,

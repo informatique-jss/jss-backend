@@ -527,7 +527,7 @@ public class BillingClosureReceiptDelegate {
             }
 
             List<Attachment> attachmentsList = attachmentService.addAttachment(
-                    new FileInputStream(billingClosureReceipt), tiers.getId(),
+                    new FileInputStream(billingClosureReceipt), tiers.getId(), null,
                     tiersType, constantService.getAttachmentTypeBillingClosure(),
                     "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".pdf", false,
                     "Relevé de compte du " + LocalDateTime.now().format(formatter), null, null, null);

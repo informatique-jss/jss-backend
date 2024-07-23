@@ -204,6 +204,10 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeContract;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_template")
+	private AttachmentType attachmentTypeTemplate;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_country_france")
 	private Country countryFrance;
 
@@ -2227,6 +2231,14 @@ public class Constant implements Serializable, IId {
 
 	public void setMailRedirectionTypeActivity(MailRedirectionType mailRedirectionTypeActivity) {
 		this.mailRedirectionTypeActivity = mailRedirectionTypeActivity;
+	}
+
+	public AttachmentType getAttachmentTypeTemplate() {
+		return attachmentTypeTemplate;
+	}
+
+	public void setAttachmentTypeTemplate(AttachmentType attachmentTypeTemplate) {
+		this.attachmentTypeTemplate = attachmentTypeTemplate;
 	}
 
 }

@@ -1,4 +1,5 @@
-<div *ngIf="entity && entity.id!=undefined && entity.id!=null">
+<div
+  *ngIf="entity &&  (instanceOfIAttachmentCode(entity) && entity.code || (!instanceOfIAttachmentCode(entity) && entity.id))">
   <form [formGroup]="attachmentForm" *ngIf="entity">
     <div class="full-width container" *ngIf="files==null ||files.length==0 ">
       <input class="pointer" type="file" #fileDropRef id="fileDropRef" (change)="fileBrowseHandler($event.target)"
