@@ -40,6 +40,9 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
     @Autowired
     FormaliteStatusService formaliteStatusService;
 
+    @Autowired
+    ServiceService serviceService;
+
     @Override
     public MissingAttachmentQuery getMissingAttachmentQuery(Integer id) {
         Optional<MissingAttachmentQuery> missingAttachmentQuery = missingAttachmentQueryRepository.findById(id);
@@ -50,11 +53,7 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
 
     @Override
     public List<MissingAttachmentQuery> getMissingAttachmentQueriesByIdService(Integer idService) {
-        List<MissingAttachmentQuery> missingAttachmentQueries = missingAttachmentQueryRepository
-                .findMissingAttachmentQueriesByIdService(idService);
-        if (missingAttachmentQueries != null && missingAttachmentQueries.size() > 0)
-            return missingAttachmentQueries;
-        return null;
+        return missingAttachmentQueryRepository.findByService(serviceService.getService(idService));
     }
 
     @Override

@@ -70,7 +70,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   quotationStatusList: QuotationStatus[] = [] as Array<QuotationStatus>;
   customerOrderStatusList: CustomerOrderStatus[] = [] as Array<CustomerOrderStatus>;
   isQuotationUrl = false;
-  newProvisionDuplicated: Provision = {} as Provision;
 
   VALIDATED_BY_CUSTOMER = VALIDATED_BY_CUSTOMER;
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
@@ -593,10 +592,11 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   duplicateProvision(service: Service, provision: Provision): Provision {
-    this.newProvisionDuplicated.provisionFamilyType = provision.provisionFamilyType;
-    this.newProvisionDuplicated.provisionType = provision.provisionType;
-    service.provisions.push(this.newProvisionDuplicated);
-    return this.newProvisionDuplicated;
+    let newProvisionDuplicated = {} as Provision;
+    newProvisionDuplicated.provisionFamilyType = provision.provisionFamilyType;
+    newProvisionDuplicated.provisionType = provision.provisionType;
+    service.provisions.push(newProvisionDuplicated);
+    return newProvisionDuplicated;
   }
 
   changeStatus(targetStatus: QuotationStatus) {
