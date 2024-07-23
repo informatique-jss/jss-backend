@@ -620,7 +620,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
         try {
             List<Attachment> attachments = attachmentService.addAttachment(new FileInputStream(invoicePdf),
-                    customerOrder.getId(),
+                    customerOrder.getId(),null,
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeInvoice(),
                     "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",

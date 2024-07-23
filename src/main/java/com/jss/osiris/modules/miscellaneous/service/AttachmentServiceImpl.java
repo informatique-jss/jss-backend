@@ -57,6 +57,7 @@ import com.jss.osiris.modules.quotation.service.FormaliteService;
 import com.jss.osiris.modules.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.TypeDocumentService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
@@ -138,6 +139,9 @@ public class AttachmentServiceImpl implements AttachmentService {
     AssoServiceDocumentService assoServiceDocumentService;
 
     @Autowired
+    TypeDocumentService typeDocumentService;
+
+    @Autowired
     PdfTools pdfTools;
 
     @Autowired
@@ -161,12 +165,12 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String entityType,
+    public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String codeEntity, String entityType,
             AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType,
             String pageSelection, TypeDocument typeDocument)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         try {
-            return addAttachment(file.getInputStream(), idEntity, entityType, attachmentType, filename,
+            return addAttachment(file.getInputStream(), idEntity, codeEntity, entityType, attachmentType, filename,
                     replaceExistingAttachementType, filename, null, pageSelection, typeDocument);
         } catch (IOException e) {
             throw new OsirisException(e, "Error when reading file");
@@ -174,7 +178,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public List<Attachment> addAttachment(InputStream file, Integer idEntity, String entityType,
+    public List<Attachment> addAttachment(InputStream file, Integer idEntity, String codeEntity, String entityType,
             AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType, String description,
             PiecesJointe piecesJointe, String pageSelection, TypeDocument typeDocument)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
@@ -195,10 +199,10 @@ public class AttachmentServiceImpl implements AttachmentService {
         String absoluteFilePath = storageFileService.saveFile(file, filename,
                 entityType + File.separator + idEntity);
 
-        List<Attachment> attachments = getAttachmentForEntityType(entityType, idEntity);
+        List<Attachment> attachments = getAttachmentForEntityType(entityType, idEntity, codeEntity);
 
         if (replaceExistingAttachementType) {
-            attachments = getAttachmentForEntityType(entityType, idEntity);
+            attachments = getAttachmentForEntityType(entityType, idEntity, codeEntity);
 
             if (attachments != null && attachments.size() > 0) {
                 for (Attachment attachment : attachments) {
@@ -246,6 +250,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (quotation == null)
                 return new ArrayList<Attachment>();
             attachment.setQuotation(quotation);
+        } else if (entityType.equals(TypeDocument.class.getSimpleName())) {
+            TypeDocument typeDocumentAttachment = typeDocumentService.getTypeDocumentByCode(codeEntity);
+            if (typeDocumentAttachment == null)
+                return new ArrayList<Attachment>();
+            attachment.setTypeDocumentAttachment(typeDocumentAttachment);
         } else if (entityType.equals(AssoServiceDocument.class.getSimpleName())) {
             AssoServiceDocument assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(idEntity);
             checkCompleteAttachmentListAndComment(assoServiceDocument, attachment);
@@ -314,7 +323,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             }
         }
 
-        return getAttachmentForEntityType(entityType, idEntity);
+        return getAttachmentForEntityType(entityType, idEntity, codeEntity);
     }
 
     @Override
@@ -339,7 +348,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         addOrUpdateAttachment(attachment);
     }
 
-    private List<Attachment> getAttachmentForEntityType(String entityType, Integer idEntity) {
+    private List<Attachment> getAttachmentForEntityType(String entityType, Integer idEntity, String codeEntity) {
         List<Attachment> attachments = new ArrayList<Attachment>();
         if (entityType.equals(Tiers.class.getSimpleName())) {
             attachments = attachmentRepository.findByTiersId(idEntity);
@@ -363,6 +372,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByProviderId(idEntity);
         } else if (entityType.equals(CompetentAuthority.class.getSimpleName())) {
             attachments = attachmentRepository.findByCompetentAuthorityId(idEntity);
+        } else if (entityType.equals(TypeDocument.class.getSimpleName())) {
+            attachments = attachmentRepository.findByTypeDocumentCode(codeEntity);
         }
         return attachments;
     }

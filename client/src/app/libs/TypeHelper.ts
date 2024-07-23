@@ -1,3 +1,5 @@
+import { IAttachment } from "../modules/miscellaneous/model/IAttachment";
+import { IAttachmentCode } from "../modules/miscellaneous/model/IAttachmentCode";
 import { Confrere } from "../modules/quotation/model/Confrere";
 import { CustomerOrder } from "../modules/quotation/model/CustomerOrder";
 import { IQuotation } from "../modules/quotation/model/IQuotation";
@@ -28,4 +30,10 @@ export function instanceOfQuotation(object: IQuotation): object is Quotation {
 
 export function instanceOfCustomerOrder(object: IQuotation): object is CustomerOrder {
   return !object.isQuotation;
+}
+
+export function instanceOfIAttachmentCode(object: any): object is IAttachmentCode {
+  if (object != null)
+    return 'code' in object;
+  return false;
 }

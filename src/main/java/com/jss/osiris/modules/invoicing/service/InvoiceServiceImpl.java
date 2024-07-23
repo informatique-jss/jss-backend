@@ -396,7 +396,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
                 List<Attachment> attachments = attachmentService.addAttachment(new FileInputStream(creditNotePdf),
-                        customerOrder.getId(),
+                        customerOrder.getId(),null,
                         CustomerOrder.class.getSimpleName(),
                         constantService.getAttachmentTypeCreditNote(),
                         "Credit_note_" + creditNote.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",

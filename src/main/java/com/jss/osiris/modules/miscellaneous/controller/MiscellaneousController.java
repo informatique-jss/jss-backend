@@ -1070,7 +1070,6 @@ public class MiscellaneousController {
             validationHelper.validateReferential(documentTypes, true, "documentTypes");
         validationHelper.validateString(documentTypes.getCode(), true, 20, "code");
         validationHelper.validateString(documentTypes.getLabel(), true, 100, "label");
-
         return new ResponseEntity<DocumentType>(documentTypeService.addOrUpdateDocumentType(documentTypes),
                 HttpStatus.OK);
     }
@@ -1110,7 +1109,8 @@ public class MiscellaneousController {
 
     @PostMapping(inputEntryPoint + "/attachment/upload")
     public ResponseEntity<List<Attachment>> uploadAttachment(@RequestParam MultipartFile file,
-            @RequestParam Integer idEntity, @RequestParam String entityType,
+            @RequestParam(required = false) Integer idEntity, @RequestParam(required = false) String codeEntity,
+            @RequestParam String entityType,
             @RequestParam Integer idAttachmentType,
             @RequestParam String filename, @RequestParam Boolean replaceExistingAttachementType,
             @RequestParam(name = "pageSelection", required = false) String pageSelection,
@@ -1127,8 +1127,8 @@ public class MiscellaneousController {
         if (filename == null || filename.equals(""))
             throw new OsirisValidationException("filename");
 
-        if (idEntity == null)
-            throw new OsirisValidationException("idEntity");
+        if (idEntity == null && codeEntity == null)
+            throw new OsirisValidationException("idEntity or codeEntity");
 
         if (entityType == null)
             throw new OsirisValidationException("entityType");
@@ -1150,11 +1150,13 @@ public class MiscellaneousController {
                 && !entityType.equals(Provision.class.getSimpleName())
                 && !entityType.equals(Affaire.class.getSimpleName())
                 && !entityType.equals(AssoServiceDocument.class.getSimpleName())
+                && !entityType.equals(TypeDocument.class.getSimpleName())
                 && !entityType.equals(Invoice.class.getSimpleName()))
+
             throw new OsirisValidationException("entityType");
 
         return new ResponseEntity<List<Attachment>>(
-                attachmentService.addAttachment(file, idEntity, entityType, attachmentType, filename,
+                attachmentService.addAttachment(file, idEntity, codeEntity, entityType, attachmentType, filename,
                         replaceExistingAttachementType, pageSelection, typeDocument),
                 HttpStatus.OK);
     }
