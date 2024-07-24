@@ -759,4 +759,12 @@ export class ConstantService extends AppRestService<Constant> {
   getServiceTypeOther() {
     return this.constant.serviceTypeOther;
   }
+
+  getDateAccountingClosureForAll() {
+    return this.constant.dateAccountingClosureForAll;
+  }
+
+  getDateAccountingClosureForAccountant() {
+    return this.constant.dateAccountingClosureForAccountant;
+  }
 }

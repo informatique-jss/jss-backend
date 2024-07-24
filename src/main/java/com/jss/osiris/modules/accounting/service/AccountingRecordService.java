@@ -22,11 +22,12 @@ import com.jss.osiris.modules.quotation.model.BankTransfert;
 public interface AccountingRecordService {
         public AccountingRecord getAccountingRecord(Integer id);
 
-        public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords);
+        public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords)
+                        throws OsirisException;
 
-        public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord);
+        public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord) throws OsirisException;
 
-        public void dailyAccountClosing();
+        public void dailyAccountClosing() throws OsirisException;
 
         public void deleteAccountingRecord(AccountingRecord accountingRecord);
 
@@ -82,6 +83,6 @@ public interface AccountingRecordService {
         public Boolean deleteAccountingRecords(AccountingRecord accountingRecord) throws OsirisValidationException;
 
         public Boolean letterRecordsForAs400(List<AccountingRecord> accountingRecords)
-                        throws OsirisValidationException, OsirisClientMessageException;
+                        throws OsirisValidationException, OsirisClientMessageException, OsirisException;
 
 }

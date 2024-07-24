@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.miscellaneous.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
@@ -764,6 +765,9 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_provision_type_bilan_publication")
 	private ProvisionType provisionTypeBilanPublication;
+	
+	private LocalDate dateAccountingClosureForAccountant;
+	private LocalDate dateAccountingClosureForAll;
 
 	public Integer getId() {
 		return id;
@@ -2173,12 +2177,27 @@ public class Constant implements Serializable, IId {
 		this.accountingJournalBilan = accountingJournalBilan;
 	}
 
+	public AttachmentType getAttachmentTypeContract() {
+		return attachmentTypeContract;
+	}
+
+	public void setAttachmentTypeContract(AttachmentType attachmentTypeContract) {
+		this.attachmentTypeContract = attachmentTypeContract;
+	}
+
+	public AttachmentType getAttachmentTypeTemplate() {
+		return attachmentTypeTemplate;
+	}
+
+	public void setAttachmentTypeTemplate(AttachmentType attachmentTypeTemplate) {
+		this.attachmentTypeTemplate = attachmentTypeTemplate;
+	}
+
 	public BillingType getBillingTypeDomiciliationContractTypeKeepMail() {
 		return billingTypeDomiciliationContractTypeKeepMail;
 	}
 
-	public void setBillingTypeDomiciliationContractTypeKeepMail(
-			BillingType billingTypeDomiciliationContractTypeKeepMail) {
+	public void setBillingTypeDomiciliationContractTypeKeepMail(BillingType billingTypeDomiciliationContractTypeKeepMail) {
 		this.billingTypeDomiciliationContractTypeKeepMail = billingTypeDomiciliationContractTypeKeepMail;
 	}
 
@@ -2209,14 +2228,6 @@ public class Constant implements Serializable, IId {
 		this.billingTypeDomiciliationContractTypeRouteEmailAndMail = billingTypeDomiciliationContractTypeRouteEmailAndMail;
 	}
 
-	public AttachmentType getAttachmentTypeContract() {
-		return attachmentTypeContract;
-	}
-
-	public void setAttachmentTypeContract(AttachmentType attachmentTypeContract) {
-		this.attachmentTypeContract = attachmentTypeContract;
-	}
-
 	public MailRedirectionType getMailRedirectionTypeLegalGuardian() {
 		return mailRedirectionTypeLegalGuardian;
 	}
@@ -2233,12 +2244,21 @@ public class Constant implements Serializable, IId {
 		this.mailRedirectionTypeActivity = mailRedirectionTypeActivity;
 	}
 
-	public AttachmentType getAttachmentTypeTemplate() {
-		return attachmentTypeTemplate;
+	public LocalDate getDateAccountingClosureForAccountant() {
+		return dateAccountingClosureForAccountant;
 	}
 
-	public void setAttachmentTypeTemplate(AttachmentType attachmentTypeTemplate) {
-		this.attachmentTypeTemplate = attachmentTypeTemplate;
+	public void setDateAccountingClosureForAccountant(LocalDate dateAccountingClosureForAccountant) {
+		this.dateAccountingClosureForAccountant = dateAccountingClosureForAccountant;
 	}
 
+	public LocalDate getDateAccountingClosureForAll() {
+		return dateAccountingClosureForAll;
+	}
+
+	public void setDateAccountingClosureForAll(LocalDate dateAccountingClosureForAll) {
+		this.dateAccountingClosureForAll = dateAccountingClosureForAll;
+	}
+
+	 
 }
