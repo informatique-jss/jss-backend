@@ -27,6 +27,7 @@ import { AccountingComponent } from "./accounting.component";
 const routes: Routes = [
   { path: 'accounting', component: AccountingComponent },
   { path: 'accounting/add', component: AddAccountingRecordComponent },
+  { path: 'accounting/edit/:temporaryOperationId', component: AddAccountingRecordComponent },
 ];
 
 @NgModule({

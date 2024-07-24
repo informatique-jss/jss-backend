@@ -10,7 +10,7 @@ import { AppService } from 'src/app/services/app.service';
 import { AccountingJournal } from '../../model/AccountingJournal';
 import { AccountingRecord } from '../../model/AccountingRecord';
 import { AccountingRecordService } from '../../services/accounting.record.service';
-
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 @Component({
   selector: 'add-accounting-record',
   templateUrl: './add-accounting-record.component.html',
@@ -26,6 +26,7 @@ export class AddAccountingRecordComponent implements OnInit {
     private appService: AppService,
     private accountingRecordService: AccountingRecordService,
     private constantService: ConstantService,
+    private activatedRoute: ActivatedRoute,
     private location: Location,
   ) {
   }
@@ -44,6 +45,8 @@ export class AddAccountingRecordComponent implements OnInit {
 
   ngOnInit() {
     this.addAccountingRecord();
+    let url: UrlSegment[] = this.activatedRoute.snapshot.url;
+    let temporaryOperationId = this.activatedRoute.snapshot.params.temporaryOperationId;
 
     // Column init
     this.displayedColumns = [];
@@ -71,6 +74,12 @@ export class AddAccountingRecordComponent implements OnInit {
       if (response)
         this.saveOperations();
     });
+
+    if (url[1].path == "edit" && temporaryOperationId) {
+      this.accountingRecordService.getAccountingRecordsByTemporaryOperationId(temporaryOperationId).subscribe(response => {
+        this.accountingRecords = response;
+      });
+    }
   }
 
   ngOnDestroy() {
@@ -138,8 +147,10 @@ export class AddAccountingRecordComponent implements OnInit {
       let journalId = 0;
 
       for (let record of this.accountingRecords) {
-        if (record.operationDateTime)
-          record.operationDateTime = new Date(record.operationDateTime.setHours(12))
+        if (record.operationDateTime) {
+          record.operationDateTime = new Date(record.operationDateTime);
+          record.operationDateTime.setHours(12);
+        }
         if (journalId > 0 && journalId != record.accountingJournal.id) {
           this.appService.displaySnackBar("Le journal doit être identique sur l'ensemble des lignes", true, 10);
           return;

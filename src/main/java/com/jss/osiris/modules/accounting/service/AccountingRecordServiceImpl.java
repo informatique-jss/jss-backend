@@ -81,6 +81,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
+  public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer temporaryOperationId) {
+    return accountingRecordRepository.findByTemporaryOperationId(temporaryOperationId);
+  }
+
+  @Override
   public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord) {
     // Do not save null or 0 € records
     if (accountingRecord.getId() == null
@@ -110,6 +115,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       accountingRecord.setTemporaryOperationId(operationId);
       accountingRecord.setIsTemporary(true);
       accountingRecord.setIsANouveau(false);
+      accountingRecord.setIsManual(true);
       addOrUpdateAccountingRecord(accountingRecord);
     }
     return accountingRecords;
@@ -211,6 +217,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     if (accountingRecordSearch.getIsFromAs400() == null)
       accountingRecordSearch.setIsFromAs400(false);
+
+    if (accountingRecordSearch.getIsManual() == null)
+      accountingRecordSearch.setIsManual(false);
 
     if (accountingRecordSearch.getTiersId() == null)
       accountingRecordSearch.setTiersId(0);

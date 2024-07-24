@@ -42,6 +42,10 @@ export class AccountingRecordService extends AppRestService<AccountingRecord> {
     return this.get(new HttpParams().set("accountingRecordId", accountingRecord.recordId), "accounting-record/delete");
   }
 
+  getAccountingRecordsByTemporaryOperationId(temporaryOperationId: number) {
+    return this.getList(new HttpParams().set("temporaryOperationId", temporaryOperationId), "accounting-record/temporary-operation-id");
+  }
+
   letterRecordsForAs400(accountingRecords: AccountingRecordSearchResult[]) {
     return this.get(new HttpParams().set("recordIds", accountingRecords.map(value => value.recordId).join(",")), "accounting-record/letter");
   }

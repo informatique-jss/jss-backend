@@ -74,6 +74,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " r.id_payment as paymentId, " +
                         " r.is_temporary as isTemporary, " +
                         " r.is_from_as400 as isFromAs400, " +
+                        " r.is_manual as isManual, " +
                         " r2.operation_id as contrePasseOperationId, " +
                         " (select STRING_AGG( case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')',', ' order by 1) as affaireLabel from asso_affaire_order asso join affaire af on af.id = asso.id_affaire left join city on city.id = af.id_city where  asso.id_customer_order = i.customer_order_id or asso.id_customer_order = r.id_customer_order)  as affaireLabel,"
                         +

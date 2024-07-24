@@ -17,4 +17,5 @@ export interface AccountingRecordSearch {
   idRefund: number;
   idBankTransfert: number;
   isFromAs400: boolean;
+  isManual: boolean;
 }
