@@ -966,7 +966,7 @@ public class ConstantServiceImpl implements ConstantService {
 
     @Override
     public LocalDate getDateAccountingClosureForAccountant() throws OsirisException {
-        return this.getConstants().getDateAccountingClosureForAll();
+        return this.getConstants().getDateAccountingClosureForAccountant();
     }
 
 }
