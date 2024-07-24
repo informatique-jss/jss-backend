@@ -55,4 +55,6 @@ public interface AccountingRecordSearchResult {
   Boolean getIsTemporary();
 
   Boolean getIsFromAs400();
+
+  Boolean getIsManual();
 }

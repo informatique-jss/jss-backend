@@ -7,7 +7,7 @@ import { AccountingRecordSearchResult } from '../model/AccountingRecordSearchRes
 @Injectable({
   providedIn: 'root'
 })
-export class AccountingRecordSearchResultService extends AppRestService<AccountingRecordSearchResult>{
+export class AccountingRecordSearchResultService extends AppRestService<AccountingRecordSearchResult> {
 
   constructor(http: HttpClient) {
     super(http, "accounting");

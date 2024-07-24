@@ -37,4 +37,5 @@ export interface AccountingRecordSearchResult {
   isTemporary: boolean;
   temporaryOperationId: number;
   isFromAs400: boolean;
+  isManual: boolean;
 }

@@ -244,6 +244,17 @@ public class AccountingController {
                 accountingRecordService.searchAccountingRecords(accountingRecordSearch, false), HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/accounting-record/temporary-operation-id")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<List<AccountingRecord>> getAccountingRecordsByOperationId(
+            @RequestParam Integer temporaryOperationId) throws OsirisValidationException {
+        if (temporaryOperationId == null)
+            throw new OsirisValidationException("temporaryOperationId");
+        return new ResponseEntity<List<AccountingRecord>>(
+                accountingRecordService.getAccountingRecordsByTemporaryOperationId(temporaryOperationId),
+                HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/accounting-record/letter")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<Boolean> letterRecordsForAs400(
