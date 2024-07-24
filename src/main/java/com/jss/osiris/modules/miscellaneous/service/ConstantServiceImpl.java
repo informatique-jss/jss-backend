@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -957,4 +958,15 @@ public class ConstantServiceImpl implements ConstantService {
     public RffFrequency getRffFrequencyQuarterly() throws OsirisException {
         return getConstants().getRffFrequencyQuarterly();
     }
+
+    @Override
+    public LocalDate getDateAccountingClosureForAll() throws OsirisException {
+        return this.getConstants().getDateAccountingClosureForAll();
+    }
+
+    @Override
+    public LocalDate getDateAccountingClosureForAccountant() throws OsirisException {
+        return this.getConstants().getDateAccountingClosureForAll();
+    }
+
 }

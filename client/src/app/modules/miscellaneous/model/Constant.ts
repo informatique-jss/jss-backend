@@ -211,4 +211,6 @@ export interface Constant {
   rffFrequencyAnnual: RffFrequency;
   rffFrequencyQuarterly: RffFrequency;
   rffFrequencyMonthly: RffFrequency;
+  dateAccountingClosureForAll: Date;
+  dateAccountingClosureForAccountant: Date;
 }

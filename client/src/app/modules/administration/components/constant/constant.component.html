@@ -1330,6 +1330,22 @@
                 [isDisabled]="!editMode"></select-rff-frequency>
             </td>
           </tr>
+          <tr>
+            <td>
+              <generic-datepicker [(model)]="constant.dateAccountingClosureForAll"
+                label="Date - cloture comptable pour les non comptables" [form]="constantForm"
+                propertyName="dateAccountingClosureForAll" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-datepicker>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-datepicker [(model)]="constant.dateAccountingClosureForAccountant"
+                label="Date - cloture comptable pour les comptables" [form]="constantForm"
+                propertyName="dateAccountingClosureForAccountant" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-datepicker>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>

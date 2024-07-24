@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.miscellaneous.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -720,6 +721,9 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_rff_frequency_monthly")
 	private RffFrequency rffFrequencyMonthly;
+
+	private LocalDate dateAccountingClosureForAccountant;
+	private LocalDate dateAccountingClosureForAll;
 
 	public Integer getId() {
 		return id;
@@ -2111,5 +2115,21 @@ public class Constant implements Serializable, IId {
 
 	public void setAccountingJournalBilan(AccountingJournal accountingJournalBilan) {
 		this.accountingJournalBilan = accountingJournalBilan;
+	}
+
+	public LocalDate getDateAccountingClosureForAccountant() {
+		return dateAccountingClosureForAccountant;
+	}
+
+	public void setDateAccountingClosureForAccountant(LocalDate dateAccountingClosureForAccountant) {
+		this.dateAccountingClosureForAccountant = dateAccountingClosureForAccountant;
+	}
+
+	public LocalDate getDateAccountingClosureForAll() {
+		return dateAccountingClosureForAll;
+	}
+
+	public void setDateAccountingClosureForAll(LocalDate dateAccountingClosureForAll) {
+		this.dateAccountingClosureForAll = dateAccountingClosureForAll;
 	}
 }

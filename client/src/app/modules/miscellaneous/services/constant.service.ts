@@ -6,7 +6,7 @@ import { Constant } from '../../miscellaneous/model/Constant';
 @Injectable({
   providedIn: 'root'
 })
-export class ConstantService extends AppRestService<Constant>{
+export class ConstantService extends AppRestService<Constant> {
 
   constructor(http: HttpClient) {
     super(http, "miscellaneous");
@@ -718,5 +718,13 @@ export class ConstantService extends AppRestService<Constant>{
 
   getRffFrequencyMonthly() {
     return this.constant.rffFrequencyMonthly;
+  }
+
+  getDateAccountingClosureForAll() {
+    return this.constant.dateAccountingClosureForAll;
+  }
+
+  getDateAccountingClosureForAccountant() {
+    return this.constant.dateAccountingClosureForAccountant;
   }
 }
