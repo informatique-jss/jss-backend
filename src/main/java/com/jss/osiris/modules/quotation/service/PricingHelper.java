@@ -363,6 +363,19 @@ public class PricingHelper {
                             && (!billingItem.getBillingType().getIsOptionnal()
                                     || hasOption(billingItem.getBillingType(), provision))) {
 
+                        // If vacation multiple option, bypass vacation and traitement billing type
+                        if (provision.getIsVacationMultipleModification() != null
+                                && provision.getIsVacationMultipleModification() && billingType.getIsVacation() != null
+                                && billingType.getIsVacation()) {
+                            continue;
+                        }
+                        if (provision.getIsTreatmentMultipleModiciation() != null
+                                && provision.getIsTreatmentMultipleModiciation()
+                                && billingType.getIsTraitement() != null
+                                && billingType.getIsTraitement()) {
+                            continue;
+                        }
+
                         InvoiceItem invoiceItem = null;
 
                         if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
