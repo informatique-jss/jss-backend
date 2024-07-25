@@ -225,6 +225,14 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 	private AccountingAccount accountingAccountDeposit;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_accounting_account_litigious")
+	private AccountingAccount accountingAccountLitigious;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_accounting_account_suspicious")
+	private AccountingAccount accountingAccountSuspicious;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_rff_frequency")
 	private RffFrequency rffFrequency;
 

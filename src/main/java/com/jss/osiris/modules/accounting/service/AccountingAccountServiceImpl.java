@@ -82,6 +82,12 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 Integer currentMaxSubAccountProvider = accountingAccountRepository
                                 .findMaxSubAccontNumberForPrincipalAccountingAccount(
                                                 constantService.getPrincipalAccountingAccountProvider());
+                Integer currentMaxSubAccountLitigious = accountingAccountRepository
+                                .findMaxSubAccontNumberForPrincipalAccountingAccount(
+                                                constantService.getPrincipalAccountingAccountProvider());
+                Integer currentMaxSubAccountSuspicious = accountingAccountRepository
+                                .findMaxSubAccontNumberForPrincipalAccountingAccount(
+                                                constantService.getPrincipalAccountingAccountProvider());
 
                 Integer currentMaxSubAccountDeposit = 0;
                 if (!isDepositForProvider)
@@ -101,7 +107,10 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                         maxSubAccount = currentMaxSubAccountProvider;
                 if (currentMaxSubAccountDeposit != null && currentMaxSubAccountDeposit > maxSubAccount)
                         maxSubAccount = currentMaxSubAccountDeposit;
-
+                if (currentMaxSubAccountLitigious != null && currentMaxSubAccountLitigious > maxSubAccount)
+                        maxSubAccount = currentMaxSubAccountLitigious;
+                if (currentMaxSubAccountSuspicious != null && currentMaxSubAccountSuspicious > maxSubAccount)
+                        maxSubAccount = currentMaxSubAccountSuspicious;
                 maxSubAccount++;
 
                 AccountingAccount accountingAccountProvider = new AccountingAccount();
@@ -121,6 +130,26 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                                 .setLabel("Client - " + (label != null ? label : ""));
                 addOrUpdateAccountingAccount(accountingAccountCustomer);
                 accountingAccountTrouple.setAccountingAccountCustomer(accountingAccountCustomer);
+
+                AccountingAccount accountingAccountLitigious = new AccountingAccount();
+                accountingAccountLitigious
+                                .setPrincipalAccountingAccount(
+                                                constantService.getPrincipalAccountingAccountLitigious());
+                accountingAccountLitigious.setAccountingAccountSubNumber(maxSubAccount);
+                accountingAccountLitigious
+                                .setLabel("Compte litigieux - " + (label != null ? label : ""));
+                addOrUpdateAccountingAccount(accountingAccountLitigious);
+                accountingAccountTrouple.setAccountingAccountLitigious(accountingAccountLitigious);
+
+                AccountingAccount accountingAccountSuspicious = new AccountingAccount();
+                accountingAccountSuspicious
+                                .setPrincipalAccountingAccount(
+                                                constantService.getPrincipalAccountingAccountSuspicious());
+                accountingAccountSuspicious.setAccountingAccountSubNumber(maxSubAccount);
+                accountingAccountSuspicious
+                                .setLabel("Compte douteux - " + (label != null ? label : ""));
+                addOrUpdateAccountingAccount(accountingAccountSuspicious);
+                accountingAccountTrouple.setAccountingAccountSuspicious(accountingAccountSuspicious);
 
                 AccountingAccount accountingAccountDeposit = new AccountingAccount();
                 if (!isDepositForProvider)
@@ -242,6 +271,12 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                                                                         .getPrincipalAccountingAccountDepositProvider()
                                                                         .getId()))
                                 label = "Acompte - " + label;
+                        if (accountingAccount.getPrincipalAccountingAccount().getId()
+                                        .equals(constantService.getPrincipalAccountingAccountLitigious().getId()))
+                                label = "Compte litigieux - " + label;
+                        if (accountingAccount.getPrincipalAccountingAccount().getId()
+                                        .equals(constantService.getPrincipalAccountingAccountSuspicious().getId()))
+                                label = "Compte douteux - " + label;
                         accountingAccount.setLabel(label);
                         addOrUpdateAccountingAccount(accountingAccount);
                 }
