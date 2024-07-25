@@ -40,5 +40,6 @@ export interface AccountingRecord {
   contrePasse: AccountingRecord;
   isANouveau: boolean;
   isFromAs400: boolean;
+  isManual: boolean;
 }
 

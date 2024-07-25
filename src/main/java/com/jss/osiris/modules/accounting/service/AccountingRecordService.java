@@ -22,6 +22,8 @@ import com.jss.osiris.modules.quotation.model.BankTransfert;
 public interface AccountingRecordService {
         public AccountingRecord getAccountingRecord(Integer id);
 
+        public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer id);
+
         public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords)
                         throws OsirisException;
 

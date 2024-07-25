@@ -131,6 +131,8 @@ public class AccountingRecord implements Serializable, IId {
 
 	private Boolean isFromAs400;
 
+	private Boolean isManual;
+
 	public Integer getId() {
 		return id;
 	}
@@ -347,4 +349,11 @@ public class AccountingRecord implements Serializable, IId {
 		this.isFromAs400 = isFromAs400;
 	}
 
+	public Boolean getIsManual() {
+		return isManual;
+	}
+
+	public void setIsManual(Boolean isManual) {
+		this.isManual = isManual;
+	}
 }

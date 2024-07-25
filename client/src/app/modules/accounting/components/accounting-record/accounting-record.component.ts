@@ -119,6 +119,17 @@ export class AccountingRecordComponent implements OnInit {
         }, display: true,
       } as SortTableAction<AccountingRecordSearchResult>);
 
+    if (this.habilitationService.canUpdateAccountingRecordsOnBilanJournal())
+      this.tableAction.push({
+        actionIcon: 'edit', actionName: "Modifier l'écriture", actionClick: (column: SortTableAction<AccountingRecordSearchResult>, element: AccountingRecordSearchResult, event: any) => {
+          if (element.isManual) {
+            this.appService.openRoute(event, '/accounting/edit/' + element.temporaryOperationId, undefined);
+          } else {
+            this.appService.displaySnackBar("La modification n'est possible sur ces lignes", true, 10);
+          }
+        }, display: true,
+      } as SortTableAction<AccountingRecordSearchResult>);
+
     if (this.habilitationService.canDeleteAccountingRecordsOnBilanJournal())
       this.tableAction.push({
         actionIcon: 'delete', actionName: "Supprimer l'écriture", actionClick: (column: SortTableAction<AccountingRecordSearchResult>, element: AccountingRecordSearchResult, event: any) => {
