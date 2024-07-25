@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
+import java.time.LocalDate;
+
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
@@ -413,4 +415,8 @@ public interface ConstantService {
     public RffFrequency getRffFrequencyQuarterly() throws OsirisException;
 
     public ServiceType getServiceTypeOther() throws OsirisException;
+    
+    public LocalDate getDateAccountingClosureForAll() throws OsirisException;
+
+    public LocalDate getDateAccountingClosureForAccountant() throws OsirisException;
 }

@@ -214,7 +214,7 @@ public class AccountingController {
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/accounting/close/daily")
-    public ResponseEntity<Boolean> dailyAccountClosing() {
+    public ResponseEntity<Boolean> dailyAccountClosing() throws OsirisException {
         accountingRecordService.dailyAccountClosing();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
@@ -255,7 +255,7 @@ public class AccountingController {
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<Boolean> letterRecordsForAs400(
             @RequestParam List<Integer> recordIds)
-            throws OsirisValidationException, OsirisClientMessageException {
+            throws OsirisValidationException, OsirisClientMessageException, OsirisException {
         if (recordIds == null)
             throw new OsirisValidationException("recordIds");
 
@@ -492,8 +492,6 @@ public class AccountingController {
             throws OsirisValidationException, OsirisException {
         byte[] data = null;
         HttpHeaders headers = null;
-
-        AccountingAccountClass accountingClass = null;
 
         if (accountingRecordSearch == null)
             throw new OsirisValidationException("accountingRecordSearch");

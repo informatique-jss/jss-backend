@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -1009,4 +1010,15 @@ public class ConstantServiceImpl implements ConstantService {
     public ServiceType getServiceTypeOther() throws OsirisException {
         return getConstants().getServiceTypeOther();
     }
+
+    @Override
+    public LocalDate getDateAccountingClosureForAll() throws OsirisException {
+        return this.getConstants().getDateAccountingClosureForAll();
+    }
+
+    @Override
+    public LocalDate getDateAccountingClosureForAccountant() throws OsirisException {
+        return this.getConstants().getDateAccountingClosureForAccountant();
+    }
+
 }

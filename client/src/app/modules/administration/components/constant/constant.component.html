@@ -1408,9 +1408,23 @@
           </tr>
           <tr>
             <td>
-              <select-provision-type [(model)]="constant.provisionTypeBilanPublication"
+              <generic-datepicker [(model)]="constant.dateAccountingClosureForAll"
+                label="Date - cloture comptable pour les non comptables" [form]="constantForm"
+                propertyName="dateAccountingClosureForAll" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-datepicker>
+            </td>
+          </tr>
+          <tr>
+            <td><select-provision-type [(model)]="constant.provisionTypeBilanPublication"
                 label="Type de prestation - Bilan" [form]="constantForm" propertyName="provisionTypeBilanPublication"
-                [isMandatory]="true" [isDisabled]="!editMode"></select-provision-type>
+                [isMandatory]="true" [isDisabled]="!editMode"></select-provision-type></td>
+          </tr>
+          <tr>
+            <td>
+              <generic-datepicker [(model)]="constant.dateAccountingClosureForAccountant"
+                label="Date - cloture comptable pour les comptables" [form]="constantForm"
+                propertyName="dateAccountingClosureForAccountant" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-datepicker>
             </td>
           </tr>
         </table>

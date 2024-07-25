@@ -34,6 +34,7 @@ import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Refund;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -72,6 +73,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Autowired
   BatchService batchService;
 
+  @Autowired
+  ConstantService constantService;
+
   @Override
   public AccountingRecord getAccountingRecord(Integer id) {
     Optional<AccountingRecord> accountingRecord = accountingRecordRepository.findById(id);
@@ -86,12 +90,23 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord) {
+  public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord) throws OsirisException {
     // Do not save null or 0 € records
     if (accountingRecord.getId() == null
         && (accountingRecord.getCreditAmount() == null || accountingRecord.getCreditAmount() == 0f)
         && (accountingRecord.getDebitAmount() == null || accountingRecord.getDebitAmount() == 0f))
       return null;
+
+    if (accountingRecord.getOperationDateTime().toLocalDate()
+        .isBefore(constantService.getDateAccountingClosureForAccountant())) {
+      throw new OsirisException(null, "Impossible to write accounting record, it's before closure all date");
+    } else if (accountingRecord.getOperationDateTime().toLocalDate()
+        .isBefore(constantService.getDateAccountingClosureForAll())
+        && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP)) {
+      throw new OsirisException(null,
+          "Impossible to write accounting record, it's before closure accounting date. It can only be done by accounting responsible");
+    }
+
     return accountingRecordRepository.save(accountingRecord);
   }
 
@@ -107,7 +122,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords) {
+  public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords)
+      throws OsirisException {
     Integer operationId = getNewTemporaryOperationId();
     for (AccountingRecord accountingRecord : accountingRecords) {
       if (accountingRecord.getOperationDateTime() == null)
@@ -123,7 +139,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public void dailyAccountClosing() {
+  public void dailyAccountClosing() throws OsirisException {
     List<AccountingJournal> journals = accountingJournalService.getAccountingJournals();
 
     Integer maxIdOperation = accountingRecordRepository
@@ -456,7 +472,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Transactional(rollbackFor = Exception.class)
   @Override
   public Boolean letterRecordsForAs400(List<AccountingRecord> accountingRecords)
-      throws OsirisValidationException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisClientMessageException, OsirisException {
 
     Integer lastAccountId = null;
     Float balance = 0f;

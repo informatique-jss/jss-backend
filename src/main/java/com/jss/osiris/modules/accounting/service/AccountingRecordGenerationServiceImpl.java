@@ -63,7 +63,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             Float creditAmount,
             Float debitAmount, AccountingAccount accountingAccount, InvoiceItem invoiceItem, Invoice invoice,
             CustomerOrder customerOrder, AccountingJournal journal, Payment payment, Refund refund,
-            BankTransfert bankTransfert) throws OsirisClientMessageException {
+            BankTransfert bankTransfert) throws OsirisClientMessageException, OsirisException {
         AccountingRecord accountingRecord = new AccountingRecord();
         accountingRecord.setOperationDateTime(operationDatetime);
         accountingRecord.setTemporaryOperationId(operationId);
@@ -94,7 +94,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     }
 
     private AccountingRecord getCounterPart(AccountingRecord originalAccountingRecord, Integer operationId,
-            AccountingJournal journal, String label) {
+            AccountingJournal journal, String label) throws OsirisException {
         AccountingRecord newAccountingRecord = new AccountingRecord();
         newAccountingRecord.setAccountingAccount(originalAccountingRecord.getAccountingAccount());
         newAccountingRecord.setAccountingJournal(journal);
