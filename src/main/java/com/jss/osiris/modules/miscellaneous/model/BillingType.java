@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
+ 
 
 @Entity
 public class BillingType implements Serializable, IId {
