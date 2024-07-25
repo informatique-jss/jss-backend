@@ -31,7 +31,7 @@ public class AssoServiceTypeFieldType implements Serializable, IId {
 	private ServiceType serviceType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_service_field_type")
+	@JoinColumn(name = "id_service_type_field_type")
 	@IndexedField
 	private ServiceFieldType serviceFieldType;
 

@@ -103,6 +103,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
 
+  canUpdateAccountingRecordsOnBilanJournal() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
   canDeleteAccountingRecordsOnBilanJournal() {
     return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }

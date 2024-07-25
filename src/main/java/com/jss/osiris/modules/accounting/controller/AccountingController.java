@@ -115,12 +115,8 @@ public class AccountingController {
         Integer accountingJournalId = null;
 
         for (AccountingRecord accountingRecord : accountingRecords) {
-            if (accountingRecord.getId() != null
-                    || accountingRecord.getAccountingDateTime() != null
-                    || accountingRecord.getIsTemporary() != null
-                    || accountingRecord.getInvoiceItem() != null
+            if (accountingRecord.getInvoiceItem() != null
                     || accountingRecord.getInvoice() != null
-                    || accountingRecord.getOperationId() != null
                     || accountingRecord.getLetteringDateTime() != null
                     || accountingRecord.getLetteringNumber() != null)
                 throw new OsirisValidationException("accountingRecords completude");
@@ -242,6 +238,17 @@ public class AccountingController {
 
         return new ResponseEntity<List<AccountingRecordSearchResult>>(
                 accountingRecordService.searchAccountingRecords(accountingRecordSearch, false), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-record/temporary-operation-id")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<List<AccountingRecord>> getAccountingRecordsByOperationId(
+            @RequestParam Integer temporaryOperationId) throws OsirisValidationException {
+        if (temporaryOperationId == null)
+            throw new OsirisValidationException("temporaryOperationId");
+        return new ResponseEntity<List<AccountingRecord>>(
+                accountingRecordService.getAccountingRecordsByTemporaryOperationId(temporaryOperationId),
+                HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/accounting-record/letter")
