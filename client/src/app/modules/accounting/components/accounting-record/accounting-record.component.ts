@@ -121,7 +121,7 @@ export class AccountingRecordComponent implements OnInit {
 
     if (this.habilitationService.canUpdateAccountingRecordsOnBilanJournal())
       this.tableAction.push({
-        actionIcon: 'update', actionName: "Modifier l'écriture", actionClick: (column: SortTableAction<AccountingRecordSearchResult>, element: AccountingRecordSearchResult, event: any) => {
+        actionIcon: 'edit', actionName: "Modifier l'écriture", actionClick: (column: SortTableAction<AccountingRecordSearchResult>, element: AccountingRecordSearchResult, event: any) => {
           if (element.isManual) {
             this.appService.openRoute(event, '/accounting/edit/' + element.temporaryOperationId, undefined);
           } else {

@@ -115,12 +115,8 @@ public class AccountingController {
         Integer accountingJournalId = null;
 
         for (AccountingRecord accountingRecord : accountingRecords) {
-            if (accountingRecord.getId() != null
-                    || accountingRecord.getAccountingDateTime() != null
-                    || accountingRecord.getIsTemporary() != null
-                    || accountingRecord.getInvoiceItem() != null
+            if (accountingRecord.getInvoiceItem() != null
                     || accountingRecord.getInvoice() != null
-                    || accountingRecord.getOperationId() != null
                     || accountingRecord.getLetteringDateTime() != null
                     || accountingRecord.getLetteringNumber() != null)
                 throw new OsirisValidationException("accountingRecords completude");

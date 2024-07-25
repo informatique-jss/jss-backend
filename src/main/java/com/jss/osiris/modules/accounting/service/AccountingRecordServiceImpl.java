@@ -500,5 +500,4 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     return true;
   }
-
 }
