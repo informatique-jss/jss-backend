@@ -12,8 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
-import com.jss.osiris.modules.accounting.model.AccountingAccount;
-
 @Entity
 public class BillingType implements Serializable, IId {
 
@@ -68,6 +66,8 @@ public class BillingType implements Serializable, IId {
 
 	private Boolean isUsedForInsertionRff;
 	private Boolean isUsedForFormaliteRff;
+	private Boolean isVacation;
+	private Boolean isTraitement;
 
 	public Integer getId() {
 		return id;
@@ -203,6 +203,22 @@ public class BillingType implements Serializable, IId {
 
 	public void setIsUsedForFormaliteRff(Boolean isUsedForFormaliteRff) {
 		this.isUsedForFormaliteRff = isUsedForFormaliteRff;
+	}
+
+	public Boolean getIsVacation() {
+		return isVacation;
+	}
+
+	public void setIsVacation(Boolean isVacation) {
+		this.isVacation = isVacation;
+	}
+
+	public Boolean getIsTraitement() {
+		return isTraitement;
+	}
+
+	public void setIsTraitement(Boolean isTraitement) {
+		this.isTraitement = isTraitement;
 	}
 
 }

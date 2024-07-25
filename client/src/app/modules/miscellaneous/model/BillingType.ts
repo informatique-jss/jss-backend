@@ -17,4 +17,6 @@ export interface BillingType extends IReferential {
   isGenerateAccountCharge: boolean;
   isUsedForInsertionRff: boolean;
   isUsedForFormaliteRff: boolean;
+  isVacation: boolean;
+  isTraitement: boolean;
 }
