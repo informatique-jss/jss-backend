@@ -272,7 +272,8 @@ public class AccountingController {
             fetchRecords.add(fetchRecord);
         }
 
-        if (!as400Found && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP))
+        if (!as400Found && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP)
+                && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP))
             throw new OsirisValidationException("as400Found");
 
         return new ResponseEntity<Boolean>(
