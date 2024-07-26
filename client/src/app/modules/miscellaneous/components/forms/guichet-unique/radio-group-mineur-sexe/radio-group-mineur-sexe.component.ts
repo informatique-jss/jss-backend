@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MineurSexeService } from 'src/app/modules/miscellaneous/services/guichet-unique/mineur.sexe.service';
 import { MineurSexe } from 'src/app/modules/quotation/model/guichet-unique/referentials/MineurSexe';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
 
 @Component({
@@ -14,8 +13,8 @@ export class RadioGroupMineurSexeComponent extends GenericRadioGroupComponent<Mi
   types: MineurSexe[] = [] as Array<MineurSexe>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private MineurSexeService: MineurSexeService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private MineurSexeService: MineurSexeService,) {
+    super(formBuild);
   }
 
   initTypes(): void {

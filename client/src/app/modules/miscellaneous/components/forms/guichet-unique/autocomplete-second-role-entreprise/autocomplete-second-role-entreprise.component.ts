@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { SecondRoleEntrepriseService } from 'src/app/modules/miscellaneous/services/guichet-unique/second.role.entreprise.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { SecondRoleEntreprise } from '../../../../../quotation/model/guichet-unique/referentials/SecondRoleEntreprise';
 import { GenericLocalAutocompleteComponent } from '../../generic-local-autocomplete/generic-local-autocomplete.component';
 
@@ -14,8 +13,8 @@ export class AutocompleteSecondRoleEntrepriseComponent extends GenericLocalAutoc
 
   types: SecondRoleEntreprise[] = [] as Array<SecondRoleEntreprise>;
 
-  constructor(private formBuild: UntypedFormBuilder, private SecondRoleEntrepriseService: SecondRoleEntrepriseService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private SecondRoleEntrepriseService: SecondRoleEntrepriseService,) {
+    super(formBuild)
   }
 
   filterEntities(types: SecondRoleEntreprise[], value: string): SecondRoleEntreprise[] {

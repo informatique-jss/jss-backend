@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { QualiteDeNonSedentariteService } from 'src/app/modules/miscellaneous/services/guichet-unique/qualite.de.non.sedentarite.service';
 import { QualiteDeNonSedentarite } from 'src/app/modules/quotation/model/guichet-unique/referentials/QualiteDeNonSedentarite';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
 
 @Component({
@@ -14,8 +13,8 @@ export class RadioGroupQualiteDeNonSedentariteComponent extends GenericRadioGrou
   types: QualiteDeNonSedentarite[] = [] as Array<QualiteDeNonSedentarite>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private QualiteDeNonSedentariteService: QualiteDeNonSedentariteService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private QualiteDeNonSedentariteService: QualiteDeNonSedentariteService,) {
+    super(formBuild,);
   }
 
   initTypes(): void {

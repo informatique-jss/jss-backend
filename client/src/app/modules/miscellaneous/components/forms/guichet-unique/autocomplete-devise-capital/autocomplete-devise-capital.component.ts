@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { DeviseCapitalService } from 'src/app/modules/miscellaneous/services/guichet-unique/devise.capital.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { DeviseCapital } from '../../../../../quotation/model/guichet-unique/referentials/DeviseCapital';
 import { GenericLocalAutocompleteComponent } from '../../generic-local-autocomplete/generic-local-autocomplete.component';
 
@@ -14,8 +13,8 @@ export class AutocompleteDeviseCapitalComponent extends GenericLocalAutocomplete
 
   types: DeviseCapital[] = [] as Array<DeviseCapital>;
 
-  constructor(private formBuild: UntypedFormBuilder, private DeviseCapitalService: DeviseCapitalService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private DeviseCapitalService: DeviseCapitalService,) {
+    super(formBuild,)
   }
 
   filterEntities(types: DeviseCapital[], value: string): DeviseCapital[] {

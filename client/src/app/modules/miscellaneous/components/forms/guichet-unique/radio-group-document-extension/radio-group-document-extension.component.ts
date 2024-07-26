@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { DocumentExtensionService } from 'src/app/modules/miscellaneous/services/guichet-unique/document.extension.service';
 import { DocumentExtension } from 'src/app/modules/quotation/model/guichet-unique/referentials/DocumentExtension';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
 
 @Component({
@@ -14,8 +13,8 @@ export class RadioGroupDocumentExtensionComponent extends GenericRadioGroupCompo
   types: DocumentExtension[] = [] as Array<DocumentExtension>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private DocumentExtensionService: DocumentExtensionService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private DocumentExtensionService: DocumentExtensionService,) {
+    super(formBuild,);
   }
 
   initTypes(): void {

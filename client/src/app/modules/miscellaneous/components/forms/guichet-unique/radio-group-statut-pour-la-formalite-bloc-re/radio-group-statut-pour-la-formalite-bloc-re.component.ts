@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { StatutPourLaFormaliteBlocReService } from 'src/app/modules/miscellaneous/services/guichet-unique/statut.pour.la.formalite.bloc.re.service';
 import { StatutPourLaFormaliteBlocRe } from 'src/app/modules/quotation/model/guichet-unique/referentials/StatutPourLaFormaliteBlocRe';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
 
 @Component({
@@ -14,8 +13,8 @@ export class RadioGroupStatutPourLaFormaliteBlocReComponent extends GenericRadio
   types: StatutPourLaFormaliteBlocRe[] = [] as Array<StatutPourLaFormaliteBlocRe>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private StatutPourLaFormaliteBlocReService: StatutPourLaFormaliteBlocReService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private StatutPourLaFormaliteBlocReService: StatutPourLaFormaliteBlocReService,) {
+    super(formBuild,);
   }
 
   initTypes(): void {

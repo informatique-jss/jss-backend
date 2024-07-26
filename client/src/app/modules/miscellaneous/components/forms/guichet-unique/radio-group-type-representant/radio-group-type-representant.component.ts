@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { TypeRepresentantService } from 'src/app/modules/miscellaneous/services/guichet-unique/type.representant.service';
 import { TypeRepresentant } from 'src/app/modules/quotation/model/guichet-unique/referentials/TypeRepresentant';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
 
 @Component({
@@ -14,8 +13,8 @@ export class RadioGroupTypeRepresentantComponent extends GenericRadioGroupCompon
   types: TypeRepresentant[] = [] as Array<TypeRepresentant>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private TypeRepresentantService: TypeRepresentantService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private TypeRepresentantService: TypeRepresentantService,) {
+    super(formBuild,);
   }
 
   initTypes(): void {

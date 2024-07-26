@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { RegimeImpositionTVAService } from 'src/app/modules/miscellaneous/services/guichet-unique/regime.imposition.tva.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { RegimeImpositionTVA } from '../../../../../quotation/model/guichet-unique/referentials/RegimeImpositionTVA';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
 
@@ -14,8 +13,8 @@ export class SelectRegimeImpositionTVAComponent extends GenericSelectComponent<R
 
   types: RegimeImpositionTVA[] = [] as Array<RegimeImpositionTVA>;
 
-  constructor(private formBuild: UntypedFormBuilder, private RegimeImpositionTVAService: RegimeImpositionTVAService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private RegimeImpositionTVAService: RegimeImpositionTVAService,) {
+    super(formBuild,)
   }
 
   initTypes(): void {

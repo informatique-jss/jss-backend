@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { SituationMatrimonialeService } from 'src/app/modules/miscellaneous/services/guichet-unique/situation.matrimoniale.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { SituationMatrimoniale } from '../../../../../quotation/model/guichet-unique/referentials/SituationMatrimoniale';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
 
@@ -14,8 +13,8 @@ export class SelectSituationMatrimonialeComponent extends GenericSelectComponent
 
   types: SituationMatrimoniale[] = [] as Array<SituationMatrimoniale>;
 
-  constructor(private formBuild: UntypedFormBuilder, private SituationMatrimonialeService: SituationMatrimonialeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private SituationMatrimonialeService: SituationMatrimonialeService,) {
+    super(formBuild,)
   }
 
   initTypes(): void {

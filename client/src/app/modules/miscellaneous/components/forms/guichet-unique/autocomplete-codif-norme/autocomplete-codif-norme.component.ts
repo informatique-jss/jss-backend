@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { CodifNormeService } from 'src/app/modules/miscellaneous/services/guichet-unique/codif.norme.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { CodifNorme } from '../../../../../quotation/model/guichet-unique/referentials/CodifNorme';
 import { GenericLocalAutocompleteComponent } from '../../generic-local-autocomplete/generic-local-autocomplete.component';
 
@@ -14,8 +13,8 @@ export class AutocompleteCodifNormeComponent extends GenericLocalAutocompleteCom
 
   types: CodifNorme[] = [] as Array<CodifNorme>;
 
-  constructor(private formBuild: UntypedFormBuilder, private CodifNormeService: CodifNormeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private CodifNormeService: CodifNormeService,) {
+    super(formBuild)
   }
 
   filterEntities(types: CodifNorme[], value: string): CodifNorme[] {

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { FormeExerciceService } from 'src/app/modules/miscellaneous/services/guichet-unique/forme.exercice.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { FormeExercice } from '../../../../../quotation/model/guichet-unique/referentials/FormeExercice';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
 
@@ -14,8 +13,8 @@ export class SelectFormeExerciceComponent extends GenericSelectComponent<FormeEx
 
   types: FormeExercice[] = [] as Array<FormeExercice>;
 
-  constructor(private formBuild: UntypedFormBuilder, private FormeExerciceService: FormeExerciceService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private FormeExerciceService: FormeExerciceService,) {
+    super(formBuild,)
   }
 
   initTypes(): void {

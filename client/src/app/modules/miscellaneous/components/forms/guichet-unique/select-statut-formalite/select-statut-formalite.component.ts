@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { StatutFormaliteService } from 'src/app/modules/miscellaneous/services/guichet-unique/statut.formalite.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { StatutFormalite } from '../../../../../quotation/model/guichet-unique/referentials/StatutFormalite';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
 
@@ -14,8 +13,8 @@ export class SelectStatutFormaliteComponent extends GenericSelectComponent<Statu
 
   types: StatutFormalite[] = [] as Array<StatutFormalite>;
 
-  constructor(private formBuild: UntypedFormBuilder, private StatutFormaliteService: StatutFormaliteService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private StatutFormaliteService: StatutFormaliteService,) {
+    super(formBuild,)
   }
 
   initTypes(): void {

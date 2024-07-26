@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { StatutExerciceActiviteSimultanService } from 'src/app/modules/miscellaneous/services/guichet-unique/statut.exercice.activite.simultan.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { StatutExerciceActiviteSimultan } from '../../../../../quotation/model/guichet-unique/referentials/StatutExerciceActiviteSimultan';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
 
@@ -14,8 +13,8 @@ export class SelectStatutExerciceActiviteSimultanComponent extends GenericSelect
 
   types: StatutExerciceActiviteSimultan[] = [] as Array<StatutExerciceActiviteSimultan>;
 
-  constructor(private formBuild: UntypedFormBuilder, private StatutExerciceActiviteSimultanService: StatutExerciceActiviteSimultanService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private StatutExerciceActiviteSimultanService: StatutExerciceActiviteSimultanService,) {
+    super(formBuild,)
   }
 
   initTypes(): void {

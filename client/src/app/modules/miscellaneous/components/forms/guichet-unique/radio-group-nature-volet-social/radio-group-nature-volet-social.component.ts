@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { NatureVoletSocialService } from 'src/app/modules/miscellaneous/services/guichet-unique/nature.volet.social.service';
 import { NatureVoletSocial } from 'src/app/modules/quotation/model/guichet-unique/referentials/NatureVoletSocial';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
 
 @Component({
@@ -14,8 +13,8 @@ export class RadioGroupNatureVoletSocialComponent extends GenericRadioGroupCompo
   types: NatureVoletSocial[] = [] as Array<NatureVoletSocial>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private NatureVoletSocialService: NatureVoletSocialService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private NatureVoletSocialService: NatureVoletSocialService,) {
+    super(formBuild,);
   }
 
   initTypes(): void {

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { RegimeImpositionBeneficesService } from 'src/app/modules/miscellaneous/services/guichet-unique/regime.imposition.benefices.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { RegimeImpositionBenefices } from '../../../../../quotation/model/guichet-unique/referentials/RegimeImpositionBenefices';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
 
@@ -14,8 +13,8 @@ export class SelectRegimeImpositionBeneficesComponent extends GenericSelectCompo
 
   types: RegimeImpositionBenefices[] = [] as Array<RegimeImpositionBenefices>;
 
-  constructor(private formBuild: UntypedFormBuilder, private RegimeImpositionBeneficesService: RegimeImpositionBeneficesService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private RegimeImpositionBeneficesService: RegimeImpositionBeneficesService,) {
+    super(formBuild,)
   }
 
   initTypes(): void {

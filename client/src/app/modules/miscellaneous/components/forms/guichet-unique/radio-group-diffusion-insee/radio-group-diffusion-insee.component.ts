@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { DiffusionINSEEService } from 'src/app/modules/miscellaneous/services/guichet-unique/diffusion.insee.service';
 import { DiffusionINSEE } from 'src/app/modules/quotation/model/guichet-unique/referentials/DiffusionINSEE';
-import { UserNoteService } from 'src/app/services/user.notes.service';
+
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
 
 @Component({
@@ -14,8 +14,8 @@ export class RadioGroupDiffusionINSEEComponent extends GenericRadioGroupComponen
   types: DiffusionINSEE[] = [] as Array<DiffusionINSEE>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private DiffusionINSEEService: DiffusionINSEEService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private DiffusionINSEEService: DiffusionINSEEService,) {
+    super(formBuild,);
   }
 
   initTypes(): void {

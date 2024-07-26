@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { RegistreEirlDeLancienneEirlService } from 'src/app/modules/miscellaneous/services/guichet-unique/registre.eirl.de.lancienne.eirl.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { RegistreEirlDeLancienneEirl } from '../../../../../quotation/model/guichet-unique/referentials/RegistreEirlDeLancienneEirl';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
 
@@ -14,8 +13,8 @@ export class SelectRegistreEirlDeLancienneEirlComponent extends GenericSelectCom
 
   types: RegistreEirlDeLancienneEirl[] = [] as Array<RegistreEirlDeLancienneEirl>;
 
-  constructor(private formBuild: UntypedFormBuilder, private RegistreEirlDeLancienneEirlService: RegistreEirlDeLancienneEirlService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private RegistreEirlDeLancienneEirlService: RegistreEirlDeLancienneEirlService,) {
+    super(formBuild,)
   }
 
   initTypes(): void {

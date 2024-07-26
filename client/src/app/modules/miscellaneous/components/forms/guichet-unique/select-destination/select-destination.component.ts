@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { DestinationService } from 'src/app/modules/miscellaneous/services/guichet-unique/destination.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Destination } from '../../../../../quotation/model/guichet-unique/referentials/Destination';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
 
@@ -14,8 +13,8 @@ export class SelectDestinationComponent extends GenericSelectComponent<Destinati
 
   types: Destination[] = [] as Array<Destination>;
 
-  constructor(private formBuild: UntypedFormBuilder, private DestinationService: DestinationService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private DestinationService: DestinationService,) {
+    super(formBuild)
   }
 
   initTypes(): void {

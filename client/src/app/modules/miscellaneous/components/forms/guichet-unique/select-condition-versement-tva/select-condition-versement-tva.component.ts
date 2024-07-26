@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ConditionVersementTVAService } from 'src/app/modules/miscellaneous/services/guichet-unique/condition.versement.tva.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { ConditionVersementTVA } from '../../../../../quotation/model/guichet-unique/referentials/ConditionVersementTVA';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
 
@@ -14,8 +13,8 @@ export class SelectConditionVersementTVAComponent extends GenericSelectComponent
 
   types: ConditionVersementTVA[] = [] as Array<ConditionVersementTVA>;
 
-  constructor(private formBuild: UntypedFormBuilder, private ConditionVersementTVAService: ConditionVersementTVAService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private ConditionVersementTVAService: ConditionVersementTVAService,) {
+    super(formBuild,)
   }
 
   initTypes(): void {
