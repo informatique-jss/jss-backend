@@ -3,7 +3,6 @@ import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Observable } from 'rxjs';
 import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Directive()
@@ -41,9 +40,8 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
 
   @Input() fieldToCheckAgainstForValidation: string = "id";
 
-  constructor(private formBuilder3: UntypedFormBuilder,
-    private userNoteService3: UserNoteService) {
-    super(formBuilder3, userNoteService3);
+  constructor(private formBuilder3: UntypedFormBuilder,) {
+    super(formBuilder3);
   }
 
   callOnNgInit(): void {

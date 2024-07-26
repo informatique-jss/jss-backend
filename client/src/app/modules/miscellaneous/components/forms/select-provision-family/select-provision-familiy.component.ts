@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ProvisionFamilyType } from 'src/app/modules/quotation/model/ProvisionFamilyType';
 import { ProvisionFamilyTypeService } from 'src/app/modules/quotation/services/provision.family.type.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
@@ -14,8 +13,8 @@ export class SelectProvisionFamilyComponent extends GenericSelectComponent<Provi
 
   types: ProvisionFamilyType[] = [] as Array<ProvisionFamilyType>;
 
-  constructor(private formBuild: UntypedFormBuilder, private provisionFamilyTypeService: ProvisionFamilyTypeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private provisionFamilyTypeService: ProvisionFamilyTypeService,) {
+    super(formBuild)
   }
 
   initTypes(): void {

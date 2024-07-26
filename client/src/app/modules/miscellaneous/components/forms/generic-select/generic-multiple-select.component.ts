@@ -1,7 +1,6 @@
 import { Directive, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { compareWithId } from 'src/app/libs/CompareHelper';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Directive()
@@ -23,8 +22,8 @@ export abstract class GenericMultipleSelectComponent<T> extends GenericFormCompo
 
   constructor(
     private formBuilder3: UntypedFormBuilder,
-    private userNoteService3: UserNoteService) {
-    super(formBuilder3, userNoteService3);
+  ) {
+    super(formBuilder3);
   }
 
   callOnNgInit(): void {

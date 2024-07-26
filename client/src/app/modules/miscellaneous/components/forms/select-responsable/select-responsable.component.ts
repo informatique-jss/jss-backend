@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
 @Component({
@@ -18,8 +17,8 @@ export class SelectResponsableComponent extends GenericMultipleSelectComponent<R
  */
   @Input() responsableList: Responsable[] | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder,) {
+    super(formBuild)
   }
 
   ngOnChanges(changes: SimpleChanges) {

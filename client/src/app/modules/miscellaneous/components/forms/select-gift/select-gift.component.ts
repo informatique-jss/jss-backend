@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Gift } from '../../../model/Gift';
 import { GiftService } from '../../../services/gift.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -15,8 +14,8 @@ export class SelectGiftComponent extends GenericSelectComponent<Gift> implements
 
   types: Gift[] = [] as Array<Gift>;
 
-  constructor(private formBuild: UntypedFormBuilder, private giftService: GiftService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private giftService: GiftService,) {
+    super(formBuild)
   }
 
   initTypes(): void {

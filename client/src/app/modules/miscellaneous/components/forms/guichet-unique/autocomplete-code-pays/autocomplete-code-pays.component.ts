@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { CodePaysService } from 'src/app/modules/miscellaneous/services/guichet-unique/code.pays.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { CodePays } from '../../../../../quotation/model/guichet-unique/referentials/CodePays';
 import { GenericLocalAutocompleteComponent } from '../../generic-local-autocomplete/generic-local-autocomplete.component';
 
@@ -14,8 +13,8 @@ export class AutocompleteCodePaysComponent extends GenericLocalAutocompleteCompo
 
   types: CodePays[] = [] as Array<CodePays>;
 
-  constructor(private formBuild: UntypedFormBuilder, private CodePaysService: CodePaysService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private CodePaysService: CodePaysService,) {
+    super(formBuild)
   }
 
   filterEntities(types: CodePays[], value: string): CodePays[] {

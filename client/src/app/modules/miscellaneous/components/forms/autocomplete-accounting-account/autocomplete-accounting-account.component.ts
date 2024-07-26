@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { AccountingAccount } from 'src/app/modules/accounting/model/AccountingAccount';
 import { PrincipalAccountingAccount } from 'src/app/modules/accounting/model/PrincipalAccountingAccount';
 import { AccountingAccountService } from 'src/app/modules/accounting/services/accounting.account.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
@@ -24,8 +23,8 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
  */
   @Input() filteredAccountPrincipal: PrincipalAccountingAccount | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private accountingAccountService: AccountingAccountService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private accountingAccountService: AccountingAccountService,) {
+    super(formBuild)
   }
 
   searchEntities(value: string): Observable<AccountingAccount[]> {

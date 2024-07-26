@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { AccountingJournal } from 'src/app/modules/accounting/model/AccountingJournal';
 import { AccountingJournalService } from 'src/app/modules/accounting/services/accounting.journal.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
@@ -16,8 +15,8 @@ export class SelectAccountingJournalComponent extends GenericSelectComponent<Acc
 
   @Input() excludedJournals: AccountingJournal[] | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private accountingJournalService: AccountingJournalService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private accountingJournalService: AccountingJournalService,) {
+    super(formBuild)
   }
 
   initTypes(): void {

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Region } from '../../../model/Region';
 import { RegionService } from '../../../services/region.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
@@ -14,8 +13,8 @@ export class SelectRegionsComponent extends GenericMultipleSelectComponent<Regio
 
   types: Region[] = [] as Array<Region>;
 
-  constructor(private formBuild: UntypedFormBuilder, private regionService: RegionService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private regionService: RegionService) {
+    super(formBuild)
   }
 
   initTypes(): void {

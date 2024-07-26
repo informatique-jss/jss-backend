@@ -1,6 +1,5 @@
 import { Directive, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Directive()
@@ -14,8 +13,8 @@ export abstract class GenericRadioGroupComponent<T> extends GenericFormComponent
  */
   @Input() isMandatory: boolean = true;
 
-  constructor(private formBuilder3: UntypedFormBuilder, private userNoteService3: UserNoteService) {
-    super(formBuilder3, userNoteService3)
+  constructor(private formBuilder3: UntypedFormBuilder,) {
+    super(formBuilder3)
   }
 
   ngOnChanges(changes: SimpleChanges) {

@@ -1,6 +1,5 @@
 import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from "@angular/core";
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { UserNoteService } from "src/app/services/user.notes.service";
 
 @Directive()
 export abstract class GenericFormComponent implements OnInit {
@@ -57,7 +56,6 @@ export abstract class GenericFormComponent implements OnInit {
 
   constructor(
     private formBuilder: UntypedFormBuilder,
-    private userNoteService: UserNoteService,
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -133,13 +131,6 @@ export abstract class GenericFormComponent implements OnInit {
       }
       return null;
     };
-  }
-
-  addToNotes(event: any) {
-    let isHeader = false;
-    if (event && event.ctrlKey)
-      isHeader = true;
-    this.userNoteService.addToNotes(this.label, this.displayLabel(this.model), undefined, isHeader);
   }
 
   displayLabel(object: any): string {

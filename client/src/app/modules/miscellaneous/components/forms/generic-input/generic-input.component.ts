@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
@@ -37,9 +36,8 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
 
   constructor(
     private formBuilder2: UntypedFormBuilder,
-    private userNoteService2: UserNoteService,
   ) {
-    super(formBuilder2, userNoteService2);
+    super(formBuilder2);
   }
 
   callOnNgInit(): void {

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { IndexEntity } from '../../../../../routing/search/IndexEntity';
 import { IndexEntityService } from '../../../../../routing/search/index.entity.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
@@ -13,8 +12,8 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 })
 export class AutocompleteCustomerOrderComponent extends GenericAutocompleteComponent<IndexEntity, IndexEntity> implements OnInit {
 
-  constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService,) {
+    super(formBuild)
   }
 
   searchEntities(value: string): Observable<IndexEntity[]> {

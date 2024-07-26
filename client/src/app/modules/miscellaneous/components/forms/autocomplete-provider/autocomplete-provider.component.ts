@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Provider } from '../../../model/Provider';
 import { ProviderService } from '../../../services/provider.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
@@ -14,8 +13,8 @@ export class AutocompleteProviderComponent extends GenericLocalAutocompleteCompo
 
   types: Provider[] = [] as Array<Provider>;
 
-  constructor(private formBuild: UntypedFormBuilder, private providerService: ProviderService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private providerService: ProviderService,) {
+    super(formBuild)
   }
 
   filterEntities(types: Provider[], value: string): Provider[] {

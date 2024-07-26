@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { City } from '../../../model/City';
 import { Country } from '../../../model/Country';
 import { CityService } from '../../../services/city.service';
@@ -27,8 +26,8 @@ export class AutocompleteCityComponent extends GenericAutocompleteComponent<City
    */
   @Input() preFilterPostalCode: string | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private cityService: CityService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private cityService: CityService,) {
+    super(formBuild)
   }
 
   searchEntities(value: string): Observable<City[]> {

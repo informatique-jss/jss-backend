@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { CapaciteEngagementService } from 'src/app/modules/miscellaneous/services/guichet-unique/capacite.engagement.service';
 import { CapaciteEngagement } from 'src/app/modules/quotation/model/guichet-unique/referentials/CapaciteEngagement';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
 
 @Component({
@@ -14,8 +13,8 @@ export class RadioGroupCapaciteEngagementComponent extends GenericRadioGroupComp
   types: CapaciteEngagement[] = [] as Array<CapaciteEngagement>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private CapaciteEngagementService: CapaciteEngagementService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private CapaciteEngagementService: CapaciteEngagementService) {
+    super(formBuild);
   }
 
   initTypes(): void {

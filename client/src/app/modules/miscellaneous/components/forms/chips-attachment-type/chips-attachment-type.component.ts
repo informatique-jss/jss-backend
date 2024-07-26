@@ -3,7 +3,6 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { AttachmentType } from '../../../model/AttachmentType';
 import { AttachmentTypeService } from '../../../services/attachment.type.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
@@ -20,8 +19,8 @@ export class ChipsAttachmentTypeComponent extends GenericChipsComponent<Attachme
   @ViewChild('attachmentTypeInput') AttachmentTypeInput: ElementRef<HTMLInputElement> | undefined;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private attachmentTypeService: AttachmentTypeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private attachmentTypeService: AttachmentTypeService,) {
+    super(formBuild)
   }
 
   callOnNgInit(): void {

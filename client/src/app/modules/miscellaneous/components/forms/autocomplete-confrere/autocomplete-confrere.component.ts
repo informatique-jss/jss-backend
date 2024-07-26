@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { ConfrereService } from 'src/app/modules/quotation/services/confrere.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Department } from '../../../model/Department';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { ConfrereDialogComponent } from '../../confreres-dialog/confreres-dialog.component';
@@ -30,9 +29,8 @@ export class AutocompleteConfrereComponent extends GenericAutocompleteComponent<
   constructor(private formBuild: UntypedFormBuilder,
     private confrereService: ConfrereService,
     public confrereDialog: MatDialog,
-    private userNoteService2: UserNoteService,
     public confirmationDialog: MatDialog,) {
-    super(formBuild, userNoteService2)
+    super(formBuild)
   }
 
   displayLabel(object: Confrere): string {

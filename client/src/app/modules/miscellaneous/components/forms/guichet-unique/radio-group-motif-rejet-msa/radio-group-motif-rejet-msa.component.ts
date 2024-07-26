@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MotifRejetMsaService } from 'src/app/modules/miscellaneous/services/guichet-unique/motif.rejet.msa.service';
 import { MotifRejetMsa } from 'src/app/modules/quotation/model/guichet-unique/referentials/MotifRejetMsa';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
 
 @Component({
@@ -14,8 +13,8 @@ export class RadioGroupMotifRejetMsaComponent extends GenericRadioGroupComponent
   types: MotifRejetMsa[] = [] as Array<MotifRejetMsa>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private MotifRejetMsaService: MotifRejetMsaService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private MotifRejetMsaService: MotifRejetMsaService,) {
+    super(formBuild);
   }
 
   initTypes(): void {

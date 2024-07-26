@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { REPORTING_DATASET_ANNOUNCEMENT, REPORTING_DATASET_CUSTOMER_ORDER, REPORTING_DATASET_PROVISION, REPORTING_DATASET_PROVISION_PRODUCTION, REPORTING_DATASET_QUOTATION, REPORTING_DATASET_RECOVERY, REPORTING_DATASET_TIERS, REPORTING_DATASET_TURNOVER_VAT_AMOUNT } from 'src/app/libs/Constants';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { REPORTING_DATASET_TURNOVER_AMOUNT } from '../../../../../libs/Constants';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
@@ -14,9 +13,8 @@ export class SelectReportingDatasetComponent extends GenericSelectComponent<stri
 
   types: string[] = [] as Array<string>;
 
-  constructor(private formBuild: UntypedFormBuilder,
-    private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder,) {
+    super(formBuild)
   }
 
   initTypes(): void {

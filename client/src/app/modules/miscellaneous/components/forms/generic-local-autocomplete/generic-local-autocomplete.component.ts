@@ -2,7 +2,6 @@ import { Directive, EventEmitter, OnInit, Output } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Directive()
@@ -18,8 +17,8 @@ export abstract class GenericLocalAutocompleteComponent<T> extends GenericFormCo
   filteredTypes: Observable<T[]> | undefined;
 
   constructor(private formBuilder3: UntypedFormBuilder,
-    private userNoteService3: UserNoteService) {
-    super(formBuilder3, userNoteService3);
+  ) {
+    super(formBuilder3);
   }
 
   callOnNgInit(): void {

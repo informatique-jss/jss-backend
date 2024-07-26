@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { TypeDocumentService } from 'src/app/modules/miscellaneous/services/guichet-unique/type.document.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { TypeDocument } from '../../../../../quotation/model/guichet-unique/referentials/TypeDocument';
 import { GenericLocalAutocompleteComponent } from '../../generic-local-autocomplete/generic-local-autocomplete.component';
 
@@ -15,8 +14,8 @@ export class AutocompleteTypeDocumentComponent extends GenericLocalAutocompleteC
   types: TypeDocument[] = [] as Array<TypeDocument>;
   @Input() onlyDisplayWithAttachmentType: boolean = false;
 
-  constructor(private formBuild: UntypedFormBuilder, private TypeDocumentService: TypeDocumentService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private TypeDocumentService: TypeDocumentService,) {
+    super(formBuild)
   }
 
   filterEntities(types: TypeDocument[], value: string): TypeDocument[] {

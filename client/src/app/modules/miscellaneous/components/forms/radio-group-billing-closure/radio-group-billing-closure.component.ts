@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { BillingClosureType } from 'src/app/modules/tiers/model/BillingClosureType';
 import { BillingClosureTypeService } from 'src/app/modules/tiers/services/billing.closure.type.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio-group.component';
 
 @Component({
@@ -14,8 +13,8 @@ export class RadioGroupBillingClosureComponent extends GenericRadioGroupComponen
   types: BillingClosureType[] = [] as Array<BillingClosureType>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private billingclosuretypeService: BillingClosureTypeService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private billingclosuretypeService: BillingClosureTypeService,) {
+    super(formBuild);
   }
 
   initTypes(): void {

@@ -2,7 +2,6 @@ import { Directive, Input, OnInit } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Directive()
@@ -17,9 +16,8 @@ export abstract class GenericChipsComponent<T> extends GenericFormComponent impl
   @Input() model: T[] | undefined;
 
 
-  constructor(private formBuilder3: UntypedFormBuilder,
-    private userNoteService3: UserNoteService) {
-    super(formBuilder3, userNoteService3);
+  constructor(private formBuilder3: UntypedFormBuilder,) {
+    super(formBuilder3,);
   }
 
   ngOnInit() {

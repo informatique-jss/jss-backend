@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MotifTrasnfertService } from 'src/app/modules/miscellaneous/services/guichet-unique/motif.trasnfert.service';
 import { MotifTrasnfert } from 'src/app/modules/quotation/model/guichet-unique/referentials/MotifTrasnfert';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
 
 @Component({
@@ -14,8 +13,8 @@ export class RadioGroupMotifTrasnfertComponent extends GenericRadioGroupComponen
   types: MotifTrasnfert[] = [] as Array<MotifTrasnfert>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private MotifTrasnfertService: MotifTrasnfertService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private MotifTrasnfertService: MotifTrasnfertService,) {
+    super(formBuild);
   }
 
   initTypes(): void {

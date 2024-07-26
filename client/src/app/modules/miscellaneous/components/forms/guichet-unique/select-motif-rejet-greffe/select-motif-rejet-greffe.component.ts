@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MotifRejetGreffeService } from 'src/app/modules/miscellaneous/services/guichet-unique/motif.rejet.greffe.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { MotifRejetGreffe } from '../../../../../quotation/model/guichet-unique/referentials/MotifRejetGreffe';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
 
@@ -14,8 +13,8 @@ export class SelectMotifRejetGreffeComponent extends GenericSelectComponent<Moti
 
   types: MotifRejetGreffe[] = [] as Array<MotifRejetGreffe>;
 
-  constructor(private formBuild: UntypedFormBuilder, private MotifRejetGreffeService: MotifRejetGreffeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private MotifRejetGreffeService: MotifRejetGreffeService,) {
+    super(formBuild)
   }
 
   initTypes(): void {

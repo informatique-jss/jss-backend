@@ -4,7 +4,6 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { TypeDocument } from 'src/app/modules/quotation/model/guichet-unique/referentials/TypeDocument';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { TypeDocumentService } from '../../../services/guichet-unique/type.document.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
 
@@ -20,8 +19,8 @@ export class ChipsTypeDocumentComponent extends GenericChipsComponent<TypeDocume
   @ViewChild('typeDocumentInput') TypeDocumentInput: ElementRef<HTMLInputElement> | undefined;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private typeDocumentService: TypeDocumentService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private typeDocumentService: TypeDocumentService) {
+    super(formBuild)
   }
 
   callOnNgInit(): void {

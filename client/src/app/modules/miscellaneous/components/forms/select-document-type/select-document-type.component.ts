@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { DocumentType } from '../../../model/DocumentType';
 import { DocumentTypeService } from '../../../services/document.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -14,8 +13,8 @@ export class SelectDocumentTypeComponent extends GenericSelectComponent<Document
 
   types: DocumentType[] = [] as Array<DocumentType>;
 
-  constructor(private formBuild: UntypedFormBuilder, private documentTypeService: DocumentTypeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private documentTypeService: DocumentTypeService,) {
+    super(formBuild)
   }
 
   initTypes(): void {

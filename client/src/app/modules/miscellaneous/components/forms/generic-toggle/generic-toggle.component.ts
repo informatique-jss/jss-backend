@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
@@ -25,8 +24,8 @@ export class GenericToggleComponent extends GenericFormComponent implements OnIn
 
 
   constructor(
-    private formBuilder3: UntypedFormBuilder, userNoteService3: UserNoteService) {
-    super(formBuilder3, userNoteService3);
+    private formBuilder3: UntypedFormBuilder,) {
+    super(formBuilder3,);
   }
 
   callOnNgInit(): void {

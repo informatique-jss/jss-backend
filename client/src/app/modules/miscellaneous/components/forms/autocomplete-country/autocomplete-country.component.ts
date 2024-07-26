@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Country } from '../../../model/Country';
 import { ConstantService } from '../../../services/constant.service';
 import { CountryService } from '../../../services/country.service';
@@ -17,9 +16,8 @@ export class AutocompleteCountryComponent extends GenericLocalAutocompleteCompon
   @Input() defaultCountry: Country = this.constantService.getCountryFrance();
 
   constructor(private formBuild: UntypedFormBuilder, private countryService: CountryService,
-    private constantService: ConstantService,
-    private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private constantService: ConstantService,) {
+    super(formBuild)
   }
 
   ngOnChanges(changes: SimpleChanges): void {

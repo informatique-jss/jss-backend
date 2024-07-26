@@ -2,7 +2,6 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { map, Observable, startWith } from 'rxjs';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { PaymentType } from '../../../model/PaymentType';
 import { PaymentTypeService } from '../../../services/payment.type.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
@@ -19,8 +18,8 @@ export class ChipsPaymentTypeComponent extends GenericChipsComponent<PaymentType
   @ViewChild('paymentTypeInput') PaymentTypeInput: ElementRef<HTMLInputElement> | undefined;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private paymentTypeService: PaymentTypeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private paymentTypeService: PaymentTypeService,) {
+    super(formBuild,)
   }
 
   callOnNgInit(): void {

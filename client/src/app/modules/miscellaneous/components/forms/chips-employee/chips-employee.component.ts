@@ -5,7 +5,6 @@ import { map, Observable, startWith } from 'rxjs';
 import { displayInTeams } from 'src/app/libs/MailHelper';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
 
 @Component({
@@ -24,8 +23,8 @@ export class ChipsEmployeeComponent extends GenericChipsComponent<Employee> impl
  */
   @Input() hint: string = "";
 
-  constructor(private formBuild: UntypedFormBuilder, private employeeService: EmployeeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private employeeService: EmployeeService,) {
+    super(formBuild)
   }
 
   callOnNgInit(): void {

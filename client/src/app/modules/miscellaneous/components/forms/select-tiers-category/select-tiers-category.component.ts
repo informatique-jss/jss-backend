@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { TiersCategory } from 'src/app/modules/tiers/model/TiersCategory';
 import { TiersCategoryService } from 'src/app/modules/tiers/services/tiers.category.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
@@ -14,8 +13,8 @@ export class SelectTiersCategoryComponent extends GenericSelectComponent<TiersCa
 
   types: TiersCategory[] = [] as Array<TiersCategory>;
 
-  constructor(private formBuild: UntypedFormBuilder, private tiersCategoryService: TiersCategoryService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private tiersCategoryService: TiersCategoryService,) {
+    super(formBuild)
   }
 
   initTypes(): void {

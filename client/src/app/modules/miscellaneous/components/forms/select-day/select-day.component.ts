@@ -2,7 +2,6 @@
 
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { WeekDay } from '../../../model/WeekDay';
 import { WeekDayService } from '../../../services/weekday.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
@@ -16,8 +15,8 @@ export class SelectDayComponent extends GenericMultipleSelectComponent<WeekDay> 
 
   types: WeekDay[] = [] as Array<WeekDay>;
 
-  constructor(private formBuild: UntypedFormBuilder, private weekDayService: WeekDayService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private weekDayService: WeekDayService,) {
+    super(formBuild,)
   }
 
   initTypes(): void {

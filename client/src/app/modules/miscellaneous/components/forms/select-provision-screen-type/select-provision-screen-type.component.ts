@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ProvisionScreenType } from 'src/app/modules/quotation/model/ProvisionScreenType';
 import { ProvisionScreenTypeService } from 'src/app/modules/quotation/services/provision.screen.type.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
@@ -14,8 +13,8 @@ export class SelectProvisionScreenTypeComponent extends GenericSelectComponent<P
 
   types: ProvisionScreenType[] = [] as Array<ProvisionScreenType>;
 
-  constructor(private formBuild: UntypedFormBuilder, private provisionScreenTypeService: ProvisionScreenTypeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private provisionScreenTypeService: ProvisionScreenTypeService,) {
+    super(formBuild)
   }
 
   initTypes(): void {

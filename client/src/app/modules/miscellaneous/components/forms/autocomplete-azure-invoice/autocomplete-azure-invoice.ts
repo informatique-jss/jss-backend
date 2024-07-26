@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AzureInvoice } from 'src/app/modules/invoicing/model/AzureInvoice';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { AzureInvoiceService } from '../../../../invoicing/services/azure.invoice.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
@@ -15,8 +14,8 @@ export class AutocompleteAzureInvoiceComponent extends GenericAutocompleteCompon
 
   constructor(private formBuild: UntypedFormBuilder,
     private azureInvoiceService: AzureInvoiceService,
-    private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  ) {
+    super(formBuild)
   }
 
   searchEntities(value: string): Observable<AzureInvoice[]> {

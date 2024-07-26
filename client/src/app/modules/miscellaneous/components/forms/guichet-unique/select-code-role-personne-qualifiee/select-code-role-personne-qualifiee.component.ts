@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { CodeRolePersonneQualifieeService } from 'src/app/modules/miscellaneous/services/guichet-unique/code.role.personne.qualifiee.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { CodeRolePersonneQualifiee } from '../../../../../quotation/model/guichet-unique/referentials/CodeRolePersonneQualifiee';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
 
@@ -14,8 +13,8 @@ export class SelectCodeRolePersonneQualifieeComponent extends GenericSelectCompo
 
   types: CodeRolePersonneQualifiee[] = [] as Array<CodeRolePersonneQualifiee>;
 
-  constructor(private formBuild: UntypedFormBuilder, private CodeRolePersonneQualifieeService: CodeRolePersonneQualifieeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private CodeRolePersonneQualifieeService: CodeRolePersonneQualifieeService,) {
+    super(formBuild,)
   }
 
   initTypes(): void {

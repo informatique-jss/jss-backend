@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { AttachmentType } from '../../../model/AttachmentType';
 import { AttachmentTypeService } from '../../../services/attachment.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -15,8 +14,8 @@ export class SelectAttachmentTypeComponent extends GenericSelectComponent<Attach
   types: AttachmentType[] = [] as Array<AttachmentType>;
   @Input() byPassAttachmentHiddenFilter: boolean = false;
 
-  constructor(private formBuild: UntypedFormBuilder, private attachmentTypeService: AttachmentTypeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private attachmentTypeService: AttachmentTypeService) {
+    super(formBuild)
   }
 
   initTypes(): void {

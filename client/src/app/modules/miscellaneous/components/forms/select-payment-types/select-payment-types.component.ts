@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { PaymentType } from '../../../model/PaymentType';
 import { ConstantService } from '../../../services/constant.service';
 import { PaymentTypeService } from '../../../services/payment.type.service';
@@ -22,9 +21,9 @@ export class SelectPaymentTypesComponent extends GenericSelectComponent<PaymentT
 
   @Input() defaultPaymentType: PaymentType | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private paymentTypeService: PaymentTypeService, private userNoteService2: UserNoteService,
+  constructor(private formBuild: UntypedFormBuilder, private paymentTypeService: PaymentTypeService,
     private constantService: ConstantService) {
-    super(formBuild, userNoteService2)
+    super(formBuild)
   }
 
   initTypes(): void {

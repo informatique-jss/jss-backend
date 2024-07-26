@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
 
 @Component({
@@ -10,8 +9,8 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 })
 export class GenericChipsInputComponent extends GenericChipsComponent<string> implements OnInit {
 
-  constructor(private formBuild: UntypedFormBuilder, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder) {
+    super(formBuild)
   }
 
   validateInput(value: string): boolean {

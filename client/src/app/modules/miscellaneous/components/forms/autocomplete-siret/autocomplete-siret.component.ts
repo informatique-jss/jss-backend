@@ -3,7 +3,6 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { AffaireService } from 'src/app/modules/quotation/services/affaire.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
@@ -13,8 +12,8 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 })
 export class AutocompleteSiretComponent extends GenericAutocompleteComponent<Affaire, Affaire> implements OnInit {
 
-  constructor(private formBuild: UntypedFormBuilder, private affaireService: AffaireService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private affaireService: AffaireService,) {
+    super(formBuild)
   }
 
   searchEntities(value: string): Observable<Affaire[]> {

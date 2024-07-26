@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { PaymentDeadlineType } from 'src/app/modules/tiers/model/PaymentDeadlineType';
 import { PaymentDeadlineTypeService } from 'src/app/modules/tiers/services/payment.deadline.type.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
@@ -14,8 +13,8 @@ export class SelectPaymentDeadlineComponent extends GenericSelectComponent<Payme
 
   types: PaymentDeadlineType[] = [] as Array<PaymentDeadlineType>;
 
-  constructor(private formBuild: UntypedFormBuilder, private paymentDeadlineTypeService: PaymentDeadlineTypeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private paymentDeadlineTypeService: PaymentDeadlineTypeService,) {
+    super(formBuild)
   }
 
   initTypes(): void {

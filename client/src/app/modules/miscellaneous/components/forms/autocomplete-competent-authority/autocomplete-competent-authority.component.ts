@@ -1,10 +1,6 @@
-
-
-
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { CompetentAuthority } from '../../../model/CompetentAuthority';
 import { CompetentAuthorityType } from '../../../model/CompetentAuthorityType';
 import { Department } from '../../../model/Department';
@@ -38,8 +34,8 @@ export class AutocompleteCompetentAuthorityComponent extends GenericAutocomplete
 */
   @Input() filteredCompetentAuthority: CompetentAuthority[] | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private competentauthorityService: CompetentAuthorityService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private competentauthorityService: CompetentAuthorityService,) {
+    super(formBuild)
   }
 
   searchEntities(value: string): Observable<CompetentAuthority[]> {
