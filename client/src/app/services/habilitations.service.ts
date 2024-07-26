@@ -100,7 +100,7 @@ export class HabilitationsService {
   }
 
   canManuallyLetterAccountingRecords() {
-    return this.loginService.hasGroup([ADMINISTRATEURS])
+    return this.loginService.hasGroup([ADMINISTRATEURS, ACCOUNTING_RESPONSIBLE])
   }
 
   canAddNewAzureInvoice() {
