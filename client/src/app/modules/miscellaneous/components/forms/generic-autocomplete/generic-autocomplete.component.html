@@ -7,11 +7,6 @@
     close
   </mat-icon>
   <mat-spinner *ngIf="isLoading" diameter="16" style="display: inline-flex" matSuffix color="accent"></mat-spinner>
-  <mat-icon color="accent" matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)"
-    matTooltipShowDelay="1000" matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined"
-    class="pointer ">
-    adjust
-  </mat-icon>
   <mat-autocomplete panelWidth="auto" autoActiveFirstOption panelOpen="true" #autoCompleteField="matAutocomplete"
     [displayWith]="displayLabel" (optionSelected)='optionSelected($event.option.value)'>
     <mat-option *ngFor="let type of filteredTypes  " [value]="type">

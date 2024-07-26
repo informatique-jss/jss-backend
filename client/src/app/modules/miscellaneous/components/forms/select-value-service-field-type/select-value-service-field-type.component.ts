@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
-import { UserNoteService } from '../../../../../services/user.notes.service';
 import { ServiceTypeFieldTypePossibleValue } from 'src/app/modules/quotation/model/ServiceTypeFieldTypePossibleValue';
 import { ServiceFieldType } from 'src/app/modules/quotation/model/ServiceFieldType';
 
@@ -16,9 +15,8 @@ export class SelectValueServiceFieldTypeComponent extends GenericSelectComponent
 
   @Input() serviceFieldType: ServiceFieldType | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder,
-    private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder,) {
+    super(formBuild,)
   }
 
   initTypes(): void {

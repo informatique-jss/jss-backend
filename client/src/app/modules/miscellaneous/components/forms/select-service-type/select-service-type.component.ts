@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ServiceType } from 'src/app/modules/quotation/model/ServiceType';
 import { ServiceTypeService } from 'src/app/modules/quotation/services/service.type.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
@@ -15,9 +14,8 @@ export class SelectServiceTypeComponent extends GenericSelectComponent<ServiceTy
   @Input() types: ServiceType[] = [] as Array<ServiceType>;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private serviceTypeService: ServiceTypeService,
-    private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private serviceTypeService: ServiceTypeService,) {
+    super(formBuild)
   }
 
   initTypes(): void {

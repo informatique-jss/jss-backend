@@ -2,11 +2,6 @@
   <mat-label *ngIf="label && label.length>0">{{label}}</mat-label>
   <input matInput [maxlength]="maxLength+''" [minlength]="minLength+''" [formControlName]="propertyName"
     [placeholder]="label" (blur)="blurForm()" [type]="type=='number'?'text':type" (change)="parse($event)">
-  <mat-icon color="accent" matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)"
-    matTooltipShowDelay="1000" matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined"
-    class="pointer ">
-    adjust
-  </mat-icon>
   <mat-hint *ngIf="hint && hint.length>0">
     {{hint}}</mat-hint>
 </mat-form-field>

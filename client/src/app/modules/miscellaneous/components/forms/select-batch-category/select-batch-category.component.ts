@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { BatchCategory } from 'src/app/modules/monitoring/model/BatchCategory';
 import { BatchCategoryService } from 'src/app/modules/monitoring/services/batch.category.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
@@ -16,9 +15,8 @@ export class SelectBatchCategoryComponent extends GenericSelectComponent<BatchCa
   types: BatchCategory[] = [] as Array<BatchCategory>;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private batchCategoryService: BatchCategoryService,
-    private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private batchCategoryService: BatchCategoryService,) {
+    super(formBuild,)
   }
 
   initTypes(): void {

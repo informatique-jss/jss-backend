@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ServiceFamilyGroup } from 'src/app/modules/quotation/model/ServiceFamilyGroup';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { ServiceFamilyGroupService } from '../../../../quotation/services/service.family.group.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
@@ -15,9 +14,8 @@ export class SelectServiceFamilyGroupComponent extends GenericSelectComponent<Se
   @Input() types: ServiceFamilyGroup[] = [] as Array<ServiceFamilyGroup>;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private serviceFamilyGroupService: ServiceFamilyGroupService,
-    private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private serviceFamilyGroupService: ServiceFamilyGroupService,) {
+    super(formBuild,)
   }
 
   initTypes(): void {

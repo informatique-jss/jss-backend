@@ -3,7 +3,6 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 import { ServiceFieldType } from '../../../../quotation/model/ServiceFieldType';
 import { ServiceFieldTypeService } from '../../../../quotation/services/service.field.type.service';
-import { UserNoteService } from '../../../../../services/user.notes.service';
 
 @Component({
   selector: 'select-service-field-type',
@@ -15,9 +14,8 @@ export class SelectServiceFieldTypeComponent extends GenericSelectComponent<Serv
   types: ServiceFieldType[] = [] as Array<ServiceFieldType>;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private userNoteService2: UserNoteService,
     private serviceFieldTypeService: ServiceFieldTypeService) {
-    super(formBuild, userNoteService2)
+    super(formBuild)
   }
 
   initTypes(): void {

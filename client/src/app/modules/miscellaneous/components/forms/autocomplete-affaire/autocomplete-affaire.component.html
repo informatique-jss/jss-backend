@@ -5,11 +5,11 @@
   <mat-icon color="accent" matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined" class="pointer">
     close
   </mat-icon>
-  <mat-icon color="accent" matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)"
+  <!-- <mat-icon color="accent" matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)"
     matTooltipShowDelay="1000" matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined"
     class="pointer ">
     adjust
-  </mat-icon>
+  </mat-icon> -->
   <mat-autocomplete autoActiveFirstOption #autoCompleteAffaire="matAutocomplete" [displayWith]="displayAffaire"
     (optionSelected)='optionSelected($event.option.value)'>
     <mat-option *ngFor="let affaire of filteredTypes" [value]="affaire">

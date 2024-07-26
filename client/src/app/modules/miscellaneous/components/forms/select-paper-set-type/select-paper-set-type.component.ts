@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { PaperSetType } from '../../../model/PaperSetType';
 import { PaperSetTypeService } from '../../../services/paper.set.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -21,9 +20,8 @@ export class SelectPaperSetTypeComponent extends GenericSelectComponent<PaperSet
   @Input() excludedPaperSetTypes: PaperSetType[] | undefined;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private paperSetTypeService: PaperSetTypeService,
-    private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private paperSetTypeService: PaperSetTypeService,) {
+    super(formBuild)
   }
 
   initTypes(): void {

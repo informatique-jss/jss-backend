@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { BillingType } from 'src/app/modules/miscellaneous/model/BillingType';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { BillingTypeService } from '../../../services/billing.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
@@ -16,8 +15,8 @@ export class SelectBillingTypeComponent extends GenericSelectComponent<BillingTy
   @Input() availableBillingTypes: BillingType[] | undefined;
   @Input() displayOnlyOptionnal: boolean = false;
 
-  constructor(private formBuild: UntypedFormBuilder, private billingTypeService: BillingTypeService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+  constructor(private formBuild: UntypedFormBuilder, private billingTypeService: BillingTypeService,) {
+    super(formBuild);
   }
 
   initTypes(): void {

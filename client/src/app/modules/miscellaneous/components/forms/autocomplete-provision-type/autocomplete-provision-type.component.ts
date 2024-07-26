@@ -2,7 +2,6 @@ import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ProvisionType } from 'src/app/modules/quotation/model/ProvisionType';
 import { ProvisionTypeService } from 'src/app/modules/quotation/services/provision.type.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { ConstantService } from '../../../services/constant.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
 
@@ -16,9 +15,8 @@ export class AutocompleteProvisionTypeComponent extends GenericLocalAutocomplete
   types: ProvisionType[] = [] as Array<ProvisionType>;
 
   constructor(private formBuild: UntypedFormBuilder, private provisionTypeService: ProvisionTypeService,
-    private constantService: ConstantService,
-    private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private constantService: ConstantService,) {
+    super(formBuild)
   }
 
   ngOnChanges(changes: SimpleChanges): void {
