@@ -668,6 +668,14 @@ public class Constant implements Serializable, IId {
 	private PrincipalAccountingAccount principalAccountingAccountDeposit;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_principal_accounting_account_litigious")
+	private PrincipalAccountingAccount principalAccountingAccountLitigious;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_principal_accounting_account_suspicious")
+	private PrincipalAccountingAccount principalAccountingAccountSuspicious;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_principal_accounting_account_deposit_provider")
 	private PrincipalAccountingAccount principalAccountingAccountDepositProvider;
 
@@ -765,7 +773,7 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_provision_type_bilan_publication")
 	private ProvisionType provisionTypeBilanPublication;
-	
+
 	private LocalDate dateAccountingClosureForAccountant;
 	private LocalDate dateAccountingClosureForAll;
 
@@ -1626,6 +1634,14 @@ public class Constant implements Serializable, IId {
 		return principalAccountingAccountDeposit;
 	}
 
+	public PrincipalAccountingAccount getPrincipalAccountingAccountLitigious() {
+		return principalAccountingAccountLitigious;
+	}
+
+	public PrincipalAccountingAccount getPrincipalAccountingAccountSuspicious() {
+		return principalAccountingAccountSuspicious;
+	}
+
 	public void setPrincipalAccountingAccountDeposit(PrincipalAccountingAccount principalAccountingAccountDeposit) {
 		this.principalAccountingAccountDeposit = principalAccountingAccountDeposit;
 	}
@@ -2197,7 +2213,8 @@ public class Constant implements Serializable, IId {
 		return billingTypeDomiciliationContractTypeKeepMail;
 	}
 
-	public void setBillingTypeDomiciliationContractTypeKeepMail(BillingType billingTypeDomiciliationContractTypeKeepMail) {
+	public void setBillingTypeDomiciliationContractTypeKeepMail(
+			BillingType billingTypeDomiciliationContractTypeKeepMail) {
 		this.billingTypeDomiciliationContractTypeKeepMail = billingTypeDomiciliationContractTypeKeepMail;
 	}
 
@@ -2260,5 +2277,4 @@ public class Constant implements Serializable, IId {
 		this.dateAccountingClosureForAll = dateAccountingClosureForAll;
 	}
 
-	 
 }

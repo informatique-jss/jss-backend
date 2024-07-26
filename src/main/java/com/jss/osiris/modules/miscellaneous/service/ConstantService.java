@@ -376,6 +376,10 @@ public interface ConstantService {
 
     public PrincipalAccountingAccount getPrincipalAccountingAccountDepositProvider() throws OsirisException;
 
+    public PrincipalAccountingAccount getPrincipalAccountingAccountLitigious() throws OsirisException;
+
+    public PrincipalAccountingAccount getPrincipalAccountingAccountSuspicious() throws OsirisException;
+
     public PrincipalAccountingAccount getPrincipalAccountingAccountCustomer() throws OsirisException;
 
     public PrincipalAccountingAccount getPrincipalAccountingAccountProduct() throws OsirisException;
@@ -415,7 +419,7 @@ public interface ConstantService {
     public RffFrequency getRffFrequencyQuarterly() throws OsirisException;
 
     public ServiceType getServiceTypeOther() throws OsirisException;
-    
+
     public LocalDate getDateAccountingClosureForAll() throws OsirisException;
 
     public LocalDate getDateAccountingClosureForAccountant() throws OsirisException;

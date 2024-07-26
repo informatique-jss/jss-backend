@@ -289,6 +289,11 @@ public class PaymentServiceImpl implements PaymentService {
                             && invoice.getInvoiceStatus().getId()
                                     .equals(constantService.getInvoiceStatusSend().getId())
                             && invoice.getProvider() == null && !foundInvoices.contains(invoice.getId())) {
+
+                        if (invoice.getManualPaymentType().equals(constantService.getPaymentTypePrelevement())) {
+                            payment.setPaymentType(constantService.getPaymentTypePrelevement());
+                            paymentRepository.save(payment);
+                        }
                         foundInvoices.add(invoice.getId());
                         correspondingInvoices.add(invoice);
                     }

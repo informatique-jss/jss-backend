@@ -1274,6 +1274,22 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountLitigious"
+                [form]="constantForm" propertyName="principalAccountingAccountLitigious" [isMandatory]="true"
+                label="Compte comptable principal - Litigieux"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountSuspicious"
+                [form]="constantForm" propertyName="principalAccountingAccountSuspicious" [isMandatory]="true"
+                label="Compte comptable principal - Douteux"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountDepositProvider"
                 [form]="constantForm" propertyName="principalAccountingAccountDepositProvider" [isMandatory]="true"
                 label="Compte comptable principal - Acompte fournisseur"

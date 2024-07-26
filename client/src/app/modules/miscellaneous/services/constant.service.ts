@@ -684,6 +684,14 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.principalAccountingAccountDeposit;
   }
 
+  getPrincipalAccountingAccountLitigious() {
+    return this.constant.principalAccountingAccountLitigious;
+  }
+
+  getPrincipalAccountingAccountSuspicious() {
+    return this.constant.principalAccountingAccountSuspicious;
+  }
+
   getPrincipalAccountingAccountDepositProvider() {
     return this.constant.principalAccountingAccountDepositProvider;
   }
