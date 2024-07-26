@@ -290,10 +290,6 @@ public class PaymentServiceImpl implements PaymentService {
                                     .equals(constantService.getInvoiceStatusSend().getId())
                             && invoice.getProvider() == null && !foundInvoices.contains(invoice.getId())) {
 
-                        if (invoice.getManualPaymentType().equals(constantService.getPaymentTypePrelevement())) {
-                            payment.setPaymentType(constantService.getPaymentTypePrelevement());
-                            paymentRepository.save(payment);
-                        }
                         foundInvoices.add(invoice.getId());
                         correspondingInvoices.add(invoice);
                     }
@@ -309,7 +305,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
             if (directDebitFound != null) {
-                associateOutboundPaymentAndDirectDebitTransfert(payment, directDebitFound);
+                associateInboundPaymentAndDirectDebitTransfert(payment, directDebitFound);
                 return;
             }
 
@@ -671,13 +667,14 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    private void associateOutboundPaymentAndDirectDebitTransfert(Payment payment,
+    private void associateInboundPaymentAndDirectDebitTransfert(Payment payment,
             DirectDebitTransfert directDebitTransfert) throws OsirisException, OsirisValidationException {
 
         Float directDebitAmount = Math.round(directDebitTransfert.getTransfertAmount() * 100f) / 100f;
         Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
 
         if (directDebitAmount.equals(paymentAmount)) {
+            payment.setPaymentType(constantService.getPaymentTypePrelevement());
             directDebitTransfert.setIsMatched(true);
             debitTransfertService.addOrUpdateDirectDebitTransfert(directDebitTransfert);
             payment.setDirectDebitTransfert(directDebitTransfert);
@@ -707,6 +704,8 @@ public class PaymentServiceImpl implements PaymentService {
         Float checkAmount = Math.round(checkPayment.getPaymentAmount() * 100f) / 100f;
 
         if (inAmount.equals(checkAmount)) {
+            inPayment.setPaymentType(constantService.getPaymentTypeCheques());
+            addOrUpdatePayment(inPayment);
             cancelPayment(inPayment);
             checkPayment.setOriginPayment(inPayment);
             addOrUpdatePayment(checkPayment);
