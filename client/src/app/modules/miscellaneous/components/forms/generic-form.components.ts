@@ -1,5 +1,6 @@
 import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from "@angular/core";
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { Observable } from "rxjs";
 
 @Directive()
 export abstract class GenericFormComponent implements OnInit {
@@ -140,4 +141,6 @@ export abstract class GenericFormComponent implements OnInit {
       return object;
     return "";
   }
+
+  abstract getPreviewActionLinkFunction(entity: any): string[] | undefined;
 }

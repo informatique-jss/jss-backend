@@ -4,6 +4,7 @@ import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Observable } from 'rxjs';
 import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
 import { GenericFormComponent } from '../generic-form.components';
+import { ActivatedRoute } from '@angular/router';
 
 @Directive()
 export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComponent implements OnInit {
@@ -133,5 +134,10 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
       this.form.markAllAsTouched();
       this.form.updateValueAndValidity();
     }
+  }
+
+  getPreviewActionLinkFunction(entity: T): string[] | undefined {
+    let route: string[] = [];
+    return route;
   }
 }
