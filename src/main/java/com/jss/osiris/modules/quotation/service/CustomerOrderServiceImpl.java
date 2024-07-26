@@ -385,7 +385,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 isPaymentTypePrelevement = ((Tiers) tiers).getPaymentType().getId()
                         .equals(constantService.getPaymentTypePrelevement().getId());
 
-            if (!isDepositMandatory || remainingToPay <= 0 || isPaymentTypePrelevement) {
+            if (!isDepositMandatory && !targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT)
+                    || remainingToPay <= 0 || isPaymentTypePrelevement) {
                 targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
                 mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
             } else {
@@ -620,7 +621,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
         try {
             List<Attachment> attachments = attachmentService.addAttachment(new FileInputStream(invoicePdf),
-                    customerOrder.getId(),null,
+                    customerOrder.getId(), null,
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeInvoice(),
                     "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",

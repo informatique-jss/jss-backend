@@ -458,6 +458,20 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 		return null;
 	}
 
+	@Override
+	public AccountingAccount getAccountingAccountLitigious() {
+		if (this.getTiers() != null)
+			return this.getTiers().getAccountingAccountLitigious();
+		return null;
+	}
+
+	@Override
+	public AccountingAccount getAccountingAccountSuspicious() {
+		if (this.getTiers() != null)
+			return this.getTiers().getAccountingAccountSuspicious();
+		return null;
+	}
+
 	public Float getRffFormaliteRate() {
 		return rffFormaliteRate;
 	}

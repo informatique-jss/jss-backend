@@ -278,6 +278,14 @@ public class Confrere implements ITiers, IGenericTiers {
 		this.accountingAccountCustomer = accountingAccountCustomer;
 	}
 
+	public AccountingAccount getAccountingAccountLitigious() {
+		return null;
+	}
+
+	public AccountingAccount getAccountingAccountSuspicious() {
+		return null;
+	}
+
 	public String getMailRecipient() {
 		return mailRecipient;
 	}

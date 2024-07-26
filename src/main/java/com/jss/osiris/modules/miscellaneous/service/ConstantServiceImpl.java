@@ -917,6 +917,16 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountLitigious() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountLitigious();
+    }
+
+    @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountSuspicious() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountSuspicious();
+    }
+
+    @Override
     public PrincipalAccountingAccount getPrincipalAccountingAccountProduct() throws OsirisException {
         return getConstants().getPrincipalAccountingAccountProduct();
     }

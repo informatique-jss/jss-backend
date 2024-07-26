@@ -225,6 +225,14 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 	private AccountingAccount accountingAccountDeposit;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_accounting_account_litigious")
+	private AccountingAccount accountingAccountLitigious;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_accounting_account_suspicious")
+	private AccountingAccount accountingAccountSuspicious;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_rff_frequency")
 	private RffFrequency rffFrequency;
 
@@ -637,6 +645,22 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 
 	public void setRffMail(String rffMail) {
 		this.rffMail = rffMail;
+	}
+
+	public AccountingAccount getAccountingAccountLitigious() {
+		return accountingAccountLitigious;
+	}
+
+	public void setAccountingAccountLitigious(AccountingAccount accountingAccountLitigious) {
+		this.accountingAccountLitigious = accountingAccountLitigious;
+	}
+
+	public AccountingAccount getAccountingAccountSuspicious() {
+		return accountingAccountSuspicious;
+	}
+
+	public void setAccountingAccountSuspicious(AccountingAccount accountingAccountSuspicious) {
+		this.accountingAccountSuspicious = accountingAccountSuspicious;
 	}
 
 }
