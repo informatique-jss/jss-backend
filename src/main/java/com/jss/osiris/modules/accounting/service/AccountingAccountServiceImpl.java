@@ -84,10 +84,10 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                                                 constantService.getPrincipalAccountingAccountProvider());
                 Integer currentMaxSubAccountLitigious = accountingAccountRepository
                                 .findMaxSubAccontNumberForPrincipalAccountingAccount(
-                                                constantService.getPrincipalAccountingAccountProvider());
+                                                constantService.getPrincipalAccountingAccountCustomer());
                 Integer currentMaxSubAccountSuspicious = accountingAccountRepository
                                 .findMaxSubAccontNumberForPrincipalAccountingAccount(
-                                                constantService.getPrincipalAccountingAccountProvider());
+                                                constantService.getPrincipalAccountingAccountCustomer());
 
                 Integer currentMaxSubAccountDeposit = 0;
                 if (!isDepositForProvider)

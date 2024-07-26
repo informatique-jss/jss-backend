@@ -647,4 +647,20 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 		this.rffMail = rffMail;
 	}
 
+	public AccountingAccount getAccountingAccountLitigious() {
+		return accountingAccountLitigious;
+	}
+
+	public void setAccountingAccountLitigious(AccountingAccount accountingAccountLitigious) {
+		this.accountingAccountLitigious = accountingAccountLitigious;
+	}
+
+	public AccountingAccount getAccountingAccountSuspicious() {
+		return accountingAccountSuspicious;
+	}
+
+	public void setAccountingAccountSuspicious(AccountingAccount accountingAccountSuspicious) {
+		this.accountingAccountSuspicious = accountingAccountSuspicious;
+	}
+
 }
