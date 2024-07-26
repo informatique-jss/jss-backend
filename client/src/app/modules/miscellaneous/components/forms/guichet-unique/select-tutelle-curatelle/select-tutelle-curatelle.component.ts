@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { TutelleCuratelleService } from 'src/app/modules/miscellaneous/services/guichet-unique/tutelle.curatelle.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { TutelleCuratelle } from '../../../../../quotation/model/guichet-unique/referentials/TutelleCuratelle';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
 
@@ -14,8 +13,8 @@ export class SelectTutelleCuratelleComponent extends GenericSelectComponent<Tute
 
   types: TutelleCuratelle[] = [] as Array<TutelleCuratelle>;
 
-  constructor(private formBuild: UntypedFormBuilder, private TutelleCuratelleService: TutelleCuratelleService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private TutelleCuratelleService: TutelleCuratelleService,) {
+    super(formBuild,)
   }
 
   initTypes(): void {
