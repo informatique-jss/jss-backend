@@ -85,7 +85,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         accountingRecord.setPayment(payment);
         accountingRecord.setRefund(refund);
         accountingRecord.setBankTransfert(bankTransfert);
-        accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
+        accountingRecordService.addOrUpdateAccountingRecord(accountingRecord, false);
 
         if (accountingRecord.getCreditAmount() != null && accountingRecord.getCreditAmount() < 0
                 || accountingRecord.getDebitAmount() != null && accountingRecord.getDebitAmount() < 0)
@@ -117,7 +117,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         newAccountingRecord.setCustomerOrder(originalAccountingRecord.getCustomerOrder());
         newAccountingRecord.setInvoice(originalAccountingRecord.getInvoice());
         newAccountingRecord.setIsCounterPart(true);
-        return accountingRecordService.addOrUpdateAccountingRecord(newAccountingRecord);
+        return accountingRecordService.addOrUpdateAccountingRecord(newAccountingRecord, false);
     }
 
     private AccountingAccount getProviderAccountingAccountForInvoice(Invoice invoice) throws OsirisException {
@@ -463,7 +463,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                     AccountingRecord counterPart = getCounterPart(accountingRecord, operationId, salesJournal,
                             labelPrefix + " - " + accountingRecord.getLabel());
                     accountingRecord.setContrePasse(counterPart);
-                    accountingRecordService.addOrUpdateAccountingRecord(counterPart);
+                    accountingRecordService.addOrUpdateAccountingRecord(counterPart, false);
                     letterCounterPartRecords(accountingRecord, counterPart);
 
                     if (counterPart.getCreditAmount() != null)
@@ -671,7 +671,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 AccountingRecord counterPart = getCounterPart(accountingRecord, operationId, pushasingJournal,
                         labelPrefix);
                 accountingRecord.setContrePasse(counterPart);
-                accountingRecordService.addOrUpdateAccountingRecord(counterPart);
+                accountingRecordService.addOrUpdateAccountingRecord(counterPart, false);
                 letterCounterPartRecords(accountingRecord, counterPart);
             }
 
@@ -799,7 +799,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
             newAccountingRecords.add(counterPart);
             accountingRecord.setContrePasse(counterPart);
-            accountingRecordService.addOrUpdateAccountingRecord(counterPart);
+            accountingRecordService.addOrUpdateAccountingRecord(counterPart, false);
             letterCounterPartRecords(accountingRecord, counterPart);
         }
 
