@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,10 +76,7 @@ import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
-import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.repository.CustomerOrderRepository;
-import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
-import com.jss.osiris.modules.quotation.service.guichetUnique.GuichetUniqueDelegateServiceImpl;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -1095,26 +1091,4 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
     }
 
-    @Autowired
-    GuichetUniqueDelegateServiceImpl guichetUniqueDelegateServiceImpl;
-
-    @Autowired
-    FormaliteGuichetUniqueService formaliteGuichetUniqueService;
-
-    @Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
-    public void test() throws OsirisException, OsirisClientMessageException {
-        List<FormaliteGuichetUnique> formalitesGuichetUnique = guichetUniqueDelegateServiceImpl.getAllFormalitiesByDate(
-                LocalDateTime.now().minusYears(10),
-                LocalDateTime.now().minusYears(10));
-        if (formalitesGuichetUnique != null && formalitesGuichetUnique.size() > 0) {
-            for (FormaliteGuichetUnique formaliteGuichetUnique : formalitesGuichetUnique) {
-                System.out.println(
-                        formalitesGuichetUnique.indexOf(formaliteGuichetUnique) + "/" + formalitesGuichetUnique.size());
-                FormaliteGuichetUnique currentFormaliteGuichetUnique = formaliteGuichetUniqueService
-                        .getFormaliteGuichetUnique(formaliteGuichetUnique.getId());
-                if (currentFormaliteGuichetUnique == null)
-                    formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
-            }
-        }
-    }
 }
