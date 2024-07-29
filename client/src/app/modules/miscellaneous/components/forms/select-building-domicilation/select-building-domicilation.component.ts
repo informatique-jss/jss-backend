@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { BuildingDomiciliation } from 'src/app/modules/quotation/model/BuildingDomiciliation';
 import { BuildingDomiciliationService } from 'src/app/modules/quotation/services/building.domiciliation.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 
 @Component({
@@ -14,8 +15,8 @@ export class SelectBuildingDomicilationComponent extends GenericSelectComponent<
 
   types: BuildingDomiciliation[] = [] as Array<BuildingDomiciliation>;
 
-  constructor(private formBuild: UntypedFormBuilder, private buildingDomiciliationService: BuildingDomiciliationService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private buildingDomiciliationService: BuildingDomiciliationService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

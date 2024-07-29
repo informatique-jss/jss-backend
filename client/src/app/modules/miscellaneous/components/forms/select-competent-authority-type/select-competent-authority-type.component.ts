@@ -12,7 +12,7 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 export class SelectCompetentAuthorityTypeComponent extends GenericSelectComponent<CompetentAuthorityType> implements OnInit {
 
   types: CompetentAuthorityType[] = [] as Array<CompetentAuthorityType>;
-
+  isDisplayShortcut: boolean = true;
   constructor(private formBuild: UntypedFormBuilder, private competentAuthorityTypeService: CompetentAuthorityTypeService,) {
     super(formBuild)
   }
@@ -21,5 +21,9 @@ export class SelectCompetentAuthorityTypeComponent extends GenericSelectComponen
     this.competentAuthorityTypeService.getCompetentAuthorityTypes().subscribe(response => {
       this.types = response;
     })
+  }
+
+  getPreviewActionLinkFunction(entity: CompetentAuthorityType): string[] | undefined {
+    return ['administration/competent/authority/', entity.id + ""];
   }
 }

@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { Department } from '../../../model/Department';
 import { DepartmentService } from '../../../services/department.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-department',
@@ -13,8 +14,8 @@ export class SelectDepartmentComponent extends GenericSelectComponent<Department
 
   types: Department[] = [] as Array<Department>;
 
-  constructor(private formBuild: UntypedFormBuilder, private departmentService: DepartmentService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private departmentService: DepartmentService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

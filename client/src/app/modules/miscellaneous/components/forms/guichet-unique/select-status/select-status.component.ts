@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { StatusService } from 'src/app/modules/miscellaneous/services/guichet-unique/status.service';
 import { Status } from '../../../../../quotation/model/guichet-unique/referentials/Status';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-status',
@@ -13,8 +14,8 @@ export class SelectStatusComponent extends GenericSelectComponent<Status> implem
 
   types: Status[] = [] as Array<Status>;
 
-  constructor(private formBuild: UntypedFormBuilder, private StatusService: StatusService,) {
-    super(formBuild,)
+  constructor(private formBuild: UntypedFormBuilder, private StatusService: StatusService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

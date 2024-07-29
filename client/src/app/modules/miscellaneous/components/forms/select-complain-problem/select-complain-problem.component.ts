@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 import { SalesComplainProblem } from '../../../model/SalesComplainProblem';
 import { SalesComplainProblemService } from 'src/app/modules/tiers/services/sales.complain.problem.service';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-complain-problem',
@@ -13,8 +14,8 @@ export class SelectComplainProblemComponent extends GenericSelectComponent<Sales
 
   types: SalesComplainProblem[] = [] as Array<SalesComplainProblem>;
 
-  constructor(private formBuild: UntypedFormBuilder, private salesComplainProblemService: SalesComplainProblemService,) {
-    super(formBuild,)
+  constructor(private formBuild: UntypedFormBuilder, private salesComplainProblemService: SalesComplainProblemService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

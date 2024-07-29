@@ -1,6 +1,7 @@
 import { Directive, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { GenericFormComponent } from '../generic-form.components';
+import { AppService } from 'src/app/services/app.service';
 
 @Directive()
 export abstract class GenericRadioGroupComponent<T> extends GenericFormComponent implements OnInit {
@@ -13,8 +14,8 @@ export abstract class GenericRadioGroupComponent<T> extends GenericFormComponent
  */
   @Input() isMandatory: boolean = true;
 
-  constructor(private formBuilder3: UntypedFormBuilder,) {
-    super(formBuilder3)
+  constructor(private formBuilder3: UntypedFormBuilder, private appService2: AppService) {
+    super(formBuilder3, appService2)
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -35,4 +36,8 @@ export abstract class GenericRadioGroupComponent<T> extends GenericFormComponent
   }
 
   abstract initTypes(): void;
+
+  getPreviewActionLinkFunction(entity: T): string[] | undefined {
+    return undefined;
+  }
 }

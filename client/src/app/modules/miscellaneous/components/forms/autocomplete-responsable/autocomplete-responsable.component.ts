@@ -36,4 +36,8 @@ export class AutocompleteResponsableComponent extends GenericAutocompleteCompone
     }
     return (responsable as any).firstname + " " + (responsable as any).lastname;
   }
+
+  getPreviewActionLinkFunction(entity: IndexEntity): string[] | undefined {
+    return ['tiers/responsable/', entity.entityId + ""];
+  }
 }

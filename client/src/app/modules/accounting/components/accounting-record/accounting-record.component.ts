@@ -21,6 +21,9 @@ import { AccountingRecordSearch } from '../../model/AccountingRecordSearch';
 import { AccountingRecordSearchResult } from '../../model/AccountingRecordSearchResult';
 import { AccountingRecordSearchResultService } from '../../services/accounting.record.search.result.service';
 import { AccountingRecordService } from '../../services/accounting.record.service';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
+import { AccountingAccount } from '../../model/AccountingAccount';
+import { AccountingAccountService } from '../../services/accounting.account.service';
 
 @Component({
   selector: 'accounting-record',
@@ -44,6 +47,8 @@ export class AccountingRecordComponent implements OnInit {
     private paymentDetailsDialogService: PaymentDetailsDialogService,
     public confirmationDialog: MatDialog,
     private constantService: ConstantService,
+    private activatedRoute: ActivatedRoute,
+    private accountingAccountService: AccountingAccountService
   ) { }
 
   accountingRecords: AccountingRecordSearchResult[] | undefined;
@@ -162,6 +167,16 @@ export class AccountingRecordComponent implements OnInit {
       }, display: true,
     } as SortTableAction<AccountingRecordSearchResult>);
 
+    let url: UrlSegment[] = this.activatedRoute.snapshot.url;
+    let accountingAccountId = this.activatedRoute.snapshot.params.accountingAccountId;
+    if (url[1].path == "view" && accountingAccountId) {
+      this.accountingAccountService.getAccountingAccountById(accountingAccountId).subscribe(response => {
+        this.accountingRecordSearch.accountingAccount = response;
+        this.accountingRecordSearch.hideLettered = true;
+        this.setCurentMonth();
+        this.searchRecords();
+      });
+    }
   }
 
   letterSelectedRecords() {

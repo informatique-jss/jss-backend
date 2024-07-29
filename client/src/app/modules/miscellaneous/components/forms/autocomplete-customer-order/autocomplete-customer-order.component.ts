@@ -27,4 +27,8 @@ export class AutocompleteCustomerOrderComponent extends GenericAutocompleteCompo
       return (customerOrder as any).id + "";
     return "";
   }
+
+  getPreviewActionLinkFunction(entity: IndexEntity): string[] | undefined {
+    return ['order/', entity.entityId + ""];
+  }
 }

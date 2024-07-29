@@ -7,6 +7,10 @@
       {{displayLabel(type)}}
     </mat-option>
   </mat-select>
+  <mat-icon color="accent" matTooltip="Afficher le responsable" matTooltipShowDelay="1000" matSuffix
+    (click)="clickOnIcon()" *ngIf="isDisplayShortcut && model!=undefined" class="pointer ">
+    visibility
+  </mat-icon>
   <mat-icon color="accent" matSuffix (click)="clearField();$event.stopPropagation()"
     *ngIf="!isDisabled && model!=undefined" class="pointer">
     close

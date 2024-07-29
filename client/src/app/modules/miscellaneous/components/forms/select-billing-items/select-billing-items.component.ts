@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { BillingItem } from '../../../model/BillingItem';
 import { BillingItemService } from '../../../services/billing.item.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-billing-items',
@@ -13,8 +14,8 @@ export class SelectBillingItemsComponent extends GenericSelectComponent<BillingI
 
   types: BillingItem[] = [] as Array<BillingItem>;
 
-  constructor(private formBuild: UntypedFormBuilder, private billingItemService: BillingItemService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private billingItemService: BillingItemService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

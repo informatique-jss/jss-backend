@@ -50,4 +50,8 @@ export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<I
       this.form.get(this.propertyName)?.setValue(null);
     this.affaireInput!.nativeElement.value = '';
   }
+
+  getPreviewActionLinkFunction(entity: any): string[] {
+    return ['/affaire/', entity.entityId + ""];
+  }
 }

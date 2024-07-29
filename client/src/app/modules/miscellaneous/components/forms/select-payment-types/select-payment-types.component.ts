@@ -4,6 +4,7 @@ import { PaymentType } from '../../../model/PaymentType';
 import { ConstantService } from '../../../services/constant.service';
 import { PaymentTypeService } from '../../../services/payment.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-payment-types',
@@ -22,8 +23,8 @@ export class SelectPaymentTypesComponent extends GenericSelectComponent<PaymentT
   @Input() defaultPaymentType: PaymentType | undefined;
 
   constructor(private formBuild: UntypedFormBuilder, private paymentTypeService: PaymentTypeService,
-    private constantService: ConstantService) {
-    super(formBuild)
+    private constantService: ConstantService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

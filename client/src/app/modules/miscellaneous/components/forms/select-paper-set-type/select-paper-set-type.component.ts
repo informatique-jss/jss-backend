@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { PaperSetType } from '../../../model/PaperSetType';
 import { PaperSetTypeService } from '../../../services/paper.set.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-paper-set-type',
@@ -20,8 +21,8 @@ export class SelectPaperSetTypeComponent extends GenericSelectComponent<PaperSet
   @Input() excludedPaperSetTypes: PaperSetType[] | undefined;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private paperSetTypeService: PaperSetTypeService,) {
-    super(formBuild)
+    private paperSetTypeService: PaperSetTypeService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

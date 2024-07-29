@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { OptionEirlService } from 'src/app/modules/miscellaneous/services/guichet-unique/option.eirl.service';
 import { OptionEirl } from '../../../../../quotation/model/guichet-unique/referentials/OptionEirl';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-option-eirl',
@@ -13,8 +14,8 @@ export class SelectOptionEirlComponent extends GenericSelectComponent<OptionEirl
 
   types: OptionEirl[] = [] as Array<OptionEirl>;
 
-  constructor(private formBuild: UntypedFormBuilder, private OptionEirlService: OptionEirlService,) {
-    super(formBuild,)
+  constructor(private formBuild: UntypedFormBuilder, private OptionEirlService: OptionEirlService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { DeliveryService } from '../../../model/DeliveryService';
 import { DeliveryServiceService } from '../../../services/delivery.service.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-delivery-service',
@@ -13,8 +14,8 @@ export class SelectDeliveryServiceComponent extends GenericSelectComponent<Deliv
 
   types: DeliveryService[] = [] as Array<DeliveryService>;
 
-  constructor(private formBuild: UntypedFormBuilder, private deliveryServiceService: DeliveryServiceService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private deliveryServiceService: DeliveryServiceService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

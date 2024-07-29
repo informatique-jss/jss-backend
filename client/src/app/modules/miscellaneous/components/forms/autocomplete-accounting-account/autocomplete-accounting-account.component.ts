@@ -5,6 +5,7 @@ import { AccountingAccount } from 'src/app/modules/accounting/model/AccountingAc
 import { PrincipalAccountingAccount } from 'src/app/modules/accounting/model/PrincipalAccountingAccount';
 import { AccountingAccountService } from 'src/app/modules/accounting/services/accounting.account.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
+import { AppService } from '../../../../../services/app.service';
 
 @Component({
   selector: 'autocomplete-accounting-account',
@@ -24,7 +25,7 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
   @Input() filteredAccountPrincipal: PrincipalAccountingAccount | undefined;
 
   constructor(private formBuild: UntypedFormBuilder, private accountingAccountService: AccountingAccountService,) {
-    super(formBuild)
+    super(formBuild,)
   }
 
   searchEntities(value: string): Observable<AccountingAccount[]> {
@@ -59,5 +60,9 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
       this.accountingAccountService.getAccountingAccountByLabel("-" + this.filteredAccountSubNumber).subscribe(response => {
         this.filteredTypes = this.mapResponse(response);
       })
+  }
+
+  getPreviewActionLinkFunction(entity: AccountingAccount): string[] {
+    return ['accounting/view/', entity.id + ""];
   }
 }

@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { RoleConjointService } from 'src/app/modules/miscellaneous/services/guichet-unique/role.conjoint.service';
 import { RoleConjoint } from '../../../../../quotation/model/guichet-unique/referentials/RoleConjoint';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-role-conjoint',
@@ -13,8 +14,8 @@ export class SelectRoleConjointComponent extends GenericSelectComponent<RoleConj
 
   types: RoleConjoint[] = [] as Array<RoleConjoint>;
 
-  constructor(private formBuild: UntypedFormBuilder, private RoleConjointService: RoleConjointService,) {
-    super(formBuild,)
+  constructor(private formBuild: UntypedFormBuilder, private RoleConjointService: RoleConjointService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

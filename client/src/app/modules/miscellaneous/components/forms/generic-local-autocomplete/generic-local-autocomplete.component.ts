@@ -3,6 +3,7 @@ import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { GenericFormComponent } from '../generic-form.components';
+import { AppService } from 'src/app/services/app.service';
 
 @Directive()
 export abstract class GenericLocalAutocompleteComponent<T> extends GenericFormComponent implements OnInit {
@@ -16,9 +17,9 @@ export abstract class GenericLocalAutocompleteComponent<T> extends GenericFormCo
   abstract types: T[];
   filteredTypes: Observable<T[]> | undefined;
 
-  constructor(private formBuilder3: UntypedFormBuilder,
+  constructor(private formBuilder3: UntypedFormBuilder, private appService2: AppService
   ) {
-    super(formBuilder3);
+    super(formBuilder3, appService2);
   }
 
   callOnNgInit(): void {
@@ -82,5 +83,7 @@ export abstract class GenericLocalAutocompleteComponent<T> extends GenericFormCo
 
   abstract initTypes(): void;
 
-
+  getPreviewActionLinkFunction(entity: T): string[] | undefined {
+    return undefined;
+  }
 }

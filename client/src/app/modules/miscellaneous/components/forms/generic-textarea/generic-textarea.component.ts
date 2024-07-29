@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { GenericFormComponent } from '../generic-form.components';
+import { AppService } from 'src/app/services/app.service';
 
 
 @Component({
@@ -34,7 +35,9 @@ export class GenericTextareaComponent extends GenericFormComponent implements On
   @Input() hint: string = "";
 
   constructor(
-    private formBuilder3: UntypedFormBuilder,) { super(formBuilder3) }
+    private formBuilder3: UntypedFormBuilder, private appService2: AppService) {
+    super(formBuilder3, appService2)
+  }
 
   callOnNgInit(): void {
   }
@@ -52,4 +55,7 @@ export class GenericTextareaComponent extends GenericFormComponent implements On
     this.filterInput.emit();
   }
 
+  getPreviewActionLinkFunction(entity: any): string[] | undefined {
+    return undefined;
+  }
 }

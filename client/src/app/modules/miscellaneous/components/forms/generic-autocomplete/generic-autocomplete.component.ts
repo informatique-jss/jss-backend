@@ -4,7 +4,7 @@ import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Observable } from 'rxjs';
 import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
 import { GenericFormComponent } from '../generic-form.components';
-import { ActivatedRoute } from '@angular/router';
+import { AppService } from '../../../../../services/app.service';
 
 @Directive()
 export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComponent implements OnInit {
@@ -41,8 +41,9 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
 
   @Input() fieldToCheckAgainstForValidation: string = "id";
 
-  constructor(private formBuilder3: UntypedFormBuilder,) {
-    super(formBuilder3);
+  constructor(private formBuilder3: UntypedFormBuilder, private appService2: AppService
+  ) {
+    super(formBuilder3, appService2);
   }
 
   callOnNgInit(): void {
@@ -137,7 +138,6 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
   }
 
   getPreviewActionLinkFunction(entity: T): string[] | undefined {
-    let route: string[] = [];
-    return route;
+    return undefined;
   }
 }

@@ -58,4 +58,8 @@ export class AutocompleteCompetentAuthorityComponent extends GenericAutocomplete
       });
     return [] as Array<CompetentAuthority>;
   }
+
+  getPreviewActionLinkFunction(entity: CompetentAuthority): string[] | undefined {
+    return ['administration/competent/authority/', entity.id + ""];
+  }
 }

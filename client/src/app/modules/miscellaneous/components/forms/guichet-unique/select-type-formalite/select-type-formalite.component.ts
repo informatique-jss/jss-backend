@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { TypeFormaliteService } from 'src/app/modules/miscellaneous/services/guichet-unique/type.formalite.service';
 import { TypeFormalite } from '../../../../../quotation/model/guichet-unique/referentials/TypeFormalite';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-type-formalite',
@@ -13,8 +14,8 @@ export class SelectTypeFormaliteComponent extends GenericSelectComponent<TypeFor
 
   types: TypeFormalite[] = [] as Array<TypeFormalite>;
 
-  constructor(private formBuild: UntypedFormBuilder, private TypeFormaliteService: TypeFormaliteService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private TypeFormaliteService: TypeFormaliteService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

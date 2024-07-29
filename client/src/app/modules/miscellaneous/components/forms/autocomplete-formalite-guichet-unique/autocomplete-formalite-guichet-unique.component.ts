@@ -22,8 +22,7 @@ export class AutocompleteGuichetUniqueFormaliteComponent extends GenericAutocomp
   @Input() label: string = "Label";
 
   constructor(private formBuild: UntypedFormBuilder,
-    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService,
-    private appService: AppService,) {
+    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService,) {
     super(formBuild,)
   }
 

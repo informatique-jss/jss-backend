@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { StatutPourLaFormaliteService } from 'src/app/modules/miscellaneous/services/guichet-unique/statut.pour.la.formalite.service';
 import { StatutPourLaFormalite } from '../../../../../quotation/model/guichet-unique/referentials/StatutPourLaFormalite';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-statut-pour-la-formalite',
@@ -13,8 +14,8 @@ export class SelectStatutPourLaFormaliteComponent extends GenericSelectComponent
 
   types: StatutPourLaFormalite[] = [] as Array<StatutPourLaFormalite>;
 
-  constructor(private formBuild: UntypedFormBuilder, private StatutPourLaFormaliteService: StatutPourLaFormaliteService,) {
-    super(formBuild,)
+  constructor(private formBuild: UntypedFormBuilder, private StatutPourLaFormaliteService: StatutPourLaFormaliteService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

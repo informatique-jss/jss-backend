@@ -2,6 +2,7 @@ import { Directive, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { compareWithId } from 'src/app/libs/CompareHelper';
 import { GenericFormComponent } from '../generic-form.components';
+import { AppService } from 'src/app/services/app.service';
 
 @Directive()
 export abstract class GenericMultipleSelectComponent<T> extends GenericFormComponent implements OnInit {
@@ -22,8 +23,9 @@ export abstract class GenericMultipleSelectComponent<T> extends GenericFormCompo
 
   constructor(
     private formBuilder3: UntypedFormBuilder,
+    private appService2: AppService
   ) {
-    super(formBuilder3);
+    super(formBuilder3, appService2);
   }
 
   callOnNgInit(): void {
@@ -38,5 +40,9 @@ export abstract class GenericMultipleSelectComponent<T> extends GenericFormCompo
     this.model = [] as Array<T>;
     this.modelChange.emit(this.model);
     this.selectionChange.emit(undefined);
+  }
+
+  getPreviewActionLinkFunction(entity: T): string[] | undefined {
+    return undefined;
   }
 }

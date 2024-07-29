@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { GenericFormComponent } from '../generic-form.components';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'generic-toggle',
@@ -24,8 +25,8 @@ export class GenericToggleComponent extends GenericFormComponent implements OnIn
 
 
   constructor(
-    private formBuilder3: UntypedFormBuilder,) {
-    super(formBuilder3,);
+    private formBuilder3: UntypedFormBuilder, private appService2: AppService) {
+    super(formBuilder3, appService2);
   }
 
   callOnNgInit(): void {
@@ -47,5 +48,8 @@ export class GenericToggleComponent extends GenericFormComponent implements OnIn
       this.model = false;
       this.modelChange.emit(this.model);
     }
+  }
+  getPreviewActionLinkFunction(entity: any): string[] | undefined {
+    return undefined;
   }
 }

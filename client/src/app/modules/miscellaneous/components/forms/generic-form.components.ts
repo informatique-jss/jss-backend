@@ -1,6 +1,7 @@
 import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from "@angular/core";
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Observable } from "rxjs";
+import { AppService } from '../../../../services/app.service';
 
 @Directive()
 export abstract class GenericFormComponent implements OnInit {
@@ -55,8 +56,11 @@ export abstract class GenericFormComponent implements OnInit {
  */
   @Output() onFormBlur: EventEmitter<void> = new EventEmitter();
 
+  @Input() isDisplayShortcut: boolean = false;
+
   constructor(
     private formBuilder: UntypedFormBuilder,
+    private appService: AppService
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -143,4 +147,14 @@ export abstract class GenericFormComponent implements OnInit {
   }
 
   abstract getPreviewActionLinkFunction(entity: any): string[] | undefined;
+
+  clickOnIcon() {
+    if (this.model) {
+      let previewActionLink = this.getPreviewActionLinkFunction(this.model);
+      if (previewActionLink) {
+        this.isDisplayShortcut = true;
+        this.appService.openRoute(event, previewActionLink.join("/"), undefined);
+      }
+    }
+  }
 }

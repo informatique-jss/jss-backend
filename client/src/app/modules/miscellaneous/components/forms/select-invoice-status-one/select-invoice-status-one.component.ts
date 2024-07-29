@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { InvoiceStatus } from 'src/app/modules/invoicing/model/InvoiceStatus';
 import { InvoiceStatusService } from 'src/app/modules/invoicing/services/invoice.status.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-invoice-status-one',
@@ -18,8 +19,8 @@ export class SelectInvoiceStatusOneComponent extends GenericSelectComponent<Invo
  */
   @Input() defaultStatusSelected: InvoiceStatus[] | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private invoiceStatusService: InvoiceStatusService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private invoiceStatusService: InvoiceStatusService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

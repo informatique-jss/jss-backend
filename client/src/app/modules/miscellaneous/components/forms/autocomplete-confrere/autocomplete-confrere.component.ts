@@ -77,4 +77,8 @@ export class AutocompleteConfrereComponent extends GenericAutocompleteComponent<
       super.optionSelected(type);
     }
   }
+
+  getPreviewActionLinkFunction(entity: Confrere): string[] | undefined {
+    return ['confrere/', entity.id + ""];
+  }
 }
