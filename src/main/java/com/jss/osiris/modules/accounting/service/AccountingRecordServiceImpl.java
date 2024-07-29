@@ -90,22 +90,24 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord) throws OsirisException {
+  public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord,
+      boolean byPassOperationDateTimeCheck) throws OsirisException {
     // Do not save null or 0 € records
     if (accountingRecord.getId() == null
         && (accountingRecord.getCreditAmount() == null || accountingRecord.getCreditAmount() == 0f)
         && (accountingRecord.getDebitAmount() == null || accountingRecord.getDebitAmount() == 0f))
       return null;
 
-    if (accountingRecord.getOperationDateTime().toLocalDate()
-        .isBefore(constantService.getDateAccountingClosureForAccountant())) {
-      throw new OsirisException(null, "Impossible to write accounting record, it's before closure all date");
-    } else if (accountingRecord.getOperationDateTime().toLocalDate()
-        .isBefore(constantService.getDateAccountingClosureForAll())
-        && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP)) {
-      throw new OsirisException(null,
-          "Impossible to write accounting record, it's before closure accounting date. It can only be done by accounting responsible");
-    }
+    if (!byPassOperationDateTimeCheck)
+      if (accountingRecord.getOperationDateTime().toLocalDate()
+          .isBefore(constantService.getDateAccountingClosureForAccountant())) {
+        throw new OsirisException(null, "Impossible to write accounting record, it's before closure all date");
+      } else if (accountingRecord.getOperationDateTime().toLocalDate()
+          .isBefore(constantService.getDateAccountingClosureForAll())
+          && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP)) {
+        throw new OsirisException(null,
+            "Impossible to write accounting record, it's before closure accounting date. It can only be done by accounting responsible");
+      }
 
     return accountingRecordRepository.save(accountingRecord);
   }
@@ -132,7 +134,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       accountingRecord.setIsTemporary(true);
       accountingRecord.setIsANouveau(false);
       accountingRecord.setIsManual(true);
-      addOrUpdateAccountingRecord(accountingRecord);
+      addOrUpdateAccountingRecord(accountingRecord, false);
     }
     return accountingRecords;
   }
@@ -179,7 +181,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             accountingRecord.setAccountingId(maxIdAccounting);
             accountingRecord.setOperationId(definitiveIdOperation.get(accountingRecord.getTemporaryOperationId()));
             accountingRecord.setIsTemporary(false);
-            addOrUpdateAccountingRecord(accountingRecord);
+            addOrUpdateAccountingRecord(accountingRecord, false);
             maxIdAccounting++;
           }
         }
@@ -511,7 +513,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     for (AccountingRecord accountingRecord : fetchRecords) {
       accountingRecord.setLetteringDateTime(LocalDateTime.now());
       accountingRecord.setLetteringNumber(maxLetteringNumber);
-      addOrUpdateAccountingRecord(accountingRecord);
+      addOrUpdateAccountingRecord(accountingRecord, true);
     }
 
     return true;
