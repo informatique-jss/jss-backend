@@ -27,7 +27,8 @@ public interface AccountingRecordService {
         public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords)
                         throws OsirisException;
 
-        public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord) throws OsirisException;
+        public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord,
+                        boolean byPassOperationDateTimeCheck) throws OsirisException;
 
         public void dailyAccountClosing() throws OsirisException;
 

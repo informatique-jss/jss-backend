@@ -206,7 +206,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 for (AccountingRecord accountingRecord : accountingRecords) {
                     accountingRecord.setLetteringDateTime(LocalDateTime.now());
                     accountingRecord.setLetteringNumber(maxLetteringNumber);
-                    this.accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
+                    this.accountingRecordService.addOrUpdateAccountingRecord(accountingRecord, true);
                 }
 
             }
@@ -250,7 +250,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 for (AccountingRecord accountingRecord : accountingRecords) {
                     accountingRecord.setLetteringDateTime(LocalDateTime.now());
                     accountingRecord.setLetteringNumber(maxLetteringNumber);
-                    this.accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
+                    this.accountingRecordService.addOrUpdateAccountingRecord(accountingRecord, true);
                 }
 
                 return true;
@@ -275,8 +275,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         record.setLetteringNumber(maxLetteringNumber);
         counterPart.setLetteringDateTime(LocalDateTime.now());
         counterPart.setLetteringNumber(maxLetteringNumber);
-        this.accountingRecordService.addOrUpdateAccountingRecord(record);
-        this.accountingRecordService.addOrUpdateAccountingRecord(counterPart);
+        this.accountingRecordService.addOrUpdateAccountingRecord(record, true);
+        this.accountingRecordService.addOrUpdateAccountingRecord(counterPart, true);
     }
 
     private void unletterInvoiceEmitted(Invoice invoice) throws OsirisException {
@@ -289,7 +289,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             for (AccountingRecord accountingRecord : accountingRecords) {
                 accountingRecord.setLetteringDateTime(null);
                 accountingRecord.setLetteringNumber(null);
-                accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
+                accountingRecordService.addOrUpdateAccountingRecord(accountingRecord, true);
             }
         invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
         invoiceService.addOrUpdateInvoice(invoice);
@@ -305,7 +305,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             for (AccountingRecord accountingRecord : accountingRecords) {
                 accountingRecord.setLetteringDateTime(null);
                 accountingRecord.setLetteringNumber(null);
-                accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
+                accountingRecordService.addOrUpdateAccountingRecord(accountingRecord, true);
             }
         if (invoice.getIsProviderCreditNote())
             invoice.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());

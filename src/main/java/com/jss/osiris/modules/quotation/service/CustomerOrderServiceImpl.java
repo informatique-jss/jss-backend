@@ -19,7 +19,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+<<<<<<< HEAD
 import org.springframework.transaction.annotation.Propagation;
+=======
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+>>>>>>> 041e2ea0 (fix)
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -80,7 +85,10 @@ import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
+import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.repository.CustomerOrderRepository;
+import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.GuichetUniqueDelegateServiceImpl;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;

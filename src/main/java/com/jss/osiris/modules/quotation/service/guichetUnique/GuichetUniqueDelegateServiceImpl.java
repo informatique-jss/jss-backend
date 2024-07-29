@@ -144,8 +144,8 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
             throws OsirisException, OsirisClientMessageException {
         List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
         formalites.addAll(getFormalitiesByDate(createdAfter, updatedAfter));
-        formalites.addAll(getAnnualAccountsByDate(createdAfter, updatedAfter));
-        formalites.addAll(getActeDepositsByDate(createdAfter, updatedAfter));
+        // formalites.addAll(getAnnualAccountsByDate(createdAfter, updatedAfter));
+        // formalites.addAll(getActeDepositsByDate(createdAfter, updatedAfter));
         return formalites;
     }
 
@@ -158,6 +158,8 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
             formalites.addAll(inFormalites);
             page++;
             inFormalites = getFormalitiesByDatePaginated(page, createdAfter, updatedAfter);
+            if (page == 5)
+                return formalites;
         }
 
         return formalites;
@@ -170,7 +172,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         HttpHeaders headers = createHeaders();
 
         ResponseEntity<List<FormaliteGuichetUnique>> response = new RestTemplate().exchange(
-                guichetUniqueEntryPoint + formalitiesRequestUrl + "?page=" + page + "&created[after]="
+                guichetUniqueEntryPoint + formalitiesRequestUrl + "?page=" + page + "&itemsPerPage=100&created[after]="
                         + (createdAfter != null ? formatter.format(createdAfter) : "")
                         + (updatedAfter != null ? "&updated[after]=" + formatter.format(updatedAfter) : ""),
                 HttpMethod.GET, new HttpEntity<String>(headers),
