@@ -204,7 +204,6 @@ import { SelectBatchCategoryComponent } from '../forms/select-batch-category/sel
 import { SelectBatchSettingsComponent } from '../forms/select-batch-settings/select-batch-settings.component';
 import { SelectBatchStatusComponent } from '../forms/select-batch-status/select-batch-status.component';
 import { SelectBillingItemsComponent } from '../forms/select-billing-items/select-billing-items.component';
-import { SelectBillingTypeDebourComponent } from '../forms/select-billing-type-debour/select-billing-type-debour.component';
 import { SelectBillingTypeComponent } from '../forms/select-billing-type/select-billing-type.component';
 import { SelectBuildingDomicilationComponent } from '../forms/select-building-domicilation/select-building-domicilation.component';
 import { SelectCompetentAuthorityTypeComponent } from '../forms/select-competent-authority-type/select-competent-authority-type.component';
@@ -358,7 +357,6 @@ const routes: Routes = [
     SelectAssignationTypeComponent,
     RadioGroupRecordTypeComponent,
     AutocompleteCityComponent,
-    SelectBillingTypeDebourComponent,
     SelectVatComponent,
     SelectRegionsComponent,
     AutocompleteRegionComponent,
@@ -594,7 +592,6 @@ const routes: Routes = [
     SelectDepartmentsComponent,
     SelectCompetentAuthorityTypeComponent,
     SelectRegionsComponent,
-    SelectBillingTypeDebourComponent,
     AutocompleteAffaireComponent,
     SelectDocumentTypeComponent,
     SelectAttachmentTypeComponent,

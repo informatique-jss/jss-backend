@@ -24,7 +24,4 @@ export class SelectCompetentAuthorityTypeComponent extends GenericSelectComponen
     })
   }
 
-  getPreviewActionLinkFunction(entity: CompetentAuthorityType): string[] | undefined {
-    return ['administration/competent/authority/', entity.id + ""];
-  }
 }

@@ -80,6 +80,6 @@ export class AutocompleteConfrereComponent extends GenericAutocompleteComponent<
   }
 
   getPreviewActionLinkFunction(entity: Confrere): string[] | undefined {
-    return ['confrere/', entity.id + ""];
+    return ['confrere', entity.id + ""];
   }
 }

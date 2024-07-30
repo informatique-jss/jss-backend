@@ -53,6 +53,6 @@ export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<I
   }
 
   getPreviewActionLinkFunction(entity: any): string[] {
-    return ['/affaire/', entity.entityId + ""];
+    return ['/affaire', entity.entityId + ""];
   }
 }

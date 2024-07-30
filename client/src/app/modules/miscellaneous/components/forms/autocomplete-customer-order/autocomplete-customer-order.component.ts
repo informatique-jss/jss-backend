@@ -30,6 +30,6 @@ export class AutocompleteCustomerOrderComponent extends GenericAutocompleteCompo
   }
 
   getPreviewActionLinkFunction(entity: IndexEntity): string[] | undefined {
-    return ['order/', entity.entityId + ""];
+    return ['order', entity.entityId + ""];
   }
 }

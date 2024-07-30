@@ -61,6 +61,6 @@ export class AutocompleteCompetentAuthorityComponent extends GenericAutocomplete
   }
 
   getPreviewActionLinkFunction(entity: CompetentAuthority): string[] | undefined {
-    return ['administration/competent/authority/', entity.id + ""];
+    return ['administration/competent/authority', entity.id + ""];
   }
 }

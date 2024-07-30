@@ -55,6 +55,6 @@ export class AutocompleteTiersIndividualComponent extends GenericAutocompleteCom
   }
 
   getPreviewActionLinkFunction(entity: IndexEntity): string[] | undefined {
-    return ['tiers/', entity.entityId + ""];
+    return ['tiers', entity.entityId + ""];
   }
 }

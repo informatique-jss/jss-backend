@@ -26,4 +26,8 @@ export class AutocompleteProviderComponent extends GenericLocalAutocompleteCompo
   initTypes(): void {
     this.providerService.getProviders().subscribe(response => this.types = response);
   }
+
+  getPreviewActionLinkFunction(entity: Provider): string[] | undefined {
+    return ['administration/provider', entity.id + ""];
+  }
 }

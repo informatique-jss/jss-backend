@@ -41,4 +41,8 @@ export class AutocompletePaymentComponent extends GenericAutocompleteComponent<P
       return payment.id + " (" + payment.paymentAmount + " €)";
     return "";
   }
+
+  getPreviewActionLinkFunction(entity: PaymentSearchResult): string[] | undefined {
+    return ['invoicing/payment', entity.id + ""];
+  }
 }

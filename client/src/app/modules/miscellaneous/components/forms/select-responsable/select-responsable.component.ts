@@ -53,6 +53,6 @@ export class SelectResponsableComponent extends GenericMultipleSelectComponent<R
   }
 
   getPreviewActionLinkFunction(entity: Responsable): string[] | undefined {
-    return ['tiers/responsable/', entity.id + ""];
+    return ['tiers/responsable', entity.id + ""];
   }
 }

@@ -64,6 +64,6 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
 
 
   override getPreviewActionLinkFunction(entity: AccountingAccount): string[] | undefined {
-    return ['accounting/view/', entity.id + ""];
+    return ['accounting/view', entity.id + ""];
   }
 }
