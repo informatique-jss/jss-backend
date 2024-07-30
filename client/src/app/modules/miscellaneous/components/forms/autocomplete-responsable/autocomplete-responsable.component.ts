@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { IndexEntity } from '../../../../../routing/search/IndexEntity';
 import { IndexEntityService } from '../../../../../routing/search/index.entity.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-responsable',
@@ -12,8 +13,8 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 })
 export class AutocompleteResponsableComponent extends GenericAutocompleteComponent<IndexEntity, IndexEntity> implements OnInit {
 
-  constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   @Input() onlyActive: boolean = true;
@@ -37,7 +38,9 @@ export class AutocompleteResponsableComponent extends GenericAutocompleteCompone
     return (responsable as any).firstname + " " + (responsable as any).lastname;
   }
 
-  getPreviewActionLinkFunction(entity: IndexEntity): string[] | undefined {
-    return ['tiers/responsable/', entity.entityId + ""];
+  override  getPreviewActionLinkFunction(entity: IndexEntity): string[] | undefined {
+    return ['tiers/responsable', entity.entityId + ""];
   }
+
+
 }

@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { TypePersonneBlocPreneurBailService } from 'src/app/modules/miscellaneous/services/guichet-unique/type.personne.bloc.preneur.bail.service';
 import { TypePersonneBlocPreneurBail } from 'src/app/modules/quotation/model/guichet-unique/referentials/TypePersonneBlocPreneurBail';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'radio-group-type-personne-bloc-preneur-bail',
@@ -13,8 +14,8 @@ export class RadioGroupTypePersonneBlocPreneurBailComponent extends GenericRadio
   types: TypePersonneBlocPreneurBail[] = [] as Array<TypePersonneBlocPreneurBail>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private TypePersonneBlocPreneurBailService: TypePersonneBlocPreneurBailService,) {
-    super(formBuild,);
+    private formBuild: UntypedFormBuilder, private TypePersonneBlocPreneurBailService: TypePersonneBlocPreneurBailService, private appService3: AppService) {
+    super(formBuild, appService3);
   }
 
   initTypes(): void {

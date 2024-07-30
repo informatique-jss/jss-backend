@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { ActType } from 'src/app/modules/quotation/model/ActType';
 import { ActTypeService } from 'src/app/modules/quotation/services/act-type.service';
 import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio-group.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'radio-group-act-type',
@@ -13,8 +14,8 @@ export class RadioGroupActTypeComponent extends GenericRadioGroupComponent<ActTy
   types: ActType[] = [] as Array<ActType>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private actTypeService: ActTypeService,) {
-    super(formBuild);
+    private formBuild: UntypedFormBuilder, private actTypeService: ActTypeService, private appService3: AppService) {
+    super(formBuild, appService3);
   }
 
   initTypes(): void {

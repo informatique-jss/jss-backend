@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { BillingType } from '../../../model/BillingType';
 import { BillingTypeService } from '../../../services/billing.type.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-billing-type',
@@ -13,8 +14,8 @@ export class AutocompleteBillingTypeComponent extends GenericLocalAutocompleteCo
 
   types: BillingType[] = [] as Array<BillingType>;
 
-  constructor(private formBuild: UntypedFormBuilder, private billingTypeService: BillingTypeService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private billingTypeService: BillingTypeService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   filterEntities(types: BillingType[], value: string): BillingType[] {

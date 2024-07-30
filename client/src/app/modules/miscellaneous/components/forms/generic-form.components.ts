@@ -56,7 +56,8 @@ export abstract class GenericFormComponent implements OnInit {
  */
   @Output() onFormBlur: EventEmitter<void> = new EventEmitter();
 
-  @Input() isDisplayShortcut: boolean = false;
+  isDisplayPreviewShortcut: boolean = false;
+  previewActionLink: string[] | undefined;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -104,9 +105,11 @@ export abstract class GenericFormComponent implements OnInit {
           this.model = newValue;
           this.modelChange.emit(this.model);
           this.onFormChange.emit(this.model);
+          this.checkPreviewIconAvailable();
         }
       )
       this.callOnNgInit();
+      this.checkPreviewIconAvailable();
       this.form.get(this.propertyName)?.setValue(this.model);
     }
   }
@@ -148,13 +151,19 @@ export abstract class GenericFormComponent implements OnInit {
 
   abstract getPreviewActionLinkFunction(entity: any): string[] | undefined;
 
-  clickOnIcon() {
+  clickOnPreviewIcon() {
+    if (this.model)
+      this.previewActionLink = this.getPreviewActionLinkFunction(this.model);
+
+    if (this.previewActionLink && this.model)
+      this.appService.openRoute(event, this.previewActionLink.join("/"), undefined);
+  }
+
+  checkPreviewIconAvailable() {
     if (this.model) {
       let previewActionLink = this.getPreviewActionLinkFunction(this.model);
-      if (previewActionLink) {
-        this.isDisplayShortcut = true;
-        this.appService.openRoute(event, previewActionLink.join("/"), undefined);
-      }
+      if (previewActionLink)
+        this.isDisplayPreviewShortcut = true;
     }
   }
 }

@@ -4,6 +4,7 @@ import { Country } from '../../../model/Country';
 import { ConstantService } from '../../../services/constant.service';
 import { CountryService } from '../../../services/country.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-country',
@@ -16,8 +17,8 @@ export class AutocompleteCountryComponent extends GenericLocalAutocompleteCompon
   @Input() defaultCountry: Country = this.constantService.getCountryFrance();
 
   constructor(private formBuild: UntypedFormBuilder, private countryService: CountryService,
-    private constantService: ConstantService,) {
-    super(formBuild)
+    private constantService: ConstantService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   ngOnChanges(changes: SimpleChanges): void {

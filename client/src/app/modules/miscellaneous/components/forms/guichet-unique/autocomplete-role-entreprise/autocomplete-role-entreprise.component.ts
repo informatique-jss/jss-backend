@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { RoleEntrepriseService } from 'src/app/modules/miscellaneous/services/guichet-unique/role.entreprise.service';
 import { RoleEntreprise } from '../../../../../quotation/model/guichet-unique/referentials/RoleEntreprise';
 import { GenericLocalAutocompleteComponent } from '../../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-role-entreprise',
@@ -13,8 +14,8 @@ export class AutocompleteRoleEntrepriseComponent extends GenericLocalAutocomplet
 
   types: RoleEntreprise[] = [] as Array<RoleEntreprise>;
 
-  constructor(private formBuild: UntypedFormBuilder, private RoleEntrepriseService: RoleEntrepriseService,) {
-    super(formBuild,)
+  constructor(private formBuild: UntypedFormBuilder, private RoleEntrepriseService: RoleEntrepriseService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   filterEntities(types: RoleEntreprise[], value: string): RoleEntreprise[] {

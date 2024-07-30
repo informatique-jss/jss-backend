@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { CustomerOrderStatus } from 'src/app/modules/quotation/model/CustomerOrderStatus';
 import { CustomerOrderStatusService } from 'src/app/modules/quotation/services/customer.order.status.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-customer-order-status',
@@ -19,8 +20,8 @@ export class SelectCustomerOrderStatusComponent extends GenericMultipleSelectCom
  */
   @Input() defaultCodesSelected: string[] | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private customerOrderStatusService: CustomerOrderStatusService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private customerOrderStatusService: CustomerOrderStatusService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

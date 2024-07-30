@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { JournalType } from 'src/app/modules/quotation/model/JournalType';
 import { JournalTypeService } from 'src/app/modules/quotation/services/journal.type.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-journal-type',
@@ -13,8 +14,8 @@ export class SelectJournalTypeComponent extends GenericMultipleSelectComponent<J
 
   types: JournalType[] = [] as Array<JournalType>;
 
-  constructor(private formBuild: UntypedFormBuilder, private journalTypeService: JournalTypeService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private journalTypeService: JournalTypeService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

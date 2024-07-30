@@ -22,8 +22,8 @@ export class AutocompleteGuichetUniqueFormaliteComponent extends GenericAutocomp
   @Input() label: string = "Label";
 
   constructor(private formBuild: UntypedFormBuilder,
-    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService,) {
-    super(formBuild,)
+    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   searchEntities(value: string): Observable<FormaliteGuichetUnique[]> {

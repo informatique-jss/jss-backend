@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { REPORTING_DATASET_ANNOUNCEMENT, REPORTING_DATASET_CUSTOMER_ORDER, REPORTING_DATASET_PROVISION, REPORTING_DATASET_PROVISION_PRODUCTION, REPORTING_DATASET_QUOTATION, REPORTING_DATASET_RECOVERY, REPORTING_DATASET_TIERS, REPORTING_DATASET_TURNOVER_VAT_AMOUNT } from 'src/app/libs/Constants';
 import { REPORTING_DATASET_TURNOVER_AMOUNT } from '../../../../../libs/Constants';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-reporting-dataset',
@@ -13,8 +14,8 @@ export class SelectReportingDatasetComponent extends GenericSelectComponent<stri
 
   types: string[] = [] as Array<string>;
 
-  constructor(private formBuild: UntypedFormBuilder,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

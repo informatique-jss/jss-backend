@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { IndexEntity } from '../../../../../routing/search/IndexEntity';
 import { IndexEntityService } from '../../../../../routing/search/index.entity.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-customer-order',
@@ -12,8 +13,8 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 })
 export class AutocompleteCustomerOrderComponent extends GenericAutocompleteComponent<IndexEntity, IndexEntity> implements OnInit {
 
-  constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   searchEntities(value: string): Observable<IndexEntity[]> {

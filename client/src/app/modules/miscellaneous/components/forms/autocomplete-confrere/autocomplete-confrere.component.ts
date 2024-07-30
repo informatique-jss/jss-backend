@@ -8,6 +8,7 @@ import { Department } from '../../../model/Department';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { ConfrereDialogComponent } from '../../confreres-dialog/confreres-dialog.component';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-confrere',
@@ -29,8 +30,8 @@ export class AutocompleteConfrereComponent extends GenericAutocompleteComponent<
   constructor(private formBuild: UntypedFormBuilder,
     private confrereService: ConfrereService,
     public confrereDialog: MatDialog,
-    public confirmationDialog: MatDialog,) {
-    super(formBuild)
+    public confirmationDialog: MatDialog, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   displayLabel(object: Confrere): string {

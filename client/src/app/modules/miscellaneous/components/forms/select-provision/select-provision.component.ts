@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Provision } from 'src/app/modules/quotation/model/Provision';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-provision',
@@ -12,8 +13,8 @@ export class SelectProvisionComponent extends GenericSelectComponent<Provision> 
 
   @Input() types: Provision[] = [] as Array<Provision>;
 
-  constructor(private formBuild: UntypedFormBuilder,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

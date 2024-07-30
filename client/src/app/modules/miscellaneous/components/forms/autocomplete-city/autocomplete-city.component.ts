@@ -5,6 +5,7 @@ import { City } from '../../../model/City';
 import { Country } from '../../../model/Country';
 import { CityService } from '../../../services/city.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-city',
@@ -26,8 +27,8 @@ export class AutocompleteCityComponent extends GenericAutocompleteComponent<City
    */
   @Input() preFilterPostalCode: string | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private cityService: CityService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private cityService: CityService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   searchEntities(value: string): Observable<City[]> {

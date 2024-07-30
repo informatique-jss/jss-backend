@@ -7,6 +7,7 @@ import { formatDateFrance } from 'src/app/libs/FormatHelper';
 import { FormaliteGuichetUnique } from 'src/app/modules/quotation/model/guichet-unique/FormaliteGuichetUnique';
 import { FormaliteGuichetUniqueService } from '../../../services/formalite.guichet.unique.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'chips-formalite-guichet-unique',
@@ -20,9 +21,9 @@ export class ChipsFormaliteGuichetUniqueComponent extends GenericChipsComponent<
   @ViewChild('formaliteGuichetUniqueInput') formaliteGuichetUniqueInput: ElementRef<HTMLInputElement> | undefined;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService,
+    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService, private appService3: AppService
   ) {
-    super(formBuild,)
+    super(formBuild, appService3)
   }
 
   callOnNgInit(): void {

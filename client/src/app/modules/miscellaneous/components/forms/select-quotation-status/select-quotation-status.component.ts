@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { QuotationStatus } from 'src/app/modules/quotation/model/QuotationStatus';
 import { QuotationStatusService } from 'src/app/modules/quotation/services/quotation-status.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-quotation-status',
@@ -19,8 +20,8 @@ export class SelectQuotationStatusComponent extends GenericMultipleSelectCompone
  */
   @Input() defaultCodesSelected: string[] | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private quotationStatusService: QuotationStatusService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private quotationStatusService: QuotationStatusService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

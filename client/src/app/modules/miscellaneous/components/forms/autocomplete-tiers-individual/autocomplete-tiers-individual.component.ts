@@ -5,6 +5,7 @@ import { IndexEntity } from '../../../../../routing/search/IndexEntity';
 import { IndexEntityService } from '../../../../../routing/search/index.entity.service';
 import { TIERS_ENTITY_TYPE } from '../../../../../routing/search/search.component';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-tiers-individual',
@@ -13,8 +14,8 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 })
 export class AutocompleteTiersIndividualComponent extends GenericAutocompleteComponent<IndexEntity, IndexEntity> implements OnInit {
 
-  constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   @Input() authorizeNonIndividualTiers: boolean = false;

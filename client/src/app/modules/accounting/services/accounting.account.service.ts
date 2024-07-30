@@ -24,7 +24,7 @@ export class AccountingAccountService extends AppRestService<AccountingAccount> 
     return this.getList(new HttpParams().set("label", label), "accounting-account/search");
   }
 
-  getAccountingAccountById(accountinAccountId: number) {
-    return this.get(new HttpParams().set("accountinAccountId", accountinAccountId), "accounting-account");
+  getAccountingAccountById(id: number) {
+    return this.getById("accounting-account", id);
   }
 }

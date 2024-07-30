@@ -4,6 +4,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { LegalForm } from '../../../model/LegalForm';
 import { LegalFormService } from '../../../services/legal.form.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-legal-form',
@@ -14,8 +15,8 @@ export class AutocompleteLegalFormComponent extends GenericLocalAutocompleteComp
 
   types: LegalForm[] = [] as Array<LegalForm>;
 
-  constructor(private formBuild: UntypedFormBuilder, private legalformService: LegalFormService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private legalformService: LegalFormService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   filterEntities(types: LegalForm[], value: string): LegalForm[] {

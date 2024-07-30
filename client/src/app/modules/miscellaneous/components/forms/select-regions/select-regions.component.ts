@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { Region } from '../../../model/Region';
 import { RegionService } from '../../../services/region.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-regions',
@@ -13,8 +14,8 @@ export class SelectRegionsComponent extends GenericMultipleSelectComponent<Regio
 
   types: Region[] = [] as Array<Region>;
 
-  constructor(private formBuild: UntypedFormBuilder, private regionService: RegionService) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private regionService: RegionService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

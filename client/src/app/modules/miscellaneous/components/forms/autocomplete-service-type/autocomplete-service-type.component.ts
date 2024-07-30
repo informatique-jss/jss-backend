@@ -4,6 +4,7 @@ import { ServiceType } from 'src/app/modules/quotation/model/ServiceType';
 import { ServiceTypeService } from 'src/app/modules/quotation/services/service.type.service';
 import { ConstantService } from '../../../services/constant.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-service-type',
@@ -15,8 +16,8 @@ export class AutocompleteServiceTypeComponent extends GenericLocalAutocompleteCo
   types: ServiceType[] = [] as Array<ServiceType>;
 
   constructor(private formBuild: UntypedFormBuilder, private serviceTypeService: ServiceTypeService,
-    private constantService: ConstantService,) {
-    super(formBuild)
+    private constantService: ConstantService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   ngOnChanges(changes: SimpleChanges): void {

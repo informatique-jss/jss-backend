@@ -10,6 +10,7 @@ import { SimpleProvisionStatus } from '../../../../quotation/model/SimpleProviso
 import { SimpleProvisionStatusService } from '../../../../quotation/services/simple.provision.status.service';
 import { IWorkflowElement } from '../../../model/IWorkflowElement';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-provision-stauts',
@@ -42,8 +43,9 @@ export class SelectProvisionStautsComponent extends GenericMultipleSelectCompone
     private domiciliationStatusService: DomiciliationStatusService,
     private announcementStatusService: AnnouncementStatusService,
     private simpleProvisionStatusService: SimpleProvisionStatusService,
+    private appService3: AppService
   ) {
-    super(formBuild)
+    super(formBuild, appService3)
   }
 
   selectDefault() {

@@ -6,6 +6,7 @@ import { CompetentAuthorityType } from '../../../model/CompetentAuthorityType';
 import { Department } from '../../../model/Department';
 import { CompetentAuthorityService } from '../../../services/competent.authority.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-competent-authority',
@@ -34,8 +35,8 @@ export class AutocompleteCompetentAuthorityComponent extends GenericAutocomplete
 */
   @Input() filteredCompetentAuthority: CompetentAuthority[] | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private competentauthorityService: CompetentAuthorityService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private competentauthorityService: CompetentAuthorityService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   searchEntities(value: string): Observable<CompetentAuthority[]> {

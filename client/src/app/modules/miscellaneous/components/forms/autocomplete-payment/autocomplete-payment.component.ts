@@ -6,6 +6,7 @@ import { PaymentSearch } from '../../../../invoicing/model/PaymentSearch';
 import { PaymentSearchResult } from '../../../../invoicing/model/PaymentSearchResult';
 import { ConstantService } from '../../../services/constant.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-payment',
@@ -16,8 +17,8 @@ export class AutocompletePaymentComponent extends GenericAutocompleteComponent<P
 
   constructor(private formBuild: UntypedFormBuilder,
     private paymentSearchResultService: PaymentSearchResultService,
-    private constantService: ConstantService,) {
-    super(formBuild)
+    private constantService: ConstantService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   @Input() forcedMinAmount = undefined;

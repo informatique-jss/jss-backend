@@ -6,6 +6,7 @@ import { map, startWith } from 'rxjs/operators';
 import { TypeDocument } from 'src/app/modules/quotation/model/guichet-unique/referentials/TypeDocument';
 import { TypeDocumentService } from '../../../services/guichet-unique/type.document.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'chips-type-document',
@@ -19,8 +20,8 @@ export class ChipsTypeDocumentComponent extends GenericChipsComponent<TypeDocume
   @ViewChild('typeDocumentInput') TypeDocumentInput: ElementRef<HTMLInputElement> | undefined;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private typeDocumentService: TypeDocumentService) {
-    super(formBuild)
+    private typeDocumentService: TypeDocumentService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   callOnNgInit(): void {

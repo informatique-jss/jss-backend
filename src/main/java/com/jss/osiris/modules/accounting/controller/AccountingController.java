@@ -212,10 +212,10 @@ public class AccountingController {
                 accountingAccountService.getAccountingAccountByLabelOrCode(label), HttpStatus.OK);
     }
 
-    @GetMapping(inputEntryPoint + "/accounting-account/")
-    public ResponseEntity<AccountingAccount> getAccountingAccountById(@RequestParam Integer accountingAccountId) {
+    @GetMapping(inputEntryPoint + "/accounting-account")
+    public ResponseEntity<AccountingAccount> getAccountingAccountById(@RequestParam Integer id) {
         return new ResponseEntity<AccountingAccount>(
-                accountingAccountService.getAccountingAccount(accountingAccountId), HttpStatus.OK);
+                accountingAccountService.getAccountingAccount(id), HttpStatus.OK);
     }
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)

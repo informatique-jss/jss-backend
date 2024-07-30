@@ -5,6 +5,7 @@ import { Observable, map, startWith } from 'rxjs';
 import { PrincipalAccountingAccount } from 'src/app/modules/accounting/model/PrincipalAccountingAccount';
 import { PrincipalAccountingAccountService } from '../../../../accounting/services/principal.accounting.account.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'chips-principal-accounting-account',
@@ -17,8 +18,9 @@ export class ChipsPrincipalAccountingAccountComponent extends GenericChipsCompon
   filteredPrincipalAccountingAccounts: Observable<PrincipalAccountingAccount[]> | undefined;
   @ViewChild('PrincipalAccountingAccountInput') PrincipalAccountingAccountInput: ElementRef<HTMLInputElement> | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private principalAccountingAccountService: PrincipalAccountingAccountService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private principalAccountingAccountService: PrincipalAccountingAccountService, private appService3: AppService
+  ) {
+    super(formBuild, appService3)
   }
 
   callOnNgInit(): void {

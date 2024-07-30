@@ -4,6 +4,7 @@ import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-employee',
@@ -17,8 +18,8 @@ export class AutocompleteEmployeeComponent extends GenericLocalAutocompleteCompo
   @Input() defaultEmployee: Employee | undefined;
   @ViewChild(MatAutocompleteTrigger) autocomplete!: MatAutocompleteTrigger;
 
-  constructor(private formBuild: UntypedFormBuilder, private employeeService: EmployeeService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private employeeService: EmployeeService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   filterEntities(types: Employee[], value: string): Employee[] {

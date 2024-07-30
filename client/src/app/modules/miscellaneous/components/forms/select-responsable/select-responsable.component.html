@@ -8,7 +8,7 @@
     </mat-option>
   </mat-select>
   <mat-icon color="accent" matTooltip="Afficher le responsable" matTooltipShowDelay="1000" matSuffix
-    (click)="clickOnIcon()" *ngIf="isDisplayShortcut && model!=undefined" class="pointer ">
+    (click)="clickOnPreviewIcon()" *ngIf="isDisplayPreviewShortcut " class="pointer ">
     visibility
   </mat-icon>
   <mat-icon color="accent" matSuffix (click)="clearField();$event.stopPropagation()"

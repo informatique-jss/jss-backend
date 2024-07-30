@@ -4,6 +4,7 @@ import { validateEmail } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { prepareMail } from 'src/app/libs/MailHelper';
 import { Mail } from '../../../model/Mail';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'chips-mail',
@@ -13,8 +14,8 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 export class ChipsMailComponent extends GenericChipsComponent<Mail> implements OnInit {
 
 
-  constructor(private formBuild: UntypedFormBuilder,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   validateInput(value: string): boolean {

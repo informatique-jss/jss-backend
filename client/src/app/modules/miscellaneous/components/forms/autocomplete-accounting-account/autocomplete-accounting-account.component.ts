@@ -24,8 +24,8 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
  */
   @Input() filteredAccountPrincipal: PrincipalAccountingAccount | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private accountingAccountService: AccountingAccountService,) {
-    super(formBuild,)
+  constructor(private formBuild: UntypedFormBuilder, private accountingAccountService: AccountingAccountService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   searchEntities(value: string): Observable<AccountingAccount[]> {
@@ -62,7 +62,8 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
       })
   }
 
-  getPreviewActionLinkFunction(entity: AccountingAccount): string[] {
+
+  override getPreviewActionLinkFunction(entity: AccountingAccount): string[] | undefined {
     return ['accounting/view/', entity.id + ""];
   }
 }

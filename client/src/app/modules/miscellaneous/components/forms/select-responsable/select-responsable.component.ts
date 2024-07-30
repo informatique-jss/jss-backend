@@ -12,7 +12,7 @@ import { AppService } from 'src/app/services/app.service';
 export class SelectResponsableComponent extends GenericMultipleSelectComponent<Responsable> implements OnInit {
 
   types: Responsable[] = [] as Array<Responsable>;
-  isDisplayShortcut: boolean = true;
+  isDisplayPreviewShortcut: boolean = true;
   /**
  * List of responsables to choose from
  */

@@ -6,6 +6,7 @@ import { map, startWith } from 'rxjs/operators';
 import { ProvisionFamilyType } from 'src/app/modules/quotation/model/ProvisionFamilyType';
 import { ProvisionFamilyTypeService } from 'src/app/modules/quotation/services/provision.family.type.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'chips-provision-family',
@@ -17,8 +18,8 @@ export class ChipsProvisionFamilyTypeComponent extends GenericChipsComponent<Pro
   filteredProvisionFamilyTypes: Observable<ProvisionFamilyType[]> | undefined;
   @ViewChild('provisionFamilyInput') ProvisionFamilyTypeInput: ElementRef<HTMLInputElement> | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private provisionFamilyTypeService: ProvisionFamilyTypeService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private provisionFamilyTypeService: ProvisionFamilyTypeService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   callOnNgInit(): void {

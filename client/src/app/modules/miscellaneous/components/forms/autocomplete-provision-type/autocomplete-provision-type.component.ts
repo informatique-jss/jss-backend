@@ -4,6 +4,7 @@ import { ProvisionType } from 'src/app/modules/quotation/model/ProvisionType';
 import { ProvisionTypeService } from 'src/app/modules/quotation/services/provision.type.service';
 import { ConstantService } from '../../../services/constant.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-provision-type',
@@ -15,8 +16,8 @@ export class AutocompleteProvisionTypeComponent extends GenericLocalAutocomplete
   types: ProvisionType[] = [] as Array<ProvisionType>;
 
   constructor(private formBuild: UntypedFormBuilder, private provisionTypeService: ProvisionTypeService,
-    private constantService: ConstantService,) {
-    super(formBuild)
+    private constantService: ConstantService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   ngOnChanges(changes: SimpleChanges): void {

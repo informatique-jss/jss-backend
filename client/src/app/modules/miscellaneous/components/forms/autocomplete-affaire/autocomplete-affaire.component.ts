@@ -6,6 +6,7 @@ import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
 import { AFFAIRE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-affaire',
@@ -15,8 +16,8 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<IndexEntity, IndexEntity> implements OnInit {
   @ViewChild('affaireInput') affaireInput: ElementRef<HTMLInputElement> | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   searchEntities(value: string): Observable<IndexEntity[]> {

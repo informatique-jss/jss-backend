@@ -5,6 +5,7 @@ import { Observable, map, startWith } from 'rxjs';
 import { FormeJuridique } from 'src/app/modules/quotation/model/guichet-unique/referentials/FormeJuridique';
 import { FormeJuridiqueService } from '../../../services/guichet-unique/forme.juridique.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'chips-forme-juridique',
@@ -19,8 +20,8 @@ export class ChipsFormeJuridiqueComponent extends GenericChipsComponent<FormeJur
   @Input() hint: string | undefined;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private formeJuridiqueService: FormeJuridiqueService,) {
-    super(formBuild)
+    private formeJuridiqueService: FormeJuridiqueService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   callOnNgInit(): void {

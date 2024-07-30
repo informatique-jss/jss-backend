@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { NatureDesActiviteService } from 'src/app/modules/miscellaneous/services/guichet-unique/nature.des.activite.service';
 import { NatureDesActivite } from 'src/app/modules/quotation/model/guichet-unique/referentials/NatureDesActivite';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'radio-group-nature-des-activite',
@@ -13,8 +14,8 @@ export class RadioGroupNatureDesActiviteComponent extends GenericRadioGroupCompo
   types: NatureDesActivite[] = [] as Array<NatureDesActivite>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private NatureDesActiviteService: NatureDesActiviteService,) {
-    super(formBuild,);
+    private formBuild: UntypedFormBuilder, private NatureDesActiviteService: NatureDesActiviteService, private appService3: AppService) {
+    super(formBuild, appService3);
   }
 
   initTypes(): void {

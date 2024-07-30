@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { RecordType } from 'src/app/modules/quotation/model/RecordType';
 import { RecordTypeService } from 'src/app/modules/quotation/services/record.type.service';
 import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio-group.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'radio-group-record-type',
@@ -13,8 +14,8 @@ export class RadioGroupRecordTypeComponent extends GenericRadioGroupComponent<Re
   types: RecordType[] = [] as Array<RecordType>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private recordtypeService: RecordTypeService,) {
-    super(formBuild);
+    private formBuild: UntypedFormBuilder, private recordtypeService: RecordTypeService, private appService3: AppService) {
+    super(formBuild, appService3);
   }
 
   initTypes(): void {

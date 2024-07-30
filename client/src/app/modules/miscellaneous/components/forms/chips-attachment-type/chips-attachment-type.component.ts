@@ -6,6 +6,7 @@ import { map, startWith } from 'rxjs/operators';
 import { AttachmentType } from '../../../model/AttachmentType';
 import { AttachmentTypeService } from '../../../services/attachment.type.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'chips-attachment-type',
@@ -19,8 +20,8 @@ export class ChipsAttachmentTypeComponent extends GenericChipsComponent<Attachme
   @ViewChild('attachmentTypeInput') AttachmentTypeInput: ElementRef<HTMLInputElement> | undefined;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private attachmentTypeService: AttachmentTypeService,) {
-    super(formBuild)
+    private attachmentTypeService: AttachmentTypeService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   callOnNgInit(): void {

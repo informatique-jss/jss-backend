@@ -6,6 +6,7 @@ import { map, startWith } from 'rxjs/operators';
 import { Competitor } from 'src/app/modules/tiers/model/Competitor';
 import { CompetitorService } from 'src/app/modules/tiers/services/competitor.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'chips-competitor',
@@ -18,8 +19,8 @@ export class ChipsCompetitorComponent extends GenericChipsComponent<Competitor> 
   filteredCompetitors: Observable<Competitor[]> | undefined;
   @ViewChild('competitorInput') CompetitorInput: ElementRef<HTMLInputElement> | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private CompetitorService: CompetitorService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private CompetitorService: CompetitorService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   callOnNgInit(): void {

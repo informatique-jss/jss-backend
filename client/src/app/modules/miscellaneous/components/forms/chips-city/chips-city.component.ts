@@ -6,6 +6,7 @@ import { City } from '../../../model/City';
 import { Country } from '../../../model/Country';
 import { CityService } from '../../../services/city.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'chips-city',
@@ -25,8 +26,8 @@ export class ChipsCityComponent extends GenericChipsComponent<City> implements O
    */
   @Input() modelCountry: Country | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private cityService: CityService,) {
-    super(formBuild,)
+  constructor(private formBuild: UntypedFormBuilder, private cityService: CityService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   callOnNgInit(): void {

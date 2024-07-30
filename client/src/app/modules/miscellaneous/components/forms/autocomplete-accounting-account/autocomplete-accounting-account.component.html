@@ -7,8 +7,7 @@
     close
   </mat-icon>
   <mat-icon color="accent" matTooltip="Afficher compte comptable" matTooltipShowDelay="1000" matSuffix
-    (click)="getPreviewActionLinkFunction(filteredAccountPrincipal)" *ngIf="isDisplayShortcut && model!=undefined"
-    class="pointer ">
+    (click)="clickOnPreviewIcon()" *ngIf="isDisplayPreviewShortcut" class="pointer ">
     visibility
   </mat-icon>
   <mat-spinner *ngIf="isLoading" diameter="16" style="display: inline-flex" matSuffix color="accent"></mat-spinner>

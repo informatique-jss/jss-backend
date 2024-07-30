@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { AzureInvoice } from 'src/app/modules/invoicing/model/AzureInvoice';
 import { AzureInvoiceService } from '../../../../invoicing/services/azure.invoice.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-azure-invoice',
@@ -13,9 +14,9 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 export class AutocompleteAzureInvoiceComponent extends GenericAutocompleteComponent<AzureInvoice, AzureInvoice> implements OnInit {
 
   constructor(private formBuild: UntypedFormBuilder,
-    private azureInvoiceService: AzureInvoiceService,
+    private azureInvoiceService: AzureInvoiceService, private appService3: AppService
   ) {
-    super(formBuild)
+    super(formBuild, appService3)
   }
 
   searchEntities(value: string): Observable<AzureInvoice[]> {

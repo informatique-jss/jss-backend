@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { EventsService } from 'src/app/modules/miscellaneous/services/guichet-unique/events.service';
 import { Events } from '../../../../../quotation/model/guichet-unique/referentials/Events';
 import { GenericLocalAutocompleteComponent } from '../../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-events',
@@ -13,8 +14,8 @@ export class AutocompleteEventsComponent extends GenericLocalAutocompleteCompone
 
   types: Events[] = [] as Array<Events>;
 
-  constructor(private formBuild: UntypedFormBuilder, private EventsService: EventsService,) {
-    super(formBuild,)
+  constructor(private formBuild: UntypedFormBuilder, private EventsService: EventsService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   filterEntities(types: Events[], value: string): Events[] {

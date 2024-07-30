@@ -4,6 +4,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { JournalType } from 'src/app/modules/quotation/model/JournalType';
 import { JournalTypeService } from 'src/app/modules/quotation/services/journal.type.service';
 import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio-group.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'radio-group-journal-type',
@@ -14,8 +15,8 @@ export class RadioGroupJournalTypeComponent extends GenericRadioGroupComponent<J
   types: JournalType[] = [] as Array<JournalType>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private journalTypeService: JournalTypeService,) {
-    super(formBuild);
+    private formBuild: UntypedFormBuilder, private journalTypeService: JournalTypeService, private appService3: AppService) {
+    super(formBuild, appService3);
   }
 
   initTypes(): void {

@@ -78,9 +78,11 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
         this.isLoading = false;
         if (!this.isDisabled && !this.doNotOpenTwice)
           this.trigger?.openPanel();
+        this.checkPreviewIconAvailable();
       });
       this.form.get(this.propertyName)?.setValue(this.model);
       this.callOnNgInit();
+      this.checkPreviewIconAvailable();
     }
   }
 
@@ -137,7 +139,7 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
     }
   }
 
-  getPreviewActionLinkFunction(entity: T): string[] | undefined {
+  override getPreviewActionLinkFunction(entity: T): string[] | undefined {
     return undefined;
   }
 }

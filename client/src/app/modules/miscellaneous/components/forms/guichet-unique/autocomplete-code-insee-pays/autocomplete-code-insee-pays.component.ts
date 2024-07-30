@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { CodeInseePaysService } from 'src/app/modules/miscellaneous/services/guichet-unique/code.insee.pays.service';
 import { CodeInseePays } from '../../../../../quotation/model/guichet-unique/referentials/CodeInseePays';
 import { GenericLocalAutocompleteComponent } from '../../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-code-insee-pays',
@@ -13,8 +14,8 @@ export class AutocompleteCodeInseePaysComponent extends GenericLocalAutocomplete
 
   types: CodeInseePays[] = [] as Array<CodeInseePays>;
 
-  constructor(private formBuild: UntypedFormBuilder, private CodeInseePaysService: CodeInseePaysService,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private CodeInseePaysService: CodeInseePaysService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   filterEntities(types: CodeInseePays[], value: string): CodeInseePays[] {

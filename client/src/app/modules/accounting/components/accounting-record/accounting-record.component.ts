@@ -173,7 +173,7 @@ export class AccountingRecordComponent implements OnInit {
       this.accountingAccountService.getAccountingAccountById(accountingAccountId).subscribe(response => {
         this.accountingRecordSearch.accountingAccount = response;
         this.accountingRecordSearch.hideLettered = true;
-        this.setCurentMonth();
+        this.setCurentFiscalYear();
         this.searchRecords();
       });
     }
