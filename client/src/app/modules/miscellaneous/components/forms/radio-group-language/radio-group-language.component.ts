@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Language } from '../../../model/Language';
 import { ConstantService } from '../../../services/constant.service';
 import { LanguageService } from '../../../services/language.service';
 import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio-group.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'radio-group-language',
@@ -18,8 +18,8 @@ export class RadioGroupLanguageComponent extends GenericRadioGroupComponent<Lang
   constructor(
     private formBuild: UntypedFormBuilder,
     private contantService: ConstantService,
-    private languageService: LanguageService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private languageService: LanguageService, private appService3: AppService) {
+    super(formBuild, appService3);
   }
 
   initTypes(): void {

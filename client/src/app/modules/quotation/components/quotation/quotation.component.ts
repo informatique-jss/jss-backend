@@ -17,7 +17,6 @@ import { EntityType } from 'src/app/routing/search/EntityType';
 import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN } from '../../../../libs/Constants';
 import { replaceDocument } from '../../../../libs/DocumentHelper';
@@ -128,7 +127,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private invoiceSearchResultService: InvoiceSearchResultService,
     private habilitationsService: HabilitationsService,
     public associatePaymentDialog: MatDialog,
-    private userNoteService2: UserNoteService,
     private userPreferenceService: UserPreferenceService,
     private serviceService: ServiceService,
     private changeDetectorRef: ChangeDetectorRef) { }

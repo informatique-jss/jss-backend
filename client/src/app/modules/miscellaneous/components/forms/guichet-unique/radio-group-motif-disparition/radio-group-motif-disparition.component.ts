@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MotifDisparitionService } from 'src/app/modules/miscellaneous/services/guichet-unique/motif.disparition.service';
 import { MotifDisparition } from 'src/app/modules/quotation/model/guichet-unique/referentials/MotifDisparition';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'radio-group-motif-disparition',
@@ -14,8 +14,8 @@ export class RadioGroupMotifDisparitionComponent extends GenericRadioGroupCompon
   types: MotifDisparition[] = [] as Array<MotifDisparition>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private MotifDisparitionService: MotifDisparitionService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private MotifDisparitionService: MotifDisparitionService, private appService3: AppService) {
+    super(formBuild, appService3);
   }
 
   initTypes(): void {

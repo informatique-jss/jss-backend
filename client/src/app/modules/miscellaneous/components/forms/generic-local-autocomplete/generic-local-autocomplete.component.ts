@@ -2,8 +2,8 @@ import { Directive, EventEmitter, OnInit, Output } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
+import { AppService } from 'src/app/services/app.service';
 
 @Directive()
 export abstract class GenericLocalAutocompleteComponent<T> extends GenericFormComponent implements OnInit {
@@ -17,9 +17,9 @@ export abstract class GenericLocalAutocompleteComponent<T> extends GenericFormCo
   abstract types: T[];
   filteredTypes: Observable<T[]> | undefined;
 
-  constructor(private formBuilder3: UntypedFormBuilder,
-    private userNoteService3: UserNoteService) {
-    super(formBuilder3, userNoteService3);
+  constructor(private formBuilder3: UntypedFormBuilder, private appService2: AppService
+  ) {
+    super(formBuilder3, appService2);
   }
 
   callOnNgInit(): void {
@@ -83,5 +83,7 @@ export abstract class GenericLocalAutocompleteComponent<T> extends GenericFormCo
 
   abstract initTypes(): void;
 
-
+  getPreviewActionLinkFunction(entity: T): string[] | undefined {
+    return undefined;
+  }
 }

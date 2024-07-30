@@ -2,11 +2,11 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { PaymentSearchResultService } from 'src/app/modules/invoicing/services/payment.search.result.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { PaymentSearch } from '../../../../invoicing/model/PaymentSearch';
 import { PaymentSearchResult } from '../../../../invoicing/model/PaymentSearchResult';
 import { ConstantService } from '../../../services/constant.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-payment',
@@ -17,9 +17,8 @@ export class AutocompletePaymentComponent extends GenericAutocompleteComponent<P
 
   constructor(private formBuild: UntypedFormBuilder,
     private paymentSearchResultService: PaymentSearchResultService,
-    private constantService: ConstantService,
-    private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private constantService: ConstantService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   @Input() forcedMinAmount = undefined;
@@ -41,5 +40,9 @@ export class AutocompletePaymentComponent extends GenericAutocompleteComponent<P
     if (payment)
       return payment.id + " (" + payment.paymentAmount + " €)";
     return "";
+  }
+
+  getPreviewActionLinkFunction(entity: PaymentSearchResult): string[] | undefined {
+    return ['invoicing/payment', entity.id + ""];
   }
 }

@@ -5,9 +5,9 @@ import { debounceTime, filter, switchMap, tap } from 'rxjs';
 import { GUICHET_UNIQUE_BASE_URL } from 'src/app/libs/Constants';
 import { formatDateFrance } from 'src/app/libs/FormatHelper';
 import { FormaliteGuichetUnique } from 'src/app/modules/quotation/model/guichet-unique/FormaliteGuichetUnique';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { FormaliteGuichetUniqueService } from '../../../services/formalite.guichet.unique.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'chips-formalite-guichet-unique',
@@ -21,9 +21,9 @@ export class ChipsFormaliteGuichetUniqueComponent extends GenericChipsComponent<
   @ViewChild('formaliteGuichetUniqueInput') formaliteGuichetUniqueInput: ElementRef<HTMLInputElement> | undefined;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService,
-    private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService, private appService3: AppService
+  ) {
+    super(formBuild, appService3)
   }
 
   callOnNgInit(): void {

@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { PrincipalAccountingAccountService } from 'src/app/modules/accounting/services/principal.accounting.account.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { PrincipalAccountingAccount } from '../../../../accounting/model/PrincipalAccountingAccount';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-principal-accounting-account',
@@ -16,9 +16,8 @@ export class AutocompletePrincipalAccountingAccountComponent extends GenericLoca
   @Input() label: string = "Compte compatable principal";
 
   constructor(private formBuild: UntypedFormBuilder,
-    private principalAccountingAccountService: PrincipalAccountingAccountService,
-    private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private principalAccountingAccountService: PrincipalAccountingAccountService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   filterEntities(types: PrincipalAccountingAccount[], value: string): PrincipalAccountingAccount[] {

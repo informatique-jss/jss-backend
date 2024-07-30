@@ -6,7 +6,7 @@ import { AccountingAccount } from '../../accounting/model/AccountingAccount';
 @Injectable({
   providedIn: 'root'
 })
-export class AccountingAccountService extends AppRestService<AccountingAccount>{
+export class AccountingAccountService extends AppRestService<AccountingAccount> {
 
   constructor(http: HttpClient) {
     super(http, "accounting");
@@ -24,4 +24,7 @@ export class AccountingAccountService extends AppRestService<AccountingAccount>{
     return this.getList(new HttpParams().set("label", label), "accounting-account/search");
   }
 
+  getAccountingAccountById(id: number) {
+    return this.getById("accounting-account", id);
+  }
 }

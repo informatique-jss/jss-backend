@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { GenreService } from 'src/app/modules/miscellaneous/services/guichet-unique/genre.service';
 import { Genre } from 'src/app/modules/quotation/model/guichet-unique/referentials/Genre';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'radio-group-genre',
@@ -14,8 +14,8 @@ export class RadioGroupGenreComponent extends GenericRadioGroupComponent<Genre> 
   types: Genre[] = [] as Array<Genre>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private GenreService: GenreService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private GenreService: GenreService, private appService3: AppService) {
+    super(formBuild, appService3);
   }
 
   initTypes(): void {

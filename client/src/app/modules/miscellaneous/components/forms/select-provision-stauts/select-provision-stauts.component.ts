@@ -6,11 +6,11 @@ import { FormaliteStatus } from 'src/app/modules/quotation/model/FormaliteStatus
 import { AnnouncementStatusService } from 'src/app/modules/quotation/services/announcement.status.service';
 import { DomiciliationStatusService } from 'src/app/modules/quotation/services/domiciliation-status.service';
 import { FormaliteStatusService } from 'src/app/modules/quotation/services/formalite.status.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { SimpleProvisionStatus } from '../../../../quotation/model/SimpleProvisonStatus';
 import { SimpleProvisionStatusService } from '../../../../quotation/services/simple.provision.status.service';
 import { IWorkflowElement } from '../../../model/IWorkflowElement';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-provision-stauts',
@@ -43,8 +43,9 @@ export class SelectProvisionStautsComponent extends GenericMultipleSelectCompone
     private domiciliationStatusService: DomiciliationStatusService,
     private announcementStatusService: AnnouncementStatusService,
     private simpleProvisionStatusService: SimpleProvisionStatusService,
-    private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private appService3: AppService
+  ) {
+    super(formBuild, appService3)
   }
 
   selectDefault() {

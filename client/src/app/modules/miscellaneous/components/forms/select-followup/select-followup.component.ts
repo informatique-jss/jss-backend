@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { TiersFollowupType } from '../../../model/TiersFollowupType';
 import { TiersFollowupTypeService } from '../../../services/tiers.followup.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 
 @Component({
@@ -15,8 +15,8 @@ export class SelectFollowupComponent extends GenericSelectComponent<TiersFollowu
 
   types: TiersFollowupType[] = [] as Array<TiersFollowupType>;
 
-  constructor(private formBuild: UntypedFormBuilder, private tiersFollowupTypeService: TiersFollowupTypeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private tiersFollowupTypeService: TiersFollowupTypeService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

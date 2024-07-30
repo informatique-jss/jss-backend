@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MotifFinEirlService } from 'src/app/modules/miscellaneous/services/guichet-unique/motif.fin.eirl.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { MotifFinEirl } from '../../../../../quotation/model/guichet-unique/referentials/MotifFinEirl';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-motif-fin-eirl',
@@ -14,8 +14,8 @@ export class SelectMotifFinEirlComponent extends GenericSelectComponent<MotifFin
 
   types: MotifFinEirl[] = [] as Array<MotifFinEirl>;
 
-  constructor(private formBuild: UntypedFormBuilder, private MotifFinEirlService: MotifFinEirlService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private MotifFinEirlService: MotifFinEirlService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

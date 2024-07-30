@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { CompetentAuthorityType } from '../../../model/CompetentAuthorityType';
 import { CompetentAuthorityTypeService } from '../../../services/competent.authority.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-competent-authority-type',
@@ -13,9 +13,9 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 export class SelectCompetentAuthorityTypeComponent extends GenericSelectComponent<CompetentAuthorityType> implements OnInit {
 
   types: CompetentAuthorityType[] = [] as Array<CompetentAuthorityType>;
-
-  constructor(private formBuild: UntypedFormBuilder, private competentAuthorityTypeService: CompetentAuthorityTypeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  isDisplayPreviewShortcut: boolean = true;
+  constructor(private formBuild: UntypedFormBuilder, private competentAuthorityTypeService: CompetentAuthorityTypeService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {
@@ -23,4 +23,5 @@ export class SelectCompetentAuthorityTypeComponent extends GenericSelectComponen
       this.types = response;
     })
   }
+
 }

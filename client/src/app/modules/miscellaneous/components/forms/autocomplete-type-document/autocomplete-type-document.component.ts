@@ -1,10 +1,10 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { TypeDocument } from 'src/app/modules/quotation/model/guichet-unique/referentials/TypeDocument';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { ConstantService } from '../../../services/constant.service';
 import { TypeDocumentService } from '../../../services/guichet-unique/type.document.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-type-document',
@@ -17,8 +17,8 @@ export class AutocompleteTypeDocumentComponent extends GenericLocalAutocompleteC
 
   constructor(private formBuild: UntypedFormBuilder, private typeDocumentService: TypeDocumentService,
     private constantService: ConstantService,
-    private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   ngOnChanges(changes: SimpleChanges): void {

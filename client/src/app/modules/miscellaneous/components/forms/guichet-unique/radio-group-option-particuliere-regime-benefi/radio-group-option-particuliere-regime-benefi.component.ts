@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { OptionParticuliereRegimeBenefiService } from 'src/app/modules/miscellaneous/services/guichet-unique/option.particuliere.regime.benefi.service';
 import { OptionParticuliereRegimeBenefi } from 'src/app/modules/quotation/model/guichet-unique/referentials/OptionParticuliereRegimeBenefi';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'radio-group-option-particuliere-regime-benefi',
@@ -14,8 +14,8 @@ export class RadioGroupOptionParticuliereRegimeBenefiComponent extends GenericRa
   types: OptionParticuliereRegimeBenefi[] = [] as Array<OptionParticuliereRegimeBenefi>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private OptionParticuliereRegimeBenefiService: OptionParticuliereRegimeBenefiService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private OptionParticuliereRegimeBenefiService: OptionParticuliereRegimeBenefiService, private appService3: AppService) {
+    super(formBuild, appService3);
   }
 
   initTypes(): void {

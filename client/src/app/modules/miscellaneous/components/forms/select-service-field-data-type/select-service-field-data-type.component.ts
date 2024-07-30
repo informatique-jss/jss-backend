@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../../libs/Constants';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-service-field-data-type',
@@ -13,9 +13,8 @@ import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE
 export class SelectServiceFieldDataTypeComponent extends GenericSelectComponent<string> implements OnInit {
   types: string[] = [] as Array<string>;
 
-  constructor(private formBuild: UntypedFormBuilder,
-    private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { DestinationLocationGeranceMandService } from 'src/app/modules/miscellaneous/services/guichet-unique/destination.location.gerance.mand.service';
 import { DestinationLocationGeranceMand } from 'src/app/modules/quotation/model/guichet-unique/referentials/DestinationLocationGeranceMand';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'radio-group-destination-location-gerance-mand',
@@ -14,8 +14,8 @@ export class RadioGroupDestinationLocationGeranceMandComponent extends GenericRa
   types: DestinationLocationGeranceMand[] = [] as Array<DestinationLocationGeranceMand>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private DestinationLocationGeranceMandService: DestinationLocationGeranceMandService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private DestinationLocationGeranceMandService: DestinationLocationGeranceMandService, private appService3: AppService) {
+    super(formBuild, appService3);
   }
 
   initTypes(): void {
