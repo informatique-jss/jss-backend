@@ -61,6 +61,8 @@ export class AccountingRecordComponent implements OnInit {
   tableActionToLetterValues: SortTableAction<AccountingRecordSearchResult>[] = [] as Array<SortTableAction<AccountingRecordSearchResult>>;
   bookmark: AccountingRecordSearch | undefined;
   refreshLetteringTable: Subject<void> = new Subject<void>();
+  accountingAccountId: string | undefined;
+
 
   canAddNewAccountingRecord() {
     return this.habilitationService.canAddNewAccountingRecord();
@@ -168,9 +170,9 @@ export class AccountingRecordComponent implements OnInit {
     } as SortTableAction<AccountingRecordSearchResult>);
 
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
-    let accountingAccountId = this.activatedRoute.snapshot.params.accountingAccountId;
-    if (url[1].path == "view" && accountingAccountId) {
-      this.accountingAccountService.getAccountingAccountById(accountingAccountId).subscribe(response => {
+    this.accountingAccountId = this.activatedRoute.snapshot.params.accountingAccountId;
+    if (url[1].path == "view" && this.accountingAccountId) {
+      this.accountingAccountService.getAccountingAccountById(parseInt(this.accountingAccountId)).subscribe(response => {
         this.accountingRecordSearch.accountingAccount = response;
         this.accountingRecordSearch.hideLettered = true;
         this.setCurentFiscalYear();
@@ -267,11 +269,10 @@ export class AccountingRecordComponent implements OnInit {
     if (this.accountingRecordSearch.startDate)
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
 
-    if (!this.tiersToDisplay && !this.accountingRecordSearch.idPayment)
+    if (!this.tiersToDisplay && !this.accountingRecordSearch.idPayment && !this.accountingAccountId)
       this.userPreferenceService.setUserSearchBookmark(this.accountingRecordSearch, "accounting-record");
     this.accountingRecordSearchService.searchAccountingRecords(this.accountingRecordSearch).subscribe(response => {
       this.accountingRecords = response;
-      this.computeBalanceAndDebitAndCreditAccumulation();
 
     });
   }
