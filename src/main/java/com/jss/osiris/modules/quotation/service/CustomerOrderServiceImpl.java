@@ -19,12 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-<<<<<<< HEAD
 import org.springframework.transaction.annotation.Propagation;
-=======
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
->>>>>>> 041e2ea0 (fix)
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
