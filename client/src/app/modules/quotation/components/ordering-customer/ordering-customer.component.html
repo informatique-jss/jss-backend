@@ -48,7 +48,7 @@
           </fieldset>
         </tr>
       </table>
-      <table class="full-width" *ngIf="quotation && quotation.id">
+      <table class="full-width" *ngIf="quotation">
         <tr>
           <td>
             <chips-mail [(model)]="getCustomerOrderForIQuotation(quotation).mails" label="Mails"
