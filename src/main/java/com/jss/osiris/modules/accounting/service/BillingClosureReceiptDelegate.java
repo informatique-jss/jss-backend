@@ -414,8 +414,8 @@ public class BillingClosureReceiptDelegate {
         value.setEventDescription("Facture n°" + invoice.getId());
         if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())
                 && invoice.getDirectDebitTransfert() != null)
-            value.setDirectDebitTransfertDateTime(
-                    invoice.getDirectDebitTransfert().getTransfertDateTime().toLocalDate());
+            value.setDirectDebitTransfertDateTime(invoice.getDirectDebitTransfert()
+                    .getTransfertDateTime().toLocalDate());
 
         if (invoice.getCustomerOrder() != null) {
             String customerOrderValue = invoice.getCustomerOrder().getId() != null
