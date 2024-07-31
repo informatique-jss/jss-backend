@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -416,7 +415,8 @@ public class BillingClosureReceiptDelegate {
         if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())
                 && invoice.getDirectDebitTransfert() != null)
             value.setDirectDebitTransfertDateTime(
-                    invoice.getDirectDebitTransfert().getTransfertDateTime().toLocalDate());
+                    invoice.getDirectDebitTransfert().getTransfertDateTime()
+                            .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
         if (invoice.getCustomerOrder() != null) {
             String customerOrderValue = invoice.getCustomerOrder().getId() != null

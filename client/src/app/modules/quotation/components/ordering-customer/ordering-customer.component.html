@@ -15,12 +15,6 @@
       </table>
       <table class="full-width">
         <tr>
-          <td style="vertical-align: middle;width : 30px">
-            <button *ngIf="quotation.responsable" mat-icon-button matTooltip="Voir le client" color="accent"
-              class="edit-icon" (click)="openRoute($event,'/tiers/'+quotation.responsable.tiers.id)"
-              (auxclick)="openRoute($event,'/tiers/'+quotation.responsable.tiers.id)"><mat-icon>visibility</mat-icon>
-            </button>
-          </td>
           <fieldset [disabled]="editMode==false" class="fieldset-no-border">
             <td *ngIf="!searchedResponsable && !quotation.confrere" style="vertical-align: middle;">
               <autocomplete-tiers-individual [(model)]="searchedTiers" [form]="orderingCustomerForm" label="Tiers"
