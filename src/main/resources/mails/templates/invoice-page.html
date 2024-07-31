@@ -98,7 +98,7 @@
                     <tr>
                         <td>
                             <span th:if="${invoice.billingLabelIntercommunityVat!=null}">Numéro de TVA :<span
-                                    th:text="${invoice.billingLabelIntercommunityVat}"></span>
+                                    th:text="${invoice.billingLabelIntercommunityVat}"></span></span>
                         </td>
                     </tr>
                 </table>
@@ -263,7 +263,10 @@
             </td>
         </tr>
     </table>
-    <p style="font-size: 12px;">Echéance de paiement : <span th:text="${invoiceDueDate}"></span></p>
+    <p style="font-size: 12px;" th:if="${!isPrelevementType}">Echéance de paiement : <span
+            th:text="${invoiceDueDate}"></span></p>
+    <p style="font-size: 12px;" th:if="${isPrelevementType}">Date d'exécution du prélèvement : <span
+            th:text="${invoiceDueDate}"></span></p>
     <p style="font-size: 12px;">Retard de paiement. Maj de 3 fois le taux d’intérêt légal (Application du CC - Article
         L441-6)<br />
         TVA acquittée sur les débits</p>

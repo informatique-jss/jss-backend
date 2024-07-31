@@ -86,8 +86,14 @@
             <td th:classappend="${values.displayBottomBorder} ? border-table : none-class"
                 th:if="${values.eventDescription!=null} and ${values.eventDateString!=null}"
                 style="border-right: solid;border-color: rgb(0,83,159)">
-                <span th:utext="${values.eventDescription}"></span> <span th:if="${values.eventCbLink!=null}"> (payer <a
+                <span th:utext="${values.eventDescription}"></span> <span
+                    th:if="${values.eventCbLink!=null} and ${values.directDebitTransfertDate==null}"> (payer <a
                         th:href="${values.eventCbLink}">ici</a>)</span>
+                <br>
+                <span th:if="${values.directDebitTransfertDate!=null}"> Date d'exécution du prélèvement : <span
+                        th:text="${#temporals.format(values.directDebitTransfertDate, 'dd/MM/yyyy')}">
+                    </span></span>
+                </br>
             </td>
             <td th:classappend="${values.displayBottomBorder} ? border-table : none-class"
                 th:if="${values.eventDescription!=null} and ${values.eventDateString==null}"
