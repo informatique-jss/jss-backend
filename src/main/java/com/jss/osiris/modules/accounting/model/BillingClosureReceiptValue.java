@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.accounting.model;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class BillingClosureReceiptValue {
     private LocalDateTime eventDateTime;
@@ -10,6 +11,7 @@ public class BillingClosureReceiptValue {
     private Float creditAmount;
     private Float debitAmount;
     private boolean displayBottomBorder;
+    private LocalDate directDebitTransfertDateTime;
 
     public BillingClosureReceiptValue() {
     }
@@ -74,4 +76,11 @@ public class BillingClosureReceiptValue {
         this.displayBottomBorder = displayBottomBorder;
     }
 
+    public LocalDate getDirectDebitTransfertDateTime() {
+        return directDebitTransfertDateTime;
+    }
+
+    public void setDirectDebitTransfertDateTime(LocalDate transfertDateTime) {
+        this.directDebitTransfertDateTime = transfertDateTime;
+    }
 }

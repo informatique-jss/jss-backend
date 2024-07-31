@@ -451,6 +451,10 @@ public class GeneratePdfDelegate {
         ctx.setVariable("vats", vats);
         ctx.setVariable("priceTotal", Math.round(invoiceHelper.getPriceTotal(invoice) * 100f) / 100f);
         ctx.setVariable("invoice", invoice);
+        if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId()))
+            ctx.setVariable("isPrelevementType", true);
+        else
+            ctx.setVariable("isPrelevementType", false);
 
         // Group debours invoice items for credit note
         if (originalInvoice != null && invoice != null && invoice.getInvoiceItems() != null) {
