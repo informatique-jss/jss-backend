@@ -87,11 +87,11 @@
                 th:if="${values.eventDescription!=null} and ${values.eventDateString!=null}"
                 style="border-right: solid;border-color: rgb(0,83,159)">
                 <span th:utext="${values.eventDescription}"></span> <span
-                    th:if="${values.eventCbLink!=null} and ${values.directDebitTransfertDateString==null}"> (payer <a
+                    th:if="${values.eventCbLink!=null} and ${values.directDebitTransfertDate==null}"> (payer <a
                         th:href="${values.eventCbLink}">ici</a>)</span>
                 <br>
-                <span th:if="${values.directDebitTransfertDateString!=null}"> Date d'exécution du prélèvement : <span
-                        th:text="${values.directDebitTransfertDateString}">
+                <span th:if="${values.directDebitTransfertDate!=null}"> Date d'exécution du prélèvement : <span
+                        th:text="${values.directDebitTransfertDate}">
                     </span></span>
                 </br>
             </td>
