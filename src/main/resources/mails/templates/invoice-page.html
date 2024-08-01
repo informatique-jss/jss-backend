@@ -59,7 +59,8 @@
                 <span th:if="${invoice.isCreditNote==false}">Facture : <span
                         th:text="${invoice.id}"></span><br /></span>
                 <span th:if="${tiersReference!=null}">N° client : <span th:text="${tiersReference}"></span><br /></span>
-                <span>Commande n°<span th:text="${customerOrder.id}"></span><span th:id="${recurringParentId!=null}"> -
+                <span th:if="${customerOrder!=null}">Commande n°<span th:text="${customerOrder.id}"></span><span
+                        th:id="${recurringParentId!=null}">
                         <span th:text="${recurringParentId}"></span></span><br /></span>
                 <span th:if="${quotation!=null}">Devis : <span th:text="${quotation.id}"></span><br /></span>
                 <span th:if="${responsableOnBilling!=null}">Commande transmise par :<span
@@ -97,8 +98,9 @@
                 <table style=" width: 100%;">
                     <tr>
                         <td>
-                            <span th:if="${invoice.billingLabelIntercommunityVat!=null}">Numéro de TVA :<span
-                                    th:text="${invoice.billingLabelIntercommunityVat}"></span></span>
+                            <span
+                                th:if="${invoice.billingLabelIntercommunityVat!=null} and ${invoice.billingLabelIntercommunityVat.length()>0} ">Numéro
+                                de TVA :<span th:text="${invoice.billingLabelIntercommunityVat}"></span></span>
                         </td>
                     </tr>
                 </table>
@@ -111,7 +113,7 @@
     </div>
     <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;"
         th:if="${reverseCreditNote==null}">
-        <th:block th:each="asso : ${assos}">
+        <th:block th:if="${assos!=null}" th:each="asso : ${assos}">
             <tr>
                 <td style="padding-top: 20px; text-align : center" th:if="${asso.affaire.denomination!=null} "
                     colspan="2">
@@ -157,6 +159,28 @@
                 </th:block>
             </th:block>
         </th:block>
+
+        <th:block th:each="invoiceItem : ${invoiceItems}"
+            th:if="${invoiceItems!=null} and (${invoiceItem.preTaxPrice!=0} or ${invoiceItem.isGifted})">
+            <tr>
+                <td style="padding-left: 10px">
+                    <span th:text="${invoiceItem.label}"></span>
+                </td>
+                <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                    <span th:text="${#numbers.formatDecimal(invoiceItem.preTaxPrice,1,2)}"></span>
+                    €
+                </td>
+            </tr>
+            <tr th:if="${invoiceItem.discountAmount!=null} and ${invoiceItem.discountAmount>0}">
+                <td>
+                    <span style="padding-left: 10px">Remise</span>
+                </td>
+                <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                    - <span th:text="${#numbers.formatDecimal(invoiceItem.discountAmount,1,2)}"></span>
+                    €</td>
+            </tr>
+        </th:block>
+
     </table>
     <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;"
         th:if="${reverseCreditNote!=null}">

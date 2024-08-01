@@ -273,6 +273,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         addOrUpdateInvoice(invoice);
+        if (invoice.getIsInvoiceFromProvider() == false)
+            generateInvoicePdf(invoice, invoice.getCustomerOrder());
 
         // Associate attachment for azure invoice
         if (invoice.getAzureInvoice() != null) {
@@ -280,6 +282,42 @@ public class InvoiceServiceImpl implements InvoiceService {
                     .getAttachment(invoice.getAzureInvoice().getAttachments().get(0).getId());
             attachment.setInvoice(invoice);
             attachmentService.addOrUpdateAttachment(attachment);
+        }
+        return invoice;
+    }
+
+    public Invoice generateInvoicePdf(Invoice invoice, CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+        // Create invoice PDF and attach it to customerOrder and invoice
+        File invoicePdf = generatePdfDelegate.generateInvoicePdf(customerOrder, invoice, null);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+        try {
+            List<Attachment> attachments = new ArrayList<Attachment>();
+            if (customerOrder != null)
+                attachments = attachmentService.addAttachment(new FileInputStream(invoicePdf),
+                        customerOrder.getId(), null,
+                        CustomerOrder.class.getSimpleName(),
+                        constantService.getAttachmentTypeInvoice(),
+                        "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                        false, "Facture n°" + invoice.getId(), null, null, null);
+            else
+                attachments = attachmentService.addAttachment(new FileInputStream(invoicePdf),
+                        invoice.getId(), null,
+                        Invoice.class.getSimpleName(),
+                        constantService.getAttachmentTypeInvoice(),
+                        "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                        false, "Facture n°" + invoice.getId(), null, null, null);
+
+            for (Attachment attachment : attachments)
+                if (attachment.getDescription().contains(invoice.getId() + "")) {
+                    attachment.setInvoice(invoice);
+                    attachmentService.addOrUpdateAttachment(attachment);
+                }
+
+        } catch (FileNotFoundException e) {
+            throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+        } finally {
+            invoicePdf.delete();
         }
         return invoice;
     }
@@ -401,7 +439,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
                 List<Attachment> attachments = attachmentService.addAttachment(new FileInputStream(creditNotePdf),
-                        customerOrder.getId(),null,
+                        customerOrder.getId(), null,
                         CustomerOrder.class.getSimpleName(),
                         constantService.getAttachmentTypeCreditNote(),
                         "Credit_note_" + creditNote.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
