@@ -1,8 +1,9 @@
 package com.jss.osiris.modules.accounting.repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import javax.persistence.QueryHint;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -11,7 +12,6 @@ import org.springframework.data.repository.query.Param;
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
-import com.jss.osiris.modules.accounting.model.AccountingBalanceBilan;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
@@ -19,8 +19,6 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-
-import jakarta.persistence.QueryHint;
 
 public interface AccountingRecordRepository extends QueryCacheCrudRepository<AccountingRecord, Integer> {
 
@@ -132,7 +130,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         "select  round(cast(sum(case "
                         + "            when record.isanouveau=false or record.is_from_as400=true then record.credit_amount "
                         + "        end)  as numeric), 2) as creditAmount," + "        round(cast(sum(case "
-                        + "            when record.isanouveau=false or record.is_from_as400=true then record.debit_amount "
+                        + "            when record.isanouveau=false or record.is_from_as400=true then round(cast(r.debit_amount as numeric), 2) "
                         + "        end) as numeric), 2) as debitAmount,"
                         + "		accounting.label as accountingAccountLabel,"
                         + "		pa.code as principalAccountingAccountCode,"
@@ -206,19 +204,6 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("endDate") LocalDateTime endDate,
                         @Param("canViewRestricted") boolean canViewRestricted,
                         @Param("isFromAs400") Boolean isFromAs400);
-
-        @Query("select sum(a.creditAmount) as creditAmount, " +
-                        " sum(a.debitAmount) as debitAmount, pa.code as accountingAccountNumber "
-                        +
-                        " from AccountingRecord a  JOIN a.accountingAccount aa  JOIN aa.principalAccountingAccount pa  where "
-                        +
-                        "(a.accountingDateTime is null or (coalesce(a.manualAccountingDocumentDate,a.accountingDateTime) >=:startDate and coalesce(a.manualAccountingDocumentDate,a.accountingDateTime) <=:endDate ))   "
-                        + " and (:canViewRestricted=true or aa.isViewRestricted=false)  " +
-                        " group by pa.code ")
-        List<AccountingBalanceBilan> getAccountingRecordAggregateByAccountingNumber(
-                        @Param("startDate") LocalDate startDate,
-                        @Param("endDate") LocalDate endDate,
-                        @Param("canViewRestricted") boolean canViewRestricted);
 
         List<AccountingRecord> findByAccountingAccountAndInvoice(AccountingAccount accountingAccountCustomer,
                         Invoice invoice);

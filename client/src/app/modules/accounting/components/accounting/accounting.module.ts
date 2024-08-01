@@ -19,8 +19,6 @@ import { MiscellaneousModule } from "../../../miscellaneous/components/miscellan
 import { AddAccountingRecordComponent } from "../add-accounting-record/add-accounting-record.component";
 import { AccountingBalanceGeneraleComponent } from "./../accounting-balance-generale/accounting-balance-generale.component";
 import { AccountingBalanceComponent } from "./../accounting-balance/accounting-balance.component";
-import { AccountingBilanComponent } from "./../accounting-bilan/accounting-bilan.component";
-import { AccountingProfitLostComponent } from "./../accounting-profit-lost/accounting-profit-lost.component";
 import { AccountingRecordComponent } from "./../accounting-record/accounting-record.component";
 import { AccountingComponent } from "./accounting.component";
 
@@ -53,9 +51,7 @@ const routes: Routes = [
   ],
   declarations: [AccountingComponent,
     AccountingRecordComponent,
-    AccountingBilanComponent,
     AccountingBalanceComponent,
-    AccountingProfitLostComponent,
     AccountingBalanceGeneraleComponent,
     AddAccountingRecordComponent,
   ],

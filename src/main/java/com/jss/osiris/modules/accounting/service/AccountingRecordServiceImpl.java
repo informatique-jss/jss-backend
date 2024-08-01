@@ -23,9 +23,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
-import com.jss.osiris.modules.accounting.model.AccountingBalanceBilan;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceSearch;
-import com.jss.osiris.modules.accounting.model.AccountingBalanceViewTitle;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
@@ -181,7 +179,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             accountingRecord.setAccountingId(maxIdAccounting);
             accountingRecord.setOperationId(definitiveIdOperation.get(accountingRecord.getTemporaryOperationId()));
             accountingRecord.setIsTemporary(false);
-            addOrUpdateAccountingRecord(accountingRecord, false);
+            addOrUpdateAccountingRecord(accountingRecord, true);
             maxIdAccounting++;
           }
         }
@@ -335,39 +333,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public List<AccountingBalanceViewTitle> getBilan(LocalDateTime startDate, LocalDateTime endDate) {
-    List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.toLocalDate(), endDate.toLocalDate(),
-            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-
-    List<AccountingBalanceBilan> accountingRecordsN1 = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1).toLocalDate(),
-            endDate.minusYears(1).toLocalDate(),
-            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-
-    ArrayList<AccountingBalanceViewTitle> outBilan = new ArrayList<AccountingBalanceViewTitle>();
-
-    outBilan.add(accountingBalanceHelper.getBilanActif(accountingRecords, accountingRecordsN1));
-    outBilan.add(accountingBalanceHelper.getBilanPassif(accountingRecords, accountingRecordsN1));
-
-    return outBilan;
-  }
-
-  @Override
-  public List<AccountingBalanceViewTitle> getProfitAndLost(LocalDateTime startDate, LocalDateTime endDate) {
-    List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.toLocalDate(), endDate.toLocalDate(),
-            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-
-    List<AccountingBalanceBilan> accountingRecordsN1 = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1).toLocalDate(),
-            endDate.minusYears(1).toLocalDate(),
-            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-
-    return accountingBalanceHelper.getProfitAndLost(accountingRecords, accountingRecordsN1);
-  }
-
-  @Override
   public File getGrandLivreExport(AccountingRecordSearch accountingRecordSearch) throws OsirisException {
     return accountingExportHelper.getGrandLivre(searchAccountingRecords(accountingRecordSearch, true),
         accountingRecordSearch.getStartDate(), accountingRecordSearch.getEndDate());
@@ -386,33 +351,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return accountingExportHelper.getAccountingAccount(searchAccountingRecords(accountingRecordSearch, true),
         accountingRecordSearch.getAccountingAccount(), accountingRecordSearch.getStartDate(),
         accountingRecordSearch.getEndDate());
-  }
-
-  @Override
-  public File getProfitLostExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
-    return accountingExportHelper.getProfitAndLost(this.getProfitAndLost(startDate, endDate));
-  }
-
-  @Override
-  public File getBilanExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
-    List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.toLocalDate(), endDate.toLocalDate(),
-            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-
-    List<AccountingBalanceBilan> accountingRecordsN1 = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1).toLocalDate(),
-            endDate.minusYears(1).toLocalDate(),
-            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-
-    ArrayList<AccountingBalanceViewTitle> outBilanActif = new ArrayList<AccountingBalanceViewTitle>();
-
-    outBilanActif.add(accountingBalanceHelper.getBilanActif(accountingRecords, accountingRecordsN1));
-
-    ArrayList<AccountingBalanceViewTitle> outBilanPassif = new ArrayList<AccountingBalanceViewTitle>();
-
-    outBilanPassif.add(accountingBalanceHelper.getBilanPassif(accountingRecords, accountingRecordsN1));
-
-    return accountingExportHelper.getBilan(outBilanActif, outBilanPassif);
   }
 
   @Override
