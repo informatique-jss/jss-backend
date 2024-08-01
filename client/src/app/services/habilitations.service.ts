@@ -144,7 +144,7 @@ export class HabilitationsService {
   }
 
   canPutInAnyAccountingAccount() {
-    return this.loginService.hasGroup([ADMINISTRATEURS])
+    return this.loginService.hasGroup([ADMINISTRATEURS, ACCOUNTING])
   }
 
   canCutPayment() {
@@ -168,10 +168,6 @@ export class HabilitationsService {
   }
 
   canByPassMultipleCustomerOrderOnAssociationCheck() {
-    return this.loginService.hasGroup([ADMINISTRATEURS]);
-  }
-
-  canPutNegativePaymentIntoAccount() {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
   }
 
