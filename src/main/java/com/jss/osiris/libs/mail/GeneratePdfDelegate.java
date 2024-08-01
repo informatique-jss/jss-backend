@@ -522,10 +522,21 @@ public class GeneratePdfDelegate {
                             ? customerOrder.getQuotations().get(0)
                             : null);
         } else {
-            ctx.setVariable("tiersReference", invoice.getResponsable().getTiers().getId()
-                    + (invoice.getResponsable().getTiers().getIdAs400() != null
-                            ? ("/" + invoice.getResponsable().getTiers().getIdAs400())
-                            : ""));
+            Tiers invoiceTiers = null;
+            if (invoice.getResponsable() != null)
+                invoiceTiers = invoice.getResponsable().getTiers();
+            if (invoice.getTiers() != null)
+                invoiceTiers = invoice.getTiers();
+
+            ctx.setVariable("tiersReference", null);
+            if (invoiceTiers != null)
+                ctx.setVariable("tiersReference", invoiceTiers.getId()
+                        + (invoiceTiers.getIdAs400() != null ? ("/" + invoiceTiers.getIdAs400()) : ""));
+
+            Float remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+            if (remainingToPay != null && remainingToPay >= 0
+                    && remainingToPay > Float.parseFloat(payementLimitRefundInEuros))
+                ctx.setVariable("remainingToPay", remainingToPay);
         }
 
         LocalDateTime localDate = invoice.getCreatedDate();
@@ -542,7 +553,8 @@ public class GeneratePdfDelegate {
                 ctx.setVariable("recurringEndDate",
                         customerOrder.getRecurringEndDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                 if (customerOrder.getCustomerOrderParentRecurring() != null)
-                    ctx.setVariable("recurringParentId", customerOrder.getCustomerOrderParentRecurring().getId());
+                    ctx.setVariable("recurringParentId",
+                            " - " + customerOrder.getCustomerOrderParentRecurring().getId());
             }
         }
         // Create the HTML body using Thymeleaf

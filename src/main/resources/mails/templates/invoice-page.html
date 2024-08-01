@@ -60,7 +60,7 @@
                         th:text="${invoice.id}"></span><br /></span>
                 <span th:if="${tiersReference!=null}">N° client : <span th:text="${tiersReference}"></span><br /></span>
                 <span th:if="${customerOrder!=null}">Commande n°<span th:text="${customerOrder.id}"></span><span
-                        th:id="${recurringParentId!=null}"> -
+                        th:id="${recurringParentId!=null}">
                         <span th:text="${recurringParentId}"></span></span><br /></span>
                 <span th:if="${quotation!=null}">Devis : <span th:text="${quotation.id}"></span><br /></span>
                 <span th:if="${responsableOnBilling!=null}">Commande transmise par :<span
@@ -98,8 +98,9 @@
                 <table style=" width: 100%;">
                     <tr>
                         <td>
-                            <span th:if="${invoice.billingLabelIntercommunityVat!=null}">Numéro de TVA :<span
-                                    th:text="${invoice.billingLabelIntercommunityVat}"></span></span>
+                            <span
+                                th:if="${invoice.billingLabelIntercommunityVat!=null} and ${invoice.billingLabelIntercommunityVat.length()>0} ">Numéro
+                                de TVA :<span th:text="${invoice.billingLabelIntercommunityVat}"></span></span>
                         </td>
                     </tr>
                 </table>
