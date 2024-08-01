@@ -19,6 +19,10 @@ public interface InvoiceService {
 
         public Invoice getInvoice(Integer id);
 
+        public Invoice generateInvoice(Invoice invoice, CustomerOrder customerOrder)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
+
         public List<Invoice> findByCompetentAuthorityAndManualDocumentNumber(CompetentAuthority competentAuthority,
                         String manualDocumentNumber);
 

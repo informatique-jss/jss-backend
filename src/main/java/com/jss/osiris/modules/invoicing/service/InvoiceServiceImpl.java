@@ -13,7 +13,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.batch.model.Batch;
@@ -43,19 +42,24 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
+import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
+import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
-@Service
+@org.springframework.stereotype.Service
 public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
@@ -90,6 +94,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     TiersService tiersService;
+
+    @Autowired
+    QuotationService quotationService;
 
     @Autowired
     ConfrereService confrereService;
@@ -273,6 +280,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         addOrUpdateInvoice(invoice);
+        if (invoice.getIsInvoiceFromProvider() == false)
+            generateInvoice(invoice, invoice.getCustomerOrder());
 
         // Associate attachment for azure invoice
         if (invoice.getAzureInvoice() != null) {
@@ -280,6 +289,42 @@ public class InvoiceServiceImpl implements InvoiceService {
                     .getAttachment(invoice.getAzureInvoice().getAttachments().get(0).getId());
             attachment.setInvoice(invoice);
             attachmentService.addOrUpdateAttachment(attachment);
+        }
+        return invoice;
+    }
+
+    public Invoice generateInvoice(Invoice invoice, CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+        // Create invoice PDF and attach it to customerOrder and invoice
+        File invoicePdf = generatePdfDelegate.generateInvoicePdf(customerOrder, invoice, null);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+        try {
+            List<Attachment> attachments = new ArrayList<Attachment>();
+            if (customerOrder != null)
+                attachments = attachmentService.addAttachment(new FileInputStream(invoicePdf),
+                        customerOrder.getId(), null,
+                        CustomerOrder.class.getSimpleName(),
+                        constantService.getAttachmentTypeInvoice(),
+                        "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                        false, "Facture n°" + invoice.getId(), null, null, null);
+            else
+                attachments = attachmentService.addAttachment(new FileInputStream(invoicePdf),
+                        invoice.getId(), null,
+                        Invoice.class.getSimpleName(),
+                        constantService.getAttachmentTypeInvoice(),
+                        "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                        false, "Facture n°" + invoice.getId(), null, null, null);
+
+            for (Attachment attachment : attachments)
+                if (attachment.getDescription().contains(invoice.getId() + "")) {
+                    attachment.setInvoice(invoice);
+                    attachmentService.addOrUpdateAttachment(attachment);
+                }
+
+        } catch (FileNotFoundException e) {
+            throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+        } finally {
+            invoicePdf.delete();
         }
         return invoice;
     }
@@ -401,7 +446,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
                 List<Attachment> attachments = attachmentService.addAttachment(new FileInputStream(creditNotePdf),
-                        customerOrder.getId(),null,
+                        customerOrder.getId(), null,
                         CustomerOrder.class.getSimpleName(),
                         constantService.getAttachmentTypeCreditNote(),
                         "Credit_note_" + creditNote.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",

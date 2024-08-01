@@ -392,23 +392,27 @@ public class GeneratePdfDelegate {
             ctx.setVariable("discountTotal", invoiceHelper.getDiscountTotal(invoice));
 
         // Group debouts for asso invoice item debours
-        List<AssoAffaireOrder> assos = new ArrayList<AssoAffaireOrder>();
-        if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
-            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
-                if (asso.getServices() != null)
-                    for (Service service : asso.getServices()) {
-                        if (service.getProvisions() != null) {
-                            ArrayList<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
-                            for (Provision provision : service.getProvisions()) {
-                                invoiceItems.addAll(provision.getInvoiceItems());
+        if (customerOrder != null) {
+            List<AssoAffaireOrder> assos = new ArrayList<AssoAffaireOrder>();
+            if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
+                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+                    if (asso.getServices() != null)
+                        for (Service service : asso.getServices()) {
+                            if (service.getProvisions() != null) {
+                                ArrayList<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
+                                for (Provision provision : service.getProvisions()) {
+                                    invoiceItems.addAll(provision.getInvoiceItems());
+                                }
+                                service.getProvisions().get(0)
+                                        .setInvoiceItems(getGroupedInvoiceItemsForDebours(invoiceItems));
                             }
-                            service.getProvisions().get(0)
-                                    .setInvoiceItems(getGroupedInvoiceItemsForDebours(invoiceItems));
                         }
-                    }
-                assos.add(asso);
-            }
-        ctx.setVariable("assos", assos);
+                    assos.add(asso);
+                }
+            ctx.setVariable("assos", assos);
+        } else {
+            ctx.setVariable("invoiceItems", invoice.getInvoiceItems());
+        }
 
         ctx.setVariable("preTaxPriceTotalWithDicount", invoiceHelper.getPreTaxPriceTotal(invoice)
                 - (invoiceHelper.getDiscountTotal(invoice) != null
@@ -460,62 +464,69 @@ public class GeneratePdfDelegate {
             ctx.setVariable("reverseInvoiceItems", getGroupedInvoiceItemsForDebours(invoice.getInvoiceItems()));
         }
 
-        Document billingDocument = documentService.getDocumentByDocumentType(customerOrder.getDocuments(),
-                constantService.getDocumentTypeBilling());
-        if (billingDocument != null) {
-            if (billingDocument.getExternalReference() != null)
-                ctx.setVariable("externalReference", billingDocument.getExternalReference());
+        if (customerOrder != null) {
+            Document billingDocument = documentService.getDocumentByDocumentType(customerOrder.getDocuments(),
+                    constantService.getDocumentTypeBilling());
+            if (billingDocument != null) {
+                if (billingDocument.getExternalReference() != null)
+                    ctx.setVariable("externalReference", billingDocument.getExternalReference());
 
-            // Responsable on billing
-            if (billingDocument.getIsResponsableOnBilling() != null && billingDocument.getIsResponsableOnBilling()
-                    && customerOrder.getResponsable() != null)
-                ctx.setVariable("responsableOnBilling", customerOrder.getResponsable().getFirstname() + " "
-                        + customerOrder.getResponsable().getLastname());
+                // Responsable on billing
+                if (billingDocument.getIsResponsableOnBilling() != null && billingDocument.getIsResponsableOnBilling()
+                        && customerOrder.getResponsable() != null)
+                    ctx.setVariable("responsableOnBilling", customerOrder.getResponsable().getFirstname() + " "
+                            + customerOrder.getResponsable().getLastname());
 
-        }
-
-        ctx.setVariable("customerOrder", customerOrder);
-
-        Tiers invoiceTiers = null;
-        if (customerOrder.getResponsable() != null)
-            invoiceTiers = customerOrder.getResponsable().getTiers();
-        if (customerOrder.getTiers() != null)
-            invoiceTiers = customerOrder.getTiers();
-
-        ctx.setVariable("tiersReference", null);
-        if (invoiceTiers != null)
-            ctx.setVariable("tiersReference", invoiceTiers.getId()
-                    + (invoiceTiers.getIdAs400() != null ? ("/" + invoiceTiers.getIdAs400()) : ""));
-
-        ctx.setVariable("quotation",
-                customerOrder.getQuotations() != null && customerOrder.getQuotations().size() > 0
-                        ? customerOrder.getQuotations().get(0)
-                        : null);
-
-        Float remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
-        ArrayList<Payment> invoicePayment = new ArrayList<Payment>();
-        if (invoice.getPayments() != null)
-            for (Payment payment : invoice.getPayments()) {
-                if (!payment.getIsCancelled())
-                    invoicePayment.add(payment);
             }
 
-        if (customerOrder.getPayments() != null)
-            for (Payment payment : customerOrder.getPayments())
-                if (!payment.getIsCancelled()) {
-                    invoicePayment.add(payment);
-                    remainingToPay -= payment.getPaymentAmount();
+            ctx.setVariable("customerOrder", customerOrder);
+
+            Float remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+            ArrayList<Payment> invoicePayment = new ArrayList<Payment>();
+            if (invoice.getPayments() != null)
+                for (Payment payment : invoice.getPayments()) {
+                    if (!payment.getIsCancelled())
+                        invoicePayment.add(payment);
                 }
 
-        if (invoicePayment.size() > 0)
-            ctx.setVariable("payments", invoicePayment);
+            if (customerOrder.getPayments() != null)
+                for (Payment payment : customerOrder.getPayments())
+                    if (!payment.getIsCancelled()) {
+                        invoicePayment.add(payment);
+                        remainingToPay -= payment.getPaymentAmount();
+                    }
 
-        if (invoice.getCustomerOrder() != null && invoice.getCustomerOrder().getRefunds() != null)
-            ctx.setVariable("refunds", invoice.getCustomerOrder().getRefunds());
+            if (invoicePayment.size() > 0)
+                ctx.setVariable("payments", invoicePayment);
 
-        if (remainingToPay != null && remainingToPay >= 0
-                && remainingToPay > Float.parseFloat(payementLimitRefundInEuros))
-            ctx.setVariable("remainingToPay", remainingToPay);
+            if (invoice.getCustomerOrder() != null && invoice.getCustomerOrder().getRefunds() != null)
+                ctx.setVariable("refunds", invoice.getCustomerOrder().getRefunds());
+
+            if (remainingToPay != null && remainingToPay >= 0
+                    && remainingToPay > Float.parseFloat(payementLimitRefundInEuros))
+                ctx.setVariable("remainingToPay", remainingToPay);
+
+            Tiers invoiceTiers = null;
+            if (customerOrder.getResponsable() != null)
+                invoiceTiers = customerOrder.getResponsable().getTiers();
+            if (customerOrder.getTiers() != null)
+                invoiceTiers = customerOrder.getTiers();
+
+            ctx.setVariable("tiersReference", null);
+            if (invoiceTiers != null)
+                ctx.setVariable("tiersReference", invoiceTiers.getId()
+                        + (invoiceTiers.getIdAs400() != null ? ("/" + invoiceTiers.getIdAs400()) : ""));
+
+            ctx.setVariable("quotation",
+                    customerOrder.getQuotations() != null && customerOrder.getQuotations().size() > 0
+                            ? customerOrder.getQuotations().get(0)
+                            : null);
+        } else {
+            ctx.setVariable("tiersReference", invoice.getResponsable().getTiers().getId()
+                    + (invoice.getResponsable().getTiers().getIdAs400() != null
+                            ? ("/" + invoice.getResponsable().getTiers().getIdAs400())
+                            : ""));
+        }
 
         LocalDateTime localDate = invoice.getCreatedDate();
         DateTimeFormatter formatter = DateTimeFormatter
@@ -524,15 +535,16 @@ public class GeneratePdfDelegate {
         ctx.setVariable("invoiceDueDate", invoice.getDueDate().format(formatter));
 
         // Recurring
-        if (customerOrder.getRecurringStartDate() != null) {
-            ctx.setVariable("recurringStartDate",
-                    customerOrder.getRecurringStartDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            ctx.setVariable("recurringEndDate",
-                    customerOrder.getRecurringEndDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            if (customerOrder.getCustomerOrderParentRecurring() != null)
-                ctx.setVariable("recurringParentId", customerOrder.getCustomerOrderParentRecurring().getId());
+        if (customerOrder != null) {
+            if (customerOrder.getRecurringStartDate() != null) {
+                ctx.setVariable("recurringStartDate",
+                        customerOrder.getRecurringStartDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                ctx.setVariable("recurringEndDate",
+                        customerOrder.getRecurringEndDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                if (customerOrder.getCustomerOrderParentRecurring() != null)
+                    ctx.setVariable("recurringParentId", customerOrder.getCustomerOrderParentRecurring().getId());
+            }
         }
-
         // Create the HTML body using Thymeleaf
         final String htmlContent = StringEscapeUtils
                 .unescapeHtml4(mailHelper.emailTemplateEngine().process("invoice-page", ctx));
