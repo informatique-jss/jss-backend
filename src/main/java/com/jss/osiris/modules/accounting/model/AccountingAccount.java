@@ -39,6 +39,8 @@ public class AccountingAccount implements Serializable, IId {
 	@Column(nullable = false)
 	private Boolean isViewRestricted;
 
+	private Boolean isAllowedToPutIntoAccount;
+
 	public Integer getId() {
 		return id;
 	}
@@ -79,4 +81,11 @@ public class AccountingAccount implements Serializable, IId {
 		this.isViewRestricted = isViewRestricted;
 	}
 
+	public Boolean getIsAllowedToPutIntoAccount() {
+		return isAllowedToPutIntoAccount;
+	}
+
+	public void setIsAllowedToPutIntoAccount(Boolean isAllowedToPutIntoAccount) {
+		this.isAllowedToPutIntoAccount = isAllowedToPutIntoAccount;
+	}
 }
