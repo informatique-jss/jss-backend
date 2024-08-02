@@ -41,7 +41,6 @@ import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.repository.PaymentRepository;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
-import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -1326,38 +1325,6 @@ public class PaymentServiceImpl implements PaymentService {
 
         payment = payment.getOriginPayment();
         return getOriginalPaymentOfPayment(payment);
-    }
-
-    @Override
-    public void putPaymentInCompetentAuthorityAccount(Payment payment, CompetentAuthority competentAuthority)
-            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
-        cancelPayment(payment);
-        Payment newPayment = null;
-        if (payment.getPaymentAmount() > 0) {
-            newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
-                    competentAuthority.getAccountingAccountDeposit());
-            // If not from bank or null, set it to default bank account
-            if (newPayment.getTargetAccountingAccount() == null
-                    || !newPayment.getTargetAccountingAccount().getPrincipalAccountingAccount().getId()
-                            .equals(constantService.getPrincipalAccountingAccountBank().getId()))
-                newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
-            accountingRecordGenerationService
-                    .generateAccountingRecordOnIncomingPaymentOnDepositCompetentAuthorityAccount(newPayment);
-            newPayment.setCompetentAuthority(competentAuthority);
-        } else {
-            newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
-                    competentAuthority.getAccountingAccountDeposit());
-            // If not from bank or null, set it to default bank account
-            if (newPayment.getSourceAccountingAccount() == null
-                    || !newPayment.getSourceAccountingAccount().getPrincipalAccountingAccount().getId()
-                            .equals(constantService.getPrincipalAccountingAccountBank().getId()))
-                newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
-            newPayment.setTargetAccountingAccount(competentAuthority.getAccountingAccountProvider());
-            accountingRecordGenerationService
-                    .generateAccountingRecordOnOutgoingPaymentOnDepositCompetentAuthorityAccount(newPayment);
-            newPayment.setCompetentAuthority(competentAuthority);
-        }
-        addOrUpdatePayment(newPayment);
     }
 
     @Override
