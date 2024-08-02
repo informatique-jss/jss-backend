@@ -377,7 +377,7 @@ public class InvoicingController {
         if (account == null)
             throw new OsirisValidationException("account");
 
-        if (account.getIsAllowedToPutIntoAccount())
+        if (account.getIsAllowedToPutIntoAccount() != null && account.getIsAllowedToPutIntoAccount())
             paymentService.putPaymentInAccount(payment, account);
         else
             throw new OsirisValidationException("Action non autorisée pour ce paiement");
