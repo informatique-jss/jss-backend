@@ -72,7 +72,6 @@ import { RefundPaymentDialogComponent } from '../refund-payment-dialog/refund-pa
 import { SelectAccountingAccountDialogComponent } from '../select-accounting-account-dialog/select-accounting-account-dialog.component';
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
-import { SelectCompetentAuthorityDialogComponent } from '../select-competent-authority-dialog/select-competent-authority-dialog.component';
 import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialog/select-document-type-dialog.component';
 import { SelectPaperSetTypeDialogComponent } from '../select-paper-set-type-dialog/select-paper-set-type-dialog.component';
 import { SelectServiceDialogComponent } from '../select-service-dialog/select-service-dialog.component';
@@ -165,7 +164,6 @@ const routes: Routes = [
     IdentiteComponent,
     EntrepriseComponent,
     GuichetUniqueStatusComponent,
-    SelectCompetentAuthorityDialogComponent,
     DebourComponent,
     ActeDepositComponent,
     ServiceComponent,
