@@ -377,12 +377,8 @@ public class InvoicingController {
         if (account == null)
             throw new OsirisValidationException("account");
 
-        if ((account.getIsAllowedToPutIntoAccount() == null || !account.getIsAllowedToPutIntoAccount())
-                && activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP)) {
-            paymentService.putPaymentInAccount(payment, account);
-        }
-
-        if (account.getIsAllowedToPutIntoAccount() != null && account.getIsAllowedToPutIntoAccount())
+        if ((account.getIsAllowedToPutIntoAccount() != null && account.getIsAllowedToPutIntoAccount())
+                || activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP))
             paymentService.putPaymentInAccount(payment, account);
 
         else
