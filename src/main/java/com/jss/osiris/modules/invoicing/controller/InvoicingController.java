@@ -378,7 +378,7 @@ public class InvoicingController {
             throw new OsirisValidationException("account");
 
         if ((account.getIsAllowedToPutIntoAccount() == null || !account.getIsAllowedToPutIntoAccount())
-                || !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP))
+                && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP))
             throw new OsirisValidationException("Action non autorisée pour ce paiement");
         paymentService.putPaymentInAccount(payment, account);
 
