@@ -16,7 +16,8 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " customerOrderStatusLabel, " +
                         " customerOrderAssignedEmployee, " +
                         " aggregateProvisionTypeLabel, " +
-                        " lastReminderDate " +
+                        " lastReminderDate, " +
+                        " userName " +
                         " from " +
                         " ( " +
                         " select " +
@@ -37,12 +38,14 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         +
                         " end], " +
                         " ' / ') as aggregateProvisionTypeLabel, " +
-                        " to_char(coalesce(third_reminder_date_time,second_reminder_date_time,first_reminder_date_time),'YYYY-MM-DD') as lastReminderDate "
+                        " to_char(coalesce(third_reminder_date_time,second_reminder_date_time,first_reminder_date_time),'YYYY-MM-DD') as lastReminderDate, "
                         +
+                        " adt.username as userName" +
                         " from " +
                         " customer_order co " +
                         " join customer_order_status cos2 on " +
                         " cos2.id = co.id_customer_order_status " +
+                        " join audit adt on co.id = adt.entity_id" +
                         " left join asso_affaire_order aao on " +
                         " aao.id_customer_order = co.id " +
                         " left join provision p on " +
@@ -51,19 +54,22 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " pft.id = p.id_provision_family_type " +
                         " left join employee e on " +
                         " e.id = co.id_assigned_to " +
+                        " where adt.entity='CustomerOrder' and adt.field_name='id'" +
                         " group by " +
                         " co.id, " +
                         " cos2.label, " +
                         " concat(e.firstname, " +
                         " ' ', " +
                         " e.lastname) , " +
-                        " co.id " +
+                        " co.id, " +
+                        " adt.username" +
                         " ) t " +
                         " group by " +
                         " customerOrderStatusLabel, " +
                         " customerOrderAssignedEmployee, " +
                         " aggregateProvisionTypeLabel, " +
-                        " lastReminderDate "
+                        " lastReminderDate, " +
+                        " userName "
                         +
                         "")
         List<ICustomerOrderReporting> getCustomerOrderReporting();
