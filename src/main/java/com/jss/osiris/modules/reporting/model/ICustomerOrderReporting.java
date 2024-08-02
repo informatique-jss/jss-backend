@@ -11,4 +11,6 @@ public interface ICustomerOrderReporting {
     String getAggregateProvisionTypeLabel();
 
     String getLastReminderDate();
+
+    String getCustomerOrderCreator();
 }
