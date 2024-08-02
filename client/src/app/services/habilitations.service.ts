@@ -144,7 +144,7 @@ export class HabilitationsService {
   }
 
   canPutInAnyAccountingAccount() {
-    return this.loginService.hasGroup([ADMINISTRATEURS, ACCOUNTING])
+    return this.loginService.hasGroup([ADMINISTRATEURS, ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
   canCutPayment() {

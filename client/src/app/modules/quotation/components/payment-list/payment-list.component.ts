@@ -23,8 +23,6 @@ import { AccountingAccount } from '../../../accounting/model/AccountingAccount';
 import { PaymentDetailsDialogService } from '../../../invoicing/services/payment.details.dialog.service';
 import { RefundPaymentDialogComponent } from "../refund-payment-dialog/refund-payment-dialog.component";
 import { SelectAccountingAccountDialogComponent } from "../select-accounting-account-dialog/select-accounting-account-dialog.component";
-import { SelectCompetentAuthorityDialogComponent } from "../select-competent-authority-dialog/select-competent-authority-dialog.component";
-
 
 @Component({
   selector: 'payment-list',
@@ -196,9 +194,6 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
         }
       }
     }
-
-
-
   }
 
   paymentForm = this.formBuilder.group({
