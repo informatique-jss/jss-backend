@@ -14,7 +14,6 @@ import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
@@ -118,9 +117,6 @@ public interface PaymentService {
                         throws OsirisException;
 
         public Payment getOriginalPaymentOfPayment(Payment payment);
-
-        public void putPaymentInCompetentAuthorityAccount(Payment payment, CompetentAuthority competentAuthority)
-                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void putPaymentInAccount(Payment payment, AccountingAccount accountingAccount)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;

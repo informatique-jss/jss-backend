@@ -59,8 +59,6 @@ import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceStatusService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.invoicing.service.RefundService;
-import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
-import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
@@ -152,9 +150,6 @@ public class InvoicingController {
 
     @Autowired
     AccountingAccountService accountingAccountService;
-
-    @Autowired
-    CompetentAuthorityService competentAuthorityService;
 
     @Autowired
     ActiveDirectoryHelper activeDirectoryHelper;
@@ -361,34 +356,8 @@ public class InvoicingController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
-    @GetMapping(inputEntryPoint + "/payment/account/competent-authority")
-    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
-    public ResponseEntity<Boolean> putPaymentInCompetentAuthorityAccount(@RequestParam Integer paymentId,
-            @RequestParam Integer competentAuthorityId)
-            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-        Payment payment = paymentService.getPayment(paymentId);
-        CompetentAuthority competentAuthority = competentAuthorityService.getCompetentAuthority(competentAuthorityId);
-
-        if (payment == null)
-            throw new OsirisValidationException("payment");
-
-        if (payment.getIsCancelled() == true || payment.getBankTransfert() != null || payment.getCustomerOrder() != null
-                || payment.getInvoice() != null
-                || payment.getRefund() != null || payment.getCompetentAuthority() != null
-                || payment.getAccountingAccount() != null
-                || payment.getIsExternallyAssociated() != null && payment.getIsExternallyAssociated())
-            throw new OsirisValidationException("Paiement déjà associé");
-
-        if (competentAuthority == null)
-            throw new OsirisValidationException("competentAuthority");
-
-        paymentService.putPaymentInCompetentAuthorityAccount(payment, competentAuthority);
-
-        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-    }
-
     @GetMapping(inputEntryPoint + "/payment/account")
-    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<Boolean> putPaymentInAccount(@RequestParam Integer paymentId,
             @RequestParam Integer accountingAccountId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
@@ -408,6 +377,9 @@ public class InvoicingController {
         if (account == null)
             throw new OsirisValidationException("account");
 
+        if ((account.getIsAllowedToPutIntoAccount() == null || !account.getIsAllowedToPutIntoAccount())
+                && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP))
+            throw new OsirisValidationException("Action non autorisée pour ce paiement");
         paymentService.putPaymentInAccount(payment, account);
 
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
