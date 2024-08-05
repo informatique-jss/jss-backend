@@ -23,8 +23,6 @@ import { AccountingAccount } from '../../../accounting/model/AccountingAccount';
 import { PaymentDetailsDialogService } from '../../../invoicing/services/payment.details.dialog.service';
 import { RefundPaymentDialogComponent } from "../refund-payment-dialog/refund-payment-dialog.component";
 import { SelectAccountingAccountDialogComponent } from "../select-accounting-account-dialog/select-accounting-account-dialog.component";
-import { SelectCompetentAuthorityDialogComponent } from "../select-competent-authority-dialog/select-competent-authority-dialog.component";
-
 
 @Component({
   selector: 'payment-list',
@@ -120,12 +118,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
             this.paymentDetailsDialogService.displayPaymentDetailsDialog(element as any);
           }, display: true,
         } as SortTableAction<PaymentSearchResult>);
-        this.tableAction.push({
-          actionIcon: "account_balance", actionName: "Mettre en compte", actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
-            if (!element.isAssociated && !element.isCancelled)
-              this.displayAccountingPaymentDetailsDialog(element as any);
-          }, display: true,
-        } as SortTableAction<PaymentSearchResult>);
+
         this.tableAction.push({
           actionIcon: 'mode_comment', actionName: 'Modifier le commentaire', actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
             let dialogRef = this.editCommentDialog.open(EditCommentDialogComponent, {
@@ -201,9 +194,6 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
         }
       }
     }
-
-
-
   }
 
   paymentForm = this.formBuilder.group({
@@ -301,30 +291,6 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
       })
     } else {
       this.appService.displaySnackBar("Impossible de rembourser un paiement sortant", true, 10);
-    }
-  }
-
-  displayAccountingPaymentDetailsDialog(payment: PaymentSearchResult) {
-    if (!this.habilitationService.canRefundPayment()) {
-      this.appService.displaySnackBar("Non autorisé", true, 10);
-      return;
-    }
-    if (payment) {
-      if (payment.paymentAmount < 0 && this.habilitationService.canPutNegativePaymentIntoAccount()) {
-        this.appService.displaySnackBar("Non autorisé", true, 10);
-        return;
-      }
-      this.paymentService.getPaymentById(payment.id).subscribe(element => {
-        let dialogCompetentAuthorityDialogRef = this.selectCompetentAuthorityDialog.open(SelectCompetentAuthorityDialogComponent, {
-          width: '100%'
-        });
-        dialogCompetentAuthorityDialogRef.afterClosed().subscribe(response => {
-          if (response)
-            this.paymentService.putInCompetentAuthorityAccount(payment, response).subscribe(response => this.searchPayments());
-        });
-      })
-    } else {
-      this.appService.displaySnackBar("Impossible de mettre en compte un paiement entrant", true, 10);
     }
   }
 

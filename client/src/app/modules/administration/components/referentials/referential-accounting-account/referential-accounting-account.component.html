@@ -31,6 +31,11 @@
               <generic-toggle [(model)]="selectedEntity.isViewRestricted" label="Est à visibilité restreinte ?"
                 [form]="entityForm" propertyName="isViewRestricted"></generic-toggle>
             </td>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isAllowedToPutIntoAccount"
+                label="Mise en compte comptable possible ?" [form]="entityForm"
+                propertyName="isAllowedToPutIntoAccount"></generic-toggle>
+            </td>
           </tr>
         </table>
         <table class="full-width">

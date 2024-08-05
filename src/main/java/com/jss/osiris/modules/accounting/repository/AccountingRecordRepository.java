@@ -3,8 +3,6 @@ package com.jss.osiris.modules.accounting.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.QueryHint;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +17,8 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+
+import jakarta.persistence.QueryHint;
 
 public interface AccountingRecordRepository extends QueryCacheCrudRepository<AccountingRecord, Integer> {
 
