@@ -45,7 +45,7 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " customer_order co " +
                         " join customer_order_status cos2 on " +
                         " cos2.id = co.id_customer_order_status " +
-                        " left join audit adt on co.id = adt.entity_id on adt.entity='CustomerOrder' and adt.field_name='id'"
+                        " left join audit adt on co.id = adt.entity_id and adt.entity='CustomerOrder' and adt.field_name='id'"
                         +
                         " left join asso_affaire_order aao on " +
                         " aao.id_customer_order = co.id " +
