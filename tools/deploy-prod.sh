@@ -2,10 +2,10 @@ cd ..
 rm build/libs/*
 gradle bootJar
 ssh -t osiris@app1.osiris.jss.fr 'sudo  /usr/bin/systemctl stop osiris.service;exit'
-scp build/libs/workspace-osiris-*.jar osiris@app1.osiris.jss.fr:/appli/osiris/osiris.jar
+scp build/libs/*.jar osiris@app1.osiris.jss.fr:/appli/osiris/osiris.jar
 ssh -t osiris@app1.osiris.jss.fr 'sudo  /usr/bin/systemctl start osiris.service;exit'
 ssh -t osiris@app2.osiris.jss.fr 'sudo  /usr/bin/systemctl stop osiris.service;exit'
-scp build/libs/workspace-osiris-*.jar osiris@app2.osiris.jss.fr:/appli/osiris/osiris.jar
+scp build/libs/*.jar osiris@app2.osiris.jss.fr:/appli/osiris/osiris.jar
 ssh -t osiris@app2.osiris.jss.fr 'sudo  /usr/bin/systemctl start osiris.service;exit'
 
 cd client
