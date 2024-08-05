@@ -391,34 +391,12 @@ public class GeneratePdfDelegate {
         if (Math.round(invoiceHelper.getDiscountTotal(invoice) * 100f) / 100f > 0)
             ctx.setVariable("discountTotal", invoiceHelper.getDiscountTotal(invoice));
 
-        // Group debouts for asso invoice item debours
-        if (customerOrder != null) {
-            List<AssoAffaireOrder> assos = new ArrayList<AssoAffaireOrder>();
-            if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
-                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
-                    if (asso.getServices() != null)
-                        for (Service service : asso.getServices()) {
-                            if (service.getProvisions() != null) {
-                                ArrayList<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
-                                for (Provision provision : service.getProvisions()) {
-                                    invoiceItems.addAll(provision.getInvoiceItems());
-                                }
-                                service.getProvisions().get(0)
-                                        .setInvoiceItems(getGroupedInvoiceItemsForDebours(invoiceItems));
-                            }
-                        }
-                    assos.add(asso);
-                }
-            ctx.setVariable("assos", assos);
-        } else {
-            ctx.setVariable("invoiceItems", invoice.getInvoiceItems());
-        }
-
         ctx.setVariable("preTaxPriceTotalWithDicount", invoiceHelper.getPreTaxPriceTotal(invoice)
                 - (invoiceHelper.getDiscountTotal(invoice) != null
                         && Math.round(invoiceHelper.getDiscountTotal(invoice) * 100f) / 100f > 0
                                 ? invoiceHelper.getDiscountTotal(invoice)
                                 : 0f));
+
         ArrayList<VatMail> vats = null;
         Float vatTotal = 0f;
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
@@ -454,6 +432,30 @@ public class GeneratePdfDelegate {
 
         ctx.setVariable("vats", vats);
         ctx.setVariable("priceTotal", Math.round(invoiceHelper.getPriceTotal(invoice) * 100f) / 100f);
+
+        // Group debouts for asso invoice item debours
+        if (customerOrder != null) {
+            List<AssoAffaireOrder> assos = new ArrayList<AssoAffaireOrder>();
+            if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
+                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+                    if (asso.getServices() != null)
+                        for (Service service : asso.getServices()) {
+                            if (service.getProvisions() != null) {
+                                ArrayList<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
+                                for (Provision provision : service.getProvisions()) {
+                                    invoiceItems.addAll(provision.getInvoiceItems());
+                                }
+                                service.getProvisions().get(0)
+                                        .setInvoiceItems(getGroupedInvoiceItemsForDebours(invoiceItems));
+                            }
+                        }
+                    assos.add(asso);
+                }
+            ctx.setVariable("assos", assos);
+        } else {
+            ctx.setVariable("invoiceItems", invoice.getInvoiceItems());
+        }
+
         ctx.setVariable("invoice", invoice);
         ctx.setVariable("isPrelevementType", false);
         if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId()))
@@ -603,6 +605,12 @@ public class GeneratePdfDelegate {
                                 if (invoiceItem.getDiscountAmount() != null)
                                     invoiceItemNonTaxable.setDiscountAmount(invoiceItemNonTaxable.getDiscountAmount()
                                             + invoiceItem.getDiscountAmount());
+                                if (invoiceItem.getPreTaxPriceReinvoiced() != null
+                                        && invoiceItemNonTaxable.getPreTaxPriceReinvoiced() != null)
+                                    invoiceItemNonTaxable.setPreTaxPriceReinvoiced(
+                                            invoiceItemNonTaxable.getPreTaxPriceReinvoiced()
+                                                    + invoiceItem.getPreTaxPriceReinvoiced());
+
                             }
                         } else {
                             if (invoiceItemTaxable == null) {
@@ -615,6 +623,11 @@ public class GeneratePdfDelegate {
                                 if (invoiceItem.getDiscountAmount() != null)
                                     invoiceItemTaxable.setDiscountAmount(invoiceItemTaxable.getDiscountAmount()
                                             + invoiceItem.getDiscountAmount());
+                                if (invoiceItem.getPreTaxPriceReinvoiced() != null
+                                        && invoiceItemTaxable.getPreTaxPriceReinvoiced() != null)
+                                    invoiceItemTaxable.setPreTaxPriceReinvoiced(
+                                            invoiceItemTaxable.getPreTaxPriceReinvoiced()
+                                                    + invoiceItem.getPreTaxPriceReinvoiced());
                             }
                         }
                     } else {
