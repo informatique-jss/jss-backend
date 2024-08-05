@@ -4,4 +4,5 @@ export interface CustomerOrderReporting {
   customerOrderAssignedEmployee: string;
   aggregateProvisionTypeLabel: string;
   lastReminderDate: string;
+  customerOrderCreator: string;
 }
