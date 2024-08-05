@@ -17,7 +17,7 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " customerOrderAssignedEmployee, " +
                         " aggregateProvisionTypeLabel, " +
                         " lastReminderDate, " +
-                        " userName " +
+                        " customerOrderCreator " +
                         " from " +
                         " ( " +
                         " select " +
@@ -69,7 +69,7 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " customerOrderAssignedEmployee, " +
                         " aggregateProvisionTypeLabel, " +
                         " lastReminderDate, " +
-                        " userName "
+                        " customerOrderCreator "
                         +
                         "")
         List<ICustomerOrderReporting> getCustomerOrderReporting();
