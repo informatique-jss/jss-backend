@@ -441,9 +441,16 @@ public class PaymentServiceImpl implements PaymentService {
                 for (IndexEntity foundEntity : correspondingEntities) {
                     if (foundEntity.getEntityType().equals(Payment.class.getSimpleName())) {
                         Payment foundPayment = getPayment(foundEntity.getEntityId());
-                        if (foundPayment != null && !payment.getId().equals(foundPayment.getId())
-                                && !foundPayment.getIsCancelled())
-                            associateOutboundCheckPayment(payment, foundPayment);
+                        if (foundPayment != null && !payment.getId().equals(foundPayment.getId())) {
+                            boolean isCancelled = foundPayment.getIsCancelled();
+                            // If first payment already associated, check for the child one
+                            if (isCancelled && foundPayment.getChildrenPayments() != null
+                                    && foundPayment.getChildrenPayments().size() > 0)
+                                isCancelled = foundPayment.getChildrenPayments().get(0).getIsCancelled();
+
+                            if (!isCancelled)
+                                associateOutboundCheckPayment(payment, foundPayment);
+                        }
                     }
                 }
             }
