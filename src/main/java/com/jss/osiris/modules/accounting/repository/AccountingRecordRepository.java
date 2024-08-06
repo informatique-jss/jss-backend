@@ -130,7 +130,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         "select  round(cast(sum(case "
                         + "            when record.isanouveau=false or record.is_from_as400=true then record.credit_amount "
                         + "        end)  as numeric), 2) as creditAmount," + "        round(cast(sum(case "
-                        + "            when record.isanouveau=false or record.is_from_as400=true then round(cast(r.debit_amount as numeric), 2) "
+                        + "            when record.isanouveau=false or record.is_from_as400=true then round(cast(record.debit_amount as numeric), 2) "
                         + "        end) as numeric), 2) as debitAmount,"
                         + "		accounting.label as accountingAccountLabel,"
                         + "		pa.code as principalAccountingAccountCode,"
