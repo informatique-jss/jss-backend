@@ -67,7 +67,9 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.Service;
+import com.jss.osiris.modules.quotation.service.PricingHelper;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -86,6 +88,9 @@ public class GeneratePdfDelegate {
 
     @Autowired
     MailHelper mailHelper;
+
+    @Autowired
+    PricingHelper pricingHelper;
 
     @Autowired
     MailComputeHelper mailComputeHelper;
@@ -376,6 +381,45 @@ public class GeneratePdfDelegate {
         } catch (DocumentException | IOException e) {
             throw new OsirisException(e,
                     "Unable to create PDF file for biling closure receipt, tiers n°" + tier.getId());
+        }
+        return tempFile;
+    }
+
+    public File generateQuotationPdf(Quotation quotation) throws OsirisException {
+        final Context ctx = new Context();
+
+        if (quotation.getResponsable().getTiers() != null)
+            ctx.setVariable("tiersReference", quotation.getResponsable().getTiers().getId()
+                    + (quotation.getResponsable().getTiers().getIdAs400() != null
+                            ? ("/" + quotation.getResponsable().getTiers().getIdAs400())
+                            : ""));
+
+        ctx.setVariable("quotation", quotation);
+        LocalDateTime localDate = quotation.getCreatedDate();
+        DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern("dd/MM/yyyy");
+        ctx.setVariable("quotationCreatedDate", localDate.format(formatter));
+        mailHelper.setQuotationPrice(quotation, ctx);
+
+        final String htmlContent = StringEscapeUtils
+                .unescapeHtml4(mailHelper.emailTemplateEngine().process("quotation-page", ctx));
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("quotation", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>"));
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e, "Unable to create PDF file for quotation " + quotation.getId());
         }
         return tempFile;
     }

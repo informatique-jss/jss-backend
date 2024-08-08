@@ -610,7 +610,7 @@ public class MailHelper {
         return emailTemplateEngine().process("model", ctx);
     }
 
-    private void setQuotationPrice(IQuotation quotation, Context ctx)
+    public void setQuotationPrice(IQuotation quotation, Context ctx)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         // Compute prices
         Float preTaxPriceTotal = 0f;
@@ -726,18 +726,31 @@ public class MailHelper {
     @Transactional(rollbackFor = Exception.class)
     public void generateQuotationMail(Quotation quotation)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        quotation = quotationService.getQuotation(quotation.getId());
         sendQuotationToCustomer(quotation, true);
     }
 
     public void sendQuotationToCustomer(Quotation quotation, boolean sendToMe)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisClientMessageException, OsirisException {
         CustomerMail mail = new CustomerMail();
         mail.setQuotation(quotation);
         mail.setHeaderPicture("images/mails/waiting-quotation-validation.jpg");
-        mail.setReplyTo(quotation.getAssignedTo());
+        if (quotation.getAssignedTo() != null)
+            mail.setReplyTo(quotation.getAssignedTo());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForQuotationMail(quotation));
 
+        if (quotation.getAttachments() != null && quotation.getAttachments().size() > 0) {
+            List<Attachment> quotationPdf = new ArrayList<Attachment>();
+            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(quotation.getAttachments())) {
+                if (attachment.getAttachmentType() != null && attachment.getAttachmentType().getId()
+                        .equals(constantService.getAttachmentTypeQuotation().getId())) {
+                    quotationPdf.add(attachment);
+                }
+            }
+            quotationPdf = quotationPdf.subList(0, 1);
+            mail.setAttachments(quotationPdf);
+        }
         mail.setSubject("Votre devis n°" + quotation.getId());
         mail.setMailTemplate(CustomerMail.TEMPLATE_WAITING_QUOTATION_VALIDATION);
 

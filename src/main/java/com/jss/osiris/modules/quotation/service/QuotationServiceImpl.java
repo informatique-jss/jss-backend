@@ -1,6 +1,10 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,12 +22,15 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
@@ -103,6 +110,12 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     BatchService batchService;
+
+    @Autowired
+    GeneratePdfDelegate generatePdfDelegate;
+
+    @Autowired
+    AttachmentService attachmentService;
 
     @Override
     public Quotation getQuotation(Integer id) {
@@ -194,7 +207,7 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+            throws OsirisException {
         quotation = getQuotation(quotation.getId());
         QuotationStatus targetQuotationStatus = quotationStatusService.getQuotationStatusByCode(targetStatusCode);
         if (targetQuotationStatus == null)
@@ -209,6 +222,8 @@ public class QuotationServiceImpl implements QuotationService {
         if (targetQuotationStatus.getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
             // save to recompute invoice item before sent it to customer
             quotation = this.addOrUpdateQuotation(quotation);
+
+            generateQuotationPdf(quotation);
 
             mailHelper.sendQuotationToCustomer(quotation, false);
             notificationService.notifyQuotationSent(quotation);
@@ -237,6 +252,33 @@ public class QuotationServiceImpl implements QuotationService {
         quotation.setLastStatusUpdate(LocalDateTime.now());
         quotation.setQuotationStatus(targetQuotationStatus);
         return this.addOrUpdateQuotation(quotation);
+    }
+
+    public Quotation generateQuotationPdf(Quotation quotation) throws OsirisClientMessageException,
+            OsirisValidationException, OsirisDuplicateException, OsirisException {
+        File quotationPdf = generatePdfDelegate.generateQuotationPdf(quotation);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+        try {
+            List<Attachment> attachments = new ArrayList<Attachment>();
+            if (quotation != null)
+                attachments = attachmentService.addAttachment(new FileInputStream(quotationPdf),
+                        quotation.getId(), null,
+                        Quotation.class.getSimpleName(),
+                        constantService.getAttachmentTypeQuotation(),
+                        "Quotation_" + quotation.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                        false, "Devis n°" + quotation.getId(), null, null, null);
+
+            for (Attachment attachment : attachments)
+                if (attachment.getDescription().contains(quotation.getId() + "")) {
+                    attachment.setQuotation(quotation);
+                    attachmentService.addOrUpdateAttachment(attachment);
+                }
+        } catch (FileNotFoundException e) {
+            throw new OsirisException(e, "Impossible to read quotation PDF temp file");
+        } finally {
+            quotationPdf.delete();
+        }
+        return quotation;
     }
 
     @Override

@@ -165,6 +165,14 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeQuotation"
+                label="Type de pièce-jointe - Devis PDF" [form]="constantForm" propertyName="attachmentTypeQuotation"
+                [isMandatory]="true" [isDisabled]="!editMode" [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-attachment-type [(model)]="constant.attachmentTypeCni" label="Type de pièce-jointe - CNI"
                 [form]="constantForm" propertyName="attachmentTypeCni" [isMandatory]="true" [isDisabled]="!editMode"
                 [byPassAttachmentHiddenFilter]="true">
