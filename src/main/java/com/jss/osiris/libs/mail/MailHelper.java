@@ -740,11 +740,10 @@ public class MailHelper {
         mail.setMailComputeResult(mailComputeHelper.computeMailForQuotationMail(quotation));
 
         if (quotation.getAttachments() != null && quotation.getAttachments().size() > 0) {
-            List<Attachment> emptyList = new ArrayList<Attachment>();
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(quotation.getAttachments())) {
                 if (attachment.getAttachmentType() != null && attachment.getAttachmentType().getId()
                         .equals(constantService.getAttachmentTypeQuotation().getId())) {
-                    mail.setAttachments(emptyList);
+                    mail.setAttachments(new ArrayList<Attachment>());
                     mail.getAttachments().add(attachment);
                     break;
                 }
