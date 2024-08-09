@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        * {
+            font-family: 'Times New Roman', Times, serif
+        }
+
+        @page {
+            size: a4 portrait;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .cgv {
+            width: 297px;
+        }
+
+        .cgv h3 {
+            margin: 0;
+            margin-top: 5px;
+            font-size: 15px;
+        }
+
+        .cgv p {
+            margin: 0;
+            text-align: justify;
+            margin-top: 5px;
+            line-height: 9px;
+            font-size: 9px
+        }
+
+        .td-with-price {
+            width: 130px;
+        }
+    </style>
+</head>
+
+<body style="background-color: #FFFFFF; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+    <table>
+        <tr>
+            <td><img width="690px" th:src="@{classpath:/images/invoice-page1-header.png}" src="picture.png" />
+            </td>
+        </tr>
+    </table>
+    <table style="table-layout: fixed;width: 690px;margin-top: 20px;">
+        <tr>
+            <td style="text-align: left;">
+                <span th:if="${tiersReference!=null}">N° client : <span th:text="${tiersReference}"></span><br /></span>
+                <span th:if="${quotation!=null}">Devis : <span th:text="${quotation.id}"></span><br /></span>
+                <span th:if="${responsableOnBilling!=null}">Demande de devis transmise par : <span
+                        th:text="${responsableOnBilling}"></span><br />
+                </span>
+            </td>
+            <td style="width: 100px;"></td>
+            <td colspan="2">
+                <table style=" width: 100%;">
+                    <tr>
+                        <td>
+                            <p>Paris le <span th:text="${quotationCreatedDate}"></span></p>
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
+        <th:block th:if="${assos!=null}" th:each="asso : ${assos}"
+            style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
+            <tr>
+                <td style="padding-top: 20px; text-align : center" th:if="${asso.affaire.denomination!=null} "
+                    colspan="2">
+                    <strong>Société <span th:text="${asso.affaire.denomination}"></span><span
+                            th:text="${asso.affaire.firstname}"></span>
+                        <span th:text="${asso.affaire.lastname}"></span></strong>
+                </td>
+                <td style="padding-top: 20px;text-align : center" th:if="${asso.affaire.denomination==null} "
+                    colspan="2">
+                    <strong><span th:text="${asso.affaire.civility.label}"></span> <span
+                            th:text="${asso.affaire.firstname}"></span> <span
+                            th:text="${asso.affaire.lastname}"></span></strong>
+                </td>
+            </tr>
+
+            <th:block th:each="service : ${asso.services}"
+                style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
+                <tr>
+                    <td style="padding-top: 20px; text-align : center" colspan="2">
+                        <strong><span th:if="${service.customLabel!=null}"
+                                th:text="${service.customLabel}"></span></strong>
+                        <strong><span th:if="${service.customLabel==null}"
+                                th:text="${service.serviceType.label}"></span></strong>
+                    </td>
+                </tr>
+                <th:block th:each="provision : ${service.provisions}"
+                    style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
+                    <tr>
+                        <td colspan="4" style="padding-left:10px;padding-right:10px;padding-top: 10px">
+                            <strong><span th:text="${provision.provisionType.label}"></span></strong>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <th:block th:each="invoiceItem : ${provision.invoiceItems}"
+                        style="border : solid; border-color: rgb(0,83,159);width: 680px;">
+                        <tr>
+                            <td colspan="4" style="padding-left:10px;padding-right:10px;padding-top: 0px">
+                                <span th:text="${invoiceItem.label}"></span>
+                            </td>
+                            <td
+                                style="text-align: right;white-space: nowrap;padding-left:10px;padding-right:10px;padding-top: 0px">
+                                <span th:text="${#numbers.formatDecimal(invoiceItem.preTaxPrice,1,2)}"></span>
+                                €
+                            </td>
+                        </tr>
+                        <tr th:if="${invoiceItem.discountAmount!=null} and ${invoiceItem.discountAmount>0}">
+                            <td colspan="4" style="padding-left:10px;padding-right:10px;padding-top: 0px">
+                                <span>Remise</span>
+                            </td>
+                            <td
+                                style="text-align: right;white-space: nowrap; padding-left:10px;padding-right:10px;padding-top: 0px">
+                                - <span th:text="${#numbers.formatDecimal(invoiceItem.discountAmount,1,2)}"></span>
+                                €</td>
+                        </tr>
+                    </th:block>
+                </th:block>
+            </th:block>
+        </th:block>
+    </table>
+
+    <p style="margin-top: 10px;">&#160;</p>
+    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;  break-inside: avoid;  ">
+        <tr>
+            <td>
+                Total HT
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(preTaxPriceTotal,1,2)}"></span>
+                €
+            </td>
+        </tr>
+
+        <tr th:if="${discountTotal!=null}">
+            <td>
+                Total remises
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"> - <span
+                    th:text="${#numbers.formatDecimal(discountTotal,1,2)}"></span>
+                €
+            </td>
+        </tr>
+
+        <tr th:if="${discountTotal!=null}">
+            <td>
+                Total HT remisé
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(preTaxPriceTotalWithDicount,1,2)}"></span>
+                €
+            </td>
+        </tr>
+
+        <tr th:if="${vats!=null}" th:each="vat : ${vats}">
+            <td><span th:text="${vat.label}"></span><span>
+                    sur la base de </span><span th:text="${#numbers.formatDecimal(vat.base,1,2)}"></span>
+                €
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(vat.total,1,2)}"></span>
+                €
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Total TTC
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(priceTotal,1,2)}"></span>
+                €
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;padding-top: 20px;">
+        <tr>
+            <td style="padding-left:10px;padding-right:10px;width:100%;">
+                <p style="font-size: 12px;font-style: italic;">Ce devis
+                    est valable jusqu'au <span th:text="${endOfYearDateString}"></span> et sous
+                    réserve que les formalités à réaliser, au vu des
+                    documents transmis, correspondent à la demande de
+                    devis. Toute modification entraînera son
+                    actualisation</p>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

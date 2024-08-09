@@ -862,7 +862,7 @@ public class QuotationController {
     MailComputeResult mailComputeResult = mailComputeHelper.computeMailForQuotationCreationConfirmation(quotation);
     if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
       throw new OsirisValidationException("MailTo");
-
+    quotationService.generateQuotationPdf(quotation);
     mailHelper.generateQuotationMail(quotation);
     return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
   }
