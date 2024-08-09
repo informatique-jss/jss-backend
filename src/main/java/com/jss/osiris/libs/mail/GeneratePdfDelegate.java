@@ -393,12 +393,19 @@ public class GeneratePdfDelegate {
                     + (quotation.getResponsable().getTiers().getIdAs400() != null
                             ? ("/" + quotation.getResponsable().getTiers().getIdAs400())
                             : ""));
-
+        ctx.setVariable("responsableOnBilling", quotation.getResponsable().getFirstname() + " "
+                + quotation.getResponsable().getLastname());
+        ctx.setVariable("assos", quotation.getAssoAffaireOrders());
         ctx.setVariable("quotation", quotation);
         LocalDateTime localDate = quotation.getCreatedDate();
         DateTimeFormatter formatter = DateTimeFormatter
                 .ofPattern("dd/MM/yyyy");
         ctx.setVariable("quotationCreatedDate", localDate.format(formatter));
+        ctx.setVariable("endOfYearDateString",
+                LocalDate.now().withMonth(12).withDayOfMonth(31).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+        if (quotation.getCustomerOrders() != null && quotation.getCustomerOrders().size() > 0)
+            ctx.setVariable("customerOrder", quotation.getCustomerOrders().get(0));
         mailHelper.setQuotationPrice(quotation, ctx);
 
         final String htmlContent = StringEscapeUtils
