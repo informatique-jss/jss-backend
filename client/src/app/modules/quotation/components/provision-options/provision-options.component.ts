@@ -60,6 +60,7 @@ export class ProvisionOptionsComponent implements OnInit {
   billingTypeVacationUpdateBeneficialOwners = this.constantService.getBillingTypeVacationUpdateBeneficialOwners();
   billingTypeFormalityAdditionalDeclaration = this.constantService.getBillingTypeFormalityAdditionalDeclaration();
   billingTypeCorrespondenceFees = this.constantService.getBillingTypeCorrespondenceFees();
+  billingTypeSupplyFullCopy = this.constantService.getBillingTypeSupplyFullCopy();
 
 
   attachmentTypeLogo = this.constantService.getAttachmentTypeLogo();
@@ -118,6 +119,7 @@ export class ProvisionOptionsComponent implements OnInit {
       if (!this.provision.isVacationUpdateBeneficialOwners) this.provision.isVacationUpdateBeneficialOwners = false;
       if (!this.provision.isFormalityAdditionalDeclaration) this.provision.isFormalityAdditionalDeclaration = false;
       if (!this.provision.isCorrespondenceFees) this.provision.isCorrespondenceFees = false;
+      if (!this.provision.isSupplyFullCopy) this.provision.isSupplyFullCopy = false;
 
       this.fillPublicationPaperNumber();
     }

@@ -700,6 +700,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeSupplyFullCopy"
+                label="Type de poste de facturation - Copie intégrale" [form]="constantForm"
+                propertyName="billingTypeSupplyFullCopy" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-input [(model)]="constant.stringNantissementDepositFormeJuridiqueCode "
                 label="Code de forme juridique - Depot de nantissement" [form]="constantForm"
                 propertyName="stringNantissementDepositFormeJuridiqueCode " [isMandatory]="true"

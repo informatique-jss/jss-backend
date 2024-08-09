@@ -732,6 +732,9 @@ public class PricingHelper {
         if (billingType.getId().equals(constantService.getBillingTypeShippingCosts().getId())
                 && getPublicationPaperNbr(provision) > 0)
             return true;
+        if (billingType.getId().equals(constantService.getBillingTypeSupplyFullCopy().getId())
+                && provision.getIsSupplyFullCopy())
+            return true;
 
         // Domiciliation pricing
         if (provision.getDomiciliation() != null

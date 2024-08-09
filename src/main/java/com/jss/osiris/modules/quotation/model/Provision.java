@@ -185,6 +185,9 @@ public class Provision implements IId, IAttachment {
 	@Column(nullable = false)
 	private Boolean isCorrespondenceFees;
 
+	@Column(nullable = false)
+	private Boolean isSupplyFullCopy;
+
 	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "provision", "invoice" }, allowSetters = true)
 	private List<Attachment> attachments;
@@ -610,4 +613,11 @@ public class Provision implements IId, IAttachment {
 		this.customerOrderComments = customerOrderComments;
 	}
 
+	public Boolean getIsSupplyFullCopy() {
+		return isSupplyFullCopy;
+	}
+
+	public void setIsSupplyFullCopy(Boolean isSupplyFullCopy) {
+		this.isSupplyFullCopy = isSupplyFullCopy;
+	}
 }

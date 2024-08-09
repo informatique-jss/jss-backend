@@ -126,6 +126,7 @@ export interface Constant {
   billingTypeDomiciliationContractTypeRouteEmail: BillingType;
   billingTypeDomiciliationContractTypeRouteMail: BillingType;
   billingTypeDomiciliationContractTypeRouteEmailAndMail: BillingType;
+  billingTypeSupplyFullCopy: BillingType;
   stringNantissementDepositFormeJuridiqueCode: string;
   strinSocialShareNantissementRedactionFormeJuridiqueCode: string;
   stringBusinnessNantissementRedactionFormeJuridiqueCode: string;

@@ -382,6 +382,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.billingTypeDomiciliationContractTypeRouteEmailAndMail;
   }
 
+  getBillingTypeSupplyFullCopy() {
+    return this.constant.billingTypeSupplyFullCopy;
+  }
+
   getStringNantissementDepositFormeJuridiqueCode() {
     return this.constant.stringNantissementDepositFormeJuridiqueCode;
   }
