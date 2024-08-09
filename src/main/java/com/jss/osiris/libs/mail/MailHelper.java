@@ -735,21 +735,20 @@ public class MailHelper {
         CustomerMail mail = new CustomerMail();
         mail.setQuotation(quotation);
         mail.setHeaderPicture("images/mails/waiting-quotation-validation.jpg");
-        if (quotation.getAssignedTo() != null)
-            mail.setReplyTo(quotation.getAssignedTo());
+        mail.setReplyTo(quotation.getAssignedTo());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForQuotationMail(quotation));
 
         if (quotation.getAttachments() != null && quotation.getAttachments().size() > 0) {
-            List<Attachment> quotationPdf = new ArrayList<Attachment>();
+            List<Attachment> emptyList = new ArrayList<Attachment>();
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(quotation.getAttachments())) {
                 if (attachment.getAttachmentType() != null && attachment.getAttachmentType().getId()
                         .equals(constantService.getAttachmentTypeQuotation().getId())) {
-                    quotationPdf.add(attachment);
+                    mail.setAttachments(emptyList);
+                    mail.getAttachments().add(attachment);
+                    break;
                 }
             }
-            quotationPdf = quotationPdf.subList(0, 1);
-            mail.setAttachments(quotationPdf);
         }
         mail.setSubject("Votre devis n°" + quotation.getId());
         mail.setMailTemplate(CustomerMail.TEMPLATE_WAITING_QUOTATION_VALIDATION);

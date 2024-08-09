@@ -69,7 +69,6 @@ import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.Service;
-import com.jss.osiris.modules.quotation.service.PricingHelper;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -88,9 +87,6 @@ public class GeneratePdfDelegate {
 
     @Autowired
     MailHelper mailHelper;
-
-    @Autowired
-    PricingHelper pricingHelper;
 
     @Autowired
     MailComputeHelper mailComputeHelper;
@@ -388,24 +384,19 @@ public class GeneratePdfDelegate {
     public File generateQuotationPdf(Quotation quotation) throws OsirisException {
         final Context ctx = new Context();
 
-        if (quotation.getResponsable().getTiers() != null)
-            ctx.setVariable("tiersReference", quotation.getResponsable().getTiers().getId()
-                    + (quotation.getResponsable().getTiers().getIdAs400() != null
-                            ? ("/" + quotation.getResponsable().getTiers().getIdAs400())
-                            : ""));
+        ctx.setVariable("tiersReference", quotation.getResponsable().getTiers().getId()
+                + (quotation.getResponsable().getTiers().getIdAs400() != null
+                        ? ("/" + quotation.getResponsable().getTiers().getIdAs400())
+                        : ""));
         ctx.setVariable("responsableOnBilling", quotation.getResponsable().getFirstname() + " "
                 + quotation.getResponsable().getLastname());
         ctx.setVariable("assos", quotation.getAssoAffaireOrders());
         ctx.setVariable("quotation", quotation);
-        LocalDateTime localDate = quotation.getCreatedDate();
-        DateTimeFormatter formatter = DateTimeFormatter
-                .ofPattern("dd/MM/yyyy");
-        ctx.setVariable("quotationCreatedDate", localDate.format(formatter));
+        ctx.setVariable("quotationCreatedDate", quotation.getCreatedDate().format(DateTimeFormatter
+                .ofPattern("dd/MM/yyyy")));
         ctx.setVariable("endOfYearDateString",
                 LocalDate.now().withMonth(12).withDayOfMonth(31).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
-        if (quotation.getCustomerOrders() != null && quotation.getCustomerOrders().size() > 0)
-            ctx.setVariable("customerOrder", quotation.getCustomerOrders().get(0));
         mailHelper.setQuotationPrice(quotation, ctx);
 
         final String htmlContent = StringEscapeUtils
