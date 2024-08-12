@@ -376,6 +376,10 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_billing_type_domiciliation_contract_route_mail_email")
 	private BillingType billingTypeDomiciliationContractTypeRouteEmailAndMail;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_supply_full_be_copy")
+	private BillingType billingTypeSupplyFullBeCopy;
+
 	@Column(length = 1000)
 	private String stringNantissementDepositFormeJuridiqueCode;
 	@Column(length = 1000)
@@ -1869,6 +1873,23 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeDeboursNonTaxable(BillingType billingTypeDeboursNonTaxable) {
 		this.billingTypeDeboursNonTaxable = billingTypeDeboursNonTaxable;
+	}
+
+	public BillingType getBillingTypeSupplyFullBeCopy() {
+		return billingTypeSupplyFullBeCopy;
+	}
+
+	public void setBillingTypeSupplyFullBeCopy(BillingType billingTypeSupplyFullBeCopy) {
+		this.billingTypeSupplyFullBeCopy = billingTypeSupplyFullBeCopy;
+	}
+
+	public void setPrincipalAccountingAccountLitigious(PrincipalAccountingAccount principalAccountingAccountLitigious) {
+		this.principalAccountingAccountLitigious = principalAccountingAccountLitigious;
+	}
+
+	public void setPrincipalAccountingAccountSuspicious(
+			PrincipalAccountingAccount principalAccountingAccountSuspicious) {
+		this.principalAccountingAccountSuspicious = principalAccountingAccountSuspicious;
 	}
 
 	public AccountingAccount getAccountingAccountCaisse() {

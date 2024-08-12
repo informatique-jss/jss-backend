@@ -532,6 +532,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public BillingType getBillingTypeSupplyFullBeCopy() throws OsirisException {
+        return getConstants().getBillingTypeSupplyFullBeCopy();
+    }
+
+    @Override
     public String getStringNantissementDepositFormeJuridiqueCode() throws OsirisException {
         return getConstants().getStringNantissementDepositFormeJuridiqueCode();
     }
