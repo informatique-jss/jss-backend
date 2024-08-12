@@ -743,7 +743,8 @@ public class MailHelper {
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(quotation.getAttachments())) {
                 if (attachment.getAttachmentType() != null && attachment.getAttachmentType().getId()
                         .equals(constantService.getAttachmentTypeQuotation().getId())) {
-                    mail.setAttachments(new ArrayList<Attachment>());
+                    if (mail.getAttachments() == null)
+                        mail.setAttachments(new ArrayList<Attachment>());
                     mail.getAttachments().add(attachment);
                     break;
                 }
