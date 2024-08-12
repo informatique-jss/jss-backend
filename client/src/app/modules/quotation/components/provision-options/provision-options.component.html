@@ -242,7 +242,7 @@
         </tr>
         <tr *ngIf="displayOption(billingTypeSupplyFullBeCopy)">
           <td>
-            <generic-toggle [(model)]="provision.isSupplyFullBeCopy" label="Fourniture de copie intégrale ?"
+            <generic-toggle [(model)]="provision.isSupplyFullBeCopy" label="Fourniture de copie intégrale des BE ?"
               (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isSupplyFullBeCopy">
             </generic-toggle>
           </td>
