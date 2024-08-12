@@ -81,6 +81,7 @@ export interface Constant {
   attachmentTypeComplexAnnouncement: AttachmentType;
   attachmentTypeContract: AttachmentType;
   attachmentTypeTemplate: AttachmentType;
+  attachmentTypeQuotation: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
   billingTypeDeboursNonTaxable: BillingType;

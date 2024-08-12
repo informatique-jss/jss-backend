@@ -64,7 +64,7 @@ public class ActiveDirectoryHelper {
                     || SecurityContextHolder.getContext().getAuthentication().getName() == null
                     || SecurityContextHolder.getContext().getAuthentication().getName().toUpperCase()
                             .equals("ANONYMOUSUSER"))
-                return "GAPIN";
+                return "COANET";
         if (SecurityContextHolder.getContext() == null
                 || SecurityContextHolder.getContext().getAuthentication() == null
                 || SecurityContextHolder.getContext().getAuthentication().getName() == null)

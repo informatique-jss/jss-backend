@@ -463,6 +463,7 @@ public class MiscellaneousController {
         validationHelper.validateReferential(constant.getAttachmentTypeCni(), true, "AttachmentTypeCni");
         validationHelper.validateReferential(constant.getAttachmentTypeLogo(), true, "AttachmentTypeLogo");
         validationHelper.validateReferential(constant.getAttachmentTypeJournal(), true, "AttachmentTypeJournal");
+        validationHelper.validateReferential(constant.getAttachmentTypeQuotation(), true, "AttachmentTypeQuotation");
         validationHelper.validateReferential(constant.getAttachmentTypeProofOfAddress(), true,
                 "AttachmentTypeProofOfAddress");
         validationHelper.validateReferential(constant.getAttachmentTypePublicationProof(), true,
