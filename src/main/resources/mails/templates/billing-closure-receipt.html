@@ -50,6 +50,8 @@
         <tr>
             <td style="text-align: left;">
                 <span th:if="${tiersReference!=null}">N° client : <span th:text="${tiersReference}"></span><br /></span>
+                <span th:if="${clientReference!=null}">Référence client : <span
+                        th:text="${clientReference}"></span><br /></span>
                 <p th:if="${commandNumber!=null}">Votre référence annuelle :<span th:text="${commandNumber}"></span>
                 </p>
                 <p>Paris le <span th:text="${currentDate}"></span></p>
