@@ -57,7 +57,7 @@ export interface Provision extends IAttachment {
   isVacationUpdateBeneficialOwners: boolean;
   isFormalityAdditionalDeclaration: boolean;
   isCorrespondenceFees: boolean;
-  isSupplyFullCopy: boolean;
+  isSupplyFullBeCopy: boolean;
   providerInvoices: Invoice[];
   payments: Payment[];
   lastCompetentAuthorityReminderDateTime: Date;

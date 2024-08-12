@@ -224,7 +224,7 @@ public interface ConstantService {
 
     public BillingType getBillingTypeDomiciliationContractTypeRouteEmailAndMail() throws OsirisException;
 
-    public BillingType getBillingTypeSupplyFullCopy() throws OsirisException;
+    public BillingType getBillingTypeSupplyFullBeCopy() throws OsirisException;
 
     public String getStringNantissementDepositFormeJuridiqueCode() throws OsirisException;
 
