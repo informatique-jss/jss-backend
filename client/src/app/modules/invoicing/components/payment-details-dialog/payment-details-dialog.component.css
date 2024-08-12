@@ -27,6 +27,6 @@
   padding-top: 10px;
 }
 
-.isCanceled {
-  color: red;
+.isCancelled {
+  color: var(--warn-color) !important;
 }
