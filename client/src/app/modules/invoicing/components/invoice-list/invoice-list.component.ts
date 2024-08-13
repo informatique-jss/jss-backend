@@ -89,6 +89,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "responsable", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "responsableCommercialId", fieldName: "responsableCommercialId", label: "Commercial" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "affaires", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "providerLabel", fieldName: "providerLabel", label: "Fournisseur" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "invoicePayer", fieldName: "billingLabel", label: "Payeur" } as SortTableColumn<InvoiceSearchResult>);

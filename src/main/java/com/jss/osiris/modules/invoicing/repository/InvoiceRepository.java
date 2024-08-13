@@ -43,6 +43,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + " coalesce(pro.label,competent_authority.label, co2.label) as providerLabel, "
                         + " co.id as confrereId, "
                         + " r1.id as responsableId, "
+                        + " r1.id_commercial as responsableCommercialId, "
                         + " t.id as tiersId, "
                         + " r1.firstname || ' '||r1.lastname  as responsableLabel,"
                         + " coalesce( t.denomination,t.firstname || ' '||t.lastname )  as tiersLabel,"

@@ -27,6 +27,8 @@ public interface InvoiceSearchResult {
 
     public Integer getResponsableId();
 
+    public Integer getResponsableCommercialId();
+
     public Integer getTiersId();
 
     public String getResponsableLabel();
