@@ -40,11 +40,8 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   @Input() overrideIconAction: string = "";
   @Input() overrideTooltipAction: string = "";
   @Input() defaultStatusFilter: InvoiceStatus[] | undefined;
-  employeeSearch: TiersSearch | undefined;
   searchedTiers: IndexEntity | undefined;
   searchedEmployee: IndexEntity | undefined;
-  bookmarkSalesEmployee: TiersSearch | undefined;
-  employees: ResponsableSearchResult[] | undefined;
 
   bookmark: InvoiceSearch | undefined;
 
@@ -58,8 +55,6 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     private formBuilder: FormBuilder,
     private habilitationService: HabilitationsService,
     private userPreferenceService: UserPreferenceService,
-    private responsableSearchResultService: ResponsableSearchResultService,
-    private employeeService: EmployeeService
   ) { }
 
   ngAfterContentChecked(): void {
@@ -141,19 +136,6 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
       }
       this.searchInvoices();
     }
-
-    this.employeeService.getEmployees().subscribe(response => {
-      this.employeeSearch = {} as TiersSearch;
-      this.bookmarkSalesEmployee = this.userPreferenceService.getUserSearchBookmark("employees") as TiersSearch;
-      if (this.bookmark) {
-        this.employeeSearch = this.bookmarkSalesEmployee;
-        if (this.employeeSearch.startDate)
-          this.employeeSearch.startDate = new Date(this.employeeSearch.startDate);
-        if (this.employeeSearch.endDate)
-          this.employeeSearch.endDate = new Date(this.employeeSearch.endDate);
-        this.searchEmployees();
-      }
-    });
   }
 
   invoiceForm = this.formBuilder.group({
@@ -187,15 +169,6 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
       this.invoiceSearchResultService.getInvoicesList(this.invoiceSearch).subscribe(response => {
         this.invoices = response;
-      })
-    }
-  }
-
-  searchEmployees() {
-    if (this.invoiceForm.valid && this.employeeSearch) {
-      this.userPreferenceService.setUserSearchBookmark(this.employeeSearch, "employees");
-      this.responsableSearchResultService.getResponsableSearch(this.employeeSearch).subscribe(response => {
-        this.employees = response;
       })
     }
   }
