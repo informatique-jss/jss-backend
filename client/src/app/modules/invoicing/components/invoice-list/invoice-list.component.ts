@@ -14,11 +14,6 @@ import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
 import { InvoiceStatus } from '../../model/InvoiceStatus';
 import { InvoiceSearchResultService } from '../../services/invoice.search.result.service';
 import { getColumnLink } from '../invoice-tools';
-import { TiersSearch } from 'src/app/modules/tiers/model/TiersSearch';
-import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
-import { Employee } from 'src/app/modules/profile/model/Employee';
-import { ResponsableSearchResultService } from '../../../tiers/services/responsable.search.result.service';
-import { ResponsableSearchResult } from 'src/app/modules/tiers/model/ResponsableSearchResult';
 
 @Component({
   selector: 'invoice-list',
@@ -41,7 +36,6 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   @Input() overrideTooltipAction: string = "";
   @Input() defaultStatusFilter: InvoiceStatus[] | undefined;
   searchedTiers: IndexEntity | undefined;
-  searchedEmployee: IndexEntity | undefined;
 
   bookmark: InvoiceSearch | undefined;
 
@@ -158,10 +152,6 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
       this.invoiceSearch.customerOrders = [];
       if (this.searchedTiers) {
         this.invoiceSearch.customerOrders.push({ id: this.searchedTiers.entityId } as ITiers);
-      }
-
-      if (this.searchedEmployee) {
-        this.invoiceSearch.salesEmployee = ({ id: this.searchedEmployee.entityId } as ITiers);
       }
 
       if (!this.isForDashboard && !this.isForTiersIntegration && !this.isForPaymentAssocationIntegration)

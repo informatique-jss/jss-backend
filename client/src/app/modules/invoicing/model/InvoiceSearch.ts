@@ -1,3 +1,4 @@
+import { Employee } from "../../profile/model/Employee";
 import { ITiers } from "../../tiers/model/ITiers";
 import { InvoiceStatus } from "./InvoiceStatus";
 
@@ -11,5 +12,5 @@ export interface InvoiceSearch {
   customerOrders: ITiers[];
   invoiceId: number;
   customerOrderId: number;
-  salesEmployee: ITiers;
+  salesEmployee: Employee;
 }
