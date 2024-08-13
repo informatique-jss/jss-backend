@@ -15,6 +15,7 @@ public class InvoiceSearch {
     private List<Tiers> customerOrders;
     private Integer invoiceId;
     private Integer customerOrderId;
+    private Tiers salesEmployee;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -86,6 +87,14 @@ public class InvoiceSearch {
 
     public void setCustomerOrderId(Integer customerOrderId) {
         this.customerOrderId = customerOrderId;
+    }
+
+    public Tiers getSalesEmployee() {
+        return salesEmployee;
+    }
+
+    public void setSalesEmployee(Tiers salesEmployee) {
+        this.salesEmployee = salesEmployee;
     }
 
 }

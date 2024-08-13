@@ -11,4 +11,5 @@ export interface InvoiceSearch {
   customerOrders: ITiers[];
   invoiceId: number;
   customerOrderId: number;
+  salesEmployee: ITiers;
 }
