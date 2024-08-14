@@ -22,8 +22,6 @@ import { getColumnLink } from '../invoice-tools';
 })
 export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
-
-
   @Input() invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   @Input() isForDashboard: boolean = false;
   @Input() isForTiersIntegration: boolean = false;
@@ -65,6 +63,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnInit() {
+
     if (!this.defaultStatusFilter && !this.isForDashboard && !this.isForTiersIntegration)
       this.defaultStatusFilter = [this.invoiceStatusSend];
 
@@ -89,6 +88,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "responsable", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "salesEmployeeId", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "affaires", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "providerLabel", fieldName: "providerLabel", label: "Fournisseur" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "invoicePayer", fieldName: "billingLabel", label: "Payeur" } as SortTableColumn<InvoiceSearchResult>);
@@ -149,13 +149,14 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
   searchInvoices() {
     if (this.invoiceForm.valid) {
-
       if (this.searchedTiers) {
         this.invoiceSearch.customerOrders = [];
-        this.invoiceSearch.customerOrders.push({ id: this.searchedTiers.entityId } as ITiers)
+        this.invoiceSearch.customerOrders.push({ id: this.searchedTiers.entityId } as ITiers);
       }
+
       if (!this.isForDashboard && !this.isForTiersIntegration && !this.isForPaymentAssocationIntegration)
         this.userPreferenceService.setUserSearchBookmark(this.invoiceSearch, "invoices");
+
       this.invoiceSearchResultService.getInvoicesList(this.invoiceSearch).subscribe(response => {
         this.invoices = response;
       })
