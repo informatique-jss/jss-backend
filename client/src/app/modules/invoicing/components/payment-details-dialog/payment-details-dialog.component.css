@@ -27,6 +27,3 @@
   padding-top: 10px;
 }
 
-.isCancelled {
-  color: var(--warn-color) !important;
-}
