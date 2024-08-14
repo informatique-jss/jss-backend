@@ -300,6 +300,8 @@ public class GeneratePdfDelegate {
                 && billingDocument.getCommandNumber() != null)
             ctx.setVariable("commandNumber", billingDocument.getCommandNumber());
         ctx.setVariable("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        if (billingDocument != null && billingDocument.getExternalReference() != null)
+            ctx.setVariable("clientReference", billingDocument.getExternalReference());
 
         if (tier instanceof Tiers) {
             ctx.setVariable("denomination",
