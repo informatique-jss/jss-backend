@@ -149,8 +149,8 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
   searchInvoices() {
     if (this.invoiceForm.valid) {
-      this.invoiceSearch.customerOrders = [];
       if (this.searchedTiers) {
+        this.invoiceSearch.customerOrders = [];
         this.invoiceSearch.customerOrders.push({ id: this.searchedTiers.entityId } as ITiers);
       }
 
