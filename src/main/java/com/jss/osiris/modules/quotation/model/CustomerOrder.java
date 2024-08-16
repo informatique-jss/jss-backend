@@ -49,7 +49,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	public CustomerOrder() {
 	}
 
-	public CustomerOrder(Employee assignedTo, Tiers tiers, Responsable responsable, Confrere confrere,
+	public CustomerOrder(Employee assignedTo, Tiers tiers, Responsable responsable, /* Confrere confrere, */
 			List<SpecialOffer> specialOffers, LocalDateTime createdDate, CustomerOrderStatus customerOrderStatus,
 			String description, List<Attachment> attachments,
 			List<Document> documents,
@@ -57,9 +57,9 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 			List<Quotation> quotations, Boolean isQuotation,
 			List<Invoice> invoices, List<CustomerOrderComment> customerOrderComments) {
 		this.assignedTo = assignedTo;
-		this.tiers = tiers;
 		this.responsable = responsable;
-		this.confrere = confrere;
+		// this.confrere = confrere;
+		// TODO refonte
 		this.specialOffers = specialOffers;
 		this.createdDate = createdDate;
 		this.customerOrderStatus = customerOrderStatus;
@@ -85,18 +85,13 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private Employee assignedTo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_tiers")
-	@IndexedField
-	private Tiers tiers;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
 	private Responsable responsable;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_confrere")
-	private Confrere confrere;
+	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "id_confrere")
+	// private Confrere confrere;
 
 	@ManyToMany
 	@JoinTable(name = "asso_customer_order_special_offer", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
@@ -204,28 +199,12 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.id = id;
 	}
 
-	public Tiers getTiers() {
-		return tiers;
-	}
-
-	public void setTiers(Tiers tiers) {
-		this.tiers = tiers;
-	}
-
 	public Responsable getResponsable() {
 		return responsable;
 	}
 
 	public void setResponsable(Responsable responsable) {
 		this.responsable = responsable;
-	}
-
-	public Confrere getConfrere() {
-		return confrere;
-	}
-
-	public void setConfrere(Confrere confrere) {
-		this.confrere = confrere;
 	}
 
 	public List<SpecialOffer> getSpecialOffers() {

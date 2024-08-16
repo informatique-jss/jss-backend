@@ -473,7 +473,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 try {
                     provision.setAttachments(
                             attachmentService.addAttachment(new FileInputStream(wordFile),
-                                    provision.getId(),null,
+                                    provision.getId(), null,
                                     Provision.class.getSimpleName(), constantService.getAttachmentTypeAnnouncement(),
                                     "announcement_" + announcement.getId()
                                             + DateTimeFormatter.ofPattern("yyyyMMdd HHmm").format(LocalDateTime.now())
@@ -541,8 +541,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         if (announcement != null) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
 
-            if (announcement.getConfrere().getIsRemindProviderInvoice() == null
-                    || announcement.getConfrere().getIsRemindProviderInvoice() == false)
+            if (announcement.getConfrere().getProvider().getIsRemindProviderInvoice() == null
+                    || announcement.getConfrere().getProvider().getIsRemindProviderInvoice() == false)
                 return;
 
             // Get provision

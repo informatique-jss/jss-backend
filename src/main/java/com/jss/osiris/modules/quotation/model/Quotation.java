@@ -14,7 +14,6 @@ import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.tiers.model.Responsable;
-import com.jss.osiris.modules.tiers.model.Tiers;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -49,19 +48,19 @@ public class Quotation implements IQuotation {
 	@IndexedField
 	private Employee assignedTo;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_tiers")
-	@IndexedField
-	private Tiers tiers;
+	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "id_tiers")
+	// @IndexedField
+	// private Tiers tiers;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
 	private Responsable responsable;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_confrere")
-	private Confrere confrere;
+	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "id_confrere")
+	// private Confrere confrere;
 
 	@ManyToMany
 	@JoinTable(name = "asso_quotation_special_offer", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
@@ -131,14 +130,6 @@ public class Quotation implements IQuotation {
 		this.id = id;
 	}
 
-	public Tiers getTiers() {
-		return tiers;
-	}
-
-	public void setTiers(Tiers tiers) {
-		this.tiers = tiers;
-	}
-
 	public Responsable getResponsable() {
 		return responsable;
 	}
@@ -193,14 +184,6 @@ public class Quotation implements IQuotation {
 
 	public void setIsQuotation(Boolean isQuotation) {
 		this.isQuotation = isQuotation;
-	}
-
-	public Confrere getConfrere() {
-		return confrere;
-	}
-
-	public void setConfrere(Confrere confrere) {
-		this.confrere = confrere;
 	}
 
 	public List<CustomerOrder> getCustomerOrders() {

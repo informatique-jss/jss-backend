@@ -1,6 +1,6 @@
 import { QuotationStatus } from 'src/app/modules/quotation/model/QuotationStatus';
 import { Employee } from "../../profile/model/Employee";
-import { ITiers } from '../../tiers/model/ITiers';
+import { Tiers } from '../../tiers/model/Tiers';
 import { Affaire } from './Affaire';
 
 export interface QuotationSearch {
@@ -9,6 +9,6 @@ export interface QuotationSearch {
   salesEmployee: Employee;
   assignedToEmployee: Employee;
   quotationStatus: QuotationStatus[];
-  customerOrders: ITiers[];
+  customerOrders: Tiers[];
   affaires: Affaire[];
 }

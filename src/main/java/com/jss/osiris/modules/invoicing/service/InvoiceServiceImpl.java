@@ -35,7 +35,6 @@ import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Document;
-import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
@@ -50,7 +49,6 @@ import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
-import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.TiersService;
@@ -149,50 +147,40 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.getId() != null)
             throw new OsirisClientMessageException("Impossible de modifier une facture");
 
-        IGenericTiers invoiceTiers = invoiceHelper.getCustomerOrder(invoice);
-
         // Define booleans
         if (invoice.getIsCreditNote() == null)
             invoice.setIsCreditNote(false);
-        if (invoice.getIsInvoiceFromProvider() == null)
-            invoice.setIsInvoiceFromProvider(false);
-        if (invoice.getIsProviderCreditNote() == null)
-            invoice.setIsProviderCreditNote(false);
 
         // Define due date
         if (invoice.getDueDate() == null)
-            invoice.setDueDate(getDueDateForInvoice(invoiceTiers, invoice));
+            invoice.setDueDate(getDueDateForInvoice(invoice.getResponsable(), invoice));
 
         invoice.setCreatedDate(LocalDateTime.now());
 
         // Defined billing label
         // If it's a credit note, no need, label is taken from invoice clone
-        if (!invoice.getIsInvoiceFromProvider() && !invoice.getIsProviderCreditNote() && !invoice.getIsCreditNote()
+        if (invoice.getResponsable() != null && !invoice.getIsCreditNote()
                 && (invoice.getBillingLabelType() == null || !constantService.getBillingLabelTypeOther().getId()
                         .equals(invoice.getBillingLabelType().getId()))) {
             Document billingDocument = null;
-            ITiers customerOrder = invoice.getTiers();
-            if (invoice.getResponsable() != null)
-                customerOrder = invoice.getResponsable();
-            if (invoice.getConfrere() != null)
-                customerOrder = invoice.getConfrere();
 
             if (invoice.getCustomerOrder() != null)
                 billingDocument = documentService.getBillingDocument(invoice.getCustomerOrder().getDocuments());
             else
-                billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
+                billingDocument = documentService.getBillingDocument(invoice.getResponsable().getDocuments());
 
             if (billingDocument == null)
                 throw new OsirisException(null, "Billing document not found for ordering customer provided");
 
             invoice.setBillingLabelType(billingDocument.getBillingLabelType());
-            invoiceHelper.setInvoiceLabel(invoice, billingDocument, invoice.getCustomerOrder(), customerOrder);
+            invoiceHelper.setInvoiceLabel(invoice, billingDocument, invoice.getCustomerOrder(),
+                    invoice.getResponsable());
         }
 
         // Define status
-        if (invoice.getIsInvoiceFromProvider())
+        if (invoice.getProvider() != null)
             invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
-        else if (invoice.getIsProviderCreditNote())
+        else if (invoice.getProvider() != null && invoice.getIsCreditNote())
             invoice.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
         else if (invoice.getInvoiceStatus() == null)
             invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
@@ -203,9 +191,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         // Associate invoice to invoice item
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
             // If we got an AC with direct charge, force no VAT
-            if (invoice.getIsInvoiceFromProvider() && invoice.getCompetentAuthority() != null
-                    && invoice.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
-                invoiceItem.setVat(constantService.getVatZero());
+            // if (invoice.getProvider() != null && invoice.getCompetentAuthority() != null
+            // &&
+            // invoice.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
+            // invoiceItem.setVat(constantService.getVatZero());
+            // TODO refonte
 
             vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
             invoiceItem.setInvoice(invoice);
@@ -215,9 +205,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceHelper.setPriceTotal(invoice);
 
         // Generate accounting records
-        if (invoice.getIsInvoiceFromProvider())
+        if (invoice.getProvider() != null)
             accountingRecordGenerationService.generateAccountingRecordsOnInvoiceReception(invoice);
-        else if (invoice.getIsProviderCreditNote())
+        else if (invoice.getProvider() != null && invoice.getIsCreditNote())
             accountingRecordGenerationService.generateAccountingRecordsOnCreditNoteReception(invoice,
                     invoice.getReverseCreditNote());
         else if (invoice.getIsCreditNote())
@@ -229,40 +219,31 @@ public class InvoiceServiceImpl implements InvoiceService {
         // Define payment type
         if (invoice.getManualPaymentType() == null) {
             PaymentType paymentType = null;
-            if (invoice.getIsInvoiceFromProvider()) {
-                if (invoice.getProvider() != null)
-                    paymentType = invoice.getProvider().getPaymentType();
-                if (invoice.getConfrere() != null)
-                    paymentType = invoice.getConfrere().getPaymentType();
-                if (invoice.getCompetentAuthority() != null)
-                    paymentType = invoice.getCompetentAuthority().getDefaultPaymentType();
+            if (invoice.getProvider() != null) {
+                paymentType = invoice.getProvider().getPaymentType();
             } else {
                 paymentType = constantService.getPaymentTypeVirement();
                 if (invoice.getResponsable() != null && invoice.getResponsable().getTiers().getPaymentType() != null)
                     paymentType = invoice.getResponsable().getTiers().getPaymentType();
-                if (invoice.getTiers() != null && invoice.getTiers().getPaymentType() != null)
-                    paymentType = invoice.getTiers().getPaymentType();
-                if (invoice.getConfrere() != null && invoice.getConfrere().getPaymentType() != null)
-                    paymentType = invoice.getConfrere().getPaymentType();
             }
             invoice.setManualPaymentType(paymentType);
         }
 
         // Handle provider and customer payment
-        if (invoice.getIsInvoiceFromProvider()) {
+        if (invoice.getProvider() != null) {
             if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())) {
                 invoice.setBankTransfert(bankTransfertService.generateBankTransfertForManualInvoice(invoice));
             }
 
             if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId())) {
                 Payment payment = paymentService.generateNewAccountPayment(-invoice.getTotalPrice(),
-                        invoiceTiers.getAccountingAccountDeposit(), invoiceTiers.getAccountingAccountProvider(),
+                        invoice.getProvider().getAccountingAccountDeposit(),
+                        invoice.getProvider().getAccountingAccountProvider(),
                         "Paiement pour la facture " + invoice.getId() + " / Fournisseur : "
-                                + (invoice.getProvider() != null ? invoice.getProvider().getLabel()
-                                        : invoice.getCompetentAuthority().getLabel()));
+                                + invoice.getProvider().getLabel());
                 accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment, false);
                 paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment, Arrays.asList(invoice), null, null,
-                        null, null, null, null);
+                        null, null, null);
             }
         } else {
             if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())
@@ -273,7 +254,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         addOrUpdateInvoice(invoice);
-        if (invoice.getIsInvoiceFromProvider() == false)
+        if (invoice.getResponsable() != null)
             generateInvoicePdf(invoice, invoice.getCustomerOrder());
 
         // Associate attachment for azure invoice
@@ -322,19 +303,12 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoice;
     }
 
-    private LocalDate getDueDateForInvoice(IGenericTiers customerOrder, Invoice invoice)
+    private LocalDate getDueDateForInvoice(Responsable customerOrder, Invoice invoice)
             throws OsirisException, OsirisClientMessageException {
         Integer nbrOfDayFromDueDate = 30;
-        ITiers masterOrderingCustomer = null;
 
-        if (customerOrder instanceof ITiers)
-            masterOrderingCustomer = (ITiers) customerOrder;
-
-        if (customerOrder instanceof Responsable)
-            masterOrderingCustomer = ((Responsable) customerOrder).getTiers();
-
-        if (masterOrderingCustomer != null) {
-            Document dunningDocument = documentService.getDocumentByDocumentType(masterOrderingCustomer.getDocuments(),
+        if (customerOrder != null) {
+            Document dunningDocument = documentService.getDocumentByDocumentType(customerOrder.getDocuments(),
                     constantService.getDocumentTypeDunning());
 
             if (dunningDocument == null)
@@ -358,13 +332,12 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
-                || !invoice.getIsCreditNote() && !invoice.getIsInvoiceFromProvider()
-                        && !invoice.getIsProviderCreditNote())
+                || invoice.getResponsable() != null)
             return cancelInvoiceEmitted(invoice, invoice.getCustomerOrder());
         if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusReceived().getId())
                 || invoice.getInvoiceStatus().getId()
                         .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())
-                || invoice.getIsInvoiceFromProvider()
+                || invoice.getProvider() != null
                         && invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusPayed().getId()))
             return cancelInvoiceReceived(invoice);
         return invoice;
@@ -383,8 +356,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                     for (Payment payment : invoice.getPayments())
                         if (payment.getPaymentType().getId()
                                 .equals(constantService.getPaymentTypePrelevement().getId())) {
-                            Tiers tiersInvoice = invoice.getResponsable() != null ? invoice.getResponsable().getTiers()
-                                    : invoice.getTiers();
+                            Tiers tiersInvoice = invoice.getResponsable().getTiers();
                             paymentService.refundPayment(payment, tiersInvoice, null);
                         }
                 }
@@ -500,14 +472,13 @@ public class InvoiceServiceImpl implements InvoiceService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         Invoice invoice = getInvoice(idOriginInvoiceForCreditNote);
-        newInvoice.setIsInvoiceFromProvider(false);
-        newInvoice.setIsProviderCreditNote(true);
+        newInvoice.setIsCreditNote(true);
         newInvoice.setReverseCreditNote(invoice);
         // Create credit note
         Invoice creditNote = addOrUpdateInvoiceFromUser(newInvoice);
         if (newInvoice.getInvoiceItems() != null) {
             creditNote.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
-            creditNote.setIsProviderCreditNote(true);
+            creditNote.setIsCreditNote(true);
         } else {
             throw new OsirisValidationException("Aucune ligne de facturation générée");
         }
@@ -525,10 +496,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Invoice addOrUpdateInvoice(Invoice invoice) throws OsirisException {
         if (invoice.getIsCreditNote() == null)
             invoice.setIsCreditNote(false);
-        if (invoice.getIsInvoiceFromProvider() == null)
-            invoice.setIsInvoiceFromProvider(false);
-        if (invoice.getIsProviderCreditNote() == null)
-            invoice.setIsProviderCreditNote(false);
 
         invoiceRepository.save(invoice);
         batchService.declareNewBatch(Batch.REINDEX_INVOICE, invoice.getId());
@@ -571,7 +538,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
         if (invoiceSearch.getCustomerOrders() != null && invoiceSearch.getCustomerOrders().size() > 0) {
-            for (ITiers tiers : invoiceSearch.getCustomerOrders())
+            for (Tiers tiers : invoiceSearch.getCustomerOrders())
                 customerOrderId.add(tiers.getId());
         } else {
             customerOrderId.add(0);
@@ -617,7 +584,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
                 for (Payment payment : invoice.getPayments())
                     if (!payment.getIsCancelled())
-                        if (invoice.getIsInvoiceFromProvider())
+                        if (invoice.getProvider() != null)
                             total -= Math.abs(payment.getPaymentAmount());
                         else
                             total -= payment.getPaymentAmount();
@@ -639,8 +606,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         newInvoice.setBillingLabelType(invoice.getBillingLabelType());
         newInvoice.setCedexComplement(invoice.getCedexComplement());
         newInvoice.setCommandNumber(invoice.getCommandNumber());
-        newInvoice.setCompetentAuthority(invoice.getCompetentAuthority());
-        newInvoice.setConfrere(invoice.getConfrere());
+        // newInvoice.setCompetentAuthority(invoice.getCompetentAuthority());
+        // TODO refonte
         newInvoice.setCreatedDate(LocalDateTime.now());
         newInvoice.setDueDate(invoice.getDueDate());
         newInvoice.setIsCommandNumberMandatory(invoice.getIsCommandNumberMandatory());
@@ -650,11 +617,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         newInvoice.setManualPaymentType(invoice.getManualPaymentType());
         newInvoice.setProvider(invoice.getProvider());
         newInvoice.setResponsable(invoice.getResponsable());
-        newInvoice.setTiers(invoice.getTiers());
         newInvoice.setTotalPrice(invoice.getTotalPrice());
         newInvoice.setIsCreditNote(false);
-        newInvoice.setIsProviderCreditNote(false);
-        newInvoice.setIsInvoiceFromProvider(invoice.getIsInvoiceFromProvider());
         return newInvoice;
     }
 
@@ -709,14 +673,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                     toSend = true;
                     invoice.setFirstReminderDateTime(LocalDateTime.now());
 
-                    IGenericTiers customerOrderToSetProvision = invoiceHelper.getCustomerOrder(invoice);
-                    if (customerOrderToSetProvision instanceof Tiers)
-                        notificationService.notifyTiersDepositMandatory((Tiers) customerOrderToSetProvision, null,
-                                invoice);
-                    else if (customerOrderToSetProvision instanceof Responsable)
-                        notificationService.notifyTiersDepositMandatory(null,
-                                (Responsable) customerOrderToSetProvision,
-                                invoice);
+                    notificationService.notifyTiersDepositMandatory(invoice.getResponsable(),
+                            invoice);
                 } else if (invoice.getSecondReminderDateTime() == null
                         && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))) {
                     toSend = true;

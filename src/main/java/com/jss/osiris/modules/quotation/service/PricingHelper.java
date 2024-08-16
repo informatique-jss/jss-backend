@@ -346,8 +346,8 @@ public class PricingHelper {
             // If billed, do not change items
             if (provision.getInvoiceItems().size() > 0)
                 for (InvoiceItem invoiceItem : provision.getInvoiceItems())
-                    if (invoiceItem.getInvoice() != null && invoiceItem.getInvoice().getIsInvoiceFromProvider() == false
-                            && invoiceItem.getInvoice().getIsProviderCreditNote() == false
+                    if (invoiceItem.getInvoice() != null && invoiceItem.getInvoice().getProvider() == null
+                            && invoiceItem.getInvoice().getIsCreditNote() == false
                             && (invoiceItem.getInvoice().getInvoiceStatus().getId()
                                     .equals(constantService.getInvoiceStatusSend().getId())
                                     || invoiceItem.getInvoice().getInvoiceStatus().getId()
@@ -504,20 +504,9 @@ public class PricingHelper {
                             newInvoiceItem.setOriginProviderInvoice(invoice);
                             newInvoiceItem.setInvoice(null);
                             newInvoiceItem.setIsOverridePrice(false);
-                            if (invoice.getCompetentAuthority() != null) {
-                                if (invoice.getCompetentAuthority().getId()
-                                        .equals(constantService.getCompetentAuthorityInpi().getId())) {
-                                    newInvoiceItem.setLabel(invoiceItem.getLabel().replace("<", ""));
-                                } else {
-                                    newInvoiceItem.setLabel(invoice.getCompetentAuthority().getLabel() + " - "
-                                            + invoiceItem.getBillingItem().getBillingType().getLabel());
-                                }
-                            } else if (invoice.getProvider() != null) {
-                                newInvoiceItem.setLabel(invoiceItem.getBillingItem().getBillingType().getLabel());
-                            } else if (invoice.getConfrere() != null) {
-                                newInvoiceItem.setLabel(invoice.getConfrere().getLabel() + " -  "
-                                        + invoiceItem.getBillingItem().getBillingType().getLabel());
-                            }
+                            newInvoiceItem.setLabel(invoiceItem.getLabel().replace("<", ""));
+                            newInvoiceItem.setLabel(invoice.getProvider().getLabel() + " - "
+                                    + invoiceItem.getBillingItem().getBillingType().getLabel());
                             newInvoiceItem.setProvision(provision);
                             newInvoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPriceReinvoiced());
                             if (invoiceItem.getVat().getRate() > 0)

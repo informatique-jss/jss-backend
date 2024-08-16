@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject } from 'rxjs';
 import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { Payment } from 'src/app/modules/invoicing/model/Payment';
@@ -11,19 +12,17 @@ import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { Responsable } from 'src/app/modules/tiers/model/Responsable';
+import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
-import { instanceOfConfrere } from '../../../../libs/TypeHelper';
 import { HabilitationsService } from '../../../../services/habilitations.service';
-import { ITiers } from '../../../tiers/model/ITiers';
 import { AccountingRecord } from '../../model/AccountingRecord';
 import { AccountingRecordSearch } from '../../model/AccountingRecordSearch';
 import { AccountingRecordSearchResult } from '../../model/AccountingRecordSearchResult';
+import { AccountingAccountService } from '../../services/accounting.account.service';
 import { AccountingRecordSearchResultService } from '../../services/accounting.record.search.result.service';
 import { AccountingRecordService } from '../../services/accounting.record.service';
-import { ActivatedRoute, UrlSegment } from '@angular/router';
-import { AccountingAccount } from '../../model/AccountingAccount';
-import { AccountingAccountService } from '../../services/accounting.account.service';
 
 @Component({
   selector: 'accounting-record',
@@ -33,7 +32,8 @@ import { AccountingAccountService } from '../../services/accounting.account.serv
 export class AccountingRecordComponent implements OnInit {
 
   // Used for integration in tiers and responsable component
-  @Input() tiersToDisplay: ITiers | undefined;
+  @Input() tiersToDisplay: Tiers | undefined;
+  @Input() responsableToDisplay: Responsable | undefined;
   @Input() accountingRecordSearch: AccountingRecordSearch = {} as AccountingRecordSearch;
 
   constructor(
@@ -93,10 +93,7 @@ export class AccountingRecordComponent implements OnInit {
     this.displayedColumns.push({ id: "payment", fieldName: "paymentId", label: "Paiement", actionFunction: (element: AccountingRecordSearchResult) => this.paymentDetailsDialogService.displayPaymentDetailsDialog({ id: element.paymentId } as Payment), actionIcon: "visibility", actionTooltip: "Voir le détail du paiement" } as SortTableColumn<AccountingRecordSearchResult>);
 
     if (this.tiersToDisplay && this.tiersToDisplay.id) {
-      if (instanceOfConfrere(this.tiersToDisplay))
-        this.accountingRecordSearch.confrereId = this.tiersToDisplay.id;
-      else
-        this.accountingRecordSearch.tiersId = this.tiersToDisplay.id;
+      this.accountingRecordSearch.tiersId = this.tiersToDisplay.id;
       this.accountingRecordSearch.hideLettered = true;
       this.searchRecords();
     } else if (this.accountingRecordSearch && this.accountingRecordSearch.idPayment)
@@ -342,7 +339,7 @@ export class AccountingRecordComponent implements OnInit {
 
   downloadBillingClosureReceipt() {
     if (this.tiersToDisplay)
-      this.accountingRecordService.downloadBillingClosureReceipt(this.tiersToDisplay);
+      this.accountingRecordService.downloadBillingClosureReceipt(this.tiersToDisplay, this.responsableToDisplay);
   }
 
   sendBillingClosureReceipt() {
@@ -358,8 +355,8 @@ export class AccountingRecordComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe(dialogResult => {
-        if (dialogResult)
-          this.accountingRecordService.sendBillingClosureReceipt(this.tiersToDisplay!).subscribe(res => { });
+        if (dialogResult && this.tiersToDisplay)
+          this.accountingRecordService.sendBillingClosureReceipt(this.tiersToDisplay, this.responsableToDisplay).subscribe(res => { });
       });
     }
   }

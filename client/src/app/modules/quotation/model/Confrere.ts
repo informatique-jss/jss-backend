@@ -1,28 +1,23 @@
+import { City } from "../../miscellaneous/model/City";
+import { Country } from "../../miscellaneous/model/Country";
 import { Department } from "../../miscellaneous/model/Department";
 import { IDocument } from "../../miscellaneous/model/IDocument";
 import { Mail } from "../../miscellaneous/model/Mail";
-import { PaymentType } from "../../miscellaneous/model/PaymentType";
-import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
-import { VatCollectionType } from "../../miscellaneous/model/VatCollectionType";
+import { Phone } from "../../miscellaneous/model/Phone";
+import { Provider } from "../../miscellaneous/model/Provider";
 import { WeekDay } from "../../miscellaneous/model/WeekDay";
-import { ITiers } from "../../tiers/model/ITiers";
+import { Responsable } from "../../tiers/model/Responsable";
 import { JournalType } from "./JournalType";
 
-export interface Confrere extends IDocument, ITiers {
+export interface Confrere extends IDocument {
   label: string;
   code: string;
-  accountingMails: Mail[];
-  paymentType: PaymentType;
-  paymentIban: string;
-  sepaMandateSignatureDate: Date;
-  paymentBic: string;
-  isSepaMandateReceived: boolean;
-  isProvisionalPaymentMandatory: boolean;
-  journalType: JournalType;
+  departments: Department[];
+  mails: Mail[];
+  phones: Phone[];
   reinvoicing: number;
   weekDays: WeekDay[];
-  specialOffers: SpecialOffer[];
-  departments: Department[];
+  journalType: JournalType;
   lastShipmentForPublication: string;
   publicationCertificateDocumentGrade: string;
   billingGrade: string;
@@ -33,8 +28,13 @@ export interface Confrere extends IDocument, ITiers {
   administrativeFees: number;
   numberOfPrint: number;
   paperPrice: number;
-  vatCollectionType: VatCollectionType;
-  intercommunityVat: string;
-  doNotUse: boolean;
-  isRemindProviderInvoice: boolean;
+  mailRecipient: string | null;
+  address: string;
+  postalCode: string;
+  cedexComplement: string;
+  city: City;
+  country: Country;
+  observations: string;
+  provider: Provider;
+  responsable: Responsable;
 }

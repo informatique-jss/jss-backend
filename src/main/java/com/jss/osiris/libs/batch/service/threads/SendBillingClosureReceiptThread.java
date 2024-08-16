@@ -25,6 +25,6 @@ public class SendBillingClosureReceiptThread implements IOsirisThread {
         public void executeTask(Integer entityId)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException,
                         OsirisDuplicateException {
-                accountingRecordService.getBillingClosureReceiptFile(entityId, false);
+                accountingRecordService.getBillingClosureReceiptFile(entityId, null, false);
         }
 }

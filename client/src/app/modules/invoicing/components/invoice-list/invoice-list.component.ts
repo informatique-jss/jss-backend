@@ -4,11 +4,11 @@ import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortT
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
-import { ITiers } from '../../../tiers/model/ITiers';
 import { InvoiceSearch } from '../../model/InvoiceSearch';
 import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
 import { InvoiceStatus } from '../../model/InvoiceStatus';
@@ -152,7 +152,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
       if (this.searchedTiers) {
         this.invoiceSearch.customerOrders = [];
-        this.invoiceSearch.customerOrders.push({ id: this.searchedTiers.entityId } as ITiers)
+        this.invoiceSearch.customerOrders.push({ id: this.searchedTiers.entityId } as Tiers)
       }
       if (!this.isForDashboard && !this.isForTiersIntegration && !this.isForPaymentAssocationIntegration)
         this.userPreferenceService.setUserSearchBookmark(this.invoiceSearch, "invoices");

@@ -69,8 +69,8 @@ import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
-import com.jss.osiris.modules.quotation.model.AssoServiceTypeFieldType;
 import com.jss.osiris.modules.quotation.model.AssoServiceProvisionType;
+import com.jss.osiris.modules.quotation.model.AssoServiceTypeFieldType;
 import com.jss.osiris.modules.quotation.model.AttachmentMailRequest;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.BuildingDomiciliation;
@@ -112,8 +112,8 @@ import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.ServiceFamily;
 import com.jss.osiris.modules.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.quotation.model.ServiceFieldType;
-import com.jss.osiris.modules.quotation.model.ServiceTypeFieldTypePossibleValue;
 import com.jss.osiris.modules.quotation.model.ServiceType;
+import com.jss.osiris.modules.quotation.model.ServiceTypeFieldTypePossibleValue;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
@@ -1376,16 +1376,6 @@ public class QuotationController {
     validationHelper.validateString(confrere.getCedexComplement(), false, 20, "CedexComplement");
     validationHelper.validateReferential(confrere.getCity(), false, "City");
     validationHelper.validateReferential(confrere.getCountry(), false, "Country");
-    validationHelper.validateReferential(confrere.getVatCollectionType(), true, "VatCollectionType");
-    validationHelper.validateReferential(confrere.getPaymentType(), true, "PaymentType");
-    validationHelper.validateIban(confrere.getPaymentIban(), false, "PaymentIBAN");
-    validationHelper.validateBic(confrere.getPaymentBic(), false, "PaymentBic");
-    validationHelper.validateString(confrere.getIntercommunityVat(), false, 20, "intercommunityVat");
-
-    if (confrere.getPaymentType() != null
-        && confrere.getPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())) {
-      validationHelper.validateDate(confrere.getSepaMandateSignatureDate(), true, "SepaMandateSignatureDate");
-    }
 
     if (confrere.getSpecialOffers() != null) {
       for (SpecialOffer specialOffer : confrere.getSpecialOffers()) {
@@ -1419,7 +1409,6 @@ public class QuotationController {
         validationHelper.validateReferential(document.getBillingClosureType(), false, "BillingClosureType");
         validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
             "BillingClosureRecipientType");
-        validationHelper.validateReferential(document.getRegie(), false, "Regie");
 
         if (document.getIsRecipientAffaire() == null)
           document.setIsRecipientAffaire(false);

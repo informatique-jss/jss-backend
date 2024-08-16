@@ -129,12 +129,8 @@ export class PaymentDetailsDialogComponent implements OnInit, AfterContentChecke
       if (this.selectedPayment) {
         if (this.selectedPayment.customerOrder) {
           this.currentCustomerOrder = this.selectedPayment.customerOrder;
-          if (this.selectedPayment.customerOrder.tiers)
-            this.currentTiers = this.selectedPayment.customerOrder.tiers;
           if (this.selectedPayment.customerOrder.responsable)
             this.currentResponsable = this.selectedPayment.customerOrder.responsable;
-          if (this.selectedPayment.customerOrder.confrere)
-            this.currentConfrere = this.selectedPayment.customerOrder.confrere;
           if (this.selectedPayment.customerOrder.assoAffaireOrders && this.selectedPayment.customerOrder.assoAffaireOrders.length == 1)
             this.currentAffaire = this.selectedPayment.customerOrder.assoAffaireOrders[0].affaire;
         }
@@ -143,16 +139,10 @@ export class PaymentDetailsDialogComponent implements OnInit, AfterContentChecke
           this.currentInvoice = this.selectedPayment.invoice;
           if (this.selectedPayment.invoice.customerOrder)
             this.currentCustomerOrder = this.selectedPayment.invoice.customerOrder;
-          if (this.selectedPayment.invoice.tiers)
-            this.currentTiers = this.selectedPayment.invoice.tiers;
           if (this.selectedPayment.invoice.responsable)
             this.currentResponsable = this.selectedPayment.invoice.responsable;
-          if (this.selectedPayment.invoice.confrere)
-            this.currentConfrere = this.selectedPayment.invoice.confrere;
           if (this.selectedPayment.invoice.provider)
             this.currentProvider = this.selectedPayment.invoice.provider;
-          if (this.selectedPayment.invoice.competentAuthority)
-            this.currentCompetentAuthority = this.selectedPayment.invoice.competentAuthority;
           if (this.selectedPayment.invoice.customerOrder && this.selectedPayment.invoice.customerOrder.assoAffaireOrders && this.selectedPayment.invoice.customerOrder.assoAffaireOrders.length == 1)
             this.currentAffaire = this.selectedPayment.invoice.customerOrder.assoAffaireOrders[0].affaire;
         }
@@ -176,26 +166,16 @@ export class PaymentDetailsDialogComponent implements OnInit, AfterContentChecke
           if (this.selectedPayment.bankTransfert.customerOrder)
             this.currentCustomerOrder = this.selectedPayment.bankTransfert.customerOrder;
 
-          if (this.selectedPayment.bankTransfert.customerOrder.tiers)
-            this.currentTiers = this.selectedPayment.invoice.tiers;
           if (this.selectedPayment.bankTransfert.customerOrder.responsable)
             this.currentResponsable = this.selectedPayment.bankTransfert.customerOrder.responsable;
-          if (this.selectedPayment.bankTransfert.customerOrder.confrere)
-            this.currentConfrere = this.selectedPayment.bankTransfert.customerOrder.confrere;
           if (this.selectedPayment.bankTransfert.customerOrder.assoAffaireOrders && this.selectedPayment.bankTransfert.customerOrder.assoAffaireOrders.length == 1)
             this.currentAffaire = this.selectedPayment.bankTransfert.customerOrder.assoAffaireOrders[0].affaire;
 
           if (this.selectedPayment.bankTransfert.invoices[0]) {
-            if (this.selectedPayment.bankTransfert.invoices[0].tiers)
-              this.currentTiers = this.selectedPayment.bankTransfert.invoices[0].tiers;
             if (this.selectedPayment.bankTransfert.invoices[0].responsable)
               this.currentResponsable = this.selectedPayment.bankTransfert.invoices[0].responsable;
-            if (this.selectedPayment.bankTransfert.invoices[0].confrere)
-              this.currentConfrere = this.selectedPayment.bankTransfert.invoices[0].confrere;
             if (this.selectedPayment.bankTransfert.invoices[0].provider)
               this.currentProvider = this.selectedPayment.bankTransfert.invoices[0].provider;
-            if (this.selectedPayment.bankTransfert.invoices[0].competentAuthority)
-              this.currentCompetentAuthority = this.selectedPayment.bankTransfert.invoices[0].competentAuthority;
           }
         }
 
@@ -206,12 +186,8 @@ export class PaymentDetailsDialogComponent implements OnInit, AfterContentChecke
 
           this.currentAffaire = this.selectedPayment.provision.service.assoAffaireOrder.affaire;
 
-          if (this.selectedPayment.provision.service.assoAffaireOrder.customerOrder.tiers)
-            this.currentTiers = this.selectedPayment.provision.service.assoAffaireOrder.customerOrder.tiers;
           if (this.selectedPayment.provision.service.assoAffaireOrder.customerOrder.responsable)
             this.currentResponsable = this.selectedPayment.provision.service.assoAffaireOrder.customerOrder.responsable;
-          if (this.selectedPayment.provision.service.assoAffaireOrder.customerOrder.confrere)
-            this.currentConfrere = this.selectedPayment.provision.service.assoAffaireOrder.customerOrder.confrere;
         }
 
         this.searchAccountingRecord = {} as AccountingRecordSearch;

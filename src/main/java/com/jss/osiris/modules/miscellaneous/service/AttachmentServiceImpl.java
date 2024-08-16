@@ -1,10 +1,10 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
-import java.time.format.DateTimeFormatter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -434,7 +434,9 @@ public class AttachmentServiceImpl implements AttachmentService {
                         return 1;
                     if (o1 != null && o2 == null)
                         return -1;
-                    return o2.getCreatedDateTime().compareTo(o1.getCreatedDateTime());
+                    if (o2 != null && o1 != null)
+                        return o2.getCreatedDateTime().compareTo(o1.getCreatedDateTime());
+                    return 1;
                 }
             });
 

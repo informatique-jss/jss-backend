@@ -48,9 +48,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   AccountingJournalService accountingJournalService;
 
   @Autowired
-  AccountingBalanceHelper accountingBalanceHelper;
-
-  @Autowired
   AccountingExportHelper accountingExportHelper;
 
   @Autowired
@@ -380,9 +377,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Transactional(rollbackFor = Exception.class)
   @Override
-  public File getBillingClosureReceiptFile(Integer tiersId, boolean downloadFile)
+  public File getBillingClosureReceiptFile(Integer tiersId, Integer responsableId, boolean downloadFile)
       throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-    return billingClosureReceiptDelegate.getBillingClosureReceiptFile(tiersId, downloadFile);
+    return billingClosureReceiptDelegate.getBillingClosureReceiptFile(tiersId, responsableId, downloadFile);
   }
 
   @Transactional(rollbackFor = Exception.class)

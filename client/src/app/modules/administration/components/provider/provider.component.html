@@ -53,12 +53,6 @@
                     [isDisabled]="true" label="Compte comptable fournisseur">
                   </autocomplete-accounting-account>
                 </td>
-                <td *ngIf="selectedProvider.accountingAccountCustomer">
-                  <autocomplete-accounting-account [(model)]="selectedProvider.accountingAccountCustomer"
-                    [form]="entityForm2" propertyName="accountingAccountCustomer" [isMandatory]="false"
-                    [isDisabled]="true" label="Compte comptable client">
-                  </autocomplete-accounting-account>
-                </td>
                 <td *ngIf="selectedProvider.accountingAccountDeposit">
                   <autocomplete-accounting-account [(model)]="selectedProvider.accountingAccountDeposit"
                     [form]="entityForm2" propertyName="accountingAccountDeposit" [isMandatory]="false"
@@ -70,6 +64,11 @@
                     label="Poste de facturation par défaut" propertyName="defaultBillingItem" [isMandatory]="false"
                     [isDisabled]="!editMode">
                   </autocomplete-billing-item>
+                </td>
+                <td>
+                  <generic-toggle [(model)]="selectedProvider.isRemindProviderInvoice"
+                    label="Relancer la non réception des factures fournisseurs" [form]="entityForm2"
+                    propertyName="isRemindProviderInvoice" [isDisabled]="!editMode"></generic-toggle>
                 </td>
               </tr>
             </table>

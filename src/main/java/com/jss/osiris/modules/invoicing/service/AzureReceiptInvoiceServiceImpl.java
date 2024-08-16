@@ -144,10 +144,8 @@ public class AzureReceiptInvoiceServiceImpl implements AzureReceiptInvoiceServic
                     .equals(CustomerOrderStatus.BILLED)
                     && finalInvoices.get(0).getCustomerOrderForInboundInvoice().getInvoices() != null) {
                 for (Invoice customerInvoice : finalInvoices.get(0).getCustomerOrderForInboundInvoice().getInvoices())
-                    if ((customerInvoice.getIsInvoiceFromProvider() == null
-                            || customerInvoice.getIsInvoiceFromProvider() == false)
-                            && (customerInvoice.getInvoiceStatus()
-                                    .equals(constantService.getInvoiceStatusSend())
+                    if (customerInvoice.getResponsable() != null
+                            && (customerInvoice.getInvoiceStatus().equals(constantService.getInvoiceStatusSend())
                                     || customerInvoice.getInvoiceStatus()
                                             .equals(constantService.getInvoiceStatusPayed()))) {
                         if (customerInvoice.getCreatedDate().isAfter(finalInvoices.get(0).getCreatedDate()))

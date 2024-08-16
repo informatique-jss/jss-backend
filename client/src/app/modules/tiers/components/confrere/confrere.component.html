@@ -34,10 +34,6 @@
                         [form]="entityForm2" propertyName="label" [isMandatory]="true"
                         [isDisabled]="!editMode"></generic-input>
                     </td>
-                    <td>
-                      <generic-toggle [(model)]="selectedConfrere.doNotUse" label="Indiquer à ne pas utiliser"
-                        [form]="entityForm2" propertyName="doNotUse"></generic-toggle>
-                    </td>
                   </tr>
                 </table>
                 <table class="full-width">
@@ -47,76 +43,8 @@
                         propertyName="mails" [isMandatory]="false" [isDisabled]="!editMode"></chips-mail>
                     </td>
                     <td>
-                      <chips-mail [(model)]="selectedConfrere.accountingMails" label="Mails (comptabilité)"
-                        [form]="entityForm2" propertyName="accountingMails" [isMandatory]="false"
-                        [isDisabled]="!editMode"></chips-mail>
-                    </td>
-                    <td>
                       <chips-phone [(model)]="selectedConfrere.phones" label="Téléphones" [form]="entityForm2"
                         propertyName="phones" [isMandatory]="false" [isDisabled]="!editMode"></chips-phone>
-                    </td>
-                  </tr>
-                </table>
-
-                <table class="full-width">
-                  <tr>
-                    <td>
-                      <autocomplete-employee [(model)]="selectedConfrere.salesEmployee" [isDisabled]="!editMode"
-                        label="Commercial" [form]="entityForm2" propertyName="salesEmployee" [isMandatory]="true">
-                      </autocomplete-employee>
-                    </td>
-                    <td>
-                      <autocomplete-employee [(model)]="selectedConfrere.defaultCustomerOrderEmployee"
-                        [isDisabled]="!editMode" label="Assignation par défaut des commandes" [form]="entityForm2"
-                        propertyName="defaultCustomerOrderEmployee" [isMandatory]="false"></autocomplete-employee>
-                    </td>
-                    <td>
-                      <autocomplete-employee [(model)]="selectedConfrere.formalisteEmployee" [isDisabled]="!editMode"
-                        label="Formaliste" [isDisabled]="!editMode" [form]="entityForm2"
-                        propertyName="formalisteEmployee">
-                      </autocomplete-employee>
-                    </td>
-                    <td>
-                      <autocomplete-employee [(model)]="selectedConfrere.insertionEmployee" [isDisabled]="!editMode"
-                        label="Publiciste" [isDisabled]="!editMode" [form]="entityForm2"
-                        propertyName="insertionEmployee">
-                      </autocomplete-employee>
-                    </td>
-                  </tr>
-                </table>
-                <table class="full-width">
-                  <tr>
-                    <td *ngIf="selectedConfrere.accountingAccountProvider">
-                      <autocomplete-accounting-account [(model)]="selectedConfrere.accountingAccountProvider"
-                        [form]="entityForm2" propertyName="accountingAccountProvider" [isMandatory]="false"
-                        [isDisabled]="true" label="Compte comptable fournisseur">
-                      </autocomplete-accounting-account>
-                    </td>
-                    <td *ngIf="selectedConfrere.accountingAccountCustomer">
-                      <autocomplete-accounting-account [(model)]="selectedConfrere.accountingAccountCustomer"
-                        [form]="entityForm2" propertyName="accountingAccountCustomer" [isMandatory]="false"
-                        [isDisabled]="true" label="Compte comptable client">
-                      </autocomplete-accounting-account>
-                    </td>
-                    <td *ngIf="selectedConfrere.accountingAccountDeposit">
-                      <autocomplete-accounting-account [(model)]="selectedConfrere.accountingAccountDeposit"
-                        [form]="entityForm2" propertyName="accountingAccountDeposit" [isMandatory]="false"
-                        [isDisabled]="true" label="Compte comptable d'acompte">
-                      </autocomplete-accounting-account>
-                    </td>
-                  </tr>
-                </table>
-                <table class="full-width">
-                  <tr>
-                    <td>
-                      <select-vat-collection-type [(model)]="selectedConfrere.vatCollectionType"
-                        label="Type d'encaissement de la TVA" [form]="entityForm2" propertyName="vatCollectionType"
-                        [isMandatory]="true" [isDisabled]="!editMode"></select-vat-collection-type>
-                    </td>
-                    <td>
-                      <generic-toggle [(model)]="selectedConfrere.isRemindProviderInvoice"
-                        label="Relancer la non réception des factures fournisseurs" [form]="entityForm2"
-                        propertyName="isRemindProviderInvoice" [isDisabled]="!editMode"></generic-toggle>
                     </td>
                   </tr>
                 </table>
@@ -188,17 +116,6 @@
                       <generic-input [(model)]="selectedConfrere.reinvoicing" label="Refacturation (%)"
                         [form]="entityForm2" propertyName="reinvoicing" [isMandatory]="true" [isDisabled]="!editMode"
                         type="number"></generic-input>
-                    </td>
-                    <td>
-                      <generic-input [(model)]="selectedConfrere.intercommunityVat" [isDisabled]="!editMode"
-                        label="TVA intercommunaitaire" [form]="entityForm2" propertyName="intercommunityVat"
-                        [isMandatory]="false" [conditionnalRequired]=""
-                        [customValidators]="[checkVAT('intercommunityVat')]">
-                      </generic-input>
-                    </td>
-                    <td>
-                      <chips-special-offers [(model)]="selectedConfrere.specialOffers" [form]="entityForm2"
-                        propertyName="specialOffers" [isDisabled]="!editMode"></chips-special-offers>
                     </td>
                     <td *ngIf="selectedConfrere.journalType && selectedConfrere.journalType.id == journalTypePaper.id">
                       <generic-input [(model)]="selectedConfrere.shippingCosts" label="Frais de port (€)"
@@ -290,9 +207,6 @@
           </form>
         </div>
       </mat-tab>
-      <mat-tab label="Pièces, réglements, facturations & relances">
-        <settlement-billing [tiers]="selectedConfrere" [editMode]="editMode"></settlement-billing>
-      </mat-tab>
       <mat-tab label="Devis" *ngIf="selectedConfrere.id">
         <ng-template matTabContent>
           <quotation-list class="integration-component"
@@ -322,18 +236,13 @@
       </mat-tab>
       <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id && !this.idConfrere">
         <ng-template matTabContent>
-          <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
+          <accounting-record [responsableToDisplay]="responsableAccountSearch"></accounting-record>
         </ng-template>
       </mat-tab>
       <mat-tab label="Mails" *ngIf="selectedConfrere.id">
         <ng-template matTabContent>
           <automatic-mail-list [confrere]="selectedConfrere">
           </automatic-mail-list>
-        </ng-template>
-      </mat-tab>
-      <mat-tab label="Suivi" *ngIf="selectedConfrere.id">
-        <ng-template matTabContent>
-          <tiers-followup [tiers]="selectedConfrere" [editMode]="editMode"></tiers-followup>
         </ng-template>
       </mat-tab>
       <mat-tab label="Historique" *ngIf="selectedConfrere.id">

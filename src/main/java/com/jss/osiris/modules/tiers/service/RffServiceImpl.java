@@ -191,9 +191,8 @@ public class RffServiceImpl implements RffService {
         Invoice invoice = new Invoice();
 
         invoice.setIsCreditNote(false);
-        invoice.setIsProviderCreditNote(false);
-        invoice.setIsInvoiceFromProvider(true);
-        invoice.setTiers(rff.getTiers());
+        invoice.setIsCreditNote(false);
+        // invoice.setTiers(rff.getTiers()); //TODO refonte
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
 
         InvoiceItem invoiceItem = new InvoiceItem();

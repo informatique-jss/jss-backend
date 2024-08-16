@@ -13,6 +13,8 @@ import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
+import { Responsable } from 'src/app/modules/tiers/model/Responsable';
+import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { EntityType } from 'src/app/routing/search/EntityType';
 import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
@@ -23,11 +25,9 @@ import { replaceDocument } from '../../../../libs/DocumentHelper';
 import { formatDateFrance } from '../../../../libs/FormatHelper';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
 import { HabilitationsService } from '../../../../services/habilitations.service';
-import { getCustomerOrderForIQuotation } from '../../../invoicing/components/invoice-tools';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
 import { InvoiceSearchResultService } from '../../../invoicing/services/invoice.search.result.service';
 import { WorkflowDialogComponent } from '../../../miscellaneous/components/workflow-dialog/workflow-dialog.component';
-import { ITiers } from '../../../tiers/model/ITiers';
 import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { CustomerOrder } from '../../model/CustomerOrder';
@@ -277,12 +277,16 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                 userList.push(provision.assignedTo);
             }
           if (userList.length == 0) {
-            let tiers: ITiers | undefined = this.quotation.responsable ?? this.quotation.tiers ?? this.quotation.confrere;
-            if (tiers) {
-              if (tiers.formalisteEmployee)
-                userList.push(tiers.formalisteEmployee);
-              if (tiers.insertionEmployee)
-                userList.push(tiers.insertionEmployee);
+            let responsable: Responsable | undefined = this.quotation.responsable;
+            if (responsable) {
+              if (responsable.formalisteEmployee)
+                userList.push(responsable.formalisteEmployee);
+              else if (responsable.tiers.formalisteEmployee)
+                userList.push(responsable.tiers.formalisteEmployee);
+              if (responsable.insertionEmployee)
+                userList.push(responsable.insertionEmployee);
+              else if (responsable.tiers.insertionEmployee)
+                userList.push(responsable.tiers.insertionEmployee);
             }
           }
           let chooseUserDialogRef = this.chooseUserDialog.open(ChooseAssignedUserDialogComponent, {
@@ -501,7 +505,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
         // Check if another quotation / affaire already exists
         let orderingSearch = {} as OrderingSearch;
-        orderingSearch.customerOrders = [getCustomerOrderForIQuotation(this.quotation)];
+        orderingSearch.customerOrders = [this.quotation.responsable as any as Tiers];
         orderingSearch.affaire = asso.affaire;
         orderingSearch.customerOrderStatus = [];
         let d = new Date();

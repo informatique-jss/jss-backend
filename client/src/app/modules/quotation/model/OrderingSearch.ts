@@ -1,5 +1,5 @@
 import { Employee } from "../../profile/model/Employee";
-import { ITiers } from '../../tiers/model/ITiers';
+import { Tiers } from "../../tiers/model/Tiers";
 import { Affaire } from "./Affaire";
 import { CustomerOrderStatus } from './CustomerOrderStatus';
 
@@ -9,7 +9,7 @@ export interface OrderingSearch {
   salesEmployee: Employee;
   assignedToEmployee: Employee;
   customerOrderStatus: CustomerOrderStatus[];
-  customerOrders: ITiers[];
+  customerOrders: Tiers[];
   affaire: Affaire;
   idCustomerOrder: number;
   idQuotation: number;

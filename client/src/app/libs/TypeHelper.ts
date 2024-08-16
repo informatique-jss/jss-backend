@@ -1,6 +1,4 @@
-import { IAttachment } from "../modules/miscellaneous/model/IAttachment";
 import { IAttachmentCode } from "../modules/miscellaneous/model/IAttachmentCode";
-import { Confrere } from "../modules/quotation/model/Confrere";
 import { CustomerOrder } from "../modules/quotation/model/CustomerOrder";
 import { IQuotation } from "../modules/quotation/model/IQuotation";
 import { Quotation } from "../modules/quotation/model/Quotation";
@@ -9,12 +7,6 @@ import { Tiers } from "../modules/tiers/model/Tiers";
 
 export function instanceOfTiers(object: any): object is Tiers {
   return !instanceOfResponsable(object);
-}
-
-export function instanceOfConfrere(object: any): object is Confrere {
-  if (object != null)
-    return 'paperGrade' in object;
-  return false;
 }
 
 export function instanceOfResponsable(object: any): object is Responsable {

@@ -41,27 +41,7 @@
             </tr>
           </table>
           <table class="full-width"
-            *ngIf="instanceOfConfrere(tiers) && billingDocument.billingLabelType && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.id==billingLableTypeOther.id">
-            <tr>
-              <td>
-                <autocomplete-regie [(model)]="billingDocument.regie" [form]="settlementBillingForm"
-                  propertyName="regie" [isMandatory]="false" [isDisabled]="!editMode"
-                  label="Régie"></autocomplete-regie>
-              </td>
-              <td *ngIf="billingDocument.regie">
-                <chips-mail [(model)]="billingDocument.regie.mails" label="Mails de la régie"
-                  [form]="settlementBillingForm" propertyName="regieMail" [isMandatory]="false"
-                  [isDisabled]="true"></chips-mail>
-              </td>
-              <td *ngIf="billingDocument.regie">
-                <generic-input [(model)]="billingDocument.regie.iban" label="IBAN de la régie"
-                  [form]="settlementBillingForm" propertyName="regieIban" [isMandatory]="false"
-                  [isDisabled]="true"></generic-input>
-              </td>
-            </tr>
-          </table>
-          <table class="full-width"
-            *ngIf="!instanceOfConfrere(tiers) && billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.id==billingLableTypeOther.id">
+            *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.id==billingLableTypeOther.id">
             <tr>
               <td>
                 <generic-input [(model)]="billingDocument.billingLabel" label="Libellé" [form]="settlementBillingForm"
@@ -206,8 +186,7 @@
             </tr>
           </table>
         </mat-expansion-panel>
-        <mat-expansion-panel
-          *ngIf="instanceOfTiers(tiers) && !instanceOfResponsable(tiers) && !instanceOfConfrere(tiers)">
+        <mat-expansion-panel *ngIf="instanceOfTiers(tiers) && !instanceOfResponsable(tiers) ">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Relevés de compte

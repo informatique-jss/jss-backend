@@ -109,7 +109,7 @@
           </ordering-customer>
         </mat-tab>
         <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-          <mat-tab label="Prestations" *ngIf="(quotation.tiers || quotation.responsable  || quotation.confrere)  ">
+          <mat-tab label="Prestations" *ngIf="(quotation.responsable)  ">
             <div class="mat-elevation-z2 form-div" *ngIf="quotation.assoAffaireOrders">
               <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTabIndexAsso"
                 (selectedTabChange)="changeTabAsso($event)">
@@ -280,7 +280,7 @@
   <mat-icon>save</mat-icon>
 </button>
 <button matTooltip="Ajouter une affaire / prestation" mat-fab color="accent" class="third-fab-button"
-  *ngIf="editMode  &&  (quotation.tiers || quotation.responsable || quotation.confrere) " (click)="addAffaire()">
+  *ngIf="editMode  &&  (quotation.responsable) " (click)="addAffaire()">
   <mat-icon>person_add</mat-icon>
 </button>
 <button [matTooltip]="instanceOfCustomerOrder?'Modifier la commande' : 'Modifier le devis'" mat-fab color="accent"

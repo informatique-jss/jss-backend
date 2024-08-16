@@ -61,7 +61,6 @@ import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-co
 import { AutocompletePrincipalAccountingAccountComponent } from '../forms/autocomplete-principal-accounting-account/autocomplete-principal-accounting-account.component';
 import { AutocompleteProviderComponent } from '../forms/autocomplete-provider/autocomplete-provider.component';
 import { AutocompleteProvisionTypeComponent } from '../forms/autocomplete-provision-type/autocomplete-provision-type.component';
-import { AutocompleteRegieComponent } from '../forms/autocomplete-regie/autocomplete-regie.component';
 import { AutocompleteRegionComponent } from '../forms/autocomplete-region/autocomplete-region.component';
 import { AutocompleteResponsableComponent } from '../forms/autocomplete-responsable/autocomplete-responsable.component';
 import { AutocompleteRnaComponent } from '../forms/autocomplete-rna/autocomplete-rna.component';
@@ -177,7 +176,6 @@ import { SelectStatutExerciceActiviteSimultanComponent } from '../forms/guichet-
 import { SelectStatutFormaliteComponent } from '../forms/guichet-unique/select-statut-formalite/select-statut-formalite.component';
 import { SelectStatutPourFormaliteComponent } from '../forms/guichet-unique/select-statut-pour-formalite/select-statut-pour-formalite.component';
 import { SelectStatutPourLaFormaliteComponent } from '../forms/guichet-unique/select-statut-pour-la-formalite/select-statut-pour-la-formalite.component';
-import { SelectServiceFieldTypeComponent } from '../forms/select-service-field-type/select-service-field-type.component';
 import { SelectStatutVisAVisFormaliteComponent } from '../forms/guichet-unique/select-statut-visavis-formalite/select-statut-visavis-formalite.component';
 import { SelectSuccursaleOuFilialeComponent } from '../forms/guichet-unique/select-succursale-ou-filiale/select-succursale-ou-filiale.component';
 import { SelectTutelleCuratelleComponent } from '../forms/guichet-unique/select-tutelle-curatelle/select-tutelle-curatelle.component';
@@ -243,11 +241,14 @@ import { SelectResponsableComponent } from '../forms/select-responsable/select-r
 import { SelectRffFrequencyComponent } from '../forms/select-rff-frequency/select-rff-frequency.component';
 import { SelectServiceFamilyGroupComponent } from '../forms/select-service-family-group/select-service-family-group.component';
 import { SelectServiceFamilyComponent } from '../forms/select-service-family/select-service-family.component';
+import { SelectServiceFieldDataTypeComponent } from '../forms/select-service-field-data-type/select-service-field-data-type.component';
+import { SelectServiceFieldTypeComponent } from '../forms/select-service-field-type/select-service-field-type.component';
 import { SelectServiceTypeComponent } from '../forms/select-service-type/select-service-type.component';
 import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-period/select-subscription-period.component';
 import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/select-tiers-category.component';
 import { SelectTiersTypeComponent } from '../forms/select-tiers-type/select-tiers-type.component';
 import { SelectTypeDocumentComponent } from '../forms/select-type-document/select-type-document.component';
+import { SelectValueServiceFieldTypeComponent } from '../forms/select-value-service-field-type/select-value-service-field-type.component';
 import { SelectVatCollectionTypeComponent } from '../forms/select-vat-collection-type/select-vat-collection-type.component';
 import { SelectVatComponent } from '../forms/select-vat/select-vat.component';
 import { GaugeChartComponent } from '../gauge-chart/gauge-chart.component';
@@ -261,8 +262,6 @@ import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.compone
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
-import { SelectServiceFieldDataTypeComponent } from '../forms/select-service-field-data-type/select-service-field-data-type.component';
-import { SelectValueServiceFieldTypeComponent } from '../forms/select-value-service-field-type/select-value-service-field-type.component'
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
@@ -360,7 +359,6 @@ const routes: Routes = [
     SelectVatComponent,
     SelectRegionsComponent,
     AutocompleteRegionComponent,
-    AutocompleteRegieComponent,
     SelectFundTypeComponent,
     ChipsCityComponent,
     AutocompleteDepartmentComponent,
@@ -634,7 +632,6 @@ const routes: Routes = [
     SortTableComponent,
     EditCommentDialogComponent,
     SelectInvoiceStatusComponent,
-    AutocompleteRegieComponent,
     SelectAssignationTypeComponent,
     ChipsProvisionFamilyTypeComponent,
     AutocompleteBillingItemComponent,

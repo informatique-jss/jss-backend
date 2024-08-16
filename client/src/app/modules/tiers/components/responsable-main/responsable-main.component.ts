@@ -19,7 +19,6 @@ import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Document } from "../../../miscellaneous/model/Document";
 import { EmployeeService } from '../../../profile/services/employee.service';
-import { ITiers } from '../../model/ITiers';
 import { Responsable } from '../../model/Responsable';
 import { RffSearch } from '../../model/RffSearch';
 import { SubscriptionPeriodType } from '../../model/SubscriptionPeriodType';
@@ -61,7 +60,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   provisionSearch: AffaireSearch = {} as AffaireSearch;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   rffSearch: RffSearch | undefined;
-  responsableAccountSearch: ITiers | undefined;
 
   displayedColumns: SortTableColumn<Responsable>[] = [];
   tableActions: SortTableAction<Responsable>[] = [] as Array<SortTableAction<Responsable>>;
@@ -96,10 +94,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
         this.tableActions[0].display = false;
       }
     }
-
-    if (this.selectedResponsable)
-      if (!this.selectedResponsable.rffFrequency)
-        this.selectedResponsable.rffFrequency = this.constantService.getRffFrequencyAnnual();
 
     if (changes.tiers != undefined && this.tiers.responsables != undefined && this.tiers.responsables != null) {
       this.principalForm.markAllAsTouched();
@@ -167,18 +161,15 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
           this.provisionSearch.customerOrders = [];
           this.invoiceSearch.customerOrders = [];
           this.rffSearch = {} as RffSearch;
-          this.responsableAccountSearch = undefined;
 
           setTimeout(() =>
-            this.orderingSearch.customerOrders = [responsable], 0);
+            this.orderingSearch.customerOrders = [responsable as any as Tiers], 0);
           setTimeout(() =>
-            this.quotationSearch.customerOrders = [responsable], 0);
+            this.quotationSearch.customerOrders = [responsable as any as Tiers], 0);
           setTimeout(() =>
-            this.provisionSearch.customerOrders = [responsable], 0);
+            this.provisionSearch.customerOrders = [responsable as any as Tiers], 0);
           setTimeout(() =>
-            this.invoiceSearch.customerOrders = [responsable], 0);
-          setTimeout(() =>
-            this.responsableAccountSearch = responsable, 0);
+            this.invoiceSearch.customerOrders = [responsable as any as Tiers], 0);
           setTimeout(() => {
             this.rffSearch = {} as RffSearch;
             this.rffSearch.responsable = { entityId: responsable.id } as IndexEntity;

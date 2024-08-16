@@ -18,7 +18,7 @@ import { ConfrereService } from 'src/app/modules/quotation/services/confrere.ser
 import { CONFRERE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
-import { ITiers } from '../../model/ITiers';
+import { Responsable } from '../../model/Responsable';
 
 @Component({
   selector: 'confrere',
@@ -49,7 +49,7 @@ export class ConfrereComponent implements OnInit {
   orderingSearch: OrderingSearch = {} as OrderingSearch;
   quotationSearch: QuotationSearch = {} as QuotationSearch;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
-  responsableAccountSearch: ITiers | undefined;
+  responsableAccountSearch: Responsable | undefined;
 
   saveObservableSubscription: Subscription = new Subscription;
 
@@ -121,13 +121,14 @@ export class ConfrereComponent implements OnInit {
 
     if (this.selectedConfrere) {
       setTimeout(() =>
-        this.orderingSearch.customerOrders = [this.selectedConfrere!], 0);
+        this.orderingSearch.customerOrders = [this.selectedConfrere! as any], 0);
       setTimeout(() =>
-        this.quotationSearch.customerOrders = [this.selectedConfrere!], 0);
+        this.quotationSearch.customerOrders = [this.selectedConfrere! as any], 0);
       setTimeout(() =>
-        this.invoiceSearch.customerOrders = [this.selectedConfrere!], 0);
-      setTimeout(() =>
-        this.responsableAccountSearch = this.selectedConfrere, 0);
+        this.invoiceSearch.customerOrders = [this.selectedConfrere! as any], 0);
+      if (this.selectedConfrere.responsable)
+        setTimeout(() =>
+          this.responsableAccountSearch = this.selectedConfrere?.responsable, 0);
     }
   }
 
@@ -180,8 +181,6 @@ export class ConfrereComponent implements OnInit {
   saveConfrere() {
     if (this.getFormStatus() && this.selectedConfrere) {
       this.editMode = false;
-      if (!this.selectedConfrere.doNotUse) this.selectedConfrere.doNotUse = false;
-      if (!this.selectedConfrere.isSepaMandateReceived) this.selectedConfrere.isSepaMandateReceived = false;
 
       this.confrereService.addOrUpdateConfrere(this.selectedConfrere).subscribe(response => {
         this.selectedConfrere = response;

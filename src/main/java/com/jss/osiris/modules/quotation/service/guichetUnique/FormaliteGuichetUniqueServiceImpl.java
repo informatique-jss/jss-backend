@@ -479,7 +479,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 }
                 if (file != null)
                     try {
-                        attachmentService.addAttachment(new FileInputStream(file), provision.getId(),null,
+                        attachmentService.addAttachment(new FileInputStream(file), provision.getId(), null,
                                 Provision.class.getSimpleName(),
                                 typeDocument.getAttachmentType(), piecesJointe.getNomDocument(), false,
                                 piecesJointe.getNomDocument(), piecesJointe, null, piecesJointe.getTypeDocument());
@@ -495,11 +495,12 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             throws OsirisException, OsirisClientMessageException,
             OsirisValidationException, OsirisDuplicateException {
         Invoice invoice = new Invoice();
-        invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
+        // invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
+        // TODO : refonte
+        invoice.setProvider(constantService.getCompetentAuthorityInpi().getProvider());
         invoice.setCustomerOrderForInboundInvoice(provision.getService().getAssoAffaireOrder().getCustomerOrder());
         invoice.setManualAccountingDocumentNumber(cart.getMipOrderNum() + "/" +
                 cart.getId());
-        invoice.setIsInvoiceFromProvider(true);
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
 
         PaymentType paymentType = null;
@@ -544,7 +545,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             throws OsirisException, OsirisClientMessageException,
             OsirisValidationException, OsirisDuplicateException {
         Invoice invoice = new Invoice();
-        invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
+        // invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
+        // TODO refonte
+        invoice.setProvider(constantService.getCompetentAuthorityInpi().getProvider());
         invoice.setCustomerOrderForInboundInvoice(provision.getService().getAssoAffaireOrder().getCustomerOrder());
         invoice.setManualAccountingDocumentNumber(cart.getMipOrderNum() + "/" +
                 cart.getId());
@@ -627,8 +630,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         }
                     }
 
-        invoice.setIsInvoiceFromProvider(false);
-        invoice.setIsProviderCreditNote(true);
+        invoice.setIsCreditNote(true);
         invoice.setProvision(provision);
 
         return invoiceHelper.getPriceTotal(invoice) > 0f ? invoiceService.addOrUpdateInvoiceFromUser(invoice) : null;
