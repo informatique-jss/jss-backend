@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -20,12 +21,12 @@ import org.springframework.web.client.RestTemplate;
 import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
-import com.jss.osiris.modules.quotation.model.infoGreffe.IdentifiantFormalite;
 import com.jss.osiris.modules.quotation.model.infoGreffe.InfoGreffeToken;
 import com.jss.osiris.modules.quotation.model.infoGreffe.ListingInfogreffe;
 
 @Service
-public class InfoGreffeDelegateServiceImpl implements InfoGreffeDelegateService {
+public class InfogreffeDelegateServiceImpl implements InfogreffeDelegateService {
+
     @Value("${infogreffe.auth.entry.point}")
     private String infoGreffeAuthEntryPoint;
     @Value("${infogreffe.auth.login}")
@@ -43,6 +44,9 @@ public class InfoGreffeDelegateServiceImpl implements InfoGreffeDelegateService 
     private String detailFormalite = "/formalites/detail";
     private String bearerValue = null;
     private LocalDateTime bearerExpireDateTime = null;
+
+    @Autowired
+    FormaliteInfogreffeService infogreffeFormaliteService;
 
     HttpHeaders createHeaders() throws OsirisException {
         if (bearerValue == null || bearerExpireDateTime == null || bearerExpireDateTime.isBefore(LocalDateTime.now()))
@@ -87,13 +91,13 @@ public class InfoGreffeDelegateServiceImpl implements InfoGreffeDelegateService 
     }
 
     @Override
-    public List<FormaliteInfogreffe> getAllInfogreffeFormalities(String competentAuthority) throws OsirisException {
+    public List<FormaliteInfogreffe> getAllInfogreffeFormalities() throws OsirisException {
         List<FormaliteInfogreffe> formalites = new ArrayList<FormaliteInfogreffe>();
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = createHeaders();
 
         ResponseEntity<ListingInfogreffe> response = new RestTemplate().exchange(
-                infoGreffeUrl + listingFormalites + "?numGreffe=" + competentAuthority,
+                infoGreffeUrl + listingFormalites,
                 HttpMethod.GET, new HttpEntity<String>(headers),
                 new ParameterizedTypeReference<ListingInfogreffe>() {
                 });
@@ -105,26 +109,26 @@ public class InfoGreffeDelegateServiceImpl implements InfoGreffeDelegateService 
     }
 
     @Override
-    public FormaliteInfogreffe getInfogreffeFormalite(IdentifiantFormalite identifiantFormalite)
+    public FormaliteInfogreffe getInfogreffeFormalite(FormaliteInfogreffe formaliteInfogreffe)
             throws OsirisException {
         String paramIdentifiantFormalite = "";
-        if (identifiantFormalite != null)
-            paramIdentifiantFormalite = identifiantFormalite.getFormaliteType() + ";"
-                    + identifiantFormalite.getEmetteurCodePart() + ";" + identifiantFormalite.getFormaliteNumero();
 
-        FormaliteInfogreffe formalite = new FormaliteInfogreffe();
+        if (formaliteInfogreffe != null)
+            paramIdentifiantFormalite = formaliteInfogreffe.getIdentifiantFormalite().getFormaliteType() + ";"
+                    + formaliteInfogreffe.getIdentifiantFormalite().getEmetteurCodePart() + ";"
+                    + formaliteInfogreffe.getIdentifiantFormalite().getFormaliteNumero();
+
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = createHeaders();
 
         ResponseEntity<FormaliteInfogreffe> response = new RestTemplate().exchange(
                 infoGreffeUrl + detailFormalite + "?identifiantFormalite=" + paramIdentifiantFormalite,
                 HttpMethod.GET, new HttpEntity<String>(headers),
-                new ParameterizedTypeReference<FormaliteInfogreffe>() {
-                });
+                FormaliteInfogreffe.class);
 
         if (response.getBody() != null) {
             return response.getBody();
         }
-        return formalite;
+        return null;
     }
 }

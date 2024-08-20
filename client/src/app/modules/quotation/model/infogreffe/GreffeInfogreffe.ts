@@ -1,4 +1,4 @@
-export interface GreffeImmat {
+export interface GreffeInfogreffe {
   numero: string;
   nom: string;
   codeGroupement: string;

@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING, GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
+import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
@@ -40,6 +41,7 @@ export class FormaliteComponent implements OnInit {
   competentAuthorityInfogreffe = this.constantService.getCompetentAuthorityInfogreffe();
 
   formaliteStatus: FormaliteStatus[] | undefined;
+  displayedColumns: SortTableColumn<Formalite>[] = [] as Array<SortTableColumn<Formalite>>;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -58,8 +60,13 @@ export class FormaliteComponent implements OnInit {
   ngOnInit() {
     this.formaliteStatusService.getFormaliteStatus().subscribe(response => { this.formaliteStatus = response });
     this.restoreTab();
+    this.displayedColumns = [];
+    this.displayedColumns.push({ id: "competentAuthorityServiceProvider", fieldName: "competentAuthorityServiceProvider", label: "Fournisseur de service" } as SortTableColumn<Formalite>);
+    this.displayedColumns.push({ id: "formaliteStatus", fieldName: "formaliteStatus", label: "Statut de la formalité" } as SortTableColumn<Formalite>);
+    // this.displayedColumns.push({ id: "isAuthorizedToSign", fieldName: "isAuthorizedToSign", label: "Autorisé à signer/payer", valueFonction: (element: Formalite, column: SortTableColumn<Formalite>) => { return element } } as SortTableColumn<Formalite>);
+    this.displayedColumns.push({ id: "waitedCompetentAuthority", fieldName: "waitedCompetentAuthority", label: "Autorité compétente en attente" } as SortTableColumn<Formalite>);
+    this.displayedColumns.push({ id: "competentAuthorityServiceProvider", fieldName: "competentAuthorityServiceProvider", label: "Dernière relance de l'AC" } as SortTableColumn<Formalite>);
   }
-
   ngOnChanges(changes: SimpleChanges) {
 
   }

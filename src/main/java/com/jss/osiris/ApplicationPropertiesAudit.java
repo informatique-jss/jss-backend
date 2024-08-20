@@ -109,6 +109,8 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("infogreffe.auth.client.id");
         isOk = isOk && checkProperty("infogreffe.auth.grant.type");
         isOk = isOk && checkProperty("infogreffe.url");
+        isOk = isOk && checkProperty("schedulling.infogreffe.refresh.all");
+        isOk = isOk && checkProperty("schedulling.infogreffe.refresh.last.day");
 
         isOk = isOk && checkAccountingParams();
 

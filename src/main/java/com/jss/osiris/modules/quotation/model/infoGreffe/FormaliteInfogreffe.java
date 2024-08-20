@@ -2,32 +2,25 @@ package com.jss.osiris.modules.quotation.model.infoGreffe;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jss.osiris.modules.quotation.model.Formalite;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.SequenceGenerator;
 
 @Entity
 public class FormaliteInfogreffe {
-    @Id
-    @JsonIgnore
-    @SequenceGenerator(name = "formalite_infogreffe_sequence", sequenceName = "formalite_infogreffe_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "formalite_infogreffe_sequence")
-    private Integer id;
 
+    @Id
     @JsonProperty("id")
-    private String idInfogreffe;
+    private String id;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_identifiant_formalite")
@@ -47,7 +40,7 @@ public class FormaliteInfogreffe {
     private String numeroLiasse;
     private String typeFormalite;
 
-    @OneToMany(mappedBy = "formaliteInfogreffe", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "formaliteInfogreffe", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "formaliteInfogreffe" }, allowSetters = true)
     private List<EvenementInfogreffe> evenements;
 
@@ -63,21 +56,10 @@ public class FormaliteInfogreffe {
     @JoinColumn(name = "id_montant_formalite")
     private MontantFormalite montantFormalite;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getIdInfogreffe() {
-        return idInfogreffe;
-    }
-
-    public void setIdInfogreffe(String idInfogreffe) {
-        this.idInfogreffe = idInfogreffe;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_formalite")
+    @JsonIgnoreProperties(value = { "formalitesInfogreffe" })
+    private Formalite formalite;
 
     public IdentifiantFormalite getIdentifiantFormalite() {
         return identifiantFormalite;
@@ -205,6 +187,22 @@ public class FormaliteInfogreffe {
 
     public void setInfosSpecifiquesFormaliteDpa(String infosSpecifiquesFormaliteDpa) {
         this.infosSpecifiquesFormaliteDpa = infosSpecifiquesFormaliteDpa;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public MontantFormalite getMontantFormalite() {
+        return montantFormalite;
+    }
+
+    public void setMontantFormalite(MontantFormalite montantFormalite) {
+        this.montantFormalite = montantFormalite;
     }
 
 }

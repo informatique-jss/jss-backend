@@ -118,8 +118,6 @@ import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.ValidationRequest;
-import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
-import com.jss.osiris.modules.quotation.model.infoGreffe.IdentifiantFormalite;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementNoticeTemplateService;
@@ -169,7 +167,6 @@ import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.GuichetUniqueDelegateService;
-import com.jss.osiris.modules.quotation.service.infoGreffe.InfoGreffeDelegateService;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
@@ -2378,24 +2375,5 @@ public class QuotationController {
 
     customerOrderService.reinitInvoicing(customerOrder);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-  }
-
-  @Autowired
-  InfoGreffeDelegateService infoGreffeDelegateService;
-
-  @GetMapping("/info-greffe-formalites")
-  public ResponseEntity<List<FormaliteInfogreffe>> getAllInfogreffeFormalities(@RequestParam String competentAuthority)
-      throws OsirisException {
-    return new ResponseEntity<List<FormaliteInfogreffe>>(
-        infoGreffeDelegateService.getAllInfogreffeFormalities(competentAuthority),
-        HttpStatus.OK);
-  }
-
-  @GetMapping("/info-greffe-formalite/detail")
-  public ResponseEntity<FormaliteInfogreffe> getInfogreffeFormalities(
-      @RequestParam IdentifiantFormalite identifiantFormalite) throws OsirisException {
-    return new ResponseEntity<FormaliteInfogreffe>(
-        infoGreffeDelegateService.getInfogreffeFormalite(identifiantFormalite),
-        HttpStatus.OK);
   }
 }

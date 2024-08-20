@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 @Entity
 public class IdentifiantFormalite {
     @Id
-    private String formaliteNumero;
+    private Integer formaliteNumero;
     private String formaliteType;
     private String emetteurCodePart;
 
@@ -26,11 +26,12 @@ public class IdentifiantFormalite {
         this.emetteurCodePart = value;
     }
 
-    public String getFormaliteNumero() {
+    public Integer getFormaliteNumero() {
         return formaliteNumero;
     }
 
-    public void setFormaliteNumero(String value) {
-        this.formaliteNumero = value;
+    public void setFormaliteNumero(Integer formaliteNumero) {
+        this.formaliteNumero = formaliteNumero;
     }
+
 }
