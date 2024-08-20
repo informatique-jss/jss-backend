@@ -113,7 +113,8 @@ public class ServiceServiceImpl implements ServiceService {
                         shouldAdd = false;
                 }
 
-                if (affaire.getLegalForm() != null && assoServiceProvisionType.getFormeJuridiques() != null) {
+                if (affaire.getLegalForm() != null && assoServiceProvisionType.getFormeJuridiques() != null
+                        && assoServiceProvisionType.getFormeJuridiques().size() > 0) {
                     boolean found = false;
                     for (FormeJuridique formeJuridique : assoServiceProvisionType.getFormeJuridiques()) {
                         if (formeJuridique.getCode().equals(affaire.getLegalForm().getCode())) {

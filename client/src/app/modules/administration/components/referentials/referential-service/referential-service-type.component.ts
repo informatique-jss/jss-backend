@@ -78,4 +78,24 @@ export class ReferentialServiceTypeComponent extends GenericReferentialComponent
           this.selectedEntity.assoServiceTypeFieldTypes.splice(i, 1);
   }
 
+  cloneEntity(): void {
+    this.selectedEntity = structuredClone(this.selectedEntity);
+    (this.selectedEntity as any).id = undefined;
+
+    if (this.selectedEntity) {
+      if (this.selectedEntity.assoServiceProvisionTypes)
+        for (let i = 0; i < this.selectedEntity.assoServiceProvisionTypes.length; i++)
+          (this.selectedEntity.assoServiceProvisionTypes[i] as any).id = null;
+
+      if (this.selectedEntity.assoServiceTypeDocuments)
+        for (let i = 0; i < this.selectedEntity.assoServiceTypeDocuments.length; i++)
+          (this.selectedEntity.assoServiceTypeDocuments[i] as any).id = null;
+
+      if (this.selectedEntity.assoServiceTypeFieldTypes)
+        for (let i = 0; i < this.selectedEntity.assoServiceTypeFieldTypes.length; i++)
+          (this.selectedEntity.assoServiceTypeFieldTypes[i] as any).id = null;
+    }
+    this.entities.push(this.selectedEntity!);
+    this.setDataTable();
+  }
 }
