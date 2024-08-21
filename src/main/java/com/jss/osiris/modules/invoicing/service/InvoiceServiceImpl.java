@@ -33,9 +33,9 @@ import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -164,7 +164,14 @@ public class InvoiceServiceImpl implements InvoiceService {
                         .equals(invoice.getBillingLabelType().getId()))) {
             Document billingDocument = null;
 
-            if (invoice.getCustomerOrder() != null)
+            if (invoice.getRff() != null) {
+                if (invoice.getRff().getTiers() != null) {
+                    billingDocument = documentService.getBillingDocument(invoice.getRff().getTiers().getDocuments());
+                } else {
+                    billingDocument = documentService
+                            .getBillingDocument(invoice.getRff().getResponsable().getDocuments());
+                }
+            } else if (invoice.getCustomerOrder() != null)
                 billingDocument = documentService.getBillingDocument(invoice.getCustomerOrder().getDocuments());
             else
                 billingDocument = documentService.getBillingDocument(invoice.getResponsable().getDocuments());
@@ -205,7 +212,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceHelper.setPriceTotal(invoice);
 
         // Generate accounting records
-        if (invoice.getProvider() != null)
+        if (invoice.getProvider() != null || invoice.getRff() != null)
             accountingRecordGenerationService.generateAccountingRecordsOnInvoiceReception(invoice);
         else if (invoice.getProvider() != null && invoice.getIsCreditNote())
             accountingRecordGenerationService.generateAccountingRecordsOnCreditNoteReception(invoice,
@@ -230,7 +237,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         // Handle provider and customer payment
-        if (invoice.getProvider() != null) {
+        if (invoice.getProvider() != null || invoice.getRff() != null) {
             if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())) {
                 invoice.setBankTransfert(bankTransfertService.generateBankTransfertForManualInvoice(invoice));
             }
@@ -254,7 +261,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         addOrUpdateInvoice(invoice);
-        if (invoice.getResponsable() != null)
+        if (invoice.getResponsable() != null && invoice.getRff() == null)
             generateInvoicePdf(invoice, invoice.getCustomerOrder());
 
         // Associate attachment for azure invoice
@@ -696,16 +703,16 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public List<Invoice> findByCompetentAuthorityAndManualDocumentNumber(CompetentAuthority competentAuthority,
+    public List<Invoice> findByProviderAndManualDocumentNumber(Provider provider,
             String manualDocumentNumber) {
-        return invoiceRepository.findByCompetentAuthorityAndManualAccountingDocumentNumber(competentAuthority,
+        return invoiceRepository.findByProviderAndManualAccountingDocumentNumber(provider,
                 manualDocumentNumber);
     }
 
     @Override
-    public List<Invoice> findByCompetentAuthorityAndManualDocumentNumberContains(CompetentAuthority competentAuthority,
+    public List<Invoice> findByProviderAndManualDocumentNumberContains(Provider provider,
             String manualDocumentNumber) {
-        return invoiceRepository.findByCompetentAuthorityAndManualAccountingDocumentNumberContainingIgnoreCase(
-                competentAuthority, manualDocumentNumber);
+        return invoiceRepository.findByProviderAndManualAccountingDocumentNumberContainingIgnoreCase(
+                provider, manualDocumentNumber);
     }
 }

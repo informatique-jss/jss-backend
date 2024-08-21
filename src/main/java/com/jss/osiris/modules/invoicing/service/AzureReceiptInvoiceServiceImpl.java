@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.AzureInvoice;
 import com.jss.osiris.modules.invoicing.model.AzureReceiptInvoice;
@@ -58,17 +59,20 @@ public class AzureReceiptInvoiceServiceImpl implements AzureReceiptInvoiceServic
 
     @Override
     public AzureReceiptInvoiceStatus getAzureReceiptInvoiceStatus(AzureReceiptInvoice azureReceiptInvoice)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
 
         CompetentAuthority competentAuthority = azureReceiptInvoice.getAzureReceipt().getAttachments().get(0)
                 .getCompetentAuthority();
         AzureReceiptInvoiceStatus status = new AzureReceiptInvoiceStatus();
 
+        if (competentAuthority.getProvider() == null)
+            throw new OsirisClientMessageException("Aucun fournisseur de défini pour l'AC");
+
         // Check Osiris invoices
-        List<Invoice> invoices = invoiceService.findByCompetentAuthorityAndManualDocumentNumber(competentAuthority,
+        List<Invoice> invoices = invoiceService.findByProviderAndManualDocumentNumber(competentAuthority.getProvider(),
                 azureReceiptInvoice.getInvoiceId());
         if (invoices == null || invoices.size() == 0)
-            invoices = invoiceService.findByCompetentAuthorityAndManualDocumentNumberContains(competentAuthority,
+            invoices = invoiceService.findByProviderAndManualDocumentNumberContains(competentAuthority.getProvider(),
                     azureReceiptInvoice.getInvoiceId());
 
         // Display only invoices with same total

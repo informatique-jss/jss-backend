@@ -533,7 +533,10 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
         labelPrefix += " - " + invoice.getProvider().getLabel();
 
-        AccountingAccount accountingAccountProvider = invoice.getProvider().getAccountingAccountProvider();
+        AccountingAccount accountingAccountProvider = null;
+        if (invoice.getRff() != null)
+            accountingAccountProvider = invoice.getResponsable().getTiers().getAccountingAccountCustomer();
+        accountingAccountProvider = invoice.getProvider().getAccountingAccountProvider();
 
         Float balance = 0f;
         balance += invoiceHelper.getPriceTotal(invoice);

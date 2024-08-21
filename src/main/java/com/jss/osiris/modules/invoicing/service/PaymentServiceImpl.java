@@ -637,7 +637,12 @@ public class PaymentServiceImpl implements PaymentService {
             cancelPayment(payment);
             Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                     payment.getTargetAccountingAccount());
-            newPayment.setSourceAccountingAccount(correspondingInvoice.getProvider().getAccountingAccountProvider());
+            if (correspondingInvoice.getRff() != null)
+                newPayment.setSourceAccountingAccount(
+                        correspondingInvoice.getResponsable().getTiers().getAccountingAccountCustomer());
+            else
+                newPayment
+                        .setSourceAccountingAccount(correspondingInvoice.getProvider().getAccountingAccountProvider());
 
             // If account payment, keep deposit account as target account, except CentralPay
             // which is payed directly with bank account

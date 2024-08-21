@@ -100,6 +100,9 @@ public class CompetentAuthority implements IAttachment, IId {
 
 	private String azureCustomReference;
 
+	@Column(length = 20)
+	private String intercommunityVat;
+
 	private Boolean isNotToReminder;
 
 	@OneToMany(mappedBy = "competentAuthority", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -309,6 +312,14 @@ public class CompetentAuthority implements IAttachment, IId {
 
 	public void setProvider(Provider provider) {
 		this.provider = provider;
+	}
+
+	public String getIntercommunityVat() {
+		return intercommunityVat;
+	}
+
+	public void setIntercommunityVat(String intercommunityVat) {
+		this.intercommunityVat = intercommunityVat;
 	}
 
 }

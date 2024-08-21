@@ -28,6 +28,7 @@ export interface CompetentAuthority extends IReferential, IAttachment {
   observations: string;
   inpiReference: string;
   azureCustomReference: string;
+  intercommunityVat: string;
   isNotToReminder: boolean;
   assoMailCompetentAuthorityServiceFamilyGroups: AssoMailCompetentAuthorityServiceFamilyGroup[];
   provider: Provider;

@@ -192,7 +192,9 @@ public class RffServiceImpl implements RffService {
 
         invoice.setIsCreditNote(false);
         invoice.setIsCreditNote(false);
-        // invoice.setTiers(rff.getTiers()); //TODO refonte
+        invoice.setResponsable(rff.getResponsable());
+        if (rff.getResponsable() == null)
+            invoice.setResponsable(rff.getTiers().getResponsables().get(0));
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
 
         InvoiceItem invoiceItem = new InvoiceItem();

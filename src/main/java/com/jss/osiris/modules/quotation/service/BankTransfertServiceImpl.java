@@ -181,11 +181,16 @@ public class BankTransfertServiceImpl implements BankTransfertService {
         bankTransfert.setTransfertAmount(invoice.getTotalPrice());
         bankTransfert.setTransfertDateTime(invoice.getDueDate().atTime(12, 0));
 
-        if (invoice.getProvider().getIban() == null || invoice.getProvider().getBic() == null)
-            throw new OsirisClientMessageException("BIC or IBAN not set on provider");
+        if (invoice.getRff() != null) {
+            bankTransfert.setTransfertBic(invoice.getResponsable().getTiers().getRffBic());
+            bankTransfert.setTransfertIban(invoice.getResponsable().getTiers().getRffIban());
+        } else {
+            if (invoice.getProvider().getIban() == null || invoice.getProvider().getBic() == null)
+                throw new OsirisClientMessageException("BIC or IBAN not set on provider");
 
-        bankTransfert.setTransfertIban(invoice.getProvider().getIban());
-        bankTransfert.setTransfertBic(invoice.getProvider().getBic());
+            bankTransfert.setTransfertIban(invoice.getProvider().getIban());
+            bankTransfert.setTransfertBic(invoice.getProvider().getBic());
+        }
 
         if (bankTransfert.getTransfertIban() == null || bankTransfert.getTransfertBic() == null)
             throw new OsirisException(null, "IBAN or BIC not found for bank transfert");

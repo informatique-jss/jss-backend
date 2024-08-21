@@ -44,6 +44,11 @@
                       [maxLength]="250" [form]="entityForm2" propertyName="inpiReference" [isMandatory]="false"
                       [isDisabled]="!editMode"></generic-input>
                   </td>
+                  <td>
+                    <generic-input [(model)]="selectedcompetentAuthority.intercommunityVat" label="Numéro de TVA"
+                      [maxLength]="250" [form]="entityForm2" propertyName="intercommunityVat" [isMandatory]="false"
+                      [isDisabled]="!editMode"></generic-input>
+                  </td>
                 </tr>
                 <tr>
                   <td>

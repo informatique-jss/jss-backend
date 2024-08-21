@@ -12,22 +12,14 @@ import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
-import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
-import com.jss.osiris.modules.tiers.model.Responsable;
-import com.jss.osiris.modules.tiers.model.Tiers;
 
 import jakarta.persistence.QueryHint;
 
 public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Integer> {
 
         List<Invoice> findByCustomerOrderId(Integer customerOrderId);
-
-        @Query("select min(createdDate) from Invoice where  tiers=:tiers")
-        LocalDate findFirstBillingDateForTiers(@Param("tiers") Tiers tiers);
-
-        @Query("select min(createdDate) from Invoice where  responsable=:responsable")
-        LocalDate findFirstBillingDateForResponsable(@Param("responsable") Responsable responsable);
 
         @Query(nativeQuery = true, value = "select "
                         + " i.id as invoiceId,"
@@ -98,11 +90,11 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<Invoice> findByCustomerOrderForInboundInvoiceId(Integer customerOrderId);
 
-        List<Invoice> findByCompetentAuthorityAndManualAccountingDocumentNumber(CompetentAuthority competentAuthority,
+        List<Invoice> findByProviderAndManualAccountingDocumentNumber(Provider provider,
                         String manualDocumentNumber);
 
-        List<Invoice> findByCompetentAuthorityAndManualAccountingDocumentNumberContainingIgnoreCase(
-                        CompetentAuthority competentAuthority, String manualDocumentNumber);
+        List<Invoice> findByProviderAndManualAccountingDocumentNumberContainingIgnoreCase(
+                        Provider provider, String manualDocumentNumber);
 
         @Query(value = "select i.* from invoice i where id_direct_debit_transfert=:id", nativeQuery = true)
         Invoice searchInvoicesByIdDirectDebitTransfert(@Param("id") Integer idToFind);
