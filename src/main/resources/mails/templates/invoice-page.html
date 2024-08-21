@@ -287,10 +287,10 @@
             </td>
         </tr>
     </table>
-    <p style="font-size: 12px;" th:if="${!isPrelevementType}">Echéance de paiement : <span
-            th:text="${invoiceDueDate}"></span></p>
-    <p style="font-size: 12px;" th:if="${isPrelevementType}">Date d'exécution du prélèvement : <span
-            th:text="${invoiceDueDate}"></span></p>
+    <p style="font-size: 12px;" th:if="${!isPrelevementType}"><strong>Echéance de paiement : <span
+                th:text="${invoiceDueDate}"></span></strong></p>
+    <p style="font-size: 12px;" th:if="${isPrelevementType}"><strong>Date d'exécution du prélèvement : <span
+                th:text="${invoiceDueDate}"></span></strong></p>
     <p style="font-size: 12px;">Retard de paiement. Maj de 3 fois le taux d’intérêt légal (Application du CC - Article
         L441-6)<br />
         TVA acquittée sur les débits</p>

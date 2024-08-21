@@ -92,9 +92,9 @@
                     th:if="${values.eventCbLink!=null} and ${values.directDebitTransfertDate==null}"> (payer <a
                         th:href="${values.eventCbLink}">ici</a>)</span>
                 <br>
-                <span th:if="${values.directDebitTransfertDate!=null}"> Date d'exécution du prélèvement : <span
-                        th:text="${#temporals.format(values.directDebitTransfertDate, 'dd/MM/yyyy')}">
-                    </span></span>
+                <span th:if="${values.directDebitTransfertDate!=null}"><strong> Date d'exécution du prélèvement : <span
+                            th:text="${#temporals.format(values.directDebitTransfertDate, 'dd/MM/yyyy')}">
+                        </span></strong></span>
                 </br>
             </td>
             <td th:classappend="${values.displayBottomBorder} ? border-table : none-class"
