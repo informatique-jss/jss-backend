@@ -222,12 +222,8 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
                 .getFormaliteGuichetUniqueStatus(FormaliteGuichetUniqueStatus.SIGNED));
         formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formalite);
 
-        if (formalite.getFormalite() != null
-                && formalite.getIsAuthorizedToSign() != null
-                && formalite.getIsAuthorizedToSign()) {
-            formalite.setIsAuthorizedToSign(false);
-            formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formalite);
-        }
+        formalite.setIsAuthorizedToSign(false);
+        formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formalite);
     }
 
     private void executeJar(String jarFilePath, List<String> args) throws OsirisException {
