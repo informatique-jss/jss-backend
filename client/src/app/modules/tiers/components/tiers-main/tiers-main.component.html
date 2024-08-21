@@ -16,7 +16,7 @@
             <td *ngIf="tiers.isIndividual==false">
               <generic-input [(model)]="tiers.denomination" label="Dénomination" [form]="principalForm"
                 propertyName="denomination" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="!tiers.isIndividual" [maxLength]="60">
+                [conditionnalRequired]="!tiers.isIndividual" [maxLength]="80">
               </generic-input>
             </td>
           </tr>
