@@ -1249,6 +1249,18 @@ public class MailHelper {
             mail.setCopyToMe(true);
         }
 
+        List<Attachment> attachments = new ArrayList<Attachment>();
+        if (mail.getMissingAttachmentQuery() != null) {
+            for (AssoServiceDocument asso : mail.getMissingAttachmentQuery().getAssoServiceDocument())
+                if (asso.getTypeDocument() != null)
+                    if (asso.getTypeDocument().getAttachments() != null
+                            && asso.getTypeDocument().getAttachments().size() > 0)
+                        for (Attachment attachment : asso.getTypeDocument().getAttachments())
+                            attachments.add(attachment);
+        }
+
+        mail.setAttachments(attachments);
+
         mail.setSubject("Pièces manquantes concernant la commande n°" + customerOrder.getId() + " - "
                 + getCustomerOrderAffaireLabel(customerOrder, null));
 

@@ -157,6 +157,12 @@ public class OsirisScheduller {
 			batchService.declareNewBatch(Batch.PURGE_LOGS, null);
 	}
 
+	@Scheduled(cron = "${schedulling.batch.purge}")
+	private void purgeBatch() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.PURGE_BATCH, null);
+	}
+
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.central.pay.payment.request.validation.check}")
 	private void checkAllCentralPayPaymentRequests()
 			throws OsirisException, OsirisClientMessageException,

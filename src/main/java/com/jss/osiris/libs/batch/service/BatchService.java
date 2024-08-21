@@ -24,4 +24,6 @@ public interface BatchService {
 
     public List<Batch> searchBatchs(BatchSearch batchSearch);
 
+    public void purgeBatch();
+
 }
