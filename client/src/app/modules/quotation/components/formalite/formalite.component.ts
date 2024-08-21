@@ -47,7 +47,7 @@ export class FormaliteComponent implements OnInit {
 
   formaliteStatus: FormaliteStatus[] | undefined;
   displayedColumns: SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>[] = [] as Array<SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>>;
-  formalites: (FormaliteGuichetUnique | FormaliteInfogreffe)[] | undefined;
+  formalites: (FormaliteGuichetUnique | FormaliteInfogreffe)[] = [] as Array<FormaliteGuichetUnique | FormaliteInfogreffe>;
   tableAction: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>[] = [] as Array<SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>>;
 
   constructor(
@@ -69,14 +69,14 @@ export class FormaliteComponent implements OnInit {
     this.formaliteStatusService.getFormaliteStatus().subscribe(response => { this.formaliteStatus = response });
     this.restoreTab();
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "competentAuthorityServiceProvider", fieldName: "competentAuthorityServiceProvider", label: "Fournisseur de service", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return this.competentAuthorityInfogreffe; return this.competentAuthorityInpi; } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
+    this.displayedColumns.push({ id: "competentAuthorityServiceProvider", fieldName: "competentAuthorityServiceProvider", label: "Fournisseur de service", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return this.competentAuthorityInfogreffe.label; return this.competentAuthorityInpi.label; } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
     this.displayedColumns.push({ id: "referenceProvider", fieldName: "referenceProvider", label: "Référence fournisseur", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return element.identifiantFormalite.formaliteNumero; return element.liasseNumber } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
-    this.displayedColumns.push({ id: "formaliteStatus", fieldName: "formaliteStatus", label: "Statut de la formalité", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return ""; return element.status; } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
-    //  this.displayedColumns.push({ id: "isAuthorizedToSign", fieldName: "isAuthorizedToSign", label: "Autorisé à signer/payer", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return ""; element.isAuthorizedToSign; } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
-    this.displayedColumns.push({ id: "", fieldName: "", label: "Dernière relance de l'AC" } as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
+    this.displayedColumns.push({ id: "formaliteStatus", fieldName: "formaliteStatus", label: "Statut de la formalité", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return ""; return element.status.label; } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
+    this.displayedColumns.push({ id: "isAuthorizedToSign", fieldName: "isAuthorizedToSign", label: "Autorisé à signer/payer", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return ""; if (!instanceOfFormaliteInfogreffe(element) && element.isAuthorizedToSign) return "Oui"; return "Non"; } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
+    //this.displayedColumns.push({ id: "", fieldName: "", label: "Dernière relance de l'AC" } as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
 
     this.tableAction.push({
-      actionIcon: 'add', actionName: "Autoriser à Signer/payer ?", actionClick: (column: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>, element: FormaliteGuichetUnique | FormaliteInfogreffe, event: any) => {
+      actionIcon: 'visibility', actionName: "Autoriser à Signer/payer ?", actionClick: (column: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>, element: FormaliteGuichetUnique | FormaliteInfogreffe, event: any) => {
         if (!instanceOfFormaliteInfogreffe(element))
           if (element.status.code == GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING || element.status.code == GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING)
             this.updateIsAuthorizedToSign(element);
@@ -96,6 +96,10 @@ export class FormaliteComponent implements OnInit {
       element.isAuthorizedToSign = false;
     else element.isAuthorizedToSign = true;
     this.formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(element);
+  }
+
+  associateLiasseWithProvider() {
+
   }
 
   ngOnChanges(changes: SimpleChanges) {

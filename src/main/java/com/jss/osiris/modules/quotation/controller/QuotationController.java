@@ -2344,6 +2344,18 @@ public class QuotationController {
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
   }
 
+  @PostMapping(inputEntryPoint + "/formalite-guichet-unique/update")
+  public ResponseEntity<FormaliteGuichetUnique> addOrUpdateFormaliteGuichetUnique(
+      @RequestBody FormaliteGuichetUnique formaliteGuichetUnique)
+      throws OsirisValidationException, OsirisException {
+    if (formaliteGuichetUnique != null)
+      return new ResponseEntity<FormaliteGuichetUnique>(
+          formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique),
+          HttpStatus.OK);
+    else
+      throw new OsirisValidationException("formaliteGuichetUnique");
+  }
+
   @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @GetMapping(inputEntryPoint + "/customer-order/credit-note")
   public ResponseEntity<Boolean> generateCreditNoteForCustomerOrderInvoice(

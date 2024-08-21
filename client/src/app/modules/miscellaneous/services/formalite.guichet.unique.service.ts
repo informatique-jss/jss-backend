@@ -17,7 +17,7 @@ export class FormaliteGuichetUniqueService extends AppRestService<FormaliteGuich
   }
 
   addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique: FormaliteGuichetUnique) {
-    return this.addOrUpdate(new HttpParams(), "formalite-guichet-unique", formaliteGuichetUnique, "Enregistré", "Erreur lors de l'enregistrement");
+    return this.addOrUpdate(new HttpParams(), "formalite-guichet-unique/update", formaliteGuichetUnique, "Enregistré", "Erreur lors de l'enregistrement");
   }
 
 }

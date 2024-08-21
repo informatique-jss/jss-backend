@@ -2,47 +2,21 @@
   <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab [label]="provision.provisionType.label">
       <div class="form-div">
-        <!--<sort-table [columns]="displayedColumns" [values]="formalites" tableName="tableName"
+        <sort-table [columns]="displayedColumns" [values]="formalites" tableName="Liasses Formalites"
           [actions]="tableAction"></sort-table>
--->
-        <table class="full-width">
-          <tr>
-            <td>
-              <autocomplete-competent-authority [(model)]="formalite.competentAuthorityServiceProvider"
-                [form]="formaliteForm" propertyName="competentAuthorityServiceProvider" [isMandatory]="false"
-                [filteredCompetentAuthority]="[competentAuthorityInfogreffe, competentAuthorityInpi]"
-                [isDisabled]="!editMode" label="Fournisseur de service"></autocomplete-competent-authority>
-            </td>
-            <td
-              *ngIf="formalite.competentAuthorityServiceProvider && formalite.competentAuthorityServiceProvider.id == competentAuthorityInpi.id && formalite.id">
-              <chips-formalite-guichet-unique [(model)]="formalite.formalitesGuichetUnique" [form]="formaliteForm"
-                propertyName="formaliteGuichetUnique" [isMandatory]="false" label="Nom du dossier GU"
-                [isDisabled]="!editMode"></chips-formalite-guichet-unique>
-            </td>
-            <td *ngIf="formalite && formalite.formalitesGuichetUnique">
-              <ng-container *ngFor="let formaliteGu of formalite.formalitesGuichetUnique">
-                <generic-toggle
-                  *ngIf="formaliteGu.status.code==GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING || formaliteGu.status.code==GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING"
-                  [(model)]="formaliteGu.isAuthorizedToSign"
-                  [label]="formaliteGu.liasseNumber+' - Autoriser à signer/payer ?'" [form]="formaliteForm"
-                  [isDisabled]="!editMode" propertyName="isAuthorizedToSign"></generic-toggle>
-              </ng-container>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2"
-              *ngIf="formalite.waitedCompetentAuthority && formalite.formaliteStatus && formalite.formaliteStatus.code ==FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY">
-              <autocomplete-competent-authority [(model)]="formalite.waitedCompetentAuthority" [form]="formaliteForm"
-                propertyName="waitedCompetentAuthority" [isMandatory]="false" label="Autorité compétente en attente"
-                [isDisabled]="true"></autocomplete-competent-authority>
-            </td>
-            <td><generic-datepicker *ngIf="provision.lastCompetentAuthorityReminderDateTime"
-                [(model)]="provision.lastCompetentAuthorityReminderDateTime" label="Dernière relance de l'AC"
-                [form]="formaliteForm" propertyName="lastCompetentAuthorityReminderDateTime"
-                [isDisabled]="true"></generic-datepicker></td>
-          </tr>
-        </table>
         <mat-divider class="margin-mat-divider"></mat-divider>
+        <button mat-raised-button color="accent" style="margin-left : 7px" *ngIf="editMode"
+          matTooltip="Associer une liasse" (click)="associateLiasseWithProvider()"><mat-icon style="margin : 0"
+            class="pointer">
+            comment</mat-icon></button>
+
+        <td
+          *ngIf="formalite.competentAuthorityServiceProvider && formalite.competentAuthorityServiceProvider.id == competentAuthorityInpi.id && formalite.id">
+          <chips-formalite-guichet-unique [(model)]="formalite.formalitesGuichetUnique" [form]="formaliteForm"
+            propertyName="formaliteGuichetUnique" [isMandatory]="false" label="Nom du dossier GU"
+            [isDisabled]="!editMode"></chips-formalite-guichet-unique>
+        </td>
+
         <customer-order-comment *ngIf="provision && provision.id" [provision]="provision"></customer-order-comment>
       </div>
     </mat-tab>
