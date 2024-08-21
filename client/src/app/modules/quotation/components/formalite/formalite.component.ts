@@ -18,6 +18,10 @@ import { FormaliteGuichetUnique } from '../../model/guichet-unique/FormaliteGuic
 import { FormaliteInfogreffe } from '../../model/infogreffe/FormaliteInfogreffe';
 import { instanceOfFormaliteInfogreffe } from '../../../../libs/TypeHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FormaliteDialogChoose } from '../../model/FormaliteDialogChoose';
+import { FormaliteService } from '../../services/formalite.service';
+import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
 import { FormaliteGuichetUniqueService } from 'src/app/modules/miscellaneous/services/formalite.guichet.unique.service';
 
 @Component({
@@ -35,6 +39,7 @@ export class FormaliteComponent implements OnInit {
   @Input() isStatusOpen: boolean = true;
   @Input() quotation: IQuotation | undefined;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
+
 
   FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY = FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY;
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
@@ -56,7 +61,9 @@ export class FormaliteComponent implements OnInit {
     private habilitationsService: HabilitationsService,
     private formaliteStatusService: FormaliteStatusService,
     private userPreferenceService: UserPreferenceService,
-    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService
+    private formaliteService: FormaliteService,
+    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService,
+    public associateFormaliteLiasseDialog: MatDialog,
   ) { }
 
   formaliteForm = this.formBuilder.group({});
@@ -99,7 +106,21 @@ export class FormaliteComponent implements OnInit {
   }
 
   associateLiasseWithProvider() {
+    const dialogRef: MatDialogRef<FormaliteAssociateDialog> = this.associateFormaliteLiasseDialog.open(FormaliteAssociateDialog, {
+      maxWidth: "600px",
+    });
 
+    dialogRef.afterClosed().subscribe((result: FormaliteDialogChoose) => {
+      if (result && result.formaliteGuichetUnique && result.competentAuthorityServiceProvider.id == this.competentAuthorityInpi.id)
+        this.formalite.formalitesGuichetUnique.push(result.formaliteGuichetUnique);
+
+      if (result && result.formaliteInfogreffe && result.competentAuthorityServiceProvider.id == this.competentAuthorityInfogreffe.id)
+        this.formalite.formalitesInfogreffe.push(result.formaliteInfogreffe);
+
+      this.formaliteService.addOrUpdateFormalite(this.formalite).subscribe(response => {
+        this.formalite = response;
+      });
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {

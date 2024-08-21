@@ -79,6 +79,7 @@ import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/
 import { ServiceComponent } from '../service/service.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
+import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
 
 const routes: Routes = [
   { path: 'quotation', component: QuotationComponent },
@@ -179,6 +180,7 @@ const routes: Routes = [
     PaperSetListComponent,
     PaperSetComponent,
     SelectPaperSetTypeDialogComponent,
+    FormaliteAssociateDialog
   ],
   exports: [
     OrderingListComponent,

@@ -85,6 +85,7 @@ import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.DomiciliationFee;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
+import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.FundType;
 import com.jss.osiris.modules.quotation.model.IPaperSetResult;
@@ -140,6 +141,7 @@ import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService
 import com.jss.osiris.modules.quotation.service.DomiciliationFeeService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
+import com.jss.osiris.modules.quotation.service.FormaliteService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.quotation.service.FundTypeService;
 import com.jss.osiris.modules.quotation.service.JournalTypeService;
@@ -387,6 +389,9 @@ public class QuotationController {
 
   @Autowired
   AssoServiceFieldTypeService assoServiceFieldTypeService;
+
+  @Autowired
+  FormaliteService formaliteService;
 
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
@@ -2354,6 +2359,18 @@ public class QuotationController {
           HttpStatus.OK);
     else
       throw new OsirisValidationException("formaliteGuichetUnique");
+  }
+
+  @PostMapping(inputEntryPoint + "/formalite/update")
+  public ResponseEntity<Formalite> addOrUpdateFormalite(
+      @RequestBody Formalite formalite)
+      throws OsirisValidationException, OsirisException {
+    if (formalite != null)
+      return new ResponseEntity<Formalite>(
+          formaliteService.addOrUpdateFormalite(formalite),
+          HttpStatus.OK);
+    else
+      throw new OsirisValidationException("formalite");
   }
 
   @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)

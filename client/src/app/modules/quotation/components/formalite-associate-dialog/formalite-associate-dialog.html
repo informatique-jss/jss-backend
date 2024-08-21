@@ -1,0 +1,30 @@
+<h1 mat-dialog-title>Associer un fournisseur de service à une liasse </h1>
+<div mat-dialog-content>
+  <p>Veuillez choisir un fournisseur de service :</p>
+  <form>
+    <table class="full-width">
+      <tr>
+        <td>
+          <autocomplete-competent-authority [(model)]="formaliteDialogChoose.competentAuthorityServiceProvider"
+            [form]="assoFormaliteTypeForm" propertyName="competentAuthorityChoose" [isMandatory]="true"
+            [filteredCompetentAuthority]="[competentAuthorityInfogreffe, competentAuthorityInpi]"
+            label="competentAuthority"></autocomplete-competent-authority>
+        </td>
+        <td *ngIf="formaliteDialogChoose.competentAuthorityServiceProvider.id==competentAuthorityInpi.id">
+          <autocomplete-guichet-unique-formalite [(model)]="formaliteDialogChoose.formaliteGuichetUnique"
+            [form]="assoFormaliteTypeForm" propertyName="formaliteGuichetUniqueChosen"
+            label="guichetUniqueFormalite"></autocomplete-guichet-unique-formalite>>
+        </td>
+        <td *ngIf="formaliteDialogChoose.competentAuthorityServiceProvider.id==competentAuthorityInfogreffe.id">
+          <autocomplete-infogreffe-formalite [(model)]="formaliteDialogChoose.formaliteInfogreffe"
+            [form]="assoFormaliteTypeForm" propertyName="formaliteInfogreffeChosen"
+            label="infogreffeFormalite"></autocomplete-infogreffe-formalite>
+        </td>
+      </tr>
+    </table>
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">Valider</button>
+</div>

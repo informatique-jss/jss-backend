@@ -5,17 +5,10 @@
         <sort-table [columns]="displayedColumns" [values]="formalites" tableName="Liasses Formalites"
           [actions]="tableAction"></sort-table>
         <mat-divider class="margin-mat-divider"></mat-divider>
-        <button mat-raised-button color="accent" style="margin-left : 7px" *ngIf="editMode"
-          matTooltip="Associer une liasse" (click)="associateLiasseWithProvider()"><mat-icon style="margin : 0"
-            class="pointer">
+        <button mat-raised-button color="accent" style="margin-left : 7px"
+          matTooltip="Associer une liasse à un fournisseur de service" (click)="associateLiasseWithProvider()"><mat-icon
+            style="margin : 0" class="pointer">
             comment</mat-icon></button>
-
-        <td
-          *ngIf="formalite.competentAuthorityServiceProvider && formalite.competentAuthorityServiceProvider.id == competentAuthorityInpi.id && formalite.id">
-          <chips-formalite-guichet-unique [(model)]="formalite.formalitesGuichetUnique" [form]="formaliteForm"
-            propertyName="formaliteGuichetUnique" [isMandatory]="false" label="Nom du dossier GU"
-            [isDisabled]="!editMode"></chips-formalite-guichet-unique>
-        </td>
 
         <customer-order-comment *ngIf="provision && provision.id" [provision]="provision"></customer-order-comment>
       </div>
