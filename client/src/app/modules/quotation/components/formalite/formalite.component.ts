@@ -14,6 +14,11 @@ import { FormaliteStatus } from '../../model/FormaliteStatus';
 import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
+import { FormaliteGuichetUnique } from '../../model/guichet-unique/FormaliteGuichetUnique';
+import { FormaliteInfogreffe } from '../../model/infogreffe/FormaliteInfogreffe';
+import { instanceOfFormaliteInfogreffe } from '../../../../libs/TypeHelper';
+import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
+import { FormaliteGuichetUniqueService } from 'src/app/modules/miscellaneous/services/formalite.guichet.unique.service';
 
 @Component({
   selector: 'formalite',
@@ -41,14 +46,17 @@ export class FormaliteComponent implements OnInit {
   competentAuthorityInfogreffe = this.constantService.getCompetentAuthorityInfogreffe();
 
   formaliteStatus: FormaliteStatus[] | undefined;
-  displayedColumns: SortTableColumn<Formalite>[] = [] as Array<SortTableColumn<Formalite>>;
+  displayedColumns: SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>[] = [] as Array<SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>>;
+  formalites: (FormaliteGuichetUnique | FormaliteInfogreffe)[] | undefined;
+  tableAction: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>[] = [] as Array<SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>>;
 
   constructor(
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
     private habilitationsService: HabilitationsService,
     private formaliteStatusService: FormaliteStatusService,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
+    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService
   ) { }
 
   formaliteForm = this.formBuilder.group({});
@@ -61,12 +69,35 @@ export class FormaliteComponent implements OnInit {
     this.formaliteStatusService.getFormaliteStatus().subscribe(response => { this.formaliteStatus = response });
     this.restoreTab();
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "competentAuthorityServiceProvider", fieldName: "competentAuthorityServiceProvider", label: "Fournisseur de service" } as SortTableColumn<Formalite>);
-    this.displayedColumns.push({ id: "formaliteStatus", fieldName: "formaliteStatus", label: "Statut de la formalité" } as SortTableColumn<Formalite>);
-    // this.displayedColumns.push({ id: "isAuthorizedToSign", fieldName: "isAuthorizedToSign", label: "Autorisé à signer/payer", valueFonction: (element: Formalite, column: SortTableColumn<Formalite>) => { return element } } as SortTableColumn<Formalite>);
-    this.displayedColumns.push({ id: "waitedCompetentAuthority", fieldName: "waitedCompetentAuthority", label: "Autorité compétente en attente" } as SortTableColumn<Formalite>);
-    this.displayedColumns.push({ id: "competentAuthorityServiceProvider", fieldName: "competentAuthorityServiceProvider", label: "Dernière relance de l'AC" } as SortTableColumn<Formalite>);
+    this.displayedColumns.push({ id: "competentAuthorityServiceProvider", fieldName: "competentAuthorityServiceProvider", label: "Fournisseur de service", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return this.competentAuthorityInfogreffe; return this.competentAuthorityInpi; } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
+    this.displayedColumns.push({ id: "referenceProvider", fieldName: "referenceProvider", label: "Référence fournisseur", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return element.identifiantFormalite.formaliteNumero; return element.liasseNumber } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
+    this.displayedColumns.push({ id: "formaliteStatus", fieldName: "formaliteStatus", label: "Statut de la formalité", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return ""; return element.status; } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
+    //  this.displayedColumns.push({ id: "isAuthorizedToSign", fieldName: "isAuthorizedToSign", label: "Autorisé à signer/payer", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return ""; element.isAuthorizedToSign; } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
+    this.displayedColumns.push({ id: "", fieldName: "", label: "Dernière relance de l'AC" } as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
+
+    this.tableAction.push({
+      actionIcon: 'add', actionName: "Autoriser à Signer/payer ?", actionClick: (column: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>, element: FormaliteGuichetUnique | FormaliteInfogreffe, event: any) => {
+        if (!instanceOfFormaliteInfogreffe(element))
+          if (element.status.code == GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING || element.status.code == GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING)
+            this.updateIsAuthorizedToSign(element);
+      }, display: true,
+    } as SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>);
+
+    if (this.formalite.formalitesGuichetUnique)
+      for (let i = 0; i < this.formalite.formalitesGuichetUnique.length; i++)
+        this.formalites?.push(this.formalite.formalitesGuichetUnique[i]);
+    if (this.formalite.formalitesInfogreffe)
+      for (let i = 0; i < this.formalite.formalitesInfogreffe.length; i++)
+        this.formalites?.push(this.formalite.formalitesInfogreffe[i]);
   }
+
+  updateIsAuthorizedToSign(element: FormaliteGuichetUnique) {
+    if (element && element.isAuthorizedToSign)
+      element.isAuthorizedToSign = false;
+    else element.isAuthorizedToSign = true;
+    this.formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(element);
+  }
+
   ngOnChanges(changes: SimpleChanges) {
 
   }

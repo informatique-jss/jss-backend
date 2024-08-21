@@ -2,6 +2,7 @@ import { IAttachment } from "../modules/miscellaneous/model/IAttachment";
 import { IAttachmentCode } from "../modules/miscellaneous/model/IAttachmentCode";
 import { Confrere } from "../modules/quotation/model/Confrere";
 import { CustomerOrder } from "../modules/quotation/model/CustomerOrder";
+import { FormaliteInfogreffe } from "../modules/quotation/model/infogreffe/FormaliteInfogreffe";
 import { IQuotation } from "../modules/quotation/model/IQuotation";
 import { Quotation } from "../modules/quotation/model/Quotation";
 import { Responsable } from "../modules/tiers/model/Responsable";
@@ -19,10 +20,15 @@ export function instanceOfConfrere(object: any): object is Confrere {
 
 export function instanceOfResponsable(object: any): object is Responsable {
   if (object != null)
-    return 'isActive' in object;
+    return 'greffeDestinataire' in object;
   return false;
 }
 
+export function instanceOfFormaliteInfogreffe(object: any): object is FormaliteInfogreffe {
+  if (object != null)
+    return 'isActive' in object;
+  return false;
+}
 
 export function instanceOfQuotation(object: IQuotation): object is Quotation {
   return object.isQuotation;

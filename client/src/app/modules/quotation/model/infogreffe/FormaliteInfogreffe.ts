@@ -1,3 +1,4 @@
+import { Formalite } from "../Formalite";
 import { Entreprise } from "./Entreprise";
 import { EvenementInfogreffe } from "./EvenementInfogreffe";
 import { GreffeInfogreffe } from "./GreffeInfogreffe";
@@ -23,6 +24,6 @@ export interface FormaliteInfogreffe {
   cloture: boolean;
   infosSpecifiquesFormaliteDpa: string;
   montantFormalite: MontantFormalite;
-  formaliteInfogreffe: FormaliteInfogreffe;
+  formalite: Formalite;
 
 }
