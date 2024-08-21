@@ -345,8 +345,7 @@ public class OsirisScheduller {
 		}
 	}
 
-	// @Scheduled(cron = "${schedulling.customer.order.recurring.generation}")
-	@Scheduled(initialDelay = 1000, fixedDelay = Integer.MAX_VALUE)
+	@Scheduled(cron = "${schedulling.customer.order.recurring.generation}")
 	private void generateRecurringCustomerOrders() {
 		try {
 			if (nodeService.shouldIBatch())
