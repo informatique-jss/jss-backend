@@ -30,6 +30,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + "  r1.firstname || ' '||r1.lastname as customerOrderLabel,"
                         + " pro.label as providerLabel, "
                         + " r1.id as responsableId, "
+                        + " coalesce(r1.id_commercial, t.id_commercial) as salesEmployeeId, "
                         + " t.id as tiersId, "
                         + " r1.firstname || ' '||r1.lastname  as responsableLabel,"
                         + " coalesce( t.denomination,t.firstname || ' '||t.lastname )  as tiersLabel,"
@@ -68,6 +69,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + " and  ( COALESCE(:invoiceId)=0 or i.id in (:invoiceId)) "
                         + " and  ( COALESCE(:customerOrderIds) =0 or t.id in (:customerOrderIds) or r1.id in (:customerOrderIds) or pro.id in (:customerOrderIds)  ) "
                         + " and (:minAmount is null or total_price>=CAST(CAST(:minAmount as text) as real) ) "
+                        + " and  ( COALESCE(:salesEmployeeId) =0 or t.id_commercial=:salesEmployeeId or r1.id_commercial=:salesEmployeeId ) "
                         + " and (:maxAmount is null or total_price<=CAST(CAST(:maxAmount as text) as real) )"
                         + " and (:showToRecover is false or (  i.first_reminder_date_time is not null and  i.second_reminder_date_time  is not null and  i.third_reminder_date_time  is not null and i.id_invoice_status<>:invoicePayedStatusId ) )"
                         + " group by i.id, ist.label,ist.code,ist.id, pro.label, c.id,  r1.id, r1.firstname,t.id, r1.lastname,"
@@ -81,6 +83,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         @Param("invoiceId") Integer invoiceId,
                         @Param("customerOrderId") Integer customerOrderId,
                         @Param("customerOrderIds") List<Integer> customerOrderIds,
+                        @Param("salesEmployeeId") Integer salesEmployeeId,
                         @Param("customerOrderForInboundInvoiceId") Integer customerOrderForInboundInvoiceId,
                         @Param("invoicingDocumentTypeId") Integer invoicingDocumentTypeId);
 

@@ -57,7 +57,7 @@ public class Tiers implements IAttachment, IId {
 	@IndexedField
 	private TiersType tiersType;
 
-	@Column(length = 60)
+	@Column(length = 80)
 	@IndexedField
 	private String denomination;
 

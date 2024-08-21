@@ -9,6 +9,7 @@ export interface InvoiceSearchResult {
   providerLabel: string;
   tiersLabel: string;
   responsableId: number;
+  salesEmployeeId: number;
   tiersId: number;
   responsableLabel: string;
   affaireLabel: string;

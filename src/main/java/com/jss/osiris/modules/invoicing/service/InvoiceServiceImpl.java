@@ -513,7 +513,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     public List<InvoiceSearchResult> getInvoiceForCustomerOrder(Integer customerOrderId) throws OsirisException {
         return invoiceRepository.findInvoice(Arrays.asList(0), LocalDateTime.now().minusYears(100),
                 LocalDateTime.now().plusYears(100), null, null, false, constantService.getInvoiceStatusPayed().getId(),
-                0, customerOrderId, Arrays.asList(0), 0, constantService.getDocumentTypeBilling().getId());
+                0, customerOrderId, Arrays.asList(0), 0, 0,
+                constantService.getDocumentTypeBilling().getId());
     }
 
     @Override
@@ -521,7 +522,8 @@ public class InvoiceServiceImpl implements InvoiceService {
             throws OsirisException {
         return invoiceRepository.findInvoice(Arrays.asList(0), LocalDateTime.now().minusYears(100),
                 LocalDateTime.now().plusYears(100), null, null, false, constantService.getInvoiceStatusPayed().getId(),
-                0, 0, Arrays.asList(0), customerOrderId, constantService.getDocumentTypeBilling().getId());
+                0, 0, Arrays.asList(0), 0, customerOrderId,
+                constantService.getDocumentTypeBilling().getId());
     }
 
     @Override
@@ -557,12 +559,16 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoiceSearch.getInvoiceId() == null)
             invoiceSearch.setInvoiceId(0);
 
+        Integer salesEmployeeId = 0;
+        if (invoiceSearch.getSalesEmployee() != null)
+            salesEmployeeId = invoiceSearch.getSalesEmployee().getId();
+
         return invoiceRepository.findInvoice(statusId,
                 invoiceSearch.getStartDate().withHour(0).withMinute(0),
                 invoiceSearch.getEndDate().withHour(23).withMinute(59), invoiceSearch.getMinAmount(),
                 invoiceSearch.getMaxAmount(), invoiceSearch.getShowToRecover(),
                 constantService.getInvoiceStatusPayed().getId(), invoiceSearch.getInvoiceId(),
-                invoiceSearch.getCustomerOrderId(), customerOrderId, 0,
+                invoiceSearch.getCustomerOrderId(), customerOrderId, salesEmployeeId, 0,
                 constantService.getDocumentTypeBilling().getId());
     }
 

@@ -69,4 +69,6 @@ public interface QuotationService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
+        public Quotation generateQuotationPdf(Quotation quotation) throws OsirisClientMessageException,
+                        OsirisValidationException, OsirisDuplicateException, OsirisException;
 }
