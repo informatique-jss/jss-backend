@@ -99,6 +99,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("azure.translator.api.region");
         isOk = isOk && checkProperty("schedulling.audit.clean");
         isOk = isOk && checkProperty("schedulling.log.purge");
+        isOk = isOk && checkProperty("schedulling.batch.purge");
         isOk = isOk && checkProperty("schedulling.node.priority");
         isOk = isOk && checkProperty("mail.temporized.temporization.seconds");
         isOk = isOk && checkProperty("schedulling.log.osiris.customer.bilan.publication.reminder");
