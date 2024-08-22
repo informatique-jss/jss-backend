@@ -1375,6 +1375,8 @@ public class QuotationController {
     validationHelper.validateString(confrere.getPostalCode(), false, 10, "PostalCode");
     validationHelper.validateString(confrere.getCedexComplement(), false, 20, "CedexComplement");
     validationHelper.validateReferential(confrere.getCity(), false, "City");
+    validationHelper.validateReferential(confrere.getResponsable(), false, "Responsable");
+    validationHelper.validateReferential(confrere.getProvider(), false, "Provider");
     validationHelper.validateReferential(confrere.getCountry(), false, "Country");
 
     if (confrere.getSpecialOffers() != null) {

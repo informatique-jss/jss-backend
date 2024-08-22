@@ -957,6 +957,7 @@ public class MiscellaneousController {
         validationHelper.validateString(competentAuthority.getSchedulle(), false, 2000, "Schedulle");
         validationHelper.validateString(competentAuthority.getIntercommunityVat(), false, 20, "IntercommunityVat");
         validationHelper.validateString(competentAuthority.getInpiReference(), false, 250, "InpiReference");
+        validationHelper.validateReferential(competentAuthority.getProvider(), false, "Provider");
         validationHelper.validateReferential(competentAuthority.getCompetentAuthorityType(), true,
                 "CompetentAuthorityType");
         if (competentAuthority.getCities() == null && competentAuthority.getDepartments() == null

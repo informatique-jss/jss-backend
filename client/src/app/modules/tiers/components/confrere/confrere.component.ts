@@ -15,10 +15,13 @@ import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
 import { ConfrereService } from 'src/app/modules/quotation/services/confrere.service';
+import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
+import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { CONFRERE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Responsable } from '../../model/Responsable';
+import { ResponsableService } from '../../services/responsable.service';
 
 @Component({
   selector: 'confrere',
@@ -34,7 +37,9 @@ export class ConfrereComponent implements OnInit {
     private constantService: ConstantService,
     private appService: AppService,
     protected paymentTypeService: PaymentTypeService,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
+    private responsableService: ResponsableService,
+    private indexEntityService: IndexEntityService,
   ) {
   }
 
@@ -45,6 +50,7 @@ export class ConfrereComponent implements OnInit {
   displayedColumns: SortTableColumn<Confrere>[] = [];
   editMode: boolean = false;
   CONFRERE_ENTITY_TYPE = CONFRERE_ENTITY_TYPE;
+  searchedResponsable: IndexEntity | undefined;
 
   orderingSearch: OrderingSearch = {} as OrderingSearch;
   quotationSearch: QuotationSearch = {} as QuotationSearch;
@@ -129,6 +135,10 @@ export class ConfrereComponent implements OnInit {
       if (this.selectedConfrere.responsable)
         setTimeout(() =>
           this.responsableAccountSearch = this.selectedConfrere?.responsable, 0);
+
+      if (this.selectedConfrere.responsable) {
+        this.indexEntityService.getResponsableByKeyword(this.selectedConfrere.responsable.id + "", false).subscribe(response => this.searchedResponsable = response[0]);
+      }
     }
   }
 
@@ -167,6 +177,13 @@ export class ConfrereComponent implements OnInit {
         }
       })
     }
+  }
+
+  fillResponsable(responsable: IndexEntity) {
+    this.responsableService.getResponsable(responsable.entityId).subscribe(response => {
+      if (this.selectedConfrere)
+        this.selectedConfrere.responsable = response;
+    });
   }
 
   applyFilter(filterValue: any) {

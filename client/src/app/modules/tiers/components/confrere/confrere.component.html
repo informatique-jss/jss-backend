@@ -38,6 +38,23 @@
                 </table>
                 <table class="full-width">
                   <tr>
+                    <td *ngIf="selectedConfrere.id">
+                      <autocomplete-responsable [(model)]="searchedResponsable" [form]="entityForm2"
+                        propertyName="responsable" [isMandatory]="false"
+                        [isDisabled]="!editMode || (selectedConfrere!=undefined && selectedConfrere!=null && selectedConfrere.responsable!=undefined && selectedConfrere.responsable!=null)"
+                        (onOptionSelected)="fillResponsable($event)"
+                        label="Responsable associé"></autocomplete-responsable>
+                    </td>
+                    <td>
+                      <autocomplete-provider [(model)]="selectedConfrere.provider" [form]="entityForm2"
+                        propertyName="provider" [isMandatory]="false" [isDisabled]="!editMode"
+                        [isDisabled]="!editMode || (selectedConfrere!=undefined && selectedConfrere!=null && selectedConfrere.provider!=undefined && selectedConfrere.provider!=null)"
+                        label="Fournisseur associé"></autocomplete-provider>
+                    </td>
+                  </tr>
+                </table>
+                <table class="full-width">
+                  <tr>
                     <td>
                       <chips-mail [(model)]="selectedConfrere.mails" label="Mails (annonce)" [form]="entityForm2"
                         propertyName="mails" [isMandatory]="false" [isDisabled]="!editMode"></chips-mail>
