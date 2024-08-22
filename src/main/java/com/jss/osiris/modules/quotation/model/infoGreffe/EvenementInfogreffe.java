@@ -19,6 +19,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_evenement_infogreffe_formalite", columnList = "id_formalite_infogreffe") })
@@ -29,7 +30,10 @@ public class EvenementInfogreffe {
     private Integer id;
 
     @JsonDeserialize(using = JacksonTimestampMillisecondDeserializer.class)
+    @Transient
     private LocalDateTime date;
+
+    private LocalDateTime createdDate;
     private String codeEtat;
 
     @OneToMany(mappedBy = "evenementInfogreffe", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -89,6 +93,14 @@ public class EvenementInfogreffe {
 
     public void setDocumentsAssocies(List<DocumentAssocieInfogreffe> documentsAssocies) {
         this.documentsAssocies = documentsAssocies;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
     }
 
 }

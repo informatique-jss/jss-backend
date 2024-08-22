@@ -23,7 +23,9 @@ export class FormaliteAssociateDialog implements OnInit {
     private formBuilder: FormBuilder,
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.formaliteDialogChoose.competentAuthorityServiceProvider = this.constantService.getCompetentAuthorityInpi();
+  }
 
   onConfirm(): void {
     this.dialogRef.close(this.formaliteDialogChoose);

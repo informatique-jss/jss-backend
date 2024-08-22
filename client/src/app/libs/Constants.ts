@@ -10,6 +10,8 @@ export const MAX_SIZE_UPLOAD_FILES = 10485760;
 export const AZURE_CONFIDENT_THRESHOLD: number = 0.95;
 export const INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = 2;
 export const GUICHET_UNIQUE_BASE_URL = "https://guichet-unique.inpi.fr/";
+export const INFOGREFFE_BASE_URL = "https://infogreffe.fr/";
+
 
 // Screen types
 export const PROVISION_SCREEN_TYPE_DOMICILIATION = "DOMICILIATION";

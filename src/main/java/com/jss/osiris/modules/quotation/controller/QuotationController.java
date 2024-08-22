@@ -119,6 +119,7 @@ import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.ValidationRequest;
+import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementNoticeTemplateService;
@@ -169,6 +170,7 @@ import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.GuichetUniqueDelegateService;
+import com.jss.osiris.modules.quotation.service.infoGreffe.FormaliteInfogreffeService;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
@@ -392,6 +394,9 @@ public class QuotationController {
 
   @Autowired
   FormaliteService formaliteService;
+
+  @Autowired
+  FormaliteInfogreffeService formaliteInfogreffeService;
 
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
@@ -2347,6 +2352,23 @@ public class QuotationController {
     }
 
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/formalite-infogreffe/search")
+  public ResponseEntity<List<FormaliteInfogreffe>> getFormaliteInfogreffeServiceByReference(
+      @RequestParam String value)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+
+    List<FormaliteInfogreffe> formalites = null;
+
+    if (value != null && value.length() > 2) {
+      formalites = formaliteInfogreffeService.getFormaliteInfogreffeByReference(value.toUpperCase());
+
+      // if (formalites == null || formalites.size() == 0)
+      // formaliteInfogreffeService.getAllFormalitiesByRefenceMandataire(value);
+    }
+
+    return new ResponseEntity<List<FormaliteInfogreffe>>(formalites, HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/formalite-guichet-unique/update")

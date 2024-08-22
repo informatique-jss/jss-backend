@@ -1,15 +1,23 @@
 <form [formGroup]="formaliteForm" *ngIf="formalite && provision">
   <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab [label]="provision.provisionType.label">
+      <div class=" form-div">
+        <div class="full-width">
+          <div class="row-field-container">
+            <mat-form-field class="full-width">
+              <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+            </mat-form-field>
+            <button (click)="associateLiasseWithFormalite()" mat-mini-fab color="warn" class="mini-fab-add"
+              *ngIf="editMode" matTooltip="Associer une liasse à un fournisseur de service">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+          <sort-table [columns]="displayedColumns" [values]="formalites" tableName="Liasses Formalites"
+            [filterText]="searchText" [actions]="tableAction"></sort-table>
+        </div>
+      </div>
       <div class="form-div">
-        <sort-table [columns]="displayedColumns" [values]="formalites" tableName="Liasses Formalites"
-          [actions]="tableAction"></sort-table>
         <mat-divider class="margin-mat-divider"></mat-divider>
-        <button mat-raised-button color="accent" style="margin-left : 7px"
-          matTooltip="Associer une liasse à un fournisseur de service" (click)="associateLiasseWithProvider()"><mat-icon
-            style="margin : 0" class="pointer">
-            comment</mat-icon></button>
-
         <customer-order-comment *ngIf="provision && provision.id" [provision]="provision"></customer-order-comment>
       </div>
     </mat-tab>

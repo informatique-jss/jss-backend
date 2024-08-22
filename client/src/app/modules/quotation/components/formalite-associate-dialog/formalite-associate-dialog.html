@@ -8,17 +8,19 @@
           <autocomplete-competent-authority [(model)]="formaliteDialogChoose.competentAuthorityServiceProvider"
             [form]="assoFormaliteTypeForm" propertyName="competentAuthorityChoose" [isMandatory]="true"
             [filteredCompetentAuthority]="[competentAuthorityInfogreffe, competentAuthorityInpi]"
-            label="competentAuthority"></autocomplete-competent-authority>
+            label="Fournisseur de service"></autocomplete-competent-authority>
         </td>
+      </tr>
+      <tr *ngIf="formaliteDialogChoose.competentAuthorityServiceProvider">
         <td *ngIf="formaliteDialogChoose.competentAuthorityServiceProvider.id==competentAuthorityInpi.id">
           <autocomplete-guichet-unique-formalite [(model)]="formaliteDialogChoose.formaliteGuichetUnique"
             [form]="assoFormaliteTypeForm" propertyName="formaliteGuichetUniqueChosen"
-            label="guichetUniqueFormalite"></autocomplete-guichet-unique-formalite>>
+            label="Numéro de liasse ou SIREN/SIRET"></autocomplete-guichet-unique-formalite>
         </td>
         <td *ngIf="formaliteDialogChoose.competentAuthorityServiceProvider.id==competentAuthorityInfogreffe.id">
           <autocomplete-infogreffe-formalite [(model)]="formaliteDialogChoose.formaliteInfogreffe"
             [form]="assoFormaliteTypeForm" propertyName="formaliteInfogreffeChosen"
-            label="infogreffeFormalite"></autocomplete-infogreffe-formalite>
+            label="Référence greffe ou référence technique"></autocomplete-infogreffe-formalite>
         </td>
       </tr>
     </table>

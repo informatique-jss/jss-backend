@@ -56,7 +56,6 @@ public class Formalite implements IId {
     private List<FormaliteGuichetUnique> formalitesGuichetUnique;
 
     @OneToMany(mappedBy = "formalite")
-    @JsonIgnoreProperties(value = { "content" })
     @IndexedField
     private List<FormaliteInfogreffe> formalitesInfogreffe;
 
@@ -122,6 +121,14 @@ public class Formalite implements IId {
 
     public void setActeDeposit(ActeDeposit acteDeposit) {
         this.acteDeposit = acteDeposit;
+    }
+
+    public List<FormaliteInfogreffe> getFormalitesInfogreffe() {
+        return formalitesInfogreffe;
+    }
+
+    public void setFormalitesInfogreffe(List<FormaliteInfogreffe> formalitesInfogreffe) {
+        this.formalitesInfogreffe = formalitesInfogreffe;
     }
 
 }

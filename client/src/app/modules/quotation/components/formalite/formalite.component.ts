@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ElementRef } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING, GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING } from 'src/app/libs/Constants';
-import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
+import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, GUICHET_UNIQUE_BASE_URL, GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING, GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING, INFOGREFFE_BASE_URL } from 'src/app/libs/Constants';
+import { instanceOfCustomerOrder, instanceOfFormaliteGuichetUnique } from 'src/app/libs/TypeHelper';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { HabilitationsService } from '../../../../services/habilitations.service';
@@ -23,6 +23,7 @@ import { FormaliteDialogChoose } from '../../model/FormaliteDialogChoose';
 import { FormaliteService } from '../../services/formalite.service';
 import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
 import { FormaliteGuichetUniqueService } from 'src/app/modules/miscellaneous/services/formalite.guichet.unique.service';
+import { FormaliteInfogreffeService } from '../../../miscellaneous/services/formalite.infogreffe.service';
 
 @Component({
   selector: 'formalite',
@@ -54,6 +55,7 @@ export class FormaliteComponent implements OnInit {
   displayedColumns: SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>[] = [] as Array<SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>>;
   formalites: (FormaliteGuichetUnique | FormaliteInfogreffe)[] = [] as Array<FormaliteGuichetUnique | FormaliteInfogreffe>;
   tableAction: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>[] = [] as Array<SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>>;
+  searchText: string | undefined;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -61,8 +63,6 @@ export class FormaliteComponent implements OnInit {
     private habilitationsService: HabilitationsService,
     private formaliteStatusService: FormaliteStatusService,
     private userPreferenceService: UserPreferenceService,
-    private formaliteService: FormaliteService,
-    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService,
     public associateFormaliteLiasseDialog: MatDialog,
   ) { }
 
@@ -83,13 +83,46 @@ export class FormaliteComponent implements OnInit {
     //this.displayedColumns.push({ id: "", fieldName: "", label: "Dernière relance de l'AC" } as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
 
     this.tableAction.push({
-      actionIcon: 'visibility', actionName: "Autoriser à Signer/payer ?", actionClick: (column: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>, element: FormaliteGuichetUnique | FormaliteInfogreffe, event: any) => {
-        if (!instanceOfFormaliteInfogreffe(element))
+      actionIcon: 'approval', actionName: "Autoriser à Signer/payer ?", actionClick: (column: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>, element: FormaliteGuichetUnique | FormaliteInfogreffe, event: any) => {
+        if (instanceOfFormaliteGuichetUnique(element) && this.editMode)
           if (element.status.code == GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING || element.status.code == GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING)
-            this.updateIsAuthorizedToSign(element);
+            element.isAuthorizedToSign = true;
       }, display: true,
     } as SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>);
 
+    this.tableAction.push({
+      actionIcon: 'link', actionName: "Ouvrir le lien", actionClick: (column: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>, element: FormaliteGuichetUnique | FormaliteInfogreffe, event: any) => {
+        if (instanceOfFormaliteGuichetUnique(element)) {
+          if (element.isFormality)
+            window.open(GUICHET_UNIQUE_BASE_URL + element.id, "_blank");
+          if (element.isAnnualAccounts)
+            window.open(GUICHET_UNIQUE_BASE_URL + "annual-accounts/" + element.id, "_blank");
+          if (element.isActeDeposit)
+            window.open(GUICHET_UNIQUE_BASE_URL + "acte-deposits/" + element.id, "_blank");
+        }
+        if (instanceOfFormaliteInfogreffe(element))
+          if (element.urlReprise)
+            window.open(INFOGREFFE_BASE_URL + element.urlReprise);
+      }, display: true,
+    } as SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>);
+
+    this.tableAction.push({
+      actionIcon: 'delete', actionName: "Supprimer la liasse", actionClick: (column: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>, element: FormaliteGuichetUnique | FormaliteInfogreffe, event: any) => {
+        if (this.editMode) {
+          if (instanceOfFormaliteGuichetUnique(element))
+            this.formalite.formalitesGuichetUnique = this.formalite.formalitesGuichetUnique.slice(this.formalite.formalitesGuichetUnique.indexOf(element), 1);
+          if (instanceOfFormaliteInfogreffe(element))
+            this.formalite.formalitesInfogreffe = this.formalite.formalitesInfogreffe.slice(this.formalite.formalitesInfogreffe.indexOf(element), 1);
+          this.setFormaliteTableData();
+        }
+      }, display: true,
+    } as SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>);
+
+    this.setFormaliteTableData();
+  }
+
+  setFormaliteTableData() {
+    this.formalites = [] as Array<FormaliteGuichetUnique | FormaliteInfogreffe>;
     if (this.formalite.formalitesGuichetUnique)
       for (let i = 0; i < this.formalite.formalitesGuichetUnique.length; i++)
         this.formalites?.push(this.formalite.formalitesGuichetUnique[i]);
@@ -98,28 +131,30 @@ export class FormaliteComponent implements OnInit {
         this.formalites?.push(this.formalite.formalitesInfogreffe[i]);
   }
 
-  updateIsAuthorizedToSign(element: FormaliteGuichetUnique) {
-    if (element && element.isAuthorizedToSign)
-      element.isAuthorizedToSign = false;
-    else element.isAuthorizedToSign = true;
-    this.formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(element);
+  applyFilter(filterValue: any) {
+    let filterValueCast = (filterValue as HTMLInputElement);
+    filterValue = filterValueCast.value.trim();
+    this.searchText = filterValue.toLowerCase();
   }
 
-  associateLiasseWithProvider() {
+  associateLiasseWithFormalite() {
     const dialogRef: MatDialogRef<FormaliteAssociateDialog> = this.associateFormaliteLiasseDialog.open(FormaliteAssociateDialog, {
       maxWidth: "600px",
     });
 
     dialogRef.afterClosed().subscribe((result: FormaliteDialogChoose) => {
-      if (result && result.formaliteGuichetUnique && result.competentAuthorityServiceProvider.id == this.competentAuthorityInpi.id)
+      if (result && result.formaliteGuichetUnique && result.competentAuthorityServiceProvider.id == this.competentAuthorityInpi.id) {
+        if (this.formalite.formalitesGuichetUnique == null)
+          this.formalite.formalitesGuichetUnique = [] as Array<FormaliteGuichetUnique>;
         this.formalite.formalitesGuichetUnique.push(result.formaliteGuichetUnique);
+      }
 
-      if (result && result.formaliteInfogreffe && result.competentAuthorityServiceProvider.id == this.competentAuthorityInfogreffe.id)
+      if (result && result.formaliteInfogreffe && result.competentAuthorityServiceProvider.id == this.competentAuthorityInfogreffe.id) {
+        if (this.formalite.formalitesInfogreffe == null)
+          this.formalite.formalitesInfogreffe = [] as Array<FormaliteInfogreffe>;
         this.formalite.formalitesInfogreffe.push(result.formaliteInfogreffe);
-
-      this.formaliteService.addOrUpdateFormalite(this.formalite).subscribe(response => {
-        this.formalite = response;
-      });
+      }
+      this.setFormaliteTableData();
     });
   }
 

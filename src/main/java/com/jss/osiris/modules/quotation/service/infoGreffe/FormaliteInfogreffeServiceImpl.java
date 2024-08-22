@@ -2,7 +2,6 @@ package com.jss.osiris.modules.quotation.service.infoGreffe;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,6 +48,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                 .getAllInfogreffeFormalities();
         if (formalitesInfogreffe != null && formalitesInfogreffe.size() > 0) {
             for (FormaliteInfogreffe formaliteInfogreffe : formalitesInfogreffe) {
+                setInfogreffeFormaliteEvenementDate(formaliteInfogreffe);
                 if (formaliteInfogreffe.getEntreprise() != null
                         && formaliteInfogreffe.getEntreprise().getSiren() == null)
                     formaliteInfogreffe.setEntreprise(null);
@@ -58,7 +58,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                 if (!isRefreshOnlyToday || formaliteInfogreffe.getEvenements() == null
                         || formaliteInfogreffe.getEvenements() != null
                                 && formaliteInfogreffe.getEvenements().size() > 0
-                                && formaliteInfogreffe.getEvenements().get(0).getDate()
+                                && formaliteInfogreffe.getEvenements().get(0).getCreatedDate()
                                         .isAfter(LocalDateTime.now().withHour(00).withMinute(00).minusSeconds(01)))
                     batchService.declareNewBatch(Batch.REFRESH_FORMALITE_INFOGREFFE_DETAIL,
                             formaliteInfogreffe.getIdentifiantFormalite().getFormaliteNumero());
@@ -71,6 +71,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
     public void refreshFormaliteInfogreffeDetail(FormaliteInfogreffe formaliteInfogreffe) throws OsirisException {
         FormaliteInfogreffe formaliteInfogreffeDetail = infogreffeDelegateService
                 .getInfogreffeFormalite(formaliteInfogreffe);
+        setInfogreffeFormaliteEvenementDate(formaliteInfogreffeDetail);
 
         if (formaliteInfogreffe.getEntreprise() != null
                 && formaliteInfogreffe.getEntreprise().getSiren() == null)
@@ -78,4 +79,18 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
         addOrUpdFormaliteInfogreffe(formaliteInfogreffeDetail);
     }
 
+    @Override
+    public List<FormaliteInfogreffe> getFormaliteInfogreffeByReference(String reference) {
+        return formaliteInfogreffeRepository.findByReference(reference);
+    }
+
+    private void setInfogreffeFormaliteEvenementDate(FormaliteInfogreffe formaliteInfogreffe) {
+        if (formaliteInfogreffe != null && formaliteInfogreffe.getEvenements() != null
+                && formaliteInfogreffe.getEvenements().size() > 0) {
+            for (EvenementInfogreffe evenementInfogreffe : formaliteInfogreffe.getEvenements()) {
+                if (evenementInfogreffe.getDate() != null)
+                    evenementInfogreffe.setCreatedDate(evenementInfogreffe.getDate());
+            }
+        }
+    }
 }

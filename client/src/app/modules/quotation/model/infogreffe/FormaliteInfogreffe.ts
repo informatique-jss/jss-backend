@@ -6,7 +6,7 @@ import { IdentifiantFormalite } from "./IdentifiantFormalite";
 import { MontantFormalite } from "./MontantFormalite";
 
 export interface FormaliteInfogreffe {
-  id: string;
+  id: number;
   identifiantFormalite: IdentifiantFormalite;
   entreprise: Entreprise;
   personnePhysique: string;
@@ -24,6 +24,4 @@ export interface FormaliteInfogreffe {
   cloture: boolean;
   infosSpecifiquesFormaliteDpa: string;
   montantFormalite: MontantFormalite;
-  formalite: Formalite;
-
 }

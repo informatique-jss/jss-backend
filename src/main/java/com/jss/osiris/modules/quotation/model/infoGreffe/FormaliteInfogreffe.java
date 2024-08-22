@@ -58,7 +58,7 @@ public class FormaliteInfogreffe {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_formalite")
-    @JsonIgnoreProperties(value = { "formalitesInfogreffe" })
+    @JsonIgnoreProperties(value = { "formalitesInfogreffe", "formalitesGuichetUnique" })
     private Formalite formalite;
 
     public IdentifiantFormalite getIdentifiantFormalite() {
@@ -205,4 +205,11 @@ public class FormaliteInfogreffe {
         this.montantFormalite = montantFormalite;
     }
 
+    public Formalite getFormalite() {
+        return formalite;
+    }
+
+    public void setFormalite(Formalite formalite) {
+        this.formalite = formalite;
+    }
 }
