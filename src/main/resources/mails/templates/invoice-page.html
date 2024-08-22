@@ -70,9 +70,7 @@
                         th:text="${invoice.commandNumber}"></span><br />
                 </span>
                 <span th:if="${externalReference!=null}">Votre référence : <span
-                        th:text="${externalReference}"></span><br /></span>
-                <span th:if="${recurringStartDate!=null}">Période du <span th:text="${recurringStartDate}"></span> au
-                    <span th:text="${recurringEndDate}"></span><br /></span>
+                        th:text="${externalReference}"></span></span>
             </td>
             <td style="width: 100px;"></td>
             <td colspan="2">
@@ -92,6 +90,16 @@
                                     th:text="${invoice.billingLabelCity.label}"></span><span
                                     th:if="${invoice.cedexComplement}"
                                     th:text="${invoice.cedexComplement}"></span></span>
+                        </td>
+                    </tr>
+                </table>
+                <table style=" width: 100%;" th:if="${recurringStartDate!=null}">
+                    <tr>
+                        <td>
+                            <p>
+                                Période du <span th:text="${recurringStartDate}"></span> au
+                                <span th:text="${recurringEndDate}"></span>
+                            </p>
                         </td>
                     </tr>
                 </table>
