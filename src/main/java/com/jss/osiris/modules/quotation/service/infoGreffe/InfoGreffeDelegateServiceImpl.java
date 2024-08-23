@@ -1,5 +1,11 @@
 package com.jss.osiris.modules.quotation.service.infoGreffe;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
 import com.jss.osiris.modules.quotation.model.infoGreffe.InfoGreffeToken;
 import com.jss.osiris.modules.quotation.model.infoGreffe.ListingInfogreffe;
@@ -128,6 +135,58 @@ public class InfogreffeDelegateServiceImpl implements InfogreffeDelegateService 
 
         if (response.getBody() != null) {
             return response.getBody();
+        }
+        return null;
+    }
+
+    @Override
+    public InputStream getAttachmentFileFromEvenementInfogreffe(
+            DocumentAssocieInfogreffe documentAssocieInfogreffe)
+            throws OsirisException {
+        SSLHelper.disableCertificateValidation();
+
+        if (bearerValue == null || bearerExpireDateTime == null || bearerExpireDateTime.isBefore(LocalDateTime.now()))
+            loginUser();
+
+        URL url;
+        try {
+            url = new URL(documentAssocieInfogreffe.getUrlTelechargement());
+        } catch (MalformedURLException e) {
+            throw new OsirisException(e, "Wrong URL Infogreffe for document "
+                    + documentAssocieInfogreffe.getUrlTelechargement());
+        }
+        HttpURLConnection httpConn;
+        try {
+            httpConn = (HttpURLConnection) url.openConnection();
+        } catch (IOException e) {
+            throw new OsirisException(e, "Impossible to open connection from URL Infogreffe for document "
+                    + documentAssocieInfogreffe.getUrlTelechargement());
+        }
+        httpConn.setRequestProperty("Authorization", "Bearer " + bearerValue);
+        httpConn.setRequestProperty("cookie",
+                "BIGipServer~DMZ-Extranet-46~POO_Infogref_Prod_FRONT_7021=rd1o00000000000000000000ffffac164cc0o7021;");
+
+        try {
+            httpConn.setRequestMethod("GET");
+        } catch (ProtocolException e) {
+            throw new OsirisException(e, "Impossible to set GET Method HTTP");
+        }
+
+        int responseCode;
+        try {
+            responseCode = httpConn.getResponseCode();
+        } catch (IOException e) {
+            throw new OsirisException(e, "Impossible to get Inputstream from URL Infogreffe for document "
+                    + documentAssocieInfogreffe.getUrlTelechargement());
+        }
+
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            try {
+                return httpConn.getInputStream();
+            } catch (IOException e) {
+                throw new OsirisException(e, "Impossible to get Inputstream from URL Infogreffe for document "
+                        + documentAssocieInfogreffe.getUrlTelechargement());
+            }
         }
         return null;
     }

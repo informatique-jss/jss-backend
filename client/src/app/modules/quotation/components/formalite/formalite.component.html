@@ -44,6 +44,11 @@
         <guichet-unique-status [formalitesGuichetUnique]="formalite.formalitesGuichetUnique"></guichet-unique-status>
       </ng-template>
     </mat-tab>
+    <mat-tab label="Historique Infogreffe" *ngIf="formalite && formalite.id && formalite.formalitesInfogreffe ">
+      <ng-template matTabContent>
+        <infogreffe-status [formalitesInfogreffe]="formalite.formalitesInfogreffe"></infogreffe-status>
+      </ng-template>
+    </mat-tab>
     <mat-tab label="Historique" *ngIf="formalite && formalite.id">
       <ng-template matTabContent>
         <history [entity]="formalite" [entityType]="FORMALITE_ENTITY_TYPE" [parseTypeList]="formaliteStatus"></history>

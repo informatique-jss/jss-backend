@@ -1041,4 +1041,14 @@ public class ConstantServiceImpl implements ConstantService {
         return this.getConstants().getDateAccountingClosureForAccountant();
     }
 
+    @Override
+    public AttachmentType getAttachmentTypeRefusInfogreffe() throws OsirisException {
+        return this.getConstants().getAttachmentTypeRefusInfogreffe();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeAutreInfogreffe() throws OsirisException {
+        return this.getConstants().getAttachmentTypeAutreInfogreffe();
+    }
+
 }

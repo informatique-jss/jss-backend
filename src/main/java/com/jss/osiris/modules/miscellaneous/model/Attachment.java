@@ -16,6 +16,7 @@ import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
+import com.jss.osiris.modules.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -172,6 +173,12 @@ public class Attachment implements Serializable, IId {
 	@JoinColumn(name = "id_piece_jointe")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private PiecesJointe piecesJointe;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "id_document_associe_infogreffe")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	private DocumentAssocieInfogreffe documentAssocieInfogreffe;
 
 	public Integer getId() {
 		return id;
@@ -364,4 +371,13 @@ public class Attachment implements Serializable, IId {
 	public void setTypeDocumentAttachment(TypeDocument typeDocumentAttachment) {
 		this.typeDocumentAttachment = typeDocumentAttachment;
 	}
+
+	public DocumentAssocieInfogreffe getDocumentAssocieInfogreffe() {
+		return documentAssocieInfogreffe;
+	}
+
+	public void setDocumentAssocieInfogreffe(DocumentAssocieInfogreffe documentAssocieInfogreffe) {
+		this.documentAssocieInfogreffe = documentAssocieInfogreffe;
+	}
+
 }

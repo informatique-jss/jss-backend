@@ -134,6 +134,10 @@ public interface ConstantService {
 
     public AttachmentType getAttachmentTypeQuotation() throws OsirisException;
 
+    public AttachmentType getAttachmentTypeRefusInfogreffe() throws OsirisException;
+
+    public AttachmentType getAttachmentTypeAutreInfogreffe() throws OsirisException;
+
     public Country getCountryFrance() throws OsirisException;
 
     public Country getCountryMonaco() throws OsirisException;
