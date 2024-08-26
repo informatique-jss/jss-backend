@@ -1,10 +1,8 @@
 package com.jss.osiris.libs.batch.controller;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,7 +29,6 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
-import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.service.BillingLabelTypeService;
 
 @RestController
@@ -140,18 +137,5 @@ public class BatchController {
 
 		return new ResponseEntity<BatchSettings>(batchSettingsService.addOrUpdateBatchSettings(batchSetting),
 				HttpStatus.OK);
-	}
-
-	// TODO
-	@GetMapping(inputEntryPoint + "/invoice/reminder")
-	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-	public ResponseEntity<Boolean> sendRemindersForInvoices(
-			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			@RequestParam Integer billingLabelTypeId)
-			throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-		BillingLabelType billingLabelType = billingLabelTypeService.getBillingLabelType(billingLabelTypeId);
-		invoiceService.sendRemindersForInvoices(startDate, endDate, billingLabelType);
-		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 }
