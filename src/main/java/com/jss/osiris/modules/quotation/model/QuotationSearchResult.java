@@ -23,8 +23,6 @@ public interface QuotationSearchResult {
 
     public Integer getTiersId();
 
-    public Integer getConfrereId();
-
     public String getServiceTypeLabel();
 
     public String getAffaireLabel();

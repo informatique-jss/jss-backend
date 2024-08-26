@@ -257,7 +257,7 @@ export class AccountingRecordComponent implements OnInit {
 
   searchRecords() {
     this.restoreTotalDivPosition();
-    if (!this.accountingRecordSearch.tiersId && !this.accountingRecordSearch.confrereId && !this.accountingRecordSearch.idPayment) {
+    if (!this.accountingRecordSearch.tiersId && !this.accountingRecordSearch.idPayment) {
       if (this.tiersToDisplay == undefined && (!this.accountingRecordSearch.startDate || !this.accountingRecordSearch.endDate)) {
         this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", false, 10);
         return;

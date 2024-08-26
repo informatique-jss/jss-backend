@@ -41,6 +41,7 @@ export class ProviderComponent implements OnInit {
   displayedColumns: SortTableColumn<Provider>[] = [];
   editMode: boolean = false;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
+  providerAccountSearch: Tiers | undefined;
 
   saveObservableSubscription: Subscription = new Subscription;
   PROVIDER_ENTITY_TYPE = PROVIDER_ENTITY_TYPE;
@@ -103,6 +104,7 @@ export class ProviderComponent implements OnInit {
     this.invoiceSearch.customerOrders = [];
     setTimeout(() =>
       this.invoiceSearch.customerOrders = [({ id: this.selectedProvider!.id } as any) as Tiers], 0);
+    this.providerAccountSearch = { id: this.selectedProvider.id } as Tiers;
   }
 
   applyFilter(filterValue: any) {

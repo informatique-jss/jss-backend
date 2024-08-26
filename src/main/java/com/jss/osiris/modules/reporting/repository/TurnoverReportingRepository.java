@@ -104,8 +104,8 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " e2.id = coalesce(r.id_commercial, t1.id_commercial, t2.id_commercial, c1.id_commercial) " +
                         " where " +
                         " i.id_invoice_status in :invoiceStatusId " +
-                        " and i.is_invoice_from_provider = false " +
-                        " and i.is_provider_credit_note = false " +
+                        " and i.id_provider is null " +
+                        " and i.is_credit_note = false " +
                         " group by " +
                         " date_trunc('year', " +
                         " i.created_date), " +

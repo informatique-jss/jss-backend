@@ -9,7 +9,6 @@ public class AccountingRecordSearch {
   private LocalDateTime startDate;
   private LocalDateTime endDate;
   private Boolean hideLettered;
-  private Integer confrereId;
   private Integer tiersId;
 
   private Integer idPayment;
@@ -74,14 +73,6 @@ public class AccountingRecordSearch {
 
   public void setHideLettered(Boolean hideLettered) {
     this.hideLettered = hideLettered;
-  }
-
-  public Integer getConfrereId() {
-    return confrereId;
-  }
-
-  public void setConfrereId(Integer confrereId) {
-    this.confrereId = confrereId;
   }
 
   public Integer getIdPayment() {

@@ -36,9 +36,9 @@
                     </td>
                   </tr>
                 </table>
-                <table class="full-width">
+                <table class="full-width" *ngIf="selectedConfrere.id">
                   <tr>
-                    <td *ngIf="selectedConfrere.id">
+                    <td>
                       <autocomplete-responsable [(model)]="searchedResponsable" [form]="entityForm2"
                         propertyName="responsable" [isMandatory]="false"
                         [isDisabled]="!editMode || (selectedConfrere!=undefined && selectedConfrere!=null && selectedConfrere.responsable!=undefined && selectedConfrere.responsable!=null)"
@@ -243,17 +243,6 @@
       <mat-tab label="Annonces" *ngIf="selectedConfrere.id!=null && selectedConfrere.id!=undefined">
         <ng-template matTabContent>
           <announcement-list [confrere]="selectedConfrere"></announcement-list>
-        </ng-template>
-      </mat-tab>
-      <mat-tab label="Factures" *ngIf="selectedConfrere.id!=null && selectedConfrere.id!=undefined">
-        <ng-template matTabContent>
-          <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
-            [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
-        </ng-template>
-      </mat-tab>
-      <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id && !this.idConfrere">
-        <ng-template matTabContent>
-          <accounting-record [responsableToDisplay]="responsableAccountSearch"></accounting-record>
         </ng-template>
       </mat-tab>
       <mat-tab label="Mails" *ngIf="selectedConfrere.id">

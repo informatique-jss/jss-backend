@@ -48,7 +48,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
         @Query(nativeQuery = true, value = "" +
                         "   with nbr_for as ( " +
                         "   select " +
-                        "           coalesce(r.id_tiers, co.id_tiers) as id_tiers , " +
+                        "          r.id_tiers as id_tiers , " +
                         "           sum(case when a.id_confrere is not null and a.id_confrere = :jssSpelConfrereId then 1 else 0 end) as announcementJssNbr, "
                         +
                         "           sum(case when a.id_confrere is not null and a.id_confrere <> :jssSpelConfrereId then 1 else 0 end) as announcementConfrereNbr, "
@@ -67,7 +67,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "   where " +
                         "           aao.id_customer_order is not null " +
                         "   group by " +
-                        "           coalesce(r.id_tiers, co.id_tiers) )   " +
+                        "           r.id_tiers )   " +
                         "          select " +
                         "          coalesce(t.denomination, " +
                         "          concat(t.firstname, " +
@@ -105,8 +105,6 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          r.id_tiers = t.id " +
                         "  left join employee e1 on " +
                         "          e1.id = t.id_commercial " +
-                        "  left join customer_order co1 on " +
-                        "          co1.id_tiers= t.id " +
                         "  left join customer_order co2 on " +
                         "          co2.id_responsable = r.id and  co2.created_date>=:startDate and co2.created_date<=:endDate  "
                         +
@@ -119,7 +117,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "  left join billing_label_type blt on " +
                         "          blt.id = d.id_billing_label_type " +
                         "  left join invoice i on " +
-                        "          i.customer_order_id = coalesce(co2.id, co1.id) " +
+                        "          i.customer_order_id = co2.id " +
                         "          and i.id_invoice_status in (:invoiceStatusIds) " +
                         "  left join invoice_item ii on " +
                         "          ii.id_invoice = i.id " +

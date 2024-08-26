@@ -233,8 +233,7 @@ public class AccountingController {
             return new ResponseEntity<List<AccountingRecordSearchResult>>(
                     accountingRecordService.searchAccountingRecords(accountingRecordSearch, false), HttpStatus.OK);
 
-        if (accountingRecordSearch.getTiersId() == null
-                && accountingRecordSearch.getConfrereId() == null) {
+        if (accountingRecordSearch.getTiersId() == null) {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
                 throw new OsirisValidationException("StartDate or EndDate");
         }
@@ -309,8 +308,7 @@ public class AccountingController {
         if (accountingRecordSearch == null)
             throw new OsirisValidationException("accountingRecordSearch");
 
-        if (accountingRecordSearch.getTiersId() == null
-                && accountingRecordSearch.getConfrereId() == null) {
+        if (accountingRecordSearch.getTiersId() == null) {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
                 throw new OsirisValidationException("StartDate or EndDate");
         }
@@ -351,8 +349,7 @@ public class AccountingController {
         if (accountingRecordSearch == null)
             throw new OsirisValidationException("accountingRecordSearch");
 
-        if (accountingRecordSearch.getTiersId() == null
-                && accountingRecordSearch.getConfrereId() == null) {
+        if (accountingRecordSearch.getTiersId() == null) {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
                 throw new OsirisValidationException("StartDate or EndDate");
         }
@@ -394,8 +391,7 @@ public class AccountingController {
         if (accountingRecordSearch == null)
             throw new OsirisValidationException("accountingRecordSearch");
 
-        if (accountingRecordSearch.getTiersId() == null
-                && accountingRecordSearch.getConfrereId() == null) {
+        if (accountingRecordSearch.getTiersId() == null) {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
                 throw new OsirisValidationException("StartDate or EndDate");
         }

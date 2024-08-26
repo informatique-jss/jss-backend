@@ -212,10 +212,6 @@ public class Tiers implements IAttachment, IId {
 	@JoinTable(name = "asso_tiers_competitor", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_competitor"))
 	private List<Competitor> competitors;
 
-	// @ManyToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "id_accounting_account_provider")
-	// private AccountingAccount accountingAccountProvider;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_customer")
 	private AccountingAccount accountingAccountCustomer;
