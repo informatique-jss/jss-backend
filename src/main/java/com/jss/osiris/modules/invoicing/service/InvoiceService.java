@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.invoicing.service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -57,7 +56,7 @@ public interface InvoiceService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public void sendRemindersForInvoices(LocalDate startDate, LocalDate endDate, BillingLabelType billingLabelType)
+        public void sendRemindersForInvoices(BillingLabelType billingLabelType)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void remindInvoice(Invoice invoice)

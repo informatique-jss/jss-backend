@@ -643,11 +643,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     @Transactional
-    public void sendRemindersForInvoices(LocalDate startDate, LocalDate endDate, BillingLabelType billingLabelType)
+    public void sendRemindersForInvoices(BillingLabelType billingLabelType)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         List<Invoice> invoices = invoiceRepository.findInvoiceForCustomReminder(constantService.getInvoiceStatusSend(),
-                startDate, endDate, billingLabelType);
+                billingLabelType);
 
         if (invoices != null && invoices.size() > 0)
             for (Invoice invoice : invoices) {
