@@ -17,7 +17,6 @@ import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
-import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 import com.jss.osiris.modules.quotation.model.infoGreffe.EvenementInfogreffe;
 import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
@@ -62,9 +61,11 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
     @Override
     public FormaliteInfogreffe addOrUpdFormaliteInfogreffe(FormaliteInfogreffe formaliteInfogreffe) {
         if (formaliteInfogreffe.getEvenements() != null && formaliteInfogreffe.getEvenements().size() > 0)
-            for (EvenementInfogreffe evenementInfogreffe : formaliteInfogreffe.getEvenements())
+            for (EvenementInfogreffe evenementInfogreffe : formaliteInfogreffe.getEvenements()) {
                 evenementInfogreffe.setFormaliteInfogreffe(formaliteInfogreffe);
-
+                for (DocumentAssocieInfogreffe documentAssocieInfogreffe : evenementInfogreffe.getDocumentsAssocies())
+                    documentAssocieInfogreffe.setEvenementInfogreffe(evenementInfogreffe);
+            }
         return formaliteInfogreffeRepository.save(formaliteInfogreffe);
     }
 
@@ -107,6 +108,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
         FormaliteInfogreffe formaliteInfogreffeDetail = infogreffeDelegateService
                 .getInfogreffeFormalite(formaliteInfogreffe);
         setInfogreffeFormaliteEvenementDate(formaliteInfogreffeDetail);
+        setInfogreffeFormaliteEvenementCodeEtat(formaliteInfogreffe);
 
         if (formaliteInfogreffe.getEntreprise() != null
                 && formaliteInfogreffe.getEntreprise().getSiren() == null)
