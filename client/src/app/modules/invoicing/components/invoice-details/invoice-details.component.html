@@ -85,10 +85,11 @@
               <p>{{getCustomerOrder(invoice).postalCode}}
                 {{getCustomerOrder(invoice).city?getCustomerOrder(invoice).city.label:""}}{{getCustomerOrder(invoice).country?getCustomerOrder(invoice).country.label:""}}
               </p>
-              <p>Compte client :
-                {{getCustomerOrder(invoice).accountingAccountCustomer.principalAccountingAccount.code}}{{getCustomerOrder(invoice).accountingAccountCustomer.accountingAccountSubNumber}}
-                <br />Compte fournisseur :
-                {{getCustomerOrder(invoice).accountingAccountProvider.principalAccountingAccount.code}}{{getCustomerOrder(invoice).accountingAccountProvider.accountingAccountSubNumber}}
+              <p *ngIf="invoice.responsable">Compte client :
+                {{invoice.responsable.tiers.accountingAccountCustomer.principalAccountingAccount.code}}{{invoice.responsable.tiers.accountingAccountCustomer.accountingAccountSubNumber}}
+              </p>
+              <p *ngIf="invoice.provider">Compte fournisseur :
+                {{invoice.provider.accountingAccountProvider.principalAccountingAccount.code}}{{invoice.provider.accountingAccountProvider.accountingAccountSubNumber}}
               </p>
             </td>
             <td class="mat-mdc-cell mdc-data-table__cell  td-info" *ngIf="invoice.provider">

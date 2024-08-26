@@ -20,8 +20,6 @@ public interface BankTransfertSearchResult {
 
     public String getInvoiceBillingLabel();
 
-    public String getCompetentAuthorityLabel();
-
     public String getAffaireLabel();
 
     public String getComment();

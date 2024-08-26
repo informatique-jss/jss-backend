@@ -258,8 +258,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                 document.getCstmrCdtTrfInitnBean().getPmtInfBean().add(generateBodyForBankTransfert(
                         header.getMsgId(), bankTransfert.getTransfertAmount(),
                         bankTransfert.getTransfertDate().toLocalDate(),
-                        (bankTransfert.getCompetentAuthorityLabel() != null ? bankTransfert.getCompetentAuthorityLabel()
-                                : StringUtils.substring(bankTransfert.getInvoiceBillingLabel(), 0, 139)),
+                        StringUtils.substring(bankTransfert.getInvoiceBillingLabel(), 0, 139),
                         completeTransfert.getTransfertIban().replaceAll(" ", ""),
                         completeTransfert.getTransfertBic().replaceAll(" ", ""),
                         StringUtils.substring(completeTransfert.getId() + " - " + completeTransfert.getLabel(), 0,
