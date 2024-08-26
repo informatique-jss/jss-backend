@@ -17,7 +17,7 @@ import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
-import javax.persistence.QueryHint;
+import jakarta.persistence.QueryHint;
 
 public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Integer> {
 
