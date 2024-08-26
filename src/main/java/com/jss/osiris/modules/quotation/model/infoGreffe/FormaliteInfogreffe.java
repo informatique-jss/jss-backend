@@ -18,6 +18,11 @@ import jakarta.persistence.OneToOne;
 @Entity
 public class FormaliteInfogreffe {
 
+    public static String INFOGREFFE_STATUS_RECEIVED = "RECU_PAR_LE_GRF";
+    public static String INFOGREFFE_STATUS_STRICT_REJECT = "REJETE_DEF_GRF";
+    public static String INFOGREFFE_STATUS_REJECT = "REJETE_GRF";
+    public static String INFOGREFFE_STATUS_VALIDATED = "VALIDE";
+
     @Id
     @JsonProperty("id")
     private String id;

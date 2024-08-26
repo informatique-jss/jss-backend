@@ -2,8 +2,7 @@ import { DocumentAssocieInfogreffe } from "./DocumentAssocieInfogreffe";
 import { FormaliteInfogreffe } from "./FormaliteInfogreffe";
 
 export interface EvenementInfogreffe {
-  id: number;
-  date: Date;
+  createdDate: Date;
   codeEtat: string;
   documentsAssocies: DocumentAssocieInfogreffe[];
   evtCommentaire: null;

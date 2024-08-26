@@ -10,31 +10,29 @@ import com.jss.osiris.libs.JacksonTimestampMillisecondDeserializer;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_evenement_infogreffe_formalite", columnList = "id_formalite_infogreffe") })
+@IdClass(EvenementInfogreffeEntityKey.class)
+@Table(indexes = { @Index(name = "idx_evenement_infogreffe_formalite", columnList = "createdDate, codeEtat") })
 public class EvenementInfogreffe {
-    @Id
-    @SequenceGenerator(name = "evenement_infogreffe_sequence", sequenceName = "evenement_infogreffe_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "evenement_infogreffe_sequence")
-    private Integer id;
 
-    @JsonDeserialize(using = JacksonTimestampMillisecondDeserializer.class)
     @Transient
+    @JsonDeserialize(using = JacksonTimestampMillisecondDeserializer.class)
     private LocalDateTime date;
 
-    private LocalDateTime createdDate;
+    @Id
     private String codeEtat;
+
+    @Id
+    private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "evenementInfogreffe", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnoreProperties(value = { "evenementInfogreffe" }, allowSetters = true)
@@ -46,14 +44,6 @@ public class EvenementInfogreffe {
     @JoinColumn(name = "id_formalite_infogreffe")
     @JsonIgnoreProperties(value = { "evenements" }, allowSetters = true)
     private FormaliteInfogreffe formaliteInfogreffe;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public LocalDateTime getDate() {
         return date;

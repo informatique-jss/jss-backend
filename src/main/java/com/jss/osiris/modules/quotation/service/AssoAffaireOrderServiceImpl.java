@@ -353,7 +353,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             && formalite.getCompetentAuthorityServiceProvider().getId()
                                     .equals(constantService.getCompetentAuthorityInpi().getId())
                             && (formalite.getFormalitesGuichetUnique() == null
-                                    || formalite.getFormalitesGuichetUnique().size() == 0))
+                                    || formalite.getFormalitesGuichetUnique().size() == 0)
+                            && (formalite.getFormalitesInfogreffe() == null
+                                    || formalite.getFormalitesInfogreffe().size() == 0))
                         throw new OsirisClientMessageException(
                                 "Merci de compléter le nom du dossier GU avant de clôturer la formalité");
                 }

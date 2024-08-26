@@ -1,14 +1,13 @@
 <div *ngIf="formalitesInfogreffe">
   <mat-tab-group animationDuration="0ms">
     <mat-tab *ngFor="let formaliteInfogreffe of formalitesInfogreffe;let index = index"
-      [label]="formaliteInfogreffe.identifiantFormalite.emetteurCodePart">
+      [label]="getFormaliteLabel(formaliteInfogreffe)">
       <mat-vertical-stepper [linear]="false" #stepper animationDuration="500">
-        <ng-container>
-          <ul *ngFor="let evenement of formaliteInfogreffe.evenements">
-            <li> {{evenement.codeEtat}} </li>
-            <li> {{evenement.date |date:'dd/MM/yyyy HH:mm'}}</li>
-          </ul>
-        </ng-container>
+        <mat-step *ngFor="let evenement of formaliteInfogreffe.evenements">
+          <ng-template matStepLabel> <span> {{getFieldLabel(evenement.codeEtat)}} le {{evenement.createdDate
+              |date:'dd/MM/yyyy HH:mm'}} </span>
+          </ng-template>
+        </mat-step>
       </mat-vertical-stepper>
     </mat-tab>
   </mat-tab-group>
