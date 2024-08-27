@@ -63,8 +63,12 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
         if (formaliteInfogreffe.getEvenements() != null && formaliteInfogreffe.getEvenements().size() > 0)
             for (EvenementInfogreffe evenementInfogreffe : formaliteInfogreffe.getEvenements()) {
                 evenementInfogreffe.setFormaliteInfogreffe(formaliteInfogreffe);
-                for (DocumentAssocieInfogreffe documentAssocieInfogreffe : evenementInfogreffe.getDocumentsAssocies())
-                    documentAssocieInfogreffe.setEvenementInfogreffe(evenementInfogreffe);
+                if (evenementInfogreffe.getDocumentsAssocies() != null
+                        && evenementInfogreffe.getDocumentsAssocies().size() > 0) {
+                    for (DocumentAssocieInfogreffe documentAssocieInfogreffe : evenementInfogreffe
+                            .getDocumentsAssocies())
+                        documentAssocieInfogreffe.setEvenementInfogreffe(evenementInfogreffe);
+                }
             }
         return formaliteInfogreffeRepository.save(formaliteInfogreffe);
     }
@@ -108,7 +112,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
         FormaliteInfogreffe formaliteInfogreffeDetail = infogreffeDelegateService
                 .getInfogreffeFormalite(formaliteInfogreffe);
         setInfogreffeFormaliteEvenementDate(formaliteInfogreffeDetail);
-        setInfogreffeFormaliteEvenementCodeEtat(formaliteInfogreffe);
+        setInfogreffeFormaliteEvenementCodeEtat(formaliteInfogreffeDetail);
 
         if (formaliteInfogreffe.getEntreprise() != null
                 && formaliteInfogreffe.getEntreprise().getSiren() == null)

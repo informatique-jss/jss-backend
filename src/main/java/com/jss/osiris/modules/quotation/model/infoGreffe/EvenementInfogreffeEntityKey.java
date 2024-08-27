@@ -18,5 +18,20 @@ public class EvenementInfogreffeEntityKey implements Serializable {
         return super.hashCode();
     }
 
-   
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getCodeEtat() {
+        return codeEtat;
+    }
+
+    public void setCodeEtat(String codeEtat) {
+        this.codeEtat = codeEtat;
+    }
+
 }
