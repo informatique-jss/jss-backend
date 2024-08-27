@@ -17,7 +17,8 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " customerOrderAssignedEmployee, " +
                         " aggregateProvisionTypeLabel, " +
                         " lastReminderDate, " +
-                        " userName " +
+                        " customerOrderCreator, " +
+                        " createdYear, createdMonth, createdDay " +
                         " from " +
                         " ( " +
                         " select " +
@@ -40,7 +41,10 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " ' / ') as aggregateProvisionTypeLabel, " +
                         " to_char(coalesce(third_reminder_date_time,second_reminder_date_time,first_reminder_date_time),'YYYY-MM-DD') as lastReminderDate, "
                         +
-                        " adt.username as userName" +
+                        " adt.username as customerOrderCreator, " +
+                        " to_char(adt.datetime, 'yyyy') as createdYear, " +
+                        " to_char(adt.datetime, 'MM') as createdMonth, " +
+                        " to_char(adt.datetime, 'dd') as createdDay" +
                         " from " +
                         " customer_order co " +
                         " join customer_order_status cos2 on " +
@@ -63,14 +67,18 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " ' ', " +
                         " e.lastname) , " +
                         " co.id, " +
-                        " adt.username" +
+                        " adt.username, " +
+                        " to_char(adt.datetime, 'yyyy') as createdYear, " +
+                        " to_char(adt.datetime, 'MM') as createdMonth, " +
+                        " to_char(adt.datetime, 'dd') as createdDay" +
                         " ) t " +
                         " group by " +
                         " customerOrderStatusLabel, " +
                         " customerOrderAssignedEmployee, " +
                         " aggregateProvisionTypeLabel, " +
                         " lastReminderDate, " +
-                        " userName "
+                        " customerOrderCreator ," +
+                        " createdYear, createdMonth, createdDay"
                         +
                         "")
         List<ICustomerOrderReporting> getCustomerOrderReporting();

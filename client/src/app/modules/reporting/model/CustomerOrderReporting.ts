@@ -5,4 +5,7 @@ export interface CustomerOrderReporting {
   aggregateProvisionTypeLabel: string;
   lastReminderDate: string;
   customerOrderCreator: string;
+  createdYear: string;
+  createdMonth: string;
+  createdDay: string;
 }
