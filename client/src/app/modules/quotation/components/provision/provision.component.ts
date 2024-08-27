@@ -274,6 +274,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     let newProvisionDuplicated = {} as Provision;
     newProvisionDuplicated.provisionFamilyType = provision.provisionFamilyType;
     newProvisionDuplicated.provisionType = provision.provisionType;
+    newProvisionDuplicated.assignedTo = provision.assignedTo;
     service.provisions.push(newProvisionDuplicated);
     return newProvisionDuplicated;
   }

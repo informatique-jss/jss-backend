@@ -209,6 +209,10 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeTemplate;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_quotation")
+	private AttachmentType attachmentTypeQuotation;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_country_france")
 	private Country countryFrance;
 
@@ -375,6 +379,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_domiciliation_contract_route_mail_email")
 	private BillingType billingTypeDomiciliationContractTypeRouteEmailAndMail;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_supply_full_be_copy")
+	private BillingType billingTypeSupplyFullBeCopy;
 
 	@Column(length = 1000)
 	private String stringNantissementDepositFormeJuridiqueCode;
@@ -1541,6 +1549,14 @@ public class Constant implements Serializable, IId {
 		this.attachmentTypeJournal = attachmentTypeJournal;
 	}
 
+	public AttachmentType getAttachmentTypeQuotation() {
+		return attachmentTypeQuotation;
+	}
+
+	public void setAttachmentTypeQuotation(AttachmentType attachmentTypeQuotation) {
+		this.attachmentTypeQuotation = attachmentTypeQuotation;
+	}
+
 	public BillingClosureRecipientType getBillingClosureRecipientTypeResponsable() {
 		return billingClosureRecipientTypeResponsable;
 	}
@@ -1869,6 +1885,23 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeDeboursNonTaxable(BillingType billingTypeDeboursNonTaxable) {
 		this.billingTypeDeboursNonTaxable = billingTypeDeboursNonTaxable;
+	}
+
+	public BillingType getBillingTypeSupplyFullBeCopy() {
+		return billingTypeSupplyFullBeCopy;
+	}
+
+	public void setBillingTypeSupplyFullBeCopy(BillingType billingTypeSupplyFullBeCopy) {
+		this.billingTypeSupplyFullBeCopy = billingTypeSupplyFullBeCopy;
+	}
+
+	public void setPrincipalAccountingAccountLitigious(PrincipalAccountingAccount principalAccountingAccountLitigious) {
+		this.principalAccountingAccountLitigious = principalAccountingAccountLitigious;
+	}
+
+	public void setPrincipalAccountingAccountSuspicious(
+			PrincipalAccountingAccount principalAccountingAccountSuspicious) {
+		this.principalAccountingAccountSuspicious = principalAccountingAccountSuspicious;
 	}
 
 	public AccountingAccount getAccountingAccountCaisse() {

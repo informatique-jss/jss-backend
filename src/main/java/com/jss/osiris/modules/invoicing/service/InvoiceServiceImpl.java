@@ -289,7 +289,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Invoice generateInvoicePdf(Invoice invoice, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Create invoice PDF and attach it to customerOrder and invoice
-        File invoicePdf = generatePdfDelegate.generateInvoicePdf(customerOrder, invoice, null);
+        File invoicePdf = generatePdfDelegate.generateInvoicePdf(customerOrder, invoice,
+                invoice.getReverseCreditNote());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
         try {
             List<Attachment> attachments = new ArrayList<Attachment>();
@@ -539,7 +540,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     public List<InvoiceSearchResult> getInvoiceForCustomerOrder(Integer customerOrderId) throws OsirisException {
         return invoiceRepository.findInvoice(Arrays.asList(0), LocalDateTime.now().minusYears(100),
                 LocalDateTime.now().plusYears(100), null, null, false, constantService.getInvoiceStatusPayed().getId(),
-                0, customerOrderId, Arrays.asList(0), 0, constantService.getDocumentTypeBilling().getId());
+                0, customerOrderId, Arrays.asList(0), 0, 0,
+                constantService.getDocumentTypeBilling().getId());
     }
 
     @Override
@@ -547,7 +549,8 @@ public class InvoiceServiceImpl implements InvoiceService {
             throws OsirisException {
         return invoiceRepository.findInvoice(Arrays.asList(0), LocalDateTime.now().minusYears(100),
                 LocalDateTime.now().plusYears(100), null, null, false, constantService.getInvoiceStatusPayed().getId(),
-                0, 0, Arrays.asList(0), customerOrderId, constantService.getDocumentTypeBilling().getId());
+                0, 0, Arrays.asList(0), 0, customerOrderId,
+                constantService.getDocumentTypeBilling().getId());
     }
 
     @Override
@@ -583,12 +586,16 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoiceSearch.getInvoiceId() == null)
             invoiceSearch.setInvoiceId(0);
 
+        Integer salesEmployeeId = 0;
+        if (invoiceSearch.getSalesEmployee() != null)
+            salesEmployeeId = invoiceSearch.getSalesEmployee().getId();
+
         return invoiceRepository.findInvoice(statusId,
                 invoiceSearch.getStartDate().withHour(0).withMinute(0),
                 invoiceSearch.getEndDate().withHour(23).withMinute(59), invoiceSearch.getMinAmount(),
                 invoiceSearch.getMaxAmount(), invoiceSearch.getShowToRecover(),
                 constantService.getInvoiceStatusPayed().getId(), invoiceSearch.getInvoiceId(),
-                invoiceSearch.getCustomerOrderId(), customerOrderId, 0,
+                invoiceSearch.getCustomerOrderId(), customerOrderId, salesEmployeeId, 0,
                 constantService.getDocumentTypeBilling().getId());
     }
 
@@ -681,11 +688,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     @Transactional
-    public void sendRemindersForInvoices(LocalDate startDate, LocalDate endDate, BillingLabelType billingLabelType)
+    public void sendRemindersForInvoices(BillingLabelType billingLabelType)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         List<Invoice> invoices = invoiceRepository.findInvoiceForCustomReminder(constantService.getInvoiceStatusSend(),
-                startDate, endDate, billingLabelType);
+                billingLabelType);
 
         if (invoices != null && invoices.size() > 0)
             for (Invoice invoice : invoices) {

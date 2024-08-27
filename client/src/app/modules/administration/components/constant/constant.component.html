@@ -165,6 +165,14 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeQuotation"
+                label="Type de pièce-jointe - Devis PDF" [form]="constantForm" propertyName="attachmentTypeQuotation"
+                [isMandatory]="true" [isDisabled]="!editMode" [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-attachment-type [(model)]="constant.attachmentTypeCni" label="Type de pièce-jointe - CNI"
                 [form]="constantForm" propertyName="attachmentTypeCni" [isMandatory]="true" [isDisabled]="!editMode"
                 [byPassAttachmentHiddenFilter]="true">
@@ -695,6 +703,14 @@
                 label="Type de poste de facturation - Domiciliation - Envoi du courrier par La Poste et par mail"
                 [form]="constantForm" propertyName="billingTypeDomiciliationContractTypeRouteEmailAndMail"
                 [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeSupplyFullBeCopy"
+                label="Type de poste de facturation - Copie intégrale des BE" [form]="constantForm"
+                propertyName="billingTypeSupplyFullCopy" [isMandatory]="true" [isDisabled]="!editMode">
               </autocomplete-billing-type>
             </td>
           </tr>

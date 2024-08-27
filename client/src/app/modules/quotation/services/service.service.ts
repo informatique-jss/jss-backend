@@ -34,7 +34,7 @@ export class ServiceService extends AppRestService<Service> {
     let label = "";
     if (service && service.serviceType) {
       if (displayGroupAndFamily)
-        label = service.serviceType.serviceFamily.serviceFamilyGroup.label + " - " + service.serviceType.serviceFamily.label + " - ";
+        label = service.serviceType.serviceFamily.serviceFamilyGroup.label + " - ";
       label += service.serviceType.label
       if (service.serviceType.id == serviceTypeOther.id && service.customLabel && service.customLabel.trim().length > 0)
         return service.customLabel;

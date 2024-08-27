@@ -283,8 +283,9 @@ public class PricingHelper {
         // First one => double price for base
         if (provision.getDomiciliation() != null && quotation.getId() != null) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotation.getId());
-            CustomerOrder masterCustomerOrder = customerOrder.getIsRecurring() ? customerOrder
-                    : customerOrder.getCustomerOrderParentRecurring();
+            CustomerOrder masterCustomerOrder = (customerOrder.getIsRecurring() != null
+                    && customerOrder.getIsRecurring()) ? customerOrder
+                            : customerOrder.getCustomerOrderParentRecurring();
             if (masterCustomerOrder != null && masterCustomerOrder.getCustomerOrderFrequency() != null)
                 if (billingItem.getBillingType().getId()
                         .equals(constantService.getBillingTypeDomiciliationContractTypeKeepMail().getId())
@@ -298,7 +299,7 @@ public class PricingHelper {
                     invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
                             * masterCustomerOrder.getCustomerOrderFrequency().getMonthNumber());
 
-            if (customerOrder.getIsRecurring())
+            if (customerOrder.getIsRecurring() != null && customerOrder.getIsRecurring())
                 invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice() * 2);
         }
 
@@ -731,6 +732,9 @@ public class PricingHelper {
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeShippingCosts().getId())
                 && getPublicationPaperNbr(provision) > 0)
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeSupplyFullBeCopy().getId())
+                && provision.getIsSupplyFullBeCopy() != null && provision.getIsSupplyFullBeCopy())
             return true;
 
         // Domiciliation pricing

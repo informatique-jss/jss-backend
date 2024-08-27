@@ -259,4 +259,10 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
                 batchSearch.getBatchSettings(), batchSearch.getBatchStatus(), batchSearch.getEntityId(),
                 batchSearch.getNodes());
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void purgeBatch() {
+        batchRepository.deleteAll(batchRepository.findBatchOlderThanMonths(4));
+    }
 }

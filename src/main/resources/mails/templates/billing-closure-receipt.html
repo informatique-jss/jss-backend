@@ -50,6 +50,8 @@
         <tr>
             <td style="text-align: left;">
                 <span th:if="${tiersReference!=null}">N° client : <span th:text="${tiersReference}"></span><br /></span>
+                <span th:if="${clientReference!=null}">Référence client : <span
+                        th:text="${clientReference}"></span><br /></span>
                 <p th:if="${commandNumber!=null}">Votre référence annuelle :<span th:text="${commandNumber}"></span>
                 </p>
                 <p>Paris le <span th:text="${currentDate}"></span></p>
@@ -90,9 +92,9 @@
                     th:if="${values.eventCbLink!=null} and ${values.directDebitTransfertDate==null}"> (payer <a
                         th:href="${values.eventCbLink}">ici</a>)</span>
                 <br>
-                <span th:if="${values.directDebitTransfertDate!=null}"> Date d'exécution du prélèvement : <span
-                        th:text="${#temporals.format(values.directDebitTransfertDate, 'dd/MM/yyyy')}">
-                    </span></span>
+                <span th:if="${values.directDebitTransfertDate!=null}"><strong> Date d'exécution du prélèvement : <span
+                            th:text="${#temporals.format(values.directDebitTransfertDate, 'dd/MM/yyyy')}">
+                        </span></strong></span>
                 </br>
             </td>
             <td th:classappend="${values.displayBottomBorder} ? border-table : none-class"

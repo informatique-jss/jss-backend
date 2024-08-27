@@ -20,6 +20,7 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.EtablissementPublicsDelegate;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
@@ -126,6 +127,9 @@ public class OsirisScheduller {
 	@Autowired
 	NodeService nodeService;
 
+	@Autowired
+	ConstantService constantService;
+
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
 		ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
@@ -155,6 +159,12 @@ public class OsirisScheduller {
 	private void purgeLogs() throws OsirisException {
 		if (nodeService.shouldIBatch())
 			batchService.declareNewBatch(Batch.PURGE_LOGS, null);
+	}
+
+	@Scheduled(cron = "${schedulling.batch.purge}")
+	private void purgeBatch() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.PURGE_BATCH, null);
 	}
 
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.central.pay.payment.request.validation.check}")
@@ -192,8 +202,10 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.log.osiris.customerOrder.invoice.reminder}")
 	private void reminderCustomerOrderInvoice() {
 		try {
-			if (nodeService.shouldIBatch())
-				invoiceService.sendRemindersForInvoices();
+			if (nodeService.shouldIBatch()) {
+				invoiceService.sendRemindersForInvoices(constantService.getBillingLabelTypeCodeAffaire());
+				invoiceService.sendRemindersForInvoices(constantService.getBillingLabelTypeOther());
+			}
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

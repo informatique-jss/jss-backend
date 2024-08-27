@@ -2,9 +2,9 @@ import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ServiceType } from 'src/app/modules/quotation/model/ServiceType';
 import { ServiceTypeService } from 'src/app/modules/quotation/services/service.type.service';
+import { AppService } from 'src/app/services/app.service';
 import { ConstantService } from '../../../services/constant.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
-import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-service-type',
@@ -41,8 +41,6 @@ export class AutocompleteServiceTypeComponent extends GenericLocalAutocompleteCo
     if (object) {
       if (object.serviceFamily && object.serviceFamily.serviceFamilyGroup)
         label += object.serviceFamily.serviceFamilyGroup.label + " - ";
-      if (object.serviceFamily)
-        label += object.serviceFamily.label + " - ";
       label += object.label;
     }
     return label;

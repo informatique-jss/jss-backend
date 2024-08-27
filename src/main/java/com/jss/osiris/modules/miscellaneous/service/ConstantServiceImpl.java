@@ -302,6 +302,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AttachmentType getAttachmentTypeQuotation() throws OsirisException {
+        return getConstants().getAttachmentTypeQuotation();
+    }
+
+    @Override
     public Country getCountryFrance() throws OsirisException {
         return getConstants().getCountryFrance();
     }
@@ -529,6 +534,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public BillingType getBillingTypeDomiciliationContractTypeRouteEmailAndMail() throws OsirisException {
         return getConstants().getBillingTypeDomiciliationContractTypeRouteEmailAndMail();
+    }
+
+    @Override
+    public BillingType getBillingTypeSupplyFullBeCopy() throws OsirisException {
+        return getConstants().getBillingTypeSupplyFullBeCopy();
     }
 
     @Override
