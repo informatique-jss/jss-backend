@@ -1,11 +1,11 @@
 package com.jss.osiris.modules.quotation.service.infoGreffe;
 
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
@@ -94,7 +94,6 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                     formaliteInfogreffe.setEntreprise(null);
 
                 addOrUpdFormaliteInfogreffe(formaliteInfogreffe);
-                // test boolean +injection batch
                 if (!isRefreshOnlyToday || formaliteInfogreffe.getEvenements() == null
                         || formaliteInfogreffe.getEvenements() != null
                                 && formaliteInfogreffe.getEvenements().size() > 0
@@ -104,6 +103,11 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                             formaliteInfogreffe.getIdentifiantFormalite().getFormaliteNumero());
             }
         }
+    }
+
+    @Transactional
+    public void test() throws OsirisException {
+        refreshFormaliteInfogreffeDetail(getFormaliteInfogreffe(3989011));
     }
 
     @Override
@@ -132,8 +136,8 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                             && evenementInfogreffe.getDocumentsAssocies().size() > 0) {
                         for (DocumentAssocieInfogreffe documentAssocieInfogreffe : evenementInfogreffe
                                 .getDocumentsAssocies()) {
-                            InputStream documentInfogreffe = infogreffeDelegateService
-                                    .getAttachmentFileFromEvenementInfogreffe(documentAssocieInfogreffe);
+                            // InputStream documentInfogreffe = infogreffeDelegateService
+                            // .getAttachmentFileFromEvenementInfogreffe(documentAssocieInfogreffe);
                             // TODO A corriger
                             /*
                              * attachmentService.addAttachment(documentInfogreffe,
