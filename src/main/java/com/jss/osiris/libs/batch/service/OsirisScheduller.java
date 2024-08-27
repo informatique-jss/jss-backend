@@ -325,8 +325,7 @@ public class OsirisScheduller {
 		}
 	}
 
-	// @Scheduled(cron = "${schedulling.infogreffe.refresh.last.day}")
-	@Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
+	@Scheduled(cron = "${schedulling.infogreffe.refresh.last.day}")
 	private void refreshAllFormalitiesInfogreffeFromLastDay() {
 		try {
 			if (nodeService.shouldIBatch())
