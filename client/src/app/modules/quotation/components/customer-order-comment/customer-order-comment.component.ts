@@ -199,4 +199,10 @@ export class CustomerOrderCommentComponent implements OnInit {
       return comment.employee.id == this.currentEmployee.id || this.habilitationService.canEditAllCustomerOrderComments();
     return false;
   }
+
+  confirmReading(comment: CustomerOrderComment) {
+    if (this.currentEmployee)
+      this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
+      });
+  }
 }

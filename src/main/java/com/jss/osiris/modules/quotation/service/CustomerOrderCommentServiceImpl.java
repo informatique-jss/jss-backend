@@ -48,6 +48,8 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
         customerOrderComment.setComment(contentComment);
         customerOrderComment.setEmployee(employeeService.getCurrentEmployee());
         customerOrderComment.setCreatedDateTime(LocalDateTime.now());
+        customerOrderComment.setIsRead(false);
+
         return addOrUpdateCustomerOrderComment(customerOrderComment);
     }
 }

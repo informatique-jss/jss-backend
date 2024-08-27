@@ -501,6 +501,7 @@ public class QuotationController {
     if (customerOrderComment.getActiveDirectoryGroups() != null)
       for (ActiveDirectoryGroup group : customerOrderComment.getActiveDirectoryGroups()) {
         validationHelper.validateReferential(group, false, "group");
+
       }
 
     if (customerOrderComment.getId() == null)

@@ -54,6 +54,9 @@
             date:'dd/MM/yyyy'}}</span><button mat-icon-button matTooltip="Editer le commentaire" color="accent"
             class="edit-icon" *ngIf="canEditComment(comment)" (click)="editComment(comment)"><mat-icon>edit</mat-icon>
           </button>
+          <button mat-icon-button matTooltip="Lu/Non lu" color="accent" class="bookmark"
+            *ngIf="comment.activeDirectoryGroups" (click)="confirmReading(comment)"><mat-icon>bookmark</mat-icon>
+          </button>
         </div>
         <div class="bubble-arrow" [class.bubble-arrow-for-myself]="comment.isCurrentUserInGroup"></div>
       </div>
