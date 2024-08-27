@@ -14,9 +14,11 @@ public interface ICustomerOrderReporting {
 
     String getCustomerOrderCreator();
 
-    String getCreatedYear();
+    String getCustomerOrderCreatedDateYear();
 
-    String getCreatedMonth();
+    String getCustomerOrderCreatedDateMonth();
 
-    String getCreatedDay();
+    String getCustomerOrderCreatedDateDay();
+
+    String getCustomerOrderCreatedDateWeek();
 }
