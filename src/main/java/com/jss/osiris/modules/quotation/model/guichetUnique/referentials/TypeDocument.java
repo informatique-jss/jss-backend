@@ -21,6 +21,9 @@ import jakarta.persistence.OneToMany;
 @DoNotAudit
 public class TypeDocument implements ICode, IAttachment {
 
+    public TypeDocument() {
+    }
+
     public TypeDocument(String code) {
         this.code = code;
     }
