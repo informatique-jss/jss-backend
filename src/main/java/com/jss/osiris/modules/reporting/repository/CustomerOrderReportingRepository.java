@@ -22,7 +22,7 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " from " +
                         " ( " +
                         " select " +
-                        " co.id, " +
+                        " co.id as id, " +
                         " cos2.label as customerOrderStatusLabel, " +
                         " concat(e.firstname, " +
                         " ' ', " +
@@ -49,7 +49,8 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " customer_order co " +
                         " join customer_order_status cos2 on " +
                         " cos2.id = co.id_customer_order_status " +
-                        " join audit adt on co.id = adt.entity_id" +
+                        " left join audit adt on co.id = adt.entity_id and adt.entity='CustomerOrder' and adt.field_name='id'"
+                        +
                         " left join asso_affaire_order aao on " +
                         " aao.id_customer_order = co.id " +
                         " left join service on service.id_asso_affaire_order = aao.id " +
@@ -59,7 +60,6 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " pft.id = p.id_provision_family_type " +
                         " left join employee e on " +
                         " e.id = co.id_assigned_to " +
-                        " where adt.entity='CustomerOrder' and adt.field_name='id'" +
                         " group by " +
                         " co.id, " +
                         " cos2.label, " +
@@ -68,9 +68,9 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " e.lastname) , " +
                         " co.id, " +
                         " adt.username, " +
-                        " to_char(adt.datetime, 'yyyy') as createdYear, " +
-                        " to_char(adt.datetime, 'MM') as createdMonth, " +
-                        " to_char(adt.datetime, 'dd') as createdDay" +
+                        " to_char(adt.datetime, 'yyyy') , " +
+                        " to_char(adt.datetime, 'MM') , " +
+                        " to_char(adt.datetime, 'dd') " +
                         " ) t " +
                         " group by " +
                         " customerOrderStatusLabel, " +
