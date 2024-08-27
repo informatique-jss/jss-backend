@@ -36,9 +36,9 @@ public class DocumentAssocieInfogreffe implements IAttachment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-     @JoinColumn(name="id_evenement_infogreffe_date", referencedColumnName="createdDate"),
-     @JoinColumn(name="id_evenement_infogreffe_code_etat", referencedColumnName="codeEtat")
-})
+            @JoinColumn(name = "id_evenement_infogreffe_created_date", referencedColumnName = "createdDate"),
+            @JoinColumn(name = "id_evenement_infogreffe_code_etat", referencedColumnName = "codeEtat")
+    })
     @JsonIgnoreProperties(value = { "documentAssocies" }, allowSetters = true)
     private EvenementInfogreffe evenementInfogreffe;
 
