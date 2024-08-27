@@ -1,29 +1,26 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ElementRef } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, GUICHET_UNIQUE_BASE_URL, GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING, GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING, INFOGREFFE_BASE_URL } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder, instanceOfFormaliteGuichetUnique } from 'src/app/libs/TypeHelper';
+import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { instanceOfFormaliteInfogreffe } from '../../../../libs/TypeHelper';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Affaire } from '../../model/Affaire';
 import { Formalite } from '../../model/Formalite';
+import { FormaliteDialogChoose } from '../../model/FormaliteDialogChoose';
 import { FormaliteStatus } from '../../model/FormaliteStatus';
+import { FormaliteGuichetUnique } from '../../model/guichet-unique/FormaliteGuichetUnique';
+import { FormaliteInfogreffe } from '../../model/infogreffe/FormaliteInfogreffe';
 import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
-import { FormaliteGuichetUnique } from '../../model/guichet-unique/FormaliteGuichetUnique';
-import { FormaliteInfogreffe } from '../../model/infogreffe/FormaliteInfogreffe';
-import { instanceOfFormaliteInfogreffe } from '../../../../libs/TypeHelper';
-import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { FormaliteDialogChoose } from '../../model/FormaliteDialogChoose';
-import { FormaliteService } from '../../services/formalite.service';
 import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
-import { FormaliteGuichetUniqueService } from 'src/app/modules/miscellaneous/services/formalite.guichet.unique.service';
-import { FormaliteInfogreffeService } from '../../../miscellaneous/services/formalite.infogreffe.service';
 
 @Component({
   selector: 'formalite',
@@ -80,7 +77,6 @@ export class FormaliteComponent implements OnInit {
     this.displayedColumns.push({ id: "referenceProvider", fieldName: "referenceProvider", label: "Référence fournisseur", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return element.identifiantFormalite.formaliteNumero; return element.liasseNumber } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
     this.displayedColumns.push({ id: "formaliteStatus", fieldName: "formaliteStatus", label: "Statut de la formalité", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return ""; return element.status.label; } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
     this.displayedColumns.push({ id: "isAuthorizedToSign", fieldName: "isAuthorizedToSign", label: "Autorisé à signer/payer", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return ""; if (!instanceOfFormaliteInfogreffe(element) && element.isAuthorizedToSign) return "Oui"; return "Non"; } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
-    //this.displayedColumns.push({ id: "", fieldName: "", label: "Dernière relance de l'AC" } as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
 
     this.tableAction.push({
       actionIcon: 'approval', actionName: "Autoriser à Signer/payer ?", actionClick: (column: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>, element: FormaliteGuichetUnique | FormaliteInfogreffe, event: any) => {

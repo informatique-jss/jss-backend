@@ -15,9 +15,4 @@ export class FormaliteInfogreffeService extends AppRestService<FormaliteInfogref
   getFormaliteInfogreffeServiceByReference(value: string) {
     return this.getList(new HttpParams().set("value", value), "formalite-infogreffe/search");
   }
-
-  addOrUpdateFormaliteInfogreffe(formaliteInfogreffe: FormaliteInfogreffe) {
-    return this.addOrUpdate(new HttpParams(), "formalite-infogreffe/update", formaliteInfogreffe, "Enregistré", "Erreur lors de l'enregistrement");
-  }
-
 }

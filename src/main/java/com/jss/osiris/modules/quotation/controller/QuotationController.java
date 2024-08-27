@@ -2363,24 +2363,9 @@ public class QuotationController {
 
     if (value != null && value.length() > 2) {
       formalites = formaliteInfogreffeService.getFormaliteInfogreffeByReference(value.toUpperCase());
-
-      // if (formalites == null || formalites.size() == 0)
-      // formaliteInfogreffeService.getAllFormalitiesByRefenceMandataire(value);
     }
 
     return new ResponseEntity<List<FormaliteInfogreffe>>(formalites, HttpStatus.OK);
-  }
-
-  @PostMapping(inputEntryPoint + "/formalite-guichet-unique/update")
-  public ResponseEntity<FormaliteGuichetUnique> addOrUpdateFormaliteGuichetUnique(
-      @RequestBody FormaliteGuichetUnique formaliteGuichetUnique)
-      throws OsirisValidationException, OsirisException {
-    if (formaliteGuichetUnique != null)
-      return new ResponseEntity<FormaliteGuichetUnique>(
-          formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique),
-          HttpStatus.OK);
-    else
-      throw new OsirisValidationException("formaliteGuichetUnique");
   }
 
   @PostMapping(inputEntryPoint + "/formalite/update")

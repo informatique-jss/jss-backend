@@ -7,11 +7,6 @@
     close
   </mat-icon>
   <mat-spinner *ngIf="isLoading" diameter="16" style="display: inline-flex" matSuffix color="accent"></mat-spinner>
-  <mat-icon color="accent" matTooltip="Voir le dossier sur le GU" matTooltipShowDelay="1000" matSuffix
-    (click)="openGuichetUnique($event)" (auxclick)="openGuichetUnique($event)" *ngIf="isDisabled && model!=undefined"
-    class="pointer ">
-    language
-  </mat-icon>
   <mat-autocomplete panelWidth="auto" autoActiveFirstOption panelOpen="true" #autoCompleteField="matAutocomplete"
     [displayWith]="displayLabel" (optionSelected)='optionSelected($event.option.value)'>
     <mat-option *ngFor="let type of filteredTypes  " [value]="type">
