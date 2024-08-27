@@ -13,6 +13,7 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 public class BatchCategory implements IId {
 
     public static String GUICHET_UNIQUE = "GUICHET_UNIQUE";
+    public static String INFOGREFFE = "INFOGREFFE";
     public static String INDEXATION = "INDEXATION";
     public static String ACCOUNTING = "ACCOUNTING";
     public static String SYSTEM = "SYSTEM";

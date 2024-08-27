@@ -8,6 +8,7 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -53,6 +54,10 @@ public class Formalite implements IId {
     @JsonIgnoreProperties(value = { "content" })
     @IndexedField
     private List<FormaliteGuichetUnique> formalitesGuichetUnique;
+
+    @OneToMany(mappedBy = "formalite")
+    @IndexedField
+    private List<FormaliteInfogreffe> formalitesInfogreffe;
 
     @OneToMany(mappedBy = "formalite")
     @JsonIgnore
@@ -116,6 +121,14 @@ public class Formalite implements IId {
 
     public void setActeDeposit(ActeDeposit acteDeposit) {
         this.acteDeposit = acteDeposit;
+    }
+
+    public List<FormaliteInfogreffe> getFormalitesInfogreffe() {
+        return formalitesInfogreffe;
+    }
+
+    public void setFormalitesInfogreffe(List<FormaliteInfogreffe> formalitesInfogreffe) {
+        this.formalitesInfogreffe = formalitesInfogreffe;
     }
 
 }

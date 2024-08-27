@@ -69,8 +69,8 @@ import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
-import com.jss.osiris.modules.quotation.model.AssoServiceTypeFieldType;
 import com.jss.osiris.modules.quotation.model.AssoServiceProvisionType;
+import com.jss.osiris.modules.quotation.model.AssoServiceTypeFieldType;
 import com.jss.osiris.modules.quotation.model.AttachmentMailRequest;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.BuildingDomiciliation;
@@ -85,6 +85,7 @@ import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.DomiciliationFee;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
+import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.FundType;
 import com.jss.osiris.modules.quotation.model.IPaperSetResult;
@@ -112,12 +113,13 @@ import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.ServiceFamily;
 import com.jss.osiris.modules.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.quotation.model.ServiceFieldType;
-import com.jss.osiris.modules.quotation.model.ServiceTypeFieldTypePossibleValue;
 import com.jss.osiris.modules.quotation.model.ServiceType;
+import com.jss.osiris.modules.quotation.model.ServiceTypeFieldTypePossibleValue;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.ValidationRequest;
+import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementNoticeTemplateService;
@@ -140,6 +142,7 @@ import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService
 import com.jss.osiris.modules.quotation.service.DomiciliationFeeService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
+import com.jss.osiris.modules.quotation.service.FormaliteService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.quotation.service.FundTypeService;
 import com.jss.osiris.modules.quotation.service.JournalTypeService;
@@ -167,6 +170,7 @@ import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.GuichetUniqueDelegateService;
+import com.jss.osiris.modules.quotation.service.infoGreffe.FormaliteInfogreffeService;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
@@ -387,6 +391,12 @@ public class QuotationController {
 
   @Autowired
   AssoServiceFieldTypeService assoServiceFieldTypeService;
+
+  @Autowired
+  FormaliteService formaliteService;
+
+  @Autowired
+  FormaliteInfogreffeService formaliteInfogreffeService;
 
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
@@ -2344,6 +2354,32 @@ public class QuotationController {
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/formalite-infogreffe/search")
+  public ResponseEntity<List<FormaliteInfogreffe>> getFormaliteInfogreffeServiceByReference(
+      @RequestParam String value)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+
+    List<FormaliteInfogreffe> formalites = null;
+
+    if (value != null && value.length() > 2) {
+      formalites = formaliteInfogreffeService.getFormaliteInfogreffeByReference(value.toUpperCase());
+    }
+
+    return new ResponseEntity<List<FormaliteInfogreffe>>(formalites, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/formalite/update")
+  public ResponseEntity<Formalite> addOrUpdateFormalite(
+      @RequestBody Formalite formalite)
+      throws OsirisValidationException, OsirisException {
+    if (formalite != null)
+      return new ResponseEntity<Formalite>(
+          formaliteService.addOrUpdateFormalite(formalite),
+          HttpStatus.OK);
+    else
+      throw new OsirisValidationException("formalite");
+  }
+
   @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @GetMapping(inputEntryPoint + "/customer-order/credit-note")
   public ResponseEntity<Boolean> generateCreditNoteForCustomerOrderInvoice(
@@ -2376,5 +2412,4 @@ public class QuotationController {
     customerOrderService.reinitInvoicing(customerOrder);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
-
 }

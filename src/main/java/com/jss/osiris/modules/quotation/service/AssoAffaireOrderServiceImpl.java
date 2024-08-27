@@ -51,9 +51,11 @@ import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
 import com.jss.osiris.modules.quotation.repository.AssoAffaireOrderRepository;
 import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
+import com.jss.osiris.modules.quotation.service.infoGreffe.FormaliteInfogreffeService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 @org.springframework.stereotype.Service
@@ -124,6 +126,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     FormaliteGuichetUniqueStatusService formaliteGuichetUniqueStatusService;
+
+    @Autowired
+    FormaliteInfogreffeService formaliteInfogreffeService;
 
     @Autowired
     PaymentService paymentService;
@@ -288,6 +293,15 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                     formaliteGuichetUnique.getId());
                         }
                     }
+                    if (formalite.getFormalitesInfogreffe() != null) {
+                        for (FormaliteInfogreffe formaliteInfogreffe : formalite
+                                .getFormalitesInfogreffe()) {
+                            formaliteInfogreffe.setFormalite(formalite);
+                            formaliteInfogreffeService.addOrUpdFormaliteInfogreffe(formaliteInfogreffe);
+                            batchService.declareNewBatch(Batch.REFRESH_FORMALITE_INFOGREFFE_DETAIL,
+                                    formaliteInfogreffe.getIdentifiantFormalite().getFormaliteNumero());
+                        }
+                    }
 
                     if (formalite.getId() != null) {
                         Formalite originalFormalite = formaliteService.getFormalite(formalite.getId());
@@ -339,7 +353,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             && formalite.getCompetentAuthorityServiceProvider().getId()
                                     .equals(constantService.getCompetentAuthorityInpi().getId())
                             && (formalite.getFormalitesGuichetUnique() == null
-                                    || formalite.getFormalitesGuichetUnique().size() == 0))
+                                    || formalite.getFormalitesGuichetUnique().size() == 0)
+                            && (formalite.getFormalitesInfogreffe() == null
+                                    || formalite.getFormalitesInfogreffe().size() == 0))
                         throw new OsirisClientMessageException(
                                 "Merci de compléter le nom du dossier GU avant de clôturer la formalité");
                 }

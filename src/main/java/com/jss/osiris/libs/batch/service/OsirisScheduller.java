@@ -307,7 +307,7 @@ public class OsirisScheduller {
 			batchService.declareNewBatch(Batch.UPDATE_COMPETENT_AUTHORITY, null);
 	}
 
-	@Scheduled(cron = "${schedulling.affaire.rne.update}")
+	// @Scheduled(cron = "${schedulling.affaire.rne.update}")
 	private void updateAffaireFromRne() {
 		try {
 			if (nodeService.shouldIBatch())
@@ -332,6 +332,27 @@ public class OsirisScheduller {
 		try {
 			if (nodeService.shouldIBatch() && !devMode)
 				guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	// @Scheduled(cron = "${schedulling.infogreffe.refresh.last.day}")
+	@Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
+	private void refreshAllFormalitiesInfogreffeFromLastDay() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.REFRESH_FORMALITE_INFOGREFFE, 1);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.infogreffe.refresh.all}")
+	private void refreshAllFormalitiesInfogreffe() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.REFRESH_FORMALITE_INFOGREFFE, 0);
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

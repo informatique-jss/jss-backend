@@ -28,7 +28,7 @@ import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.JacksonLocalDateDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
-import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
+import com.jss.osiris.libs.JacksonTimestampMillisecondDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.batch.model.Batch;
@@ -728,7 +728,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
         simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
         simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
-        simpleModule.addDeserializer(LocalDateTime.class, new JacksonLocalDateTimeDeserializer());
+        simpleModule.addDeserializer(LocalDateTime.class, new JacksonTimestampMillisecondDeserializer());
         simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
         objectMapper.registerModule(simpleModule);
         Hibernate5JakartaModule module = new Hibernate5JakartaModule();
@@ -1252,7 +1252,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
         simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
         simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
-        simpleModule.addDeserializer(LocalDateTime.class, new JacksonLocalDateTimeDeserializer());
+        simpleModule.addDeserializer(LocalDateTime.class, new JacksonTimestampMillisecondDeserializer());
         simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
         objectMapper.registerModule(simpleModule);
         Hibernate5JakartaModule module = new Hibernate5JakartaModule();

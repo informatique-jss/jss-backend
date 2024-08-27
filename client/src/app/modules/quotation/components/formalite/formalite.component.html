@@ -1,44 +1,22 @@
 <form [formGroup]="formaliteForm" *ngIf="formalite && provision">
   <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab [label]="provision.provisionType.label">
+      <div class=" form-div">
+        <div class="full-width">
+          <div class="row-field-container">
+            <mat-form-field class="full-width">
+              <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+            </mat-form-field>
+            <button (click)="associateLiasseWithFormalite()" mat-mini-fab color="warn" class="mini-fab-add"
+              *ngIf="editMode" matTooltip="Associer une liasse à un fournisseur de service">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+          <sort-table [columns]="displayedColumns" [values]="formalites" tableName="Liasses Formalites"
+            [filterText]="searchText" [actions]="tableAction"></sort-table>
+        </div>
+      </div>
       <div class="form-div">
-        <table class="full-width">
-          <tr>
-            <td>
-              <autocomplete-competent-authority [(model)]="formalite.competentAuthorityServiceProvider"
-                [form]="formaliteForm" propertyName="competentAuthorityServiceProvider" [isMandatory]="false"
-                [filteredCompetentAuthority]="[competentAuthorityInfogreffe, competentAuthorityInpi]"
-                [isDisabled]="!editMode" label="Fournisseur de service"></autocomplete-competent-authority>
-            </td>
-            <td
-              *ngIf="formalite.competentAuthorityServiceProvider && formalite.competentAuthorityServiceProvider.id == competentAuthorityInpi.id && formalite.id">
-              <chips-formalite-guichet-unique [(model)]="formalite.formalitesGuichetUnique" [form]="formaliteForm"
-                propertyName="formaliteGuichetUnique" [isMandatory]="false" label="Nom du dossier GU"
-                [isDisabled]="!editMode"></chips-formalite-guichet-unique>
-            </td>
-            <td *ngIf="formalite && formalite.formalitesGuichetUnique">
-              <ng-container *ngFor="let formaliteGu of formalite.formalitesGuichetUnique">
-                <generic-toggle
-                  *ngIf="formaliteGu.status.code==GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING || formaliteGu.status.code==GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING"
-                  [(model)]="formaliteGu.isAuthorizedToSign"
-                  [label]="formaliteGu.liasseNumber+' - Autoriser à signer/payer ?'" [form]="formaliteForm"
-                  [isDisabled]="!editMode" propertyName="isAuthorizedToSign"></generic-toggle>
-              </ng-container>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2"
-              *ngIf="formalite.waitedCompetentAuthority && formalite.formaliteStatus && formalite.formaliteStatus.code ==FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY">
-              <autocomplete-competent-authority [(model)]="formalite.waitedCompetentAuthority" [form]="formaliteForm"
-                propertyName="waitedCompetentAuthority" [isMandatory]="false" label="Autorité compétente en attente"
-                [isDisabled]="true"></autocomplete-competent-authority>
-            </td>
-            <td><generic-datepicker *ngIf="provision.lastCompetentAuthorityReminderDateTime"
-                [(model)]="provision.lastCompetentAuthorityReminderDateTime" label="Dernière relance de l'AC"
-                [form]="formaliteForm" propertyName="lastCompetentAuthorityReminderDateTime"
-                [isDisabled]="true"></generic-datepicker></td>
-          </tr>
-        </table>
         <mat-divider class="margin-mat-divider"></mat-divider>
         <customer-order-comment *ngIf="provision && provision.id" [provision]="provision"></customer-order-comment>
       </div>
@@ -64,6 +42,11 @@
     <mat-tab label="Historique GU" *ngIf="formalite && formalite.id && formalite.formalitesGuichetUnique ">
       <ng-template matTabContent>
         <guichet-unique-status [formalitesGuichetUnique]="formalite.formalitesGuichetUnique"></guichet-unique-status>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="Historique Infogreffe" *ngIf="formalite && formalite.id && formalite.formalitesInfogreffe ">
+      <ng-template matTabContent>
+        <infogreffe-status [formalitesInfogreffe]="formalite.formalitesInfogreffe"></infogreffe-status>
       </ng-template>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="formalite && formalite.id">

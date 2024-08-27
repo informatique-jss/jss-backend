@@ -6,7 +6,7 @@ import { FormaliteGuichetUnique } from '../../quotation/model/guichet-unique/For
 @Injectable({
   providedIn: 'root'
 })
-export class FormaliteGuichetUniqueService extends AppRestService<FormaliteGuichetUnique>{
+export class FormaliteGuichetUniqueService extends AppRestService<FormaliteGuichetUnique> {
 
   constructor(http: HttpClient) {
     super(http, "quotation");

@@ -117,7 +117,7 @@ public class FormaliteGuichetUnique implements IId {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_formalite")
-    @JsonIgnoreProperties(value = { "formalitesGuichetUnique" })
+    @JsonIgnoreProperties(value = { "formalitesGuichetUnique", "formalitesInfogreffe" })
     private Formalite formalite;
 
     private Integer mandataireId;

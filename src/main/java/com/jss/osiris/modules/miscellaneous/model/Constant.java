@@ -213,6 +213,14 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeQuotation;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_Refus_infogreffe")
+	private AttachmentType attachmentTypeRefusInfogreffe;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_Autre_infogreffe")
+	private AttachmentType attachmentTypeAutreInfogreffe;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_country_france")
 	private Country countryFrance;
 
@@ -2308,6 +2316,22 @@ public class Constant implements Serializable, IId {
 
 	public void setDateAccountingClosureForAll(LocalDate dateAccountingClosureForAll) {
 		this.dateAccountingClosureForAll = dateAccountingClosureForAll;
+	}
+
+	public AttachmentType getAttachmentTypeRefusInfogreffe() {
+		return attachmentTypeRefusInfogreffe;
+	}
+
+	public void setAttachmentTypeRefusInfogreffe(AttachmentType attachmentTypeRefusInfogreffe) {
+		this.attachmentTypeRefusInfogreffe = attachmentTypeRefusInfogreffe;
+	}
+
+	public AttachmentType getAttachmentTypeAutreInfogreffe() {
+		return attachmentTypeAutreInfogreffe;
+	}
+
+	public void setAttachmentTypeAutreInfogreffe(AttachmentType attachmentTypeAutreInfogreffe) {
+		this.attachmentTypeAutreInfogreffe = attachmentTypeAutreInfogreffe;
 	}
 
 }

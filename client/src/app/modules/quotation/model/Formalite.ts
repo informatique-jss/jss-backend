@@ -2,6 +2,7 @@ import { CompetentAuthority } from 'src/app/modules/miscellaneous/model/Competen
 import { ActeDeposit } from './ActeDeposit';
 import { FormaliteStatus } from './FormaliteStatus';
 import { FormaliteGuichetUnique } from './guichet-unique/FormaliteGuichetUnique';
+import { FormaliteInfogreffe } from './infogreffe/FormaliteInfogreffe';
 
 export interface Formalite {
   id: number;
@@ -9,6 +10,7 @@ export interface Formalite {
   formaliteStatus: FormaliteStatus;
   competentAuthorityServiceProvider: CompetentAuthority;
   formalitesGuichetUnique: FormaliteGuichetUnique[];
+  formalitesInfogreffe: FormaliteInfogreffe[];
   acteDeposit: ActeDeposit;
 }
 
