@@ -17,7 +17,6 @@ import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
-import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 import com.jss.osiris.modules.quotation.model.infoGreffe.EvenementInfogreffe;
 import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
