@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@
 import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { Subject } from 'rxjs';
 import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, GUICHET_UNIQUE_BASE_URL, GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING, GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING, INFOGREFFE_BASE_URL } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder, instanceOfFormaliteGuichetUnique } from 'src/app/libs/TypeHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -53,6 +54,7 @@ export class FormaliteComponent implements OnInit {
   formalites: (FormaliteGuichetUnique | FormaliteInfogreffe)[] = [] as Array<FormaliteGuichetUnique | FormaliteInfogreffe>;
   tableAction: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>[] = [] as Array<SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>>;
   searchText: string | undefined;
+  refreshFormalityTable: Subject<void> = new Subject<void>();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -80,9 +82,14 @@ export class FormaliteComponent implements OnInit {
 
     this.tableAction.push({
       actionIcon: 'approval', actionName: "Autoriser à Signer/payer ?", actionClick: (column: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>, element: FormaliteGuichetUnique | FormaliteInfogreffe, event: any) => {
-        if (instanceOfFormaliteGuichetUnique(element) && this.editMode)
+        if (instanceOfFormaliteGuichetUnique(element) && this.editMode && this.formalite && this.formalite.formalitesGuichetUnique)
           if (element.status.code == GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING || element.status.code == GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING)
-            element.isAuthorizedToSign = true;
+            for (let formalite of this.formalite.formalitesGuichetUnique)
+              if (formalite.id == element.id) {
+                formalite.isAuthorizedToSign = true;
+                break;
+              }
+        this.refreshFormalityTable;
       }, display: true,
     } as SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>);
 
@@ -106,9 +113,9 @@ export class FormaliteComponent implements OnInit {
       actionIcon: 'delete', actionName: "Supprimer la liasse", actionClick: (column: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>, element: FormaliteGuichetUnique | FormaliteInfogreffe, event: any) => {
         if (this.editMode) {
           if (instanceOfFormaliteGuichetUnique(element))
-            this.formalite.formalitesGuichetUnique = this.formalite.formalitesGuichetUnique.slice(this.formalite.formalitesGuichetUnique.indexOf(element), 1);
+            this.formalite.formalitesGuichetUnique.splice(this.formalite.formalitesGuichetUnique.indexOf(element), 1);
           if (instanceOfFormaliteInfogreffe(element))
-            this.formalite.formalitesInfogreffe = this.formalite.formalitesInfogreffe.slice(this.formalite.formalitesInfogreffe.indexOf(element), 1);
+            this.formalite.formalitesInfogreffe.splice(this.formalite.formalitesInfogreffe.indexOf(element), 1);
           this.setFormaliteTableData();
         }
       }, display: true,
@@ -125,6 +132,7 @@ export class FormaliteComponent implements OnInit {
     if (this.formalite.formalitesInfogreffe)
       for (let i = 0; i < this.formalite.formalitesInfogreffe.length; i++)
         this.formalites?.push(this.formalite.formalitesInfogreffe[i]);
+    this.refreshFormalityTable.next();
   }
 
   applyFilter(filterValue: any) {

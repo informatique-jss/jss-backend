@@ -1,10 +1,10 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
-import java.time.format.DateTimeFormatter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -46,6 +46,7 @@ import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
+import com.jss.osiris.modules.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.AssoServiceDocumentService;
@@ -473,5 +474,10 @@ public class AttachmentServiceImpl implements AttachmentService {
                 }
             }
         }
+    }
+
+    @Override
+    public List<Attachment> findByDocumentAssocieInfogreffe(DocumentAssocieInfogreffe documentAssocieInfogreffe) {
+        return attachmentRepository.findByDocumentAssocieInfogreffe(documentAssocieInfogreffe.getUrlTelechargement());
     }
 }

@@ -13,7 +13,8 @@
             </button>
           </div>
           <sort-table [columns]="displayedColumns" [values]="formalites" tableName="Liasses Formalites"
-            [filterText]="searchText" [actions]="tableAction"></sort-table>
+            [refreshTable]="refreshFormalityTable.asObservable()" [filterText]="searchText"
+            [actions]="tableAction"></sort-table>
         </div>
       </div>
       <div class="form-div">

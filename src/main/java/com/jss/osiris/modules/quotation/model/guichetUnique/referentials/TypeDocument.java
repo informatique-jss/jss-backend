@@ -34,6 +34,13 @@ public class TypeDocument implements ICode, IAttachment {
     public static String UNSIGNED_BE_DOCUMENT_CODE = "PJ_119";
     public static String SIGNED_BE_DOCUMENT_CODE = "PJ_120";
 
+    public TypeDocument(String code) {
+        this.code = code;
+    }
+
+    public TypeDocument() {
+    }
+
     @Id
     private String code;
 
