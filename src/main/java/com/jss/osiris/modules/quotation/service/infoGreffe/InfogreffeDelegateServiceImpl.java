@@ -9,6 +9,7 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,11 +52,13 @@ public class InfogreffeDelegateServiceImpl implements InfogreffeDelegateService 
     private String detailFormalite = "/formalites/detail";
     private String bearerValue = null;
     private LocalDateTime bearerExpireDateTime = null;
+    private HashMap<String, String> downloadCookies = null;
 
     @Autowired
     FormaliteInfogreffeService infogreffeFormaliteService;
 
     HttpHeaders createHeaders() throws OsirisException {
+        bearerValue = null;
         if (bearerValue == null || bearerExpireDateTime == null || bearerExpireDateTime.isBefore(LocalDateTime.now()))
             loginUser();
         return new HttpHeaders() {
@@ -97,6 +100,17 @@ public class InfogreffeDelegateServiceImpl implements InfogreffeDelegateService 
         }
     }
 
+    private <T> void watchAndStoreBigIpCookie(ResponseEntity<T> res) {
+        if (res.getHeaders().get("Set-Cookie") != null) {
+            if (downloadCookies == null)
+                downloadCookies = new HashMap<String, String>();
+            for (String cookie : res.getHeaders().get("Set-Cookie")) {
+                String[] cookieSplit = cookie.split("=", 2);
+                downloadCookies.put(cookieSplit[0], cookieSplit[1]);
+            }
+        }
+    }
+
     @Override
     public List<FormaliteInfogreffe> getAllInfogreffeFormalities() throws OsirisException {
         List<FormaliteInfogreffe> formalites = new ArrayList<FormaliteInfogreffe>();
@@ -109,6 +123,7 @@ public class InfogreffeDelegateServiceImpl implements InfogreffeDelegateService 
                 new ParameterizedTypeReference<ListingInfogreffe>() {
                 });
 
+        watchAndStoreBigIpCookie(response);
         if (response.getBody() != null) {
             return response.getBody().getItems();
         }
@@ -133,6 +148,7 @@ public class InfogreffeDelegateServiceImpl implements InfogreffeDelegateService 
                 HttpMethod.GET, new HttpEntity<String>(headers),
                 FormaliteInfogreffe.class);
 
+        watchAndStoreBigIpCookie(response);
         if (response.getBody() != null) {
             return response.getBody();
         }
@@ -163,8 +179,12 @@ public class InfogreffeDelegateServiceImpl implements InfogreffeDelegateService 
                     + documentAssocieInfogreffe.getUrlTelechargement());
         }
         httpConn.setRequestProperty("Authorization", "Bearer " + bearerValue);
-        httpConn.setRequestProperty("cookie",
-                "BIGipServer~DMZ-Extranet-46~POO_Infogref_Prod_FRONT_7021=rd1o00000000000000000000ffffac164cc0o7021;");
+        if (downloadCookies != null && downloadCookies.size() > 0) {
+            String finalCookie = "";
+            for (String key : downloadCookies.keySet())
+                finalCookie += ";" + key + "=" + downloadCookies.get(key);
+            httpConn.setRequestProperty("Cookie", finalCookie);
+        }
 
         try {
             httpConn.setRequestMethod("GET");

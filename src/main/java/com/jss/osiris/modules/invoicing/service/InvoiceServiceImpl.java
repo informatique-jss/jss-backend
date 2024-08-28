@@ -273,7 +273,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         addOrUpdateInvoice(invoice);
-        if (invoice.getIsInvoiceFromProvider() == false)
+        if (invoice.getIsInvoiceFromProvider() == false && invoice.getIsProviderCreditNote() == false)
             generateInvoicePdf(invoice, invoice.getCustomerOrder());
 
         // Associate attachment for azure invoice

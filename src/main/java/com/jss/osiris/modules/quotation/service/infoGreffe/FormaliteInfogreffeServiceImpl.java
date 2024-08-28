@@ -1,15 +1,18 @@
 package com.jss.osiris.modules.quotation.service.infoGreffe;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.repository.CompetentAuthorityRepository;
@@ -17,6 +20,7 @@ import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 import com.jss.osiris.modules.quotation.model.infoGreffe.EvenementInfogreffe;
 import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
@@ -105,11 +109,6 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
         }
     }
 
-    @Transactional
-    public void test() throws OsirisException {
-        refreshFormaliteInfogreffeDetail(getFormaliteInfogreffe(3989011));
-    }
-
     @Override
     public void refreshFormaliteInfogreffeDetail(FormaliteInfogreffe formaliteInfogreffe)
             throws OsirisException {
@@ -124,31 +123,56 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
         formaliteInfogreffeDetail.setFormalite(formaliteInfogreffe.getFormalite());
         addOrUpdFormaliteInfogreffe(formaliteInfogreffeDetail);
 
+        formaliteInfogreffe = getFormaliteInfogreffe(
+                formaliteInfogreffe.getIdentifiantFormalite().getFormaliteNumero());
         refreshWaitedCompetentAuthorithy(formaliteInfogreffe);
 
         refreshFormaliteStatusFromInfogreffeStatus(formaliteInfogreffe);
 
         if (formaliteInfogreffe.getFormalite() != null) {
-            if (formaliteInfogreffeDetail.getEvenements() != null
-                    && formaliteInfogreffeDetail.getEvenements().size() > 0) {
-                for (EvenementInfogreffe evenementInfogreffe : formaliteInfogreffeDetail.getEvenements()) {
+            if (formaliteInfogreffe.getEvenements() != null
+                    && formaliteInfogreffe.getEvenements().size() > 0) {
+                for (EvenementInfogreffe evenementInfogreffe : formaliteInfogreffe.getEvenements()) {
                     if (evenementInfogreffe.getDocumentsAssocies() != null
                             && evenementInfogreffe.getDocumentsAssocies().size() > 0) {
                         for (DocumentAssocieInfogreffe documentAssocieInfogreffe : evenementInfogreffe
                                 .getDocumentsAssocies()) {
-                            // InputStream documentInfogreffe = infogreffeDelegateService
-                            // .getAttachmentFileFromEvenementInfogreffe(documentAssocieInfogreffe);
-                            // TODO A corriger
-                            /*
-                             * attachmentService.addAttachment(documentInfogreffe,
-                             * formaliteInfogreffeDetail.getFormalite().getProvision().get(0).getId(), null,
-                             * Provision.class.getSimpleName(),
-                             * getAttachmentTypeDocumentAssocieInfogreffe(documentAssocieInfogreffe),
-                             * documentAssocieInfogreffe.getTypeDocument() + "_"
-                             * + evenementInfogreffe.getCreatedDate() + ".pdf",
-                             * false, null,
-                             * null, null, null);
-                             */
+                            List<Attachment> existingAttachment = attachmentService
+                                    .findByDocumentAssocieInfogreffe(documentAssocieInfogreffe);
+                            if (existingAttachment == null || existingAttachment.size() == 0) {
+                                InputStream documentInfogreffe = infogreffeDelegateService
+                                        .getAttachmentFileFromEvenementInfogreffe(documentAssocieInfogreffe);
+
+                                String filename = documentAssocieInfogreffe.getTypeDocument() + "_"
+                                        + evenementInfogreffe.getCreatedDate()
+                                                .format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"))
+                                        + ".pdf";
+                                List<Attachment> attachments = attachmentService.addAttachment(documentInfogreffe,
+                                        formaliteInfogreffeDetail.getFormalite().getProvision().get(0).getId(), null,
+                                        Provision.class.getSimpleName(),
+                                        getAttachmentTypeDocumentAssocieInfogreffe(documentAssocieInfogreffe),
+                                        filename,
+                                        false, null,
+                                        null, null, null);
+
+                                for (Attachment attachment : attachments) {
+                                    if (attachment.getUploadedFile().getFilename().equals(filename)) {
+                                        attachment.setDocumentAssocieInfogreffe(documentAssocieInfogreffe);
+                                        attachmentService.addOrUpdateAttachment(attachment);
+                                        break;
+                                    }
+                                }
+
+                                try {
+                                    if (documentInfogreffe != null)
+                                        documentInfogreffe.close();
+                                } catch (IOException e) {
+                                    throw new OsirisException(e,
+                                            "Impossible to close input stream for Inforgreffe document associe "
+                                                    + documentAssocieInfogreffe.getEvenementInfogreffe()
+                                                            .getFormaliteInfogreffe().getId());
+                                }
+                            }
                         }
                     }
                 }
@@ -182,8 +206,8 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                 && formaliteInfogreffe.getEvenements().size() > 0) {
 
             formaliteInfogreffe.getEvenements().sort(
-                    (o1, o2) -> ((LocalDateTime) o1.getCreatedDate())
-                            .compareTo((LocalDateTime) (o2.getCreatedDate())));
+                    (o1, o2) -> ((LocalDateTime) o2.getCreatedDate())
+                            .compareTo((LocalDateTime) (o1.getCreatedDate())));
 
             if (formaliteInfogreffe.getEvenements().get(0).getCodeEtat()
                     .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_REJECT)
@@ -193,7 +217,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                         formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED));
                 customerOrderCommentService.createCustomerOrderComment(formaliteInfogreffe.getFormalite()
                         .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
-                        "Formalité GU n°" + formaliteInfogreffe.getNumeroLiasse() + " rejetée");
+                        "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " rejetée");
             }
             if (formaliteInfogreffe.getEvenements().get(0).getCodeEtat()
                     .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_VALIDATED)) {
@@ -201,7 +225,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                         formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED));
                 customerOrderCommentService.createCustomerOrderComment(formaliteInfogreffe.getFormalite()
                         .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
-                        "Formalité GU n°" + formaliteInfogreffe.getNumeroLiasse() + " validée");
+                        "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " validée");
             }
             formaliteService.addOrUpdateFormalite(formaliteInfogreffe.getFormalite());
         }
