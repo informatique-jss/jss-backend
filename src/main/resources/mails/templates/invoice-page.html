@@ -70,9 +70,7 @@
                         th:text="${invoice.commandNumber}"></span><br />
                 </span>
                 <span th:if="${externalReference!=null}">Votre référence : <span
-                        th:text="${externalReference}"></span><br /></span>
-                <span th:if="${recurringStartDate!=null}">Période du <span th:text="${recurringStartDate}"></span> au
-                    <span th:text="${recurringEndDate}"></span><br /></span>
+                        th:text="${externalReference}"></span></span>
             </td>
             <td style="width: 100px;"></td>
             <td colspan="2">
@@ -92,6 +90,16 @@
                                     th:text="${invoice.billingLabelCity.label}"></span><span
                                     th:if="${invoice.cedexComplement}"
                                     th:text="${invoice.cedexComplement}"></span></span>
+                        </td>
+                    </tr>
+                </table>
+                <table style=" width: 100%;" th:if="${recurringStartDate!=null}">
+                    <tr>
+                        <td>
+                            <p>
+                                Période du <span th:text="${recurringStartDate}"></span> au
+                                <span th:text="${recurringEndDate}"></span>
+                            </p>
                         </td>
                     </tr>
                 </table>
@@ -287,10 +295,10 @@
             </td>
         </tr>
     </table>
-    <p style="font-size: 12px;" th:if="${!isPrelevementType}">Echéance de paiement : <span
-            th:text="${invoiceDueDate}"></span></p>
-    <p style="font-size: 12px;" th:if="${isPrelevementType}">Date d'exécution du prélèvement : <span
-            th:text="${invoiceDueDate}"></span></p>
+    <p style="font-size: 12px;" th:if="${!isPrelevementType}"><strong>Echéance de paiement : <span
+                th:text="${invoiceDueDate}"></span></strong></p>
+    <p style="font-size: 12px;" th:if="${isPrelevementType}"><strong>Date d'exécution du prélèvement : <span
+                th:text="${invoiceDueDate}"></span></strong></p>
     <p style="font-size: 12px;">Retard de paiement. Maj de 3 fois le taux d’intérêt légal (Application du CC - Article
         L441-6)<br />
         TVA acquittée sur les débits</p>

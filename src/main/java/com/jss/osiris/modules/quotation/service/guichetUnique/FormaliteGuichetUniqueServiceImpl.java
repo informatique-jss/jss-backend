@@ -215,10 +215,10 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 // Status field
                 if (!originalFormalite.getStatus().getCode().equals(formaliteGuichetUnique.getStatus().getCode())) {
                     originalFormalite.setStatus(formaliteGuichetUnique.getStatus());
-                    formalityHasNewStatus = true;
+                    originalFormalite.setIsAuthorizedToSign(false);
+                    addOrUpdateFormaliteGuichetUnique(originalFormalite);
 
                     if (originalFormalite.getFormalite() != null) {
-                        originalFormalite.setIsAuthorizedToSign(false);
                         notificationService.notifyGuichetUniqueFormaliteStatus(
                                 originalFormalite.getFormalite().getProvision().get(0), originalFormalite);
                     }
@@ -484,7 +484,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 Provision.class.getSimpleName(),
                                 typeDocument.getAttachmentType(), piecesJointe.getNomDocument(), false,
                                 piecesJointe.getNomDocument(), piecesJointe, null, piecesJointe.getTypeDocument());
-                        file.delete();
+                        file.delete(); 
                     } catch (FileNotFoundException e) {
                         throw new OsirisException(e, "erreur when reading file");
                     }

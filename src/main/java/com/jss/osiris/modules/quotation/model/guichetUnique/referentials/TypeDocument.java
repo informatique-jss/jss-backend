@@ -21,6 +21,13 @@ import jakarta.persistence.OneToMany;
 @DoNotAudit
 public class TypeDocument implements ICode, IAttachment {
 
+    public TypeDocument() {
+    }
+
+    public TypeDocument(String code) {
+        this.code = code;
+    }
+
     public static String UNSIGNED_SYNTHESES_DOCUMENT_CODE = "PJ_99";
     public static String SIGNED_SYNTHESES_DOCUMENT_CODE = "PJ_115";
 

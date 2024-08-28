@@ -289,7 +289,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Invoice generateInvoicePdf(Invoice invoice, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Create invoice PDF and attach it to customerOrder and invoice
-        File invoicePdf = generatePdfDelegate.generateInvoicePdf(customerOrder, invoice, null);
+        File invoicePdf = generatePdfDelegate.generateInvoicePdf(customerOrder, invoice,
+                invoice.getReverseCreditNote());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
         try {
             List<Attachment> attachments = new ArrayList<Attachment>();
@@ -687,11 +688,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     @Transactional
-    public void sendRemindersForInvoices(LocalDate startDate, LocalDate endDate, BillingLabelType billingLabelType)
+    public void sendRemindersForInvoices(BillingLabelType billingLabelType)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         List<Invoice> invoices = invoiceRepository.findInvoiceForCustomReminder(constantService.getInvoiceStatusSend(),
-                startDate, endDate, billingLabelType);
+                billingLabelType);
 
         if (invoices != null && invoices.size() > 0)
             for (Invoice invoice : invoices) {

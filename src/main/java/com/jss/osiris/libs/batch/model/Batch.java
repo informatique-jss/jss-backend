@@ -2,6 +2,10 @@ package com.jss.osiris.libs.batch.model;
 
 import java.time.LocalDateTime;
 
+import com.jss.osiris.libs.exception.OsirisLog;
+import com.jss.osiris.libs.node.model.Node;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,10 +17,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-
-import com.jss.osiris.libs.exception.OsirisLog;
-import com.jss.osiris.libs.node.model.Node;
-import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_batch_settings_id", columnList = "id_batch_settings"),
@@ -32,6 +32,7 @@ public class Batch implements IId {
     public static String ACTIVE_DIRECTORY_USER_UPDATE = "ACTIVE_DIRECTORY_USER_UPDATE";
     public static String PURGE_NOTIFICATION = "PURGE_NOTIFICATION";
     public static String PURGE_LOGS = "PURGE_LOGS";
+    public static String PURGE_BATCH = "PURGE_BATCH";
     public static String CHECK_CENTRAL_PAY_PAYMENT_REQUEST = "CHECK_CENTRAL_PAY_PAYMENT_REQUEST";
     public static String SEND_MAIL = "SEND_MAIL";
     public static String SEND_REMINDER_FOR_QUOTATION = "SEND_REMINDER_FOR_QUOTATION";

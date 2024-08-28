@@ -654,7 +654,7 @@ public class TiersController {
     } else {
       tiers.setFirstname(null);
       tiers.setLastname(null);
-      validationHelper.validateString(tiers.getDenomination(), true, 60, "Denomination");
+      validationHelper.validateString(tiers.getDenomination(), true, 80, "Denomination");
       if (tiers.getIntercommunityVat() != null && tiers.getIntercommunityVat().length() > 20)
         throw new OsirisValidationException("IntercommunityVat");
     }

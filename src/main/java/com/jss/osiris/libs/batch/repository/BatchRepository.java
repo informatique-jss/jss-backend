@@ -90,4 +90,7 @@ public interface BatchRepository extends CrudRepository<Batch, Integer> {
                         @Param("entityId") Integer entityId,
                         @Param("nodes") List<Integer> nodes);
 
+        @Query(value = "select * from batch n where n.created_date<(now() - make_interval(months => :monthNbr))  ", nativeQuery = true)
+        List<Batch> findBatchOlderThanMonths(@Param("monthNbr") Integer monthNbr);
+
 }

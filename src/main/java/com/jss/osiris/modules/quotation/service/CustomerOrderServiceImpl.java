@@ -243,6 +243,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 document.setCustomerOrder(customerOrder);
             }
 
+        // If from recurring, reset parent customerOrder, because field @JsonIgnore in
+        // customerOrder entity
+        if (customerOrder.getRecurringStartDate() != null && !isNewCustomerOrder) {
+            CustomerOrder currentCustomerOrder = getCustomerOrder(customerOrder.getId());
+            customerOrder.setCustomerOrderParentRecurring(currentCustomerOrder.getCustomerOrderParentRecurring());
+        }
+
         // Complete provisions
         boolean oneNewProvision = false;
         if (customerOrder.getAssoAffaireOrders() != null)

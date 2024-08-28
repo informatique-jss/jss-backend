@@ -173,6 +173,18 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.SYSTEM));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.PURGE_BATCH) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.PURGE_LOGS);
+            batchSettings.setLabel("Purge des batchs");
+            batchSettings.setFixedRate(5 * 60 * 1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.SYSTEM));
+            addOrUpdateBatchSettings(batchSettings);
+        }
         if (getByCode(Batch.CLEAN_AUDIT) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.CLEAN_AUDIT);

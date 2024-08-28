@@ -13,4 +13,12 @@ public interface ICustomerOrderReporting {
     String getLastReminderDate();
 
     String getCustomerOrderCreator();
+
+    String getCustomerOrderCreatedDateYear();
+
+    String getCustomerOrderCreatedDateMonth();
+
+    String getCustomerOrderCreatedDateDay();
+
+    String getCustomerOrderCreatedDateWeek();
 }
