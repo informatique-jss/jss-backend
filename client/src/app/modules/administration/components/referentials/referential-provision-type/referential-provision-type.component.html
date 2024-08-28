@@ -97,16 +97,6 @@
             </td>
           </tr>
         </table>
-        <table class="full-width"
-          *ngIf="selectedEntity.provisionScreenType && selectedEntity.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE">
-          <tr>
-            <td>
-              <autocomplete-competent-authority [(model)]="selectedEntity.defaultCompetentAuthorityServiceProvider"
-                [form]="entityForm" propertyName="defaultCompetentAuthorityServiceProvider" [isMandatory]="false"
-                [isDisabled]="!editMode" label="Fournisseur de service par défaut"></autocomplete-competent-authority>
-            </td>
-          </tr>
-        </table>
         <table class="full-width" *ngIf="selectedEntity.billingTypes">
           <tr *ngFor="let billingType of selectedEntity.billingTypes; let i = index">
             <td>

@@ -8,7 +8,6 @@ export interface Formalite {
   id: number;
   waitedCompetentAuthority: CompetentAuthority;
   formaliteStatus: FormaliteStatus;
-  competentAuthorityServiceProvider: CompetentAuthority;
   formalitesGuichetUnique: FormaliteGuichetUnique[];
   formalitesInfogreffe: FormaliteInfogreffe[];
   acteDeposit: ActeDeposit;

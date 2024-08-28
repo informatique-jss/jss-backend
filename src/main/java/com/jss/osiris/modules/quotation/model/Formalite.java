@@ -45,11 +45,6 @@ public class Formalite implements IId {
     @JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
     private CompetentAuthority waitedCompetentAuthority;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_competent_authority_service_provider")
-    @JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
-    private CompetentAuthority competentAuthorityServiceProvider;
-
     @OneToMany(mappedBy = "formalite")
     @JsonIgnoreProperties(value = { "content" })
     @IndexedField
@@ -89,14 +84,6 @@ public class Formalite implements IId {
 
     public void setFormaliteStatus(FormaliteStatus formaliteStatus) {
         this.formaliteStatus = formaliteStatus;
-    }
-
-    public CompetentAuthority getCompetentAuthorityServiceProvider() {
-        return competentAuthorityServiceProvider;
-    }
-
-    public void setCompetentAuthorityServiceProvider(CompetentAuthority competentAuthorityServiceProvider) {
-        this.competentAuthorityServiceProvider = competentAuthorityServiceProvider;
     }
 
     public List<Provision> getProvision() {

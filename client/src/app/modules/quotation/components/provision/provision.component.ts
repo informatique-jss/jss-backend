@@ -502,7 +502,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     }
     if (provision.formalite) {
       if (status.code == FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY &&
-        (!provision.formalite.competentAuthorityServiceProvider || provision.formalite.competentAuthorityServiceProvider.id != this.constantService.getCompetentAuthorityInpi().id)) {
+        (!provision.formalite.formalitesGuichetUnique && !provision.formalite.formalitesInfogreffe)) {
         saveAsso = false;
         const dialogRef = this.chooseCompetentAuthorityDialog.open(ChooseCompetentAuthorityDialogComponent, {
           maxWidth: "400px",
