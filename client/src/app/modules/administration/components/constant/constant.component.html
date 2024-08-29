@@ -215,6 +215,24 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeRefusInfogreffe"
+                label="Type de pièce-jointe - Refus Infogreffe" [form]="constantForm"
+                propertyName="attachmentTypeRefusInfogreffe" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeAutreInfogreffe"
+                label="Type de pièce-jointe - Autre Infogreffe" [form]="constantForm"
+                propertyName="attachmentTypeAutreInfogreffe" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-attachment-type [(model)]="constant.attachmentTypeCreditNote" label="Type de pièce-jointe - Avoir"
                 [form]="constantForm" propertyName="attachmentTypeCreditNote" [isMandatory]="true"
                 [byPassAttachmentHiddenFilter]="true" [isDisabled]="!editMode">

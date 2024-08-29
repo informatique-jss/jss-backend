@@ -7,8 +7,9 @@ import { Observable } from 'rxjs';
 import { GUICHET_UNIQUE_BASE_URL } from 'src/app/libs/Constants';
 import { FormaliteGuichetUnique } from 'src/app/modules/quotation/model/guichet-unique/FormaliteGuichetUnique';
 import { AppService } from 'src/app/services/app.service';
-import { FormaliteGuichetUniqueService } from '../../../services/formalite.guichet.unique.service';
+import { FormaliteInfogreffeService } from '../../../services/formalite.infogreffe.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
+import { FormaliteGuichetUniqueService } from '../../../services/formalite.guichet.unique.service';
 
 @Component({
   selector: 'autocomplete-guichet-unique-formalite',

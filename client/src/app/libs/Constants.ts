@@ -10,6 +10,8 @@ export const MAX_SIZE_UPLOAD_FILES = 10485760;
 export const AZURE_CONFIDENT_THRESHOLD: number = 0.95;
 export const INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = 2;
 export const GUICHET_UNIQUE_BASE_URL = "https://guichet-unique.inpi.fr/";
+export const INFOGREFFE_BASE_URL = "https://infogreffe.fr/";
+
 
 // Screen types
 export const PROVISION_SCREEN_TYPE_DOMICILIATION = "DOMICILIATION";
@@ -105,4 +107,3 @@ export const SERVICE_FIELD_TYPE_TEXT = "SERVICE_FIELD_TYPE_TEXT";
 export const SERVICE_FIELD_TYPE_TEXTAREA = "SERVICE_FIELD_TYPE_TEXTAREA";
 export const SERVICE_FIELD_TYPE_DATE = "SERVICE_FIELD_TYPE_DATE";
 export const SERVICE_FIELD_TYPE_SELECT = "SERVICE_FIELD_TYPE_SELECT";
-

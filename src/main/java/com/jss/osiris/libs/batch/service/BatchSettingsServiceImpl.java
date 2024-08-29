@@ -65,6 +65,30 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.GUICHET_UNIQUE));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.REFRESH_FORMALITE_INFOGREFFE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REFRESH_FORMALITE_INFOGREFFE);
+            batchSettings.setLabel("Mise à jour des dossiers Infogreffe");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(1);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INFOGREFFE));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.REFRESH_FORMALITE_INFOGREFFE_DETAIL) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REFRESH_FORMALITE_INFOGREFFE_DETAIL);
+            batchSettings.setLabel("Mise à jour du détail des dossiers Infogreffe");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INFOGREFFE));
+            addOrUpdateBatchSettings(batchSettings);
+        }
         if (getByCode(Batch.PAY_FORMALITE_GUICHET_UNIQUE) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.PAY_FORMALITE_GUICHET_UNIQUE);

@@ -7,7 +7,7 @@
   <table class="full-width" [formGroup]="commentForm" *ngIf="isDisplayCommentInput">
     <tr>
       <td>
-        <editor apiKey="7pgnveyplwectwsk1gw9tdhl1vz1r0lt0zt9jkea2ypfllpm" formControlName="newComment"
+        <editor apiKey="7hx3s724hmzwlzwrnwpyss45j2tp31yjutysm78id6s2gtgh" formControlName="newComment"
           [disabled]="false" [(ngModel)]="newComment.comment" [init]="{
                     menubar: false,
                     selector: '.editor-textarea',
@@ -51,7 +51,7 @@
           </p>
           <p class="message" [innerHTML]="comment.comment| trustHtml"> </p>
           <span class="timestamp" [matTooltip]="getTooltipDateText(comment)">{{comment.createdDateTime |
-            date:'dd/MM/yyyy'}}</span><button mat-icon-button matTooltip="Editer le commentaire" color="accent"
+            date:'dd/MM/yyyy à HH:mm'}}</span><button mat-icon-button matTooltip="Editer le commentaire" color="accent"
             class="edit-icon" *ngIf="canEditComment(comment)" (click)="editComment(comment)"><mat-icon>edit</mat-icon>
           </button>
           <button mat-icon-button matTooltip="Marquer comme non lu"

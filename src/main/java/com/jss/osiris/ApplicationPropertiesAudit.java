@@ -104,6 +104,14 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("mail.temporized.temporization.seconds");
         isOk = isOk && checkProperty("schedulling.log.osiris.customer.bilan.publication.reminder");
         isOk = isOk && checkProperty("schedulling.log.osiris.customer.missing.attachment.queries");
+        isOk = isOk && checkProperty("infogreffe.auth.entry.point");
+        isOk = isOk && checkProperty("infogreffe.auth.login");
+        isOk = isOk && checkProperty("infogreffe.auth.password");
+        isOk = isOk && checkProperty("infogreffe.auth.client.id");
+        isOk = isOk && checkProperty("infogreffe.auth.grant.type");
+        isOk = isOk && checkProperty("infogreffe.url");
+        isOk = isOk && checkProperty("schedulling.infogreffe.refresh.all");
+        isOk = isOk && checkProperty("schedulling.infogreffe.refresh.last.day");
 
         isOk = isOk && checkAccountingParams();
 
