@@ -37,6 +37,6 @@ public class FormaliteServiceImpl implements FormaliteService {
 
     @Override
     public List<Formalite> getFormaliteForGURefresh() throws OsirisException {
-        return formaliteRepository.getFormaliteForGURefresh(constantService.getCompetentAuthorityInpi());
+        return formaliteRepository.getFormaliteForGURefresh();
     }
 }
