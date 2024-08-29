@@ -216,6 +216,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 if (!originalFormalite.getStatus().getCode().equals(formaliteGuichetUnique.getStatus().getCode())) {
                     originalFormalite.setStatus(formaliteGuichetUnique.getStatus());
                     originalFormalite.setIsAuthorizedToSign(false);
+                    formalityHasNewStatus = true;
                     addOrUpdateFormaliteGuichetUnique(originalFormalite);
 
                     if (originalFormalite.getFormalite() != null) {
@@ -395,7 +396,10 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     customerOrderCommentService.createCustomerOrderComment(originalFormalite.getFormalite()
                             .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
                             "Formalité GU n°" + originalFormalite.getLiasseNumber() + " rejetée ("
-                                    + originalFormalite.getStatus().getLabel() + ")");
+                                    + formaliteGuichetUniqueStatusService
+                                            .getFormaliteGuichetUniqueStatus(originalFormalite.getStatus().getCode())
+                                            .getLabel()
+                                    + ")");
                 } else if (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED_DGFIP)
                         || originalFormalite.getStatus().getCode()
                                 .equals(FormaliteGuichetUniqueStatus.VALIDATED_PARTNER)
@@ -484,7 +488,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 Provision.class.getSimpleName(),
                                 typeDocument.getAttachmentType(), piecesJointe.getNomDocument(), false,
                                 piecesJointe.getNomDocument(), piecesJointe, null, piecesJointe.getTypeDocument());
-                        file.delete(); 
+                        file.delete();
                     } catch (FileNotFoundException e) {
                         throw new OsirisException(e, "erreur when reading file");
                     }
