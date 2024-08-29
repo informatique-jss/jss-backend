@@ -55,7 +55,6 @@ import { AutocompleteCustomerOrderComponent } from '../forms/autocomplete-custom
 import { AutocompleteDepartmentComponent } from '../forms/autocomplete-department/autocomplete-department.component';
 import { AutocompleteEmployeeComponent } from '../forms/autocomplete-employee/autocomplete-employee.component';
 import { AutocompleteGuichetUniqueFormaliteComponent } from '../forms/autocomplete-formalite-guichet-unique/autocomplete-formalite-guichet-unique.component';
-import { AutocompleteInfogreffeFormaliteComponent } from '../forms/autocomplete-formalite-infogreffe/autocomplete-formalite-infogreffe.component';
 import { AutocompleteLegalFormComponent } from '../forms/autocomplete-legal-form/autocomplete-legal-form.component';
 import { AutocompletePaymentComponent } from '../forms/autocomplete-payment/autocomplete-payment.component';
 import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-code/autocomplete-postal-code.component';
@@ -178,6 +177,7 @@ import { SelectStatutExerciceActiviteSimultanComponent } from '../forms/guichet-
 import { SelectStatutFormaliteComponent } from '../forms/guichet-unique/select-statut-formalite/select-statut-formalite.component';
 import { SelectStatutPourFormaliteComponent } from '../forms/guichet-unique/select-statut-pour-formalite/select-statut-pour-formalite.component';
 import { SelectStatutPourLaFormaliteComponent } from '../forms/guichet-unique/select-statut-pour-la-formalite/select-statut-pour-la-formalite.component';
+import { SelectServiceFieldTypeComponent } from '../forms/select-service-field-type/select-service-field-type.component';
 import { SelectStatutVisAVisFormaliteComponent } from '../forms/guichet-unique/select-statut-visavis-formalite/select-statut-visavis-formalite.component';
 import { SelectSuccursaleOuFilialeComponent } from '../forms/guichet-unique/select-succursale-ou-filiale/select-succursale-ou-filiale.component';
 import { SelectTutelleCuratelleComponent } from '../forms/guichet-unique/select-tutelle-curatelle/select-tutelle-curatelle.component';
@@ -243,14 +243,11 @@ import { SelectResponsableComponent } from '../forms/select-responsable/select-r
 import { SelectRffFrequencyComponent } from '../forms/select-rff-frequency/select-rff-frequency.component';
 import { SelectServiceFamilyGroupComponent } from '../forms/select-service-family-group/select-service-family-group.component';
 import { SelectServiceFamilyComponent } from '../forms/select-service-family/select-service-family.component';
-import { SelectServiceFieldDataTypeComponent } from '../forms/select-service-field-data-type/select-service-field-data-type.component';
-import { SelectServiceFieldTypeComponent } from '../forms/select-service-field-type/select-service-field-type.component';
 import { SelectServiceTypeComponent } from '../forms/select-service-type/select-service-type.component';
 import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-period/select-subscription-period.component';
 import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/select-tiers-category.component';
 import { SelectTiersTypeComponent } from '../forms/select-tiers-type/select-tiers-type.component';
 import { SelectTypeDocumentComponent } from '../forms/select-type-document/select-type-document.component';
-import { SelectValueServiceFieldTypeComponent } from '../forms/select-value-service-field-type/select-value-service-field-type.component';
 import { SelectVatCollectionTypeComponent } from '../forms/select-vat-collection-type/select-vat-collection-type.component';
 import { SelectVatComponent } from '../forms/select-vat/select-vat.component';
 import { GaugeChartComponent } from '../gauge-chart/gauge-chart.component';
@@ -264,6 +261,10 @@ import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.compone
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
+import { SelectServiceFieldDataTypeComponent } from '../forms/select-service-field-data-type/select-service-field-data-type.component';
+import { SelectValueServiceFieldTypeComponent } from '../forms/select-value-service-field-type/select-value-service-field-type.component'
+import { SelectActiveDirectoryGroupComponent } from '../forms/select-active-directory-group/select-active-directory-group.component';
+import { AutocompleteInfogreffeFormaliteComponent } from '../forms/autocomplete-formalite-infogreffe/autocomplete-formalite-infogreffe.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
@@ -541,6 +542,7 @@ const routes: Routes = [
     SelectServiceFieldTypeComponent,
     SelectValueServiceFieldTypeComponent,
     SelectServiceFieldDataTypeComponent,
+    SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent
   ],
   exports: [
@@ -779,6 +781,7 @@ const routes: Routes = [
     SelectServiceFieldTypeComponent,
     SelectValueServiceFieldTypeComponent,
     SelectServiceFieldDataTypeComponent,
+    SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }

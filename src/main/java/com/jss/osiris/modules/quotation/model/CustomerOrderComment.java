@@ -65,6 +65,8 @@ public class CustomerOrderComment implements Serializable, IId {
 	@Column(nullable = false)
 	private LocalDateTime createdDateTime;
 
+	private Boolean isRead;
+
 	public Integer getId() {
 		return id;
 	}
@@ -129,4 +131,11 @@ public class CustomerOrderComment implements Serializable, IId {
 		this.employee = employee;
 	}
 
+	public Boolean getIsRead() {
+		return isRead;
+	}
+
+	public void setIsRead(Boolean isRead) {
+		this.isRead = isRead;
+	}
 }
