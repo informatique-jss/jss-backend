@@ -263,6 +263,7 @@ import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.comp
 import { MiscellaneousComponent } from './miscellaneous.component';
 import { SelectServiceFieldDataTypeComponent } from '../forms/select-service-field-data-type/select-service-field-data-type.component';
 import { SelectValueServiceFieldTypeComponent } from '../forms/select-value-service-field-type/select-value-service-field-type.component'
+import { SelectActiveDirectoryGroupComponent } from '../forms/select-active-directory-group/select-active-directory-group.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
@@ -540,6 +541,7 @@ const routes: Routes = [
     SelectServiceFieldTypeComponent,
     SelectValueServiceFieldTypeComponent,
     SelectServiceFieldDataTypeComponent,
+    SelectActiveDirectoryGroupComponent,
   ],
   exports: [
     HistoryComponent,
@@ -777,6 +779,7 @@ const routes: Routes = [
     SelectServiceFieldTypeComponent,
     SelectValueServiceFieldTypeComponent,
     SelectServiceFieldDataTypeComponent,
+    SelectActiveDirectoryGroupComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

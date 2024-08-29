@@ -201,8 +201,10 @@ export class CustomerOrderCommentComponent implements OnInit {
   }
 
   confirmReading(comment: CustomerOrderComment) {
-    if (this.currentEmployee)
-      this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
+    if (comment) {
+      this.customerOrderCommentService.toggleCustomerOrderCommentIsRead(comment).subscribe(response => {
+        comment.isRead = response.isRead;
       });
+    }
   }
 }

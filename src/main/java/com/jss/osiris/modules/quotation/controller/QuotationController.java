@@ -87,6 +87,7 @@ import com.jss.osiris.modules.quotation.model.DomiciliationFee;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.FundType;
+import com.jss.osiris.modules.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.quotation.model.IPaperSetResult;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.JournalType;
@@ -96,6 +97,7 @@ import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.NoticeTypeFamily;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
+import com.jss.osiris.modules.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.quotation.model.PaperSet;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
@@ -463,6 +465,24 @@ public class QuotationController {
     validationHelper.validateReferential(paperSet.getPaperSetType(), true, "paperSetType");
 
     return new ResponseEntity<PaperSet>(paperSetService.addOrUpdatePaperSet(paperSet), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order-comment/toggle-read")
+  public ResponseEntity<CustomerOrderComment> addOrUpdateCustomerOrderCommentBookmark(
+      @RequestParam Integer customerOrderCommentId) throws OsirisValidationException, OsirisException {
+    CustomerOrderComment customerOrderComment = customerOrderCommentService
+        .getCustomerOrderComment(customerOrderCommentId);
+
+    if (customerOrderComment == null)
+      throw new OsirisValidationException("customerOrderComment");
+
+    if (customerOrderComment.getIsRead() == null || customerOrderComment.getIsRead() == false)
+      customerOrderComment.setIsRead(true);
+    else
+      customerOrderComment.setIsRead(false);
+
+    return new ResponseEntity<CustomerOrderComment>(
+        customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/customer-order-comment")
@@ -1679,6 +1699,26 @@ public class QuotationController {
         validationHelper.validateReferential(status, false, "status");
 
     return new ResponseEntity<List<OrderingSearchResult>>(customerOrderService.searchOrders(orderingSearch),
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/order-tagged/search")
+  public ResponseEntity<List<IOrderingSearchTaggedResult>> searchOrders(
+      @RequestBody OrderingSearchTagged orderingSearchTagged)
+      throws OsirisValidationException, OsirisException {
+    if (orderingSearchTagged == null)
+      throw new OsirisValidationException("orderingSearchTagged");
+
+    validationHelper.validateReferential(orderingSearchTagged.getSalesEmployee(), false, "SalesEmployee");
+    if (orderingSearchTagged.getCustomerOrderStatus() != null)
+      for (CustomerOrderStatus status : orderingSearchTagged.getCustomerOrderStatus())
+        validationHelper.validateReferential(status, false, "status");
+
+    validationHelper.validateReferential(orderingSearchTagged.getSalesEmployee(), false, "SalesEmployee");
+    validationHelper.validateReferential(orderingSearchTagged.getAssignedToEmployee(), false, "AssignedToEmployee");
+
+    return new ResponseEntity<List<IOrderingSearchTaggedResult>>(
+        customerOrderService.searchOrdersTagged(orderingSearchTagged),
         HttpStatus.OK);
   }
 

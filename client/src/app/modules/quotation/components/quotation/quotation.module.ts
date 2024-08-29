@@ -79,6 +79,7 @@ import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/
 import { ServiceComponent } from '../service/service.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
+import { OrderingListTaggedComponent } from '../ordering-list-tagged/ordering-list-tagged.component';
 
 const routes: Routes = [
   { path: 'quotation', component: QuotationComponent },
@@ -179,6 +180,7 @@ const routes: Routes = [
     PaperSetListComponent,
     PaperSetComponent,
     SelectPaperSetTypeDialogComponent,
+    OrderingListTaggedComponent
   ],
   exports: [
     OrderingListComponent,
@@ -189,6 +191,7 @@ const routes: Routes = [
     AnnouncementListComponent,
     DirectDebitTransfertListComponent,
     QuotationComponent,
+    OrderingListTaggedComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

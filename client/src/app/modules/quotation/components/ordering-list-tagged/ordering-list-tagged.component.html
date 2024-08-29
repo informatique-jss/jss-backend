@@ -1,0 +1,46 @@
+<div class="mat-elevation-z2 form-div ">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard  && orderingSearchTagged">
+      <tr>
+        <td>
+          <select-customer-order-status [(model)]="orderingSearchTagged.customerOrderStatus" label="Statut"
+            [form]="orderingSearchTaggedForm" propertyName="customerOrderStatus" [isMandatory]="false"
+            [isDisabled]="false" [defaultCodesSelected]="defaultStatusFilter"></select-customer-order-status>
+        </td>
+        <td>
+          <autocomplete-employee [(model)]="orderingSearchTagged.assignedToEmployee" label="Assignée à"
+            [form]="orderingSearchTaggedForm" propertyName="assignedToEmployee" [isMandatory]="false">
+          </autocomplete-employee>
+        </td>
+        <td>
+          <select-active-directory-group [(model)]="orderingSearchTagged.activeDirectoryGroup" label="Groupe taggé"
+            [form]="orderingSearchTaggedForm" propertyName="activeDirectoryGroup"
+            [isMandatory]="false"></select-active-directory-group>
+        </td>
+        <td>
+          <generic-toggle [(model)]="orderingSearchTagged.isOnlyDisplayUnread" label="Non lu ?"
+            [form]="orderingSearchTaggedForm" propertyName="isOnlyDisplayUnread"></generic-toggle>
+        </td>
+        <td>
+          <generic-datepicker [(model)]="orderingSearchTagged.startDate" label="Date de début"
+            [form]="orderingSearchTaggedForm" propertyName="startDate" [isMandatory]="false"
+            [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td>
+          <generic-datepicker [(model)]="orderingSearchTagged.endDate" label="Date de fin"
+            [form]="orderingSearchTaggedForm" propertyName="endDate" [isMandatory]="false"
+            [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchOrders()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="orders" tableName="Commandes"
+      [noMaxHeight]="isForDashboard" [noPaddingBottom]="isForDashboard"
+      *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true">
+    </sort-table>
+  </div>
+</div>
