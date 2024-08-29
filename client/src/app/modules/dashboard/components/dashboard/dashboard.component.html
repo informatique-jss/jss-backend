@@ -47,6 +47,8 @@
           [orderingSearch]="orderingSearchBeingProcessed" [isForDashboard]="true"></ordering-list>
         <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_TO_BILLED"
           [orderingSearch]="orderingSearchToBilled" [isForDashboard]="true"></ordering-list>
+        <ordering-list-tagged class="dashboard-box-component" *ngIf="item==ORDER_GROUP_TAGGED_WITH_COMMENT"
+          [orderingSearchTagged]="orderingSearchTagged" [isForDashboard]="true"></ordering-list-tagged>
         <quotation-list class="dashboard-box-component" *ngIf="item==QUOTATION_OPEN"
           [quotationSearch]="quotationSearchOpen" [isForDashboard]="true"></quotation-list>
         <quotation-list class="dashboard-box-component" *ngIf="item==QUOTATION_TO_VERIFY"

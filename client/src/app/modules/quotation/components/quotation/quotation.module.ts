@@ -79,6 +79,7 @@ import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/
 import { ServiceComponent } from '../service/service.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
+import { OrderingListTaggedComponent } from '../ordering-list-tagged/ordering-list-tagged.component';
 import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
 import { InfogreffeStatusComponent } from '../infogreffe-status/infogreffe-status.component';
 
@@ -181,6 +182,7 @@ const routes: Routes = [
     PaperSetListComponent,
     PaperSetComponent,
     SelectPaperSetTypeDialogComponent,
+    OrderingListTaggedComponent,
     FormaliteAssociateDialog,
     InfogreffeStatusComponent
   ],
@@ -193,6 +195,7 @@ const routes: Routes = [
     AnnouncementListComponent,
     DirectDebitTransfertListComponent,
     QuotationComponent,
+    OrderingListTaggedComponent,
     InfogreffeStatusComponent
   ],
   providers: [

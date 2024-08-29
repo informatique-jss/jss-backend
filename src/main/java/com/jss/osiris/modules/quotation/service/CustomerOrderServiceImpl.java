@@ -47,6 +47,7 @@ import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
@@ -69,9 +70,11 @@ import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
+import com.jss.osiris.modules.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
+import com.jss.osiris.modules.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.Service;
@@ -621,6 +624,53 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
         invoiceService.addOrUpdateInvoiceFromUser(invoice);
         return invoice;
+    }
+
+    @Override
+    public List<IOrderingSearchTaggedResult> searchOrdersTagged(OrderingSearchTagged orderingSearchTagged) {
+        ArrayList<Integer> statusId = new ArrayList<Integer>();
+        if (orderingSearchTagged.getCustomerOrderStatus() != null
+                && orderingSearchTagged.getCustomerOrderStatus().size() > 0) {
+            for (CustomerOrderStatus customerOrderStatus : orderingSearchTagged.getCustomerOrderStatus())
+                if (customerOrderStatus != null)
+                    statusId.add(customerOrderStatus.getId());
+        } else {
+            statusId.add(0);
+        }
+
+        ArrayList<Integer> salesEmployeeId = new ArrayList<Integer>();
+        if (orderingSearchTagged.getSalesEmployee() != null) {
+            for (Employee employee : employeeService.getMyHolidaymaker(orderingSearchTagged.getSalesEmployee()))
+                salesEmployeeId.add(employee.getId());
+        } else {
+            salesEmployeeId.add(0);
+        }
+
+        ArrayList<Integer> assignedToEmployeeId = new ArrayList<Integer>();
+        if (orderingSearchTagged.getAssignedToEmployee() != null) {
+            for (Employee employee : employeeService.getMyHolidaymaker(orderingSearchTagged.getAssignedToEmployee()))
+                assignedToEmployeeId.add(employee.getId());
+        } else {
+            assignedToEmployeeId.add(0);
+        }
+
+        if (orderingSearchTagged.getActiveDirectoryGroup() == null) {
+            orderingSearchTagged.setActiveDirectoryGroup(new ActiveDirectoryGroup());
+            orderingSearchTagged.getActiveDirectoryGroup().setId(0);
+        }
+
+        if (orderingSearchTagged.getStartDate() == null)
+            orderingSearchTagged.setStartDate(LocalDateTime.now().minusYears(100));
+
+        if (orderingSearchTagged.getEndDate() == null)
+            orderingSearchTagged.setEndDate(LocalDateTime.now().plusYears(100));
+
+        List<IOrderingSearchTaggedResult> customerOrders = customerOrderRepository.findTaggedCustomerOrders(statusId,
+                salesEmployeeId, assignedToEmployeeId, orderingSearchTagged.getActiveDirectoryGroup().getId(),
+                orderingSearchTagged.getIsOnlyDisplayUnread(),
+                orderingSearchTagged.getStartDate().withHour(0).withMinute(0),
+                orderingSearchTagged.getEndDate().withHour(23).withMinute(59));
+        return customerOrders;
     }
 
     @Override
