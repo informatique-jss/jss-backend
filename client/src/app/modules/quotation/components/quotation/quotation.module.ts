@@ -80,6 +80,8 @@ import { ServiceComponent } from '../service/service.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
 import { OrderingListTaggedComponent } from '../ordering-list-tagged/ordering-list-tagged.component';
+import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
+import { InfogreffeStatusComponent } from '../infogreffe-status/infogreffe-status.component';
 
 const routes: Routes = [
   { path: 'quotation', component: QuotationComponent },
@@ -180,7 +182,9 @@ const routes: Routes = [
     PaperSetListComponent,
     PaperSetComponent,
     SelectPaperSetTypeDialogComponent,
-    OrderingListTaggedComponent
+    OrderingListTaggedComponent,
+    FormaliteAssociateDialog,
+    InfogreffeStatusComponent
   ],
   exports: [
     OrderingListComponent,
@@ -191,7 +195,8 @@ const routes: Routes = [
     AnnouncementListComponent,
     DirectDebitTransfertListComponent,
     QuotationComponent,
-    OrderingListTaggedComponent
+    OrderingListTaggedComponent,
+    InfogreffeStatusComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

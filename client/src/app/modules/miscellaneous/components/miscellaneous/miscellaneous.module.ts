@@ -264,6 +264,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
 import { SelectServiceFieldDataTypeComponent } from '../forms/select-service-field-data-type/select-service-field-data-type.component';
 import { SelectValueServiceFieldTypeComponent } from '../forms/select-value-service-field-type/select-value-service-field-type.component'
 import { SelectActiveDirectoryGroupComponent } from '../forms/select-active-directory-group/select-active-directory-group.component';
+import { AutocompleteInfogreffeFormaliteComponent } from '../forms/autocomplete-formalite-infogreffe/autocomplete-formalite-infogreffe.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
@@ -542,6 +543,7 @@ const routes: Routes = [
     SelectValueServiceFieldTypeComponent,
     SelectServiceFieldDataTypeComponent,
     SelectActiveDirectoryGroupComponent,
+    AutocompleteInfogreffeFormaliteComponent
   ],
   exports: [
     HistoryComponent,
@@ -780,6 +782,7 @@ const routes: Routes = [
     SelectValueServiceFieldTypeComponent,
     SelectServiceFieldDataTypeComponent,
     SelectActiveDirectoryGroupComponent,
+    AutocompleteInfogreffeFormaliteComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent
