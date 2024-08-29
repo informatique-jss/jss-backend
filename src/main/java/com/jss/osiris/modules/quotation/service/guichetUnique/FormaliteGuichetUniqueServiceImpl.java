@@ -394,7 +394,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                             .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED));
                     customerOrderCommentService.createCustomerOrderComment(originalFormalite.getFormalite()
                             .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
-                            "Formalité GU n°" + originalFormalite.getLiasseNumber() + " rejetée");
+                            "Formalité GU n°" + originalFormalite.getLiasseNumber() + " rejetée ("
+                                    + originalFormalite.getStatus().getLabel() + ")");
                 } else if (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED_DGFIP)
                         || originalFormalite.getStatus().getCode()
                                 .equals(FormaliteGuichetUniqueStatus.VALIDATED_PARTNER)
@@ -479,7 +480,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 }
                 if (file != null)
                     try {
-                        attachmentService.addAttachment(new FileInputStream(file), provision.getId(),null,
+                        attachmentService.addAttachment(new FileInputStream(file), provision.getId(), null,
                                 Provision.class.getSimpleName(),
                                 typeDocument.getAttachmentType(), piecesJointe.getNomDocument(), false,
                                 piecesJointe.getNomDocument(), piecesJointe, null, piecesJointe.getTypeDocument());

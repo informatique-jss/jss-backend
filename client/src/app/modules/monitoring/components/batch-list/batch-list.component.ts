@@ -81,6 +81,14 @@ export class BatchListComponent implements OnInit {
 
   searchBatchs() {
     if (this.batchSearchForm.valid && this.batchSearch && this.batchSearch.startDate && this.batchSearch.endDate) {
+      this.batchSearch.startDate = new Date(this.batchSearch.startDate);
+      this.batchSearch.endDate = new Date(this.batchSearch.endDate);
+      this.batchSearch.startDate.setHours(0);
+      this.batchSearch.startDate.setMinutes(0);
+      this.batchSearch.startDate.setSeconds(0);
+      this.batchSearch.endDate.setHours(23);
+      this.batchSearch.endDate.setMinutes(59);
+      this.batchSearch.endDate.setSeconds(59);
       this.batchService.getBatchs(this.batchSearch).subscribe(response => {
         this.batchDetails = response;
       })

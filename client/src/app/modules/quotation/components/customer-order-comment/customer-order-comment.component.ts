@@ -195,7 +195,7 @@ export class CustomerOrderCommentComponent implements OnInit {
   }
 
   canEditComment(comment: CustomerOrderComment) {
-    if (this.currentEmployee)
+    if (this.currentEmployee && comment.employee)
       return comment.employee.id == this.currentEmployee.id || this.habilitationService.canEditAllCustomerOrderComments();
     return false;
   }

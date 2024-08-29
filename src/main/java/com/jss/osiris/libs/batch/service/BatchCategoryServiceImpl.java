@@ -49,6 +49,7 @@ public class BatchCategoryServiceImpl implements BatchCategoryService {
     @Transactional(rollbackFor = Exception.class)
     public void updateCategoryReferential() throws OsirisException {
         updateCategory(BatchCategory.GUICHET_UNIQUE, "Guichet unique");
+        updateCategory(BatchCategory.INFOGREFFE, "Infogreffe");
         updateCategory(BatchCategory.INDEXATION, "Indexation");
         updateCategory(BatchCategory.ACCOUNTING, "Comptabilité");
         updateCategory(BatchCategory.SYSTEM, "Système");

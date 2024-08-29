@@ -1,6 +1,6 @@
 package com.jss.osiris.libs.batch.repository;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -76,13 +76,19 @@ public interface BatchRepository extends CrudRepository<Batch, Integer> {
         List<IBatchTimeStatistics> getTimeStatisticsOfBatch(@Param("batchSettingsId") Integer batchSettingsId,
                         @Param("batchStatusErrorCode") String batchStatusErrorCode);
 
-        @Query("select b from Batch b where createdDate  between :startDate and :endDate and (coalesce(:batchSettings) is null or b.batchSettings in :batchSettings) and (coalesce(:batchStatus) is null or b.batchStatus in :batchStatus)  and (coalesce(:nodes) is null or b.node in :nodes)  and (:entityId is null or b.entityId = :entityId)  order by createdDate desc ")
-        List<Batch> searchBatchs(@Param("startDate") Date startDate,
-                        @Param("endDate") Date endDate,
-                        @Param("batchSettings") List<BatchSettings> batchSettings,
-                        @Param("batchStatus") List<BatchStatus> batchStatus,
+        @Query(nativeQuery = true, value = "select b.* " +
+                        " from batch b  " +
+                        "where created_date  between :startDate and :endDate " +
+                        "and (coalesce(:batchSettings) =0 or b.id_batch_settings in :batchSettings) " +
+                        "and (coalesce(:batchStatus) =0 or b.id_batch_status in :batchStatus) " +
+                        "and (coalesce(:nodes) =0 or b.id_node in :nodes) " +
+                        "and (:entityId =0 or b.entity_id  = :entityId)  order by created_date  desc ")
+        List<Batch> searchBatchs(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate,
+                        @Param("batchSettings") List<Integer> batchSettings,
+                        @Param("batchStatus") List<Integer> batchStatus,
                         @Param("entityId") Integer entityId,
-                        @Param("nodes") List<Node> nodes);
+                        @Param("nodes") List<Integer> nodes);
 
         @Query(value = "select * from batch n where n.created_date<(now() - make_interval(months => :monthNbr))  ", nativeQuery = true)
         List<Batch> findBatchOlderThanMonths(@Param("monthNbr") Integer monthNbr);
