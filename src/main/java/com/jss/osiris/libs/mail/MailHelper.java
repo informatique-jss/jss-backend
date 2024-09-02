@@ -70,6 +70,7 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUniq
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
+import com.jss.osiris.modules.quotation.service.ServiceService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -158,6 +159,9 @@ public class MailHelper {
 
     @Autowired
     ResponsableService responsableService;
+
+    @Autowired
+    ServiceService serviceService;
 
     @Bean
     public TemplateEngine emailTemplateEngine() {
@@ -407,7 +411,6 @@ public class MailHelper {
             ctx.setVariable("affaireLabel", getCustomerOrderAffaireLabel(quotation, assoAffaireOrderToUse));
             ctx.setVariable("affaireLabelDetails",
                     getCustomerOrderAffaireDetailLabel(quotation, assoAffaireOrderToUse));
-            ctx.setVariable("serviceLabel", getCustomerOrderServiceLabel(quotation, assoAffaireOrderToUse));
             ctx.setVariable("referenceLabel", getCustomerOrderReferenceLabel(quotation, assoAffaireOrderToUse));
             ctx.setVariable("invoiceLabelResult",
                     invoiceHelper.computeInvoiceLabelResult(
@@ -488,6 +491,8 @@ public class MailHelper {
                 if (asso.getFormalisteComment() != null)
                     asso.setFormalisteComment(asso.getFormalisteComment().replaceAll("\r?\n", "<br/>"));
             ctx.setVariable("assoServiceDocuments", mail.getMissingAttachmentQuery().getAssoServiceDocument());
+            ctx.setVariable("serviceLabel",
+                    serviceService.getServiceLabel(mail.getMissingAttachmentQuery().getService()));
         }
 
         ctx.setVariable("isLastReminder", mail.getIsLastReminder() != null && mail.getIsLastReminder());
@@ -513,20 +518,6 @@ public class MailHelper {
                     : (affaire.getFirstname() + " " + affaire.getLastname());
         }
         return affaireLabel;
-    }
-
-    private String getCustomerOrderServiceLabel(IQuotation customerOrder, AssoAffaireOrder asso) {
-        String serviceLabel = "";
-        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null
-                && customerOrder.getAssoAffaireOrders().size() > 0) {
-            Service service = null;
-            if (asso == null)
-                service = customerOrder.getAssoAffaireOrders().get(0).getServices().get(0);
-            else
-                service = asso.getServices().get(0);
-            serviceLabel = service.getCustomLabel();
-        }
-        return serviceLabel;
     }
 
     private String getCustomerOrderReferenceLabel(IQuotation customerOrder, AssoAffaireOrder asso)
