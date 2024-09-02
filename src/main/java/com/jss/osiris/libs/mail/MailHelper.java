@@ -407,6 +407,7 @@ public class MailHelper {
             ctx.setVariable("affaireLabel", getCustomerOrderAffaireLabel(quotation, assoAffaireOrderToUse));
             ctx.setVariable("affaireLabelDetails",
                     getCustomerOrderAffaireDetailLabel(quotation, assoAffaireOrderToUse));
+            ctx.setVariable("serviceLabel", getCustomerOrderServiceLabel(quotation, assoAffaireOrderToUse));
             ctx.setVariable("referenceLabel", getCustomerOrderReferenceLabel(quotation, assoAffaireOrderToUse));
             ctx.setVariable("invoiceLabelResult",
                     invoiceHelper.computeInvoiceLabelResult(
@@ -512,6 +513,20 @@ public class MailHelper {
                     : (affaire.getFirstname() + " " + affaire.getLastname());
         }
         return affaireLabel;
+    }
+
+    private String getCustomerOrderServiceLabel(IQuotation customerOrder, AssoAffaireOrder asso) {
+        String serviceLabel = "";
+        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null
+                && customerOrder.getAssoAffaireOrders().size() > 0) {
+            Service service = null;
+            if (asso == null)
+                service = customerOrder.getAssoAffaireOrders().get(0).getServices().get(0);
+            else
+                service = asso.getServices().get(0);
+            serviceLabel = service.getCustomLabel();
+        }
+        return serviceLabel;
     }
 
     private String getCustomerOrderReferenceLabel(IQuotation customerOrder, AssoAffaireOrder asso)
