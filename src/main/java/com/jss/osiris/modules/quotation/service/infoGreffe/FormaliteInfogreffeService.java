@@ -3,6 +3,7 @@ package com.jss.osiris.modules.quotation.service.infoGreffe;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.quotation.model.infoGreffe.EvenementInfogreffe;
 import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
 
 public interface FormaliteInfogreffeService {
@@ -16,5 +17,8 @@ public interface FormaliteInfogreffeService {
     public FormaliteInfogreffe getFormaliteInfogreffe(Integer formaliteNumero);
 
     public List<FormaliteInfogreffe> getFormaliteInfogreffeByReference(String value);
+
+    public EvenementInfogreffe getLastEvenementInfogreffe(FormaliteInfogreffe formaliteInfogreffe,
+            boolean onlyNonNullStatus);
 
 }

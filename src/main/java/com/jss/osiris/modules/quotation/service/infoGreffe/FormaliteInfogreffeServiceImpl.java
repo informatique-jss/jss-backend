@@ -205,13 +205,11 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
         if (formaliteInfogreffe.getFormalite() != null && formaliteInfogreffe.getEvenements() != null
                 && formaliteInfogreffe.getEvenements().size() > 0) {
 
-            formaliteInfogreffe.getEvenements().sort(
-                    (o1, o2) -> ((LocalDateTime) o2.getCreatedDate())
-                            .compareTo((LocalDateTime) (o1.getCreatedDate())));
+            EvenementInfogreffe lastEvent = getLastEvenementInfogreffe(formaliteInfogreffe, true);
 
-            if (formaliteInfogreffe.getEvenements().get(0).getCodeEtat()
+            if (lastEvent.getCodeEtat()
                     .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_REJECT)
-                    || formaliteInfogreffe.getEvenements().get(0).getCodeEtat()
+                    || lastEvent.getCodeEtat()
                             .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_STRICT_REJECT)) {
                 formaliteInfogreffe.getFormalite().setFormaliteStatus(
                         formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED));
@@ -219,7 +217,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                         .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
                         "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " rejetée");
             }
-            if (formaliteInfogreffe.getEvenements().get(0).getCodeEtat()
+            if (lastEvent.getCodeEtat()
                     .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_VALIDATED)) {
                 formaliteInfogreffe.getFormalite().setFormaliteStatus(
                         formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED));
@@ -229,6 +227,24 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
             }
             formaliteService.addOrUpdateFormalite(formaliteInfogreffe.getFormalite());
         }
+    }
+
+    @Override
+    public EvenementInfogreffe getLastEvenementInfogreffe(FormaliteInfogreffe formaliteInfogreffe,
+            boolean onlyNonNullStatus) {
+        if (formaliteInfogreffe.getFormalite() != null && formaliteInfogreffe.getEvenements() != null
+                && formaliteInfogreffe.getEvenements().size() > 0) {
+
+            formaliteInfogreffe.getEvenements().sort(
+                    (o1, o2) -> ((LocalDateTime) o2.getCreatedDate())
+                            .compareTo((LocalDateTime) (o1.getCreatedDate())));
+
+            for (EvenementInfogreffe evenementInfogreffe : formaliteInfogreffe.getEvenements())
+                if (!onlyNonNullStatus || evenementInfogreffe.getCodeEtat() != null
+                        && evenementInfogreffe.getCodeEtat().trim().length() > 0)
+                    return evenementInfogreffe;
+        }
+        return null;
     }
 
     @Override

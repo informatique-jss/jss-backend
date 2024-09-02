@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.quotation.model.Formalite;
 
 import jakarta.persistence.CascadeType;
@@ -29,6 +30,7 @@ public class FormaliteInfogreffe {
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_identifiant_formalite")
+    @IndexedField
     private IdentifiantFormalite identifiantFormalite;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -40,6 +42,7 @@ public class FormaliteInfogreffe {
     @JoinColumn(name = "id_greffe_destinataire")
     private GreffeInfogreffe greffeDestinataire;
 
+    @IndexedField
     private String referenceTechnique;
     private String referenceClient;
     private String numeroLiasse;

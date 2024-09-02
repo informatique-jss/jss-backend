@@ -16,4 +16,5 @@ export interface AffaireSearch {
   isMissingQueriesToManualRemind: boolean;
   commercial: Employee | undefined;
   formaliteGuichetUniqueStatus: Status | undefined;
+  formaliteInfogreffeStatusCode: String | undefined;
 }
