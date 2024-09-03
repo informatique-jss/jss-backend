@@ -38,26 +38,32 @@ import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
 import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
+import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.quotation.service.AssoServiceDocumentService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
+import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
+import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.TypeDocumentService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -147,6 +153,15 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     CustomerOrderCommentService customerOrderCommentService;
+
+    @Autowired
+    SimpleProvisionStatusService simpleProvisionStatusService;
+
+    @Autowired
+    FormaliteStatusService formaliteStatusService;
+
+    @Autowired
+    AnnouncementStatusService announcementStatusService;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -464,6 +479,35 @@ public class AttachmentServiceImpl implements AttachmentService {
                                     return;
                             }
                         }
+
+                    // After 'break' (==if MissingAttachment Query is completed), then, for the
+                    // service, set all provisions, with status 'waiting for attachments', to
+                    // 'in progress' status
+                    if (missingAttachmentQuery.getService().getProvisions() != null
+                            && missingAttachmentQuery.getService().getProvisions().size() > 0)
+                        for (Provision provision : missingAttachmentQuery.getService().getProvisions()) {
+                            if (provision.getSimpleProvision() != null)
+                                if (provision.getSimpleProvision().getSimpleProvisionStatus().getCode()
+                                        .equals(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT))
+                                    provision.getSimpleProvision().setSimpleProvisionStatus(
+                                            simpleProvisionStatusService.getSimpleProvisionStatusByCode(
+                                                    SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS));
+
+                            if (provision.getFormalite() != null)
+                                if (provision.getFormalite().getFormaliteStatus().getCode()
+                                        .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT))
+                                    provision.getFormalite().setFormaliteStatus(
+                                            formaliteStatusService
+                                                    .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_IN_PROGRESS));
+
+                            if (provision.getAnnouncement() != null)
+                                if (provision.getAnnouncement().getAnnouncementStatus().getCode()
+                                        .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT))
+                                    provision.getAnnouncement().setAnnouncementStatus(
+                                            announcementStatusService.getAnnouncementStatusByCode(
+                                                    AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS));
+                        }
+
                     CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                             assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder(),
                             "La demande de pièces manquantes du " + missingAttachmentQuery.getCreatedDateTime()
