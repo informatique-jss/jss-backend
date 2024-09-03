@@ -1,8 +1,11 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.time.LocalDateTime;
+
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
@@ -50,6 +53,22 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
         customerOrderComment.setCreatedDateTime(LocalDateTime.now());
         customerOrderComment.setIsRead(false);
 
+        return addOrUpdateCustomerOrderComment(customerOrderComment);
+    }
+
+    @Override
+    public CustomerOrderComment tagGroupCustomerOrderComment(CustomerOrderComment customerOrderComment,
+            ActiveDirectoryGroup activeDirectoryGroup) {
+        if (customerOrderComment != null && activeDirectoryGroup != null) {
+            if (customerOrderComment.getActiveDirectoryGroups() == null
+                    || customerOrderComment.getActiveDirectoryGroups().size() == 0) {
+                List<ActiveDirectoryGroup> activeDirectoryGroups = new ArrayList<ActiveDirectoryGroup>();
+                activeDirectoryGroups.add(activeDirectoryGroup);
+                customerOrderComment
+                        .setActiveDirectoryGroups(activeDirectoryGroups);
+            } else
+                customerOrderComment.getActiveDirectoryGroups().add(activeDirectoryGroup);
+        }
         return addOrUpdateCustomerOrderComment(customerOrderComment);
     }
 }

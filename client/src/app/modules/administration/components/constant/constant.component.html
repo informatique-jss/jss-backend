@@ -855,6 +855,20 @@
           </tr>
           <tr>
             <td>
+              <select-active-directory-group [(model)]="constant.activeDirectoryGroupFacturation"
+                label="Groupe Facturation" [form]="constantForm" propertyName="activeDirectoryGroupFacturation"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-active-directory-group>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-active-directory-group [(model)]="constant.activeDirectoryGroupFormalites"
+                label="Groupe Formalites" [form]="constantForm" propertyName="activeDirectoryGroupFormalites"
+                [isMandatory]=" true" [isDisabled]="!editMode"></select-active-directory-group>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-contract-type [(model)]="constant.domiciliationContractTypeRouteEmail"
                 label="Contrat de domiciliation - redirection par mail" [form]="constantForm"
                 propertyName="domiciliationContractTypeRouteEmail" [isMandatory]="true" [isDisabled]="!editMode">

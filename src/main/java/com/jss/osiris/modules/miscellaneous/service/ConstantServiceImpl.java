@@ -15,6 +15,7 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -1051,4 +1052,13 @@ public class ConstantServiceImpl implements ConstantService {
         return this.getConstants().getAttachmentTypeAutreInfogreffe();
     }
 
+    @Override
+    public ActiveDirectoryGroup getActiveDirectoryGroupFormalites() throws OsirisException {
+        return this.getConstants().getActiveDirectoryGroupFormalites();
+    }
+
+    @Override
+    public ActiveDirectoryGroup getActiveDirectoryGroupFacturation() throws OsirisException {
+        return this.getConstants().getActiveDirectoryGroupFacturation();
+    }
 }

@@ -25,13 +25,11 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
-import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.DepartmentVatSetting;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
-import com.jss.osiris.modules.miscellaneous.service.ActiveDirectoryGroupService;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -121,9 +119,6 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Autowired
     CustomerOrderCommentService customerOrderCommentService;
-
-    @Autowired
-    ActiveDirectoryGroupService activeDirectoryGroupService;
 
     private String cartStatusPayed = "PAID";
     private String cartStatusRefund = "REFUNDED";
@@ -408,11 +403,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                             .getLabel()
                                     + ")");
 
-                    List<ActiveDirectoryGroup> activeDirectoryGroups = new ArrayList<ActiveDirectoryGroup>();
-                    activeDirectoryGroups.add(activeDirectoryGroupService
-                            .getActiveDirectoryGroupByCode(ActiveDirectoryGroup.GROUP_FORMALITES));
-                    customerOrderComment.setActiveDirectoryGroups(activeDirectoryGroups);
-                    customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
+                    customerOrderCommentService.tagGroupCustomerOrderComment(customerOrderComment,
+                            constantService.getActiveDirectoryGroupFormalites());
 
                 } else if (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED_DGFIP)
                         || originalFormalite.getStatus().getCode()
@@ -425,11 +417,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                     .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
                             "Formalité GU n°" + originalFormalite.getLiasseNumber() + " validée");
 
-                    List<ActiveDirectoryGroup> activeDirectoryGroups = new ArrayList<ActiveDirectoryGroup>();
-                    activeDirectoryGroups.add(activeDirectoryGroupService
-                            .getActiveDirectoryGroupByCode(ActiveDirectoryGroup.GROUP_FORMALITES));
-                    customerOrderComment.setActiveDirectoryGroups(activeDirectoryGroups);
-                    customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
+                    customerOrderCommentService.tagGroupCustomerOrderComment(customerOrderComment,
+                            constantService.getActiveDirectoryGroupFormalites());
                 }
                 formaliteService.addOrUpdateFormalite(originalFormalite.getFormalite());
             }

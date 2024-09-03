@@ -783,4 +783,12 @@ export class ConstantService extends AppRestService<Constant> {
   getDateAccountingClosureForAccountant() {
     return this.constant.dateAccountingClosureForAccountant;
   }
+
+  getActiveDirectoryGroupFormalites() {
+    return this.constant.activeDirectoryGroupFormalites;
+  }
+
+  getActiveDirectoryGroupFacturation() {
+    return this.constant.activeDirectoryGroupFacturation;
+  }
 }
