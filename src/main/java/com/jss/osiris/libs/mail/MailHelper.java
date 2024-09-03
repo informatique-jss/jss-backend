@@ -72,6 +72,7 @@ import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
+import com.jss.osiris.modules.quotation.service.ServiceService;
 import com.jss.osiris.modules.quotation.service.infoGreffe.FormaliteInfogreffeService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Rff;
@@ -163,6 +164,7 @@ public class MailHelper {
     ResponsableService responsableService;
 
     @Autowired
+    ServiceService serviceService;
     FormaliteInfogreffeService formaliteInfogreffeService;
 
     @Bean
@@ -493,6 +495,8 @@ public class MailHelper {
                 if (asso.getFormalisteComment() != null)
                     asso.setFormalisteComment(asso.getFormalisteComment().replaceAll("\r?\n", "<br/>"));
             ctx.setVariable("assoServiceDocuments", mail.getMissingAttachmentQuery().getAssoServiceDocument());
+            ctx.setVariable("serviceLabel",
+                    serviceService.getServiceLabel(mail.getMissingAttachmentQuery().getService()));
         }
 
         ctx.setVariable("isLastReminder", mail.getIsLastReminder() != null && mail.getIsLastReminder());
