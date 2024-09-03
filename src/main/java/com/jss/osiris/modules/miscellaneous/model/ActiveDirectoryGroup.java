@@ -12,8 +12,6 @@ import jakarta.persistence.SequenceGenerator;
 @Entity
 public class ActiveDirectoryGroup implements Serializable, IId {
 
-	public static String GROUP_FORMALITES = "FORMALITES";
-	public static String GROUP_FACTURATION = "FACTURATION";
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
