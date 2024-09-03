@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
-import com.jss.osiris.modules.miscellaneous.repository.ActiveDirectoryGroupRepository; 
+import com.jss.osiris.modules.miscellaneous.repository.ActiveDirectoryGroupRepository;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +27,11 @@ public class ActiveDirectoryGroupServiceImpl implements ActiveDirectoryGroupServ
         if (activeDirectoryGroup.isPresent())
             return activeDirectoryGroup.get();
         return null;
+    }
+
+    @Override
+    public ActiveDirectoryGroup getActiveDirectoryGroupByCode(String code) {
+        return activeDirectoryGroupRepository.findByCode(code);
     }
 
     @Override

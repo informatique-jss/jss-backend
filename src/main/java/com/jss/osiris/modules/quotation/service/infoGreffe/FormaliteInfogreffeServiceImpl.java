@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,16 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.repository.CompetentAuthorityRepository;
+import com.jss.osiris.modules.miscellaneous.service.ActiveDirectoryGroupService;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
@@ -61,6 +65,9 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
 
     @Autowired
     CustomerOrderCommentService customerOrderCommentService;
+
+    @Autowired
+    ActiveDirectoryGroupService activeDirectoryGroupService;
 
     @Override
     public FormaliteInfogreffe addOrUpdFormaliteInfogreffe(FormaliteInfogreffe formaliteInfogreffe) {
@@ -213,17 +220,31 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                             .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_STRICT_REJECT)) {
                 formaliteInfogreffe.getFormalite().setFormaliteStatus(
                         formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED));
-                customerOrderCommentService.createCustomerOrderComment(formaliteInfogreffe.getFormalite()
-                        .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
+                CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                        formaliteInfogreffe.getFormalite()
+                                .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
                         "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " rejetée");
+
+                List<ActiveDirectoryGroup> activeDirectoryGroups = new ArrayList<ActiveDirectoryGroup>();
+                activeDirectoryGroups.add(activeDirectoryGroupService
+                        .getActiveDirectoryGroupByCode(ActiveDirectoryGroup.GROUP_FORMALITES));
+                customerOrderComment.setActiveDirectoryGroups(activeDirectoryGroups);
+                customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
             }
             if (lastEvent.getCodeEtat()
                     .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_VALIDATED)) {
                 formaliteInfogreffe.getFormalite().setFormaliteStatus(
                         formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED));
-                customerOrderCommentService.createCustomerOrderComment(formaliteInfogreffe.getFormalite()
-                        .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
+                CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                        formaliteInfogreffe.getFormalite()
+                                .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
                         "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " validée");
+
+                List<ActiveDirectoryGroup> activeDirectoryGroups = new ArrayList<ActiveDirectoryGroup>();
+                activeDirectoryGroups.add(activeDirectoryGroupService
+                        .getActiveDirectoryGroupByCode(ActiveDirectoryGroup.GROUP_FORMALITES));
+                customerOrderComment.setActiveDirectoryGroups(activeDirectoryGroups);
+                customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
             }
             formaliteService.addOrUpdateFormalite(formaliteInfogreffe.getFormalite());
         }

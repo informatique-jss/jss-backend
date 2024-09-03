@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
+import com.jss.osiris.modules.miscellaneous.service.ActiveDirectoryGroupService;
+import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.IPaperSetResult;
 import com.jss.osiris.modules.quotation.model.PaperSet;
 import com.jss.osiris.modules.quotation.repository.PaperSetRepository;
@@ -20,6 +24,9 @@ public class PaperSetServiceImpl implements PaperSetService {
 
     @Autowired
     CustomerOrderCommentService customerOrderCommentService;
+
+    @Autowired
+    ActiveDirectoryGroupService activeDirectoryGroupService;
 
     @Override
     public List<PaperSet> getPaperSets() {
@@ -67,18 +74,32 @@ public class PaperSetServiceImpl implements PaperSetService {
     public PaperSet cancelPaperSet(PaperSet paperSet) {
         paperSet = getPaperSet(paperSet.getId());
         paperSet.setIsCancelled(true);
-        customerOrderCommentService.createCustomerOrderComment(paperSet.getCustomerOrder(),
+        CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                paperSet.getCustomerOrder(),
                 "L'action " + paperSet.getPaperSetType().getLabel() + " n°" + paperSet.getId()
                         + " a été annulée (emplacement n°" + paperSet.getLocationNumber() + ")");
+
+        List<ActiveDirectoryGroup> activeDirectoryGroups = new ArrayList<ActiveDirectoryGroup>();
+        activeDirectoryGroups.add(activeDirectoryGroupService
+                .getActiveDirectoryGroupByCode(ActiveDirectoryGroup.GROUP_FORMALITES));
+        customerOrderComment.setActiveDirectoryGroups(activeDirectoryGroups);
+        customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
         return addOrUpdatePaperSet(paperSet);
     }
 
     public PaperSet validatePaperSet(PaperSet paperSet) {
         paperSet = getPaperSet(paperSet.getId());
         paperSet.setIsValidated(true);
-        customerOrderCommentService.createCustomerOrderComment(paperSet.getCustomerOrder(),
+        CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                paperSet.getCustomerOrder(),
                 "L'action " + paperSet.getPaperSetType().getLabel() + " n°" + paperSet.getId()
                         + " a été effectuée (emplacement n°" + paperSet.getLocationNumber() + ")");
+
+        List<ActiveDirectoryGroup> activeDirectoryGroups = new ArrayList<ActiveDirectoryGroup>();
+        activeDirectoryGroups.add(activeDirectoryGroupService
+                .getActiveDirectoryGroupByCode(ActiveDirectoryGroup.GROUP_FORMALITES));
+        customerOrderComment.setActiveDirectoryGroups(activeDirectoryGroups);
+        customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
         return addOrUpdatePaperSet(paperSet);
     }
 }

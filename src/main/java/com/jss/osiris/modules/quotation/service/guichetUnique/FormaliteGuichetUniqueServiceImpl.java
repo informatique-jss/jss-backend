@@ -25,11 +25,13 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.DepartmentVatSetting;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
+import com.jss.osiris.modules.miscellaneous.service.ActiveDirectoryGroupService;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -37,6 +39,7 @@ import com.jss.osiris.modules.miscellaneous.service.DepartmentVatSettingService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.PaymentTypeService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -118,6 +121,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Autowired
     CustomerOrderCommentService customerOrderCommentService;
+
+    @Autowired
+    ActiveDirectoryGroupService activeDirectoryGroupService;
 
     private String cartStatusPayed = "PAID";
     private String cartStatusRefund = "REFUNDED";
@@ -393,25 +399,39 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.REJECTED)) {
                     originalFormalite.getFormalite().setFormaliteStatus(formaliteStatusService
                             .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED));
-                    customerOrderCommentService.createCustomerOrderComment(originalFormalite.getFormalite()
-                            .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
+                    CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                            originalFormalite.getFormalite()
+                                    .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
                             "Formalité GU n°" + originalFormalite.getLiasseNumber() + " rejetée ("
                                     + formaliteGuichetUniqueStatusService
                                             .getFormaliteGuichetUniqueStatus(originalFormalite.getStatus().getCode())
                                             .getLabel()
                                     + ")");
+
+                    List<ActiveDirectoryGroup> activeDirectoryGroups = new ArrayList<ActiveDirectoryGroup>();
+                    activeDirectoryGroups.add(activeDirectoryGroupService
+                            .getActiveDirectoryGroupByCode(ActiveDirectoryGroup.GROUP_FORMALITES));
+                    customerOrderComment.setActiveDirectoryGroups(activeDirectoryGroups);
+                    customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
+
                 } else if (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED_DGFIP)
                         || originalFormalite.getStatus().getCode()
                                 .equals(FormaliteGuichetUniqueStatus.VALIDATED_PARTNER)
                         || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED)) {
                     originalFormalite.getFormalite().setFormaliteStatus(formaliteStatusService
                             .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED));
-                    customerOrderCommentService.createCustomerOrderComment(originalFormalite.getFormalite()
-                            .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
+                    CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                            originalFormalite.getFormalite()
+                                    .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
                             "Formalité GU n°" + originalFormalite.getLiasseNumber() + " validée");
+
+                    List<ActiveDirectoryGroup> activeDirectoryGroups = new ArrayList<ActiveDirectoryGroup>();
+                    activeDirectoryGroups.add(activeDirectoryGroupService
+                            .getActiveDirectoryGroupByCode(ActiveDirectoryGroup.GROUP_FORMALITES));
+                    customerOrderComment.setActiveDirectoryGroups(activeDirectoryGroups);
+                    customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
                 }
                 formaliteService.addOrUpdateFormalite(originalFormalite.getFormalite());
-
             }
 
             if (formalite != null) {

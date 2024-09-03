@@ -8,6 +8,8 @@ public interface ActiveDirectoryGroupService {
     public List<ActiveDirectoryGroup> getActiveDirectoryGroups();
 
     public ActiveDirectoryGroup getActiveDirectoryGroup(Integer id);
-	
-	 public ActiveDirectoryGroup addOrUpdateActiveDirectoryGroup(ActiveDirectoryGroup activeDirectoryGroup);
+
+    public ActiveDirectoryGroup addOrUpdateActiveDirectoryGroup(ActiveDirectoryGroup activeDirectoryGroup);
+
+    public ActiveDirectoryGroup getActiveDirectoryGroupByCode(String code);
 }

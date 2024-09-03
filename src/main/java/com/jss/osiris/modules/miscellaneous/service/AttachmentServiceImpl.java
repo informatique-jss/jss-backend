@@ -32,6 +32,7 @@ import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -40,6 +41,7 @@ import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -150,6 +152,9 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     MissingAttachmentQueryService missingAttachmentQueryService;
+
+    @Autowired
+    ActiveDirectoryGroupService activeDirectoryGroupService;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -466,10 +471,16 @@ public class AttachmentServiceImpl implements AttachmentService {
                                     return;
                             }
                         }
-                    customerOrderCommentService.createCustomerOrderComment(
+                    CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                             assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder(),
                             "La demande de pièces manquantes du " + missingAttachmentQuery.getCreatedDateTime()
                                     .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " a été complétée");
+
+                    List<ActiveDirectoryGroup> activeDirectoryGroups = new ArrayList<ActiveDirectoryGroup>();
+                    activeDirectoryGroups.add(activeDirectoryGroupService
+                            .getActiveDirectoryGroupByCode(ActiveDirectoryGroup.GROUP_FORMALITES));
+                    customerOrderComment.setActiveDirectoryGroups(activeDirectoryGroups);
+                    customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
                     return;
                 }
             }
