@@ -37,6 +37,7 @@ import com.jss.osiris.modules.miscellaneous.service.DepartmentVatSettingService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.PaymentTypeService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -393,25 +394,33 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.REJECTED)) {
                     originalFormalite.getFormalite().setFormaliteStatus(formaliteStatusService
                             .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED));
-                    customerOrderCommentService.createCustomerOrderComment(originalFormalite.getFormalite()
-                            .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
+                    CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                            originalFormalite.getFormalite()
+                                    .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
                             "Formalité GU n°" + originalFormalite.getLiasseNumber() + " rejetée ("
                                     + formaliteGuichetUniqueStatusService
                                             .getFormaliteGuichetUniqueStatus(originalFormalite.getStatus().getCode())
                                             .getLabel()
                                     + ")");
+
+                    customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
+                            constantService.getActiveDirectoryGroupFormalites());
+
                 } else if (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED_DGFIP)
                         || originalFormalite.getStatus().getCode()
                                 .equals(FormaliteGuichetUniqueStatus.VALIDATED_PARTNER)
                         || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED)) {
                     originalFormalite.getFormalite().setFormaliteStatus(formaliteStatusService
                             .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED));
-                    customerOrderCommentService.createCustomerOrderComment(originalFormalite.getFormalite()
-                            .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
+                    CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                            originalFormalite.getFormalite()
+                                    .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
                             "Formalité GU n°" + originalFormalite.getLiasseNumber() + " validée");
+
+                    customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
+                            constantService.getActiveDirectoryGroupFormalites());
                 }
                 formaliteService.addOrUpdateFormalite(originalFormalite.getFormalite());
-
             }
 
             if (formalite != null) {

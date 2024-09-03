@@ -790,6 +790,14 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_provision_type_bilan_publication")
 	private ProvisionType provisionTypeBilanPublication;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_active_directory_group_formalites")
+	private ActiveDirectoryGroup activeDirectoryGroupFormalites;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_active_directory_group_facturation")
+	private ActiveDirectoryGroup activeDirectoryGroupFacturation;
+
 	private LocalDate dateAccountingClosureForAccountant;
 	private LocalDate dateAccountingClosureForAll;
 
@@ -2332,6 +2340,22 @@ public class Constant implements Serializable, IId {
 
 	public void setAttachmentTypeAutreInfogreffe(AttachmentType attachmentTypeAutreInfogreffe) {
 		this.attachmentTypeAutreInfogreffe = attachmentTypeAutreInfogreffe;
+	}
+
+	public ActiveDirectoryGroup getActiveDirectoryGroupFormalites() {
+		return activeDirectoryGroupFormalites;
+	}
+
+	public void setActiveDirectoryGroupFormalites(ActiveDirectoryGroup activeDirectoryGroupFormalites) {
+		this.activeDirectoryGroupFormalites = activeDirectoryGroupFormalites;
+	}
+
+	public ActiveDirectoryGroup getActiveDirectoryGroupFacturation() {
+		return activeDirectoryGroupFacturation;
+	}
+
+	public void setActiveDirectoryGroupFacturation(ActiveDirectoryGroup activeDirectoryGroupFacturation) {
+		this.activeDirectoryGroupFacturation = activeDirectoryGroupFacturation;
 	}
 
 }

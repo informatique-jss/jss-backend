@@ -40,6 +40,7 @@ import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -55,7 +56,6 @@ import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
-import com.jss.osiris.modules.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.TypeDocumentService;
@@ -147,9 +147,6 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     CustomerOrderCommentService customerOrderCommentService;
-
-    @Autowired
-    MissingAttachmentQueryService missingAttachmentQueryService;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -422,7 +419,8 @@ public class AttachmentServiceImpl implements AttachmentService {
         return newAttachment;
     }
 
-    private void checkCompleteAttachmentListAndComment(AssoServiceDocument assoServiceDocument, Attachment attachment) {
+    private void checkCompleteAttachmentListAndComment(AssoServiceDocument assoServiceDocument, Attachment attachment)
+            throws OsirisException {
         if (assoServiceDocument.getService().getMissingAttachmentQueries() != null
                 && assoServiceDocument.getService().getMissingAttachmentQueries().size() > 0) {
 
@@ -466,10 +464,13 @@ public class AttachmentServiceImpl implements AttachmentService {
                                     return;
                             }
                         }
-                    customerOrderCommentService.createCustomerOrderComment(
+                    CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                             assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder(),
                             "La demande de pièces manquantes du " + missingAttachmentQuery.getCreatedDateTime()
                                     .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " a été complétée");
+
+                    customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
+                            constantService.getActiveDirectoryGroupFormalites());
                     return;
                 }
             }

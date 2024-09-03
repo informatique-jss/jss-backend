@@ -7,6 +7,7 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -427,6 +428,10 @@ public interface ConstantService {
     public RffFrequency getRffFrequencyQuarterly() throws OsirisException;
 
     public ServiceType getServiceTypeOther() throws OsirisException;
+
+    public ActiveDirectoryGroup getActiveDirectoryGroupFormalites() throws OsirisException;
+
+    public ActiveDirectoryGroup getActiveDirectoryGroupFacturation() throws OsirisException;
 
     public LocalDate getDateAccountingClosureForAll() throws OsirisException;
 

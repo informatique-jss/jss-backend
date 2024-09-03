@@ -19,6 +19,7 @@ import com.jss.osiris.modules.miscellaneous.repository.CompetentAuthorityReposit
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
@@ -201,7 +202,8 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
         }
     }
 
-    private void refreshFormaliteStatusFromInfogreffeStatus(FormaliteInfogreffe formaliteInfogreffe) {
+    private void refreshFormaliteStatusFromInfogreffeStatus(FormaliteInfogreffe formaliteInfogreffe)
+            throws OsirisException {
         if (formaliteInfogreffe.getFormalite() != null && formaliteInfogreffe.getEvenements() != null
                 && formaliteInfogreffe.getEvenements().size() > 0) {
 
@@ -213,17 +215,25 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                             .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_STRICT_REJECT)) {
                 formaliteInfogreffe.getFormalite().setFormaliteStatus(
                         formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED));
-                customerOrderCommentService.createCustomerOrderComment(formaliteInfogreffe.getFormalite()
-                        .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
+                CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                        formaliteInfogreffe.getFormalite()
+                                .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
                         "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " rejetée");
+
+                customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
+                        constantService.getActiveDirectoryGroupFormalites());
             }
             if (lastEvent.getCodeEtat()
                     .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_VALIDATED)) {
                 formaliteInfogreffe.getFormalite().setFormaliteStatus(
                         formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED));
-                customerOrderCommentService.createCustomerOrderComment(formaliteInfogreffe.getFormalite()
-                        .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
+                CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                        formaliteInfogreffe.getFormalite()
+                                .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
                         "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " validée");
+
+                customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
+                        constantService.getActiveDirectoryGroupFormalites());
             }
             formaliteService.addOrUpdateFormalite(formaliteInfogreffe.getFormalite());
         }
