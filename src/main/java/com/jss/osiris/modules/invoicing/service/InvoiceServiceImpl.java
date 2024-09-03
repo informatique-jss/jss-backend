@@ -683,14 +683,14 @@ public class InvoiceServiceImpl implements InvoiceService {
                 } else if (invoice.getSecondReminderDateTime() == null) {
                     if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))
                             && LocalDate.now().minusDays(15)
-                                    .isBefore(invoice.getFirstReminderDateTime().toLocalDate())) {
+                                    .isAfter(invoice.getFirstReminderDateTime().toLocalDate())) {
                         toSend = true;
                         invoice.setSecondReminderDateTime(LocalDateTime.now());
                     }
                 } else if (invoice.getThirdReminderDateTime() == null) {
                     if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15 + 15))
                             && LocalDate.now().minusDays(15)
-                                    .isBefore(invoice.getSecondReminderDateTime().toLocalDate())) {
+                                    .isAfter(invoice.getSecondReminderDateTime().toLocalDate())) {
                         toSend = true;
                         invoice.setThirdReminderDateTime(LocalDateTime.now());
                         notificationService.notifyInvoiceToReminder(invoice);
